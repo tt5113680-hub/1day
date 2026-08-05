@@ -202,7 +202,18 @@ importers:
 
   packages/design-tokens: {}
 
-  packages/events: {}
+  packages/events:
+    dependencies:
+      pg:
+        specifier: 8.16.3
+        version: 8.16.3
+    devDependencies:
+      '@types/node':
+        specifier: 24.10.1
+        version: 24.10.1
+      '@types/pg':
+        specifier: 8.15.6
+        version: 8.15.6
 
   packages/observability: {}
 

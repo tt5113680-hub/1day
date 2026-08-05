@@ -1,4 +1,6 @@
+/* global fetch, setTimeout */
 import assert from 'node:assert/strict';
+import { Buffer } from 'node:buffer';
 import { spawn } from 'node:child_process';
 import test from 'node:test';
 import { signAccessToken } from '../packages/auth/dist/index.js';
@@ -23,7 +25,9 @@ async function ready() {
   for (let i = 0; i < 30; i += 1) {
     try {
       if ((await request('/api/v1/health')).ok) return;
-    } catch {}
+    } catch {
+      // API is still starting.
+    }
     await new Promise((resolve) => setTimeout(resolve, 100));
   }
   throw new Error('API did not become ready');
