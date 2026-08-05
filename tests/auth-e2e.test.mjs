@@ -120,3 +120,34 @@ test('tampered and cross-tenant session revocation attempts are rejected', async
     401,
   );
 });
+
+test('tenant context is server-derived and rejects cross-tenant request headers', async () => {
+  await ready();
+  const login = await request('/api/v1/auth/login', {
+    method: 'POST',
+    headers: { 'content-type': 'application/json' },
+    body: JSON.stringify({
+      email: 'admin@system.local',
+      password: 'ChangeMe123!',
+      tenantId: '00000000-0000-4000-8000-000000000001',
+    }),
+  });
+  const tokens = await login.json();
+  const allowed = await request('/api/v1/auth/context', {
+    headers: { authorization: `Bearer ${tokens.accessToken}` },
+  });
+  assert.equal(allowed.status, 200);
+  assert.equal((await allowed.json()).tenantId, '00000000-0000-4000-8000-000000000001');
+  assert.equal(
+    (
+      await request('/api/v1/auth/context', {
+        headers: {
+          authorization: `Bearer ${tokens.accessToken}`,
+          'x-tenant-context': '00000000-0000-4000-8000-000000000099',
+        },
+      })
+    ).status,
+    403,
+  );
+  assert.equal((await request('/api/v1/auth/context')).status, 401);
+});

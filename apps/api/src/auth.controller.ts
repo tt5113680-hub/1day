@@ -3,16 +3,27 @@ import {
   Body,
   Controller,
   Delete,
+  Get,
   Headers,
   Param,
   Post,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
+import { TenantContextService } from './tenant-context.service';
 
 const bearer = (value?: string) => (value?.startsWith('Bearer ') ? value.slice(7) : '');
 @Controller('api/v1/auth')
 export class AuthController {
-  constructor(private readonly auth: AuthService) {}
+  constructor(
+    private readonly auth: AuthService,
+    private readonly tenantContext: TenantContextService,
+  ) {}
+  @Get('context') context(
+    @Headers('authorization') authorization?: string,
+    @Headers('x-tenant-context') tenantId?: string,
+  ) {
+    return this.tenantContext.fromAuthorization(authorization, tenantId);
+  }
   @Post('login') login(
     @Body() body: { email?: string; password?: string; tenantId?: string; deviceName?: string },
   ) {
