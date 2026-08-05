@@ -7,6 +7,7 @@ import * as organizationModel from './migrations/005_organization_model.js';
 import * as employeeMembership from './migrations/006_employee_membership.js';
 import * as permissionConfirmations from './migrations/007_permission_change_confirmations.js';
 import * as customerMaster from './migrations/008_customer_master.js';
+import * as customerAttribution from './migrations/009_customer_attribution.js';
 import type { Database } from './types.js';
 
 const migrationProvider: MigrationProvider = {
@@ -20,6 +21,7 @@ const migrationProvider: MigrationProvider = {
       '006_employee_membership': employeeMembership,
       '007_permission_change_confirmations': permissionConfirmations,
       '008_customer_master': customerMaster,
+      '009_customer_attribution': customerAttribution,
     };
   },
 };

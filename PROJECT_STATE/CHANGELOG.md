@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## 2026-08-06 — CORE-005 PASS
+
+- 交付客户来源、推荐/接待/成交/核销贡献、归属链与审批式转移；所有关键写操作均有乐观锁、审计和 Outbox 事件。
+- 锁定依赖安装、lint、format、Vitest、50 项仓库测试、typecheck、build 和 evidence check 已通过。
+
 ## 2026-08-06 — CORE-004 PASS
 
 - 交付客户主档、手机号/微信身份哈希与脱敏、同租户去重、乐观锁身份新增和客户合并。

@@ -318,6 +318,74 @@ export interface CustomerMergesTable {
   version: Generated<number>;
 }
 
+export interface CustomerSourcesTable {
+  id: string;
+  tenant_id: string;
+  customer_id: string;
+  source_role: string;
+  source_type: string;
+  source_id: string | null;
+  metadata: unknown;
+  status: string;
+  created_at: Timestamp;
+  created_by: string | null;
+  updated_at: Timestamp;
+  updated_by: string | null;
+  deleted_at: Timestamp | null;
+  version: Generated<number>;
+}
+
+export interface CustomerOwnershipsTable {
+  id: string;
+  tenant_id: string;
+  customer_id: string;
+  employee_id: string;
+  ownership_role: string;
+  status: string;
+  created_at: Timestamp;
+  created_by: string | null;
+  updated_at: Timestamp;
+  updated_by: string | null;
+  deleted_at: Timestamp | null;
+  version: Generated<number>;
+}
+
+export interface CustomerContributionsTable {
+  id: string;
+  tenant_id: string;
+  customer_id: string;
+  employee_id: string;
+  contribution_role: string;
+  evidence_refs: unknown;
+  confirmed: boolean;
+  status: string;
+  created_at: Timestamp;
+  created_by: string | null;
+  updated_at: Timestamp;
+  updated_by: string | null;
+  deleted_at: Timestamp | null;
+  version: Generated<number>;
+}
+
+export interface CustomerOwnershipTransferApprovalsTable {
+  id: string;
+  tenant_id: string;
+  customer_id: string;
+  from_employee_id: string | null;
+  to_employee_id: string;
+  reason: string;
+  requested_version: number;
+  approved_by: string | null;
+  approved_at: Timestamp | null;
+  status: string;
+  created_at: Timestamp;
+  created_by: string | null;
+  updated_at: Timestamp;
+  updated_by: string | null;
+  deleted_at: Timestamp | null;
+  version: Generated<number>;
+}
+
 export interface Database {
   tenants: TenantsTable;
   users: UsersTable;
@@ -340,4 +408,8 @@ export interface Database {
   customers: CustomersTable;
   customer_identities: CustomerIdentitiesTable;
   customer_merges: CustomerMergesTable;
+  customer_sources: CustomerSourcesTable;
+  customer_ownerships: CustomerOwnershipsTable;
+  customer_contributions: CustomerContributionsTable;
+  customer_ownership_transfer_approvals: CustomerOwnershipTransferApprovalsTable;
 }

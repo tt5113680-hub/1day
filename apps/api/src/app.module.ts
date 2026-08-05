@@ -12,6 +12,8 @@ import { RbacController } from './rbac.controller';
 import { RbacService } from './rbac.service';
 import { CustomerController } from './customer.controller';
 import { CustomerService } from './customer.service';
+import { AttributionController } from './attribution.controller';
+import { AttributionService } from './attribution.service';
 
 @Module({
   controllers: [
@@ -21,6 +23,7 @@ import { CustomerService } from './customer.service';
     EmployeeController,
     RbacController,
     CustomerController,
+    AttributionController,
   ],
   providers: [
     AuthService,
@@ -30,6 +33,7 @@ import { CustomerService } from './customer.service';
     EmployeeService,
     RbacService,
     CustomerService,
+    AttributionService,
   ],
 })
 export class AppModule {}
