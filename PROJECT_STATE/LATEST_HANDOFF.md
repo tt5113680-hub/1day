@@ -2,13 +2,14 @@
 
 ## 已确认事实
 
-- `FOUNDATION-001` 正在进行。
+- `FOUNDATION-001` 已 PASS，代码提交为 `1d94bb72ac8b89d2dab8948d7a1f8a7567c94f06`。
+- pnpm/Turbo Monorepo 已建立，包含四个 Next.js 16 Web 应用、NestJS 11 + Fastify API、Worker 与 11 个共享包。
 - 开发环境已核验：Node.js 24、pnpm 10、Git 和 Docker 可用。
-- 新仓库尚未初始化；旧项目 `D:\1DAY_V2` 未被访问或修改。
+- 旧项目 `D:\1DAY_V2` 未被访问或修改。
 
 ## 下一步
 
-完成 `FOUNDATION-001` 的 Git、pnpm/Turbo Monorepo 骨架、质量验证、证据和提交。
+从 `main` 创建 `foundation/FOUNDATION-002` 分支，读取 `FOUNDATION-002.md` 及其直接规范后开始本地基础设施任务。
 
 ## 禁止
 
