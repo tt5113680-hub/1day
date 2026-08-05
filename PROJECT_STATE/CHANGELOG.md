@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## 2026-08-06 — FOUNDATION-008 PASS
+
+- 实现 PostgreSQL Outbox、消费者唯一键幂等与 correlation/trace 追踪字段。
+- 实际数据库一致性测试和全仓质量闸门通过；代码提交：`f16ef6a1b98ace697eaa74be1d908233c02ab519`。
+
 ## 2026-08-06 — FOUNDATION-007 PASS
 
 - 建立成员角色映射、统一授权服务和权限矩阵 HTTP E2E。

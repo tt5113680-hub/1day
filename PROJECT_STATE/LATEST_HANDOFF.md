@@ -16,7 +16,7 @@
 
 ## 下一步
 
-创建 `foundation/FOUNDATION-008` 分支，读取事件与 Outbox 任务后实现事务写入、事件持久化和安全投递框架。
+创建 `foundation/FOUNDATION-009` 分支，读取设计系统与应用壳任务后建立共享令牌、组件和各端应用壳。
 
 ## 禁止
 
