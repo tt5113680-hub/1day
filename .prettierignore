@@ -4,3 +4,4 @@ node_modules/
 **/next-env.d.ts
 pnpm-lock.yaml
 PROJECT_STATE/STOP_REPORT.md
+evidence/*/playwright-output/

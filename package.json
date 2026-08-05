@@ -19,18 +19,23 @@
     "db:rollback": "pnpm --filter @oneday/database migrate:down",
     "db:repair": "pnpm --filter @oneday/database migrate:repair",
     "db:seed": "pnpm --filter @oneday/database seed",
-    "db:test:prepare": "pnpm --filter @oneday/database test:prepare"
+    "db:test:prepare": "pnpm --filter @oneday/database test:prepare",
+    "test:unit": "vitest run",
+    "test:e2e": "playwright test",
+    "evidence:check": "node tests/evidence-contract.test.mjs"
   },
   "devDependencies": {
     "@commitlint/cli": "20.5.0",
     "@commitlint/config-conventional": "20.5.0",
     "@eslint/js": "9.39.1",
+    "@playwright/test": "1.55.0",
     "eslint": "9.39.1",
     "eslint-config-prettier": "10.1.8",
     "prettier": "3.7.4",
     "turbo": "2.10.8",
     "typescript": "6.0.3",
-    "typescript-eslint": "8.66.0"
+    "typescript-eslint": "8.66.0",
+    "vitest": "3.2.4"
   },
   "pnpm": {
     "overrides": {
