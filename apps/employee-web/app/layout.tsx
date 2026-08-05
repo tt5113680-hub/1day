@@ -4,5 +4,9 @@ import type { ReactNode } from 'react';
 export const metadata: Metadata = { title: 'ONEDAY Employee' };
 
 export default function RootLayout({ children }: Readonly<{ children: ReactNode }>) {
-  return <html lang="zh-CN"><body>{children}</body></html>;
+  return (
+    <html lang="zh-CN">
+      <body>{children}</body>
+    </html>
+  );
 }

@@ -9,7 +9,7 @@
 ```json
 {
   "data": {},
-  "meta": {"requestId": "..."},
+  "meta": { "requestId": "..." },
   "error": null
 }
 ```

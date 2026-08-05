@@ -8,11 +8,11 @@ services:
       POSTGRES_USER: oneday
       POSTGRES_PASSWORD: oneday_local_only
     ports:
-      - "5434:5432"
+      - '5434:5432'
     volumes:
       - oneday_v3_postgres_data:/var/lib/postgresql
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U oneday -d oneday"]
+      test: ['CMD-SHELL', 'pg_isready -U oneday -d oneday']
       interval: 5s
       timeout: 5s
       retries: 12
@@ -20,13 +20,13 @@ services:
 
   redis:
     image: redis:8
-    command: ["redis-server", "--appendonly", "yes"]
+    command: ['redis-server', '--appendonly', 'yes']
     ports:
-      - "6380:6379"
+      - '6380:6379'
     volumes:
       - oneday_v3_redis_data:/data
     healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
+      test: ['CMD', 'redis-cli', 'ping']
       interval: 5s
       timeout: 5s
       retries: 12
@@ -43,14 +43,20 @@ services:
       DATABASE_URL: postgresql://oneday:oneday_local_only@postgres:5432/oneday
       REDIS_URL: redis://redis:6379
     ports:
-      - "3001:3001"
+      - '3001:3001'
     depends_on:
       postgres:
         condition: service_healthy
       redis:
         condition: service_healthy
     healthcheck:
-      test: ["CMD", "node", "-e", "require('http').get('http://127.0.0.1:3001/api/v1/health',(r)=>process.exit(r.statusCode===200?0:1)).on('error',()=>process.exit(1))"]
+      test:
+        [
+          'CMD',
+          'node',
+          '-e',
+          "require('http').get('http://127.0.0.1:3001/api/v1/health',(r)=>process.exit(r.statusCode===200?0:1)).on('error',()=>process.exit(1))",
+        ]
       interval: 5s
       timeout: 5s
       retries: 12
@@ -67,14 +73,20 @@ services:
       DATABASE_URL: postgresql://oneday:oneday_local_only@postgres:5432/oneday
       REDIS_URL: redis://redis:6379
     ports:
-      - "3002:3002"
+      - '3002:3002'
     depends_on:
       postgres:
         condition: service_healthy
       redis:
         condition: service_healthy
     healthcheck:
-      test: ["CMD", "node", "-e", "require('http').get('http://127.0.0.1:3002/health',(r)=>process.exit(r.statusCode===200?0:1)).on('error',()=>process.exit(1))"]
+      test:
+        [
+          'CMD',
+          'node',
+          '-e',
+          "require('http').get('http://127.0.0.1:3002/health',(r)=>process.exit(r.statusCode===200?0:1)).on('error',()=>process.exit(1))",
+        ]
       interval: 5s
       timeout: 5s
       retries: 12
