@@ -1,0 +1,21 @@
+# ONEDAY V3 project-scoped Codex policy.
+# This configuration is intentionally limited to the trusted project workspace.
+
+approval_policy = "never"
+sandbox_mode = "workspace-write"
+developer_instructions = """
+ONEDAY V3 safety policy:
+- Write only inside D:\\ONEDAY_V3. Do not modify D:\\1DAY_V2 or any path outside the workspace.
+- Project dependency installation, tests, builds, and normal non-forced Git commits are allowed only for the current task.
+- Never run git reset --hard, git clean -fd, git push --force, database deletion commands, Docker data deletion commands, Windows system configuration changes, or user-permission changes.
+- Process exactly one TASK at a time. Before work, read CURRENT_STATE, TASK_QUEUE, and LATEST_HANDOFF.
+- If the task cannot be safely completed because of ambiguity, missing authorization/account access, system-level software, or three failed repair rounds, stop and create PROJECT_STATE/BLOCKED_REPORT.md.
+- Do not use Cursor Agent, Headless CLI, unattended controller scripts, or multi-agent execution.
+"""
+
+[agents]
+enabled = false
+
+[sandbox_workspace_write]
+# Required for package-manager downloads while keeping all writes in the workspace.
+network_access = true
