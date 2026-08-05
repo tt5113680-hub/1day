@@ -1,5 +1,8 @@
 # TASK_QUEUE
 
+## Milestones
+- [x] FOUNDATION MILESTONE PASS — FOUNDATION-001 至 FOUNDATION-010（10/69，基础阶段最终状态提交：239114e）
+
 - [x] FOUNDATION-001 — 新仓库与 Monorepo 骨架
 - [x] FOUNDATION-002 — 本地基础设施
 - [x] FOUNDATION-003 — 共享配置与代码质量

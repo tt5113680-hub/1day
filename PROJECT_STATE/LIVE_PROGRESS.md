@@ -11,3 +11,4 @@
 - 2026-08-06 Asia/Shanghai — FOUNDATION-008 transactional Postgres Outbox, consumer idempotency and repository quality gates completed. Next: evidence, state update and commit.
 - 2026-08-06 Asia/Shanghai — FOUNDATION-009 design tokens, four application shells, state routes and repository quality gates completed. Next: evidence, state update and commit.
 - 2026-08-06 Asia/Shanghai — FOUNDATION-010 Vitest, Playwright screenshot, evidence validation and final repository quality gates completed. Foundation phase is ready for acceptance; no CORE work started.
+- 2026-08-06 Asia/Shanghai — FOUNDATION-001 through FOUNDATION-010 accepted as MILESTONE PASS (10/69); final state commit `239114e`. Next.js Playwright dev-server cross-origin resource warnings are a known non-blocking observation. CORE-001 authorized to start.

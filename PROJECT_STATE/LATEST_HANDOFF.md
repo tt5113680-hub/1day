@@ -13,10 +13,12 @@
 
 - `FOUNDATION-004` 已 PASS：Kysely 迁移、种子、回滚/前向修复和测试数据库框架已实现并真实验证；代码提交为 `3685e9a07be6e98e4980d00afabeb33be8087106`。
 - PostgreSQL 测试库 `oneday_v3_test` 保留在本地 Docker 环境，包含 `001_foundation_schema` 迁移、1 个系统租户和 2 条基础权限。
+- 基础阶段 `FOUNDATION-001` 至 `FOUNDATION-010` 已获验收：MILESTONE PASS，完成度 `10/69`，最终状态提交为 `239114e`。
+- Playwright 的 Next.js 开发服务器会输出跨源资源警告；截图与 E2E 均通过，列为已知观察项，不构成当前阻塞。
 
 ## 下一步
 
-基础阶段 FOUNDATION-001 至 FOUNDATION-010 已完成并通过证据校验。当前停留在 `foundation/FOUNDATION-010`；后续如获授权进入 CORE，应从 `core/CORE-001` 分支开始，不得在本基础阶段任务中继续施工。
+用户已正式授权进入 CORE。创建 `core/CORE-001` 分支，读取租户与组织模型任务及直接依赖规范后开始施工；CORE 阶段最后一个任务为 `CORE-010`。
 
 ## 禁止
 
