@@ -1,10 +1,14 @@
 import { Migrator, type Kysely, type Migration, type MigrationProvider } from 'kysely';
 import * as foundationSchema from './migrations/001_foundation_schema.js';
+import * as authSessions from './migrations/002_auth_sessions.js';
 import type { Database } from './types.js';
 
 const migrationProvider: MigrationProvider = {
   async getMigrations(): Promise<Record<string, Migration>> {
-    return { '001_foundation_schema': foundationSchema };
+    return {
+      '001_foundation_schema': foundationSchema,
+      '002_auth_sessions': authSessions,
+    };
   },
 };
 

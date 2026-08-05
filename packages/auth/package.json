@@ -2,12 +2,15 @@
   "name": "@oneday/auth",
   "version": "0.0.0",
   "private": true,
-  "type": "module",
+  "type": "commonjs",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "scripts": {
     "build": "tsc --project tsconfig.json",
     "typecheck": "tsc --noEmit",
     "test": "node --test"
+  },
+  "devDependencies": {
+    "@types/node": "24.10.1"
   }
 }

@@ -1,7 +1,11 @@
 import type { Kysely } from 'kysely';
+import { scryptSync } from 'node:crypto';
 import type { Database } from '../types.js';
 
 export const SYSTEM_TENANT_ID = '00000000-0000-4000-8000-000000000001';
+const SYSTEM_USER_ID = '00000000-0000-4000-8000-000000000002';
+const SYSTEM_MEMBERSHIP_ID = '00000000-0000-4000-8000-000000000003';
+const systemPasswordHash = `scrypt$oneday-foundation-seed$${scryptSync('ChangeMe123!', 'oneday-foundation-seed', 64).toString('base64url')}`;
 
 export async function seedFoundationData(database: Kysely<Database>): Promise<void> {
   await database
@@ -10,6 +14,34 @@ export async function seedFoundationData(database: Kysely<Database>): Promise<vo
       id: SYSTEM_TENANT_ID,
       slug: 'system',
       name: 'ONEDAY System',
+      status: 'active',
+      created_by: null,
+      updated_by: null,
+      deleted_at: null,
+    })
+    .onConflict((conflict) => conflict.column('id').doNothing())
+    .execute();
+
+  await database
+    .insertInto('users')
+    .values({
+      id: SYSTEM_USER_ID,
+      email: 'admin@system.local',
+      display_name: 'System Admin',
+      password_hash: systemPasswordHash,
+      status: 'active',
+      created_by: null,
+      updated_by: null,
+      deleted_at: null,
+    })
+    .onConflict((conflict) => conflict.column('id').doNothing())
+    .execute();
+  await database
+    .insertInto('memberships')
+    .values({
+      id: SYSTEM_MEMBERSHIP_ID,
+      tenant_id: SYSTEM_TENANT_ID,
+      user_id: SYSTEM_USER_ID,
       status: 'active',
       created_by: null,
       updated_by: null,

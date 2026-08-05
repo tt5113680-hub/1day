@@ -138,6 +138,23 @@ export interface AuditLogsTable {
   version: Generated<number>;
 }
 
+export interface AuthSessionsTable {
+  id: string;
+  tenant_id: string;
+  user_id: string;
+  refresh_token_hash: string;
+  device_name: string | null;
+  expires_at: Timestamp;
+  revoked_at: Timestamp | null;
+  status: string;
+  created_at: Timestamp;
+  created_by: string | null;
+  updated_at: Timestamp;
+  updated_by: string | null;
+  deleted_at: Timestamp | null;
+  version: Generated<number>;
+}
+
 export interface Database {
   tenants: TenantsTable;
   users: UsersTable;
@@ -148,4 +165,5 @@ export interface Database {
   data_scopes: DataScopesTable;
   outbox_events: OutboxEventsTable;
   audit_logs: AuditLogsTable;
+  auth_sessions: AuthSessionsTable;
 }

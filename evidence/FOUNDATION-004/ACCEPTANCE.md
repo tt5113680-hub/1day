@@ -9,15 +9,15 @@
 
 ## 已执行验证
 
-| 验证 | 命令 | 结果 |
-| --- | --- | --- |
-| 冻结依赖 | `pnpm.cmd install --frozen-lockfile` | PASS |
-| 类型检查 | `pnpm.cmd typecheck` | PASS，17 个工作区 |
-| Lint | `pnpm.cmd lint` | PASS |
-| 格式检查 | `pnpm.cmd format:check` | PASS |
-| 自动化测试 | `pnpm.cmd test` | PASS，根测试 28 项、工作区测试 17 个 |
-| 构建 | `pnpm.cmd build` | PASS，17 个工作区 |
-| PostgreSQL 迁移 | `migrate` 两次、`seed` 两次、`down`、`repair`、再次 `seed` | PASS |
+| 验证            | 命令                                                       | 结果                                 |
+| --------------- | ---------------------------------------------------------- | ------------------------------------ |
+| 冻结依赖        | `pnpm.cmd install --frozen-lockfile`                       | PASS                                 |
+| 类型检查        | `pnpm.cmd typecheck`                                       | PASS，17 个工作区                    |
+| Lint            | `pnpm.cmd lint`                                            | PASS                                 |
+| 格式检查        | `pnpm.cmd format:check`                                    | PASS                                 |
+| 自动化测试      | `pnpm.cmd test`                                            | PASS，根测试 28 项、工作区测试 17 个 |
+| 构建            | `pnpm.cmd build`                                           | PASS，17 个工作区                    |
+| PostgreSQL 迁移 | `migrate` 两次、`seed` 两次、`down`、`repair`、再次 `seed` | PASS                                 |
 
 ## 实际数据库结果
 
