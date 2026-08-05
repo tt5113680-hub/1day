@@ -16,7 +16,7 @@
 
 ## 下一步
 
-创建 `foundation/FOUNDATION-006` 分支，读取租户上下文与数据隔离任务后，将认证会话中的租户声明落实为 API 请求上下文和查询隔离。
+创建 `foundation/FOUNDATION-007` 分支，读取 RBAC 与数据权限范围任务后，在 TenantContext 上实现角色、权限和数据范围校验。
 
 ## 禁止
 
