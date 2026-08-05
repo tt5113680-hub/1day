@@ -8,7 +8,7 @@
 - [x] FOUNDATION-006 — 租户上下文与数据隔离
 - [x] FOUNDATION-007 — RBAC与数据范围
 - [x] FOUNDATION-008 — 事件与Outbox
-- [ ] FOUNDATION-009 — 设计系统与应用壳
+- [x] FOUNDATION-009 — 设计系统与应用壳
 - [ ] FOUNDATION-010 — 测试与证据框架
 - [ ] CORE-001 — 租户与组织模型
 - [ ] CORE-002 — 用户员工与成员关系

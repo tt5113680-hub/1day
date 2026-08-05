@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## 2026-08-06 — FOUNDATION-009 PASS
+
+- 建立设计令牌、统一状态文案及四端应用壳/状态边界。
+- 四端构建和全仓质量闸门通过；代码提交：`2b3aac67876a84cff99048e0087adaee38171f5f`。
+
 ## 2026-08-06 — FOUNDATION-008 PASS
 
 - 实现 PostgreSQL Outbox、消费者唯一键幂等与 correlation/trace 追踪字段。
