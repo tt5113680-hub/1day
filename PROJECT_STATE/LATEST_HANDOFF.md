@@ -1,6 +1,7 @@
 # LATEST_HANDOFF
 
 ## CORE-001 已交接
+
 - `CORE-001` 已 PASS：组织、组织关系、商户、门店、创建幂等、乐观锁、TenantContext/RBAC 校验及 audit logs 已实现并真实 HTTP 验证。
 - 验证：`pnpm.cmd typecheck`、`lint`、`format:check`、`test`（41/41）、`test:unit`（1/1）、`build`、`evidence:check` 均通过。
 - 下一任务：`CORE-002` — 用户员工与成员关系。

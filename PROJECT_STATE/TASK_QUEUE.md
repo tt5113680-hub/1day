@@ -1,6 +1,7 @@
 # TASK_QUEUE
 
 ## Current core status
+
 - [x] CORE-001 PASS — tenant, organization, merchant and store model; evidence and all applicable quality gates passed.
 - [ ] CORE-002 NEXT — user, employee and membership model.
 

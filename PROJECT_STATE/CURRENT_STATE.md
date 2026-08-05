@@ -6,7 +6,7 @@
 - current_task: CORE-002
 - status: PENDING
 - branch: core/CORE-001
-- last_safe_commit: a8847a1
+- last_safe_commit: 02b9ae0
 - started_at: null
 - blocker: null
 - known_observation: Next.js Playwright development-server cross-origin resource warnings; E2E and screenshot passed, not blocking.
