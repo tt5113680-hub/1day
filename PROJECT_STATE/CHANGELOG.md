@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## 2026-08-06 — FOUNDATION-005 PASS
+
+- 实现持久化登录、刷新轮换、登出与会话撤销 API，并以会话租户字段拒绝跨租户撤销。
+- 认证 HTTP E2E 和全仓质量闸门均通过；代码提交：`c9f40f810a6b259a7c0abdcb4636d63436144959`。
+
 ## 2026-08-06 — FOUNDATION-004 PASS
 
 - 建立 Kysely PostgreSQL 数据访问、类型化基础表迁移、回滚与前向修复 CLI。

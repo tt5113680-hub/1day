@@ -4,7 +4,7 @@
 - [x] FOUNDATION-002 — 本地基础设施
 - [x] FOUNDATION-003 — 共享配置与代码质量
 - [x] FOUNDATION-004 — 数据库迁移与种子框架
-- [ ] FOUNDATION-005 — 认证与会话
+- [x] FOUNDATION-005 — 认证与会话
 - [ ] FOUNDATION-006 — 租户上下文与数据隔离
 - [ ] FOUNDATION-007 — RBAC与数据范围
 - [ ] FOUNDATION-008 — 事件与Outbox
