@@ -4,6 +4,7 @@ import * as authSessions from './migrations/002_auth_sessions.js';
 import * as membershipRoles from './migrations/003_membership_roles.js';
 import * as eventConsumptions from './migrations/004_event_consumptions.js';
 import * as organizationModel from './migrations/005_organization_model.js';
+import * as employeeMembership from './migrations/006_employee_membership.js';
 import type { Database } from './types.js';
 
 const migrationProvider: MigrationProvider = {
@@ -14,6 +15,7 @@ const migrationProvider: MigrationProvider = {
       '003_membership_roles': membershipRoles,
       '004_event_consumptions': eventConsumptions,
       '005_organization_model': organizationModel,
+      '006_employee_membership': employeeMembership,
     };
   },
 };

@@ -1,5 +1,11 @@
 # LATEST_HANDOFF
 
+## CORE-002 已交接
+
+- `CORE-002` 已 PASS：员工邀请、成员接受、员工与组织归属、离职状态、审计和 Outbox 事件已实现并通过真实 HTTP 验证。
+- 验证：typecheck、lint、format check、44 项仓库测试、Vitest、build、`tests/core-002-e2e.test.mjs` 和 evidence check 均通过。
+- 下一任务：`CORE-003` — 角色与权限管理服务。
+
 ## CORE-001 已交接
 
 - `CORE-001` 已 PASS：组织、组织关系、商户、门店、创建幂等、乐观锁、TenantContext/RBAC 校验及 audit logs 已实现并真实 HTTP 验证。

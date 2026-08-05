@@ -1,5 +1,11 @@
 # LIVE_PROGRESS
 
+- 2026-08-06 Asia/Shanghai — CORE-002 testing completed: typecheck, lint, format check, repository tests, Vitest, build, targeted HTTP E2E and evidence check passed. State and evidence are ready for commit; next task is CORE-003.
+
+- 2026-08-06 Asia/Shanghai — CORE-002 main implementation and targeted HTTP E2E completed: employee invitation, acceptance, tenant-bound membership, offboarding, audit and outbox events are verified. Next: full quality gates, evidence and commit.
+
+- 2026-08-06 Asia/Shanghai — CORE-002 started on `core/CORE-002`; user, employee, membership, invitation and offboarding requirements plus CORE-001 handoff have been read. Next: inspect the existing identity, membership and authorization implementation.
+
 - 2026-08-06 Asia/Shanghai — CORE-001 tests completed: typecheck, lint, format check, 41 repository tests, Vitest, build and evidence check passed. Evidence and state are being committed; next task is CORE-002.
 
 - 2026-08-06 Asia/Shanghai — CORE-001 main implementation and targeted HTTP E2E completed: organization hierarchy, merchant/store ownership, idempotency, optimistic versioning, RBAC/TenantContext enforcement and audit logs are verified. Next: full applicable quality gates and acceptance evidence.

@@ -237,6 +237,41 @@ export interface IdempotencyKeysTable {
   deleted_at: Timestamp | null;
   version: Generated<number>;
 }
+export interface EmployeesTable {
+  id: string;
+  tenant_id: string;
+  membership_id: string;
+  organization_id: string;
+  employee_code: string;
+  title: string | null;
+  status: string;
+  started_at: Timestamp;
+  ended_at: Timestamp | null;
+  created_at: Timestamp;
+  created_by: string | null;
+  updated_at: Timestamp;
+  updated_by: string | null;
+  deleted_at: Timestamp | null;
+  version: Generated<number>;
+}
+export interface MembershipInvitationsTable {
+  id: string;
+  tenant_id: string;
+  organization_id: string;
+  email: string;
+  employee_code: string;
+  title: string | null;
+  token_hash: string;
+  expires_at: Timestamp;
+  accepted_at: Timestamp | null;
+  status: string;
+  created_at: Timestamp;
+  created_by: string | null;
+  updated_at: Timestamp;
+  updated_by: string | null;
+  deleted_at: Timestamp | null;
+  version: Generated<number>;
+}
 
 export interface Database {
   tenants: TenantsTable;
@@ -255,4 +290,6 @@ export interface Database {
   merchants: MerchantsTable;
   stores: StoresTable;
   idempotency_keys: IdempotencyKeysTable;
+  employees: EmployeesTable;
+  membership_invitations: MembershipInvitationsTable;
 }

@@ -1,5 +1,10 @@
 # TASK_QUEUE
 
+## Latest core status
+
+- [x] CORE-002 PASS — employee invitations, memberships, lifecycle, audit and outbox verified.
+- [ ] CORE-003 NEXT — role and permission management.
+
 ## Current core status
 
 - [x] CORE-001 PASS — tenant, organization, merchant and store model; evidence and all applicable quality gates passed.
