@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## 2026-08-06 — CORE-004 PASS
+
+- 交付客户主档、手机号/微信身份哈希与脱敏、同租户去重、乐观锁身份新增和客户合并。
+- 所有客户写操作均通过动作权限、TenantContext、审计日志和带 correlation/trace 的 Outbox 事件保护。
+- 锁定依赖安装、lint、format、Vitest、48 项仓库测试、typecheck、build 和 evidence check 已通过。
+
 ## 2026-08-06 — FOUNDATION-010 PASS
 
 - 配置 Vitest、Playwright Chromium、evidence 校验和可重复截图/trace 输出。

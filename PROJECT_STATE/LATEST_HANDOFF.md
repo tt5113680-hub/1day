@@ -1,5 +1,12 @@
 # LATEST_HANDOFF
 
+## CORE-004 已交接
+
+- `CORE-004` 已 PASS：客户主档、手机号/微信身份的哈希化持久化与脱敏展示、同租户身份去重、乐观锁、合并记录、审计和 Outbox 事件均已实现。
+- 验证：`pnpm.cmd install --frozen-lockfile`、typecheck、lint、format check、Vitest、48 项仓库测试、build、`tests/core-004-e2e.test.mjs` 和 evidence check 均通过。
+- 证据：`evidence/CORE-004/ACCEPTANCE.md`；页面 E2E、截图、可访问性和外部服务失败不适用（本任务无页面或外部服务）。
+- 下一任务：`CORE-005` — 来源归属与贡献。
+
 ## CORE-003 已交接
 
 - `CORE-003` 已 PASS：角色模板、创建幂等、敏感权限确认、乐观锁、确认记录与审计日志已实现。

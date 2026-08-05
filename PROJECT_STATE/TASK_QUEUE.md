@@ -2,8 +2,8 @@
 
 ## Latest core status
 
-- [x] CORE-003 PASS — role templates, confirmed permission updates and audit verified.
-- [ ] CORE-004 NEXT — customer master and identity.
+- [x] CORE-004 PASS — customer master, protected phone/WeChat identities, deduplication, merge audit and outbox events verified.
+- [ ] CORE-005 NEXT — source attribution and contribution.
 
 ## Latest core status
 
@@ -32,7 +32,7 @@
 - [ ] CORE-001 — 租户与组织模型
 - [ ] CORE-002 — 用户员工与成员关系
 - [ ] CORE-003 — 角色权限管理服务
-- [ ] CORE-004 — 客户主档与身份
+- [x] CORE-004 — 客户主档与身份
 - [ ] CORE-005 — 来源归属与贡献
 - [ ] CORE-006 — 任务提醒与升级
 - [ ] CORE-007 — 证据与结果回收

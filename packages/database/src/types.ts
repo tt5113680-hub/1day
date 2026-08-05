@@ -273,6 +273,51 @@ export interface MembershipInvitationsTable {
   version: Generated<number>;
 }
 
+export interface CustomersTable {
+  id: string;
+  tenant_id: string;
+  display_name: string;
+  status: string;
+  merged_into_id: string | null;
+  created_at: Timestamp;
+  created_by: string | null;
+  updated_at: Timestamp;
+  updated_by: string | null;
+  deleted_at: Timestamp | null;
+  version: Generated<number>;
+}
+
+export interface CustomerIdentitiesTable {
+  id: string;
+  tenant_id: string;
+  customer_id: string;
+  identity_type: string;
+  identity_value_hash: string;
+  masked_value: string;
+  status: string;
+  created_at: Timestamp;
+  created_by: string | null;
+  updated_at: Timestamp;
+  updated_by: string | null;
+  deleted_at: Timestamp | null;
+  version: Generated<number>;
+}
+
+export interface CustomerMergesTable {
+  id: string;
+  tenant_id: string;
+  source_customer_id: string;
+  target_customer_id: string;
+  reason: string;
+  status: string;
+  created_at: Timestamp;
+  created_by: string | null;
+  updated_at: Timestamp;
+  updated_by: string | null;
+  deleted_at: Timestamp | null;
+  version: Generated<number>;
+}
+
 export interface Database {
   tenants: TenantsTable;
   users: UsersTable;
@@ -292,4 +337,7 @@ export interface Database {
   idempotency_keys: IdempotencyKeysTable;
   employees: EmployeesTable;
   membership_invitations: MembershipInvitationsTable;
+  customers: CustomersTable;
+  customer_identities: CustomerIdentitiesTable;
+  customer_merges: CustomerMergesTable;
 }
