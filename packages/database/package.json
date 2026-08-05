@@ -8,6 +8,18 @@
   "scripts": {
     "build": "tsc --project tsconfig.json",
     "typecheck": "tsc --noEmit",
-    "test": "node --test"
+    "test": "node --test",
+    "migrate": "node dist/cli.js migrate",
+    "migrate:down": "node dist/cli.js down",
+    "migrate:repair": "node dist/cli.js repair",
+    "seed": "node dist/cli.js seed",
+    "test:prepare": "node dist/cli.js test:prepare"
+  },
+  "dependencies": {
+    "kysely": "0.28.10",
+    "pg": "8.16.3"
+  },
+  "devDependencies": {
+    "@types/pg": "8.15.6"
   }
 }

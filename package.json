@@ -12,9 +12,14 @@
     "typecheck": "turbo run typecheck",
     "test": "node --test tests/*.test.mjs && turbo run test",
     "lint": "eslint .",
-    "format:check": "prettier --check .",
-    "format": "prettier --write .",
-    "commitlint": "commitlint --from HEAD~1 --to HEAD"
+    "format:check": "prettier --check . --ignore-unknown",
+    "format": "prettier --write . --ignore-unknown",
+    "commitlint": "commitlint --from HEAD~1 --to HEAD",
+    "db:migrate": "pnpm --filter @oneday/database migrate",
+    "db:rollback": "pnpm --filter @oneday/database migrate:down",
+    "db:repair": "pnpm --filter @oneday/database migrate:repair",
+    "db:seed": "pnpm --filter @oneday/database seed",
+    "db:test:prepare": "pnpm --filter @oneday/database test:prepare"
   },
   "devDependencies": {
     "@commitlint/cli": "20.5.0",
