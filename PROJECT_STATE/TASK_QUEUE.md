@@ -1,7 +1,7 @@
 # TASK_QUEUE
 
 - [x] FOUNDATION-001 — 新仓库与 Monorepo 骨架
-- [ ] FOUNDATION-002 — 本地基础设施
+- [>] FOUNDATION-002 — 本地基础设施
 - [ ] FOUNDATION-003 — 共享配置与代码质量
 - [ ] FOUNDATION-004 — 数据库迁移与种子框架
 - [ ] FOUNDATION-005 — 认证与会话
