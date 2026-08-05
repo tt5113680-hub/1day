@@ -1,6 +1,11 @@
 # TASK_QUEUE
 
+## Current core status
+- [x] CORE-001 PASS — tenant, organization, merchant and store model; evidence and all applicable quality gates passed.
+- [ ] CORE-002 NEXT — user, employee and membership model.
+
 ## Milestones
+
 - [x] FOUNDATION MILESTONE PASS — FOUNDATION-001 至 FOUNDATION-010（10/69，基础阶段最终状态提交：239114e）
 
 - [x] FOUNDATION-001 — 新仓库与 Monorepo 骨架

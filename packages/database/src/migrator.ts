@@ -3,6 +3,7 @@ import * as foundationSchema from './migrations/001_foundation_schema.js';
 import * as authSessions from './migrations/002_auth_sessions.js';
 import * as membershipRoles from './migrations/003_membership_roles.js';
 import * as eventConsumptions from './migrations/004_event_consumptions.js';
+import * as organizationModel from './migrations/005_organization_model.js';
 import type { Database } from './types.js';
 
 const migrationProvider: MigrationProvider = {
@@ -12,6 +13,7 @@ const migrationProvider: MigrationProvider = {
       '002_auth_sessions': authSessions,
       '003_membership_roles': membershipRoles,
       '004_event_consumptions': eventConsumptions,
+      '005_organization_model': organizationModel,
     };
   },
 };

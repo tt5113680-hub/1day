@@ -123,6 +123,50 @@ export async function seedFoundationData(database: Kysely<Database>): Promise<vo
         updated_by: null,
         deleted_at: null,
       },
+      {
+        id: '00000000-0000-4000-8000-000000000103',
+        code: 'organization.read',
+        description: 'Read organization data',
+        status: 'active',
+        created_by: null,
+        updated_by: null,
+        deleted_at: null,
+      },
+      {
+        id: '00000000-0000-4000-8000-000000000104',
+        code: 'organization.manage',
+        description: 'Manage organization data',
+        status: 'active',
+        created_by: null,
+        updated_by: null,
+        deleted_at: null,
+      },
+    ])
+    .onConflict((conflict) => conflict.column('id').doNothing())
+    .execute();
+  await database
+    .insertInto('role_permissions')
+    .values([
+      {
+        id: '00000000-0000-4000-8000-000000000008',
+        tenant_id: SYSTEM_TENANT_ID,
+        role_id: SYSTEM_ROLE_ID,
+        permission_id: '00000000-0000-4000-8000-000000000103',
+        status: 'active',
+        created_by: null,
+        updated_by: null,
+        deleted_at: null,
+      },
+      {
+        id: '00000000-0000-4000-8000-000000000009',
+        tenant_id: SYSTEM_TENANT_ID,
+        role_id: SYSTEM_ROLE_ID,
+        permission_id: '00000000-0000-4000-8000-000000000104',
+        status: 'active',
+        created_by: null,
+        updated_by: null,
+        deleted_at: null,
+      },
     ])
     .onConflict((conflict) => conflict.column('id').doNothing())
     .execute();
