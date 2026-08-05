@@ -9,7 +9,11 @@
 - 开发环境已核验：Node.js 24、pnpm 10、Git 和 Docker 可用。
 - 旧项目 `D:\1DAY_V2` 未被访问或修改。
 
-## 下一步
+## 施工状态
+
+用户已于 2026-08-06 要求停止施工。停止报告见 `PROJECT_STATE/STOP_REPORT.md`。
+
+## 恢复后的下一步
 
 从 `main` 创建 `foundation/FOUNDATION-004` 分支，读取任务与数据库规范后开始迁移和种子框架任务。
 
