@@ -8,15 +8,24 @@ import { OrganizationController } from './organization.controller';
 import { OrganizationService } from './organization.service';
 import { EmployeeController } from './employee.controller';
 import { EmployeeService } from './employee.service';
+import { RbacController } from './rbac.controller';
+import { RbacService } from './rbac.service';
 
 @Module({
-  controllers: [AppController, AuthController, OrganizationController, EmployeeController],
+  controllers: [
+    AppController,
+    AuthController,
+    OrganizationController,
+    EmployeeController,
+    RbacController,
+  ],
   providers: [
     AuthService,
     TenantContextService,
     AuthorizationService,
     OrganizationService,
     EmployeeService,
+    RbacService,
   ],
 })
 export class AppModule {}

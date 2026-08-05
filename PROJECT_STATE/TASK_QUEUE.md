@@ -2,6 +2,11 @@
 
 ## Latest core status
 
+- [x] CORE-003 PASS — role templates, confirmed permission updates and audit verified.
+- [ ] CORE-004 NEXT — customer master and identity.
+
+## Latest core status
+
 - [x] CORE-002 PASS — employee invitations, memberships, lifecycle, audit and outbox verified.
 - [ ] CORE-003 NEXT — role and permission management.
 

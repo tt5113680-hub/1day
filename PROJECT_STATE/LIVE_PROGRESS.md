@@ -1,5 +1,11 @@
 # LIVE_PROGRESS
 
+- 2026-08-06 Asia/Shanghai — CORE-003 all applicable quality gates passed; evidence and state are being committed. Next task: CORE-004.
+
+- 2026-08-06 Asia/Shanghai — CORE-003 main implementation and targeted HTTP E2E completed: role templates, idempotent creation, confirmed versioned permission changes and audit records are verified. Next: quality gates, evidence and commit.
+
+- 2026-08-06 Asia/Shanghai — CORE-003 started on `core/CORE-003`; existing RBAC schema and CORE-002 handoff were verified. Next: implement tenant-scoped role template and permission-change management with audit confirmation.
+
 - 2026-08-06 Asia/Shanghai — CORE-002 testing completed: typecheck, lint, format check, repository tests, Vitest, build, targeted HTTP E2E and evidence check passed. State and evidence are ready for commit; next task is CORE-003.
 
 - 2026-08-06 Asia/Shanghai — CORE-002 main implementation and targeted HTTP E2E completed: employee invitation, acceptance, tenant-bound membership, offboarding, audit and outbox events are verified. Next: full quality gates, evidence and commit.
