@@ -151,3 +151,28 @@ test('tenant context is server-derived and rejects cross-tenant request headers'
   );
   assert.equal((await request('/api/v1/auth/context')).status, 401);
 });
+
+test('RBAC permission matrix permits assigned actions and denies missing or cross-tenant actions', async () => {
+  await ready();
+  const login = await request('/api/v1/auth/login', {
+    method: 'POST',
+    headers: { 'content-type': 'application/json' },
+    body: JSON.stringify({
+      email: 'admin@system.local',
+      password: 'ChangeMe123!',
+      tenantId: '00000000-0000-4000-8000-000000000001',
+    }),
+  });
+  const tokens = await login.json();
+  const headers = { authorization: `Bearer ${tokens.accessToken}` };
+  assert.equal((await request('/api/v1/auth/permissions/tenant.read', { headers })).status, 200);
+  assert.equal((await request('/api/v1/auth/permissions/unknown.action', { headers })).status, 403);
+  assert.equal(
+    (
+      await request('/api/v1/auth/permissions/tenant.read', {
+        headers: { ...headers, 'x-tenant-context': '00000000-0000-4000-8000-000000000099' },
+      })
+    ).status,
+    403,
+  );
+});

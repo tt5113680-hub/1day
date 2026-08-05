@@ -5,6 +5,7 @@ import type { Database } from '../types.js';
 export const SYSTEM_TENANT_ID = '00000000-0000-4000-8000-000000000001';
 const SYSTEM_USER_ID = '00000000-0000-4000-8000-000000000002';
 const SYSTEM_MEMBERSHIP_ID = '00000000-0000-4000-8000-000000000003';
+const SYSTEM_ROLE_ID = '00000000-0000-4000-8000-000000000004';
 const systemPasswordHash = `scrypt$oneday-foundation-seed$${scryptSync('ChangeMe123!', 'oneday-foundation-seed', 64).toString('base64url')}`;
 
 export async function seedFoundationData(database: Kysely<Database>): Promise<void> {
@@ -47,6 +48,57 @@ export async function seedFoundationData(database: Kysely<Database>): Promise<vo
       updated_by: null,
       deleted_at: null,
     })
+    .onConflict((conflict) => conflict.column('id').doNothing())
+    .execute();
+
+  await database
+    .insertInto('roles')
+    .values({
+      id: SYSTEM_ROLE_ID,
+      tenant_id: SYSTEM_TENANT_ID,
+      code: 'system_admin',
+      name: 'System Admin',
+      status: 'active',
+      created_by: null,
+      updated_by: null,
+      deleted_at: null,
+    })
+    .onConflict((conflict) => conflict.column('id').doNothing())
+    .execute();
+  await database
+    .insertInto('membership_roles')
+    .values({
+      id: '00000000-0000-4000-8000-000000000005',
+      tenant_id: SYSTEM_TENANT_ID,
+      membership_id: SYSTEM_MEMBERSHIP_ID,
+      role_id: SYSTEM_ROLE_ID,
+    })
+    .onConflict((conflict) => conflict.column('id').doNothing())
+    .execute();
+  await database
+    .insertInto('role_permissions')
+    .values([
+      {
+        id: '00000000-0000-4000-8000-000000000006',
+        tenant_id: SYSTEM_TENANT_ID,
+        role_id: SYSTEM_ROLE_ID,
+        permission_id: '00000000-0000-4000-8000-000000000101',
+        status: 'active',
+        created_by: null,
+        updated_by: null,
+        deleted_at: null,
+      },
+      {
+        id: '00000000-0000-4000-8000-000000000007',
+        tenant_id: SYSTEM_TENANT_ID,
+        role_id: SYSTEM_ROLE_ID,
+        permission_id: '00000000-0000-4000-8000-000000000102',
+        status: 'active',
+        created_by: null,
+        updated_by: null,
+        deleted_at: null,
+      },
+    ])
     .onConflict((conflict) => conflict.column('id').doNothing())
     .execute();
 

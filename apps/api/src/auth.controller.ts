@@ -10,6 +10,7 @@ import {
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { TenantContextService } from './tenant-context.service';
+import { AuthorizationService } from './authorization.service';
 
 const bearer = (value?: string) => (value?.startsWith('Bearer ') ? value.slice(7) : '');
 @Controller('api/v1/auth')
@@ -17,7 +18,15 @@ export class AuthController {
   constructor(
     private readonly auth: AuthService,
     private readonly tenantContext: TenantContextService,
+    private readonly authorizationService: AuthorizationService,
   ) {}
+  @Get('permissions/:code') permission(
+    @Headers('authorization') authorization: string | undefined,
+    @Headers('x-tenant-context') tenantId: string | undefined,
+    @Param('code') code: string,
+  ) {
+    return this.authorizationService.require(authorization, code, tenantId);
+  }
   @Get('context') context(
     @Headers('authorization') authorization?: string,
     @Headers('x-tenant-context') tenantId?: string,

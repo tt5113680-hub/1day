@@ -7,3 +7,4 @@
 - 2026-08-06 Asia/Shanghai — FOUNDATION-005 started on `foundation/FOUNDATION-005`; security baseline and API conventions read. Authentication core now passes typecheck, build, and password/token tamper-expiry tests. Next: persistent sessions and API endpoints.
 - 2026-08-06 Asia/Shanghai — FOUNDATION-005 API, persistent sessions, HTTP E2E, typecheck, lint, format, test and build all passed. Next: evidence, state update and commit.
 - 2026-08-06 Asia/Shanghai — FOUNDATION-006 TenantContext and cross-tenant HTTP isolation tests completed; repository quality gates passed. Next: evidence, state update and commit.
+- 2026-08-06 Asia/Shanghai — FOUNDATION-007 RBAC role/permission mappings, matrix HTTP E2E and repository quality gates completed. Next: evidence, state update and commit.

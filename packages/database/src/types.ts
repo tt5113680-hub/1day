@@ -154,6 +154,12 @@ export interface AuthSessionsTable {
   deleted_at: Timestamp | null;
   version: Generated<number>;
 }
+export interface MembershipRolesTable {
+  id: string;
+  tenant_id: string;
+  membership_id: string;
+  role_id: string;
+}
 
 export interface Database {
   tenants: TenantsTable;
@@ -166,4 +172,5 @@ export interface Database {
   outbox_events: OutboxEventsTable;
   audit_logs: AuditLogsTable;
   auth_sessions: AuthSessionsTable;
+  membership_roles: MembershipRolesTable;
 }
