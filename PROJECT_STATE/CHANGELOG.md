@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## 2026-08-06 — FOUNDATION-004 PASS
+
+- 建立 Kysely PostgreSQL 数据访问、类型化基础表迁移、回滚与前向修复 CLI。
+- 建立可重复执行的系统租户和基础权限种子，并提供受保护的测试数据库准备器。
+- 实测 PostgreSQL 18 测试库的迁移、幂等迁移/种子、回滚和前向修复；完成全仓质量闸门。
+- 任务代码提交：`3685e9a07be6e98e4980d00afabeb33be8087106`。
+
 ## 2026-08-05 — FOUNDATION-001 PASS
 
 - 初始化 Git 仓库、pnpm 10 与 Turborepo Monorepo。

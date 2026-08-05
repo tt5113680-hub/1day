@@ -11,11 +11,12 @@
 
 ## 施工状态
 
-用户已于 2026-08-06 要求停止施工。停止报告见 `PROJECT_STATE/STOP_REPORT.md`。
+- `FOUNDATION-004` 已 PASS：Kysely 迁移、种子、回滚/前向修复和测试数据库框架已实现并真实验证；代码提交为 `3685e9a07be6e98e4980d00afabeb33be8087106`。
+- PostgreSQL 测试库 `oneday_v3_test` 保留在本地 Docker 环境，包含 `001_foundation_schema` 迁移、1 个系统租户和 2 条基础权限。
 
-## 恢复后的下一步
+## 下一步
 
-从 `main` 创建 `foundation/FOUNDATION-004` 分支，读取任务与数据库规范后开始迁移和种子框架任务。
+创建 `foundation/FOUNDATION-005` 分支，读取认证与会话任务、身份安全与 API 规范后实现登录、刷新、登出与会话失效能力。
 
 ## 禁止
 
