@@ -6,7 +6,7 @@
 - [x] FOUNDATION-004 — 数据库迁移与种子框架
 - [x] FOUNDATION-005 — 认证与会话
 - [x] FOUNDATION-006 — 租户上下文与数据隔离
-- [ ] FOUNDATION-007 — RBAC与数据范围
+- [x] FOUNDATION-007 — RBAC与数据范围
 - [ ] FOUNDATION-008 — 事件与Outbox
 - [ ] FOUNDATION-009 — 设计系统与应用壳
 - [ ] FOUNDATION-010 — 测试与证据框架

@@ -16,7 +16,7 @@
 
 ## 下一步
 
-创建 `foundation/FOUNDATION-007` 分支，读取 RBAC 与数据权限范围任务后，在 TenantContext 上实现角色、权限和数据范围校验。
+创建 `foundation/FOUNDATION-008` 分支，读取事件与 Outbox 任务后实现事务写入、事件持久化和安全投递框架。
 
 ## 禁止
 

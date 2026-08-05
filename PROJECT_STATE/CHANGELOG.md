@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## 2026-08-06 — FOUNDATION-007 PASS
+
+- 建立成员角色映射、统一授权服务和权限矩阵 HTTP E2E。
+- 全仓质量闸门通过；代码提交：`678a4e5041057c4dc7651205c87e1a9ea73f82b8`。
+
 ## 2026-08-06 — FOUNDATION-006 PASS
 
 - 建立基于认证声明的 TenantContext，拒绝客户端租户头与服务端声明不一致的请求。

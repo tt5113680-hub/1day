@@ -1,8 +1,8 @@
 # CURRENT_STATE
 
-- current_task: FOUNDATION-007
+- current_task: FOUNDATION-008
 - status: PENDING
-- branch: foundation/FOUNDATION-007
-- last_safe_commit: d218f82044c979103ae264420c2d898257796341
+- branch: foundation/FOUNDATION-008
+- last_safe_commit: 678a4e5041057c4dc7651205c87e1a9ea73f82b8
 - started_at: null
 - blocker: null
