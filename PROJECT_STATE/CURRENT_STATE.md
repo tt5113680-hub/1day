@@ -1,8 +1,8 @@
 # CURRENT_STATE
 
-- current_task: FOUNDATION-010
+- current_task: CORE-001
 - status: PENDING
 - branch: foundation/FOUNDATION-010
-- last_safe_commit: 2b3aac67876a84cff99048e0087adaee38171f5f
+- last_safe_commit: 9ae59d6
 - started_at: null
 - blocker: null

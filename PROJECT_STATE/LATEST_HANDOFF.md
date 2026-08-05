@@ -16,7 +16,7 @@
 
 ## 下一步
 
-创建 `foundation/FOUNDATION-010` 分支，读取测试与证据框架任务后统一质量命令、证据校验和基础阶段验收。
+基础阶段 FOUNDATION-001 至 FOUNDATION-010 已完成并通过证据校验。当前停留在 `foundation/FOUNDATION-010`；后续如获授权进入 CORE，应从 `core/CORE-001` 分支开始，不得在本基础阶段任务中继续施工。
 
 ## 禁止
 

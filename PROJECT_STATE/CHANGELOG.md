@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## 2026-08-06 — FOUNDATION-010 PASS
+
+- 配置 Vitest、Playwright Chromium、evidence 校验和可重复截图/trace 输出。
+- 生成 Consumer 应用壳截图并通过最终全仓质量闸门；代码提交：`0666f345d009334c705b5604d0334c0319834846`。
+
 ## 2026-08-06 — FOUNDATION-009 PASS
 
 - 建立设计令牌、统一状态文案及四端应用壳/状态边界。
