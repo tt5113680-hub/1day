@@ -9,3 +9,4 @@
 - 2026-08-06 Asia/Shanghai — FOUNDATION-006 TenantContext and cross-tenant HTTP isolation tests completed; repository quality gates passed. Next: evidence, state update and commit.
 - 2026-08-06 Asia/Shanghai — FOUNDATION-007 RBAC role/permission mappings, matrix HTTP E2E and repository quality gates completed. Next: evidence, state update and commit.
 - 2026-08-06 Asia/Shanghai — FOUNDATION-008 transactional Postgres Outbox, consumer idempotency and repository quality gates completed. Next: evidence, state update and commit.
+- 2026-08-06 Asia/Shanghai — FOUNDATION-009 design tokens, four application shells, state routes and repository quality gates completed. Next: evidence, state update and commit.
