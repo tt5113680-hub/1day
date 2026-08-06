@@ -1,5 +1,11 @@
 # LATEST_HANDOFF
 
+## PAGE-C-005 completed
+
+- `PAGE-C-005` is PASS at `37d5d61`: consumer entry actions open `/c/actions/[id]`, which confirms the action before a trusted browser redirect and keeps a safe local return path. Non-link actions expose a copyable code and recovery UI.
+- Verification passed: `tests/page-c-005-api.test.mjs`, `playwright.page-c-005.config.ts` (390px redirect and unavailable screenshots plus traces), full `lint`, `format:check`, `typecheck`, `test:unit`, `test` 70/70, `build`, `db:migrate`, `db:seed`, `evidence:check` and `git diff --check`.
+- Evidence: `evidence/PAGE-C-005/ACCEPTANCE.md`. Next task: `PAGE-C-006` consumer process and result query.
+
 ## PAGE-C-004 completed
 
 - `PAGE-C-004` is PASS at `b49f21b`: `/c/services/[id]` shows the persisted service, applicable store and benefit records in a tenant-scoped public read model. Its consultation action is server-resolved and idempotently records the existing consumer event, audit log and Outbox message.

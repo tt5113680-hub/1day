@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## 2026-08-06 — PAGE-C-005 PASS
+
+- Delivered `/c/actions/[id]` as a real external-action confirmation and recovery flow, connected from the consumer entry rather than directly trusting browser-side destinations.
+- Added a tenant-scoped public confirmation API and persisted redirect events with idempotency, audit records, Outbox events and safe local-only return paths.
+- HTTP tenant/isolation/idempotency tests, two 390px Chromium scenarios with screenshots/traces, and full gates passed: 70 repository tests, lint, format, 17-package typecheck/build, migration/seed and evidence checks.
+
 ## 2026-08-06 — PAGE-C-004 PASS
 
 - Delivered a tenant-scoped consumer service page at `/c/services/[id]`, including applicable store, benefits, explicit consultation result and loading/error/unavailable states.

@@ -1,5 +1,7 @@
 # LIVE_PROGRESS
 
+- 2026-08-06 Asia/Shanghai — PAGE-C-005 PASS at `37d5d61`: public action confirmation now writes tenant-scoped idempotent redirect events, audit/Outbox and supports safe return/recovery; HTTP, 390px browser evidence and the full 70-test gate passed. Next task: PAGE-C-006.
+
 - 2026-08-06 Asia/Shanghai — PAGE-C-004 PASS at `b49f21b`: tenant-scoped service detail, benefits and idempotent consultation event flow are real HTTP-verified; 390px normal/unavailable screenshots and traces plus the full 68-test gate passed. Next task: PAGE-C-005.
 
 - 2026-08-06 Asia/Shanghai — PAGE-C-003 PASS at `97bdd48`: real store detail, isolated public consultation trace, audit/Outbox, mobile screenshots and full 66-test quality gate passed. Next task: PAGE-C-004.
