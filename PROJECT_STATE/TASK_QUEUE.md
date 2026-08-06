@@ -1,5 +1,12 @@
 # TASK_QUEUE
 
+## Current employee status (authoritative)
+
+- [x] PAGE-E-001 PASS — employee-scoped workbench verified.
+- [x] PAGE-E-002 PASS — employee task detail and evidence links verified.
+- [x] PAGE-E-003 PASS — employee-related customer detail verified.
+- [ ] PAGE-E-004 NEXT — employee follow-up records.
+
 ## Current page status
 
 - [x] PAGE-C-001 PASS — public consumer entry renders published template and actions with mobile state coverage.

@@ -1,5 +1,10 @@
 # LATEST_HANDOFF
 
+## PAGE-E-003 completed
+
+- `PAGE-E-003` is PASS at `5c16e9c`: employee customer detail exposes only employee-related customer records, with masked identities, persisted sources/ownership/tags, own task links and safe timeline data.
+- Verification passed: `tests/page-e-003-api.test.mjs`, `playwright.page-e-003.config.ts`, lint, format, typecheck, test:unit, test (79), build, migration/seed and evidence checks. Evidence: `evidence/PAGE-E-003/ACCEPTANCE.md`. Next task: `PAGE-E-004` employee follow-up records.
+
 ## PAGE-E-002 completed
 
 - `PAGE-E-002` is PASS at `1f0b19c`: `/e/tasks/[id]` reads only the active employee's own persisted task, including reason, deadline, customer and safe evidence metadata. Employees can link only that customer's active evidence with idempotency, audit and Outbox records, and complete their own task through the existing versioned state machine.

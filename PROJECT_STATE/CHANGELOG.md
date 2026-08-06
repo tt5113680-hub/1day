@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## 2026-08-06 — PAGE-E-003 PASS
+
+- Delivered a mobile employee customer detail at `/e/customers/[id]` with persisted source, own ownership, safe tags, masked identity, own tasks and timeline.
+- Customer reads are restricted to an active employee's owned, tasked or contributed customers; HTTP and 390px browser checks verified tenant scope and recovery states.
+
 ## 2026-08-06 — PAGE-E-002 PASS
 
 - Delivered `/e/tasks/[id]` as an employee-scoped mobile task detail surface for persisted task reason, deadline, customer and safe evidence metadata, with loading/error/forbidden/empty feedback.
