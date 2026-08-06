@@ -8,6 +8,12 @@ async function bootstrap() {
     AppModule,
     new FastifyAdapter({ logger: false }),
   );
+  const origins = (process.env.CORS_ORIGINS ?? '')
+    .split(',')
+    .map((origin) => origin.trim())
+    .filter(Boolean);
+  if (origins.length)
+    await app.enableCors({ origin: origins, methods: ['GET', 'POST', 'OPTIONS'] });
   await app.listen({ host: '0.0.0.0', port: Number(process.env.PORT ?? 3001) });
 }
 

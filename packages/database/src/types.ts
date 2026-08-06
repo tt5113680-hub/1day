@@ -747,6 +747,71 @@ export interface MerchantLocationsTable {
   deleted_at: Timestamp | null;
   version: Generated<number>;
 }
+export interface StoreServicesTable {
+  id: string;
+  tenant_id: string;
+  store_id: string;
+  code: string;
+  name: string;
+  description: string | null;
+  duration_minutes: number | null;
+  price_label: string | null;
+  rank: number;
+  status: string;
+  created_at: Timestamp;
+  created_by: string | null;
+  updated_at: Timestamp;
+  updated_by: string | null;
+  deleted_at: Timestamp | null;
+  version: Generated<number>;
+}
+export interface StoreBenefitsTable {
+  id: string;
+  tenant_id: string;
+  store_id: string;
+  title: string;
+  description: string | null;
+  external_action_id: string | null;
+  rank: number;
+  status: string;
+  created_at: Timestamp;
+  created_by: string | null;
+  updated_at: Timestamp;
+  updated_by: string | null;
+  deleted_at: Timestamp | null;
+  version: Generated<number>;
+}
+export interface StoreContentItemsTable {
+  id: string;
+  tenant_id: string;
+  store_id: string;
+  content_type: string;
+  title: string;
+  summary: string | null;
+  rank: number;
+  status: string;
+  created_at: Timestamp;
+  created_by: string | null;
+  updated_at: Timestamp;
+  updated_by: string | null;
+  deleted_at: Timestamp | null;
+  version: Generated<number>;
+}
+export interface ConsumerActionEventsTable {
+  id: string;
+  tenant_id: string;
+  store_id: string;
+  external_action_id: string;
+  source: string | null;
+  idempotency_key: string;
+  status: string;
+  created_at: Timestamp;
+  created_by: string | null;
+  updated_at: Timestamp;
+  updated_by: string | null;
+  deleted_at: Timestamp | null;
+  version: Generated<number>;
+}
 
 export interface Database {
   tenants: TenantsTable;
@@ -797,4 +862,8 @@ export interface Database {
   business_circles: BusinessCirclesTable;
   business_circle_merchants: BusinessCircleMerchantsTable;
   merchant_locations: MerchantLocationsTable;
+  store_services: StoreServicesTable;
+  store_benefits: StoreBenefitsTable;
+  store_content_items: StoreContentItemsTable;
+  consumer_action_events: ConsumerActionEventsTable;
 }

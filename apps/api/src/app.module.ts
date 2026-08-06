@@ -28,6 +28,8 @@ import { ConsumerEntryController } from './consumer-entry.controller';
 import { ConsumerEntryService } from './consumer-entry.service';
 import { ConsumerDiscoveryController } from './consumer-discovery.controller';
 import { ConsumerDiscoveryService } from './consumer-discovery.service';
+import { ConsumerStoreController } from './consumer-store.controller';
+import { ConsumerStoreService } from './consumer-store.service';
 
 @Module({
   controllers: [
@@ -45,6 +47,7 @@ import { ConsumerDiscoveryService } from './consumer-discovery.service';
     WorkflowController,
     ConsumerEntryController,
     ConsumerDiscoveryController,
+    ConsumerStoreController,
   ],
   providers: [
     AuthService,
@@ -62,6 +65,7 @@ import { ConsumerDiscoveryService } from './consumer-discovery.service';
     WorkflowService,
     ConsumerEntryService,
     ConsumerDiscoveryService,
+    ConsumerStoreService,
   ],
 })
 export class AppModule {}
