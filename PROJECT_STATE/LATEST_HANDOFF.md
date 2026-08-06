@@ -1,5 +1,11 @@
 # LATEST_HANDOFF
 
+## PAGE-E-001 completed
+
+- `PAGE-E-001` is PASS at `f2bc111`: `/e/workbench` reads only the current active employee's persisted tasks, customer reminders and explainable time-limit opportunities. It supports completing only the employee's own task with a version check, audit and Outbox event.
+- Verification passed: `tests/page-e-001-api.test.mjs`, `playwright.page-e-001.config.ts` (390px normal/login-recovery screenshots and traces), full `lint`, `format:check`, `typecheck`, `test:unit`, `test`, `build`, `db:migrate`, `db:seed`, `evidence:check` and `git diff --check`.
+- Evidence: `evidence/PAGE-E-001/ACCEPTANCE.md`. Next task: `PAGE-E-002` employee task detail.
+
 ## PAGE-C-006 completed
 
 - `PAGE-C-006` is PASS at `b7c5a59`: `/c/processes/[id]` reads persisted CORE-007 order results through an expiring tenant-bound secret. It shows order, consultation, appointment, verification, result receipts and exception feedback without returning customer identity fields.

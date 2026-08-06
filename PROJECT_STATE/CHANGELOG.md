@@ -1,5 +1,16 @@
 # CHANGELOG
 
+## 2026-08-06 — PAGE-E-001 PASS
+
+- Delivered `/e/workbench` as an employee-scoped mobile execution surface: today's tasks, customer reminders and explainable due-signal opportunities all use persisted task data.
+- Task completion is limited to the logged-in employee's own assignment, version-protected, and records audit/Outbox evidence.
+- Real HTTP permission/isolation tests and two 390px Chromium scenarios passed, along with lint, format, typecheck, Vitest, repository tests, build, migration/seed and evidence checks.
+
+## 2026-08-06 — PAGE-C-007 PASS / PAGE-C phase acceptance
+
+- Delivered `/c/profile` with tenant-bound profile access, masked identity bindings, tenant-scoped benefits, personal service history and consent revocation.
+- All PAGE-C-001 through PAGE-C-007 tasks passed automated phase acceptance before PAGE-E-001 began.
+
 ## 2026-08-06 — PAGE-C-006 PASS
 
 - Delivered `/c/processes/[id]` for consumer-visible order, consultation, appointment, verification, connector-result and exception feedback progress.

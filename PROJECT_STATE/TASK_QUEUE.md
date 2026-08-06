@@ -8,7 +8,12 @@
 - [x] PAGE-C-004 PASS — consumer service detail, benefits and tenant-scoped action trace verified.
 - [x] PAGE-C-005 PASS — consumer external-action redirect, recovery and audit trail verified.
 - [x] PAGE-C-006 PASS — consumer process/results, private access and recovery verified.
-- [ ] PAGE-C-007 NEXT — consumer identity and membership page.
+- [x] PAGE-C-007 PASS — consumer identity, membership, minimized data exposure and consent revocation verified.
+
+## Current employee status
+
+- [x] PAGE-E-001 PASS — employee-scoped workbench, actionable tasks, due-signal opportunities and customer reminders verified.
+- [ ] PAGE-E-002 NEXT — employee task detail.
 
 ## Latest core status
 
