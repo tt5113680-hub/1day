@@ -674,6 +674,79 @@ export interface WorkflowInstanceStepsTable {
   deleted_at: Timestamp | null;
   version: Generated<number>;
 }
+export interface DiscoveryChannelsTable {
+  id: string;
+  tenant_id: string;
+  code: string;
+  name: string;
+  description: string | null;
+  rank: number;
+  status: string;
+  created_at: Timestamp;
+  created_by: string | null;
+  updated_at: Timestamp;
+  updated_by: string | null;
+  deleted_at: Timestamp | null;
+  version: Generated<number>;
+}
+export interface DiscoveryChannelMerchantsTable {
+  id: string;
+  tenant_id: string;
+  channel_id: string;
+  merchant_id: string;
+  rank: number;
+  status: string;
+  created_at: Timestamp;
+  created_by: string | null;
+  updated_at: Timestamp;
+  updated_by: string | null;
+  deleted_at: Timestamp | null;
+  version: Generated<number>;
+}
+export interface BusinessCirclesTable {
+  id: string;
+  tenant_id: string;
+  code: string;
+  name: string;
+  description: string | null;
+  rank: number;
+  status: string;
+  created_at: Timestamp;
+  created_by: string | null;
+  updated_at: Timestamp;
+  updated_by: string | null;
+  deleted_at: Timestamp | null;
+  version: Generated<number>;
+}
+export interface BusinessCircleMerchantsTable {
+  id: string;
+  tenant_id: string;
+  business_circle_id: string;
+  merchant_id: string;
+  rank: number;
+  status: string;
+  created_at: Timestamp;
+  created_by: string | null;
+  updated_at: Timestamp;
+  updated_by: string | null;
+  deleted_at: Timestamp | null;
+  version: Generated<number>;
+}
+export interface MerchantLocationsTable {
+  id: string;
+  tenant_id: string;
+  merchant_id: string;
+  latitude: string;
+  longitude: string;
+  address_label: string | null;
+  status: string;
+  created_at: Timestamp;
+  created_by: string | null;
+  updated_at: Timestamp;
+  updated_by: string | null;
+  deleted_at: Timestamp | null;
+  version: Generated<number>;
+}
 
 export interface Database {
   tenants: TenantsTable;
@@ -719,4 +792,9 @@ export interface Database {
   workflow_steps: WorkflowStepsTable;
   workflow_instances: WorkflowInstancesTable;
   workflow_instance_steps: WorkflowInstanceStepsTable;
+  discovery_channels: DiscoveryChannelsTable;
+  discovery_channel_merchants: DiscoveryChannelMerchantsTable;
+  business_circles: BusinessCirclesTable;
+  business_circle_merchants: BusinessCircleMerchantsTable;
+  merchant_locations: MerchantLocationsTable;
 }

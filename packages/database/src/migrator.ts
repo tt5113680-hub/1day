@@ -14,6 +14,7 @@ import * as resultEvidence from './migrations/012_result_evidence.js';
 import * as pageTemplates from './migrations/013_page_templates.js';
 import * as externalActions from './migrations/014_external_actions.js';
 import * as workflows from './migrations/015_workflows.js';
+import * as consumerDiscovery from './migrations/016_consumer_discovery.js';
 import type { Database } from './types.js';
 
 const migrationProvider: MigrationProvider = {
@@ -34,6 +35,7 @@ const migrationProvider: MigrationProvider = {
       '013_page_templates': pageTemplates,
       '014_external_actions': externalActions,
       '015_workflows': workflows,
+      '016_consumer_discovery': consumerDiscovery,
     };
   },
 };

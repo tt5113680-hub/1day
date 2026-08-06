@@ -20,6 +20,7 @@ for (const id of [
   'CORE-009',
   'CORE-010',
   'PAGE-C-001',
+  'PAGE-C-002',
 ])
   test(`evidence directory exists: ${id}`, () =>
     assert.ok(existsSync(`evidence/${id}/ACCEPTANCE.md`) || id === 'FOUNDATION-010'));

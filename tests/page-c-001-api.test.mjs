@@ -51,7 +51,11 @@ test.after(() => api.kill());
 test('public consumer entry exposes only published tenant content and configured actions', async () => {
   await ready();
   const token = await login(),
-    stamp = Date.now();
+    stamp = Date.now(),
+    publicTenantId = randomUUID(),
+    publicTenantSlug = `entry-public-${stamp}`,
+    publicTemplateId = randomUUID(),
+    publicVersionId = randomUUID();
   const templateResponse = await request('/api/v1/page-templates', {
     method: 'POST',
     headers: headers(token, `entry-template-${stamp}`),
@@ -118,17 +122,55 @@ test('public consumer entry exposes only published tenant content and configured
       "insert into tenants(id,slug,name,status,created_by,updated_by) values($1,$2,$3,'active',null,null)",
       [randomUUID(), `isolated-${stamp}`, 'Isolated tenant'],
     );
+    await client.query(
+      "insert into tenants(id,slug,name,status,created_by,updated_by) values($1,$2,$3,'active',null,null)",
+      [publicTenantId, publicTenantSlug, 'Public entry tenant'],
+    );
+    await client.query(
+      "insert into page_templates(id,tenant_id,code,name,target,published_version_id,status,created_by,updated_by) values($1,$2,$3,$4,'consumer',$5,'active',null,null)",
+      [publicTemplateId, publicTenantId, `public-entry-${stamp}`, 'Public entry', publicVersionId],
+    );
+    await client.query(
+      "insert into page_template_versions(id,tenant_id,template_id,sequence,status,created_by,updated_by) values($1,$2,$3,1,'published',null,null)",
+      [publicVersionId, publicTenantId, publicTemplateId],
+    );
+    for (const [position, moduleType, config] of [
+      [0, 'hero', { title: 'Public entry' }],
+      [1, 'action_grid', { recommendations: [] }],
+      [2, 'content', { cards: [] }],
+    ])
+      await client.query(
+        "insert into page_modules(id,tenant_id,template_version_id,module_type,position,config,status,created_by,updated_by) values($1,$2,$3,$4,$5,$6::jsonb,'active',null,null)",
+        [
+          randomUUID(),
+          publicTenantId,
+          publicVersionId,
+          moduleType,
+          position,
+          JSON.stringify(config),
+        ],
+      );
+    await client.query(
+      "insert into external_actions(id,tenant_id,code,name,action_type,target_url,platform,status,created_by,updated_by) values($1,$2,$3,$4,'link',$5,'web','active',null,null)",
+      [
+        randomUUID(),
+        publicTenantId,
+        `public-consult-${stamp}`,
+        'Public consult',
+        'https://example.com/consult',
+      ],
+    );
   } finally {
     await client.end();
   }
-  const entry = await request('/api/v1/consumer/entry?tenant=system');
+  const entry = await request(`/api/v1/consumer/entry?tenant=${publicTenantSlug}`);
   assert.equal(entry.status, 200);
   const data = (await entry.json()).data;
-  assert.equal(data.tenant.name, 'ONEDAY System');
-  assert.equal(data.template.code, template.code);
+  assert.equal(data.tenant.name, 'Public entry tenant');
+  assert.equal(data.template.code, `public-entry-${stamp}`);
   assert.equal(data.modules.length, 3);
   assert.equal(
-    data.actions.some((item) => item.name === '咨询商家'),
+    data.actions.some((item) => item.name === 'Public consult'),
     true,
   );
   assert.equal(JSON.stringify(data).includes('password_hash'), false);

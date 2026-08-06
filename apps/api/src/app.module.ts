@@ -26,6 +26,8 @@ import { WorkflowController } from './workflow.controller';
 import { WorkflowService } from './workflow.service';
 import { ConsumerEntryController } from './consumer-entry.controller';
 import { ConsumerEntryService } from './consumer-entry.service';
+import { ConsumerDiscoveryController } from './consumer-discovery.controller';
+import { ConsumerDiscoveryService } from './consumer-discovery.service';
 
 @Module({
   controllers: [
@@ -42,6 +44,7 @@ import { ConsumerEntryService } from './consumer-entry.service';
     ExternalActionController,
     WorkflowController,
     ConsumerEntryController,
+    ConsumerDiscoveryController,
   ],
   providers: [
     AuthService,
@@ -58,6 +61,7 @@ import { ConsumerEntryService } from './consumer-entry.service';
     ExternalActionService,
     WorkflowService,
     ConsumerEntryService,
+    ConsumerDiscoveryService,
   ],
 })
 export class AppModule {}
