@@ -1,11 +1,11 @@
 # LATEST_HANDOFF
 
-## CORE-010 已交接 / CORE 阶段待验收
+## CORE-010 已交接 / CORE 阶段验收 PASS
 
 - `CORE-010` 已 PASS：工作流定义、版本发布、实例、上下文条件、员工任务、审批和超时处理均已持久化；实例以发布版本为准，关键动作有审计和带 correlation/trace 的 Outbox 事件。
 - 验证：`pnpm.cmd typecheck`、`lint`、`format:check`、`test`（60/60）、`test:unit`、`build`、`db:migrate`、`db:seed`、`tests/core-010-e2e.test.mjs`、`evidence:check` 与 `git diff --check` 均通过。
 - 证据：`evidence/CORE-010/ACCEPTANCE.md`。无页面或第三方服务调用，页面 E2E/截图、无障碍和外部服务失败不适用。
-- 阶段：CORE-001 至 CORE-010 已完成，按施工规则在此请求阶段人工验收；验收后下一任务为 `PAGE-C-001` — 消费者统一入口。
+- 阶段：CORE-001 至 CORE-010 已完成并通过自动阶段验收，报告为 `evidence/CORE-PHASE/ACCEPTANCE.md`；下一任务为 `PAGE-C-001` — 消费者统一入口。
 
 ## CORE-009 已交接
 

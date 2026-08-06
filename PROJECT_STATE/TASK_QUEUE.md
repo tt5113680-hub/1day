@@ -3,7 +3,8 @@
 ## Latest core status
 
 - [x] CORE-010 PASS — versioned workflows execute tasks, conditions, approvals and timeout handling.
-- [x] CORE MILESTONE COMPLETE — CORE-001 至 CORE-010，等待阶段人工验收。
+- [x] CORE MILESTONE PASS — CORE-001 至 CORE-010，阶段验收报告已归档。
+- [ ] PAGE-C-001 NEXT — consumer unified entry.
 
 ## Latest core status
 

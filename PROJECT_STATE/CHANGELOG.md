@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 2026-08-06 — CORE 阶段验收 PASS
+
+- CORE-001 至 CORE-010 的任务提交、验收证据、HTTP/权限/租户边界与全仓质量闸门已复核通过；报告：`evidence/CORE-PHASE/ACCEPTANCE.md`。
+
 ## 2026-08-06 — CORE-010 PASS / CORE 阶段完成
 
 - 交付版本化工作流定义、实例、条件、真实任务生成、指派审批和超时终止；每个关键状态变更均有租户/RBAC 边界、审计与 Outbox 事件。
