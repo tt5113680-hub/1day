@@ -606,6 +606,24 @@ export interface ConsumerActionRedirectEventsTable {
   deleted_at: Timestamp | null;
   version: Generated<number>;
 }
+export interface ConsumerProcessAccessesTable {
+  id: string;
+  tenant_id: string;
+  customer_id: string;
+  order_id: string;
+  access_token_hash: string;
+  appointment_at: Timestamp | null;
+  consultation_status: string;
+  exception_feedback: string | null;
+  expires_at: Timestamp;
+  status: string;
+  created_at: Timestamp;
+  created_by: string | null;
+  updated_at: Timestamp;
+  updated_by: string | null;
+  deleted_at: Timestamp | null;
+  version: Generated<number>;
+}
 export interface WorkflowDefinitionsTable {
   id: string;
   tenant_id: string;
@@ -867,6 +885,7 @@ export interface Database {
   external_actions: ExternalActionsTable;
   external_action_events: ExternalActionEventsTable;
   consumer_action_redirect_events: ConsumerActionRedirectEventsTable;
+  consumer_process_accesses: ConsumerProcessAccessesTable;
   workflow_definitions: WorkflowDefinitionsTable;
   workflow_versions: WorkflowVersionsTable;
   workflow_steps: WorkflowStepsTable;
