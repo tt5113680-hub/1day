@@ -2,9 +2,8 @@
 
 ## Latest core status
 
-- [x] CORE-010 PASS — versioned workflows execute tasks, conditions, approvals and timeout handling.
-- [x] CORE MILESTONE PASS — CORE-001 至 CORE-010，阶段验收报告已归档。
-- [ ] PAGE-C-001 NEXT — consumer unified entry.
+- [x] PAGE-C-001 PASS — public consumer entry renders published template and actions with mobile state coverage.
+- [ ] PAGE-C-002 NEXT — consumer discovery page.
 
 ## Latest core status
 
@@ -40,7 +39,7 @@
 - [x] CORE-008 — 页面模板与模块
 - [x] CORE-009 — 入口插件与外部动作
 - [x] CORE-010 — 标准工作流引擎
-- [ ] PAGE-C-001 — 消费者统一入口
+- [x] PAGE-C-001 — 消费者统一入口
 - [ ] PAGE-C-002 — 消费者发现页
 - [ ] PAGE-C-003 — 商户详情
 - [ ] PAGE-C-004 — 服务/权益详情

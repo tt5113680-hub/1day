@@ -24,6 +24,8 @@ import { ExternalActionController } from './external-action.controller';
 import { ExternalActionService } from './external-action.service';
 import { WorkflowController } from './workflow.controller';
 import { WorkflowService } from './workflow.service';
+import { ConsumerEntryController } from './consumer-entry.controller';
+import { ConsumerEntryService } from './consumer-entry.service';
 
 @Module({
   controllers: [
@@ -39,6 +41,7 @@ import { WorkflowService } from './workflow.service';
     PageTemplateController,
     ExternalActionController,
     WorkflowController,
+    ConsumerEntryController,
   ],
   providers: [
     AuthService,
@@ -54,6 +57,7 @@ import { WorkflowService } from './workflow.service';
     PageTemplateService,
     ExternalActionService,
     WorkflowService,
+    ConsumerEntryService,
   ],
 })
 export class AppModule {}

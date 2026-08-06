@@ -1,5 +1,11 @@
 # LATEST_HANDOFF
 
+## PAGE-C-001 已交接
+
+- `PAGE-C-001` 已 PASS：`/c/entry` 使用租户已发布的消费者模板和外部动作渲染品牌、场景、推荐、权益、咨询及固定底部导航；公共 API 对 slug 输入和租户范围严格校验。
+- 验证：`pnpm.cmd typecheck`、`lint`、`format:check`、`test`（62/62）、`test:unit`、`build`、`db:migrate`、`db:seed`、`tests/page-c-001-api.test.mjs`、`playwright.page-c-001.config.ts`、`evidence:check` 与 `git diff --check` 均通过。
+- 证据：`evidence/PAGE-C-001/ACCEPTANCE.md`，含移动端正常、空、不可用截图与 Playwright trace。下一任务：`PAGE-C-002` — 消费者发现页。
+
 ## CORE-010 已交接 / CORE 阶段验收 PASS
 
 - `CORE-010` 已 PASS：工作流定义、版本发布、实例、上下文条件、员工任务、审批和超时处理均已持久化；实例以发布版本为准，关键动作有审计和带 correlation/trace 的 Outbox 事件。

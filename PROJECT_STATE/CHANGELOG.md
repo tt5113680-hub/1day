@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## 2026-08-06 — PAGE-C-001 PASS
+
+- 交付真实数据驱动的消费者统一入口：已发布模板、服务权益、推荐和外部行动入口按租户公开呈现，包含空、不可用、加载和错误恢复状态。
+- 构建后 HTTP API、390px Playwright 交互与三种状态截图/trace 已通过；全仓质量闸门和 evidence check 已通过。
+
 ## 2026-08-06 — CORE 阶段验收 PASS
 
 - CORE-001 至 CORE-010 的任务提交、验收证据、HTTP/权限/租户边界与全仓质量闸门已复核通过；报告：`evidence/CORE-PHASE/ACCEPTANCE.md`。

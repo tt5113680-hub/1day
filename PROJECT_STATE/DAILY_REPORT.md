@@ -9,11 +9,11 @@
 
 ## 当前施工
 
-- CORE-010：版本化工作流、任务、条件、审批与超时已通过验收；CORE 阶段验收 PASS，自动进入消费者页面阶段。
+- PAGE-C-001：消费者统一入口已完成真实模板/动作数据链路和移动端视觉验收；下一任务为 PAGE-C-002。
 
 ## 已验证质量
 
-- CORE-010：60 项仓库测试、Vitest、typecheck、lint、format、build、迁移、种子、HTTP E2E、evidence check 通过。
+- PAGE-C-001：62 项仓库测试、Vitest、typecheck、lint、format、build、迁移、种子、HTTP API、移动端 Playwright、截图/trace、evidence check 通过。
 
 ## 风险与观察
 
