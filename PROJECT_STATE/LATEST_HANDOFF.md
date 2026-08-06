@@ -1,5 +1,12 @@
 # LATEST_HANDOFF
 
+## CORE-007 已交接
+
+- `CORE-007` 已 PASS：客户订单、截图/照片的受限图片证据、哈希化核销码和连接器回执均已持久化；文件读取经租户/RBAC 校验并带下载安全响应头。
+- 验证：`pnpm.cmd typecheck`、`lint`、`format:check`、`test`（54/54）、`test:unit`、`build`、`db:migrate`、`db:seed`、`tests/core-007-e2e.test.mjs`、`evidence:check` 与 `git diff --check` 均通过。
+- 证据：`evidence/CORE-007/ACCEPTANCE.md`。本任务无页面交付；页面 E2E、截图和无障碍不适用。外部第三方调用属于后续 CORE-009，当前回执为受控持久化输入。
+- 下一任务：`CORE-008` — 页面模板与模块。
+
 ## CORE-006 已交接
 
 - `CORE-006` 已 PASS：任务创建与完成、客户/员工租户校验、提醒、到期升级、勿扰抑制与恢复、通知日志均已持久化；关键写操作在事务内记录审计和带 correlation/trace 的 Outbox 事件。

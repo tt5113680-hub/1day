@@ -9,11 +9,11 @@
 
 ## 当前施工
 
-- CORE-006：任务、提醒、超时升级、勿扰和通知日志已通过验收；下一任务为 CORE-007。
+- CORE-007：订单、图片证据、核销码与连接器回执已通过验收；下一任务为 CORE-008。
 
 ## 已验证质量
 
-- CORE-006：52 项仓库测试、Vitest、typecheck、lint、format、build、迁移、HTTP E2E、evidence check 通过。
+- CORE-007：54 项仓库测试、Vitest、typecheck、lint、format、build、迁移、HTTP E2E、evidence check 通过。
 
 ## 风险与观察
 

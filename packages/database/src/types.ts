@@ -446,6 +446,75 @@ export interface EmployeeNotificationPreferencesTable {
   version: Generated<number>;
 }
 
+export interface CustomerOrdersTable {
+  id: string;
+  tenant_id: string;
+  customer_id: string;
+  order_number: string;
+  occurred_at: Timestamp;
+  status: string;
+  created_at: Timestamp;
+  created_by: string | null;
+  updated_at: Timestamp;
+  updated_by: string | null;
+  deleted_at: Timestamp | null;
+  version: Generated<number>;
+}
+
+export interface EvidenceFilesTable {
+  id: string;
+  tenant_id: string;
+  order_id: string;
+  evidence_type: string;
+  original_filename: string;
+  media_type: string;
+  byte_size: number;
+  content_sha256: string;
+  content: Uint8Array;
+  status: string;
+  created_at: Timestamp;
+  created_by: string | null;
+  updated_at: Timestamp;
+  updated_by: string | null;
+  deleted_at: Timestamp | null;
+  version: Generated<number>;
+}
+
+export interface VerificationCodesTable {
+  id: string;
+  tenant_id: string;
+  order_id: string;
+  code_hash: string;
+  expires_at: Timestamp;
+  redeemed_at: Timestamp | null;
+  redeemed_by: string | null;
+  status: string;
+  created_at: Timestamp;
+  created_by: string | null;
+  updated_at: Timestamp;
+  updated_by: string | null;
+  deleted_at: Timestamp | null;
+  version: Generated<number>;
+}
+
+export interface ConnectorResultsTable {
+  id: string;
+  tenant_id: string;
+  order_id: string;
+  connector_code: string;
+  external_reference: string;
+  result_status: string;
+  payload: unknown;
+  received_at: Timestamp;
+  status: string;
+  created_at: Timestamp;
+  created_by: string | null;
+  updated_at: Timestamp;
+  updated_by: string | null;
+  deleted_at: Timestamp | null;
+  version: Generated<number>;
+}
+
 export interface Database {
   tenants: TenantsTable;
   users: UsersTable;
@@ -476,4 +545,8 @@ export interface Database {
   task_reminders: TaskRemindersTable;
   notification_logs: NotificationLogsTable;
   employee_notification_preferences: EmployeeNotificationPreferencesTable;
+  customer_orders: CustomerOrdersTable;
+  evidence_files: EvidenceFilesTable;
+  verification_codes: VerificationCodesTable;
+  connector_results: ConnectorResultsTable;
 }

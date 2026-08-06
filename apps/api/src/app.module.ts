@@ -16,6 +16,8 @@ import { AttributionController } from './attribution.controller';
 import { AttributionService } from './attribution.service';
 import { TaskController } from './task.controller';
 import { TaskService } from './task.service';
+import { ResultEvidenceController } from './result-evidence.controller';
+import { ResultEvidenceService } from './result-evidence.service';
 
 @Module({
   controllers: [
@@ -27,6 +29,7 @@ import { TaskService } from './task.service';
     CustomerController,
     AttributionController,
     TaskController,
+    ResultEvidenceController,
   ],
   providers: [
     AuthService,
@@ -38,6 +41,7 @@ import { TaskService } from './task.service';
     CustomerService,
     AttributionService,
     TaskService,
+    ResultEvidenceService,
   ],
 })
 export class AppModule {}
