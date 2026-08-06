@@ -1,5 +1,12 @@
 # LATEST_HANDOFF
 
+## CORE-006 已交接
+
+- `CORE-006` 已 PASS：任务创建与完成、客户/员工租户校验、提醒、到期升级、勿扰抑制与恢复、通知日志均已持久化；关键写操作在事务内记录审计和带 correlation/trace 的 Outbox 事件。
+- 验证：`pnpm.cmd typecheck`、`lint`、`format:check`、`test`（52/52）、`test:unit`、`build`、`db:migrate`、`tests/core-006-e2e.test.mjs`、`evidence:check` 与 `git diff --check` 均通过。
+- 证据：`evidence/CORE-006/ACCEPTANCE.md`。页面 E2E、截图、无障碍与外部服务失败场景不适用（本任务无页面且无外部依赖）。
+- 下一任务：`CORE-007` — 证据与结果回收。
+
 ## CORE-005 已交接
 
 - `CORE-005` 已 PASS：首要/当前/最终来源、贡献角色与证据、归属转移申请和审批均已实现；归属修改留有审计和可追踪 Outbox 事件。

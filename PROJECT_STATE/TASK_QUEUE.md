@@ -2,8 +2,8 @@
 
 ## Latest core status
 
-- [x] CORE-005 PASS — sources, contribution roles, ownership transfer approval, audit and outbox events verified.
-- [ ] CORE-006 NEXT — tasks, reminders and escalation.
+- [x] CORE-006 PASS — tasks, persisted reminders, do-not-disturb, escalation, notifications, audit and outbox events verified.
+- [ ] CORE-007 NEXT — evidence and result collection.
 
 ## Latest core status
 
@@ -29,12 +29,12 @@
 - [x] FOUNDATION-008 — 事件与Outbox
 - [x] FOUNDATION-009 — 设计系统与应用壳
 - [x] FOUNDATION-010 — 测试与证据框架
-- [ ] CORE-001 — 租户与组织模型
-- [ ] CORE-002 — 用户员工与成员关系
-- [ ] CORE-003 — 角色权限管理服务
+- [x] CORE-001 — 租户与组织模型
+- [x] CORE-002 — 用户员工与成员关系
+- [x] CORE-003 — 角色权限管理服务
 - [x] CORE-004 — 客户主档与身份
 - [x] CORE-005 — 来源归属与贡献
-- [ ] CORE-006 — 任务提醒与升级
+- [x] CORE-006 — 任务提醒与升级
 - [ ] CORE-007 — 证据与结果回收
 - [ ] CORE-008 — 页面模板与模块
 - [ ] CORE-009 — 入口插件与外部动作

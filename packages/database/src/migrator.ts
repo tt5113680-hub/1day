@@ -8,6 +8,8 @@ import * as employeeMembership from './migrations/006_employee_membership.js';
 import * as permissionConfirmations from './migrations/007_permission_change_confirmations.js';
 import * as customerMaster from './migrations/008_customer_master.js';
 import * as customerAttribution from './migrations/009_customer_attribution.js';
+import * as taskReminders from './migrations/010_task_reminders.js';
+import * as taskNotificationPreferences from './migrations/011_task_notification_preferences.js';
 import type { Database } from './types.js';
 
 const migrationProvider: MigrationProvider = {
@@ -22,6 +24,8 @@ const migrationProvider: MigrationProvider = {
       '007_permission_change_confirmations': permissionConfirmations,
       '008_customer_master': customerMaster,
       '009_customer_attribution': customerAttribution,
+      '010_task_reminders': taskReminders,
+      '011_task_notification_preferences': taskNotificationPreferences,
     };
   },
 };
