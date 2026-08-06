@@ -167,9 +167,7 @@ export default function ConsumerEntry({ entry }: { entry: Entry }) {
                   <a
                     key={action.id}
                     className={`${styles.action} ${action.id === primary?.id ? styles.actionPrimary : ''}`}
-                    href={action.targetUrl ?? '#'}
-                    target={action.targetUrl ? '_blank' : undefined}
-                    rel={action.targetUrl ? 'noreferrer' : undefined}
+                    href={`/c/actions/${action.id}?tenant=${encodeURIComponent(entry.tenant.slug)}&source=consumer:entry&returnTo=${encodeURIComponent(`/c/entry?tenant=${encodeURIComponent(entry.tenant.slug)}`)}`}
                     aria-label={`打开${action.name}`}
                   >
                     {action.name}

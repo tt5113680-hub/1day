@@ -16,6 +16,7 @@ import * as externalActions from './migrations/014_external_actions.js';
 import * as workflows from './migrations/015_workflows.js';
 import * as consumerDiscovery from './migrations/016_consumer_discovery.js';
 import * as consumerStoreDetails from './migrations/017_consumer_store_details.js';
+import * as consumerActionRedirects from './migrations/018_consumer_action_redirects.js';
 import type { Database } from './types.js';
 
 const migrationProvider: MigrationProvider = {
@@ -38,6 +39,7 @@ const migrationProvider: MigrationProvider = {
       '015_workflows': workflows,
       '016_consumer_discovery': consumerDiscovery,
       '017_consumer_store_details': consumerStoreDetails,
+      '018_consumer_action_redirects': consumerActionRedirects,
     };
   },
 };

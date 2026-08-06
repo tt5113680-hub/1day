@@ -592,6 +592,20 @@ export interface ExternalActionEventsTable {
   deleted_at: Timestamp | null;
   version: Generated<number>;
 }
+export interface ConsumerActionRedirectEventsTable {
+  id: string;
+  tenant_id: string;
+  action_id: string;
+  source: string | null;
+  return_to: string | null;
+  idempotency_key: string;
+  created_at: Timestamp;
+  created_by: string | null;
+  updated_at: Timestamp;
+  updated_by: string | null;
+  deleted_at: Timestamp | null;
+  version: Generated<number>;
+}
 export interface WorkflowDefinitionsTable {
   id: string;
   tenant_id: string;
@@ -852,6 +866,7 @@ export interface Database {
   page_modules: PageModulesTable;
   external_actions: ExternalActionsTable;
   external_action_events: ExternalActionEventsTable;
+  consumer_action_redirect_events: ConsumerActionRedirectEventsTable;
   workflow_definitions: WorkflowDefinitionsTable;
   workflow_versions: WorkflowVersionsTable;
   workflow_steps: WorkflowStepsTable;
