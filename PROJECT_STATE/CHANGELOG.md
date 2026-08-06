@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## 2026-08-06 — PAGE-C-003 PASS
+
+- Delivered a real consumer store detail experience with persisted services, benefits, content, action entry, deep-link source retention and complete loading/empty/error/forbidden feedback.
+- Public consultation clicks are tenant/store/action scoped, idempotent, audited and published as `consumer.action.clicked.v1`. CORS is an explicit environment allowlist rather than a wildcard.
+- HTTP isolation and event tests, 390px browser interaction/screenshots/traces, and full gates passed: 66 repository tests, 17-package typecheck/build, lint, format, migration/seed and evidence checks.
+
 ## 2026-08-06 — PAGE-C-002 PASS
 
 - Delivered the consumer discovery page backed by distinct tenant-scoped channel, business-circle and merchant-location models. Public coordinate validation, empty/error/forbidden/loading states, browser geolocation action and 390px responsive interaction are implemented.

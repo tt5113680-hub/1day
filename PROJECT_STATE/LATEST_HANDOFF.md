@@ -1,5 +1,11 @@
 # LATEST_HANDOFF
 
+## PAGE-C-003 completed
+
+- `PAGE-C-003` is PASS at `97bdd48`: `/c/stores/[id]` renders tenant-scoped stores, services, benefits and content from PostgreSQL. Deep links preserve source context; public consultation is idempotent and writes a consumer action event, audit log and Outbox event.
+- Verification passed: `tests/page-c-003-api.test.mjs`, `playwright.page-c-003.config.ts` (390px normal and unavailable screenshots plus traces), full `lint`, `format:check`, `typecheck`, `test:unit`, `test` 66/66, `build`, `db:migrate`, `db:seed`, `evidence:check` and `git diff --check`.
+- Evidence: `evidence/PAGE-C-003/ACCEPTANCE.md`. Next task: `PAGE-C-004` consumer service and benefit detail.
+
 ## PAGE-C-002 completed
 
 - `PAGE-C-002` is PASS at `04a39cc`: `/c/discovery` reads the public consumer discovery API. Channel recommendations, fixed business circles and LBS results have separate persisted models and queries; every read is scoped by active tenant ID. Coordinates are pair-validated and range-validated.
