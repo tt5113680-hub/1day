@@ -41,6 +41,7 @@ export class TaskService implements OnModuleDestroy {
     if (!k.trim()) throw new BadRequestException('VALIDATION_ERROR');
     const employeeId = text(b.assigneeEmployeeId, 36),
       title = text(b.title, 160),
+      reason = b.reason === undefined ? null : text(b.reason, 1000),
       dueAt = text(b.dueAt, 40),
       remindAt = optionalDate(b.remindAt),
       customerId = b.customerId === undefined ? null : text(b.customerId, 36);
@@ -66,8 +67,8 @@ export class TaskService implements OnModuleDestroy {
       const id = randomUUID(),
         row = (
           await q.query(
-            'insert into tasks(id,tenant_id,customer_id,assignee_employee_id,title,due_at,created_by,updated_by) values($1,$2,$3,$4,$5,$6,$7,$7) returning id,customer_id,assignee_employee_id,title,due_at,status,escalation_level,version',
-            [id, c.tenantId, customerId, employeeId, title, dueAt, c.userId],
+            'insert into tasks(id,tenant_id,customer_id,assignee_employee_id,title,reason,due_at,created_by,updated_by) values($1,$2,$3,$4,$5,$6,$7,$8,$8) returning id,customer_id,assignee_employee_id,title,reason,due_at,status,escalation_level,version',
+            [id, c.tenantId, customerId, employeeId, title, reason, dueAt, c.userId],
           )
         ).rows[0];
       if (remindAt !== null)

@@ -390,11 +390,24 @@ export interface TasksTable {
   id: string;
   tenant_id: string;
   customer_id: string | null;
+  reason: string | null;
   assignee_employee_id: string;
   title: string;
   due_at: Timestamp;
   status: string;
   escalation_level: number;
+  created_at: Timestamp;
+  created_by: string | null;
+  updated_at: Timestamp;
+  updated_by: string | null;
+  deleted_at: Timestamp | null;
+  version: Generated<number>;
+}
+export interface TaskEvidenceLinksTable {
+  id: string;
+  tenant_id: string;
+  task_id: string;
+  evidence_file_id: string;
   created_at: Timestamp;
   created_by: string | null;
   updated_at: Timestamp;
@@ -890,6 +903,7 @@ export interface Database {
   customer_contributions: CustomerContributionsTable;
   customer_ownership_transfer_approvals: CustomerOwnershipTransferApprovalsTable;
   tasks: TasksTable;
+  task_evidence_links: TaskEvidenceLinksTable;
   task_reminders: TaskRemindersTable;
   notification_logs: NotificationLogsTable;
   employee_notification_preferences: EmployeeNotificationPreferencesTable;

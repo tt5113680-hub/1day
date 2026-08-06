@@ -158,9 +158,12 @@ export function Workbench() {
                   {task.escalationLevel ? ` · 已升级 ${task.escalationLevel} 次` : ''}
                 </p>
               </div>
-              <button disabled={busy === task.id} onClick={() => void complete(task)}>
-                {busy === task.id ? '处理中…' : '完成'}
-              </button>
+              <div className={styles.taskActions}>
+                <a href={`/e/tasks/${task.id}`}>详情</a>
+                <button disabled={busy === task.id} onClick={() => void complete(task)}>
+                  {busy === task.id ? '处理中…' : '完成'}
+                </button>
+              </div>
             </article>
           ))
         )}
