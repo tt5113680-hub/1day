@@ -10,7 +10,15 @@
 - [x] PAGE-C-006 PASS — consumer process/results, private access and recovery verified.
 - [x] PAGE-C-007 PASS — consumer identity, membership, minimized data exposure and consent revocation verified.
 
+## Employee status archive
+
+The following current employee status is authoritative; the two legacy entries retained below it are superseded snapshots and must be ignored.
+
 ## Current employee status
+
+- [x] PAGE-E-001 PASS — employee-scoped workbench, actionable tasks, due-signal opportunities and customer reminders verified.
+- [x] PAGE-E-002 PASS — employee-scoped task detail, evidence links and self completion verified.
+- [ ] PAGE-E-003 NEXT — employee customer detail.
 
 - [x] PAGE-E-001 PASS — employee-scoped workbench, actionable tasks, due-signal opportunities and customer reminders verified.
 - [ ] PAGE-E-002 NEXT — employee task detail.

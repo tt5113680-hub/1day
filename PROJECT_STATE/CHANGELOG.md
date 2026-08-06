@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## 2026-08-06 — PAGE-E-002 PASS
+
+- Delivered `/e/tasks/[id]` as an employee-scoped mobile task detail surface for persisted task reason, deadline, customer and safe evidence metadata, with loading/error/forbidden/empty feedback.
+- Added tenant-bound task evidence links that accept only the task customer's persisted active evidence, use idempotency, write audit/Outbox records, and preserve self-only task completion with version locking.
+- Real HTTP isolation/idempotency verification, two 390px Chromium scenarios with screenshots/traces, and full repository gates passed: lint, format, typecheck, Vitest, 78 repository tests, build, migration/seed and evidence checks.
+
 ## 2026-08-06 — PAGE-E-001 PASS
 
 - Delivered `/e/workbench` as an employee-scoped mobile execution surface: today's tasks, customer reminders and explainable due-signal opportunities all use persisted task data.

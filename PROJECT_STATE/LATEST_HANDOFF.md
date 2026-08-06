@@ -1,5 +1,11 @@
 # LATEST_HANDOFF
 
+## PAGE-E-002 completed
+
+- `PAGE-E-002` is PASS at `1f0b19c`: `/e/tasks/[id]` reads only the active employee's own persisted task, including reason, deadline, customer and safe evidence metadata. Employees can link only that customer's active evidence with idempotency, audit and Outbox records, and complete their own task through the existing versioned state machine.
+- Verification passed: `tests/page-e-002-api.test.mjs`, `playwright.page-e-002.config.ts` (390px normal/login-recovery screenshots and traces), full `lint`, `format:check`, `typecheck`, `test:unit`, `test` (78), `build`, `db:migrate`, `db:seed`, `evidence:check` and `git diff --check`.
+- Evidence: `evidence/PAGE-E-002/ACCEPTANCE.md`. Next task: `PAGE-E-003` employee customer detail.
+
 ## PAGE-E-001 completed
 
 - `PAGE-E-001` is PASS at `f2bc111`: `/e/workbench` reads only the current active employee's persisted tasks, customer reminders and explainable time-limit opportunities. It supports completing only the employee's own task with a version check, audit and Outbox event.
