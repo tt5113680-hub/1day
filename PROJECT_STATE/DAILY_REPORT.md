@@ -9,11 +9,11 @@
 
 ## 当前施工
 
-- CORE-008：页面模板、模块、版本、预览、发布与回滚已通过验收；下一任务为 CORE-009。
+- CORE-009：外部动作配置、点击追踪、审计与 Outbox 已通过验收；下一任务为 CORE-010。
 
 ## 已验证质量
 
-- CORE-008：56 项仓库测试、Vitest、typecheck、lint、format、build、迁移、HTTP E2E、evidence check 通过。
+- CORE-009：58 项仓库测试、Vitest、typecheck、lint、format、build、迁移、种子、HTTP E2E、evidence check 通过。
 
 ## 风险与观察
 

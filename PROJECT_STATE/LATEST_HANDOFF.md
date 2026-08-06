@@ -1,5 +1,12 @@
 # LATEST_HANDOFF
 
+## CORE-009 已交接
+
+- `CORE-009` 已 PASS：外部 HTTP(S) 链接、小程序 App ID/路径与平台入口均按租户配置；所有点击事件可追踪，并写入审计和带 correlation/trace 的 Outbox 事件。
+- 验证：`pnpm.cmd typecheck`、`lint`、`format:check`、`test`（58/58）、`test:unit`、`build`、`db:migrate`、`db:seed`、`tests/core-009-e2e.test.mjs`、`evidence:check` 与 `git diff --check` 均通过。
+- 证据：`evidence/CORE-009/ACCEPTANCE.md`。本任务不调用未经授权的第三方服务，外部服务失败和页面 E2E/截图不适用。
+- 下一任务：`CORE-010` — 标准工作流引擎。
+
 ## CORE-008 已交接
 
 - `CORE-008` 已 PASS：模板、模块、版本、草稿预览、发布与回滚均通过租户/RBAC 边界实现；关键变更含审计与可追踪 Outbox 事件。

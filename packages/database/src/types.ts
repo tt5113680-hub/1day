@@ -560,6 +560,38 @@ export interface PageModulesTable {
   deleted_at: Timestamp | null;
   version: Generated<number>;
 }
+export interface ExternalActionsTable {
+  id: string;
+  tenant_id: string;
+  code: string;
+  name: string;
+  action_type: string;
+  target_url: string | null;
+  mini_program_app_id: string | null;
+  mini_program_path: string | null;
+  platform: string | null;
+  status: string;
+  created_at: Timestamp;
+  created_by: string | null;
+  updated_at: Timestamp;
+  updated_by: string | null;
+  deleted_at: Timestamp | null;
+  version: Generated<number>;
+}
+export interface ExternalActionEventsTable {
+  id: string;
+  tenant_id: string;
+  action_id: string;
+  event_type: string;
+  actor_id: string | null;
+  context: unknown;
+  created_at: Timestamp;
+  created_by: string | null;
+  updated_at: Timestamp;
+  updated_by: string | null;
+  deleted_at: Timestamp | null;
+  version: Generated<number>;
+}
 
 export interface Database {
   tenants: TenantsTable;
@@ -598,4 +630,6 @@ export interface Database {
   page_templates: PageTemplatesTable;
   page_template_versions: PageTemplateVersionsTable;
   page_modules: PageModulesTable;
+  external_actions: ExternalActionsTable;
+  external_action_events: ExternalActionEventsTable;
 }

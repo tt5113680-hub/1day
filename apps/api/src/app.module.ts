@@ -20,6 +20,8 @@ import { ResultEvidenceController } from './result-evidence.controller';
 import { ResultEvidenceService } from './result-evidence.service';
 import { PageTemplateController } from './page-template.controller';
 import { PageTemplateService } from './page-template.service';
+import { ExternalActionController } from './external-action.controller';
+import { ExternalActionService } from './external-action.service';
 
 @Module({
   controllers: [
@@ -33,6 +35,7 @@ import { PageTemplateService } from './page-template.service';
     TaskController,
     ResultEvidenceController,
     PageTemplateController,
+    ExternalActionController,
   ],
   providers: [
     AuthService,
@@ -46,6 +49,7 @@ import { PageTemplateService } from './page-template.service';
     TaskService,
     ResultEvidenceService,
     PageTemplateService,
+    ExternalActionService,
   ],
 })
 export class AppModule {}

@@ -2,8 +2,8 @@
 
 ## Latest core status
 
-- [x] CORE-008 PASS — page templates, modules, draft preview, version publishing and rollback verified.
-- [ ] CORE-009 NEXT — entry plugins and external actions.
+- [x] CORE-009 PASS — tenant-scoped external actions, click tracking, audit and outbox verified.
+- [ ] CORE-010 NEXT — standard workflow engine.
 
 ## Latest core status
 
@@ -37,7 +37,7 @@
 - [x] CORE-006 — 任务提醒与升级
 - [x] CORE-007 — 证据与结果回收
 - [x] CORE-008 — 页面模板与模块
-- [ ] CORE-009 — 入口插件与外部动作
+- [x] CORE-009 — 入口插件与外部动作
 - [ ] CORE-010 — 标准工作流引擎
 - [ ] PAGE-C-001 — 消费者统一入口
 - [ ] PAGE-C-002 — 消费者发现页

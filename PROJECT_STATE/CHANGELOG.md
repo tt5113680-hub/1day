@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## 2026-08-06 — CORE-009 PASS
+
+- 交付租户隔离的 HTTP(S) 链接、小程序路径和平台入口配置，以及可追踪的点击事件。
+- 构建后 HTTP E2E 验证幂等、动作事件、审计、Outbox、输入校验、未登录、无权限与跨租户拒绝；58 项仓库测试、Vitest、typecheck、lint、format、build、迁移、种子和 evidence check 已通过。
+
 ## 2026-08-06 — CORE-008 PASS
 
 - 交付租户页面模板、模块实例、版本草稿、预览、发布和回滚；关键操作采用乐观锁、审计与 Outbox 事件。
