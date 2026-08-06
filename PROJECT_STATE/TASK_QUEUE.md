@@ -2,8 +2,8 @@
 
 ## Latest core status
 
-- [x] CORE-009 PASS — tenant-scoped external actions, click tracking, audit and outbox verified.
-- [ ] CORE-010 NEXT — standard workflow engine.
+- [x] CORE-010 PASS — versioned workflows execute tasks, conditions, approvals and timeout handling.
+- [x] CORE MILESTONE COMPLETE — CORE-001 至 CORE-010，等待阶段人工验收。
 
 ## Latest core status
 
@@ -38,7 +38,7 @@
 - [x] CORE-007 — 证据与结果回收
 - [x] CORE-008 — 页面模板与模块
 - [x] CORE-009 — 入口插件与外部动作
-- [ ] CORE-010 — 标准工作流引擎
+- [x] CORE-010 — 标准工作流引擎
 - [ ] PAGE-C-001 — 消费者统一入口
 - [ ] PAGE-C-002 — 消费者发现页
 - [ ] PAGE-C-003 — 商户详情

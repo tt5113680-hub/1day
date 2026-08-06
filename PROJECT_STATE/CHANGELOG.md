@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## 2026-08-06 — CORE-010 PASS / CORE 阶段完成
+
+- 交付版本化工作流定义、实例、条件、真实任务生成、指派审批和超时终止；每个关键状态变更均有租户/RBAC 边界、审计与 Outbox 事件。
+- 构建后 HTTP E2E 验证定义幂等、发布、任务、条件、审批、超时、认证、无权限和跨租户拒绝；60 项仓库测试、Vitest、typecheck、lint、format、build、迁移、种子和 evidence check 已通过。
+
 ## 2026-08-06 — CORE-009 PASS
 
 - 交付租户隔离的 HTTP(S) 链接、小程序路径和平台入口配置，以及可追踪的点击事件。

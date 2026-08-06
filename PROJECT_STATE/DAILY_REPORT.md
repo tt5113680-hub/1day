@@ -9,11 +9,11 @@
 
 ## 当前施工
 
-- CORE-009：外部动作配置、点击追踪、审计与 Outbox 已通过验收；下一任务为 CORE-010。
+- CORE-010：版本化工作流、任务、条件、审批与超时已通过验收；CORE 阶段完成，等待阶段人工验收。
 
 ## 已验证质量
 
-- CORE-009：58 项仓库测试、Vitest、typecheck、lint、format、build、迁移、种子、HTTP E2E、evidence check 通过。
+- CORE-010：60 项仓库测试、Vitest、typecheck、lint、format、build、迁移、种子、HTTP E2E、evidence check 通过。
 
 ## 风险与观察
 

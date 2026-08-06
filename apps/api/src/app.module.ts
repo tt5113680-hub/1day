@@ -22,6 +22,8 @@ import { PageTemplateController } from './page-template.controller';
 import { PageTemplateService } from './page-template.service';
 import { ExternalActionController } from './external-action.controller';
 import { ExternalActionService } from './external-action.service';
+import { WorkflowController } from './workflow.controller';
+import { WorkflowService } from './workflow.service';
 
 @Module({
   controllers: [
@@ -36,6 +38,7 @@ import { ExternalActionService } from './external-action.service';
     ResultEvidenceController,
     PageTemplateController,
     ExternalActionController,
+    WorkflowController,
   ],
   providers: [
     AuthService,
@@ -50,6 +53,7 @@ import { ExternalActionService } from './external-action.service';
     ResultEvidenceService,
     PageTemplateService,
     ExternalActionService,
+    WorkflowService,
   ],
 })
 export class AppModule {}

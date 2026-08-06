@@ -592,6 +592,88 @@ export interface ExternalActionEventsTable {
   deleted_at: Timestamp | null;
   version: Generated<number>;
 }
+export interface WorkflowDefinitionsTable {
+  id: string;
+  tenant_id: string;
+  code: string;
+  name: string;
+  published_version_id: string | null;
+  status: string;
+  created_at: Timestamp;
+  created_by: string | null;
+  updated_at: Timestamp;
+  updated_by: string | null;
+  deleted_at: Timestamp | null;
+  version: Generated<number>;
+}
+export interface WorkflowVersionsTable {
+  id: string;
+  tenant_id: string;
+  definition_id: string;
+  sequence: number;
+  status: string;
+  created_at: Timestamp;
+  created_by: string | null;
+  updated_at: Timestamp;
+  updated_by: string | null;
+  deleted_at: Timestamp | null;
+  version: Generated<number>;
+}
+export interface WorkflowStepsTable {
+  id: string;
+  tenant_id: string;
+  workflow_version_id: string;
+  position: number;
+  name: string;
+  step_type: string;
+  assignee_employee_id: string;
+  timeout_minutes: number;
+  condition: unknown;
+  status: string;
+  created_at: Timestamp;
+  created_by: string | null;
+  updated_at: Timestamp;
+  updated_by: string | null;
+  deleted_at: Timestamp | null;
+  version: Generated<number>;
+}
+export interface WorkflowInstancesTable {
+  id: string;
+  tenant_id: string;
+  definition_id: string;
+  workflow_version_id: string;
+  context: unknown;
+  current_step_position: number;
+  started_at: Timestamp;
+  completed_at: Timestamp | null;
+  status: string;
+  created_at: Timestamp;
+  created_by: string | null;
+  updated_at: Timestamp;
+  updated_by: string | null;
+  deleted_at: Timestamp | null;
+  version: Generated<number>;
+}
+export interface WorkflowInstanceStepsTable {
+  id: string;
+  tenant_id: string;
+  workflow_instance_id: string;
+  workflow_step_id: string;
+  position: number;
+  name: string;
+  step_type: string;
+  assignee_employee_id: string;
+  task_id: string | null;
+  due_at: Timestamp | null;
+  completed_at: Timestamp | null;
+  status: string;
+  created_at: Timestamp;
+  created_by: string | null;
+  updated_at: Timestamp;
+  updated_by: string | null;
+  deleted_at: Timestamp | null;
+  version: Generated<number>;
+}
 
 export interface Database {
   tenants: TenantsTable;
@@ -632,4 +714,9 @@ export interface Database {
   page_modules: PageModulesTable;
   external_actions: ExternalActionsTable;
   external_action_events: ExternalActionEventsTable;
+  workflow_definitions: WorkflowDefinitionsTable;
+  workflow_versions: WorkflowVersionsTable;
+  workflow_steps: WorkflowStepsTable;
+  workflow_instances: WorkflowInstancesTable;
+  workflow_instance_steps: WorkflowInstanceStepsTable;
 }
