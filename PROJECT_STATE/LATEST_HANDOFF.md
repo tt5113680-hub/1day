@@ -1,5 +1,10 @@
 # LATEST_HANDOFF
 
+## PAGE-E-006 completed
+
+- `PAGE-E-006` is PASS at `1a04177` (feature base `11a5b09`): `/e/leads` presents persisted tenant-scoped leads with filter, claim, employee allocation, conversion to follow-up task or nurture queue, clear mobile feedback and recovery states. Writes use active-employee/RBAC validation, optimistic versions, idempotency, audit and correlated Outbox events.
+- Verification passed: `tests/page-e-006-api.test.mjs` against a spawned production API and PostgreSQL; `playwright.page-e-006.config.ts` with two 390px browser flows/screenshots/traces; lint, format, 17-package typecheck/build, Vitest, `test` (86), migration/seed and evidence checks. Evidence: `evidence/PAGE-E-006/ACCEPTANCE.md`. Next task: `PAGE-E-007` employee nurture workbench.
+
 ## PAGE-E-005 completed
 
 - `PAGE-E-005` is PASS at `403e687`: `/e/share` creates employee/campaign/channel codes with a genuine QR code, expiry and explicit revocation. The consumer share landing records a persistent source event before routing to the tenant's safe internal consumer path; inactive or expired codes are rejected.

@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## 2026-08-06 — PAGE-E-006 PASS
+
+- Delivered `/e/leads` with persisted, tenant-bound acquisition entries and mobile status filtering, claim, staff allocation, follow-up conversion and nurture conversion.
+- Real HTTP verification covers RBAC, active employee scope, input validation, version conflicts, idempotency, tenant rejection, follow-up task creation, batch allocation, audit and Outbox persistence.
+- Two 390px Chromium interactions, 86 repository tests and all repository quality gates passed.
+
 ## 2026-08-06 — PAGE-E-005 PASS
 
 - Delivered `/e/share` with real employee, campaign and channel codes, scannable QR links, expiry/revocation and mobile recovery states.
