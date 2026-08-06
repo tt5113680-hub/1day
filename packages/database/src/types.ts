@@ -476,6 +476,24 @@ export interface EmployeeShareCodeEventsTable {
   version: number;
 }
 
+export interface EmployeeLeadPoolEntriesTable {
+  id: string;
+  tenant_id: string;
+  customer_id: string;
+  source_type: string;
+  priority: string;
+  status: string;
+  assignee_employee_id: string | null;
+  claimed_at: Timestamp | null;
+  converted_at: Timestamp | null;
+  created_at: Timestamp;
+  created_by: string | null;
+  updated_at: Timestamp;
+  updated_by: string | null;
+  deleted_at: Timestamp | null;
+  version: number;
+}
+
 export interface TaskRemindersTable {
   id: string;
   tenant_id: string;
@@ -968,6 +986,7 @@ export interface Database {
   task_follow_ups: TaskFollowUpsTable;
   employee_share_codes: EmployeeShareCodesTable;
   employee_share_code_events: EmployeeShareCodeEventsTable;
+  employee_lead_pool_entries: EmployeeLeadPoolEntriesTable;
   task_reminders: TaskRemindersTable;
   notification_logs: NotificationLogsTable;
   employee_notification_preferences: EmployeeNotificationPreferencesTable;

@@ -47,6 +47,8 @@ import { EmployeeFollowUpController } from './employee-follow-up.controller';
 import { EmployeeFollowUpService } from './employee-follow-up.service';
 import { EmployeeShareController, PublicShareCodeController } from './employee-share.controller';
 import { EmployeeShareService } from './employee-share.service';
+import { EmployeeLeadPoolController } from './employee-lead-pool.controller';
+import { EmployeeLeadPoolService } from './employee-lead-pool.service';
 
 @Module({
   controllers: [
@@ -75,6 +77,7 @@ import { EmployeeShareService } from './employee-share.service';
     EmployeeFollowUpController,
     EmployeeShareController,
     PublicShareCodeController,
+    EmployeeLeadPoolController,
   ],
   providers: [
     AuthService,
@@ -101,6 +104,7 @@ import { EmployeeShareService } from './employee-share.service';
     EmployeeCustomerDetailService,
     EmployeeFollowUpService,
     EmployeeShareService,
+    EmployeeLeadPoolService,
   ],
 })
 export class AppModule {}
