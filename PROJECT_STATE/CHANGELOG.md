@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## 2026-08-06 — PAGE-C-002 PASS
+
+- Delivered the consumer discovery page backed by distinct tenant-scoped channel, business-circle and merchant-location models. Public coordinate validation, empty/error/forbidden/loading states, browser geolocation action and 390px responsive interaction are implemented.
+- Real HTTP data-isolation validation, two Chromium E2E scenarios with normal/empty/forbidden screenshots and traces, and the full repository gate passed: lint, format, 17-package typecheck/build, Vitest, 64 repository tests, migration/seed and evidence checks.
+- Isolated PAGE-C-001 public-entry fixtures so concurrent repository tests no longer select each other’s published content.
+
 ## 2026-08-06 — PAGE-C-001 PASS
 
 - 交付真实数据驱动的消费者统一入口：已发布模板、服务权益、推荐和外部行动入口按租户公开呈现，包含空、不可用、加载和错误恢复状态。

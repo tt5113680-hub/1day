@@ -1,5 +1,12 @@
 # LATEST_HANDOFF
 
+## PAGE-C-002 completed
+
+- `PAGE-C-002` is PASS at `04a39cc`: `/c/discovery` reads the public consumer discovery API. Channel recommendations, fixed business circles and LBS results have separate persisted models and queries; every read is scoped by active tenant ID. Coordinates are pair-validated and range-validated.
+- Verification passed: `node --test tests/page-c-002-api.test.mjs`, `pnpm.cmd exec playwright test --config playwright.page-c-002.config.ts`, and the full repository gates (`lint`, `format:check`, `typecheck`, `test:unit`, `test` 64/64, `build`, `db:migrate`, `db:seed`, `evidence:check`, `git diff --check`). Evidence: `evidence/PAGE-C-002/ACCEPTANCE.md`, three 390px state screenshots and Playwright traces.
+- The full suite exposed shared-fixture interference in PAGE-C-001; its public read fixture now uses a separate persisted tenant while retaining its protected template publishing validation. The concurrent full suite passed after the repair.
+- Next task: `PAGE-C-003` consumer merchant detail page.
+
 ## PAGE-C-001 已交接
 
 - `PAGE-C-001` 已 PASS：`/c/entry` 使用租户已发布的消费者模板和外部动作渲染品牌、场景、推荐、权益、咨询及固定底部导航；公共 API 对 slug 输入和租户范围严格校验。

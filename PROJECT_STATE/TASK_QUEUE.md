@@ -1,5 +1,11 @@
 # TASK_QUEUE
 
+## Current page status
+
+- [x] PAGE-C-001 PASS — public consumer entry renders published template and actions with mobile state coverage.
+- [x] PAGE-C-002 PASS — tenant-scoped channel recommendations, fixed business circles and LBS discovery are independently rendered and verified.
+- [ ] PAGE-C-003 NEXT — consumer merchant detail page.
+
 ## Latest core status
 
 - [x] PAGE-C-001 PASS — public consumer entry renders published template and actions with mobile state coverage.
