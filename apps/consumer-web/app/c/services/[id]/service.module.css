@@ -1,0 +1,150 @@
+.page {
+  min-height: 100svh;
+  padding: 20px 16px 96px;
+  color: #111827;
+  background: #f6f8fb;
+}
+.shell {
+  max-width: 560px;
+  margin: auto;
+}
+.eyebrow {
+  margin: 0;
+  color: #2563eb;
+  font-size: 13px;
+  font-weight: 700;
+}
+.title {
+  margin: 8px 0 6px;
+  font-size: 30px;
+  letter-spacing: -0.04em;
+}
+.sub {
+  margin: 0;
+  color: #4b5563;
+  font-size: 14px;
+}
+.hero {
+  margin-top: 20px;
+  border-radius: 22px;
+  padding: 20px;
+  color: #fff;
+  background: linear-gradient(135deg, #7c3aed, #2563eb);
+  box-shadow: 0 16px 36px rgba(124, 58, 237, 0.22);
+}
+.hero p {
+  margin: 0;
+  opacity: 0.8;
+  font-size: 13px;
+}
+.hero strong {
+  display: block;
+  margin-top: 10px;
+  font-size: 21px;
+}
+.section {
+  margin-top: 28px;
+}
+.section h2 {
+  margin: 0 0 12px;
+  font-size: 20px;
+}
+.card,
+.empty {
+  border: 1px solid #e5e7eb;
+  border-radius: 16px;
+  padding: 15px;
+  background: #fff;
+  box-shadow: 0 5px 16px rgba(15, 23, 42, 0.05);
+}
+.card + .card {
+  margin-top: 10px;
+}
+.card p {
+  margin: 5px 0 0;
+  color: #4b5563;
+  font-size: 13px;
+  line-height: 1.55;
+}
+.tag {
+  display: inline-block;
+  margin-top: 10px;
+  border-radius: 99px;
+  padding: 5px 8px;
+  color: #1d4ed8;
+  background: #eff6ff;
+  font-size: 12px;
+  font-weight: 700;
+}
+.empty {
+  border-style: dashed;
+  color: #4b5563;
+  text-align: center;
+  font-size: 14px;
+}
+.bar {
+  position: sticky;
+  bottom: 14px;
+  margin-top: 28px;
+  border: 1px solid #dbeafe;
+  border-radius: 20px;
+  padding: 12px;
+  background: rgba(255, 255, 255, 0.96);
+  box-shadow: 0 12px 30px rgba(15, 23, 42, 0.13);
+}
+.button {
+  width: 100%;
+  min-height: 48px;
+  border: 0;
+  border-radius: 14px;
+  color: #fff;
+  background: #2563eb;
+  font: inherit;
+  font-weight: 700;
+}
+.button:disabled {
+  background: #94a3b8;
+}
+.notice {
+  margin: 8px 0 0;
+  color: #166534;
+  font-size: 13px;
+  text-align: center;
+}
+.message {
+  display: grid;
+  min-height: 100svh;
+  place-items: center;
+  padding: 24px;
+  background: #f6f8fb;
+}
+.messageCard {
+  width: min(100%, 410px);
+  border: 1px solid #e5e7eb;
+  border-radius: 20px;
+  padding: 28px;
+  text-align: center;
+  background: #fff;
+  box-shadow: 0 14px 40px rgba(15, 23, 42, 0.08);
+}
+.messageCard h1 {
+  margin: 0;
+  font-size: 22px;
+}
+.messageCard p {
+  margin: 10px 0 0;
+  color: #4b5563;
+  line-height: 1.6;
+}
+@media (min-width: 700px) {
+  .page {
+    padding-top: 36px;
+  }
+  .shell {
+    border: 1px solid #e5e7eb;
+    border-radius: 24px;
+    padding: 28px;
+    background: #fff;
+    box-shadow: 0 20px 56px rgba(15, 23, 42, 0.1);
+  }
+}

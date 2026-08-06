@@ -30,6 +30,7 @@ import { ConsumerDiscoveryController } from './consumer-discovery.controller';
 import { ConsumerDiscoveryService } from './consumer-discovery.service';
 import { ConsumerStoreController } from './consumer-store.controller';
 import { ConsumerStoreService } from './consumer-store.service';
+import { ConsumerServiceController } from './consumer-service.controller';
 
 @Module({
   controllers: [
@@ -48,6 +49,7 @@ import { ConsumerStoreService } from './consumer-store.service';
     ConsumerEntryController,
     ConsumerDiscoveryController,
     ConsumerStoreController,
+    ConsumerServiceController,
   ],
   providers: [
     AuthService,

@@ -72,6 +72,55 @@ export class ConsumerStoreService implements OnModuleDestroy {
     };
   }
 
+  async serviceDetail(tenantSlug: string, serviceId: string) {
+    if (!SLUG.test(tenantSlug) || !UUID.test(serviceId))
+      throw new BadRequestException('VALIDATION_ERROR');
+    const tenant = await this.tenant(tenantSlug);
+    const service = (
+      await this.pool.query(
+        "select ss.id,ss.name,ss.description,ss.duration_minutes,ss.price_label,s.id as store_id,s.name as store_name,s.address,m.name as merchant_name from store_services ss join stores s on s.id=ss.store_id and s.tenant_id=ss.tenant_id and s.status='active' and s.deleted_at is null join merchants m on m.id=s.merchant_id and m.tenant_id=s.tenant_id and m.status='active' and m.deleted_at is null where ss.id=$1 and ss.tenant_id=$2 and ss.status='active' and ss.deleted_at is null",
+        [serviceId, tenant.id],
+      )
+    ).rows[0];
+    if (!service) throw new NotFoundException('NOT_FOUND');
+    const [benefits, actions] = await Promise.all([
+      this.pool.query(
+        "select b.id,b.title,b.description,b.external_action_id from store_benefits b where b.tenant_id=$1 and b.store_id=$2 and b.status='active' and b.deleted_at is null order by b.rank desc,b.title",
+        [tenant.id, service.store_id],
+      ),
+      this.pool.query(
+        "select id,name,action_type,target_url,mini_program_app_id,mini_program_path,platform from external_actions where tenant_id=$1 and status='active' and deleted_at is null order by created_at desc limit 3",
+        [tenant.id],
+      ),
+    ]);
+    return {
+      tenant: { slug: tenant.slug, name: tenant.name },
+      service: {
+        id: service.id,
+        name: service.name,
+        description: service.description,
+        durationMinutes: service.duration_minutes,
+        priceLabel: service.price_label,
+      },
+      store: {
+        id: service.store_id,
+        name: service.store_name,
+        address: service.address,
+        merchant: service.merchant_name,
+      },
+      benefits: benefits.rows,
+      actions: actions.rows.map((row) => ({
+        id: row.id,
+        name: row.name,
+        actionType: row.action_type,
+        targetUrl: row.target_url,
+        miniProgramAppId: row.mini_program_app_id,
+        miniProgramPath: row.mini_program_path,
+        platform: row.platform,
+      })),
+    };
+  }
+
   async open(tenantSlug: string, storeId: string, actionId: string, key: string, value: unknown) {
     if (!SLUG.test(tenantSlug) || !UUID.test(storeId) || !UUID.test(actionId) || !key.trim())
       throw new BadRequestException('VALIDATION_ERROR');
