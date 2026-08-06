@@ -41,6 +41,8 @@ import { EmployeeWorkbenchController } from './employee-workbench.controller';
 import { EmployeeWorkbenchService } from './employee-workbench.service';
 import { EmployeeTaskDetailController } from './employee-task-detail.controller';
 import { EmployeeTaskDetailService } from './employee-task-detail.service';
+import { EmployeeCustomerDetailController } from './employee-customer-detail.controller';
+import { EmployeeCustomerDetailService } from './employee-customer-detail.service';
 
 @Module({
   controllers: [
@@ -65,6 +67,7 @@ import { EmployeeTaskDetailService } from './employee-task-detail.service';
     ConsumerProfileController,
     EmployeeWorkbenchController,
     EmployeeTaskDetailController,
+    EmployeeCustomerDetailController,
   ],
   providers: [
     AuthService,
@@ -88,6 +91,7 @@ import { EmployeeTaskDetailService } from './employee-task-detail.service';
     ConsumerProfileService,
     EmployeeWorkbenchService,
     EmployeeTaskDetailService,
+    EmployeeCustomerDetailService,
   ],
 })
 export class AppModule {}

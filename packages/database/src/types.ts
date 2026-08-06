@@ -416,6 +416,19 @@ export interface TaskEvidenceLinksTable {
   version: Generated<number>;
 }
 
+export interface CustomerTagsTable {
+  id: string;
+  tenant_id: string;
+  customer_id: string;
+  label: string;
+  created_at: Timestamp;
+  created_by: string | null;
+  updated_at: Timestamp;
+  updated_by: string | null;
+  deleted_at: Timestamp | null;
+  version: number;
+}
+
 export interface TaskRemindersTable {
   id: string;
   tenant_id: string;
@@ -904,6 +917,7 @@ export interface Database {
   customer_ownership_transfer_approvals: CustomerOwnershipTransferApprovalsTable;
   tasks: TasksTable;
   task_evidence_links: TaskEvidenceLinksTable;
+  customer_tags: CustomerTagsTable;
   task_reminders: TaskRemindersTable;
   notification_logs: NotificationLogsTable;
   employee_notification_preferences: EmployeeNotificationPreferencesTable;

@@ -187,7 +187,13 @@ export function TaskDetail() {
         <h2 id="customer-title">关联客户</h2>
         <div className={styles.customer}>
           <span>客户</span>
-          <strong>{data.customer?.displayName ?? '内部执行任务'}</strong>
+          {data.customer ? (
+            <a href={`/e/customers/${data.customer.id}`}>
+              <strong>{data.customer.displayName}</strong>
+            </a>
+          ) : (
+            <strong>内部执行任务</strong>
+          )}
           <p>{data.customer ? '证据仅限关联该客户的已持久化记录。' : '该任务未关联客户。'}</p>
         </div>
       </section>
