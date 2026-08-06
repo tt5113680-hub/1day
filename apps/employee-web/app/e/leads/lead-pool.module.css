@@ -107,6 +107,23 @@
   font-weight: 700;
   cursor: pointer;
 }
+.assign {
+  display: grid;
+  gap: 4px;
+  min-width: 138px;
+  color: #4b5563;
+  font-size: 12px;
+  font-weight: 700;
+}
+.assign select {
+  min-height: 40px;
+  border: 1px solid #dbe4f0;
+  border-radius: 10px;
+  padding: 0 8px;
+  background: #fff;
+  color: #1d4ed8;
+  font: inherit;
+}
 .actions .primary {
   border: 0;
   color: #fff;

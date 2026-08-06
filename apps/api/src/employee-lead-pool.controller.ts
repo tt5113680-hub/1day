@@ -30,6 +30,18 @@ export class EmployeeLeadPoolController {
       error: null,
     };
   }
+  @Get('assignees') async assignees(
+    @Headers('authorization') a: string | undefined,
+    @Headers('x-tenant-context') t: string | undefined,
+    @Headers('x-request-id') r: string | undefined,
+  ) {
+    if (!r?.trim()) throw new BadRequestException('VALIDATION_ERROR');
+    return {
+      data: await this.leads.assignees(await this.auth.require(a, 'customer.manage', t)),
+      meta: { requestId: r },
+      error: null,
+    };
+  }
   @Post('batch/assign') async bulkAssign(
     @Headers('authorization') a: string | undefined,
     @Headers('x-tenant-context') t: string | undefined,

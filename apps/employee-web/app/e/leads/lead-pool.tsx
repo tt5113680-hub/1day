@@ -13,11 +13,13 @@ type Lead = {
   version: number;
   openTasks: number;
 };
+type Assignee = { id: string; displayName: string; title: string };
 const api = process.env.NEXT_PUBLIC_API_BASE_URL ?? 'http://127.0.0.1:3001';
 
 export function LeadPool() {
   const [state, setState] = useState<'loading' | 'ready' | 'forbidden' | 'error'>('loading');
   const [leads, setLeads] = useState<Lead[]>([]);
+  const [assignees, setAssignees] = useState<Assignee[]>([]);
   const [status, setStatus] = useState('');
   const [busy, setBusy] = useState<string | null>(null);
   const [message, setMessage] = useState('');
@@ -35,7 +37,12 @@ export function LeadPool() {
       const response = await fetch(`${api}/api/v1/employee/leads${query}`, { headers: headers() });
       if ([401, 403].includes(response.status)) return setState('forbidden');
       if (!response.ok) throw Error('LOAD');
-      setLeads((await response.json()).data);
+      const [leadPayload, assigneeResponse] = await Promise.all([
+        response.json(),
+        fetch(`${api}/api/v1/employee/leads/assignees`, { headers: headers() }),
+      ]);
+      setLeads(leadPayload.data);
+      if (assigneeResponse.ok) setAssignees((await assigneeResponse.json()).data);
       setState('ready');
     } catch {
       setState('error');
@@ -46,7 +53,7 @@ export function LeadPool() {
   }, [load]);
   const action = async (
     lead: Lead,
-    actionName: 'claim' | 'convert',
+    actionName: 'claim' | 'assign' | 'convert',
     body: Record<string, unknown> = {},
   ) => {
     setBusy(lead.id);
@@ -61,9 +68,11 @@ export function LeadPool() {
       setMessage(
         actionName === 'claim'
           ? '线索已领取，归属与审计记录已同步。'
-          : body.destination === 'follow_up'
-            ? '已转入跟进并创建执行任务。'
-            : '已转入养客队列。',
+          : actionName === 'assign'
+            ? '已分配给目标员工，归属与审计记录已同步。'
+            : body.destination === 'follow_up'
+              ? '已转入跟进并创建执行任务。'
+              : '已转入养客队列。',
       );
       await load();
     } catch {
@@ -160,6 +169,27 @@ export function LeadPool() {
                       转跟进
                     </button>
                   </>
+                ) : lead.status === 'claimed' ? (
+                  <label className={styles.assign}>
+                    <span>分配给</span>
+                    <select
+                      aria-label={`分配 ${lead.customerName}`}
+                      defaultValue=""
+                      disabled={busy === lead.id}
+                      onChange={(event) => {
+                        const employeeId = event.target.value;
+                        if (employeeId) void action(lead, 'assign', { employeeId });
+                      }}
+                    >
+                      <option value="">选择员工</option>
+                      {assignees.map((assignee) => (
+                        <option key={assignee.id} value={assignee.id}>
+                          {assignee.displayName}
+                          {assignee.title ? ` · ${assignee.title}` : ''}
+                        </option>
+                      ))}
+                    </select>
+                  </label>
                 ) : (
                   <span className={styles.state}>
                     {lead.status === 'follow_up'

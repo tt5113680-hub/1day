@@ -47,6 +47,25 @@ export class EmployeeLeadPoolService implements OnModuleDestroy {
     return result.rows.map((row) => this.output(row, employee.id));
   }
 
+  async assignees(context: OrganizationContext) {
+    await this.employee(context);
+    const result = await this.pool.query(
+      `select e.id,u.display_name,e.title
+       from employees e
+       join memberships m on m.id=e.membership_id and m.tenant_id=e.tenant_id
+       join users u on u.id=m.user_id
+       where e.tenant_id=$1 and e.status='active' and m.status='active'
+         and e.deleted_at is null and m.deleted_at is null
+       order by u.display_name,e.employee_code`,
+      [context.tenantId],
+    );
+    return result.rows.map((row) => ({
+      id: row.id,
+      displayName: row.display_name,
+      title: row.title,
+    }));
+  }
+
   async claim(
     context: OrganizationContext,
     id: string,
