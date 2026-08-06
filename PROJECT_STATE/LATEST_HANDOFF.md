@@ -1,5 +1,10 @@
 # LATEST_HANDOFF
 
+## PAGE-E-004 completed
+
+- `PAGE-E-004` is PASS at `edbdf25`: task follow-ups preserve raw records, voice transcription, editable summary and a transactionally created next task, all restricted to the active employee's own tasks.
+- Verification passed: `tests/page-e-004-api.test.mjs`, `playwright.page-e-004.config.ts`, lint, format, typecheck, test, build, migration/seed and evidence checks. Evidence: `evidence/PAGE-E-004/ACCEPTANCE.md`. Next task: `PAGE-E-005` sharing codes and scenarios.
+
 ## PAGE-E-003 completed
 
 - `PAGE-E-003` is PASS at `5c16e9c`: employee customer detail exposes only employee-related customer records, with masked identities, persisted sources/ownership/tags, own task links and safe timeline data.

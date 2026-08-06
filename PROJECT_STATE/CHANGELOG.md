@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## 2026-08-06 — PAGE-E-004 PASS
+
+- Delivered mobile task follow-up recording with persistent original text/voice transcription, editable summary and optional next task creation.
+- Real HTTP scope/idempotency/audit/Outbox checks and 390px browser normal/recovery evidence passed.
+
 ## 2026-08-06 — PAGE-E-003 PASS
 
 - Delivered a mobile employee customer detail at `/e/customers/[id]` with persisted source, own ownership, safe tags, masked identity, own tasks and timeline.

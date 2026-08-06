@@ -5,7 +5,8 @@
 - [x] PAGE-E-001 PASS — employee-scoped workbench verified.
 - [x] PAGE-E-002 PASS — employee task detail and evidence links verified.
 - [x] PAGE-E-003 PASS — employee-related customer detail verified.
-- [ ] PAGE-E-004 NEXT — employee follow-up records.
+- [x] PAGE-E-004 PASS — employee follow-up records and next tasks verified.
+- [ ] PAGE-E-005 NEXT — employee sharing codes and scenarios.
 
 ## Current page status
 
