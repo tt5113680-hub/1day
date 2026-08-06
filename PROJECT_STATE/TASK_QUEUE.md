@@ -7,7 +7,8 @@
 - [x] PAGE-C-003 PASS — consumer store detail, consultation trace, audit and Outbox verified.
 - [x] PAGE-C-004 PASS — consumer service detail, benefits and tenant-scoped action trace verified.
 - [x] PAGE-C-005 PASS — consumer external-action redirect, recovery and audit trail verified.
-- [ ] PAGE-C-006 NEXT — consumer process and result query page.
+- [x] PAGE-C-006 PASS — consumer process/results, private access and recovery verified.
+- [ ] PAGE-C-007 NEXT — consumer identity and membership page.
 
 ## Latest core status
 
@@ -53,7 +54,7 @@
 - [ ] PAGE-C-003 — 商户详情
 - [x] PAGE-C-004 — 服务/权益详情
 - [x] PAGE-C-005 — 外部动作中转
-- [ ] PAGE-C-006 — 过程与结果查询
+- [x] PAGE-C-006 — 过程与结果查询
 - [ ] PAGE-C-007 — 消费者身份与会员
 - [ ] PAGE-E-001 — 员工工作台
 - [ ] PAGE-E-002 — 任务详情

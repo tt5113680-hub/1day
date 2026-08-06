@@ -1,5 +1,11 @@
 # LATEST_HANDOFF
 
+## PAGE-C-006 completed
+
+- `PAGE-C-006` is PASS at `b7c5a59`: `/c/processes/[id]` reads persisted CORE-007 order results through an expiring tenant-bound secret. It shows order, consultation, appointment, verification, result receipts and exception feedback without returning customer identity fields.
+- Verification passed: `tests/page-c-006-api.test.mjs`, `playwright.page-c-006.config.ts` (390px normal and recovery screenshots plus traces), full `lint`, `format:check`, `typecheck`, `test:unit`, `test` 72/72, `build`, `db:migrate`, `db:seed`, `evidence:check` and `git diff --check`.
+- Evidence: `evidence/PAGE-C-006/ACCEPTANCE.md`. Next task: `PAGE-C-007` consumer identity and membership.
+
 ## PAGE-C-005 completed
 
 - `PAGE-C-005` is PASS at `37d5d61`: consumer entry actions open `/c/actions/[id]`, which confirms the action before a trusted browser redirect and keeps a safe local return path. Non-link actions expose a copyable code and recovery UI.

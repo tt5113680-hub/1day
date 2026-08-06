@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## 2026-08-06 — PAGE-C-006 PASS
+
+- Delivered `/c/processes/[id]` for consumer-visible order, consultation, appointment, verification, connector-result and exception feedback progress.
+- Added an expiring, tenant-bound, hashed process access secret so public reads do not expose customer identity or rely on enumerable order IDs.
+- HTTP secret/isolation checks, 390px normal/recovery browser evidence, and full gates passed: 72 repository tests, lint, format, 17-package typecheck/build, migration/seed and evidence checks.
+
 ## 2026-08-06 — PAGE-C-005 PASS
 
 - Delivered `/c/actions/[id]` as a real external-action confirmation and recovery flow, connected from the consumer entry rather than directly trusting browser-side destinations.
