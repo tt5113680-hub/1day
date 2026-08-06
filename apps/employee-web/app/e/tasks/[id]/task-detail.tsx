@@ -223,6 +223,7 @@ export function TaskDetail() {
       </section>
       <footer className={styles.footer}>
         <a href="/e/workbench">返回工作台</a>
+        <a href={`/e/tasks/${data.task.id}/follow-up`}>记录跟进</a>
         <button
           className={styles.complete}
           disabled={busy !== null || done}

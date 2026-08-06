@@ -428,6 +428,23 @@ export interface CustomerTagsTable {
   deleted_at: Timestamp | null;
   version: number;
 }
+export interface TaskFollowUpsTable {
+  id: string;
+  tenant_id: string;
+  task_id: string;
+  employee_id: string;
+  action_type: string;
+  raw_note: string | null;
+  voice_transcript: string | null;
+  summary: string | null;
+  next_task_id: string | null;
+  created_at: Timestamp;
+  created_by: string | null;
+  updated_at: Timestamp;
+  updated_by: string | null;
+  deleted_at: Timestamp | null;
+  version: number;
+}
 
 export interface TaskRemindersTable {
   id: string;
@@ -918,6 +935,7 @@ export interface Database {
   tasks: TasksTable;
   task_evidence_links: TaskEvidenceLinksTable;
   customer_tags: CustomerTagsTable;
+  task_follow_ups: TaskFollowUpsTable;
   task_reminders: TaskRemindersTable;
   notification_logs: NotificationLogsTable;
   employee_notification_preferences: EmployeeNotificationPreferencesTable;

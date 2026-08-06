@@ -21,6 +21,7 @@ import * as consumerProcessAccess from './migrations/019_consumer_process_access
 import * as consumerProfileAccess from './migrations/020_consumer_profile_access.js';
 import * as taskDetailContext from './migrations/021_task_detail_context.js';
 import * as customerTags from './migrations/022_customer_tags.js';
+import * as taskFollowUps from './migrations/023_task_follow_ups.js';
 import type { Database } from './types.js';
 
 const migrationProvider: MigrationProvider = {
@@ -48,6 +49,7 @@ const migrationProvider: MigrationProvider = {
       '020_consumer_profile_access': consumerProfileAccess,
       '021_task_detail_context': taskDetailContext,
       '022_customer_tags': customerTags,
+      '023_task_follow_ups': taskFollowUps,
     };
   },
 };

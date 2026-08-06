@@ -43,6 +43,8 @@ import { EmployeeTaskDetailController } from './employee-task-detail.controller'
 import { EmployeeTaskDetailService } from './employee-task-detail.service';
 import { EmployeeCustomerDetailController } from './employee-customer-detail.controller';
 import { EmployeeCustomerDetailService } from './employee-customer-detail.service';
+import { EmployeeFollowUpController } from './employee-follow-up.controller';
+import { EmployeeFollowUpService } from './employee-follow-up.service';
 
 @Module({
   controllers: [
@@ -68,6 +70,7 @@ import { EmployeeCustomerDetailService } from './employee-customer-detail.servic
     EmployeeWorkbenchController,
     EmployeeTaskDetailController,
     EmployeeCustomerDetailController,
+    EmployeeFollowUpController,
   ],
   providers: [
     AuthService,
@@ -92,6 +95,7 @@ import { EmployeeCustomerDetailService } from './employee-customer-detail.servic
     EmployeeWorkbenchService,
     EmployeeTaskDetailService,
     EmployeeCustomerDetailService,
+    EmployeeFollowUpService,
   ],
 })
 export class AppModule {}
