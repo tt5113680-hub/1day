@@ -45,6 +45,8 @@ import { EmployeeCustomerDetailController } from './employee-customer-detail.con
 import { EmployeeCustomerDetailService } from './employee-customer-detail.service';
 import { EmployeeFollowUpController } from './employee-follow-up.controller';
 import { EmployeeFollowUpService } from './employee-follow-up.service';
+import { EmployeeShareController, PublicShareCodeController } from './employee-share.controller';
+import { EmployeeShareService } from './employee-share.service';
 
 @Module({
   controllers: [
@@ -71,6 +73,8 @@ import { EmployeeFollowUpService } from './employee-follow-up.service';
     EmployeeTaskDetailController,
     EmployeeCustomerDetailController,
     EmployeeFollowUpController,
+    EmployeeShareController,
+    PublicShareCodeController,
   ],
   providers: [
     AuthService,
@@ -96,6 +100,7 @@ import { EmployeeFollowUpService } from './employee-follow-up.service';
     EmployeeTaskDetailService,
     EmployeeCustomerDetailService,
     EmployeeFollowUpService,
+    EmployeeShareService,
   ],
 })
 export class AppModule {}

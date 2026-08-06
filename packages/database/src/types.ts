@@ -446,6 +446,36 @@ export interface TaskFollowUpsTable {
   version: number;
 }
 
+export interface EmployeeShareCodesTable {
+  id: string;
+  tenant_id: string;
+  employee_id: string;
+  code: string;
+  scenario: string;
+  target_path: string;
+  expires_at: Timestamp | null;
+  status: string;
+  created_at: Timestamp;
+  created_by: string | null;
+  updated_at: Timestamp;
+  updated_by: string | null;
+  deleted_at: Timestamp | null;
+  version: number;
+}
+
+export interface EmployeeShareCodeEventsTable {
+  id: string;
+  tenant_id: string;
+  share_code_id: string;
+  event_type: string;
+  created_at: Timestamp;
+  created_by: string | null;
+  updated_at: Timestamp;
+  updated_by: string | null;
+  deleted_at: Timestamp | null;
+  version: number;
+}
+
 export interface TaskRemindersTable {
   id: string;
   tenant_id: string;
@@ -936,6 +966,8 @@ export interface Database {
   task_evidence_links: TaskEvidenceLinksTable;
   customer_tags: CustomerTagsTable;
   task_follow_ups: TaskFollowUpsTable;
+  employee_share_codes: EmployeeShareCodesTable;
+  employee_share_code_events: EmployeeShareCodeEventsTable;
   task_reminders: TaskRemindersTable;
   notification_logs: NotificationLogsTable;
   employee_notification_preferences: EmployeeNotificationPreferencesTable;
