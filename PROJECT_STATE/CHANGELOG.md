@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## 2026-08-06 — PAGE-E-005 PASS
+
+- Delivered `/e/share` with real employee, campaign and channel codes, scannable QR links, expiry/revocation and mobile recovery states.
+- Public consumer share entry records source-code opens, rejects revoked or expired codes, and safely routes only to internal consumer paths.
+- HTTP isolation/idempotency/audit/Outbox checks, two 390px browser scenarios, 84 repository tests and all quality gates passed.
+
 ## 2026-08-06 — PAGE-E-004 PASS
 
 - Delivered mobile task follow-up recording with persistent original text/voice transcription, editable summary and optional next task creation.

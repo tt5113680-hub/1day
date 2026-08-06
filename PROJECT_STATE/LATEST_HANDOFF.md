@@ -1,5 +1,10 @@
 # LATEST_HANDOFF
 
+## PAGE-E-005 completed
+
+- `PAGE-E-005` is PASS at `403e687`: `/e/share` creates employee/campaign/channel codes with a genuine QR code, expiry and explicit revocation. The consumer share landing records a persistent source event before routing to the tenant's safe internal consumer path; inactive or expired codes are rejected.
+- Verification passed: `tests/page-e-005-api.test.mjs`, `playwright.page-e-005.config.ts` (390px generated-QR and recovery screenshots/traces), lint, format, typecheck, test:unit, test (84), build, migration/seed and evidence checks. Evidence: `evidence/PAGE-E-005/ACCEPTANCE.md`. Next task: `PAGE-E-006` employee acquisition pool.
+
 ## PAGE-E-004 completed
 
 - `PAGE-E-004` is PASS at `edbdf25`: task follow-ups preserve raw records, voice transcription, editable summary and a transactionally created next task, all restricted to the active employee's own tasks.
