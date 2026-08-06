@@ -1,5 +1,7 @@
 # LIVE_PROGRESS
 
+- 2026-08-06 Asia/Shanghai — PAGE-C-004 PASS at `b49f21b`: tenant-scoped service detail, benefits and idempotent consultation event flow are real HTTP-verified; 390px normal/unavailable screenshots and traces plus the full 68-test gate passed. Next task: PAGE-C-005.
+
 - 2026-08-06 Asia/Shanghai — PAGE-C-003 PASS at `97bdd48`: real store detail, isolated public consultation trace, audit/Outbox, mobile screenshots and full 66-test quality gate passed. Next task: PAGE-C-004.
 
 - 2026-08-06 Asia/Shanghai — PAGE-C-002 PASS at `04a39cc`: consumer discovery has isolated channel/circle/LBS data paths, real HTTP tenant-bound validation, 390px normal/empty/forbidden E2E screenshots and traces. Full gates passed (64 repository tests). Next task: PAGE-C-003.

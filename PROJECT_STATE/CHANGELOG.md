@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## 2026-08-06 — PAGE-C-004 PASS
+
+- Delivered a tenant-scoped consumer service page at `/c/services/[id]`, including applicable store, benefits, explicit consultation result and loading/error/unavailable states.
+- The service action is resolved server-side, reuses the persisted, idempotent, audited consumer-action flow, and preserves strict tenant/store/action boundaries.
+- HTTP isolation and idempotency checks, 390px Chromium interaction/screenshots/traces, plus full gates passed: lint, format, 17-package typecheck/build, Vitest, 68 repository tests, migration/seed and evidence checks.
+
 ## 2026-08-06 — PAGE-C-003 PASS
 
 - Delivered a real consumer store detail experience with persisted services, benefits, content, action entry, deep-link source retention and complete loading/empty/error/forbidden feedback.

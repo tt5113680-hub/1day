@@ -1,5 +1,11 @@
 # LATEST_HANDOFF
 
+## PAGE-C-004 completed
+
+- `PAGE-C-004` is PASS at `b49f21b`: `/c/services/[id]` shows the persisted service, applicable store and benefit records in a tenant-scoped public read model. Its consultation action is server-resolved and idempotently records the existing consumer event, audit log and Outbox message.
+- Verification passed: `tests/page-c-004-api.test.mjs`, `playwright.page-c-004.config.ts` (390px normal and unavailable screenshots plus traces), full `lint`, `format:check`, `typecheck`, `test:unit`, `test` 68/68, `build`, `db:migrate`, `db:seed`, `evidence:check` and `git diff --check`.
+- Evidence: `evidence/PAGE-C-004/ACCEPTANCE.md`. Next task: `PAGE-C-005` consumer external-action redirect and recovery.
+
 ## PAGE-C-003 completed
 
 - `PAGE-C-003` is PASS at `97bdd48`: `/c/stores/[id]` renders tenant-scoped stores, services, benefits and content from PostgreSQL. Deep links preserve source context; public consultation is idempotent and writes a consumer action event, audit log and Outbox event.

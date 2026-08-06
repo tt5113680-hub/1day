@@ -5,7 +5,8 @@
 - [x] PAGE-C-001 PASS — public consumer entry renders published template and actions with mobile state coverage.
 - [x] PAGE-C-002 PASS — tenant-scoped channel recommendations, fixed business circles and LBS discovery are independently rendered and verified.
 - [x] PAGE-C-003 PASS — consumer store detail, consultation trace, audit and Outbox verified.
-- [ ] PAGE-C-004 NEXT — consumer service and benefit detail page.
+- [x] PAGE-C-004 PASS — consumer service detail, benefits and tenant-scoped action trace verified.
+- [ ] PAGE-C-005 NEXT — consumer external-action redirect and recovery page.
 
 ## Latest core status
 
@@ -49,7 +50,7 @@
 - [x] PAGE-C-001 — 消费者统一入口
 - [ ] PAGE-C-002 — 消费者发现页
 - [ ] PAGE-C-003 — 商户详情
-- [ ] PAGE-C-004 — 服务/权益详情
+- [x] PAGE-C-004 — 服务/权益详情
 - [ ] PAGE-C-005 — 外部动作中转
 - [ ] PAGE-C-006 — 过程与结果查询
 - [ ] PAGE-C-007 — 消费者身份与会员
