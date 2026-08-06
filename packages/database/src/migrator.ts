@@ -11,6 +11,7 @@ import * as customerAttribution from './migrations/009_customer_attribution.js';
 import * as taskReminders from './migrations/010_task_reminders.js';
 import * as taskNotificationPreferences from './migrations/011_task_notification_preferences.js';
 import * as resultEvidence from './migrations/012_result_evidence.js';
+import * as pageTemplates from './migrations/013_page_templates.js';
 import type { Database } from './types.js';
 
 const migrationProvider: MigrationProvider = {
@@ -28,6 +29,7 @@ const migrationProvider: MigrationProvider = {
       '010_task_reminders': taskReminders,
       '011_task_notification_preferences': taskNotificationPreferences,
       '012_result_evidence': resultEvidence,
+      '013_page_templates': pageTemplates,
     };
   },
 };

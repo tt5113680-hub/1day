@@ -18,6 +18,8 @@ import { TaskController } from './task.controller';
 import { TaskService } from './task.service';
 import { ResultEvidenceController } from './result-evidence.controller';
 import { ResultEvidenceService } from './result-evidence.service';
+import { PageTemplateController } from './page-template.controller';
+import { PageTemplateService } from './page-template.service';
 
 @Module({
   controllers: [
@@ -30,6 +32,7 @@ import { ResultEvidenceService } from './result-evidence.service';
     AttributionController,
     TaskController,
     ResultEvidenceController,
+    PageTemplateController,
   ],
   providers: [
     AuthService,
@@ -42,6 +45,7 @@ import { ResultEvidenceService } from './result-evidence.service';
     AttributionService,
     TaskService,
     ResultEvidenceService,
+    PageTemplateService,
   ],
 })
 export class AppModule {}

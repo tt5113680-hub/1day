@@ -2,8 +2,8 @@
 
 ## Latest core status
 
-- [x] CORE-007 PASS — customer orders, secure image evidence, hashed verification codes and connector receipts verified.
-- [ ] CORE-008 NEXT — page templates and modules.
+- [x] CORE-008 PASS — page templates, modules, draft preview, version publishing and rollback verified.
+- [ ] CORE-009 NEXT — entry plugins and external actions.
 
 ## Latest core status
 
@@ -36,7 +36,7 @@
 - [x] CORE-005 — 来源归属与贡献
 - [x] CORE-006 — 任务提醒与升级
 - [x] CORE-007 — 证据与结果回收
-- [ ] CORE-008 — 页面模板与模块
+- [x] CORE-008 — 页面模板与模块
 - [ ] CORE-009 — 入口插件与外部动作
 - [ ] CORE-010 — 标准工作流引擎
 - [ ] PAGE-C-001 — 消费者统一入口

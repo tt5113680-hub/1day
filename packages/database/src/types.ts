@@ -515,6 +515,52 @@ export interface ConnectorResultsTable {
   version: Generated<number>;
 }
 
+export interface PageTemplatesTable {
+  id: string;
+  tenant_id: string;
+  code: string;
+  name: string;
+  target: string;
+  published_version_id: string | null;
+  status: string;
+  created_at: Timestamp;
+  created_by: string | null;
+  updated_at: Timestamp;
+  updated_by: string | null;
+  deleted_at: Timestamp | null;
+  version: Generated<number>;
+}
+
+export interface PageTemplateVersionsTable {
+  id: string;
+  tenant_id: string;
+  template_id: string;
+  sequence: number;
+  status: string;
+  created_at: Timestamp;
+  created_by: string | null;
+  updated_at: Timestamp;
+  updated_by: string | null;
+  deleted_at: Timestamp | null;
+  version: Generated<number>;
+}
+
+export interface PageModulesTable {
+  id: string;
+  tenant_id: string;
+  template_version_id: string;
+  module_type: string;
+  position: number;
+  config: unknown;
+  status: string;
+  created_at: Timestamp;
+  created_by: string | null;
+  updated_at: Timestamp;
+  updated_by: string | null;
+  deleted_at: Timestamp | null;
+  version: Generated<number>;
+}
+
 export interface Database {
   tenants: TenantsTable;
   users: UsersTable;
@@ -549,4 +595,7 @@ export interface Database {
   evidence_files: EvidenceFilesTable;
   verification_codes: VerificationCodesTable;
   connector_results: ConnectorResultsTable;
+  page_templates: PageTemplatesTable;
+  page_template_versions: PageTemplateVersionsTable;
+  page_modules: PageModulesTable;
 }

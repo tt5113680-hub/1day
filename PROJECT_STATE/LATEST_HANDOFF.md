@@ -1,5 +1,12 @@
 # LATEST_HANDOFF
 
+## CORE-008 已交接
+
+- `CORE-008` 已 PASS：模板、模块、版本、草稿预览、发布与回滚均通过租户/RBAC 边界实现；关键变更含审计与可追踪 Outbox 事件。
+- 验证：`pnpm.cmd typecheck`、`lint`、`format:check`、`test`（56/56）、`test:unit`、`build`、`db:migrate`、`db:seed`、`tests/core-008-e2e.test.mjs`、`evidence:check` 与 `git diff --check` 均通过。
+- 证据：`evidence/CORE-008/ACCEPTANCE.md`。模板 API 将由后续各角色页面任务消费；本任务不依赖外部服务。
+- 下一任务：`CORE-009` — 入口插件与外部动作。
+
 ## CORE-007 已交接
 
 - `CORE-007` 已 PASS：客户订单、截图/照片的受限图片证据、哈希化核销码和连接器回执均已持久化；文件读取经租户/RBAC 校验并带下载安全响应头。
