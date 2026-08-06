@@ -624,6 +624,24 @@ export interface ConsumerProcessAccessesTable {
   deleted_at: Timestamp | null;
   version: Generated<number>;
 }
+export interface ConsumerProfileAccessesTable {
+  id: string;
+  tenant_id: string;
+  customer_id: string;
+  access_token_hash: string;
+  consent_status: string;
+  consent_version: string;
+  consented_at: Timestamp;
+  revoked_at: Timestamp | null;
+  expires_at: Timestamp;
+  status: string;
+  created_at: Timestamp;
+  created_by: string | null;
+  updated_at: Timestamp;
+  updated_by: string | null;
+  deleted_at: Timestamp | null;
+  version: Generated<number>;
+}
 export interface WorkflowDefinitionsTable {
   id: string;
   tenant_id: string;
@@ -886,6 +904,7 @@ export interface Database {
   external_action_events: ExternalActionEventsTable;
   consumer_action_redirect_events: ConsumerActionRedirectEventsTable;
   consumer_process_accesses: ConsumerProcessAccessesTable;
+  consumer_profile_accesses: ConsumerProfileAccessesTable;
   workflow_definitions: WorkflowDefinitionsTable;
   workflow_versions: WorkflowVersionsTable;
   workflow_steps: WorkflowStepsTable;

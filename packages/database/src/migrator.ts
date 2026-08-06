@@ -18,6 +18,7 @@ import * as consumerDiscovery from './migrations/016_consumer_discovery.js';
 import * as consumerStoreDetails from './migrations/017_consumer_store_details.js';
 import * as consumerActionRedirects from './migrations/018_consumer_action_redirects.js';
 import * as consumerProcessAccess from './migrations/019_consumer_process_access.js';
+import * as consumerProfileAccess from './migrations/020_consumer_profile_access.js';
 import type { Database } from './types.js';
 
 const migrationProvider: MigrationProvider = {
@@ -42,6 +43,7 @@ const migrationProvider: MigrationProvider = {
       '017_consumer_store_details': consumerStoreDetails,
       '018_consumer_action_redirects': consumerActionRedirects,
       '019_consumer_process_access': consumerProcessAccess,
+      '020_consumer_profile_access': consumerProfileAccess,
     };
   },
 };

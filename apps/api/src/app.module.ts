@@ -35,6 +35,8 @@ import { ConsumerActionController } from './consumer-action.controller';
 import { ConsumerActionService } from './consumer-action.service';
 import { ConsumerProcessController } from './consumer-process.controller';
 import { ConsumerProcessService } from './consumer-process.service';
+import { ConsumerProfileController } from './consumer-profile.controller';
+import { ConsumerProfileService } from './consumer-profile.service';
 
 @Module({
   controllers: [
@@ -56,6 +58,7 @@ import { ConsumerProcessService } from './consumer-process.service';
     ConsumerServiceController,
     ConsumerActionController,
     ConsumerProcessController,
+    ConsumerProfileController,
   ],
   providers: [
     AuthService,
@@ -76,6 +79,7 @@ import { ConsumerProcessService } from './consumer-process.service';
     ConsumerStoreService,
     ConsumerActionService,
     ConsumerProcessService,
+    ConsumerProfileService,
   ],
 })
 export class AppModule {}
