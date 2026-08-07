@@ -668,6 +668,7 @@ export interface PageTemplatesTable {
   code: string;
   name: string;
   target: string;
+  industry_config: unknown;
   published_version_id: string | null;
   status: string;
   created_at: Timestamp;

@@ -21,6 +21,12 @@ const version = (v: unknown) => {
   if (!Number.isInteger(v) || (v as number) < 1) throw new BadRequestException('VALIDATION_ERROR');
   return v as number;
 };
+const configuration = (v: unknown) => {
+  if (v === undefined) return {};
+  if (!v || typeof v !== 'object' || Array.isArray(v) || JSON.stringify(v).length > 5000)
+    throw new BadRequestException('VALIDATION_ERROR');
+  return v as Record<string, unknown>;
+};
 const correlation = (r: string) => (UUID.test(r) ? r : randomUUID());
 
 @Injectable()
@@ -29,7 +35,7 @@ export class PageTemplateService implements OnModuleDestroy {
   async list(c: OrganizationContext) {
     return (
       await this.pool.query(
-        'select id,code,name,target,published_version_id,status,version from page_templates where tenant_id=$1 and deleted_at is null order by created_at desc',
+        'select id,code,name,target,industry_config,published_version_id,status,version from page_templates where tenant_id=$1 and deleted_at is null order by created_at desc',
         [c.tenantId],
       )
     ).rows;
@@ -74,14 +80,20 @@ export class PageTemplateService implements OnModuleDestroy {
     const target = text(body.target, 32);
     if (!TARGETS.has(target)) throw new BadRequestException('VALIDATION_ERROR');
     const modules = this.modules(body.modules);
-    const input = { code: text(body.code, 80), name: text(body.name, 120), target, modules };
+    const input = {
+      code: text(body.code, 80),
+      name: text(body.name, 120),
+      target,
+      modules,
+      industryConfig: configuration(body.industryConfig),
+    };
     return this.idempotent(c, 'page_template', key, async (q) => {
       const id = randomUUID(),
         vid = randomUUID();
       const row = (
         await q.query(
-          'insert into page_templates(id,tenant_id,code,name,target,created_by,updated_by) values($1,$2,$3,$4,$5,$6,$6) returning id,code,name,target,status,version',
-          [id, c.tenantId, input.code, input.name, input.target, c.userId],
+          'insert into page_templates(id,tenant_id,code,name,target,industry_config,created_by,updated_by) values($1,$2,$3,$4,$5,$6,$7,$7) returning id,code,name,target,industry_config,status,version',
+          [id, c.tenantId, input.code, input.name, input.target, input.industryConfig, c.userId],
         )
       ).rows[0];
       await q.query(
@@ -268,6 +280,7 @@ export class PageTemplateService implements OnModuleDestroy {
       code: t.code,
       name: t.name,
       target: t.target,
+      industryConfig: t.industry_config,
       publishedVersionId: t.published_version_id,
       version: t.version,
     };
