@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## 2026-08-08 — PAGE-M-016 PASS
+
+- Delivered `/m/settings` with tenant-scoped, versioned operational settings for reminders, approvals, default quiet hours, tags, ownership and branding.
+- Browser saves are now supported by CORS `PUT`, while employee-level quiet-hour preferences remain independent.
+
 ## 2026-08-08 — PAGE-M-015 PASS
 
 - Delivered `/m/connectors` with tenant-scoped authorization requests, persisted status/logs and a no-fabricated-external-call boundary.

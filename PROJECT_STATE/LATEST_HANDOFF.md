@@ -1,5 +1,10 @@
 # LATEST_HANDOFF
 
+## PAGE-M-016 completed
+
+- `PAGE-M-016` is PASS at `8b8898e`: `/m/settings` persists and audits tenant operating rules using RBAC, idempotency, optimistic versioning and correlated outbox events.
+- Verification passed: `tests/page-m-016-api.test.mjs`; `playwright.page-m-016.config.ts` (two desktop flows); full quality gates, migration/seed and evidence checks. Evidence: `evidence/PAGE-M-016/ACCEPTANCE.md`. Next task: `PAGE-P-001` platform overview.
+
 ## PAGE-M-015 completed
 
 - `PAGE-M-015` is PASS at `fb32e47`: `/m/connectors` records tenant-scoped connector authorization intents and shows persisted status/logs without ever exposing submitted secrets or claiming an unperformed external call.

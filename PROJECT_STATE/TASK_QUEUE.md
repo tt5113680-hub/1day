@@ -2,6 +2,11 @@
 
 ## Current task status (latest)
 
+- [x] PAGE-M-016 PASS — tenant operating settings verified.
+- [ ] PAGE-P-001 NEXT — platform overview.
+
+## Current task status (latest)
+
 - [x] PAGE-M-015 PASS — connector management verified.
 - [ ] PAGE-M-016 NEXT — tenant operating settings.
 
