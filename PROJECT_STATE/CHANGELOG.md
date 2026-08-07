@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## 2026-08-08 — HARDENING-001 PASS
+
+- Protected API requests now require a matching active, unrevoked, unexpired persistent session in addition to a valid JWT.
+- Added runtime and contract coverage for logout revocation, tenant/RBAC separation, private controllers, export and evidence-file security headers.
+
+
 ## 2026-08-08 — CHANNEL / BUSINESS-CIRCLE PHASE ACCEPTED
 
 - Verified CHANNEL-001, CHANNEL-002, CIRCLE-001 and CIRCLE-002 with full repository gates, database migration/seed, HTTP and browser evidence.

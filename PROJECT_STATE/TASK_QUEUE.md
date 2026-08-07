@@ -2,6 +2,11 @@
 
 ## Current hardening status (latest)
 
+- [x] HARDENING-001 PASS — persistent session validation, tenant isolation and private controller authorization contracts verified.
+- [ ] HARDENING-002 NEXT — commercial MVP end-to-end acceptance.
+
+## Current hardening status (latest)
+
 - [x] CHANNEL / BUSINESS-CIRCLE PHASE ACCEPTED — full gates and evidence verified.
 - [ ] HARDENING-001 NEXT — end-to-end permissions and tenant-isolation hardening.
 
