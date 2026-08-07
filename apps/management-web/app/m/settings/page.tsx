@@ -1,0 +1,244 @@
+'use client';
+
+import { useCallback, useEffect, useState } from 'react';
+import styles from './page.module.css';
+
+type Settings = {
+  version: number;
+  reminders: { defaultDueHours: number; escalationHours: number };
+  approvals: { requireOwnershipTransfer: boolean; requireContentApproval: boolean };
+  doNotDisturb: { enabled: boolean; startHour: number; endHour: number };
+  tags: { allowCustom: boolean; maxPerCustomer: number };
+  ownership: { allocation: 'manual' | 'round_robin'; transferRequiresApproval: boolean };
+  brand: { displayName: string; primaryColor: string };
+};
+
+const api = process.env.NEXT_PUBLIC_API_BASE_URL ?? 'http://127.0.0.1:3001';
+
+export default function SettingsPage() {
+  const [state, setState] = useState<'loading' | 'ready' | 'forbidden' | 'error'>('loading');
+  const [settings, setSettings] = useState<Settings | null>(null);
+  const [note, setNote] = useState('');
+  const [saving, setSaving] = useState(false);
+  const headers = () => ({
+    authorization: `Bearer ${sessionStorage.getItem('oneday.accessToken')}`,
+    'x-request-id': crypto.randomUUID(),
+  });
+  const load = useCallback(async () => {
+    if (!sessionStorage.getItem('oneday.accessToken')) return setState('forbidden');
+    setState('loading');
+    try {
+      const response = await fetch(`${api}/api/v1/management/settings`, { headers: headers() });
+      if ([401, 403].includes(response.status)) return setState('forbidden');
+      if (!response.ok) throw Error();
+      setSettings((await response.json()).data);
+      setState('ready');
+    } catch {
+      setState('error');
+    }
+  }, []);
+  useEffect(() => void load(), [load]);
+  const update = (path: string, value: string | number | boolean) => {
+    if (!settings) return;
+    const [group, key] = path.split('.') as [string, string];
+    const section = (settings as Record<string, unknown>)[group] as Record<string, unknown>;
+    setSettings({
+      ...settings,
+      [group]: { ...section, [key]: value },
+    } as Settings);
+  };
+  const save = async () => {
+    if (!settings) return;
+    setSaving(true);
+    try {
+      const response = await fetch(`${api}/api/v1/management/settings`, {
+        method: 'PUT',
+        headers: {
+          ...headers(),
+          'content-type': 'application/json',
+          'idempotency-key': crypto.randomUUID(),
+        },
+        body: JSON.stringify(settings),
+      });
+      if (response.status === 409) return setNote('设置已被其他管理员更新，请刷新后再保存。');
+      if (!response.ok) throw Error();
+      setSettings((await response.json()).data);
+      setNote('经营设置已保存，并已记录审计与事件。');
+    } catch {
+      setNote('保存失败，请检查输入和权限后重试。');
+    } finally {
+      setSaving(false);
+    }
+  };
+  if (state === 'loading') return <main className={styles.centered}>正在加载经营设置…</main>;
+  if (state === 'forbidden')
+    return (
+      <main className={styles.centered}>
+        <section>
+          <h1>无权查看租户经营设置</h1>
+        </section>
+      </main>
+    );
+  if (state === 'error')
+    return (
+      <main className={styles.centered}>
+        <section>
+          <h1>经营设置暂不可用</h1>
+          <button onClick={() => void load()}>重新加载</button>
+        </section>
+      </main>
+    );
+  if (!settings) return <main className={styles.centered}>暂无可用设置。</main>;
+  return (
+    <main className={styles.page}>
+      <header>
+        <div>
+          <p>ONEDAY / 租户经营设置</p>
+          <h1>{settings.brand.displayName} 的可审计经营规则</h1>
+          <span>保存需经过服务端权限、版本、审计和事件校验；员工个人免打扰偏好不会被覆盖。</span>
+        </div>
+        <button onClick={() => void load()}>刷新</button>
+      </header>
+      {note && (
+        <p role="status" className={styles.notice}>
+          {note}
+        </p>
+      )}
+      <section className={styles.grid}>
+        <fieldset>
+          <legend>提醒与升级</legend>
+          <label>
+            默认时限（小时）
+            <input
+              aria-label="默认时限"
+              type="number"
+              min="1"
+              max="720"
+              value={settings.reminders.defaultDueHours}
+              onChange={(e) => update('reminders.defaultDueHours', Number(e.target.value))}
+            />
+          </label>
+          <label>
+            升级时限（小时）
+            <input
+              aria-label="升级时限"
+              type="number"
+              min="1"
+              max="720"
+              value={settings.reminders.escalationHours}
+              onChange={(e) => update('reminders.escalationHours', Number(e.target.value))}
+            />
+          </label>
+        </fieldset>
+        <fieldset>
+          <legend>审批规则</legend>
+          <label>
+            <input
+              type="checkbox"
+              checked={settings.approvals.requireOwnershipTransfer}
+              onChange={(e) => update('approvals.requireOwnershipTransfer', e.target.checked)}
+            />{' '}
+            归属转移需要审批
+          </label>
+          <label>
+            <input
+              type="checkbox"
+              checked={settings.approvals.requireContentApproval}
+              onChange={(e) => update('approvals.requireContentApproval', e.target.checked)}
+            />{' '}
+            内容发布需要审批
+          </label>
+        </fieldset>
+        <fieldset>
+          <legend>免打扰规则</legend>
+          <label>
+            <input
+              type="checkbox"
+              checked={settings.doNotDisturb.enabled}
+              onChange={(e) => update('doNotDisturb.enabled', e.target.checked)}
+            />{' '}
+            启用默认免打扰时段
+          </label>
+          <label>
+            开始小时
+            <input
+              aria-label="免打扰开始小时"
+              type="number"
+              min="0"
+              max="23"
+              value={settings.doNotDisturb.startHour}
+              onChange={(e) => update('doNotDisturb.startHour', Number(e.target.value))}
+            />
+          </label>
+          <label>
+            结束小时
+            <input
+              aria-label="免打扰结束小时"
+              type="number"
+              min="0"
+              max="23"
+              value={settings.doNotDisturb.endHour}
+              onChange={(e) => update('doNotDisturb.endHour', Number(e.target.value))}
+            />
+          </label>
+        </fieldset>
+        <fieldset>
+          <legend>标签与归属</legend>
+          <label>
+            <input
+              type="checkbox"
+              checked={settings.tags.allowCustom}
+              onChange={(e) => update('tags.allowCustom', e.target.checked)}
+            />{' '}
+            允许自定义标签
+          </label>
+          <label>
+            每位客户最大标签数
+            <input
+              aria-label="最大标签数"
+              type="number"
+              min="1"
+              max="50"
+              value={settings.tags.maxPerCustomer}
+              onChange={(e) => update('tags.maxPerCustomer', Number(e.target.value))}
+            />
+          </label>
+          <label>
+            默认分配
+            <select
+              aria-label="默认分配"
+              value={settings.ownership.allocation}
+              onChange={(e) => update('ownership.allocation', e.target.value)}
+            >
+              <option value="manual">人工分配</option>
+              <option value="round_robin">轮转分配</option>
+            </select>
+          </label>
+        </fieldset>
+        <fieldset>
+          <legend>品牌规则</legend>
+          <label>
+            展示名称
+            <input
+              aria-label="展示名称"
+              maxLength={160}
+              value={settings.brand.displayName}
+              onChange={(e) => update('brand.displayName', e.target.value)}
+            />
+          </label>
+          <label>
+            主色
+            <input
+              aria-label="主色"
+              value={settings.brand.primaryColor}
+              onChange={(e) => update('brand.primaryColor', e.target.value)}
+            />
+          </label>
+        </fieldset>
+      </section>
+      <button className={styles.save} disabled={saving} onClick={() => void save()}>
+        {saving ? '正在保存…' : '保存经营设置'}
+      </button>
+    </main>
+  );
+}

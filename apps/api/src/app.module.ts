@@ -80,6 +80,8 @@ import { ManagementContentController } from './management-content.controller';
 import { ManagementContentService } from './management-content.service';
 import { ManagementConnectorController } from './management-connector.controller';
 import { ManagementConnectorService } from './management-connector.service';
+import { ManagementSettingsController } from './management-settings.controller';
+import { ManagementSettingsService } from './management-settings.service';
 
 @Module({
   controllers: [
@@ -125,6 +127,7 @@ import { ManagementConnectorService } from './management-connector.service';
     ManagementAttributionController,
     ManagementContentController,
     ManagementConnectorController,
+    ManagementSettingsController,
   ],
   providers: [
     AuthService,
@@ -167,6 +170,7 @@ import { ManagementConnectorService } from './management-connector.service';
     ManagementAttributionService,
     ManagementContentService,
     ManagementConnectorService,
+    ManagementSettingsService,
   ],
 })
 export class AppModule {}

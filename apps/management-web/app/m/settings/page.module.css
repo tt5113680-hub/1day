@@ -1,0 +1,104 @@
+.page {
+  max-width: 1440px;
+  min-height: 100vh;
+  margin: auto;
+  padding: 42px 48px;
+  background: #f6f8fb;
+  color: #111827;
+}
+.page header {
+  display: flex;
+  justify-content: space-between;
+  gap: 24px;
+}
+.page header p {
+  margin: 0;
+  color: #2563eb;
+  font-size: 13px;
+  font-weight: 800;
+}
+.page h1 {
+  margin: 8px 0;
+  font-size: 34px;
+}
+.page header span {
+  color: #4b5563;
+}
+.page button,
+.page input,
+.page select {
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  background: #fff;
+  padding: 10px 14px;
+  font: inherit;
+}
+.page button {
+  font-weight: 700;
+  cursor: pointer;
+}
+.notice {
+  color: #166534;
+  font-weight: 700;
+}
+.grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  margin: 28px 0;
+}
+.grid fieldset {
+  display: grid;
+  gap: 12px;
+  min-width: 0;
+  padding: 20px;
+  border: 1px solid #e5e7eb;
+  border-radius: 16px;
+  background: #fff;
+  box-shadow: 0 5px 16px #11182708;
+}
+.grid legend {
+  padding: 0 6px;
+  font-size: 17px;
+  font-weight: 800;
+}
+.grid label {
+  display: grid;
+  gap: 6px;
+  font-weight: 700;
+}
+.grid label:has(input[type='checkbox']) {
+  display: flex;
+  align-items: center;
+}
+.grid input[type='checkbox'] {
+  width: 18px;
+  height: 18px;
+  padding: 0;
+}
+.save {
+  background: #2563eb !important;
+  color: #fff;
+}
+.centered {
+  display: grid;
+  min-height: 70vh;
+  place-items: center;
+  text-align: center;
+}
+.centered section {
+  padding: 32px;
+  border-radius: 16px;
+  background: #fff;
+}
+@media (max-width: 900px) {
+  .page {
+    padding: 28px 18px;
+  }
+  .page header {
+    display: grid;
+  }
+  .grid {
+    grid-template-columns: 1fr;
+  }
+}
