@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## 2026-08-08 — HARDENING-003 PASS
+
+- Replaced static API health reporting with bounded database-backed readiness and verified failure-closed behavior.
+- Verified connector unavailable-to-healthy recovery through versioned idempotent observations.
+
 ## 2026-08-08 — HARDENING-002 PASS
 
 - Verified the commercial MVP across consumer action, employee follow-up/repurchase, fixed business-circle attribution, and merchant onboarding with real PostgreSQL-backed HTTP chains.

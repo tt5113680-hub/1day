@@ -2,6 +2,11 @@
 
 ## Current hardening status (latest)
 
+- [x] HARDENING-003 PASS — database-backed readiness and connector recovery reliability verified.
+- [ ] HARDENING-004 NEXT — backup recovery and release rehearsal.
+
+## Current hardening status (latest)
+
 - [x] HARDENING-002 PASS — four commercial MVP HTTP chains and four-terminal browser evidence verified.
 - [ ] HARDENING-003 NEXT — performance and reliability hardening.
 

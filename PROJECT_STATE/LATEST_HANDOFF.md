@@ -1,5 +1,11 @@
 # LATEST_HANDOFF
 
+## HARDENING-003 completed
+
+- `HARDENING-003` is PASS at `8928843`: API readiness now confirms PostgreSQL availability with bounded connection/query timeouts and fails closed with `503` when unavailable; connector recovery is verified end-to-end.
+- Verification passed: targeted reliability HTTP suite, lint, format, 17-package typecheck, Vitest, serialized repository HTTP suite, full build, migration/seed, evidence check and diff check. Evidence: `evidence/HARDENING-003/ACCEPTANCE.md`.
+- Next task: `HARDENING-004` backup recovery and release rehearsal.
+
 ## HARDENING-002 completed
 
 - `HARDENING-002` is PASS at `cdbcbae`: four commercial MVP chains are verified through the built API and PostgreSQL, with consumer, employee, management and channel browser screenshots plus a retained trace in `evidence/HARDENING-002/`.
