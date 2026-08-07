@@ -76,6 +76,8 @@ import { ManagementEmployeePerformanceController } from './management-employee-p
 import { ManagementEmployeePerformanceService } from './management-employee-performance.service';
 import { ManagementAttributionController } from './management-attribution.controller';
 import { ManagementAttributionService } from './management-attribution.service';
+import { ManagementContentController } from './management-content.controller';
+import { ManagementContentService } from './management-content.service';
 
 @Module({
   controllers: [
@@ -119,6 +121,7 @@ import { ManagementAttributionService } from './management-attribution.service';
     ManagementPermissionAuditController,
     ManagementEmployeePerformanceController,
     ManagementAttributionController,
+    ManagementContentController,
   ],
   providers: [
     AuthService,
@@ -159,6 +162,7 @@ import { ManagementAttributionService } from './management-attribution.service';
     ManagementPermissionAuditService,
     ManagementEmployeePerformanceService,
     ManagementAttributionService,
+    ManagementContentService,
   ],
 })
 export class AppModule {}
