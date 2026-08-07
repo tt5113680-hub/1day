@@ -1,0 +1,140 @@
+.page {
+  max-width: 1440px;
+  min-height: 100vh;
+  margin: auto;
+  padding: 38px 48px 70px;
+  background: #f7f9fc;
+  color: #14213d;
+}
+.back {
+  color: #2563eb;
+  font-weight: 700;
+  text-decoration: none;
+}
+.page header {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+  margin: 26px 0;
+}
+.page header p {
+  margin: 0;
+  color: #2563eb;
+  font-weight: 800;
+}
+.page h1 {
+  margin: 8px 0;
+  font-size: 34px;
+}
+.page header span {
+  color: #64748b;
+}
+.page button {
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  background: #fff;
+  padding: 10px 14px;
+  font-weight: 700;
+}
+.alerts {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 12px;
+  margin-bottom: 16px;
+}
+.alerts article {
+  display: grid;
+  gap: 4px;
+  border: 1px solid #fed7aa;
+  border-left: 4px solid #f97316;
+  border-radius: 10px;
+  padding: 13px;
+  background: #fff7ed;
+}
+.alerts strong {
+  color: #9a3412;
+  text-transform: uppercase;
+  font-size: 12px;
+}
+.grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+}
+.panel,
+.timeline {
+  border: 1px solid #e2e8f0;
+  border-radius: 14px;
+  background: #fff;
+  box-shadow: 0 8px 24px #1e293b0a;
+  padding: 20px;
+}
+.panel h2,
+.timeline h2 {
+  margin: 0 0 12px;
+  font-size: 18px;
+}
+.panel ul {
+  padding: 0;
+  margin: 0 0 14px;
+  list-style: none;
+}
+.panel li {
+  padding: 10px 0;
+  border-top: 1px solid #eef2f7;
+  color: #475569;
+  line-height: 1.45;
+}
+.panel li:first-child {
+  border-top: 0;
+}
+.empty {
+  color: #94a3b8;
+}
+.timeline {
+  margin-top: 16px;
+}
+.timeline article {
+  display: grid;
+  grid-template-columns: 175px 110px 1fr;
+  gap: 12px;
+  padding: 11px 0;
+  border-top: 1px solid #eef2f7;
+}
+.timeline time,
+.timeline span {
+  color: #64748b;
+  font-size: 13px;
+}
+.timeline p {
+  margin: 0;
+}
+.centered {
+  display: grid;
+  min-height: 70vh;
+  place-items: center;
+  text-align: center;
+}
+.centered section {
+  padding: 32px;
+  border-radius: 16px;
+  background: #fff;
+}
+@media (max-width: 800px) {
+  .page {
+    padding: 28px 18px;
+  }
+  .page header {
+    flex-direction: column;
+  }
+  .grid {
+    grid-template-columns: 1fr;
+  }
+  .timeline article {
+    grid-template-columns: 1fr;
+    gap: 3px;
+  }
+  .page h1 {
+    font-size: 28px;
+  }
+}

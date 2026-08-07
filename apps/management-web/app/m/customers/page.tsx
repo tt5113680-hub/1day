@@ -1,6 +1,7 @@
 'use client';
 
 import { useCallback, useEffect, useMemo, useState } from 'react';
+import Link from 'next/link';
 import styles from './page.module.css';
 
 type Customer = {
@@ -265,7 +266,7 @@ export default function ManagementCustomersPage() {
                     />
                   </td>
                   <td>
-                    <strong>{customer.displayName}</strong>
+                    <Link href={`/m/customers/${customer.id}`}>{customer.displayName}</Link>
                     <small>{customer.id.slice(0, 8)}</small>
                   </td>
                   <td>

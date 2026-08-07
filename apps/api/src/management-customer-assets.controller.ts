@@ -100,4 +100,13 @@ export class ManagementCustomerAssetsController {
       .header('x-content-type-options', 'nosniff')
       .send(file.csv);
   }
+  @Get(':id') async detail(
+    @Param('id') id: string,
+    @Headers('authorization') a: string | undefined,
+    @Headers('x-tenant-context') t: string | undefined,
+    @Headers('x-request-id') r: string | undefined,
+  ) {
+    const c = await this.context(a, t, r);
+    return { data: await this.customers.detail(c, id), meta: { requestId: r }, error: null };
+  }
 }
