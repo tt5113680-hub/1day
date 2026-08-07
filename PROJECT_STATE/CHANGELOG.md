@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## 2026-08-08 — PAGE-M-003 PASS
+
+- Delivered `/m/customers` with tenant-scoped persisted customer filters, segmentation, ownership context and a desktop batch ownership-transfer approval workflow.
+- Added approval-gated export requests and CSV download with idempotency, optimistic versioning, audit and correlated Outbox records.
+- Verified through production HTTP/PostgreSQL, two 1440px browser flows, 98 repository tests and all quality gates.
+
 ## 2026-08-08 — PAGE-M-002 PASS
 
 - Delivered `/m/funnels/[id]` with tenant-scoped source, lead, follow-up, deal and repurchase outcomes, plus an explicit unconfirmed visit stage.

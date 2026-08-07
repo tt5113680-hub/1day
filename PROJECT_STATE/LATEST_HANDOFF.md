@@ -1,5 +1,10 @@
 # LATEST_HANDOFF
 
+## PAGE-M-003 completed
+
+- `PAGE-M-003` is PASS at `1b3015a`: `/m/customers` presents tenant-scoped customer assets with persisted search, tags, segment, source and ownership data. Management can select up to fifty versioned customers and create auditable ownership-transfer approval requests without direct owner overwrite.
+- Export requests persist the active filters; only approved requests produce the minimized customer CSV. Requests, approval, and download are audited and publish correlated Outbox events. Verification passed: `tests/page-m-003-api.test.mjs` against a spawned production API/PostgreSQL; `playwright.page-m-003.config.ts` (two 1440px browser flows, screenshots and trace); lint, format, 17-package typecheck/build, Vitest, `test` (98), migration/seed and evidence checks. Evidence: `evidence/PAGE-M-003/ACCEPTANCE.md`. Next task: `PAGE-M-004` management customer detail.
+
 ## PAGE-M-002 completed
 
 - `PAGE-M-002` is PASS at `d6689ca`: `/m/funnels/[id]` presents tenant-scoped source, lead, follow-up, deal and repurchase cohort outcomes. The current schema cannot verify source-to-visit links, so visit is visibly classified as inferred and excluded from conversion rates rather than fabricated.
