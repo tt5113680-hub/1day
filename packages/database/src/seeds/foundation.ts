@@ -76,33 +76,6 @@ export async function seedFoundationData(database: Kysely<Database>): Promise<vo
     .onConflict((conflict) => conflict.column('id').doNothing())
     .execute();
   await database
-    .insertInto('role_permissions')
-    .values([
-      {
-        id: '00000000-0000-4000-8000-000000000006',
-        tenant_id: SYSTEM_TENANT_ID,
-        role_id: SYSTEM_ROLE_ID,
-        permission_id: '00000000-0000-4000-8000-000000000101',
-        status: 'active',
-        created_by: null,
-        updated_by: null,
-        deleted_at: null,
-      },
-      {
-        id: '00000000-0000-4000-8000-000000000007',
-        tenant_id: SYSTEM_TENANT_ID,
-        role_id: SYSTEM_ROLE_ID,
-        permission_id: '00000000-0000-4000-8000-000000000102',
-        status: 'active',
-        created_by: null,
-        updated_by: null,
-        deleted_at: null,
-      },
-    ])
-    .onConflict((conflict) => conflict.column('id').doNothing())
-    .execute();
-
-  await database
     .insertInto('permissions')
     .values([
       {
@@ -327,6 +300,26 @@ export async function seedFoundationData(database: Kysely<Database>): Promise<vo
   await database
     .insertInto('role_permissions')
     .values([
+      {
+        id: '00000000-0000-4000-8000-000000000006',
+        tenant_id: SYSTEM_TENANT_ID,
+        role_id: SYSTEM_ROLE_ID,
+        permission_id: '00000000-0000-4000-8000-000000000101',
+        status: 'active',
+        created_by: null,
+        updated_by: null,
+        deleted_at: null,
+      },
+      {
+        id: '00000000-0000-4000-8000-000000000007',
+        tenant_id: SYSTEM_TENANT_ID,
+        role_id: SYSTEM_ROLE_ID,
+        permission_id: '00000000-0000-4000-8000-000000000102',
+        status: 'active',
+        created_by: null,
+        updated_by: null,
+        deleted_at: null,
+      },
       {
         id: '00000000-0000-4000-8000-000000000008',
         tenant_id: SYSTEM_TENANT_ID,

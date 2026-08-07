@@ -23,7 +23,7 @@ test('commercial MVP terminals expose their live consumer, employee, management 
 }) => {
   const consumer = await browser.newPage({ viewport: { width: 390, height: 844 } });
   await consumer.goto('http://127.0.0.1:3171/c/entry?tenant=system');
-  await expect(consumer.locator('main')).toBeVisible();
+  await expect(consumer.locator('main[class]')).toBeVisible();
   await consumer.screenshot({ path: 'evidence/HARDENING-002/consumer-mobile.png', fullPage: true });
 
   for (const [url, path] of [
