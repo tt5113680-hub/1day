@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 2026-08-08 — PAGE-M-013 PASS
+
+- Delivered `/m/content` with tenant-scoped drafts, optimistic-version approval and auditable pending-authorization distribution requests.
+
 ## 2026-08-08 — PAGE-M-012 PASS
 
 - Delivered `/m/attribution` with tenant-scoped first/current/final source views, contribution context, evidence levels and customer-chain drill-down.

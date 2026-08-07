@@ -2,6 +2,11 @@
 
 ## Current task status (latest)
 
+- [x] PAGE-M-013 PASS — content center verified.
+- [ ] PAGE-M-014 NEXT — page decoration.
+
+## Current task status (latest)
+
 - [x] PAGE-M-012 PASS — source attribution verified.
 - [ ] PAGE-M-013 NEXT — content center.
 

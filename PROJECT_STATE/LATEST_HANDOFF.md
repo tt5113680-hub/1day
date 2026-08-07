@@ -1,5 +1,10 @@
 # LATEST_HANDOFF
 
+## PAGE-M-013 completed
+
+- `PAGE-M-013` is PASS at `087b22f`: `/m/content` persists knowledge/article/media records, versioned approval and channel distribution intents. It never claims third-party delivery without authorization.
+- Verification passed: `tests/page-m-013-api.test.mjs`; `playwright.page-m-013.config.ts` (two 1440px flows); full quality gates, migration/seed and evidence checks. Evidence: `evidence/PAGE-M-013/ACCEPTANCE.md`. Next task: `PAGE-M-014` page decoration.
+
 ## PAGE-M-012 completed
 
 - `PAGE-M-012` is PASS at `aecee91`: `/m/attribution` explains tenant-scoped first/current/final sources using persisted source, contribution and evidence-reference records, with customer-chain links.
