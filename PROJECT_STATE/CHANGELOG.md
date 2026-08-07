@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## 2026-08-08 HARDENING-005 PASS
+
+- Added a controlled pilot delivery package covering deployment, administrator operations, deterministic-demo-account isolation, product limitations, and an evidence-led handoff checklist.
+- Added documentation contracts that prevent unsafe readiness, credential, cross-tenant, recovery, and external-delivery claims from silently regressing.
+
 ## 2026-08-08 — HARDENING-004 PASS
 
 - Added guarded PostgreSQL recovery clone tooling, retained recovery verification, and release/rollback runbook documentation.

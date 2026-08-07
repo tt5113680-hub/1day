@@ -1,5 +1,10 @@
 # TASK_QUEUE
 
+## Final commercial acceptance status (latest)
+
+- [x] HARDENING-005 PASS - controlled pilot deployment, administrator, limitation and acceptance package verified.
+- [ ] FINAL COMMERCIAL ACCEPTANCE IN PROGRESS - execute clean-database release rehearsal and final handoff report.
+
 ## Current hardening status (latest)
 
 - [x] HARDENING-004 PASS — guarded PostgreSQL recovery clone and release/recovery rehearsal verified.

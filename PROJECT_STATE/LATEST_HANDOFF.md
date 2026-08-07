@@ -1,5 +1,12 @@
 # LATEST_HANDOFF
 
+## HARDENING-005 completed
+
+- `HARDENING-005` is PASS at `412600f`: the repository now contains a controlled pilot deployment guide, administrator guide, explicit MVP limitations, and an evidence-led customer handoff checklist.
+- The package expressly isolates the deterministic local seed account from customer environments, requires database-backed API readiness, records tenant/RBAC negative controls, and prohibits unverified external delivery claims.
+- Verification passed: dedicated pilot documentation contract tests, evidence contract, lint, format, 17-package typecheck, Vitest, serialized repository HTTP suite, full build, migration/seed and diff check. Evidence: `evidence/HARDENING-005/ACCEPTANCE.md`.
+- All 69 indexed tasks are PASS. Final automated commercial acceptance is now in progress before the human pilot handoff decision.
+
 ## HARDENING-004 completed
 
 - `HARDENING-004` is PASS at `f3da8ac`: `pnpm db:recovery:clone` creates a guarded, non-destructive PostgreSQL clone and verifies tenant, configuration, connector and evidence-file record counts. A real clone completed in approximately five seconds.
