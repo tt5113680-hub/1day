@@ -10,7 +10,7 @@
   "scripts": {
     "build": "turbo run build",
     "typecheck": "turbo run typecheck",
-    "test": "node --test tests/*.test.mjs && turbo run test",
+    "test": "node --test --test-concurrency=1 tests/*.test.mjs && turbo run test",
     "lint": "eslint .",
     "format:check": "prettier --check . --ignore-unknown",
     "format": "prettier --write . --ignore-unknown",
