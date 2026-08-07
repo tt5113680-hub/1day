@@ -84,6 +84,8 @@ import { ManagementSettingsController } from './management-settings.controller';
 import { ManagementSettingsService } from './management-settings.service';
 import { PlatformDashboardController } from './platform-dashboard.controller';
 import { PlatformDashboardService } from './platform-dashboard.service';
+import { PlatformTenantController } from './platform-tenant.controller';
+import { PlatformTenantService } from './platform-tenant.service';
 
 @Module({
   controllers: [
@@ -131,6 +133,7 @@ import { PlatformDashboardService } from './platform-dashboard.service';
     ManagementConnectorController,
     ManagementSettingsController,
     PlatformDashboardController,
+    PlatformTenantController,
   ],
   providers: [
     AuthService,
@@ -175,6 +178,7 @@ import { PlatformDashboardService } from './platform-dashboard.service';
     ManagementConnectorService,
     ManagementSettingsService,
     PlatformDashboardService,
+    PlatformTenantService,
   ],
 })
 export class AppModule {}

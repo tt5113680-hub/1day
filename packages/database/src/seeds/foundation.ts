@@ -303,6 +303,15 @@ export async function seedFoundationData(database: Kysely<Database>): Promise<vo
         updated_by: null,
         deleted_at: null,
       },
+      {
+        id: '00000000-0000-4000-8000-000000000123',
+        code: 'platform.manage',
+        description: 'Manage platform-wide tenant lifecycle and quotas',
+        status: 'active',
+        created_by: null,
+        updated_by: null,
+        deleted_at: null,
+      },
     ])
     .onConflict((conflict) => conflict.column('id').doNothing())
     .execute();
@@ -504,6 +513,16 @@ export async function seedFoundationData(database: Kysely<Database>): Promise<vo
         tenant_id: SYSTEM_TENANT_ID,
         role_id: SYSTEM_ROLE_ID,
         permission_id: '00000000-0000-4000-8000-000000000122',
+        status: 'active',
+        created_by: null,
+        updated_by: null,
+        deleted_at: null,
+      },
+      {
+        id: '00000000-0000-4000-8000-000000000028',
+        tenant_id: SYSTEM_TENANT_ID,
+        role_id: SYSTEM_ROLE_ID,
+        permission_id: '00000000-0000-4000-8000-000000000123',
         status: 'active',
         created_by: null,
         updated_by: null,
