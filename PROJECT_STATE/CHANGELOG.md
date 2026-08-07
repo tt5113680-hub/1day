@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## 2026-08-08 — PAGE-M-007 PASS
+
+- Delivered `/m/stores` with tenant-scoped store status, accountable manager, configured entries and traceable operating comparison signals.
+- Manager assignment is optimistic-versioned and records audit and correlated Outbox events.
+- Verified through production HTTP/PostgreSQL, two 1440px browser flows, repository gates, migration/seed and evidence checks.
+
 ## 2026-08-08 — PAGE-M-006 PASS
 
 - Delivered `/m/ai-suggestions` with tenant-scoped persisted recommendations, model name/version metadata, explicit acceptance and field-addressable feedback.
