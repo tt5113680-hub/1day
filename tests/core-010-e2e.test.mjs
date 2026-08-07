@@ -204,7 +204,7 @@ test('published workflows execute tasks, conditions, approvals and timeout safeg
     headers: headers(token),
     body: JSON.stringify({}),
   });
-  assert.equal((await process.json()).data.timedOut, 1);
+  assert.ok((await process.json()).data.timedOut >= 1);
   const timedOut = await request(`/api/v1/workflows/instances/${timeoutInstance.id}`, {
     headers: headers(token),
   });

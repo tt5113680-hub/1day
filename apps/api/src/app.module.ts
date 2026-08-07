@@ -84,6 +84,8 @@ import { ManagementSettingsController } from './management-settings.controller';
 import { ManagementSettingsService } from './management-settings.service';
 import { PlatformDashboardController } from './platform-dashboard.controller';
 import { PlatformDashboardService } from './platform-dashboard.service';
+import { PlatformChannelController } from './platform-channel.controller';
+import { PlatformChannelService } from './platform-channel.service';
 import { PlatformTenantController } from './platform-tenant.controller';
 import { PlatformTenantService } from './platform-tenant.service';
 import { PlatformOnboardingController } from './platform-onboarding.controller';
@@ -135,6 +137,7 @@ import { PlatformOnboardingService } from './platform-onboarding.service';
     ManagementConnectorController,
     ManagementSettingsController,
     PlatformDashboardController,
+    PlatformChannelController,
     PlatformTenantController,
     PlatformOnboardingController,
   ],
@@ -181,6 +184,7 @@ import { PlatformOnboardingService } from './platform-onboarding.service';
     ManagementConnectorService,
     ManagementSettingsService,
     PlatformDashboardService,
+    PlatformChannelService,
     PlatformTenantService,
     PlatformOnboardingService,
   ],
