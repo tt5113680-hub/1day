@@ -1,5 +1,7 @@
 # LIVE_PROGRESS
 
+- 2026-08-08 Asia/Shanghai — PAGE-M-009 PASS at `aea0630`: role templates, permission ranges and affected-member impact are visible before changes; high-risk changes require confirmation and continue to use CORE-003's audited versioned server flow. Next task: PAGE-M-010.
+
 - 2026-08-08 Asia/Shanghai — PAGE-M-008 PASS at `f432578`: organization/employee management now exposes tenant-scoped organization membership, invitations and persistent handoff risk while reusing audited CORE-002 writes. Next task: PAGE-M-009.
 
 - 2026-08-08 Asia/Shanghai — PAGE-M-007 PASS at `ea6ec93`: store management compares persisted status, manager, configured entries, active services, consumer entry opens and organization work signals. Manager assignment is audited, evented and version-protected. Next task: PAGE-M-008.

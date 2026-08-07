@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## 2026-08-08 — PAGE-M-009 PASS
+
+- Delivered `/m/roles-permissions` with tenant-scoped role templates, effective permission ranges, affected-member counts and high-risk confirmation guidance.
+- Permission changes retain CORE-003's server-side reason, confirmation, version and audit safeguards.
+
 ## 2026-08-08 — PAGE-M-008 PASS
 
 - Delivered `/m/organization-employees` with a tenant-scoped organization tree, employee status, invitations and visible task/customer handoff risk.

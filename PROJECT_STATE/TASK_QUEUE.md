@@ -19,7 +19,8 @@
 - [x] PAGE-M-006 PASS — AI suggestion center verified.
 - [x] PAGE-M-007 PASS — store management verified.
 - [x] PAGE-M-008 PASS — organization and employees verified.
-- [ ] PAGE-M-009 NEXT — roles and permissions.
+- [x] PAGE-M-009 PASS — roles and permissions verified.
+- [ ] PAGE-M-010 NEXT — permission audit.
 
 ## Current page status
 

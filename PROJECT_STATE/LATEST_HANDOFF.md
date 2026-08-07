@@ -1,5 +1,10 @@
 # LATEST_HANDOFF
 
+## PAGE-M-009 completed
+
+- `PAGE-M-009` is PASS at `aea0630`: `/m/roles-permissions` exposes tenant-scoped roles, effective permissions and membership impact. Its update UI supplies a reason and high-risk confirmation while CORE-003 enforces final confirmation, optimistic versioning and audit records.
+- Verification passed: `tests/page-m-009-api.test.mjs`; `playwright.page-m-009.config.ts` (two 1440px flows); lint, format, 17-package typecheck/build, Vitest, repository test, migration/seed and evidence checks. Evidence: `evidence/PAGE-M-009/ACCEPTANCE.md`. Next task: `PAGE-M-010` permission audit.
+
 ## PAGE-M-008 completed
 
 - `PAGE-M-008` is PASS at `f432578`: `/m/organization-employees` combines tenant-scoped organizations, employee status, pending invitations and visible task/customer handoff risk. Existing CORE-002 invitation and offboarding writes remain audited and evented.
