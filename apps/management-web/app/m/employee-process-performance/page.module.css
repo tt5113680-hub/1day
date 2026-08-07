@@ -1,0 +1,112 @@
+.page {
+  max-width: 1440px;
+  min-height: 100vh;
+  margin: auto;
+  padding: 42px 48px;
+  background: #f6f8fb;
+  color: #111827;
+}
+.page header {
+  display: flex;
+  justify-content: space-between;
+  gap: 24px;
+}
+.page header p {
+  margin: 0;
+  color: #2563eb;
+  font-size: 13px;
+  font-weight: 800;
+}
+.page h1 {
+  margin: 8px 0;
+  font-size: 34px;
+}
+.page header span,
+.rows span,
+.rows p {
+  color: #4b5563;
+}
+.page button {
+  height: fit-content;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  background: #fff;
+  padding: 10px 14px;
+  font: inherit;
+  font-weight: 700;
+}
+.panel {
+  margin-top: 28px;
+  padding: 22px;
+  border: 1px solid #e5e7eb;
+  border-radius: 16px;
+  background: #fff;
+  box-shadow: 0 5px 16px #11182708;
+}
+.panel h2 {
+  margin-top: 0;
+}
+.rows {
+  border-top: 1px solid #e5e7eb;
+}
+.rows article {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  gap: 24px;
+  padding: 18px 0;
+  border-bottom: 1px solid #e5e7eb;
+}
+.rows article > div {
+  display: grid;
+  gap: 6px;
+}
+.rows p {
+  margin: 0;
+}
+.rows dl {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 14px;
+  margin: 0;
+}
+.rows dt {
+  color: #64748b;
+  font-size: 12px;
+}
+.rows dd {
+  margin: 4px 0;
+  font-size: 20px;
+  font-weight: 800;
+}
+.rows em {
+  color: #b45309;
+  font-style: normal;
+}
+.empty {
+  padding: 32px;
+  background: #f8fafc;
+  color: #475569;
+  text-align: center;
+}
+.centered {
+  display: grid;
+  min-height: 70vh;
+  place-items: center;
+  text-align: center;
+}
+.centered section {
+  padding: 32px;
+  border-radius: 16px;
+  background: #fff;
+}
+@media (max-width: 900px) {
+  .page {
+    padding: 28px 18px;
+  }
+  .page header,
+  .rows article,
+  .rows dl {
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+}
