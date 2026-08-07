@@ -1,0 +1,147 @@
+.page {
+  max-width: 1440px;
+  min-height: 100vh;
+  margin: auto;
+  padding: 42px 48px;
+  background: #f7f9fc;
+  color: #14213d;
+}
+.page header {
+  display: flex;
+  justify-content: space-between;
+  gap: 24px;
+}
+.page header p {
+  margin: 0;
+  color: #2563eb;
+  font-weight: 800;
+  font-size: 13px;
+}
+.page h1 {
+  margin: 8px 0;
+  font-size: 34px;
+}
+.page header span,
+.card p,
+.page small {
+  color: #64748b;
+}
+.page button {
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  background: #fff;
+  padding: 10px 14px;
+  font: inherit;
+  font-weight: 700;
+}
+.page button:disabled {
+  opacity: 0.5;
+}
+.notice {
+  padding: 12px;
+  border-radius: 10px;
+  background: #eff6ff;
+  color: #1e40af;
+}
+.grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  margin-top: 28px;
+}
+.card,
+.empty {
+  border: 1px solid #e2e8f0;
+  border-radius: 14px;
+  background: #fff;
+  box-shadow: 0 8px 24px #1e293b0a;
+  padding: 20px;
+}
+.top,
+.card footer {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  align-items: center;
+}
+.top span {
+  padding: 3px 8px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+}
+.pending {
+  background: #dbeafe;
+  color: #1d4ed8;
+}
+.accepted {
+  background: #dcfce7;
+  color: #166534;
+}
+.card h2 {
+  font-size: 20px;
+}
+.card dl {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  border-top: 1px solid #e2e8f0;
+  padding-top: 12px;
+}
+.card dt {
+  color: #64748b;
+  font-size: 12px;
+}
+.card dd {
+  margin: 4px 0;
+}
+.feedback {
+  background: #f8fafc;
+  padding: 8px;
+}
+.feedbackForm {
+  display: grid;
+  gap: 6px;
+  margin-top: 14px;
+}
+.feedbackForm label {
+  font-size: 13px;
+  font-weight: 700;
+}
+.feedbackForm input {
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  padding: 9px;
+  font: inherit;
+}
+.feedbackForm .fieldError {
+  margin: 0;
+  color: #b91c1c;
+  font-size: 13px;
+}
+.empty {
+  grid-column: 1/-1;
+  text-align: center;
+}
+.centered {
+  display: grid;
+  min-height: 70vh;
+  place-items: center;
+  text-align: center;
+}
+.centered section {
+  padding: 32px;
+  background: #fff;
+  border-radius: 16px;
+}
+@media (max-width: 900px) {
+  .grid {
+    grid-template-columns: 1fr;
+  }
+  .page {
+    padding: 28px 18px;
+  }
+  .page header {
+    flex-direction: column;
+  }
+}

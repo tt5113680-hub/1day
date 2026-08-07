@@ -1023,6 +1023,25 @@ export interface CustomerExportRequestsTable {
   version: Generated<number>;
 }
 
+export interface AiSuggestionsTable {
+  id: string;
+  tenant_id: string;
+  title: string;
+  reason: string;
+  impact: string;
+  action_type: string;
+  action_payload: Record<string, unknown>;
+  model_name: string;
+  model_version: string;
+  status: string;
+  feedback: string | null;
+  accepted_by: string | null;
+  accepted_at: Timestamp | null;
+  created_at: Timestamp;
+  updated_at: Timestamp;
+  version: number;
+}
+
 export interface Database {
   tenants: TenantsTable;
   users: UsersTable;
@@ -1089,4 +1108,5 @@ export interface Database {
   store_content_items: StoreContentItemsTable;
   consumer_action_events: ConsumerActionEventsTable;
   customer_export_requests: CustomerExportRequestsTable;
+  ai_suggestions: AiSuggestionsTable;
 }

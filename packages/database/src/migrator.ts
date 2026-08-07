@@ -27,6 +27,7 @@ import * as employeeLeadPool from './migrations/025_employee_lead_pool.js';
 import * as employeeNurture from './migrations/026_employee_nurture.js';
 import * as employeeNotifications from './migrations/027_employee_notifications.js';
 import * as customerExportRequests from './migrations/028_customer_export_requests.js';
+import * as aiSuggestions from './migrations/029_ai_suggestions.js';
 import type { Database } from './types.js';
 
 const migrationProvider: MigrationProvider = {
@@ -60,6 +61,7 @@ const migrationProvider: MigrationProvider = {
       '026_employee_nurture': employeeNurture,
       '027_employee_notifications': employeeNotifications,
       '028_customer_export_requests': customerExportRequests,
+      '029_ai_suggestions': aiSuggestions,
     };
   },
 };
