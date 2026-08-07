@@ -146,19 +146,23 @@ export class ChannelMerchantOnboardingService implements OnModuleDestroy {
         "insert into roles(id,tenant_id,code,name,created_by,updated_by) values($1,$2,'tenant_admin','Tenant Administrator',$3,$3)",
         [roleId, tenantId, context.userId],
       );
-      const permission = (
+      const permissions = (
         await client.query(
-          "select id from permissions where code='tenant.manage' and status='active'",
+          "select id,code from permissions where code=any($1::varchar[]) and status='active'",
+          [['tenant.manage', 'employee.manage']],
         )
-      ).rows[0];
+      ).rows;
+      if (permissions.length !== 2) throw new BadRequestException('PERMISSION_NOT_AVAILABLE');
       await client.query(
         'insert into membership_roles(id,tenant_id,membership_id,role_id) values($1,$2,$3,$4)',
         [randomUUID(), tenantId, membershipId, roleId],
       );
-      await client.query(
-        'insert into role_permissions(id,tenant_id,role_id,permission_id,created_by,updated_by) values($1,$2,$3,$4,$5,$5)',
-        [randomUUID(), tenantId, roleId, permission.id, context.userId],
-      );
+      for (const permission of permissions) {
+        await client.query(
+          'insert into role_permissions(id,tenant_id,role_id,permission_id,created_by,updated_by) values($1,$2,$3,$4,$5,$5)',
+          [randomUUID(), tenantId, roleId, permission.id, context.userId],
+        );
+      }
       await client.query(
         "insert into page_templates(id,tenant_id,code,name,target,created_by,updated_by) values($1,$2,'consumer-starter',$3,'consumer',$4,$4)",
         [templateId, tenantId, `${input.tenantName} ${input.template}`, context.userId],

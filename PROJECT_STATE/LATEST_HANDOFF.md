@@ -6,7 +6,6 @@
 - Verification passed: lint, format, 17-package typecheck, Vitest, serialized repository HTTP suite (151 tests), full build, migration/seed, evidence contract and diff checks. Evidence: `evidence/HARDENING-001/ACCEPTANCE.md`.
 - Next task: `HARDENING-002` commercial MVP end-to-end acceptance.
 
-
 ## Channel / business-circle phase accepted
 
 - `evidence/CHANNEL-PHASE/ACCEPTANCE.md` records automatic acceptance for CHANNEL-001, CHANNEL-002, CIRCLE-001 and CIRCLE-002. All applicable repository gates, persistence checks and browser evidence passed.
