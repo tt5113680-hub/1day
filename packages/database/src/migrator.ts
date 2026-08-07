@@ -25,6 +25,7 @@ import * as taskFollowUps from './migrations/023_task_follow_ups.js';
 import * as employeeShareCodes from './migrations/024_employee_share_codes.js';
 import * as employeeLeadPool from './migrations/025_employee_lead_pool.js';
 import * as employeeNurture from './migrations/026_employee_nurture.js';
+import * as employeeNotifications from './migrations/027_employee_notifications.js';
 import type { Database } from './types.js';
 
 const migrationProvider: MigrationProvider = {
@@ -56,6 +57,7 @@ const migrationProvider: MigrationProvider = {
       '024_employee_share_codes': employeeShareCodes,
       '025_employee_lead_pool': employeeLeadPool,
       '026_employee_nurture': employeeNurture,
+      '027_employee_notifications': employeeNotifications,
     };
   },
 };
