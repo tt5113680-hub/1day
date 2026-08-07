@@ -64,6 +64,8 @@ import { ManagementCustomerAssetsController } from './management-customer-assets
 import { ManagementCustomerAssetsService } from './management-customer-assets.service';
 import { ManagementAiSuggestionController } from './management-ai-suggestion.controller';
 import { ManagementAiSuggestionService } from './management-ai-suggestion.service';
+import { ManagementStoreController } from './management-store.controller';
+import { ManagementStoreService } from './management-store.service';
 
 @Module({
   controllers: [
@@ -101,6 +103,7 @@ import { ManagementAiSuggestionService } from './management-ai-suggestion.servic
     ManagementFunnelController,
     ManagementCustomerAssetsController,
     ManagementAiSuggestionController,
+    ManagementStoreController,
   ],
   providers: [
     AuthService,
@@ -135,6 +138,7 @@ import { ManagementAiSuggestionService } from './management-ai-suggestion.servic
     ManagementFunnelService,
     ManagementCustomerAssetsService,
     ManagementAiSuggestionService,
+    ManagementStoreService,
   ],
 })
 export class AppModule {}

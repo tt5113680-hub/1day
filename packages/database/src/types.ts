@@ -1042,6 +1042,20 @@ export interface AiSuggestionsTable {
   version: number;
 }
 
+export interface StoreManagersTable {
+  id: string;
+  tenant_id: string;
+  store_id: string;
+  employee_id: string;
+  status: string;
+  created_at: Timestamp;
+  created_by: string | null;
+  updated_at: Timestamp;
+  updated_by: string | null;
+  deleted_at: Timestamp | null;
+  version: Generated<number>;
+}
+
 export interface Database {
   tenants: TenantsTable;
   users: UsersTable;
@@ -1109,4 +1123,5 @@ export interface Database {
   consumer_action_events: ConsumerActionEventsTable;
   customer_export_requests: CustomerExportRequestsTable;
   ai_suggestions: AiSuggestionsTable;
+  store_managers: StoreManagersTable;
 }

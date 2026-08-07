@@ -1,0 +1,135 @@
+.page {
+  max-width: 1440px;
+  min-height: 100vh;
+  margin: auto;
+  padding: 42px 48px;
+  background: #f7f9fc;
+  color: #14213d;
+}
+.page header,
+.head {
+  display: flex;
+  justify-content: space-between;
+  gap: 24px;
+}
+.page header p {
+  margin: 0;
+  color: #2563eb;
+  font-size: 13px;
+  font-weight: 800;
+}
+.page h1 {
+  margin: 8px 0;
+  font-size: 34px;
+}
+.page header span,
+.card p {
+  color: #64748b;
+}
+.page button {
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  background: #fff;
+  padding: 10px 14px;
+  font: inherit;
+  font-weight: 700;
+}
+.notice {
+  padding: 12px;
+  border-radius: 10px;
+  background: #eff6ff;
+  color: #1e40af;
+}
+.list {
+  display: grid;
+  gap: 16px;
+  margin-top: 28px;
+}
+.card,
+.empty {
+  padding: 22px;
+  border: 1px solid #e2e8f0;
+  border-radius: 14px;
+  background: #fff;
+  box-shadow: 0 8px 24px #1e293b0a;
+}
+.head h2 {
+  margin: 10px 0 4px;
+}
+.head strong {
+  font-size: 30px;
+}
+.head small {
+  display: block;
+  color: #64748b;
+  font-size: 12px;
+  font-weight: 500;
+}
+.head span {
+  padding: 4px 8px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+}
+.active {
+  background: #dcfce7;
+  color: #166534;
+}
+.inactive {
+  background: #f1f5f9;
+  color: #475569;
+}
+.card dl {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+  border-top: 1px solid #e2e8f0;
+  padding-top: 14px;
+}
+.card dt {
+  font-size: 12px;
+  color: #64748b;
+}
+.card dd {
+  margin: 5px 0;
+  font-weight: 700;
+}
+.assign {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 12px;
+}
+.assign select {
+  min-width: 220px;
+  padding: 9px;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+}
+.empty {
+  text-align: center;
+}
+.centered {
+  display: grid;
+  min-height: 70vh;
+  place-items: center;
+  text-align: center;
+}
+.centered section {
+  padding: 32px;
+  border-radius: 16px;
+  background: #fff;
+}
+@media (max-width: 900px) {
+  .page {
+    padding: 28px 18px;
+  }
+  .page header,
+  .head,
+  .assign {
+    flex-direction: column;
+  }
+  .card dl {
+    grid-template-columns: 1fr 1fr;
+  }
+}
