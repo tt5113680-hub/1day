@@ -1,5 +1,10 @@
 # LATEST_HANDOFF
 
+## PAGE-M-002 completed
+
+- `PAGE-M-002` is PASS at `d6689ca`: `/m/funnels/[id]` presents tenant-scoped source, lead, follow-up, deal and repurchase cohort outcomes. The current schema cannot verify source-to-visit links, so visit is visibly classified as inferred and excluded from conversion rates rather than fabricated.
+- Verification passed: `tests/page-m-002-api.test.mjs` against a spawned production API/PostgreSQL; `playwright.page-m-002.config.ts` (two 1440px browser flows, screenshots and traces); lint, format, 17-package typecheck/build, Vitest, `test` (93), migration/seed and evidence checks. Evidence: `evidence/PAGE-M-002/ACCEPTANCE.md`. Next task: `PAGE-M-003` customer assets.
+
 ## PAGE-M-001 completed
 
 - `PAGE-M-001` is PASS at `0264231`: `/m/dashboard` presents tenant-scoped customer, order and task results, current overdue/pending-ownership exceptions and rule-based explainable suggestions with action links. The read endpoint requires `tenant.manage`, and all displayed signals trace to persisted records.

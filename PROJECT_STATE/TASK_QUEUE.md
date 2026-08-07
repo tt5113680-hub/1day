@@ -12,7 +12,8 @@
 - [x] PAGE-E-008 PASS — employee notifications verified.
 - [x] PAGE-E-009 PASS — employee profile and tools verified.
 - [x] PAGE-M-001 PASS — management overview verified.
-- [ ] PAGE-M-002 NEXT — management funnel.
+- [x] PAGE-M-002 PASS — management funnel verified.
+- [ ] PAGE-M-003 NEXT — customer assets.
 
 ## Current page status
 

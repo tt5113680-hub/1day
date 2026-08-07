@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## 2026-08-08 — PAGE-M-002 PASS
+
+- Delivered `/m/funnels/[id]` with tenant-scoped source, lead, follow-up, deal and repurchase outcomes, plus an explicit unconfirmed visit stage.
+- The funnel keeps confirmed PostgreSQL outcomes separate from unavailable customer-to-visit inference so conversion rates never overstate evidence.
+- Verified through production HTTP/PostgreSQL, two 1440px browser flows, 93 repository tests and all quality gates.
+
 ## 2026-08-08 — PAGE-M-001 PASS
 
 - Delivered `/m/dashboard` with tenant-bound customer, order and task operating metrics, persisted overdue-task and ownership-approval exceptions, and explainable action-first recommendations.
