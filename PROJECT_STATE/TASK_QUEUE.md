@@ -1,5 +1,10 @@
 # TASK_QUEUE
 
+## Final commercial acceptance status (final)
+
+- [x] FINAL COMMERCIAL ACCEPTANCE PASS - all 69 indexed tasks, fresh-database release rehearsal, live readiness/recovery, browser acceptance, and repository quality gates verified.
+- [ ] HUMAN PILOT HANDOFF - operator must provision live credentials/authorizations and sign the controlled-pilot checklist before customer enablement.
+
 ## Final commercial acceptance status (latest)
 
 - [x] HARDENING-005 PASS - controlled pilot deployment, administrator, limitation and acceptance package verified.

@@ -1,5 +1,10 @@
 # LATEST_HANDOFF
 
+## FINAL COMMERCIAL MVP automated acceptance completed
+
+- All 69 indexed tasks are PASS. `FINAL_ACCEPTANCE_REPORT.md` records the successful fresh-database release rehearsal, live readiness/connector recovery, browser terminal acceptance, full repository quality gates, and the final seed-order remediation.
+- The repository is ready for controlled pilot handoff. Remaining work is human/operator-only: create unique pilot credentials, configure real approved secrets and external authorization, and sign `docs/PILOT_ACCEPTANCE_CHECKLIST.md` before enabling a customer.
+
 ## HARDENING-005 completed
 
 - `HARDENING-005` is PASS at `412600f`: the repository now contains a controlled pilot deployment guide, administrator guide, explicit MVP limitations, and an evidence-led customer handoff checklist.

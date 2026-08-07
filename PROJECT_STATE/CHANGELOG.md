@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## 2026-08-08 FINAL COMMERCIAL MVP AUTOMATED ACCEPTANCE PASS
+
+- Completed all 69 indexed tasks and recorded final controlled-pilot acceptance, including fresh-database migration/seed/rollback/repair rehearsal, live readiness/connector recovery, and browser terminal acceptance.
+- Remediated fresh-database foundation seed ordering and a transient consumer browser-test selector race; both have regression coverage.
+
 ## 2026-08-08 HARDENING-005 PASS
 
 - Added a controlled pilot delivery package covering deployment, administrator operations, deterministic-demo-account isolation, product limitations, and an evidence-led handoff checklist.
