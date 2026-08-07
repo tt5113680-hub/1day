@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## 2026-08-08 — CHANNEL-001 PASS
+
+- Delivered `/ch/dashboard` with persisted first-level channel merchant assignments, onboarding status, 30-day activity and evidence-based renewal opportunity signals.
+- Renewal signals are limited to inactive-30-day or existing high-risk evidence; no subscription expiry is fabricated.
+
 ## 2026-08-08 — PAGE-P-008 PASS
 
 - Delivered `/p/security-audit` with platform-authorized risk signals, reviewable privilege and connector events, and persistent risk disposition.

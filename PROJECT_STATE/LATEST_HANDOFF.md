@@ -1,5 +1,10 @@
 # LATEST_HANDOFF
 
+## CHANNEL-001 completed
+
+- `CHANNEL-001` is PASS at `bf19dee`: `/ch/dashboard` projects system-tenant first-level channel merchant assignments, persisted onboarding/service state, actual 30-day task/order activity and carefully labelled follow-up signals.
+- Verification passed: `tests/channel-001-api.test.mjs`; `playwright.channel-001.config.ts` (two browser flows); lint, format, typecheck, unit test, serialized repository test suite (140 tests), build, migration/seed and evidence checks. Evidence: `evidence/CHANNEL-001/ACCEPTANCE.md`. Next task: `CHANNEL-002` channel merchant onboarding.
+
 ## PAGE-P-008 completed
 
 - `PAGE-P-008` is PASS at `eac941b`: `/p/security-audit` locates persisted platform risk signals for degraded connectors, privileged changes and authorization anomalies. It supports idempotent, versioned dispositions while retaining audit and correlated Outbox evidence.

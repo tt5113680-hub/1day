@@ -1,5 +1,10 @@
 # TASK_QUEUE
 
+## Current task status (latest — CHANNEL-001 passed)
+
+- [x] CHANNEL-001 PASS — channel operations console verified.
+- [ ] CHANNEL-002 NEXT — channel merchant onboarding.
+
 ## Current task status (latest — PAGE-P-008 passed)
 
 - [x] PAGE-P-008 PASS — platform security audit verified.
