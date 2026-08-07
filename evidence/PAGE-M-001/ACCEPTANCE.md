@@ -1,0 +1,8 @@
+# PAGE-M-001 Acceptance Evidence
+
+- Delivered `/m/dashboard` as a 1440px management operating overview. It combines tenant-scoped customer assets, 30-day orders, completed tasks and open-task metrics with current overdue-task and pending-ownership-approval exceptions.
+- Traceability: each metric is calculated by a tenant-bound PostgreSQL query against `customers`, `customer_orders` or `tasks`. Each exception retains its persisted record ID and a safe internal detail/action link; suggestions state their rule-derived reason and direct the manager to the corresponding action context.
+- Authorization: `GET /api/v1/management/dashboard` requires a server-side `tenant.manage` grant resolved through `AuthorizationService` and rejects missing request IDs, unauthenticated calls and a tenant-context mismatch before any data is read.
+- HTTP: `node --test tests/page-m-001-api.test.mjs` starts the built production API against PostgreSQL. It covers unauthenticated rejection, cross-tenant rejection, tenant-bound metric aggregation, persisted overdue-task detail traceability and explainable suggested action output.
+- Browser: `pnpm.cmd exec playwright test --config playwright.page-m-001.config.ts` passes two 1440px flows: authorized real dashboard rendering and no-session recovery. Screenshots: `management-dashboard-desktop.png` and `management-dashboard-forbidden.png`; Playwright traces and error-context output are retained under `playwright-output/`.
+- Visual review: the desktop layout gives primary operating metrics a single-row hierarchy, separates exceptions from recommended actions and keeps refresh/action affordances visible without horizontal scrolling.

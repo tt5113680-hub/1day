@@ -1,0 +1,147 @@
+:global(body) {
+  margin: 0;
+  background: #f6f8fb;
+  color: #111827;
+  font-family: Arial, 'Microsoft YaHei', sans-serif;
+}
+.page {
+  max-width: 1440px;
+  margin: auto;
+  padding: 40px 48px;
+}
+.page header {
+  display: flex;
+  justify-content: space-between;
+  gap: 24px;
+  align-items: start;
+}
+.page header p {
+  margin: 0;
+  color: #2563eb;
+  font-size: 13px;
+  font-weight: 700;
+}
+.page h1 {
+  margin: 8px 0;
+  font-size: 36px;
+}
+.page header span,
+.panel p,
+.metrics small {
+  color: #4b5563;
+}
+.page button {
+  padding: 11px 16px;
+  border: 0;
+  border-radius: 8px;
+  background: #2563eb;
+  color: #fff;
+  font-weight: 700;
+}
+.metrics {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  margin-top: 32px;
+}
+.metrics article,
+.panel {
+  padding: 20px;
+  border: 1px solid #e5e7eb;
+  border-radius: 16px;
+  background: #fff;
+  box-shadow: 0 5px 16px #11182708;
+}
+.metrics span,
+.metrics small {
+  display: block;
+}
+.metrics strong {
+  display: block;
+  margin: 8px 0;
+  font-size: 32px;
+}
+.grid {
+  display: grid;
+  grid-template-columns: 1.2fr 0.8fr;
+  gap: 16px;
+  margin-top: 16px;
+}
+.head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.head h2 {
+  margin: 0;
+  font-size: 20px;
+}
+.anomaly {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 16px 0;
+  border-bottom: 1px solid #e5e7eb;
+  color: inherit;
+}
+.anomaly strong {
+  color: #dc2626;
+}
+.anomaly p,
+.ai p {
+  margin: 6px 0;
+}
+.anomaly time {
+  color: #4b5563;
+  font-size: 13px;
+}
+.ai {
+  margin-top: 12px;
+  padding: 16px;
+  border-radius: 12px;
+  background: #f3e8ff;
+}
+.ai strong {
+  color: #5b21b6;
+}
+.ai a {
+  color: #6d28d9;
+  font-weight: 700;
+}
+.empty {
+  padding: 32px 0;
+  color: #4b5563;
+}
+.centered {
+  display: grid;
+  min-height: 70vh;
+  place-items: center;
+  padding: 24px;
+  text-align: center;
+}
+.centered section {
+  padding: 32px;
+  border-radius: 16px;
+  background: #fff;
+}
+@media (max-width: 900px) {
+  .page {
+    padding: 28px 20px;
+  }
+  .metrics,
+  .grid {
+    grid-template-columns: 1fr 1fr;
+  }
+  .page header {
+    flex-direction: column;
+  }
+}
+@media (max-width: 580px) {
+  .metrics,
+  .grid {
+    grid-template-columns: 1fr;
+  }
+  .page h1 {
+    font-size: 28px;
+  }
+}
