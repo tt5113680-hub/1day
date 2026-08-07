@@ -1,5 +1,10 @@
 # TASK_QUEUE
 
+## Audit hardening status (latest)
+
+- [x] H-001 PASS - API startup fails closed without a safe authentication signing secret.
+- [ ] H-002 NEXT - add real login, refresh, and logout journeys to all four web terminals.
+
 ## Final commercial acceptance status (final)
 
 - [x] FINAL COMMERCIAL ACCEPTANCE PASS - all 69 indexed tasks, fresh-database release rehearsal, live readiness/recovery, browser acceptance, and repository quality gates verified.

@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 2026-08-08 H-001 PASS
+
+- Closed pre-release P0-1 by removing the API authentication-secret fallback and making missing/unsafe production configuration fail closed.
+
 ## 2026-08-08 FINAL COMMERCIAL MVP AUTOMATED ACCEPTANCE PASS
 
 - Completed all 69 indexed tasks and recorded final controlled-pilot acceptance, including fresh-database migration/seed/rollback/repair rehearsal, live readiness/connector recovery, and browser terminal acceptance.

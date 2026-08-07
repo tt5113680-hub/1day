@@ -1,5 +1,11 @@
 # LATEST_HANDOFF
 
+## H-001 completed
+
+- Removed the token-signing default fallback. API startup now rejects a missing or retired-default `AUTH_TOKEN_SECRET`, and requires 32+ characters in production.
+- Compose requires an explicitly supplied secret; deployment guidance and process-level startup tests cover the fail-closed contract. Evidence: `evidence/H-001/ACCEPTANCE.md`.
+- Next task: H-002 real four-terminal login, refresh, and logout journey.
+
 ## FINAL COMMERCIAL MVP automated acceptance completed
 
 - All 69 indexed tasks are PASS. `FINAL_ACCEPTANCE_REPORT.md` records the successful fresh-database release rehearsal, live readiness/connector recovery, browser terminal acceptance, full repository quality gates, and the final seed-order remediation.
