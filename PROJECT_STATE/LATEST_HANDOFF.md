@@ -1,5 +1,10 @@
 # LATEST_HANDOFF
 
+## PAGE-M-005 completed
+
+- `PAGE-M-005` is PASS at `b823034`: `/m/workflows` reads persisted CORE-010 templates, instances, active owners, approval steps and timeout exceptions through a `tenant.manage`-protected, tenant-scoped management projection.
+- Verification passed: `tests/page-m-005-api.test.mjs`; `playwright.page-m-005.config.ts` (two 1440px flows); lint, format, typecheck, Vitest, repository test/build, migration/seed and evidence checks. Evidence: `evidence/PAGE-M-005/ACCEPTANCE.md`. Next task: `PAGE-M-006` AI suggestion center.
+
 ## PAGE-M-004 completed
 
 - `PAGE-M-004` is PASS at `7356225`: `/m/customers/[id]` gives a `tenant.manage` user a tenant-scoped, masked customer full-chain view. It combines persisted sources, contributions, ownerships/transfers, orders/evidence receipts, tasks, actionable anomalies and audit-derived history without disclosing identity hashes.

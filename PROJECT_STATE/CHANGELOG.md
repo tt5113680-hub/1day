@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## 2026-08-08 — PAGE-M-005 PASS
+
+- Delivered `/m/workflows` with tenant-scoped workflow templates, instances, responsibility, approval and timeout views.
+- Verified through production HTTP/PostgreSQL, two 1440px browser flows and all quality gates.
+
 ## 2026-08-08 — PAGE-M-004 PASS
 
 - Delivered `/m/customers/[id]` with tenant-scoped customer-chain, approval, ownership, anomaly, order-evidence and audit-timeline views.
