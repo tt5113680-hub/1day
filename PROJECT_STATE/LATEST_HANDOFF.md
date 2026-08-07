@@ -1,5 +1,10 @@
 # LATEST_HANDOFF
 
+## PAGE-P-004 completed
+
+- `PAGE-P-004` is PASS at `1a4365b`: `/p/channels` manages first-level channels and tenant merchant-pool onboarding/service state with `platform.manage` authority.
+- Verification passed: `tests/page-p-004-api.test.mjs`; `playwright.page-p-004.config.ts` (two browser flows); lint, format, typecheck, unit test, serialized repository test suite (131 tests), build, migration/seed and evidence checks. Evidence: `evidence/PAGE-P-004/ACCEPTANCE.md`. Next task: `PAGE-P-005` business-circle management.
+
 ## PAGE-P-003 completed
 
 - `PAGE-P-003` is PASS at `652efe1`: `/p/tenants/new` atomically provisions the tenant subject, organization, merchant, first store, administrator access and initial consumer template through `platform.manage` authority.

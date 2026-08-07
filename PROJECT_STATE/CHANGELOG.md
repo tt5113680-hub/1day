@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## 2026-08-08 — PAGE-P-004 PASS
+
+- Delivered `/p/channels` with persisted first-level channels, tenant merchant pool, onboarding progress and service status.
+- Channel creation requires platform authority and records idempotency, audit and correlated Outbox evidence.
+
 ## 2026-08-08 — PAGE-P-003 PASS
 
 - Delivered `/p/tenants/new` with transactional tenant, organization, store, administrator/RBAC and starter-template provisioning.

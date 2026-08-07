@@ -2,6 +2,11 @@
 
 ## Current task status (latest)
 
+- [x] PAGE-P-004 PASS — channel management verified.
+- [ ] PAGE-P-005 NEXT — business-circle management.
+
+## Current task status (latest)
+
 - [x] PAGE-P-003 PASS — tenant onboarding verified.
 - [ ] PAGE-P-004 NEXT — channel management.
 
