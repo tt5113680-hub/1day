@@ -90,7 +90,10 @@ test('circle dashboard projects only approved fixed-circle merchant data', async
     assert.equal(circle.merchants[0].merchantTenantId, merchant.id);
     assert.deepEqual(circle.merchants[0].benefits, ['Fixed benefit']);
     assert.equal(typeof circle.merchants[0].trafficEvents, 'number');
-    assert.equal(circle.merchants.some((item) => item.merchantTenantId === pendingMerchantId), false);
+    assert.equal(
+      circle.merchants.some((item) => item.merchantTenantId === pendingMerchantId),
+      false,
+    );
   } finally {
     await client.end();
   }

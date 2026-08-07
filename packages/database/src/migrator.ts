@@ -39,6 +39,7 @@ import * as platformTemplateIndustries from './migrations/037_platform_template_
 import * as platformConnectors from './migrations/038_platform_connectors.js';
 import * as platformSecurityReviews from './migrations/039_platform_security_reviews.js';
 import * as channelMerchantOnboardings from './migrations/040_channel_merchant_onboardings.js';
+import * as circleMerchantManagement from './migrations/041_circle_merchant_management.js';
 import type { Database } from './types.js';
 
 const migrationProvider: MigrationProvider = {
@@ -84,6 +85,7 @@ const migrationProvider: MigrationProvider = {
       '038_platform_connectors': platformConnectors,
       '039_platform_security_reviews': platformSecurityReviews,
       '040_channel_merchant_onboardings': channelMerchantOnboardings,
+      '041_circle_merchant_management': circleMerchantManagement,
     };
   },
 };

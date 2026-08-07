@@ -22,9 +22,9 @@ export class CircleDashboardService implements OnModuleDestroy {
             'contentCount',(select count(*)::int from content_items i where i.tenant_id=m.merchant_tenant_id and i.status='approved' and i.deleted_at is null),
             'trafficEvents',(select count(*)::int from consumer_action_events e where e.tenant_id=m.merchant_tenant_id and e.deleted_at is null),
             'conversionOrders',(select count(*)::int from customer_orders o where o.tenant_id=m.merchant_tenant_id and o.status='active' and o.deleted_at is null)
-          ) order by t.name) filter(where m.id is not null),'[]') merchants
+          ) order by coalesce((m.display_config->>'sortOrder')::int,0),t.name) filter(where m.id is not null),'[]') merchants
          from platform_business_circles c
-         left join platform_business_circle_merchants m on m.circle_id=c.id and m.tenant_id=c.tenant_id and m.approval_status='approved' and m.deleted_at is null
+         left join platform_business_circle_merchants m on m.circle_id=c.id and m.tenant_id=c.tenant_id and m.approval_status='approved' and coalesce((m.display_config->>'visible')::boolean,true) and m.deleted_at is null
          left join tenants t on t.id=m.merchant_tenant_id and t.deleted_at is null
          where c.tenant_id=$1 and c.deleted_at is null group by c.id order by c.created_at desc`,
         [platformTenantId],
