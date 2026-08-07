@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## 2026-08-08 — CIRCLE-002 PASS
+
+- Delivered `/bc/merchants` with prepared-only invitations, distinct circle and platform approvals, versioned display configuration and auditable exit.
+- Approved merchant projections now honor display visibility and sort configuration in the fixed-circle dashboard.
+
 ## 2026-08-08 — CIRCLE-001 PASS
 
 - Delivered `/bc/dashboard` with fixed-circle merchant benefits plus aggregate content, traffic and conversion projections.

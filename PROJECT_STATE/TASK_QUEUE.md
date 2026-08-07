@@ -1,5 +1,10 @@
 # TASK_QUEUE
 
+## Channel phase status (latest — acceptance required)
+
+- [x] CIRCLE-002 PASS — business-circle merchant invitation, dual approval, display control and exit verified.
+- [ ] CHANNEL PHASE ACCEPTANCE — review CHANNEL-001, CHANNEL-002, CIRCLE-001 and CIRCLE-002 before HARDENING-001.
+
 ## Current task status (latest — CIRCLE-001 passed)
 
 - [x] CIRCLE-001 PASS — fixed business-circle operations console verified.

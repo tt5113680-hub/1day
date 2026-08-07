@@ -1,5 +1,11 @@
 # LATEST_HANDOFF
 
+## CIRCLE-002 completed / channel phase acceptance required
+
+- `CIRCLE-002` is PASS at `7cc5dbb`: `/bc/merchants` records invitation preparation, circle approval (`circle.manage`), separate platform approval (`platform.manage`), display configuration and exit. External delivery is deliberately not claimed.
+- Verification passed: `tests/circle-002-api.test.mjs` (validation, unauthenticated rejection, idempotency, ordered approvals, display exclusion, exit, audit/Outbox); `playwright.circle-002.config.ts` (desktop and missing-session flows); lint, format, typecheck, unit test, serialized repository suite, build, migration/seed and evidence checks. Evidence: `evidence/CIRCLE-002/ACCEPTANCE.md`.
+- CHANNEL phase is now complete (CHANNEL-001, CHANNEL-002, CIRCLE-001, CIRCLE-002). Pause for stage acceptance before starting `HARDENING-001`.
+
 ## CIRCLE-001 completed
 
 - `CIRCLE-001` is PASS at `d8a7246`: `/bc/dashboard` displays platform-owned fixed business circles, approved merchant benefits and aggregate content, traffic and conversion counts. It neither exposes tenant-private operational records nor admits pending memberships.
