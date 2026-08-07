@@ -9,14 +9,14 @@ This guide is for a controlled first-pilot environment. It is not an instruction
 - Node.js 24 LTS and pnpm 10.
 - Docker Compose for PostgreSQL 18 and Redis 8, or equivalent managed services controlled by the pilot operator.
 - A fresh PostgreSQL database and a least-privilege application database user.
-- Values for `DATABASE_URL`, `REDIS_URL`, `PORT`, and `CORS_ORIGINS`; do not commit real values into this repository.
+- Values for `DATABASE_URL`, `REDIS_URL`, `PORT`, `CORS_ORIGINS`, and a unique `AUTH_TOKEN_SECRET`; do not commit real values into this repository. In production the token secret must be at least 32 characters and may not be the retired development default.
 
 ## Controlled startup
 
 1. Install the locked workspace dependencies with `pnpm.cmd install --frozen-lockfile`.
 2. For local infrastructure, run `docker compose -f infra/docker/compose.yaml up -d postgres redis`.
 3. Set `DATABASE_URL` to the controlled target and run `pnpm.cmd db:migrate`. Run `pnpm.cmd db:seed` only when demonstration data is intentionally required.
-4. Start the API with `pnpm.cmd --filter @oneday/api dev` (or the containerized `api` service). The API listens on `PORT`, default `3001`; its ready endpoint is `GET /api/v1/health`.
+4. Supply `AUTH_TOKEN_SECRET` through the environment/secret store before starting the API. Missing, retired-default, or short production secrets make API startup fail closed. Start the API with `pnpm.cmd --filter @oneday/api dev` (or the containerized `api` service). The API listens on `PORT`, default `3001`; its ready endpoint is `GET /api/v1/health`.
 5. Start only the web terminals and worker that the pilot needs. Configure `CORS_ORIGINS` to the exact pilot web origins; never use a permissive production CORS policy.
 
 ## Release go/no-go

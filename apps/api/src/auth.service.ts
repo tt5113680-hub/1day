@@ -8,14 +8,15 @@ import {
 } from '@oneday/auth';
 import { randomUUID } from 'node:crypto';
 import { Pool } from 'pg';
+import { requireAuthTokenSecret } from './runtime-config';
 
-const secret = process.env.AUTH_TOKEN_SECRET ?? 'development-only-change-me';
 const accessLifetimeMs = 15 * 60 * 1000;
 const refreshLifetimeMs = 30 * 24 * 60 * 60 * 1000;
 
 @Injectable()
 export class AuthService implements OnModuleDestroy {
   private readonly pool = new Pool({ connectionString: process.env.DATABASE_URL });
+  private readonly secret = requireAuthTokenSecret();
 
   async login(email: string, password: string, tenantId: string, deviceName?: string) {
     const user = await this.pool.query(
@@ -57,7 +58,7 @@ export class AuthService implements OnModuleDestroy {
   }
 
   async claims(accessToken: string) {
-    const claims = verifyAccessToken(accessToken, secret);
+    const claims = verifyAccessToken(accessToken, this.secret);
     if (!claims) throw new UnauthorizedException('AUTH_REQUIRED');
     const session = await this.pool.query(
       "select 1 from auth_sessions where id=$1 and user_id=$2 and tenant_id=$3 and status='active' and revoked_at is null and expires_at>now() and deleted_at is null",
@@ -88,7 +89,7 @@ export class AuthService implements OnModuleDestroy {
       ],
     );
     return {
-      accessToken: signAccessToken({ sub: userId, tenantId, sessionId, exp }, secret),
+      accessToken: signAccessToken({ sub: userId, tenantId, sessionId, exp }, this.secret),
       refreshToken,
       expiresAt: exp,
     };
