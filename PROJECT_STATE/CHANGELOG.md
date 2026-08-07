@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## 2026-08-08 — PAGE-P-005 PASS
+
+- Delivered `/p/business-circles` with platform-owned fixed business circles, an explicit merchant recommendation, persisted benefits and a separate approval queue.
+- Nearby merchant discovery remains separate and cannot auto-enroll a merchant; creation and approval use platform RBAC, idempotency, optimistic versioning, audit and correlated Outbox evidence.
+
 ## 2026-08-08 — PAGE-P-004 PASS
 
 - Delivered `/p/channels` with persisted first-level channels, tenant merchant pool, onboarding progress and service status.

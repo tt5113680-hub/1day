@@ -2,6 +2,11 @@
 
 ## Current task status (latest)
 
+- [x] PAGE-P-005 PASS — fixed business-circle management verified.
+- [ ] PAGE-P-006 NEXT — platform template components.
+
+## Current task status (previous)
+
 - [x] PAGE-P-004 PASS — channel management verified.
 - [ ] PAGE-P-005 NEXT — business-circle management.
 

@@ -1,5 +1,10 @@
 # LATEST_HANDOFF
 
+## PAGE-P-005 completed
+
+- `PAGE-P-005` is PASS at `80d0805`: `/p/business-circles` manages platform-owned fixed business circles with explicit merchant recommendations, stored benefits/reasons and versioned approval. Nearby discovery is deliberately separate and cannot auto-enroll a merchant.
+- Verification passed: `tests/page-p-005-api.test.mjs`; `playwright.page-p-005.config.ts` (two browser flows); lint, format, typecheck, unit test, serialized repository test suite (132 tests), build, migration/seed and evidence checks. Evidence: `evidence/PAGE-P-005/ACCEPTANCE.md`. Next task: `PAGE-P-006` platform template components.
+
 ## PAGE-P-004 completed
 
 - `PAGE-P-004` is PASS at `1a4365b`: `/p/channels` manages first-level channels and tenant merchant-pool onboarding/service state with `platform.manage` authority.
