@@ -57,6 +57,8 @@ import { EmployeeProfileController } from './employee-profile.controller';
 import { EmployeeProfileService } from './employee-profile.service';
 import { ManagementDashboardController } from './management-dashboard.controller';
 import { ManagementDashboardService } from './management-dashboard.service';
+import { ManagementFunnelController } from './management-funnel.controller';
+import { ManagementFunnelService } from './management-funnel.service';
 
 @Module({
   controllers: [
@@ -90,6 +92,7 @@ import { ManagementDashboardService } from './management-dashboard.service';
     EmployeeNotificationController,
     EmployeeProfileController,
     ManagementDashboardController,
+    ManagementFunnelController,
   ],
   providers: [
     AuthService,
@@ -121,6 +124,7 @@ import { ManagementDashboardService } from './management-dashboard.service';
     EmployeeNotificationService,
     EmployeeProfileService,
     ManagementDashboardService,
+    ManagementFunnelService,
   ],
 })
 export class AppModule {}
