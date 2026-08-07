@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## 2026-08-08 — PAGE-E-009 PASS
+
+- Delivered `/e/profile` with employee-private personal, organization, store, permission and notification-preference data plus safe common tool links.
+- Added a server-resolved own-preference endpoint so client-supplied employee IDs cannot alter another employee's notification setting; existing version, audit and Outbox safeguards remain enforced.
+- Verified through production HTTP/PostgreSQL, two 390px browser flows, 91 repository tests and all quality gates.
+
 ## 2026-08-08 — PAGE-E-008 PASS
 
 - Delivered `/e/notifications` with employee-private task, anomaly, ownership-approval and system records, category/read filters, safe internal deep links and mobile recovery states.

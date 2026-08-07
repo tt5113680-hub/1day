@@ -1,5 +1,10 @@
 # LATEST_HANDOFF
 
+## PAGE-E-009 completed
+
+- `PAGE-E-009` is PASS at `8335f65`: `/e/profile` provides each active employee's persisted identity, organization, same-organization stores, effective permissions, safe internal tools and notification preference. The profile-specific preference write resolves the employee on the server from the active membership, preventing a caller from changing a peer's setting while retaining CORE-006 version, audit and Outbox semantics.
+- Verification passed: `tests/page-e-009-api.test.mjs` against a spawned production API/PostgreSQL; `playwright.page-e-009.config.ts` (two 390px browser flows, screenshots and traces); lint, format, 17-package typecheck/build, Vitest, `test` (91), migration/seed and evidence checks. Evidence: `evidence/PAGE-E-009/ACCEPTANCE.md`. Next task: `PAGE-M-001` management overview.
+
 ## PAGE-E-008 completed
 
 - `PAGE-E-008` is PASS at `20f92f8`: `/e/notifications` presents each active employee's persisted task reminder, overdue anomaly, pending customer-ownership approval and system notifications, with category/read filters and safe internal deep links. CORE-006 notification logs and pending approvals materialize idempotently into an employee-private inbox; read writes enforce task permission, employee ownership, optimistic version and idempotency, and record audit/Outbox data.
