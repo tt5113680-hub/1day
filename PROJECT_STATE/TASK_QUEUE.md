@@ -2,6 +2,11 @@
 
 ## Current hardening status (latest)
 
+- [x] HARDENING-002 PASS — four commercial MVP HTTP chains and four-terminal browser evidence verified.
+- [ ] HARDENING-003 NEXT — performance and reliability hardening.
+
+## Current hardening status (latest)
+
 - [x] HARDENING-001 PASS — persistent session validation, tenant isolation and private controller authorization contracts verified.
 - [ ] HARDENING-002 NEXT — commercial MVP end-to-end acceptance.
 

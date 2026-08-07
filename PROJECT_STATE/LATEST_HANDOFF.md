@@ -1,5 +1,12 @@
 # LATEST_HANDOFF
 
+## HARDENING-002 completed
+
+- `HARDENING-002` is PASS at `cdbcbae`: four commercial MVP chains are verified through the built API and PostgreSQL, with consumer, employee, management and channel browser screenshots plus a retained trace in `evidence/HARDENING-002/`.
+- Channel merchant onboarding now grants the tenant administrator `tenant.manage` and `employee.manage`, allowing immediate staff invitation while role changes remain confirmation-protected.
+- Verification passed: targeted HTTP chain suite (4 tests), terminal Playwright suite, lint, format, 17-package typecheck, Vitest, serialized repository HTTP suite, full build, migration/seed, evidence check and diff check.
+- Next task: `HARDENING-003` performance and reliability.
+
 ## HARDENING-001 completed
 
 - `HARDENING-001` is PASS at `d2e924f`: every protected authorization path now reconciles JWT claims with an active persistent `auth_sessions` row. Revoked, expired, deleted, inactive or mismatched sessions receive `401`; a valid session without the required RBAC permission remains `403`.

@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## 2026-08-08 — HARDENING-002 PASS
+
+- Verified the commercial MVP across consumer action, employee follow-up/repurchase, fixed business-circle attribution, and merchant onboarding with real PostgreSQL-backed HTTP chains.
+- Added cross-terminal Playwright screenshots and trace evidence; merchant onboarding now grants the tenant administrator the necessary `employee.manage` capability.
+
 ## 2026-08-08 — HARDENING-001 PASS
 
 - Protected API requests now require a matching active, unrevoked, unexpired persistent session in addition to a valid JWT.
