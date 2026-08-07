@@ -78,6 +78,8 @@ import { ManagementAttributionController } from './management-attribution.contro
 import { ManagementAttributionService } from './management-attribution.service';
 import { ManagementContentController } from './management-content.controller';
 import { ManagementContentService } from './management-content.service';
+import { ManagementConnectorController } from './management-connector.controller';
+import { ManagementConnectorService } from './management-connector.service';
 
 @Module({
   controllers: [
@@ -122,6 +124,7 @@ import { ManagementContentService } from './management-content.service';
     ManagementEmployeePerformanceController,
     ManagementAttributionController,
     ManagementContentController,
+    ManagementConnectorController,
   ],
   providers: [
     AuthService,
@@ -163,6 +166,7 @@ import { ManagementContentService } from './management-content.service';
     ManagementEmployeePerformanceService,
     ManagementAttributionService,
     ManagementContentService,
+    ManagementConnectorService,
   ],
 })
 export class AppModule {}

@@ -30,6 +30,7 @@ import * as customerExportRequests from './migrations/028_customer_export_reques
 import * as aiSuggestions from './migrations/029_ai_suggestions.js';
 import * as storeManagement from './migrations/030_store_management.js';
 import * as contentCenter from './migrations/031_content_center.js';
+import * as connectorConfigs from './migrations/032_connector_configs.js';
 import type { Database } from './types.js';
 
 const migrationProvider: MigrationProvider = {
@@ -66,6 +67,7 @@ const migrationProvider: MigrationProvider = {
       '029_ai_suggestions': aiSuggestions,
       '030_store_management': storeManagement,
       '031_content_center': contentCenter,
+      '032_connector_configs': connectorConfigs,
     };
   },
 };
