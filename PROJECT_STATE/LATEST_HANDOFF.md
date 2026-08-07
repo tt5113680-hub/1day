@@ -1,5 +1,10 @@
 # LATEST_HANDOFF
 
+## PAGE-E-008 completed
+
+- `PAGE-E-008` is PASS at `20f92f8`: `/e/notifications` presents each active employee's persisted task reminder, overdue anomaly, pending customer-ownership approval and system notifications, with category/read filters and safe internal deep links. CORE-006 notification logs and pending approvals materialize idempotently into an employee-private inbox; read writes enforce task permission, employee ownership, optimistic version and idempotency, and record audit/Outbox data.
+- Verification passed: `tests/page-e-008-api.test.mjs` against a spawned production API/PostgreSQL; `playwright.page-e-008.config.ts` (two 390px browser flows, screenshots and traces); lint, format, 17-package typecheck/build, Vitest, `test` (90), migration/seed and evidence checks. Evidence: `evidence/PAGE-E-008/ACCEPTANCE.md`. Next task: `PAGE-E-009` employee profile and tools.
+
 ## PAGE-E-007 completed
 
 - `PAGE-E-007` is PASS at `a0aa0b7`: `/e/nurture` shows employee-owned persisted active, repurchase and dormant customers with order/task signals. Employees can adjust a profile, record a non-sending touchpoint or create a real follow-up task; writes enforce active-employee/RBAC/tenant/version/idempotency and record audit/Outbox. E006 nurture conversions create the profile automatically.

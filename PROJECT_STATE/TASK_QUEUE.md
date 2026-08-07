@@ -9,7 +9,8 @@
 - [x] PAGE-E-005 PASS — employee sharing codes, QR entry, expiry and source tracing verified.
 - [x] PAGE-E-006 PASS — employee acquisition pool verified.
 - [x] PAGE-E-007 PASS — employee nurture workbench verified.
-- [ ] PAGE-E-008 NEXT — employee notifications.
+- [x] PAGE-E-008 PASS — employee notifications verified.
+- [ ] PAGE-E-009 NEXT — employee profile and tools.
 
 ## Current page status
 

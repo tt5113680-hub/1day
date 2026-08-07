@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## 2026-08-08 — PAGE-E-008 PASS
+
+- Delivered `/e/notifications` with employee-private task, anomaly, ownership-approval and system records, category/read filters, safe internal deep links and mobile recovery states.
+- Added a deduplicated persistent inbox projection for CORE-006 notification logs and pending ownership approvals; read changes enforce employee scope, version/idempotency, audit and correlated Outbox records.
+- Verified by production HTTP/PostgreSQL, two 390px browser flows, 90 repository tests and all quality gates.
+
 ## 2026-08-08 — PAGE-E-007 PASS
 
 - Delivered `/e/nurture` with employee-owned customer segmentation, repurchase/dormant handling, real touchpoint records and optional follow-up task creation.
