@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 2026-08-08 — CHANNEL / BUSINESS-CIRCLE PHASE ACCEPTED
+
+- Verified CHANNEL-001, CHANNEL-002, CIRCLE-001 and CIRCLE-002 with full repository gates, database migration/seed, HTTP and browser evidence.
+
 ## 2026-08-08 — CIRCLE-002 PASS
 
 - Delivered `/bc/merchants` with prepared-only invitations, distinct circle and platform approvals, versioned display configuration and auditable exit.

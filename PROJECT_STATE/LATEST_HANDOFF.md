@@ -1,5 +1,10 @@
 # LATEST_HANDOFF
 
+## Channel / business-circle phase accepted
+
+- `evidence/CHANNEL-PHASE/ACCEPTANCE.md` records automatic acceptance for CHANNEL-001, CHANNEL-002, CIRCLE-001 and CIRCLE-002. All applicable repository gates, persistence checks and browser evidence passed.
+- Next task: `HARDENING-001` end-to-end permissions and tenant-isolation hardening.
+
 ## CIRCLE-002 completed / channel phase acceptance required
 
 - `CIRCLE-002` is PASS at `7cc5dbb`: `/bc/merchants` records invitation preparation, circle approval (`circle.manage`), separate platform approval (`platform.manage`), display configuration and exit. External delivery is deliberately not claimed.

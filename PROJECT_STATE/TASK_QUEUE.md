@@ -1,5 +1,10 @@
 # TASK_QUEUE
 
+## Current hardening status (latest)
+
+- [x] CHANNEL / BUSINESS-CIRCLE PHASE ACCEPTED — full gates and evidence verified.
+- [ ] HARDENING-001 NEXT — end-to-end permissions and tenant-isolation hardening.
+
 ## Channel phase status (latest — acceptance required)
 
 - [x] CIRCLE-002 PASS — business-circle merchant invitation, dual approval, display control and exit verified.
