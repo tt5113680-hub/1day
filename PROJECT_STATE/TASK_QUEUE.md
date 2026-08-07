@@ -2,6 +2,11 @@
 
 ## Current task status (latest)
 
+- [x] PAGE-P-002 PASS — tenant management verified.
+- [ ] PAGE-P-003 NEXT — tenant onboarding wizard.
+
+## Current task status (latest)
+
 - [x] PAGE-P-001 PASS — platform overview verified.
 - [ ] PAGE-P-002 NEXT — tenant management.
 

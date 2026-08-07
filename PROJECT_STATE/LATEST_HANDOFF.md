@@ -1,5 +1,10 @@
 # LATEST_HANDOFF
 
+## PAGE-P-002 completed
+
+- `PAGE-P-002` is PASS at `522a8f6`: `/p/tenants` manages persisted tenant lifecycle, commercial plan, quotas and risk using platform RBAC, confirmation, version and idempotency safeguards.
+- Verification passed: `tests/page-p-002-api.test.mjs`; `playwright.page-p-002.config.ts` (two desktop flows); full quality gates, migration/seed and evidence checks. Evidence: `evidence/PAGE-P-002/ACCEPTANCE.md`. Next task: `PAGE-P-003` tenant onboarding wizard.
+
 ## PAGE-P-001 completed
 
 - `PAGE-P-001` is PASS at `98c029e`: `/p/dashboard` exposes auditable global operational signals only to the system-tenant platform permission scope.

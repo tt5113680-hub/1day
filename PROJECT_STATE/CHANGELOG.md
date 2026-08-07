@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## 2026-08-08 — PAGE-P-002 PASS
+
+- Delivered `/p/tenants` with platform-scoped lifecycle, plan, quota and risk management.
+- Sensitive lifecycle changes now require exact second confirmation and write audited outbox events.
+
 ## 2026-08-08 — PAGE-P-001 PASS
 
 - Delivered `/p/dashboard` with platform-permission-scoped global tenant, channel, activity, risk and PostgreSQL availability signals.
