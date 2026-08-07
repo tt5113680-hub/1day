@@ -494,6 +494,41 @@ export interface EmployeeLeadPoolEntriesTable {
   version: number;
 }
 
+export interface EmployeeNurtureProfilesTable {
+  id: string;
+  tenant_id: string;
+  customer_id: string;
+  employee_id: string;
+  segment: string;
+  next_touch_at: Timestamp | null;
+  last_touch_at: Timestamp | null;
+  status: string;
+  created_at: Timestamp;
+  created_by: string | null;
+  updated_at: Timestamp;
+  updated_by: string | null;
+  deleted_at: Timestamp | null;
+  version: Generated<number>;
+}
+
+export interface EmployeeNurtureTouchpointsTable {
+  id: string;
+  tenant_id: string;
+  profile_id: string;
+  customer_id: string;
+  employee_id: string;
+  action_type: string;
+  note: string | null;
+  task_id: string | null;
+  occurred_at: Timestamp;
+  created_at: Timestamp;
+  created_by: string | null;
+  updated_at: Timestamp;
+  updated_by: string | null;
+  deleted_at: Timestamp | null;
+  version: Generated<number>;
+}
+
 export interface TaskRemindersTable {
   id: string;
   tenant_id: string;
@@ -987,6 +1022,8 @@ export interface Database {
   employee_share_codes: EmployeeShareCodesTable;
   employee_share_code_events: EmployeeShareCodeEventsTable;
   employee_lead_pool_entries: EmployeeLeadPoolEntriesTable;
+  employee_nurture_profiles: EmployeeNurtureProfilesTable;
+  employee_nurture_touchpoints: EmployeeNurtureTouchpointsTable;
   task_reminders: TaskRemindersTable;
   notification_logs: NotificationLogsTable;
   employee_notification_preferences: EmployeeNotificationPreferencesTable;

@@ -213,6 +213,11 @@ export class EmployeeLeadPoolService implements OnModuleDestroy {
               context.userId,
             ],
           );
+        } else {
+          await client.query(
+            "insert into employee_nurture_profiles(id,tenant_id,customer_id,employee_id,next_touch_at,created_by,updated_by) values($1,$2,$3,$4,now()+interval '7 days',$5,$5) on conflict (tenant_id,customer_id) do nothing",
+            [randomUUID(), context.tenantId, row.customer_id, employee.id, context.userId],
+          );
         }
         Object.assign(
           row,
