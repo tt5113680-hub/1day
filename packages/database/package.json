@@ -13,7 +13,8 @@
     "migrate:down": "node dist/cli.js down",
     "migrate:repair": "node dist/cli.js repair",
     "seed": "node dist/cli.js seed",
-    "test:prepare": "node dist/cli.js test:prepare"
+    "test:prepare": "node dist/cli.js test:prepare",
+    "recovery:clone": "node dist/cli.js recovery:clone"
   },
   "dependencies": {
     "kysely": "0.28.10",

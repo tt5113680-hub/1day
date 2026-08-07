@@ -20,6 +20,7 @@
     "db:repair": "pnpm --filter @oneday/database migrate:repair",
     "db:seed": "pnpm --filter @oneday/database seed",
     "db:test:prepare": "pnpm --filter @oneday/database test:prepare",
+    "db:recovery:clone": "pnpm --filter @oneday/database recovery:clone",
     "test:unit": "vitest run",
     "test:e2e": "playwright test",
     "evidence:check": "node tests/evidence-contract.test.mjs"

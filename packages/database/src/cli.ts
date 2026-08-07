@@ -2,6 +2,7 @@ import { createDatabase, destroyDatabase } from './client.js';
 import { migrateDown, migrateToLatest } from './migrator.js';
 import { seedFoundationData } from './seeds/foundation.js';
 import { createTestDatabaseUrl } from './test-database.js';
+import { createRecoverySnapshot } from './recovery.js';
 
 function databaseUrl(): string {
   const value = process.env.DATABASE_URL;
@@ -12,6 +13,12 @@ function databaseUrl(): string {
 export async function runCli(command: string | undefined): Promise<void> {
   if (command === 'test:prepare') {
     console.log(await createTestDatabaseUrl(databaseUrl()));
+    return;
+  }
+  if (command === 'recovery:clone') {
+    const target = process.env.ONEDAY_RECOVERY_TARGET;
+    if (!target) throw new Error('ONEDAY_RECOVERY_TARGET is required.');
+    console.log(JSON.stringify(await createRecoverySnapshot(databaseUrl(), target)));
     return;
   }
 
