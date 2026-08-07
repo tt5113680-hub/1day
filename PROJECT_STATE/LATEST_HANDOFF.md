@@ -1,5 +1,10 @@
 # LATEST_HANDOFF
 
+## PAGE-M-001 completed
+
+- `PAGE-M-001` is PASS at `0264231`: `/m/dashboard` presents tenant-scoped customer, order and task results, current overdue/pending-ownership exceptions and rule-based explainable suggestions with action links. The read endpoint requires `tenant.manage`, and all displayed signals trace to persisted records.
+- Verification passed: `tests/page-m-001-api.test.mjs` against a spawned production API/PostgreSQL; `playwright.page-m-001.config.ts` (two 1440px browser flows, screenshots and traces); lint, format, 17-package typecheck/build, Vitest, `test` (92), migration/seed and evidence checks. Evidence: `evidence/PAGE-M-001/ACCEPTANCE.md`. Next task: `PAGE-M-002` management funnel.
+
 ## PAGE-E-009 completed
 
 - `PAGE-E-009` is PASS at `8335f65`: `/e/profile` provides each active employee's persisted identity, organization, same-organization stores, effective permissions, safe internal tools and notification preference. The profile-specific preference write resolves the employee on the server from the active membership, preventing a caller from changing a peer's setting while retaining CORE-006 version, audit and Outbox semantics.

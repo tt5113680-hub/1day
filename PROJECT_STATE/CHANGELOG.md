@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## 2026-08-08 — PAGE-M-001 PASS
+
+- Delivered `/m/dashboard` with tenant-bound customer, order and task operating metrics, persisted overdue-task and ownership-approval exceptions, and explainable action-first recommendations.
+- Management reads require `tenant.manage`; every metric and exception remains traceable to tenant-scoped persisted records and safe internal action links.
+- Verified through production HTTP/PostgreSQL, two 1440px browser flows, 92 repository tests and all quality gates.
+
 ## 2026-08-08 — PAGE-E-009 PASS
 
 - Delivered `/e/profile` with employee-private personal, organization, store, permission and notification-preference data plus safe common tool links.

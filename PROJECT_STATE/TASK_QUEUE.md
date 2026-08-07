@@ -11,7 +11,8 @@
 - [x] PAGE-E-007 PASS — employee nurture workbench verified.
 - [x] PAGE-E-008 PASS — employee notifications verified.
 - [x] PAGE-E-009 PASS — employee profile and tools verified.
-- [ ] PAGE-M-001 NEXT — management overview.
+- [x] PAGE-M-001 PASS — management overview verified.
+- [ ] PAGE-M-002 NEXT — management funnel.
 
 ## Current page status
 
