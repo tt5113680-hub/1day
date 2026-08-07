@@ -2,6 +2,11 @@
 
 ## Current task status (latest)
 
+- [x] PAGE-M-015 PASS — connector management verified.
+- [ ] PAGE-M-016 NEXT — tenant operating settings.
+
+## Current task status (latest)
+
 - [x] PAGE-M-014 PASS — page decoration verified.
 - [ ] PAGE-M-015 NEXT — connector management.
 
@@ -141,7 +146,7 @@ The following current employee status is authoritative; the two legacy entries r
 - [ ] PAGE-M-012 — 来源归因
 - [ ] PAGE-M-013 — 内容中心
 - [ ] PAGE-M-014 — 页面装修
-- [ ] PAGE-M-015 — 插件连接器
+- [x] PAGE-M-015 — 插件连接器
 - [ ] PAGE-M-016 — 租户经营设置
 - [ ] PAGE-P-001 — 平台总览
 - [ ] PAGE-P-002 — 租户管理

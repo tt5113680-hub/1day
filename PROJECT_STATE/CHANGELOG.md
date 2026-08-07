@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## 2026-08-08 — PAGE-M-015 PASS
+
+- Delivered `/m/connectors` with tenant-scoped authorization requests, persisted status/logs and a no-fabricated-external-call boundary.
+- Connector secrets are converted to a fingerprint before persistence; authorization requests remain idempotent and emit auditable, correlated events.
+
 ## 2026-08-08 — PAGE-M-014 PASS
 
 - Delivered `/m/page-builder` with persisted fixed-module templates, real-time preview and server-controlled version publishing.

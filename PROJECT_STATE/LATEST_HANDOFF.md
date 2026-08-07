@@ -1,5 +1,10 @@
 # LATEST_HANDOFF
 
+## PAGE-M-015 completed
+
+- `PAGE-M-015` is PASS at `fb32e47`: `/m/connectors` records tenant-scoped connector authorization intents and shows persisted status/logs without ever exposing submitted secrets or claiming an unperformed external call.
+- Verification passed: `tests/page-m-015-api.test.mjs`; `playwright.page-m-015.config.ts` (two 1440px flows); full quality gates, migration/seed and evidence checks. Evidence: `evidence/PAGE-M-015/ACCEPTANCE.md`. Next task: `PAGE-M-016` tenant operating settings.
+
 ## PAGE-M-014 completed
 
 - `PAGE-M-014` is PASS at `a92b743`: `/m/page-builder` exposes fixed-module templates, persisted preview and server-side version publishing without arbitrary low-code execution.
