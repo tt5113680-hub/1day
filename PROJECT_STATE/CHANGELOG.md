@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## 2026-08-08 — PAGE-M-011 PASS
+
+- Delivered `/m/employee-process-performance` with tenant-scoped task, follow-up, evidence-link and confirmed-contribution order signals.
+- The view explicitly avoids single-order performance judgments and gives process-based, reviewable coaching guidance.
+
 ## 2026-08-08 — PAGE-M-010 PASS
 
 - Delivered `/m/permission-audit` with tenant-scoped permission-change, export, risk-signal and trace views.

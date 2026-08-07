@@ -1,5 +1,10 @@
 # LATEST_HANDOFF
 
+## PAGE-M-011 completed
+
+- `PAGE-M-011` is PASS at `3c46dfd`: `/m/employee-process-performance` is a tenant-scoped, multi-signal coaching view. Confirmed contribution-linked orders are context, not a personal sales amount or single performance conclusion.
+- Verification passed: `tests/page-m-011-api.test.mjs`; `playwright.page-m-011.config.ts` (two 1440px flows); lint, format, 17-package typecheck/build, Vitest, repository test, migration/seed and evidence checks. Evidence: `evidence/PAGE-M-011/ACCEPTANCE.md`. Next task: `PAGE-M-012` source attribution.
+
 ## PAGE-M-010 completed
 
 - `PAGE-M-010` is PASS at `d7642ff`: `/m/permission-audit` reads current-tenant audit records through a `tenant.manage`-protected API. It filters permission changes, exports and reviewable risk signals while retaining action, actor, resource, correlation and trace evidence.

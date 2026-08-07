@@ -1,5 +1,10 @@
 # TASK_QUEUE
 
+## Current task status (latest authoritative)
+
+- [x] PAGE-M-011 PASS — employee process performance verified.
+- [ ] PAGE-M-012 NEXT — source attribution.
+
 ## Current task status (authoritative)
 
 - [x] PAGE-M-010 PASS — permission audit verified.
