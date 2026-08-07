@@ -1,0 +1,8 @@
+# PAGE-M-003 Acceptance Evidence
+
+- Delivered `/m/customers` as a desktop customer-asset workspace. It reads tenant-scoped persisted customers and supports server-side search, tag, segment and source filtering, selection and an employee-targeted batch ownership-transfer request.
+- Ownership safety: batch operations validate up to 50 customer/version pairs, use `tenant.manage`, and delegate each change to the established CORE-005 ownership-transfer approval state machine. No customer owner is overwritten by the page; each request has idempotency, optimistic customer versioning, audit, and correlated Outbox events.
+- Export safety: export requests persist the active filter set. An approved request can retrieve a tenant-scoped CSV only from its approved state. Request, approval, and download each produce audit and correlated Outbox records; the CSV contains only the page's minimized customer-asset columns.
+- HTTP: `node --test tests/page-m-003-api.test.mjs` starts the built production API against PostgreSQL and verifies unauthenticated and cross-tenant denial, filter results, export idempotency, approval version conflict, approved CSV download, batch ownership request, audit, and Outbox records.
+- Browser: `pnpm.cmd exec playwright test --config playwright.page-m-003.config.ts` passes authenticated 1440px filtering/export-request and no-session recovery flows. Screenshots: `management-customers-desktop.png`, `management-customers-forbidden.png`; trace output is retained in `playwright-output/`.
+- Visual review: the desktop layout keeps filters, selected-customer context, the explicitly approval-gated batch action, success feedback, and customer asset rows visible without conflating a request with a completed export or ownership change.

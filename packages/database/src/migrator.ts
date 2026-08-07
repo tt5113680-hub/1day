@@ -26,6 +26,7 @@ import * as employeeShareCodes from './migrations/024_employee_share_codes.js';
 import * as employeeLeadPool from './migrations/025_employee_lead_pool.js';
 import * as employeeNurture from './migrations/026_employee_nurture.js';
 import * as employeeNotifications from './migrations/027_employee_notifications.js';
+import * as customerExportRequests from './migrations/028_customer_export_requests.js';
 import type { Database } from './types.js';
 
 const migrationProvider: MigrationProvider = {
@@ -58,6 +59,7 @@ const migrationProvider: MigrationProvider = {
       '025_employee_lead_pool': employeeLeadPool,
       '026_employee_nurture': employeeNurture,
       '027_employee_notifications': employeeNotifications,
+      '028_customer_export_requests': customerExportRequests,
     };
   },
 };

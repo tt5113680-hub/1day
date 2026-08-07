@@ -1010,6 +1010,19 @@ export interface ConsumerActionEventsTable {
   version: Generated<number>;
 }
 
+export interface CustomerExportRequestsTable {
+  id: string;
+  tenant_id: string;
+  filters: unknown;
+  requested_by: string;
+  approved_by: string | null;
+  approved_at: Timestamp | null;
+  status: string;
+  created_at: Timestamp;
+  updated_at: Timestamp;
+  version: Generated<number>;
+}
+
 export interface Database {
   tenants: TenantsTable;
   users: UsersTable;
@@ -1075,4 +1088,5 @@ export interface Database {
   store_benefits: StoreBenefitsTable;
   store_content_items: StoreContentItemsTable;
   consumer_action_events: ConsumerActionEventsTable;
+  customer_export_requests: CustomerExportRequestsTable;
 }

@@ -59,6 +59,8 @@ import { ManagementDashboardController } from './management-dashboard.controller
 import { ManagementDashboardService } from './management-dashboard.service';
 import { ManagementFunnelController } from './management-funnel.controller';
 import { ManagementFunnelService } from './management-funnel.service';
+import { ManagementCustomerAssetsController } from './management-customer-assets.controller';
+import { ManagementCustomerAssetsService } from './management-customer-assets.service';
 
 @Module({
   controllers: [
@@ -93,6 +95,7 @@ import { ManagementFunnelService } from './management-funnel.service';
     EmployeeProfileController,
     ManagementDashboardController,
     ManagementFunnelController,
+    ManagementCustomerAssetsController,
   ],
   providers: [
     AuthService,
@@ -125,6 +128,7 @@ import { ManagementFunnelService } from './management-funnel.service';
     EmployeeProfileService,
     ManagementDashboardService,
     ManagementFunnelService,
+    ManagementCustomerAssetsService,
   ],
 })
 export class AppModule {}
