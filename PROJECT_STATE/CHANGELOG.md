@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## 2026-08-08 — PAGE-M-006 PASS
+
+- Delivered `/m/ai-suggestions` with tenant-scoped persisted recommendations, model name/version metadata, explicit acceptance and field-addressable feedback.
+- Acceptance only records the manager confirmation: optimistic versioning, audit and correlated Outbox evidence preserve the boundary before any business action is performed elsewhere.
+- Verified with production HTTP/PostgreSQL, two 1440px browser flows, 104 repository tests and all quality gates.
+
 ## 2026-08-08 — PAGE-M-005 PASS
 
 - Delivered `/m/workflows` with tenant-scoped workflow templates, instances, responsibility, approval and timeout views.

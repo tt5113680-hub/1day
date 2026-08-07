@@ -1,5 +1,10 @@
 # LATEST_HANDOFF
 
+## PAGE-M-006 completed
+
+- `PAGE-M-006` is PASS at `80505fb`: `/m/ai-suggestions` reads tenant-scoped persisted AI recommendations with model name/version metadata and a clear no-auto-execution boundary. `tenant.manage` managers can version-confirm pending suggestions and submit validated feedback; both writes are audited and publish correlated Outbox events.
+- Verification passed: `tests/page-m-006-api.test.mjs`; `playwright.page-m-006.config.ts` (two 1440px flows); lint, format, 17-package typecheck/build, Vitest, repository test (104), migration/seed and evidence checks. Evidence: `evidence/PAGE-M-006/ACCEPTANCE.md`. Next task: `PAGE-M-007` store management.
+
 ## PAGE-M-005 completed
 
 - `PAGE-M-005` is PASS at `b823034`: `/m/workflows` reads persisted CORE-010 templates, instances, active owners, approval steps and timeout exceptions through a `tenant.manage`-protected, tenant-scoped management projection.

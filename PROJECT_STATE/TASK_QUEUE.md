@@ -16,7 +16,8 @@
 - [x] PAGE-M-003 PASS — customer assets verified.
 - [x] PAGE-M-004 PASS — management customer detail verified.
 - [x] PAGE-M-005 PASS — workflow center verified.
-- [ ] PAGE-M-006 NEXT — AI suggestion center.
+- [x] PAGE-M-006 PASS — AI suggestion center verified.
+- [ ] PAGE-M-007 NEXT — store management.
 
 ## Current page status
 
