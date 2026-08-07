@@ -1,5 +1,10 @@
 # LATEST_HANDOFF
 
+## PAGE-M-004 completed
+
+- `PAGE-M-004` is PASS at `7356225`: `/m/customers/[id]` gives a `tenant.manage` user a tenant-scoped, masked customer full-chain view. It combines persisted sources, contributions, ownerships/transfers, orders/evidence receipts, tasks, actionable anomalies and audit-derived history without disclosing identity hashes.
+- Verification passed: `tests/page-m-004-api.test.mjs` against a spawned production API/PostgreSQL; `playwright.page-m-004.config.ts` (two 1440px browser flows, screenshots and traces); lint, format, 17-package typecheck/build, Vitest, `test` (100), migration/seed and evidence checks. Evidence: `evidence/PAGE-M-004/ACCEPTANCE.md`. Next task: `PAGE-M-005` workflow center.
+
 ## PAGE-M-003 completed
 
 - `PAGE-M-003` is PASS at `1b3015a`: `/m/customers` presents tenant-scoped customer assets with persisted search, tags, segment, source and ownership data. Management can select up to fifty versioned customers and create auditable ownership-transfer approval requests without direct owner overwrite.

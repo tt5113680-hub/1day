@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## 2026-08-08 — PAGE-M-004 PASS
+
+- Delivered `/m/customers/[id]` with tenant-scoped customer-chain, approval, ownership, anomaly, order-evidence and audit-timeline views.
+- Verified through production HTTP/PostgreSQL, two 1440px browser flows, 100 repository tests and all quality gates.
+
 ## 2026-08-08 — PAGE-M-003 PASS
 
 - Delivered `/m/customers` with tenant-scoped persisted customer filters, segmentation, ownership context and a desktop batch ownership-transfer approval workflow.

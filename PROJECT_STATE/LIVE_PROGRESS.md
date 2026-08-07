@@ -1,5 +1,7 @@
 # LIVE_PROGRESS
 
+- 2026-08-08 Asia/Shanghai — PAGE-M-004 PASS at `7356225`: tenant-scoped management customer detail now presents a minimized full chain of source, ownership approvals, contribution, orders/evidence, tasks, anomalies and audit history. Production HTTP, two 1440px browser flows and full 100-test quality gate passed. Next task: PAGE-M-005.
+
 - 2026-08-08 Asia/Shanghai — PAGE-M-003 PASS at `1b3015a`: tenant-scoped customer asset management now supports persisted filter/segment/owner data, approval-gated batch ownership transfer requests, approval-gated CSV export and complete audit/Outbox records. Production HTTP, two 1440px browser flows and full 98-test quality gate passed. Next task: PAGE-M-004.
 
 - 2026-08-08 Asia/Shanghai — PAGE-M-002 PASS at `d6689ca`: tenant-scoped source-to-repurchase funnel separates confirmed customer/task/order outcomes from the unavailable source-to-visit inference; production HTTP, two 1440px browser flows and full 93-test quality gate passed. Next task: PAGE-M-003.

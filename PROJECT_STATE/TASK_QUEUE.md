@@ -14,7 +14,8 @@
 - [x] PAGE-M-001 PASS — management overview verified.
 - [x] PAGE-M-002 PASS — management funnel verified.
 - [x] PAGE-M-003 PASS — customer assets verified.
-- [ ] PAGE-M-004 NEXT — management customer detail.
+- [x] PAGE-M-004 PASS — management customer detail verified.
+- [ ] PAGE-M-005 NEXT — workflow center.
 
 ## Current page status
 
