@@ -1,0 +1,8 @@
+# PAGE-E-009 Acceptance Evidence
+
+- Delivered `/e/profile` as the employee's mobile personal workspace: personal identity, assigned organization, same-organization stores, effective permission codes, safe common-tool links and notification settings all use persisted API data.
+- Data and scope: `GET /api/v1/employee/profile` resolves only the active session employee, then scopes organization, stores, permissions and notification preference to that employee's tenant and membership. It returns no peer employee data.
+- Setting boundary: the profile-specific notification-preferences endpoint resolves the employee ID on the server from the active membership and ignores an injected client `employeeId`. It retains CORE-006 optimistic versioning, validation, audit and Outbox behavior.
+- HTTP: `node --test tests/page-e-009-api.test.mjs` starts the production API/PostgreSQL. It covers unauthenticated/cross-tenant rejection, own profile aggregation, organization/store/permission data, malicious peer employee ID injection, version conflict, another employee's independent preference and audit/Outbox persistence.
+- Browser: `pnpm.cmd exec playwright test --config playwright.page-e-009.config.ts` passes two 390px flows: employee profile data and store display with a real eight-hour do-not-disturb update, plus no-session recovery. Screenshots: `employee-profile-mobile.png`, `employee-profile-forbidden.png`; traces are retained under `playwright-output/`.
+- Visual review: the mobile layout maintains clear personal context, dense but readable store/permission sections, a distinct settings action and directly reachable work tools without horizontal overflow.

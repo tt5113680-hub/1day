@@ -170,6 +170,18 @@ export class TaskService implements OnModuleDestroy {
       q.release();
     }
   }
+  async setOwnNotificationPreferences(
+    c: OrganizationContext,
+    b: Record<string, unknown>,
+    r: string,
+  ) {
+    const employee = await this.pool.query(
+      "select e.id from employees e join memberships m on m.id=e.membership_id and m.tenant_id=e.tenant_id where e.tenant_id=$1 and m.user_id=$2 and e.status='active' and m.status='active' and e.deleted_at is null and m.deleted_at is null",
+      [c.tenantId, c.userId],
+    );
+    if (!employee.rowCount) throw new NotFoundException('NOT_FOUND');
+    return this.setNotificationPreferences(c, { ...b, employeeId: employee.rows[0].id }, r);
+  }
   async processDue(c: OrganizationContext, r: string) {
     const q = await this.pool.connect();
     try {

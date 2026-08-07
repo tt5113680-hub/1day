@@ -1,0 +1,114 @@
+:global(body) {
+  margin: 0;
+  background: #f6f8fb;
+  color: #111827;
+  font-family: Arial, 'Microsoft YaHei', sans-serif;
+}
+.page {
+  max-width: 680px;
+  margin: auto;
+  padding: 28px 16px 48px;
+}
+.page header p {
+  margin: 0;
+  color: #2563eb;
+  font-size: 13px;
+  font-weight: 700;
+}
+.page h1 {
+  margin: 7px 0;
+  font-size: 28px;
+}
+.page header span,
+.card p,
+.card small {
+  color: #4b5563;
+  font-size: 14px;
+  line-height: 1.5;
+}
+.card {
+  margin-top: 14px;
+  padding: 16px;
+  border: 1px solid #e5e7eb;
+  border-radius: 16px;
+  background: #fff;
+  box-shadow: 0 5px 16px #11182708;
+}
+.card h2 {
+  margin: 0 0 10px;
+  font-size: 17px;
+}
+.card p {
+  margin: 7px 0;
+}
+.card small {
+  display: block;
+}
+.card button {
+  min-height: 44px;
+  padding: 0 13px;
+  border: 0;
+  border-radius: 10px;
+  background: #2563eb;
+  color: #fff;
+  font: inherit;
+  font-weight: 700;
+}
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+}
+.chips span {
+  padding: 5px 8px;
+  border-radius: 999px;
+  background: #e0ecff;
+  color: #1d4ed8;
+  font-size: 12px;
+  font-weight: 700;
+}
+.tools {
+  display: grid;
+  gap: 4px;
+}
+.tools a {
+  display: flex;
+  justify-content: space-between;
+  padding: 11px 0;
+  border-bottom: 1px solid #eef2f7;
+  color: #2563eb;
+  font-weight: 700;
+}
+.feedback {
+  padding: 12px;
+  border-radius: 10px;
+  color: #166534;
+  background: #dcfce7;
+}
+.centered {
+  display: grid;
+  min-height: 70vh;
+  place-items: center;
+  padding: 24px;
+  text-align: center;
+}
+.centered section {
+  max-width: 320px;
+  padding: 28px;
+  border-radius: 16px;
+  background: #fff;
+  box-shadow: 0 10px 30px #11182712;
+}
+.centered a,
+.centered button {
+  color: #2563eb;
+  font-weight: 700;
+}
+@media (max-width: 480px) {
+  .page {
+    padding: 24px 14px;
+  }
+  .page h1 {
+    font-size: 26px;
+  }
+}

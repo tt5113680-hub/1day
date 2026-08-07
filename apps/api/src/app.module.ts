@@ -53,6 +53,8 @@ import { EmployeeNurtureController } from './employee-nurture.controller';
 import { EmployeeNurtureService } from './employee-nurture.service';
 import { EmployeeNotificationController } from './employee-notification.controller';
 import { EmployeeNotificationService } from './employee-notification.service';
+import { EmployeeProfileController } from './employee-profile.controller';
+import { EmployeeProfileService } from './employee-profile.service';
 
 @Module({
   controllers: [
@@ -84,6 +86,7 @@ import { EmployeeNotificationService } from './employee-notification.service';
     EmployeeLeadPoolController,
     EmployeeNurtureController,
     EmployeeNotificationController,
+    EmployeeProfileController,
   ],
   providers: [
     AuthService,
@@ -113,6 +116,7 @@ import { EmployeeNotificationService } from './employee-notification.service';
     EmployeeLeadPoolService,
     EmployeeNurtureService,
     EmployeeNotificationService,
+    EmployeeProfileService,
   ],
 })
 export class AppModule {}
