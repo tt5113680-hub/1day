@@ -1,5 +1,10 @@
 # LATEST_HANDOFF
 
+## PAGE-M-014 completed
+
+- `PAGE-M-014` is PASS at `a92b743`: `/m/page-builder` exposes fixed-module templates, persisted preview and server-side version publishing without arbitrary low-code execution.
+- Verification passed: CORE-008 HTTP state-machine coverage; `playwright.page-m-014.config.ts` (two 1440px flows); full quality gates, migration/seed and evidence checks. Evidence: `evidence/PAGE-M-014/ACCEPTANCE.md`. Next task: `PAGE-M-015` connector management.
+
 ## PAGE-M-013 completed
 
 - `PAGE-M-013` is PASS at `087b22f`: `/m/content` persists knowledge/article/media records, versioned approval and channel distribution intents. It never claims third-party delivery without authorization.

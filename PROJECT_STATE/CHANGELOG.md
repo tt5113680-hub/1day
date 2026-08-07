@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 2026-08-08 — PAGE-M-014 PASS
+
+- Delivered `/m/page-builder` with persisted fixed-module templates, real-time preview and server-controlled version publishing.
+
 ## 2026-08-08 — PAGE-M-013 PASS
 
 - Delivered `/m/content` with tenant-scoped drafts, optimistic-version approval and auditable pending-authorization distribution requests.

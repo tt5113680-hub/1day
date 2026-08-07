@@ -2,6 +2,11 @@
 
 ## Current task status (latest)
 
+- [x] PAGE-M-014 PASS — page decoration verified.
+- [ ] PAGE-M-015 NEXT — connector management.
+
+## Current task status (latest)
+
 - [x] PAGE-M-013 PASS — content center verified.
 - [ ] PAGE-M-014 NEXT — page decoration.
 
