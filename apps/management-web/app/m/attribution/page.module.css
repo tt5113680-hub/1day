@@ -1,0 +1,141 @@
+.page {
+  max-width: 1440px;
+  min-height: 100vh;
+  margin: auto;
+  padding: 42px 48px;
+  background: #f6f8fb;
+  color: #111827;
+}
+.page header,
+.controls,
+.rows article {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+}
+.page header p {
+  margin: 0;
+  color: #2563eb;
+  font-size: 13px;
+  font-weight: 800;
+}
+.page h1 {
+  margin: 8px 0;
+  font-size: 34px;
+}
+.page header span,
+.rows p {
+  color: #4b5563;
+}
+.page button,
+.page select {
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  background: #fff;
+  padding: 10px 14px;
+  font: inherit;
+  font-weight: 700;
+}
+.cards {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  margin: 28px 0;
+}
+.cards article,
+.panel {
+  padding: 20px;
+  border: 1px solid #e5e7eb;
+  border-radius: 16px;
+  background: #fff;
+  box-shadow: 0 5px 16px #11182708;
+}
+.cards span {
+  color: #64748b;
+}
+.cards strong {
+  display: block;
+  margin-top: 8px;
+  font-size: 30px;
+}
+.panel {
+  padding: 22px;
+}
+.controls {
+  align-items: center;
+}
+.controls h2 {
+  margin: 0;
+}
+.controls label {
+  display: grid;
+  gap: 6px;
+  font-weight: 700;
+}
+.rows {
+  margin-top: 18px;
+  border-top: 1px solid #e5e7eb;
+}
+.rows article {
+  align-items: center;
+  padding: 16px 0;
+  border-bottom: 1px solid #e5e7eb;
+}
+.rows article > div {
+  display: grid;
+  gap: 7px;
+}
+.rows p {
+  margin: 0;
+}
+.tag,
+.level {
+  width: fit-content;
+  border-radius: 999px;
+  padding: 3px 8px;
+  background: #eff6ff;
+  color: #1d4ed8;
+  font-size: 12px;
+  font-weight: 800;
+}
+.level {
+  background: #f0fdf4;
+  color: #166534;
+}
+.rows a {
+  color: #1d4ed8;
+  font-weight: 700;
+}
+.empty {
+  margin-top: 18px;
+  padding: 32px;
+  background: #f8fafc;
+  text-align: center;
+}
+.centered {
+  display: grid;
+  min-height: 70vh;
+  place-items: center;
+  text-align: center;
+}
+.centered section {
+  padding: 32px;
+  border-radius: 16px;
+  background: #fff;
+}
+@media (max-width: 900px) {
+  .page {
+    padding: 28px 18px;
+  }
+  .page header,
+  .controls,
+  .rows article {
+    display: grid;
+  }
+  .cards {
+    grid-template-columns: 1fr;
+  }
+  .page select {
+    width: 100%;
+  }
+}
