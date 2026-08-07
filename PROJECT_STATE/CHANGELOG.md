@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## 2026-08-08 — PAGE-P-001 PASS
+
+- Delivered `/p/dashboard` with platform-permission-scoped global tenant, channel, activity, risk and PostgreSQL availability signals.
+- Platform-wide reads require a system-tenant membership carrying the new `platform.read` permission.
+
 ## 2026-08-08 — PAGE-M-016 PASS
 
 - Delivered `/m/settings` with tenant-scoped, versioned operational settings for reminders, approvals, default quiet hours, tags, ownership and branding.

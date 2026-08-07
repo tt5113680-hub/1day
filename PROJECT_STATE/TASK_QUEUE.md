@@ -2,6 +2,11 @@
 
 ## Current task status (latest)
 
+- [x] PAGE-P-001 PASS — platform overview verified.
+- [ ] PAGE-P-002 NEXT — tenant management.
+
+## Current task status (latest)
+
 - [x] PAGE-M-016 PASS — tenant operating settings verified.
 - [ ] PAGE-P-001 NEXT — platform overview.
 

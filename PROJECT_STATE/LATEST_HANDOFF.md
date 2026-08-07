@@ -1,5 +1,10 @@
 # LATEST_HANDOFF
 
+## PAGE-P-001 completed
+
+- `PAGE-P-001` is PASS at `98c029e`: `/p/dashboard` exposes auditable global operational signals only to the system-tenant platform permission scope.
+- Verification passed: `tests/page-p-001-api.test.mjs`; `playwright.page-p-001.config.ts` (two desktop flows); full quality gates, migration/seed and evidence checks. Evidence: `evidence/PAGE-P-001/ACCEPTANCE.md`. Next task: `PAGE-P-002` tenant management.
+
 ## PAGE-M-016 completed
 
 - `PAGE-M-016` is PASS at `8b8898e`: `/m/settings` persists and audits tenant operating rules using RBAC, idempotency, optimistic versioning and correlated outbox events.
