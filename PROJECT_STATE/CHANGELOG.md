@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## 2026-08-08 — PAGE-M-008 PASS
+
+- Delivered `/m/organization-employees` with a tenant-scoped organization tree, employee status, invitations and visible task/customer handoff risk.
+- Reused the audited CORE-002 invitation and offboarding state transitions; verification covered tenant isolation and post-offboarding risk visibility.
+
 ## 2026-08-08 — PAGE-M-007 PASS
 
 - Delivered `/m/stores` with tenant-scoped store status, accountable manager, configured entries and traceable operating comparison signals.

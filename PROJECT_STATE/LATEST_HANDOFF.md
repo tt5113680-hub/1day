@@ -1,5 +1,10 @@
 # LATEST_HANDOFF
 
+## PAGE-M-008 completed
+
+- `PAGE-M-008` is PASS at `f432578`: `/m/organization-employees` combines tenant-scoped organizations, employee status, pending invitations and visible task/customer handoff risk. Existing CORE-002 invitation and offboarding writes remain audited and evented.
+- Verification passed: `tests/page-m-008-api.test.mjs`; `playwright.page-m-008.config.ts` (two 1440px flows); lint, format, 17-package typecheck/build, Vitest, repository test, migration/seed and evidence checks. Evidence: `evidence/PAGE-M-008/ACCEPTANCE.md`. Next task: `PAGE-M-009` roles and permissions.
+
 ## PAGE-M-007 completed
 
 - `PAGE-M-007` is PASS at `ea6ec93`: `/m/stores` presents tenant-scoped store status, manager assignments, configured entry actions, active services, 30-day consumer entry opens and organization-scoped open tasks. Manager changes use version control and write audit/Outbox records.

@@ -18,7 +18,8 @@
 - [x] PAGE-M-005 PASS — workflow center verified.
 - [x] PAGE-M-006 PASS — AI suggestion center verified.
 - [x] PAGE-M-007 PASS — store management verified.
-- [ ] PAGE-M-008 NEXT — organization and employees.
+- [x] PAGE-M-008 PASS — organization and employees verified.
+- [ ] PAGE-M-009 NEXT — roles and permissions.
 
 ## Current page status
 
