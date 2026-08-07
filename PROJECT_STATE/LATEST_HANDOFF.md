@@ -1,5 +1,10 @@
 # LATEST_HANDOFF
 
+## PAGE-P-008 completed
+
+- `PAGE-P-008` is PASS at `eac941b`: `/p/security-audit` locates persisted platform risk signals for degraded connectors, privileged changes and authorization anomalies. It supports idempotent, versioned dispositions while retaining audit and correlated Outbox evidence.
+- Verification passed: `tests/page-p-008-api.test.mjs`; `playwright.page-p-008.config.ts` (two browser flows); lint, format, typecheck, unit test, serialized repository test suite (139 tests), build, migration/seed and evidence checks. Evidence: `evidence/PAGE-P-008/ACCEPTANCE.md`. Next task: `CHANNEL-001` channel operations console.
+
 ## PAGE-P-007 completed
 
 - `PAGE-P-007` is PASS at `1e32a24`: `/p/connectors` provides platform-scoped connector definitions, authorization-state aggregation, rate-limit policy, auditable health observations and logs without exposing tenant secrets or fabricating external calls.

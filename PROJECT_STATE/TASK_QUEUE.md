@@ -1,5 +1,10 @@
 # TASK_QUEUE
 
+## Current task status (latest — PAGE-P-008 passed)
+
+- [x] PAGE-P-008 PASS — platform security audit verified.
+- [ ] CHANNEL-001 NEXT — channel operations console.
+
 ## Current task status (latest)
 
 - [x] PAGE-P-007 PASS — platform connectors verified.

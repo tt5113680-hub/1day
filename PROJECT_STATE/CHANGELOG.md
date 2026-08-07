@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## 2026-08-08 — PAGE-P-008 PASS
+
+- Delivered `/p/security-audit` with platform-authorized risk signals, reviewable privilege and connector events, and persistent risk disposition.
+- Dispositions use idempotency and optimistic versioning, with a tenant-bound review record plus correlated audit and Outbox evidence.
+
 ## 2026-08-08 — PAGE-P-007 PASS
 
 - Delivered `/p/connectors` with platform connector definitions, fixed authorization modes, rate limits, persisted health observations and logs.
