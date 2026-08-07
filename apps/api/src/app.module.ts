@@ -68,6 +68,8 @@ import { ManagementStoreController } from './management-store.controller';
 import { ManagementStoreService } from './management-store.service';
 import { ManagementOrganizationEmployeeController } from './management-organization-employee.controller';
 import { ManagementOrganizationEmployeeService } from './management-organization-employee.service';
+import { ManagementRolePermissionController } from './management-role-permission.controller';
+import { ManagementRolePermissionService } from './management-role-permission.service';
 
 @Module({
   controllers: [
@@ -107,6 +109,7 @@ import { ManagementOrganizationEmployeeService } from './management-organization
     ManagementAiSuggestionController,
     ManagementStoreController,
     ManagementOrganizationEmployeeController,
+    ManagementRolePermissionController,
   ],
   providers: [
     AuthService,
@@ -143,6 +146,7 @@ import { ManagementOrganizationEmployeeService } from './management-organization
     ManagementAiSuggestionService,
     ManagementStoreService,
     ManagementOrganizationEmployeeService,
+    ManagementRolePermissionService,
   ],
 })
 export class AppModule {}
