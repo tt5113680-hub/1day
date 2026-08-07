@@ -36,6 +36,7 @@ import * as platformTenantSettings from './migrations/034_platform_tenant_settin
 import * as platformChannels from './migrations/035_platform_channels.js';
 import * as platformBusinessCircles from './migrations/036_platform_business_circles.js';
 import * as platformTemplateIndustries from './migrations/037_platform_template_industries.js';
+import * as platformConnectors from './migrations/038_platform_connectors.js';
 import type { Database } from './types.js';
 
 const migrationProvider: MigrationProvider = {
@@ -78,6 +79,7 @@ const migrationProvider: MigrationProvider = {
       '035_platform_channels': platformChannels,
       '036_platform_business_circles': platformBusinessCircles,
       '037_platform_template_industries': platformTemplateIndustries,
+      '038_platform_connectors': platformConnectors,
     };
   },
 };
