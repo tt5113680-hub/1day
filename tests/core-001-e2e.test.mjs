@@ -172,8 +172,20 @@ test('organization, merchant and store writes are tenant-bound, idempotent, audi
       .insertInto('memberships')
       .values({ id: randomUUID(), tenant_id: tenantId, user_id: deniedUser, status: 'active' })
       .execute();
+    const deniedSession = randomUUID();
+    await database
+      .insertInto('auth_sessions')
+      .values({
+        id: deniedSession,
+        tenant_id: tenantId,
+        user_id: deniedUser,
+        refresh_token_hash: `test-${randomUUID()}`,
+        expires_at: new Date(Date.now() + 60_000),
+        status: 'active',
+      })
+      .execute();
     const deniedToken = signAccessToken(
-      { sub: deniedUser, tenantId, sessionId: randomUUID(), exp: Date.now() + 60_000 },
+      { sub: deniedUser, tenantId, sessionId: deniedSession, exp: Date.now() + 60_000 },
       secret,
     );
     assert.equal(

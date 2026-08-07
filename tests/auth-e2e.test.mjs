@@ -85,6 +85,14 @@ test('login, refresh rotation, logout and revoked-token rejection use persistent
     ).status,
     401,
   );
+  assert.equal(
+    (
+      await request('/api/v1/auth/context', {
+        headers: { authorization: `Bearer ${next.accessToken}` },
+      })
+    ).status,
+    401,
+  );
 });
 
 test('tampered and cross-tenant session revocation attempts are rejected', async () => {

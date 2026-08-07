@@ -5,9 +5,9 @@ import { AuthService } from './auth.service';
 export class TenantContextService {
   constructor(private readonly auth: AuthService) {}
 
-  fromAuthorization(authorization?: string, requestedTenant?: string) {
+  async fromAuthorization(authorization?: string, requestedTenant?: string) {
     if (!authorization?.startsWith('Bearer ')) throw new UnauthorizedException('AUTH_REQUIRED');
-    const claims = this.auth.claims(authorization.slice(7));
+    const claims = await this.auth.claims(authorization.slice(7));
     if (requestedTenant && requestedTenant !== claims.tenantId)
       throw new ForbiddenException('FORBIDDEN');
     return { tenantId: claims.tenantId, userId: claims.sub, sessionId: claims.sessionId };

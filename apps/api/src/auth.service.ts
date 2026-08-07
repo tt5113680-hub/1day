@@ -47,7 +47,7 @@ export class AuthService implements OnModuleDestroy {
   }
 
   async revoke(accessToken: string, sessionId?: string) {
-    const claims = this.claims(accessToken);
+    const claims = await this.claims(accessToken);
     const id = sessionId ?? claims.sessionId;
     const result = await this.pool.query(
       'update auth_sessions set revoked_at = now(), status = $1 where id = $2 and tenant_id = $3 and user_id = $4 and revoked_at is null',
@@ -56,9 +56,14 @@ export class AuthService implements OnModuleDestroy {
     if (result.rowCount !== 1) throw new UnauthorizedException('AUTH_REQUIRED');
   }
 
-  claims(accessToken: string) {
+  async claims(accessToken: string) {
     const claims = verifyAccessToken(accessToken, secret);
     if (!claims) throw new UnauthorizedException('AUTH_REQUIRED');
+    const session = await this.pool.query(
+      "select 1 from auth_sessions where id=$1 and user_id=$2 and tenant_id=$3 and status='active' and revoked_at is null and expires_at>now() and deleted_at is null",
+      [claims.sessionId, claims.sub, claims.tenantId],
+    );
+    if (session.rowCount !== 1) throw new UnauthorizedException('AUTH_REQUIRED');
     return claims;
   }
 

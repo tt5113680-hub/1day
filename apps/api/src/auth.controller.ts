@@ -27,7 +27,7 @@ export class AuthController {
   ) {
     return this.authorizationService.require(authorization, code, tenantId);
   }
-  @Get('context') context(
+  @Get('context') async context(
     @Headers('authorization') authorization?: string,
     @Headers('x-tenant-context') tenantId?: string,
   ) {
