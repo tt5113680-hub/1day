@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 2026-08-08 — PAGE-M-012 PASS
+
+- Delivered `/m/attribution` with tenant-scoped first/current/final source views, contribution context, evidence levels and customer-chain drill-down.
+
 ## 2026-08-08 — PAGE-M-011 PASS
 
 - Delivered `/m/employee-process-performance` with tenant-scoped task, follow-up, evidence-link and confirmed-contribution order signals.

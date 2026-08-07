@@ -1,5 +1,10 @@
 # TASK_QUEUE
 
+## Current task status (latest)
+
+- [x] PAGE-M-012 PASS — source attribution verified.
+- [ ] PAGE-M-013 NEXT — content center.
+
 ## Current task status (latest authoritative)
 
 - [x] PAGE-M-011 PASS — employee process performance verified.

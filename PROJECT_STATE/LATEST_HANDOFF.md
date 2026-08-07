@@ -1,5 +1,10 @@
 # LATEST_HANDOFF
 
+## PAGE-M-012 completed
+
+- `PAGE-M-012` is PASS at `aecee91`: `/m/attribution` explains tenant-scoped first/current/final sources using persisted source, contribution and evidence-reference records, with customer-chain links.
+- Verification passed: `tests/page-m-012-api.test.mjs`; `playwright.page-m-012.config.ts` (two 1440px flows); full quality gates, migration/seed and evidence checks. Evidence: `evidence/PAGE-M-012/ACCEPTANCE.md`. Next task: `PAGE-M-013` content center.
+
 ## PAGE-M-011 completed
 
 - `PAGE-M-011` is PASS at `3c46dfd`: `/m/employee-process-performance` is a tenant-scoped, multi-signal coaching view. Confirmed contribution-linked orders are context, not a personal sales amount or single performance conclusion.
