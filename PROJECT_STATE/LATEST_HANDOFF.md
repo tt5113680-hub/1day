@@ -1,5 +1,10 @@
 # LATEST_HANDOFF
 
+## PAGE-P-007 completed
+
+- `PAGE-P-007` is PASS at `1e32a24`: `/p/connectors` provides platform-scoped connector definitions, authorization-state aggregation, rate-limit policy, auditable health observations and logs without exposing tenant secrets or fabricating external calls.
+- Verification passed: `tests/page-p-007-api.test.mjs`; `playwright.page-p-007.config.ts` (two browser flows); lint, format, typecheck, unit test, serialized repository test suite, build, migration/seed and evidence checks. Evidence: `evidence/PAGE-P-007/ACCEPTANCE.md`. Next task: `PAGE-P-008` platform security audit.
+
 ## PAGE-P-006 completed
 
 - `PAGE-P-006` is PASS at `b4bd3da`: `/p/templates` persists platform-owned fixed-module templates with industry/scenario configuration, preview and versioned publication. The platform path requires system-tenant `platform.read` / `platform.manage` authority.

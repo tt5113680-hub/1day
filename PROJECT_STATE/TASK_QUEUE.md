@@ -2,6 +2,11 @@
 
 ## Current task status (latest)
 
+- [x] PAGE-P-007 PASS — platform connectors verified.
+- [ ] PAGE-P-008 NEXT — platform security audit.
+
+## Current task status (previous)
+
 - [x] PAGE-P-006 PASS — platform template components verified.
 - [ ] PAGE-P-007 NEXT — platform connectors.
 

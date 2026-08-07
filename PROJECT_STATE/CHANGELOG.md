@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## 2026-08-08 — PAGE-P-007 PASS
+
+- Delivered `/p/connectors` with platform connector definitions, fixed authorization modes, rate limits, persisted health observations and logs.
+- Tenant authorization is aggregated from existing records only; connector secrets are never exposed and health observations never claim an unperformed external call.
+
 ## 2026-08-08 — PAGE-P-006 PASS
 
 - Delivered `/p/templates` with platform-owned template drafts, fixed CORE-008 modules, validated industry/scenario configuration, preview and versioned publication.
