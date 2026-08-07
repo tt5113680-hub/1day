@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## 2026-08-08 — PAGE-E-007 PASS
+
+- Delivered `/e/nurture` with employee-owned customer segmentation, repurchase/dormant handling, real touchpoint records and optional follow-up task creation.
+- Added tenant/RBAC/optimistic-lock/idempotency protections, correlated audit/Outbox writes and a pipeline from E006 nurture conversion into retained-customer execution.
+- Fixed the API CORS allowlist to support the product PATCH update path; 88 repository tests and all quality gates passed.
+
 ## 2026-08-06 — PAGE-E-006 PASS
 
 - Delivered `/e/leads` with persisted, tenant-bound acquisition entries and mobile status filtering, claim, staff allocation, follow-up conversion and nurture conversion.

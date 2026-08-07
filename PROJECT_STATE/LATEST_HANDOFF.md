@@ -1,5 +1,10 @@
 # LATEST_HANDOFF
 
+## PAGE-E-007 completed
+
+- `PAGE-E-007` is PASS at `a0aa0b7`: `/e/nurture` shows employee-owned persisted active, repurchase and dormant customers with order/task signals. Employees can adjust a profile, record a non-sending touchpoint or create a real follow-up task; writes enforce active-employee/RBAC/tenant/version/idempotency and record audit/Outbox. E006 nurture conversions create the profile automatically.
+- Verification passed: `tests/page-e-007-api.test.mjs` against a spawned production API/PostgreSQL; `playwright.page-e-007.config.ts` (two 390px browser flows, screenshots and traces); lint, format, 17-package typecheck/build, Vitest, `test` (88), migration/seed and evidence checks. Evidence: `evidence/PAGE-E-007/ACCEPTANCE.md`. Next task: `PAGE-E-008` employee notifications.
+
 ## PAGE-E-006 completed
 
 - `PAGE-E-006` is PASS at `1a04177` (feature base `11a5b09`): `/e/leads` presents persisted tenant-scoped leads with filter, claim, employee allocation, conversion to follow-up task or nurture queue, clear mobile feedback and recovery states. Writes use active-employee/RBAC validation, optimistic versions, idempotency, audit and correlated Outbox events.

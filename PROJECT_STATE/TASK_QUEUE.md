@@ -8,7 +8,8 @@
 - [x] PAGE-E-004 PASS — employee follow-up records and next tasks verified.
 - [x] PAGE-E-005 PASS — employee sharing codes, QR entry, expiry and source tracing verified.
 - [x] PAGE-E-006 PASS — employee acquisition pool verified.
-- [ ] PAGE-E-007 NEXT — employee nurture workbench.
+- [x] PAGE-E-007 PASS — employee nurture workbench verified.
+- [ ] PAGE-E-008 NEXT — employee notifications.
 
 ## Current page status
 
