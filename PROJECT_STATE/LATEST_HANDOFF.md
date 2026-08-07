@@ -1,5 +1,10 @@
 # LATEST_HANDOFF
 
+## PAGE-P-006 completed
+
+- `PAGE-P-006` is PASS at `b4bd3da`: `/p/templates` persists platform-owned fixed-module templates with industry/scenario configuration, preview and versioned publication. The platform path requires system-tenant `platform.read` / `platform.manage` authority.
+- Verification passed: `tests/page-p-006-api.test.mjs`; `playwright.page-p-006.config.ts` (two browser flows); lint, format, typecheck, unit test, serialized repository test suite (134 tests), build, migration/seed and evidence checks. Evidence: `evidence/PAGE-P-006/ACCEPTANCE.md`. Next task: `PAGE-P-007` platform connectors.
+
 ## PAGE-P-005 completed
 
 - `PAGE-P-005` is PASS at `80d0805`: `/p/business-circles` manages platform-owned fixed business circles with explicit merchant recommendations, stored benefits/reasons and versioned approval. Nearby discovery is deliberately separate and cannot auto-enroll a merchant.

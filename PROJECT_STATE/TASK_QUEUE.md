@@ -2,6 +2,11 @@
 
 ## Current task status (latest)
 
+- [x] PAGE-P-006 PASS — platform template components verified.
+- [ ] PAGE-P-007 NEXT — platform connectors.
+
+## Current task status (previous)
+
 - [x] PAGE-P-005 PASS — fixed business-circle management verified.
 - [ ] PAGE-P-006 NEXT — platform template components.
 

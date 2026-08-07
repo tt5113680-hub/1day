@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## 2026-08-08 — PAGE-P-006 PASS
+
+- Delivered `/p/templates` with platform-owned template drafts, fixed CORE-008 modules, validated industry/scenario configuration, preview and versioned publication.
+- Platform templates are system-tenant isolated, require platform permissions and retain idempotency, audit and correlated Outbox evidence without allowing arbitrary executable configuration.
+
 ## 2026-08-08 — PAGE-P-005 PASS
 
 - Delivered `/p/business-circles` with platform-owned fixed business circles, an explicit merchant recommendation, persisted benefits and a separate approval queue.
