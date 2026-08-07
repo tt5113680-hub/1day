@@ -65,6 +65,7 @@ for (const id of [
   'CIRCLE-002',
   'HARDENING-001',
   'HARDENING-002',
+  'HARDENING-003',
 ])
   test(`evidence directory exists: ${id}`, () =>
     assert.ok(existsSync(`evidence/${id}/ACCEPTANCE.md`) || id === 'FOUNDATION-010'));
