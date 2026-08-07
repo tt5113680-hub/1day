@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## 2026-08-08 — HARDENING-004 PASS
+
+- Added guarded PostgreSQL recovery clone tooling, retained recovery verification, and release/rollback runbook documentation.
+- Verified tenant, configuration, connector and evidence-file counts against a real controlled recovery clone.
+
 ## 2026-08-08 — HARDENING-003 PASS
 
 - Replaced static API health reporting with bounded database-backed readiness and verified failure-closed behavior.

@@ -2,6 +2,11 @@
 
 ## Current hardening status (latest)
 
+- [x] HARDENING-004 PASS — guarded PostgreSQL recovery clone and release/recovery rehearsal verified.
+- [ ] HARDENING-005 NEXT — pilot delivery package and final commercial acceptance.
+
+## Current hardening status (latest)
+
 - [x] HARDENING-003 PASS — database-backed readiness and connector recovery reliability verified.
 - [ ] HARDENING-004 NEXT — backup recovery and release rehearsal.
 

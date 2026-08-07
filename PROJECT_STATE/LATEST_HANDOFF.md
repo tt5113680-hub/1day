@@ -1,5 +1,11 @@
 # LATEST_HANDOFF
 
+## HARDENING-004 completed
+
+- `HARDENING-004` is PASS at `f3da8ac`: `pnpm db:recovery:clone` creates a guarded, non-destructive PostgreSQL clone and verifies tenant, configuration, connector and evidence-file record counts. A real clone completed in approximately five seconds.
+- Verification passed: recovery clone drill, release/recovery contract test, lint, format, 17-package typecheck, Vitest, serialized repository HTTP suite, full build, migration/seed, evidence check and diff check. Evidence: `evidence/HARDENING-004/ACCEPTANCE.md`.
+- Next task: `HARDENING-005` pilot delivery package and final commercial acceptance.
+
 ## HARDENING-003 completed
 
 - `HARDENING-003` is PASS at `8928843`: API readiness now confirms PostgreSQL availability with bounded connection/query timeouts and fails closed with `503` when unavailable; connector recovery is verified end-to-end.
