@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## 2026-08-08 — CHANNEL-002 PASS
+
+- Delivered `/ch/merchants/new` with transactional merchant provisioning, channel affiliation, invitation preparation, initial template, commercial plan and recoverable delivery states.
+- Delivery state is explicit and versioned; no external invitation or delivery is fabricated without authorization.
+
 ## 2026-08-08 — CHANNEL-001 PASS
 
 - Delivered `/ch/dashboard` with persisted first-level channel merchant assignments, onboarding status, 30-day activity and evidence-based renewal opportunity signals.

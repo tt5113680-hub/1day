@@ -1,5 +1,10 @@
 # LATEST_HANDOFF
 
+## CHANNEL-002 completed
+
+- `CHANNEL-002` is PASS at `b601089`: `/ch/merchants/new` creates tenant, organization, first store, administrator, template, plan, channel membership and invitation-prepared delivery state atomically. Delivery failure and recovery are versioned, idempotent and auditable.
+- Verification passed: `tests/channel-002-api.test.mjs`; `playwright.channel-002.config.ts` (two browser flows); lint, format, typecheck, unit test, serialized repository test suite (141 tests), build, migration/seed and evidence checks. Evidence: `evidence/CHANNEL-002/ACCEPTANCE.md`. Next task: `CIRCLE-001` fixed business-circle operations console.
+
 ## CHANNEL-001 completed
 
 - `CHANNEL-001` is PASS at `bf19dee`: `/ch/dashboard` projects system-tenant first-level channel merchant assignments, persisted onboarding/service state, actual 30-day task/order activity and carefully labelled follow-up signals.
