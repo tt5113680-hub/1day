@@ -1,5 +1,10 @@
 # LATEST_HANDOFF
 
+## CIRCLE-001 completed
+
+- `CIRCLE-001` is PASS at `d8a7246`: `/bc/dashboard` displays platform-owned fixed business circles, approved merchant benefits and aggregate content, traffic and conversion counts. It neither exposes tenant-private operational records nor admits pending memberships.
+- Verification passed: `tests/circle-001-api.test.mjs` (including unapproved-membership exclusion); `playwright.circle-001.config.ts` (desktop and missing-session flows); lint, format, typecheck, unit test, serialized repository test suite (142 tests), build, migration/seed and evidence checks. Evidence: `evidence/CIRCLE-001/ACCEPTANCE.md`. Next task: `CIRCLE-002` business-circle merchant management.
+
 ## CHANNEL-002 completed
 
 - `CHANNEL-002` is PASS at `b601089`: `/ch/merchants/new` creates tenant, organization, first store, administrator, template, plan, channel membership and invitation-prepared delivery state atomically. Delivery failure and recovery are versioned, idempotent and auditable.

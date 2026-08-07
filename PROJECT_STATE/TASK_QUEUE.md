@@ -1,5 +1,10 @@
 # TASK_QUEUE
 
+## Current task status (latest — CIRCLE-001 passed)
+
+- [x] CIRCLE-001 PASS — fixed business-circle operations console verified.
+- [ ] CIRCLE-002 NEXT — business-circle merchant management.
+
 ## Current task status (latest — CHANNEL-002 passed)
 
 - [x] CHANNEL-002 PASS — channel merchant onboarding verified.

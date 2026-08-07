@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## 2026-08-08 — CIRCLE-001 PASS
+
+- Delivered `/bc/dashboard` with fixed-circle merchant benefits plus aggregate content, traffic and conversion projections.
+- The dashboard accepts only system-tenant platform access and displays approved platform-owned memberships; tenant private master data and pending memberships remain excluded.
+
 ## 2026-08-08 — CHANNEL-002 PASS
 
 - Delivered `/ch/merchants/new` with transactional merchant provisioning, channel affiliation, invitation preparation, initial template, commercial plan and recoverable delivery states.
