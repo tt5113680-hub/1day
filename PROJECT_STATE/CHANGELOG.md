@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## 2026-08-08 — PAGE-M-010 PASS
+
+- Delivered `/m/permission-audit` with tenant-scoped permission-change, export, risk-signal and trace views.
+- Risk signals distinguish high-privilege expansion from unattributed privileged activity and retain correlation/trace evidence for review without claiming unverified violations.
+- Verified through production HTTP/PostgreSQL, two 1440px browser flows, 112 repository tests and all quality gates.
+
 ## 2026-08-08 — PAGE-M-009 PASS
 
 - Delivered `/m/roles-permissions` with tenant-scoped role templates, effective permission ranges, affected-member counts and high-risk confirmation guidance.

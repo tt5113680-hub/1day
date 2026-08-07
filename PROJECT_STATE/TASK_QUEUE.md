@@ -1,5 +1,12 @@
 # TASK_QUEUE
 
+## Current task status (authoritative)
+
+- [x] PAGE-M-010 PASS — permission audit verified.
+- [ ] PAGE-M-011 NEXT — employee process performance.
+
+This section supersedes older duplicate task snapshots below.
+
 ## Current employee status (authoritative)
 
 - [x] PAGE-E-001 PASS — employee-scoped workbench verified.

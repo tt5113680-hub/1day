@@ -1,5 +1,10 @@
 # LATEST_HANDOFF
 
+## PAGE-M-010 completed
+
+- `PAGE-M-010` is PASS at `d7642ff`: `/m/permission-audit` reads current-tenant audit records through a `tenant.manage`-protected API. It filters permission changes, exports and reviewable risk signals while retaining action, actor, resource, correlation and trace evidence.
+- Verification passed: `tests/page-m-010-api.test.mjs`; `playwright.page-m-010.config.ts` (two 1440px flows); lint, format, 17-package typecheck/build, Vitest, repository test (112), migration/seed and evidence checks. Evidence: `evidence/PAGE-M-010/ACCEPTANCE.md`. Next task: `PAGE-M-011` employee process performance.
+
 ## PAGE-M-009 completed
 
 - `PAGE-M-009` is PASS at `aea0630`: `/m/roles-permissions` exposes tenant-scoped roles, effective permissions and membership impact. Its update UI supplies a reason and high-risk confirmation while CORE-003 enforces final confirmation, optimistic versioning and audit records.
