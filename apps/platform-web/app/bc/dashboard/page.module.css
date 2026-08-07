@@ -1,0 +1,149 @@
+.page {
+  max-width: 1440px;
+  min-height: 100vh;
+  margin: auto;
+  padding: 42px 48px;
+  background: #f6f8fb;
+  color: #111827;
+}
+.header {
+  display: flex;
+  justify-content: space-between;
+  gap: 24px;
+  align-items: start;
+}
+.header p {
+  margin: 0;
+  color: #2563eb;
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+}
+.header h1 {
+  margin: 8px 0;
+  font-size: 34px;
+}
+.header span,
+.circle header span,
+.merchants span {
+  color: #4b5563;
+}
+.header button,
+.centered button {
+  border: 0;
+  border-radius: 8px;
+  padding: 10px 14px;
+  background: #2563eb;
+  color: #fff;
+  font: inherit;
+  font-weight: 700;
+}
+.metrics {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  margin: 28px 0;
+}
+.metrics article,
+.panel {
+  border-radius: 16px;
+  background: #fff;
+  box-shadow: 0 5px 16px #1118270a;
+}
+.metrics article {
+  display: grid;
+  gap: 8px;
+  padding: 20px;
+}
+.metrics small {
+  color: #4b5563;
+}
+.metrics strong {
+  font-size: 30px;
+}
+.panel {
+  padding: 24px;
+}
+.panel h2 {
+  margin-top: 0;
+}
+.circles {
+  display: grid;
+  gap: 16px;
+}
+.circle {
+  padding: 18px;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+}
+.circle header {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+}
+.circle header div,
+.merchants section > div {
+  display: grid;
+  gap: 4px;
+}
+.merchants {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 12px;
+  margin-top: 16px;
+}
+.merchants section {
+  padding: 14px;
+  border-radius: 10px;
+  background: #f8fafc;
+}
+.merchants p {
+  min-height: 40px;
+  color: #4b5563;
+}
+.merchants dl {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  margin: 0;
+}
+.merchants dl div {
+  padding-top: 8px;
+  border-top: 1px solid #e5e7eb;
+}
+.merchants dt {
+  color: #4b5563;
+  font-size: 12px;
+}
+.merchants dd {
+  margin: 4px 0 0;
+  font-weight: 800;
+}
+.empty {
+  color: #4b5563;
+}
+.centered {
+  display: grid;
+  min-height: 70vh;
+  place-items: center;
+  text-align: center;
+}
+.centered section {
+  padding: 32px;
+  border-radius: 16px;
+  background: #fff;
+}
+@media (max-width: 900px) {
+  .page {
+    padding: 28px 18px;
+  }
+  .header,
+  .metrics,
+  .circle header {
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+  .header h1 {
+    font-size: 27px;
+  }
+}

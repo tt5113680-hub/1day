@@ -90,6 +90,8 @@ import { ChannelDashboardController } from './channel-dashboard.controller';
 import { ChannelDashboardService } from './channel-dashboard.service';
 import { ChannelMerchantOnboardingController } from './channel-merchant-onboarding.controller';
 import { ChannelMerchantOnboardingService } from './channel-merchant-onboarding.service';
+import { CircleDashboardController } from './circle-dashboard.controller';
+import { CircleDashboardService } from './circle-dashboard.service';
 import { PlatformBusinessCircleController } from './platform-business-circle.controller';
 import { PlatformBusinessCircleService } from './platform-business-circle.service';
 import { PlatformTemplateController } from './platform-template.controller';
@@ -151,6 +153,7 @@ import { PlatformOnboardingService } from './platform-onboarding.service';
     PlatformChannelController,
     ChannelDashboardController,
     ChannelMerchantOnboardingController,
+    CircleDashboardController,
     PlatformBusinessCircleController,
     PlatformTemplateController,
     PlatformConnectorController,
@@ -204,6 +207,7 @@ import { PlatformOnboardingService } from './platform-onboarding.service';
     PlatformChannelService,
     ChannelDashboardService,
     ChannelMerchantOnboardingService,
+    CircleDashboardService,
     PlatformBusinessCircleService,
     PlatformConnectorService,
     PlatformSecurityAuditService,
