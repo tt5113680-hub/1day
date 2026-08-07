@@ -2,6 +2,11 @@
 
 ## Current task status (latest)
 
+- [x] PAGE-P-003 PASS — tenant onboarding verified.
+- [ ] PAGE-P-004 NEXT — channel management.
+
+## Current task status (latest)
+
 - [x] PAGE-P-002 PASS — tenant management verified.
 - [ ] PAGE-P-003 NEXT — tenant onboarding wizard.
 

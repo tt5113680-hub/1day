@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## 2026-08-08 — PAGE-P-003 PASS
+
+- Delivered `/p/tenants/new` with transactional tenant, organization, store, administrator/RBAC and starter-template provisioning.
+- Platform onboarding now validates operator-supplied administrator credentials, persists only a password hash, and records correlated audit/Outbox/idempotency evidence.
+- Serialized shared-database integration tests to eliminate cross-test data races in the repository quality gate.
+
 ## 2026-08-08 — PAGE-P-002 PASS
 
 - Delivered `/p/tenants` with platform-scoped lifecycle, plan, quota and risk management.

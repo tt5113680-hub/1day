@@ -1,5 +1,10 @@
 # LATEST_HANDOFF
 
+## PAGE-P-003 completed
+
+- `PAGE-P-003` is PASS at `652efe1`: `/p/tenants/new` atomically provisions the tenant subject, organization, merchant, first store, administrator access and initial consumer template through `platform.manage` authority.
+- Verification passed: `tests/page-p-003-api.test.mjs`; `playwright.page-p-003.config.ts` (two browser flows); full lint, format, typecheck, serialized repository test suite (129 tests), build, migration/seed and evidence checks. Evidence: `evidence/PAGE-P-003/ACCEPTANCE.md`. Next task: `PAGE-P-004` channel management.
+
 ## PAGE-P-002 completed
 
 - `PAGE-P-002` is PASS at `522a8f6`: `/p/tenants` manages persisted tenant lifecycle, commercial plan, quotas and risk using platform RBAC, confirmation, version and idempotency safeguards.
