@@ -86,6 +86,8 @@ import { PlatformDashboardController } from './platform-dashboard.controller';
 import { PlatformDashboardService } from './platform-dashboard.service';
 import { PlatformChannelController } from './platform-channel.controller';
 import { PlatformChannelService } from './platform-channel.service';
+import { PlatformBusinessCircleController } from './platform-business-circle.controller';
+import { PlatformBusinessCircleService } from './platform-business-circle.service';
 import { PlatformTenantController } from './platform-tenant.controller';
 import { PlatformTenantService } from './platform-tenant.service';
 import { PlatformOnboardingController } from './platform-onboarding.controller';
@@ -138,6 +140,7 @@ import { PlatformOnboardingService } from './platform-onboarding.service';
     ManagementSettingsController,
     PlatformDashboardController,
     PlatformChannelController,
+    PlatformBusinessCircleController,
     PlatformTenantController,
     PlatformOnboardingController,
   ],
@@ -185,6 +188,7 @@ import { PlatformOnboardingService } from './platform-onboarding.service';
     ManagementSettingsService,
     PlatformDashboardService,
     PlatformChannelService,
+    PlatformBusinessCircleService,
     PlatformTenantService,
     PlatformOnboardingService,
   ],
