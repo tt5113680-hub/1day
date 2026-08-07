@@ -54,6 +54,44 @@ export class WorkflowService implements OnModuleDestroy {
     ).rows;
   }
 
+  async managementOverview(c: OrganizationContext, query: Record<string, unknown>) {
+    const status =
+      query.status === undefined || query.status === '' ? null : text(query.status, 32);
+    const allowed = new Set(['active', 'completed', 'rejected', 'timed_out']);
+    if (status && !allowed.has(status)) throw new BadRequestException('VALIDATION_ERROR');
+    const [templates, instances, approvals] = await Promise.all([
+      this.pool.query(
+        `select d.id,d.code,d.name,d.status,d.version,d.published_version_id,
+          count(i.id) filter(where i.status='active')::int active_instances,
+          count(i.id) filter(where i.status='timed_out')::int timed_out_instances
+         from workflow_definitions d left join workflow_instances i on i.definition_id=d.id and i.tenant_id=d.tenant_id and i.deleted_at is null
+         where d.tenant_id=$1 and d.deleted_at is null group by d.id order by d.updated_at desc`,
+        [c.tenantId],
+      ),
+      this.pool.query(
+        `select i.id,i.status,i.current_step_position,i.version,i.created_at,i.completed_at,d.name definition_name,
+          s.id step_id,s.name step_name,s.step_type,s.due_at,s.status step_status,coalesce(u.display_name,'Unassigned') assignee_name
+         from workflow_instances i join workflow_definitions d on d.id=i.definition_id and d.tenant_id=i.tenant_id
+         left join workflow_instance_steps s on s.workflow_instance_id=i.id and s.tenant_id=i.tenant_id and s.status='active' and s.deleted_at is null
+         left join employees e on e.id=s.assignee_employee_id and e.tenant_id=s.tenant_id
+         left join memberships m on m.id=e.membership_id and m.tenant_id=e.tenant_id left join users u on u.id=m.user_id
+         where i.tenant_id=$1 and i.deleted_at is null and ($2::text is null or i.status=$2)
+         order by case i.status when 'timed_out' then 0 when 'active' then 1 else 2 end,i.created_at desc limit 100`,
+        [c.tenantId, status],
+      ),
+      this.pool.query(
+        `select s.id,s.workflow_instance_id,s.name,s.due_at,s.version,coalesce(u.display_name,'Unassigned') assignee_name,d.name definition_name
+         from workflow_instance_steps s join workflow_instances i on i.id=s.workflow_instance_id and i.tenant_id=s.tenant_id
+         join workflow_definitions d on d.id=i.definition_id and d.tenant_id=i.tenant_id
+         left join employees e on e.id=s.assignee_employee_id and e.tenant_id=s.tenant_id
+         left join memberships m on m.id=e.membership_id and m.tenant_id=e.tenant_id left join users u on u.id=m.user_id
+         where s.tenant_id=$1 and s.step_type='approval' and s.status='active' and s.deleted_at is null order by s.due_at`,
+        [c.tenantId],
+      ),
+    ]);
+    return { templates: templates.rows, instances: instances.rows, approvals: approvals.rows };
+  }
+
   async detail(c: OrganizationContext, id: string) {
     if (!UUID.test(id)) throw new BadRequestException('VALIDATION_ERROR');
     const definition = (

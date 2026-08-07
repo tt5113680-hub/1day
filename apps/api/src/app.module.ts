@@ -24,6 +24,7 @@ import { ExternalActionController } from './external-action.controller';
 import { ExternalActionService } from './external-action.service';
 import { WorkflowController } from './workflow.controller';
 import { WorkflowService } from './workflow.service';
+import { ManagementWorkflowController } from './management-workflow.controller';
 import { ConsumerEntryController } from './consumer-entry.controller';
 import { ConsumerEntryService } from './consumer-entry.service';
 import { ConsumerDiscoveryController } from './consumer-discovery.controller';
@@ -76,6 +77,7 @@ import { ManagementCustomerAssetsService } from './management-customer-assets.se
     PageTemplateController,
     ExternalActionController,
     WorkflowController,
+    ManagementWorkflowController,
     ConsumerEntryController,
     ConsumerDiscoveryController,
     ConsumerStoreController,
