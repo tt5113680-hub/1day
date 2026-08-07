@@ -66,6 +66,8 @@ import { ManagementAiSuggestionController } from './management-ai-suggestion.con
 import { ManagementAiSuggestionService } from './management-ai-suggestion.service';
 import { ManagementStoreController } from './management-store.controller';
 import { ManagementStoreService } from './management-store.service';
+import { ManagementOrganizationEmployeeController } from './management-organization-employee.controller';
+import { ManagementOrganizationEmployeeService } from './management-organization-employee.service';
 
 @Module({
   controllers: [
@@ -104,6 +106,7 @@ import { ManagementStoreService } from './management-store.service';
     ManagementCustomerAssetsController,
     ManagementAiSuggestionController,
     ManagementStoreController,
+    ManagementOrganizationEmployeeController,
   ],
   providers: [
     AuthService,
@@ -139,6 +142,7 @@ import { ManagementStoreService } from './management-store.service';
     ManagementCustomerAssetsService,
     ManagementAiSuggestionService,
     ManagementStoreService,
+    ManagementOrganizationEmployeeService,
   ],
 })
 export class AppModule {}
