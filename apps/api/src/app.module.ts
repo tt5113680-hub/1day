@@ -70,6 +70,8 @@ import { ManagementOrganizationEmployeeController } from './management-organizat
 import { ManagementOrganizationEmployeeService } from './management-organization-employee.service';
 import { ManagementRolePermissionController } from './management-role-permission.controller';
 import { ManagementRolePermissionService } from './management-role-permission.service';
+import { ManagementPermissionAuditController } from './management-permission-audit.controller';
+import { ManagementPermissionAuditService } from './management-permission-audit.service';
 
 @Module({
   controllers: [
@@ -110,6 +112,7 @@ import { ManagementRolePermissionService } from './management-role-permission.se
     ManagementStoreController,
     ManagementOrganizationEmployeeController,
     ManagementRolePermissionController,
+    ManagementPermissionAuditController,
   ],
   providers: [
     AuthService,
@@ -147,6 +150,7 @@ import { ManagementRolePermissionService } from './management-role-permission.se
     ManagementStoreService,
     ManagementOrganizationEmployeeService,
     ManagementRolePermissionService,
+    ManagementPermissionAuditService,
   ],
 })
 export class AppModule {}
