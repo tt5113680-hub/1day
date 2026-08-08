@@ -1,10 +1,10 @@
 import { ForbiddenException, Injectable, OnModuleDestroy } from '@nestjs/common';
-import { Pool } from 'pg';
+import { createApiPool } from './database-pool';
 import type { OrganizationContext } from './organization.service';
 
 @Injectable()
 export class EmployeeProfileService implements OnModuleDestroy {
-  private readonly pool = new Pool({ connectionString: process.env.DATABASE_URL });
+  private readonly pool = createApiPool();
 
   async get(context: OrganizationContext) {
     const employee = await this.pool.query(

@@ -6,7 +6,8 @@ import {
   OnModuleDestroy,
 } from '@nestjs/common';
 import { createHash, randomBytes, randomUUID } from 'node:crypto';
-import { Pool } from 'pg';
+import { type Pool } from 'pg';
+import { createApiPool } from './database-pool';
 import type { OrganizationContext } from './organization.service';
 
 const uuid = /^[0-9a-f-]{36}$/i;
@@ -18,7 +19,7 @@ const text = (v: unknown, max: number) => {
 const hash = (value: string) => createHash('sha256').update(value).digest('hex');
 @Injectable()
 export class EmployeeService implements OnModuleDestroy {
-  private readonly pool = new Pool({ connectionString: process.env.DATABASE_URL });
+  private readonly pool = createApiPool();
   async list(context: OrganizationContext) {
     return (
       await this.pool.query(

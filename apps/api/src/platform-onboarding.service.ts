@@ -5,7 +5,7 @@ import {
   OnModuleDestroy,
 } from '@nestjs/common';
 import { randomUUID, scryptSync } from 'node:crypto';
-import { Pool } from 'pg';
+import { createApiPool } from './database-pool';
 import type { OrganizationContext } from './organization.service';
 const text = (v: unknown, n: number) => {
   if (typeof v !== 'string' || !v.trim() || v.trim().length > n)
@@ -19,7 +19,7 @@ const slug = (v: unknown) => {
 };
 @Injectable()
 export class PlatformOnboardingService implements OnModuleDestroy {
-  private readonly pool = new Pool({ connectionString: process.env.DATABASE_URL });
+  private readonly pool = createApiPool();
   async create(c: OrganizationContext, b: Record<string, unknown>, key: string, r: string) {
     if (!key.trim()) throw new BadRequestException('VALIDATION_ERROR');
     const input = {

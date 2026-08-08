@@ -1,10 +1,10 @@
 import { Injectable, OnModuleDestroy } from '@nestjs/common';
-import { Pool } from 'pg';
+import { createApiPool } from './database-pool';
 import type { OrganizationContext } from './organization.service';
 
 @Injectable()
 export class ManagementRolePermissionService implements OnModuleDestroy {
-  private readonly pool = new Pool({ connectionString: process.env.DATABASE_URL });
+  private readonly pool = createApiPool();
   async overview(context: OrganizationContext) {
     const [roles, permissions] = await Promise.all([
       this.pool.query(

@@ -6,7 +6,8 @@ import {
   OnModuleDestroy,
 } from '@nestjs/common';
 import { randomUUID } from 'node:crypto';
-import { Pool, type PoolClient } from 'pg';
+import { type Pool, type PoolClient } from 'pg';
+import { createApiPool } from './database-pool';
 import type { OrganizationContext } from './organization.service';
 
 const UUID = /^[0-9a-f-]{36}$/i;
@@ -31,7 +32,7 @@ const correlation = (r: string) => (UUID.test(r) ? r : randomUUID());
 
 @Injectable()
 export class PageTemplateService implements OnModuleDestroy {
-  private readonly pool = new Pool({ connectionString: process.env.DATABASE_URL });
+  private readonly pool = createApiPool();
   async list(c: OrganizationContext) {
     return (
       await this.pool.query(

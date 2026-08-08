@@ -7,7 +7,7 @@ import {
   verifyPassword,
 } from '@oneday/auth';
 import { randomUUID } from 'node:crypto';
-import { Pool } from 'pg';
+import { createApiPool } from './database-pool';
 import { requireAuthTokenSecret } from './runtime-config';
 
 const accessLifetimeMs = 15 * 60 * 1000;
@@ -15,7 +15,7 @@ const refreshLifetimeMs = 30 * 24 * 60 * 60 * 1000;
 
 @Injectable()
 export class AuthService implements OnModuleDestroy {
-  private readonly pool = new Pool({ connectionString: process.env.DATABASE_URL });
+  private readonly pool = createApiPool();
   private readonly secret = requireAuthTokenSecret();
 
   async login(

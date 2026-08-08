@@ -1,13 +1,9 @@
 import { Controller, Get, OnModuleDestroy, ServiceUnavailableException } from '@nestjs/common';
-import { Pool } from 'pg';
+import { createApiPool, destroyApiPool } from './database-pool';
 
 @Controller('api/v1/health')
 export class AppController implements OnModuleDestroy {
-  private readonly pool = new Pool({
-    connectionString: process.env.DATABASE_URL,
-    connectionTimeoutMillis: 1_500,
-    query_timeout: 1_500,
-  });
+  private readonly pool = createApiPool();
 
   @Get()
   async health() {
@@ -24,6 +20,6 @@ export class AppController implements OnModuleDestroy {
   }
 
   async onModuleDestroy() {
-    await this.pool.end();
+    await destroyApiPool();
   }
 }

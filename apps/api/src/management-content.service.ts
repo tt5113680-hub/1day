@@ -5,7 +5,8 @@ import {
   OnModuleDestroy,
 } from '@nestjs/common';
 import { randomUUID } from 'node:crypto';
-import { Pool, type PoolClient } from 'pg';
+import { type PoolClient } from 'pg';
+import { createApiPool } from './database-pool';
 import type { OrganizationContext } from './organization.service';
 const kinds = new Set(['knowledge', 'article', 'image', 'video']),
   channels = new Set(['wechat', 'douyin', 'meituan', 'internal']),
@@ -18,7 +19,7 @@ const text = (v: unknown, n: number) =>
       })();
 @Injectable()
 export class ManagementContentService implements OnModuleDestroy {
-  private readonly pool = new Pool({ connectionString: process.env.DATABASE_URL });
+  private readonly pool = createApiPool();
   async list(c: OrganizationContext) {
     const r = await this.pool.query(
       `select i.id,i.kind,i.title,i.body,i.media_url,i.status,i.version,i.created_at,coalesce(d.channels,'{}') channels from content_items i left join lateral(select array_agg(channel order by channel) channels from content_distributions where content_id=i.id and tenant_id=i.tenant_id and deleted_at is null) d on true where i.tenant_id=$1 and i.deleted_at is null order by i.created_at desc`,

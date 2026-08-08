@@ -1,10 +1,10 @@
 import { ForbiddenException, Injectable, OnModuleDestroy } from '@nestjs/common';
-import { Pool } from 'pg';
+import { createApiPool } from './database-pool';
 import { TenantContextService } from './tenant-context.service';
 
 @Injectable()
 export class AuthorizationService implements OnModuleDestroy {
-  private readonly pool = new Pool({ connectionString: process.env.DATABASE_URL });
+  private readonly pool = createApiPool();
   constructor(private readonly tenantContext: TenantContextService) {}
   async require(authorization: string | undefined, permission: string, requestedTenant?: string) {
     const context = await this.tenantContext.fromAuthorization(authorization, requestedTenant);

@@ -1,5 +1,5 @@
 import { BadRequestException, Injectable, OnModuleDestroy } from '@nestjs/common';
-import { Pool } from 'pg';
+import { createApiPool } from './database-pool';
 import type { OrganizationContext } from './organization.service';
 
 const filters = ['all', 'change', 'export', 'risk'] as const;
@@ -7,7 +7,7 @@ type Filter = (typeof filters)[number];
 
 @Injectable()
 export class ManagementPermissionAuditService implements OnModuleDestroy {
-  private readonly pool = new Pool({ connectionString: process.env.DATABASE_URL });
+  private readonly pool = createApiPool();
 
   async list(context: OrganizationContext, filter?: string) {
     if (filter !== undefined && !filters.includes(filter as Filter))

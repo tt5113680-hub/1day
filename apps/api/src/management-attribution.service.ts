@@ -1,10 +1,10 @@
 import { Injectable, OnModuleDestroy } from '@nestjs/common';
-import { Pool } from 'pg';
+import { createApiPool } from './database-pool';
 import type { OrganizationContext } from './organization.service';
 
 @Injectable()
 export class ManagementAttributionService implements OnModuleDestroy {
-  private readonly pool = new Pool({ connectionString: process.env.DATABASE_URL });
+  private readonly pool = createApiPool();
   async overview(context: OrganizationContext) {
     const result = await this.pool.query(
       `select s.id,s.customer_id,s.source_role,s.source_type,s.source_id,s.metadata,s.created_at,c.display_name,

@@ -1,9 +1,9 @@
 import { Injectable, OnModuleDestroy } from '@nestjs/common';
-import { Pool } from 'pg';
+import { createApiPool } from './database-pool';
 
 @Injectable()
 export class PlatformDashboardService implements OnModuleDestroy {
-  private readonly pool = new Pool({ connectionString: process.env.DATABASE_URL });
+  private readonly pool = createApiPool();
   async overview() {
     const [metrics, risks, health] = await Promise.all([
       this.pool.query(`select

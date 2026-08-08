@@ -6,7 +6,7 @@ import {
   OnModuleDestroy,
 } from '@nestjs/common';
 import { createHash, randomUUID, timingSafeEqual } from 'node:crypto';
-import { Pool } from 'pg';
+import { createApiPool } from './database-pool';
 
 const SLUG = /^[a-z0-9][a-z0-9-]{0,62}$/;
 const UUID = /^[0-9a-f-]{36}$/i;
@@ -14,7 +14,7 @@ const digest = (value: string) => createHash('sha256').update(value).digest('hex
 
 @Injectable()
 export class ConsumerProfileService implements OnModuleDestroy {
-  private readonly pool = new Pool({ connectionString: process.env.DATABASE_URL });
+  private readonly pool = createApiPool();
   async profile(slug: string, accessId: string, token: string) {
     const access = await this.access(slug, accessId, token, true);
     const [identities, orders, benefits] = await Promise.all([

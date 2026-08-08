@@ -5,7 +5,7 @@ import {
   OnModuleDestroy,
 } from '@nestjs/common';
 import { randomUUID } from 'node:crypto';
-import { Pool } from 'pg';
+import { createApiPool } from './database-pool';
 import { ConsumerOperatingOrchestrator } from './consumer-operating-orchestrator.service';
 
 const SLUG = /^[a-z0-9][a-z0-9-]{0,62}$/;
@@ -39,7 +39,7 @@ const shareCode = (value: unknown) => {
 
 @Injectable()
 export class ConsumerActionService implements OnModuleDestroy {
-  private readonly pool = new Pool({ connectionString: process.env.DATABASE_URL });
+  private readonly pool = createApiPool();
 
   constructor(private readonly operating: ConsumerOperatingOrchestrator) {}
 

@@ -6,7 +6,8 @@ import {
   OnModuleDestroy,
 } from '@nestjs/common';
 import { randomUUID } from 'node:crypto';
-import { Pool } from 'pg';
+import { type Pool } from 'pg';
+import { createApiPool } from './database-pool';
 import type { OrganizationContext } from './organization.service';
 const uuid = /^[0-9a-f-]{36}$/i,
   text = (v: unknown, n: number) => {
@@ -16,7 +17,7 @@ const uuid = /^[0-9a-f-]{36}$/i,
   };
 @Injectable()
 export class RbacService implements OnModuleDestroy {
-  private readonly pool = new Pool({ connectionString: process.env.DATABASE_URL });
+  private readonly pool = createApiPool();
   async list(c: OrganizationContext) {
     return (
       await this.pool.query(

@@ -6,7 +6,8 @@ import {
   OnModuleDestroy,
 } from '@nestjs/common';
 import { randomUUID } from 'node:crypto';
-import { Pool, type PoolClient } from 'pg';
+import { type Pool, type PoolClient } from 'pg';
+import { createApiPool } from './database-pool';
 import type { OrganizationContext } from './organization.service';
 const UUID = /^[0-9a-f-]{36}$/i;
 const ACTIONS = new Set(['call', 'visit', 'message', 'other']);
@@ -20,7 +21,7 @@ const optional = (v: unknown, n: number) =>
         })();
 @Injectable()
 export class EmployeeFollowUpService implements OnModuleDestroy {
-  private readonly pool = new Pool({ connectionString: process.env.DATABASE_URL });
+  private readonly pool = createApiPool();
   async list(c: OrganizationContext, id: string) {
     const e = await this.employee(c);
     await this.task(this.pool, c.tenantId, e.id, id);

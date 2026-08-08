@@ -5,7 +5,7 @@ import {
   OnModuleDestroy,
 } from '@nestjs/common';
 import { randomUUID, scryptSync } from 'node:crypto';
-import { Pool } from 'pg';
+import { createApiPool } from './database-pool';
 import type { OrganizationContext } from './organization.service';
 
 const uuid = /^[0-9a-f-]{36}$/i;
@@ -22,7 +22,7 @@ const slug = (value: unknown) => {
 
 @Injectable()
 export class ChannelMerchantOnboardingService implements OnModuleDestroy {
-  private readonly pool = new Pool({ connectionString: process.env.DATABASE_URL });
+  private readonly pool = createApiPool();
 
   async list(platformTenantId: string) {
     const result = await this.pool.query(

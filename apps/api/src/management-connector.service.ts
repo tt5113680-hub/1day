@@ -1,6 +1,6 @@
 import { BadRequestException, Injectable, OnModuleDestroy } from '@nestjs/common';
 import { createHash, randomUUID } from 'node:crypto';
-import { Pool } from 'pg';
+import { createApiPool } from './database-pool';
 import type { OrganizationContext } from './organization.service';
 
 const codes = new Set(['wechat', 'douyin', 'meituan', 'manual-import']);
@@ -14,7 +14,7 @@ const text = (value: unknown, maximum: number) =>
 
 @Injectable()
 export class ManagementConnectorService implements OnModuleDestroy {
-  private readonly pool = new Pool({ connectionString: process.env.DATABASE_URL });
+  private readonly pool = createApiPool();
 
   async list(context: OrganizationContext) {
     return (

@@ -5,7 +5,7 @@ import {
   OnModuleDestroy,
 } from '@nestjs/common';
 import { createHash, timingSafeEqual } from 'node:crypto';
-import { Pool } from 'pg';
+import { createApiPool } from './database-pool';
 
 const SLUG = /^[a-z0-9][a-z0-9-]{0,62}$/;
 const UUID = /^[0-9a-f-]{36}$/i;
@@ -13,7 +13,7 @@ const hash = (value: string) => createHash('sha256').update(value).digest('hex')
 
 @Injectable()
 export class ConsumerProcessService implements OnModuleDestroy {
-  private readonly pool = new Pool({ connectionString: process.env.DATABASE_URL });
+  private readonly pool = createApiPool();
 
   async detail(tenantSlug: string, processId: string, accessToken: string) {
     if (!SLUG.test(tenantSlug) || !UUID.test(processId) || !accessToken || accessToken.length > 256)

@@ -5,7 +5,7 @@ import {
   OnModuleDestroy,
 } from '@nestjs/common';
 import { randomUUID } from 'node:crypto';
-import { Pool } from 'pg';
+import { createApiPool } from './database-pool';
 import type { OrganizationContext } from './organization.service';
 const uuid = /^[0-9a-f-]{36}$/i;
 const quota = (value: unknown) => {
@@ -19,7 +19,7 @@ const quota = (value: unknown) => {
 };
 @Injectable()
 export class PlatformTenantService implements OnModuleDestroy {
-  private readonly pool = new Pool({ connectionString: process.env.DATABASE_URL });
+  private readonly pool = createApiPool();
   async list() {
     const rows = (
       await this.pool.query(

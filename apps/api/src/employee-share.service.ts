@@ -6,7 +6,8 @@ import {
   OnModuleDestroy,
 } from '@nestjs/common';
 import { randomBytes, randomUUID } from 'node:crypto';
-import { Pool, type PoolClient } from 'pg';
+import { type PoolClient } from 'pg';
+import { createApiPool } from './database-pool';
 import type { OrganizationContext } from './organization.service';
 
 const UUID = /^[0-9a-f-]{36}$/i;
@@ -32,7 +33,7 @@ const targetPath = (value: unknown) => {
 
 @Injectable()
 export class EmployeeShareService implements OnModuleDestroy {
-  private readonly pool = new Pool({ connectionString: process.env.DATABASE_URL });
+  private readonly pool = createApiPool();
 
   async list(context: OrganizationContext) {
     const employee = await this.employee(context);

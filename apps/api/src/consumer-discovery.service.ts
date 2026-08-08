@@ -4,7 +4,7 @@ import {
   NotFoundException,
   OnModuleDestroy,
 } from '@nestjs/common';
-import { Pool } from 'pg';
+import { createApiPool } from './database-pool';
 
 const SLUG = /^[a-z0-9][a-z0-9-]{0,62}$/;
 const coordinate = (value: string | undefined, min: number, max: number) => {
@@ -31,7 +31,7 @@ const distanceKm = (
 
 @Injectable()
 export class ConsumerDiscoveryService implements OnModuleDestroy {
-  private readonly pool = new Pool({ connectionString: process.env.DATABASE_URL });
+  private readonly pool = createApiPool();
 
   async discovery(tenantSlug: string, latitudeQuery?: string, longitudeQuery?: string) {
     if (!SLUG.test(tenantSlug)) throw new BadRequestException('VALIDATION_ERROR');

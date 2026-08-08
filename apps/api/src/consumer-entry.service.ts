@@ -4,13 +4,13 @@ import {
   NotFoundException,
   OnModuleDestroy,
 } from '@nestjs/common';
-import { Pool } from 'pg';
+import { createApiPool } from './database-pool';
 
 const SLUG = /^[a-z0-9][a-z0-9-]{0,62}$/;
 
 @Injectable()
 export class ConsumerEntryService implements OnModuleDestroy {
-  private readonly pool = new Pool({ connectionString: process.env.DATABASE_URL });
+  private readonly pool = createApiPool();
 
   async entry(tenantSlug: string) {
     if (!SLUG.test(tenantSlug)) throw new BadRequestException('VALIDATION_ERROR');

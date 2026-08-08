@@ -42,6 +42,7 @@ import * as channelMerchantOnboardings from './migrations/040_channel_merchant_o
 import * as circleMerchantManagement from './migrations/041_circle_merchant_management.js';
 import * as consumerOperatingProjections from './migrations/042_consumer_operating_projections.js';
 import * as workerDispatchState from './migrations/043_worker_dispatch_state.js';
+import * as rateLimitWindows from './migrations/044_rate_limit_windows.js';
 import type { Database } from './types.js';
 
 const migrationProvider: MigrationProvider = {
@@ -90,6 +91,7 @@ const migrationProvider: MigrationProvider = {
       '041_circle_merchant_management': circleMerchantManagement,
       '042_consumer_operating_projections': consumerOperatingProjections,
       '043_worker_dispatch_state': workerDispatchState,
+      '044_rate_limit_windows': rateLimitWindows,
     };
   },
 };

@@ -6,7 +6,8 @@ import {
   OnModuleDestroy,
 } from '@nestjs/common';
 import { randomUUID } from 'node:crypto';
-import { Pool, type PoolClient } from 'pg';
+import { type Pool, type PoolClient } from 'pg';
+import { createApiPool } from './database-pool';
 
 export interface OrganizationContext {
   tenantId: string;
@@ -61,7 +62,7 @@ function responseRow(row: Record<string, unknown>) {
 
 @Injectable()
 export class OrganizationService implements OnModuleDestroy {
-  private readonly pool = new Pool({ connectionString: process.env.DATABASE_URL });
+  private readonly pool = createApiPool();
 
   async listOrganizations(context: OrganizationContext) {
     const result = await this.pool.query(

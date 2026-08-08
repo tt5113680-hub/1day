@@ -5,14 +5,14 @@ import {
   NotFoundException,
   OnModuleDestroy,
 } from '@nestjs/common';
-import { Pool } from 'pg';
+import { createApiPool } from './database-pool';
 import type { OrganizationContext } from './organization.service';
 
 const UUID = /^[0-9a-f-]{36}$/i;
 
 @Injectable()
 export class EmployeeCustomerDetailService implements OnModuleDestroy {
-  private readonly pool = new Pool({ connectionString: process.env.DATABASE_URL });
+  private readonly pool = createApiPool();
 
   async detail(context: OrganizationContext, customerId: string) {
     if (!UUID.test(customerId)) throw new BadRequestException('VALIDATION_ERROR');

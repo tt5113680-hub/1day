@@ -5,7 +5,7 @@ import {
   OnModuleDestroy,
 } from '@nestjs/common';
 import { randomUUID } from 'node:crypto';
-import { Pool } from 'pg';
+import { createApiPool } from './database-pool';
 import type { OrganizationContext } from './organization.service';
 
 const code = (value: unknown) => {
@@ -24,7 +24,7 @@ const service = new Set(['pending', 'ready', 'degraded', 'blocked']);
 
 @Injectable()
 export class PlatformChannelService implements OnModuleDestroy {
-  private readonly pool = new Pool({ connectionString: process.env.DATABASE_URL });
+  private readonly pool = createApiPool();
 
   async list(context: OrganizationContext) {
     const [channels, merchantPool] = await Promise.all([

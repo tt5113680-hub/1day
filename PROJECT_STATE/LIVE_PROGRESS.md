@@ -15,6 +15,7 @@
 - 2026-08-08 Asia/Shanghai - AUDIT-BATCH-3 full test verification completed: 177 repository tests plus all package tests, 18-package typecheck, lint and format passed. Evidence and verified-pending-commit state are recorded; full build and final contract check remain before commit.
 
 - 2026-08-08 Asia/Shanghai - AUDIT-BATCH-3 PASS at `3998a7d`: internal Outbox consumption, retry diagnostics and the shared Worker/API reminder-overdue scheduler passed real Worker process acceptance, 177 repository tests and all quality gates. AUDIT-BATCH-4 connection pool / rate limit / TLS-CORS production safety has started.
+- 2026-08-08 Asia/Shanghai - AUDIT-BATCH-4 major implementation complete: 51 API service pools were consolidated behind the bounded shared pool, migration 044 adds database-backed rate-limit windows, and API startup now enforces CORS/TLS/proxy/edge-rate-limit production controls. Target real-process HTTP security acceptance passed; full quality verification is starting.
 
 - 2026-08-08 Asia/Shanghai - H-002 systemic session close-out PASS: SessionApiClient now owns Bearer, request-id, refresh/retry and logout semantics; 36 E/M/P business pages / 54 direct token reads migrated; consumer stays anonymous with explicit tenant links. Verified by typecheck, lint, format, build, 173 repository tests, 1 Vitest, 2 boundary contracts and 6 real Playwright/API journeys. Next: AUDIT-BATCH-2 commercial operating orchestration.
 

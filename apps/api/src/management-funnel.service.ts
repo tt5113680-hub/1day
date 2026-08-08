@@ -1,5 +1,5 @@
 import { BadRequestException, Injectable, OnModuleDestroy } from '@nestjs/common';
-import { Pool } from 'pg';
+import { createApiPool } from './database-pool';
 import type { OrganizationContext } from './organization.service';
 
 const sourceType = (value: string) => {
@@ -10,7 +10,7 @@ const sourceType = (value: string) => {
 
 @Injectable()
 export class ManagementFunnelService implements OnModuleDestroy {
-  private readonly pool = new Pool({ connectionString: process.env.DATABASE_URL });
+  private readonly pool = createApiPool();
 
   async detail(context: OrganizationContext, funnelId: string) {
     const source = sourceType(funnelId);
