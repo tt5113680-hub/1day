@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## 2026-08-08 AUDIT-BATCH-6 PASS (`62f102b`)
+
+- Added a task-scoped employee result and controlled image-evidence flow with server-side session, membership, assignment, customer and idempotency enforcement; result, audit and Outbox receipts commit as one transaction.
+- Added real four-terminal browser acceptance from public consumer behaviour through employee handling to owner management visibility, including second-tenant and low-privilege API isolation checks.
+
 ## 2026-08-08 AUDIT-BATCH-5 PASS (`aa50e0e`)
 
 - Added migration-backed AI execution receipts and a controlled command boundary: only complete whitelisted tenant-local task commands run, while incomplete or unsupported suggestions remain `manual_required`.

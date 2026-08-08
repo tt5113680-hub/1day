@@ -26,6 +26,18 @@
 
 - 2026-08-08 Asia/Shanghai - AUDIT-BATCH-5 PASS at aa50e0e: migration 045, controlled tenant-local AI task commands, manual-required fallback, audit/Outbox receipts, capability-limited connector APIs/UI, pilot boundary documentation and evidence are complete. Target real API acceptance passed 1/1; format, lint, 18-package typecheck/build, evidence check and 182 repository tests passed. Next: AUDIT-BATCH-6 multi-role commercial journey and cross-tenant security acceptance.
 
+- 2026-08-08 Asia/Shanghai - AUDIT-BATCH-6 started on hardening/AUDIT-BATCH-6: the next scope is an honest multi-role browser and API journey using the existing Luckin-style simulation tenant plus a second isolated tenant. It must retain public consumer entry, real employee/management/platform sessions, operational evidence and negative tenant/RBAC/session controls without administrator API stitching.
+
+- 2026-08-08 Asia/Shanghai - AUDIT-BATCH-6 main implementation completed: employee task detail now records a result order, image evidence and task link only after server-side session/membership/own-task/customer checks, in one idempotent audit/Outbox transaction. The commercial fixture gained an explicit public action while retaining isolated test-only data boundaries.
+
+- 2026-08-08 Asia/Shanghai - AUDIT-BATCH-6 full verification started: the API/employee targeted typechecks, real API plus four-terminal Playwright commercial journey, then repository format/lint/typecheck/build/test/evidence gates are being run against the completed transactional flow.
+
+- 2026-08-08 Asia/Shanghai - AUDIT-BATCH-6 browser testing passed: the real API and four terminals completed a 1/1 consumer-public-action -> employee login/follow-up/result-image/task completion -> owner management trail journey. A second tenant owner and an unassigned employee both received API-level 404 isolation denials; platform login also passed. Full repository gates are next.
+
+- 2026-08-08 Asia/Shanghai - AUDIT-BATCH-6 full verification passed: format, lint, 18-package typecheck/build, 183 repository tests across 18 tasks, and 73 evidence-contract checks are all PASS.
+
+- 2026-08-08 Asia/Shanghai - AUDIT-BATCH-6 PASS at `62f102b`: real public consumer to employee follow-up/result/evidence/completion to owner management trail is verified without administrative stitching. Real employee/owner/platform sessions passed; second-tenant owner and unassigned employee API reads were denied with 404. Next: AUDIT-BATCH-7 UI/UX commercial-quality review and pilot-blocking remediation.
+
 - 2026-08-08 Asia/Shanghai - H-002 systemic session close-out PASS: SessionApiClient now owns Bearer, request-id, refresh/retry and logout semantics; 36 E/M/P business pages / 54 direct token reads migrated; consumer stays anonymous with explicit tenant links. Verified by typecheck, lint, format, build, 173 repository tests, 1 Vitest, 2 boundary contracts and 6 real Playwright/API journeys. Next: AUDIT-BATCH-2 commercial operating orchestration.
 
 - 2026-08-08 Asia/Shanghai — PAGE-M-009 PASS at `aea0630`: role templates, permission ranges and affected-member impact are visible before changes; high-risk changes require confirmation and continue to use CORE-003's audited versioned server flow. Next task: PAGE-M-010.

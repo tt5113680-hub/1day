@@ -1,5 +1,13 @@
 # LATEST_HANDOFF
 
+## AUDIT-BATCH-6 completed
+
+- The public consumer action now reaches the existing ownership rules without an administrator API shortcut. The assigned employee has a task-scoped result endpoint and UI: session/membership/own-task/customer checks, idempotency, result order, controlled image evidence, task link, audit and Outbox persist in one transaction.
+- Real Playwright acceptance (1/1) starts the API and consumer/employee/management/platform terminals. It performs the public action, real employee follow-up/result upload/completion, real owner trail inspection, second-tenant owner denial, unassigned employee denial and platform login. The negative checks assert API-level `404` isolation responses.
+- Final gates passed: formatting, lint, 18-package typecheck/build, 183 repository tests across 18 test tasks, and 73 evidence-contract checks. Screenshots and the acceptance record are in `evidence/AUDIT-BATCH-6/`.
+- PASS commit: `62f102b feat(hardening): verify multi-role commercial journey`.
+- Next scope: AUDIT-BATCH-7 UI/UX commercial-quality review and pilot-blocking remediation; non-blocking design-system debt goes to V3.1.
+
 ## AUDIT-BATCH-5 completed
 
 - Migration `045_ai_suggestion_execution` records whether an accepted AI suggestion executed a controlled command, requires manual action, and what local receipt was created. Only complete whitelisted local task commands execute; unsupported or incomplete payloads remain `manual_required` and cannot infer customer contact or external action.

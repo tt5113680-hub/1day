@@ -8,7 +8,8 @@
 - [x] AUDIT-BATCH-3 PASS (`3998a7d`) - Worker / Outbox consumption / reminder / overdue scheduling.
 - [x] AUDIT-BATCH-4 PASS (207740e) - shared API pool, database-backed auth/public-write rate limits, strict CORS and production TLS/proxy/edge-rate-limit startup controls; real HTTP security acceptance and 180 repository tests passed.
 - [x] AUDIT-BATCH-5 PASS (`aa50e0e`) - controlled local AI task commands, `manual_required` fallback, execution audit/Outbox receipts, and honest management/platform connector capability boundaries.
-- [ ] AUDIT-BATCH-6 NEXT - multi-role commercial journey and cross-tenant security acceptance.
+- [x] AUDIT-BATCH-6 PASS (`62f102b`) - real public consumer -> employee follow-up/result/evidence -> owner-management journey, with actual employee/owner/platform sessions and second-tenant/low-privilege API isolation denials.
+- [ ] AUDIT-BATCH-7 NEXT - UI/UX commercial-quality review and pilot-blocking remediation; non-blocking design-system debt is explicitly deferred to V3.1.
 
 ## Final commercial acceptance status (final)
 
