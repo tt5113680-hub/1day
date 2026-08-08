@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## 2026-08-08 AUDIT-BATCH-7 PASS (`d175f64`)
+
+- Added shared business-language mappings for operating source, ownership, status, evidence and audit timeline values; the critical employee and owner flow now omits generated consumer identifiers while retaining the persisted business trace.
+- Corrected public platform-entry language and the 390px employee result composition. Real four-terminal browser acceptance verifies consumer, employee, management, platform and cross-tenant isolation behavior.
+
 ## 2026-08-08 AUDIT-BATCH-6 PASS (`62f102b`)
 
 - Added a task-scoped employee result and controlled image-evidence flow with server-side session, membership, assignment, customer and idempotency enforcement; result, audit and Outbox receipts commit as one transaction.

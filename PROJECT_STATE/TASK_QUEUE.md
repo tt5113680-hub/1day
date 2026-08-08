@@ -9,7 +9,9 @@
 - [x] AUDIT-BATCH-4 PASS (207740e) - shared API pool, database-backed auth/public-write rate limits, strict CORS and production TLS/proxy/edge-rate-limit startup controls; real HTTP security acceptance and 180 repository tests passed.
 - [x] AUDIT-BATCH-5 PASS (`aa50e0e`) - controlled local AI task commands, `manual_required` fallback, execution audit/Outbox receipts, and honest management/platform connector capability boundaries.
 - [x] AUDIT-BATCH-6 PASS (`62f102b`) - real public consumer -> employee follow-up/result/evidence -> owner-management journey, with actual employee/owner/platform sessions and second-tenant/low-privilege API isolation denials.
-- [ ] AUDIT-BATCH-7 NEXT - UI/UX commercial-quality review and pilot-blocking remediation; non-blocking design-system debt is explicitly deferred to V3.1.
+- [x] AUDIT-BATCH-7 PASS (`d175f64`) - shared commercial-language presentation, anonymous-customer minimization, accurate public platform-entry copy and non-overlapping 390px employee result form, verified by real four-terminal Playwright and full quality gates.
+- [x] AUDIT REMEDIATION STAGE PASS - A through G are complete; see `PROJECT_STATE/AUDIT_REMEDIATION_CLOSEOUT.md`.
+- [ ] HUMAN-PILOT-HANDOFF ACCEPTANCE REQUIRED - an operator must provision live credentials/authorizations and sign the controlled-pilot checklist; no new development phase starts automatically.
 
 ## Final commercial acceptance status (final)
 

@@ -38,6 +38,18 @@
 
 - 2026-08-08 Asia/Shanghai - AUDIT-BATCH-6 PASS at `62f102b`: real public consumer to employee follow-up/result/evidence/completion to owner management trail is verified without administrative stitching. Real employee/owner/platform sessions passed; second-tenant owner and unassigned employee API reads were denied with 404. Next: AUDIT-BATCH-7 UI/UX commercial-quality review and pilot-blocking remediation.
 
+- 2026-08-08 Asia/Shanghai - AUDIT-BATCH-7 started on `hardening/AUDIT-BATCH-7`: reviewing the public consumer action, employee task-result flow and management customer-trail interface as one commercial journey. Pilot-blocking usability defects will be corrected here; reusable but non-blocking design-system debt will be documented for V3.1.
+
+- 2026-08-08 Asia/Shanghai - AUDIT-BATCH-7 main implementation completed: shared business-language mapping now removes internal source/status/task values from the commercial flow; employee result entry and mobile action layout are readable at 390px; the public external-action copy accurately separates consultation logging, code copying and third-party service.
+
+- 2026-08-08 Asia/Shanghai - AUDIT-BATCH-7 browser verification started: a real API plus consumer, employee, management and platform terminal journey is checking readable public/employee/owner interactions while retaining second-tenant API 404 isolation.
+
+- 2026-08-08 Asia/Shanghai - AUDIT-BATCH-7 browser verification passed: real four-terminal Playwright 1/1 validates public consultation wording, 390px employee result input with a non-overlapping page-end action area, owner-readable customer trail, platform login and second-tenant API 404 denial. Full repository quality gates are starting.
+
+- 2026-08-08 Asia/Shanghai - AUDIT-BATCH-7 full verification passed: format, lint, 18-package typecheck/build, 184 repository tests across 18 package test tasks, and 74 evidence-contract checks are all PASS.
+
+- 2026-08-08 Asia/Shanghai - AUDIT-BATCH-7 PASS at `d175f64`: shared commercial-language mapping, accurate public platform-entry copy, anonymous-customer minimization and a non-overlapping 390px employee result composition are verified by real four-terminal Playwright. A-G remediation is complete; the task is now stopped at HUMAN-PILOT-HANDOFF acceptance and will not enter another development phase automatically.
+
 - 2026-08-08 Asia/Shanghai - H-002 systemic session close-out PASS: SessionApiClient now owns Bearer, request-id, refresh/retry and logout semantics; 36 E/M/P business pages / 54 direct token reads migrated; consumer stays anonymous with explicit tenant links. Verified by typecheck, lint, format, build, 173 repository tests, 1 Vitest, 2 boundary contracts and 6 real Playwright/API journeys. Next: AUDIT-BATCH-2 commercial operating orchestration.
 
 - 2026-08-08 Asia/Shanghai — PAGE-M-009 PASS at `aea0630`: role templates, permission ranges and affected-member impact are visible before changes; high-risk changes require confirmation and continue to use CORE-003's audited versioned server flow. Next task: PAGE-M-010.

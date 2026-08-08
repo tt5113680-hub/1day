@@ -1,5 +1,13 @@
 # LATEST_HANDOFF
 
+## AUDIT remediation stage completed - acceptance required
+
+- A-G remediation is technically complete: systemic protected-session close-out, transactional consumer operating projection, Worker/Outbox scheduling, production process safety, controlled AI commands/connector boundaries, real multi-role cross-tenant commercial acceptance, and pilot-blocking UI/UX correction.
+- AUDIT-BATCH-7 adds the shared `@oneday/ui` commercial-language mapping. It removes generated source/status/task identifiers and anonymous consumer hashes from the verified employee/management journey; public platform-entry copy now accurately states that it records consultation and supplies a code rather than claiming third-party delivery.
+- Real B7 four-terminal Playwright passed 1/1, including the 390px result-form/no-overlap geometry assertion, public consumer action, real employee result entry, owner management trail, platform login and second-tenant `404` denial. Full gates passed: formatting, lint, 18-package typecheck/build, 184 repository tests and 74 evidence-contract checks.
+- PASS commit: `d175f64 fix(hardening): improve commercial journey usability`.
+- This is a stage boundary. Remaining work is the existing human controlled-pilot handoff: provision non-seed credentials and approved authorizations, then sign `docs/PILOT_ACCEPTANCE_CHECKLIST.md`. Do not automatically begin another development phase.
+
 ## AUDIT-BATCH-6 completed
 
 - The public consumer action now reaches the existing ownership rules without an administrator API shortcut. The assigned employee has a task-scoped result endpoint and UI: session/membership/own-task/customer checks, idempotency, result order, controlled image evidence, task link, audit and Outbox persist in one transaction.
