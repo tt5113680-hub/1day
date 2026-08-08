@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## 2026-08-08 AUDIT-BATCH-4 PASS (207740e)
+
+- Consolidated API database access behind a bounded, application-owned PostgreSQL pool and added persistent, atomic limit windows for authentication and public consumer writes.
+- Enforced production HTTPS/TLS-proxy/CORS/edge-rate-limit configuration, added request correlation and CORS session-revocation support, and covered the boundary with real API-process acceptance.
+
 ## 2026-08-08 AUDIT-BATCH-3 PASS (`3998a7d`)
 
 - Replaced the health-only Worker with locked internal Outbox consumption, durable retry diagnostics and a shared reminder/overdue scheduler.

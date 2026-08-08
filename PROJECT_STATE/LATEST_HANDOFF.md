@@ -1,5 +1,13 @@
 # LATEST_HANDOFF
 
+## AUDIT-BATCH-4 completed
+
+- API service-local PostgreSQL pools are consolidated behind one bounded, application-owned pool. Migration 044 atomically enforces separate authentication and public-write limits with hashed subjects and deployment namespaces.
+- CORS validates exact origins and includes DELETE session revocation. API replies with a correlation ID. Production startup fails closed unless HTTPS public transport, TLS proxy declaration, trusted proxy handling, exact CORS, a stable limit namespace and shared edge rate-limit declaration are all configured.
+- The audit-batch-4 security test passed against real API processes, covering CORS DELETE preflight, request-ID correlation, persistent 429 limits, unsafe-production startup refusal and safe-production readiness. Final gates passed: 180 repository tests, 18-package typecheck/build, lint, format and 71 evidence checks.
+- PASS commit: 207740e feat(hardening): secure pool and http boundary.
+- Next scope: AUDIT-BATCH-5 AI delivery and connector capability-boundary calibration.
+
 ## AUDIT-BATCH-3 completed
 
 - Worker is no longer a health-only process. It uses the shared task dispatch state machine and an internal Outbox consumer that locks due records, persists consumption de-duplication, records bounded retry diagnostics, and publishes only internal delivery completion (never an unperformed third-party delivery).

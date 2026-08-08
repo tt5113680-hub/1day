@@ -6,7 +6,8 @@
 - [x] H-002 PASS - systemic shared session boundary: real employee, management and platform login/refresh/logout; 36 E/M/P business pages migrated from 54 direct token reads; public consumer entry requires explicit tenant and remains anonymous; real Playwright 6/6 PASS.
 - [x] AUDIT-BATCH-2 PASS (`5c0ea50`) - commercial operating orchestration: public consumer behaviour atomically projects customer/source/ownership or lead-pool/task/reminder/audit/Outbox, with HTTP full-chain evidence.
 - [x] AUDIT-BATCH-3 PASS (`3998a7d`) - Worker / Outbox consumption / reminder / overdue scheduling.
-- [~] AUDIT-BATCH-4 IN_PROGRESS - connection pool / rate limit / TLS-CORS production safety.
+- [x] AUDIT-BATCH-4 PASS (207740e) - shared API pool, database-backed auth/public-write rate limits, strict CORS and production TLS/proxy/edge-rate-limit startup controls; real HTTP security acceptance and 180 repository tests passed.
+- [~] AUDIT-BATCH-5 IN_PROGRESS - AI delivery and connector capability-boundary calibration.
 
 ## Final commercial acceptance status (final)
 
