@@ -1,4 +1,5 @@
 'use client';
+import { SessionApiClient } from '@oneday/session-client';
 import { useCallback, useEffect, useState } from 'react';
 import styles from './page.module.css';
 
@@ -29,19 +30,19 @@ type Data = {
   }[];
 };
 const api = process.env.NEXT_PUBLIC_API_BASE_URL ?? 'http://127.0.0.1:3001';
+const sessionApi = new SessionApiClient(api);
 export default function WorkflowsPage() {
   const [state, setState] = useState<'loading' | 'ready' | 'forbidden' | 'error'>('loading');
   const [data, setData] = useState<Data | null>(null);
   const [filter, setFilter] = useState('');
   const load = useCallback(
     async (status = filter) => {
-      const token = sessionStorage.getItem('oneday.accessToken');
-      if (!token) return setState('forbidden');
+      if (!(await sessionApi.context())) return setState('forbidden');
       setState('loading');
       try {
-        const response = await fetch(
+        const response = await sessionApi.request(
           `${api}/api/v1/management/workflows${status ? `?status=${status}` : ''}`,
-          { headers: { authorization: `Bearer ${token}`, 'x-request-id': crypto.randomUUID() } },
+          { headers: {} },
         );
         if ([401, 403].includes(response.status)) return setState('forbidden');
         if (!response.ok) throw Error('LOAD');

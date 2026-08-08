@@ -1,4 +1,5 @@
 'use client';
+import { SessionApiClient } from '@oneday/session-client';
 
 import { useCallback, useEffect, useState } from 'react';
 import styles from './page.module.css';
@@ -25,6 +26,7 @@ type Preview = {
   modules: { id: string; module_type: string; position: number; config: Record<string, unknown> }[];
 };
 const api = process.env.NEXT_PUBLIC_API_BASE_URL ?? 'http://127.0.0.1:3001';
+const sessionApi = new SessionApiClient(api);
 const bundles = {
   service: ['hero', 'action_grid', 'content'],
   conversion: ['hero', 'content', 'result_list'],
@@ -44,15 +46,14 @@ export default function PlatformTemplatesPage() {
     scenario: '',
     bundle: 'service' as keyof typeof bundles,
   });
-  const headers = () => ({
-    authorization: `Bearer ${sessionStorage.getItem('oneday.accessToken')}`,
-    'x-request-id': crypto.randomUUID(),
-  });
+  const headers = () => ({});
   const load = useCallback(async () => {
-    if (!sessionStorage.getItem('oneday.accessToken')) return setState('forbidden');
+    if (!(await sessionApi.context())) return setState('forbidden');
     setState('loading');
     try {
-      const response = await fetch(`${api}/api/v1/platform/templates`, { headers: headers() });
+      const response = await sessionApi.request(`${api}/api/v1/platform/templates`, {
+        headers: headers(),
+      });
       if ([401, 403].includes(response.status)) return setState('forbidden');
       if (!response.ok) throw Error();
       setTemplates((await response.json()).data);
@@ -63,7 +64,7 @@ export default function PlatformTemplatesPage() {
   }, []);
   useEffect(() => void load(), [load]);
   const preview = async (id: string) => {
-    const response = await fetch(`${api}/api/v1/platform/templates/${id}/preview`, {
+    const response = await sessionApi.request(`${api}/api/v1/platform/templates/${id}/preview`, {
       headers: headers(),
     });
     if (!response.ok) return setNote('模板预览不可用，请刷新后重试。');
@@ -73,7 +74,7 @@ export default function PlatformTemplatesPage() {
     setSaving(true);
     setNote('');
     try {
-      const response = await fetch(`${api}/api/v1/platform/templates`, {
+      const response = await sessionApi.request(`${api}/api/v1/platform/templates`, {
         method: 'POST',
         headers: {
           ...headers(),
@@ -114,7 +115,7 @@ export default function PlatformTemplatesPage() {
     setSaving(true);
     setNote('');
     try {
-      const response = await fetch(
+      const response = await sessionApi.request(
         `${api}/api/v1/platform/templates/${selected.template.id}/publish`,
         {
           method: 'POST',

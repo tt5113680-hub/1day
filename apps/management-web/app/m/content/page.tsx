@@ -1,4 +1,5 @@
 'use client';
+import { SessionApiClient } from '@oneday/session-client';
 import { useCallback, useEffect, useState } from 'react';
 import styles from './page.module.css';
 type Item = {
@@ -10,18 +11,18 @@ type Item = {
   channels: string[];
 };
 const api = process.env.NEXT_PUBLIC_API_BASE_URL ?? 'http://127.0.0.1:3001';
+const sessionApi = new SessionApiClient(api);
 export default function ContentPage() {
   const [state, setState] = useState<'loading' | 'ready' | 'forbidden' | 'error'>('loading'),
     [items, setItems] = useState<Item[]>([]),
     [title, setTitle] = useState(''),
     [note, setNote] = useState('');
   const load = useCallback(async () => {
-    const token = sessionStorage.getItem('oneday.accessToken');
-    if (!token) return setState('forbidden');
+    if (!(await sessionApi.context())) return setState('forbidden');
     setState('loading');
     try {
-      const r = await fetch(`${api}/api/v1/management/content`, {
-        headers: { authorization: `Bearer ${token}`, 'x-request-id': crypto.randomUUID() },
+      const r = await sessionApi.request(`${api}/api/v1/management/content`, {
+        headers: {},
       });
       if ([401, 403].includes(r.status)) return setState('forbidden');
       if (!r.ok) throw Error();
@@ -34,17 +35,14 @@ export default function ContentPage() {
   useEffect(() => void load(), [load]);
   const create = async () => {
     if (!title.trim()) return setNote('请填写内容标题。');
-    const token = sessionStorage.getItem('oneday.accessToken'),
-      r = await fetch(`${api}/api/v1/management/content`, {
-        method: 'POST',
-        headers: {
-          authorization: `Bearer ${token}`,
-          'x-request-id': crypto.randomUUID(),
-          'idempotency-key': crypto.randomUUID(),
-          'content-type': 'application/json',
-        },
-        body: JSON.stringify({ kind: 'article', title }),
-      });
+    const r = await sessionApi.request(`${api}/api/v1/management/content`, {
+      method: 'POST',
+      headers: {
+        'idempotency-key': crypto.randomUUID(),
+        'content-type': 'application/json',
+      },
+      body: JSON.stringify({ kind: 'article', title }),
+    });
     if (!r.ok) return setNote('内容未创建，请检查权限和输入。');
     setTitle('');
     setNote('草稿已创建，待审批后才能登记分发。');

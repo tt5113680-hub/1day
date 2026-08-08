@@ -1,4 +1,5 @@
 'use client';
+import { SessionApiClient } from '@oneday/session-client';
 
 import { useParams } from 'next/navigation';
 import { useCallback, useEffect, useState } from 'react';
@@ -17,6 +18,7 @@ type Data = {
   timeline: { kind: string; action: string; at: string; taskId?: string; title?: string }[];
 };
 const api = process.env.NEXT_PUBLIC_API_BASE_URL ?? 'http://127.0.0.1:3001';
+const sessionApi = new SessionApiClient(api);
 const when = (value: string) =>
   new Intl.DateTimeFormat('zh-CN', { dateStyle: 'medium', timeStyle: 'short' }).format(
     new Date(value),
@@ -28,15 +30,14 @@ export function CustomerDetail() {
   const [state, setState] = useState<'loading' | 'ready' | 'forbidden' | 'error'>('loading');
   const [data, setData] = useState<Data | null>(null);
   const load = useCallback(async () => {
-    const token = sessionStorage.getItem('oneday.accessToken') ?? '';
-    if (!token || !id) {
+    if (!(await sessionApi.context()) || !id) {
       setState('forbidden');
       return;
     }
     setState('loading');
     try {
-      const r = await fetch(`${api}/api/v1/employee/customers/${id}`, {
-        headers: { authorization: `Bearer ${token}`, 'x-request-id': crypto.randomUUID() },
+      const r = await sessionApi.request(`${api}/api/v1/employee/customers/${id}`, {
+        headers: {},
       });
       if ([401, 403, 404].includes(r.status)) {
         setState('forbidden');

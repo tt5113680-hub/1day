@@ -1,4 +1,5 @@
 'use client';
+import { SessionApiClient } from '@oneday/session-client';
 
 import { useCallback, useEffect, useState } from 'react';
 import styles from './page.module.css';
@@ -17,6 +18,7 @@ type Connector = {
   logs: { status: string; message: string; observedAt: string }[];
 };
 const api = process.env.NEXT_PUBLIC_API_BASE_URL ?? 'http://127.0.0.1:3001';
+const sessionApi = new SessionApiClient(api);
 export default function PlatformConnectorsPage() {
   const [state, setState] = useState<'loading' | 'ready' | 'forbidden' | 'error'>('loading');
   const [items, setItems] = useState<Connector[]>([]);
@@ -28,15 +30,14 @@ export default function PlatformConnectorsPage() {
     authMode: 'api_key',
     rateLimitPerMinute: '120',
   });
-  const headers = () => ({
-    authorization: `Bearer ${sessionStorage.getItem('oneday.accessToken')}`,
-    'x-request-id': crypto.randomUUID(),
-  });
+  const headers = () => ({});
   const load = useCallback(async () => {
-    if (!sessionStorage.getItem('oneday.accessToken')) return setState('forbidden');
+    if (!(await sessionApi.context())) return setState('forbidden');
     setState('loading');
     try {
-      const response = await fetch(`${api}/api/v1/platform/connectors`, { headers: headers() });
+      const response = await sessionApi.request(`${api}/api/v1/platform/connectors`, {
+        headers: headers(),
+      });
       if ([401, 403].includes(response.status)) return setState('forbidden');
       if (!response.ok) throw Error();
       setItems((await response.json()).data);
@@ -50,7 +51,7 @@ export default function PlatformConnectorsPage() {
     setSaving(true);
     setNote('');
     try {
-      const response = await fetch(`${api}/api/v1/platform/connectors`, {
+      const response = await sessionApi.request(`${api}/api/v1/platform/connectors`, {
         method: 'POST',
         headers: {
           ...headers(),
@@ -76,7 +77,7 @@ export default function PlatformConnectorsPage() {
     setSaving(true);
     setNote('');
     try {
-      const response = await fetch(
+      const response = await sessionApi.request(
         `${api}/api/v1/platform/connectors/${item.id}/health-observations`,
         {
           method: 'POST',

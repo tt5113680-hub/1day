@@ -1,4 +1,5 @@
 'use client';
+import { SessionApiClient } from '@oneday/session-client';
 import { useCallback, useEffect, useState } from 'react';
 import styles from './page.module.css';
 type Template = {
@@ -15,21 +16,20 @@ type Preview = {
   modules: { id: string; module_type: string; position: number; config: Record<string, unknown> }[];
 };
 const api = process.env.NEXT_PUBLIC_API_BASE_URL ?? 'http://127.0.0.1:3001';
+const sessionApi = new SessionApiClient(api);
 export default function PageBuilder() {
   const [state, setState] = useState<'loading' | 'ready' | 'forbidden' | 'error'>('loading'),
     [templates, setTemplates] = useState<Template[]>([]),
     [selected, setSelected] = useState<Preview | null>(null),
     [note, setNote] = useState('');
   const headers = () => ({
-    authorization: `Bearer ${sessionStorage.getItem('oneday.accessToken')}`,
-    'x-request-id': crypto.randomUUID(),
     'content-type': 'application/json',
   });
   const load = useCallback(async () => {
-    if (!sessionStorage.getItem('oneday.accessToken')) return setState('forbidden');
+    if (!(await sessionApi.context())) return setState('forbidden');
     setState('loading');
     try {
-      const r = await fetch(`${api}/api/v1/page-templates`, { headers: headers() });
+      const r = await sessionApi.request(`${api}/api/v1/page-templates`, { headers: headers() });
       if ([401, 403].includes(r.status)) return setState('forbidden');
       if (!r.ok) throw Error();
       setTemplates((await r.json()).data);
@@ -40,20 +40,25 @@ export default function PageBuilder() {
   }, []);
   useEffect(() => void load(), [load]);
   const preview = async (id: string) => {
-    const r = await fetch(`${api}/api/v1/page-templates/${id}/preview`, { headers: headers() });
+    const r = await sessionApi.request(`${api}/api/v1/page-templates/${id}/preview`, {
+      headers: headers(),
+    });
     if (!r.ok) return setNote('模板预览不可用。');
     setSelected((await r.json()).data);
   };
   const publish = async () => {
     if (!selected?.version) return;
-    const r = await fetch(`${api}/api/v1/page-templates/${selected.template.id}/publish`, {
-      method: 'POST',
-      headers: headers(),
-      body: JSON.stringify({
-        versionId: selected.version.id,
-        templateVersion: selected.template.version,
-      }),
-    });
+    const r = await sessionApi.request(
+      `${api}/api/v1/page-templates/${selected.template.id}/publish`,
+      {
+        method: 'POST',
+        headers: headers(),
+        body: JSON.stringify({
+          versionId: selected.version.id,
+          templateVersion: selected.template.version,
+        }),
+      },
+    );
     if (!r.ok) return setNote('发布失败：版本可能已变化，请刷新后重试。');
     setNote('版本已发布，服务端已记录审计与事件。');
     await load();

@@ -1,5 +1,12 @@
 # LATEST_HANDOFF
 
+## H-002 systemic close-out completed
+
+- H-002 is now a verified PASS on `hardening/HARDENING-H-002`: `SessionApiClient` centrally attaches Bearer/request-id, serializes refresh, retries one protected-request 401 with a rotated token, and clears local credentials on refresh failure. All 36 E/M/P app business pages (54 former direct reads) use it; static contract coverage prevents regressions.
+- Public consumer routes retain low-friction anonymous access and no employee-like login. A public tenant must be carried explicitly by its URL; no consumer route defaults to `system`.
+- Final evidence: 18-package typecheck, lint, format, build, 173 repository tests, SessionApiClient Vitest, session-boundary static tests, and 6 real H-002 Playwright/API journeys all PASS. See `evidence/H-002/ACCEPTANCE.md`.
+- Next scope: `AUDIT-BATCH-2` commercial operating orchestration. Implement the consumer behaviour -> customer/source/ownership -> employee task -> follow-up/result evidence -> management chain without manual administrator API stitching.
+
 ## H-002 completed
 
 - `H-002` is PASS: employee, tenant-owner/management and platform browser sessions now use real tenant-slug login, automatic refresh rotation and server-side logout revocation. Consumer routes remain public and anonymous by the frozen product decision.

@@ -1,4 +1,5 @@
 'use client';
+import { SessionApiClient } from '@oneday/session-client';
 
 import { useCallback, useEffect, useState } from 'react';
 import styles from './page.module.css';
@@ -14,6 +15,7 @@ type Connector = {
 };
 
 const api = process.env.NEXT_PUBLIC_API_BASE_URL ?? 'http://127.0.0.1:3001';
+const sessionApi = new SessionApiClient(api);
 const labels: Record<string, string> = {
   wechat: '微信',
   douyin: '抖音',
@@ -29,15 +31,14 @@ export default function ConnectorPage() {
   const [note, setNote] = useState('');
   const [submitting, setSubmitting] = useState(false);
 
-  const headers = () => ({
-    authorization: `Bearer ${sessionStorage.getItem('oneday.accessToken')}`,
-    'x-request-id': crypto.randomUUID(),
-  });
+  const headers = () => ({});
   const load = useCallback(async () => {
-    if (!sessionStorage.getItem('oneday.accessToken')) return setState('forbidden');
+    if (!(await sessionApi.context())) return setState('forbidden');
     setState('loading');
     try {
-      const response = await fetch(`${api}/api/v1/management/connectors`, { headers: headers() });
+      const response = await sessionApi.request(`${api}/api/v1/management/connectors`, {
+        headers: headers(),
+      });
       if ([401, 403].includes(response.status)) return setState('forbidden');
       if (!response.ok) throw Error();
       setConnectors((await response.json()).data);
@@ -52,15 +53,18 @@ export default function ConnectorPage() {
     if (!secret.trim()) return setNote('请输入授权密钥。');
     setSubmitting(true);
     try {
-      const response = await fetch(`${api}/api/v1/management/connectors/authorization-requests`, {
-        method: 'POST',
-        headers: {
-          ...headers(),
-          'content-type': 'application/json',
-          'idempotency-key': crypto.randomUUID(),
+      const response = await sessionApi.request(
+        `${api}/api/v1/management/connectors/authorization-requests`,
+        {
+          method: 'POST',
+          headers: {
+            ...headers(),
+            'content-type': 'application/json',
+            'idempotency-key': crypto.randomUUID(),
+          },
+          body: JSON.stringify({ code, secret }),
         },
-        body: JSON.stringify({ code, secret }),
-      });
+      );
       if (!response.ok) throw Error();
       setSecret('');
       setNote('授权请求已登记，等待第三方授权；系统尚未调用外部平台。');

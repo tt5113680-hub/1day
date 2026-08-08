@@ -1,4 +1,5 @@
 'use client';
+import { SessionApiClient } from '@oneday/session-client';
 
 import { useCallback, useEffect, useState } from 'react';
 import styles from './notification-center.module.css';
@@ -16,6 +17,7 @@ type Notification = {
 type Payload = { items: Notification[]; unreadCount: number };
 
 const api = process.env.NEXT_PUBLIC_API_BASE_URL ?? 'http://127.0.0.1:3001';
+const sessionApi = new SessionApiClient(api);
 const labels = { task: '任务', anomaly: '异常', approval: '审批', system: '系统' };
 
 export function NotificationCenter() {
@@ -25,19 +27,16 @@ export function NotificationCenter() {
   const [readState, setReadState] = useState('all');
   const [busy, setBusy] = useState<string | null>(null);
   const [message, setMessage] = useState('');
-  const token = () => sessionStorage.getItem('oneday.accessToken') ?? '';
   const headers = () => ({
-    authorization: `Bearer ${token()}`,
     'content-type': 'application/json',
-    'x-request-id': crypto.randomUUID(),
   });
   const load = useCallback(async () => {
-    if (!token()) return setState('forbidden');
+    if (!(await sessionApi.context())) return setState('forbidden');
     setState('loading');
     try {
       const params = new URLSearchParams({ state: readState });
       if (category) params.set('category', category);
-      const response = await fetch(`${api}/api/v1/employee/notifications?${params}`, {
+      const response = await sessionApi.request(`${api}/api/v1/employee/notifications?${params}`, {
         headers: headers(),
       });
       if ([401, 403].includes(response.status)) return setState('forbidden');
@@ -55,11 +54,14 @@ export function NotificationCenter() {
     setBusy(notification.id);
     setMessage('');
     try {
-      const response = await fetch(`${api}/api/v1/employee/notifications/${notification.id}/read`, {
-        method: 'PATCH',
-        headers: { ...headers(), 'idempotency-key': crypto.randomUUID() },
-        body: JSON.stringify({ version: notification.version }),
-      });
+      const response = await sessionApi.request(
+        `${api}/api/v1/employee/notifications/${notification.id}/read`,
+        {
+          method: 'PATCH',
+          headers: { ...headers(), 'idempotency-key': crypto.randomUUID() },
+          body: JSON.stringify({ version: notification.version }),
+        },
+      );
       if (!response.ok) throw Error('READ');
       setMessage('通知已标记为已读。');
       await load();

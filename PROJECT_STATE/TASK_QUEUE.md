@@ -3,7 +3,8 @@
 ## Audit hardening status (latest)
 
 - [x] H-001 PASS - API startup fails closed without a safe authentication signing secret.
-- [x] H-002 PASS - real employee, management and platform login, refresh and logout journeys; public anonymous consumer entry; isolated reusable commercial test fixture.
+- [x] H-002 PASS - systemic shared session boundary: real employee, management and platform login/refresh/logout; 36 E/M/P business pages migrated from 54 direct token reads; public consumer entry requires explicit tenant and remains anonymous; real Playwright 6/6 PASS.
+- [ ] AUDIT-BATCH-2 NEXT - commercial operating orchestration: consumer behaviour -> customer/source/ownership -> employee task -> follow-up/result evidence -> management projection.
 
 ## Final commercial acceptance status (final)
 

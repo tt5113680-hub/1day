@@ -1,4 +1,5 @@
 'use client';
+import { SessionApiClient } from '@oneday/session-client';
 
 import { useParams } from 'next/navigation';
 import { useCallback, useEffect, useState } from 'react';
@@ -29,6 +30,7 @@ type Detail = {
 type State = 'loading' | 'ready' | 'forbidden' | 'error';
 
 const api = process.env.NEXT_PUBLIC_API_BASE_URL ?? 'http://127.0.0.1:3001';
+const sessionApi = new SessionApiClient(api);
 const when = (value: string) =>
   new Intl.DateTimeFormat('zh-CN', { dateStyle: 'medium', timeStyle: 'short' }).format(
     new Date(value),
@@ -42,23 +44,22 @@ export function TaskDetail() {
   const [data, setData] = useState<Detail | null>(null);
   const [message, setMessage] = useState('');
   const [busy, setBusy] = useState<'link' | 'complete' | null>(null);
-  const token = () => window.sessionStorage.getItem('oneday.accessToken') ?? '';
   const headers = (extra: Record<string, string> = {}) => ({
-    authorization: `Bearer ${token()}`,
-    'x-request-id': crypto.randomUUID(),
     'content-type': 'application/json',
     ...extra,
   });
   const load = useCallback(
     async (preserveMessage = false) => {
-      if (!token() || !id) {
+      if (!(await sessionApi.context()) || !id) {
         setState('forbidden');
         return;
       }
       setState('loading');
       if (!preserveMessage) setMessage('');
       try {
-        const response = await fetch(`${api}/api/v1/employee/tasks/${id}`, { headers: headers() });
+        const response = await sessionApi.request(`${api}/api/v1/employee/tasks/${id}`, {
+          headers: headers(),
+        });
         if ([401, 403, 404].includes(response.status)) {
           setState('forbidden');
           return;
@@ -80,11 +81,14 @@ export function TaskDetail() {
     setBusy('link');
     setMessage('');
     try {
-      const response = await fetch(`${api}/api/v1/employee/tasks/${id}/evidence-links`, {
-        method: 'POST',
-        headers: headers({ 'idempotency-key': crypto.randomUUID() }),
-        body: JSON.stringify({ evidenceId }),
-      });
+      const response = await sessionApi.request(
+        `${api}/api/v1/employee/tasks/${id}/evidence-links`,
+        {
+          method: 'POST',
+          headers: headers({ 'idempotency-key': crypto.randomUUID() }),
+          body: JSON.stringify({ evidenceId }),
+        },
+      );
       if (response.status === 409) throw Error('CONFLICT');
       if (!response.ok) throw Error('LINK_FAILED');
       setMessage('证据已关联到本任务，执行记录已同步。');
@@ -104,7 +108,7 @@ export function TaskDetail() {
     setBusy('complete');
     setMessage('');
     try {
-      const response = await fetch(`${api}/api/v1/employee/tasks/${id}/complete`, {
+      const response = await sessionApi.request(`${api}/api/v1/employee/tasks/${id}/complete`, {
         method: 'POST',
         headers: headers(),
         body: JSON.stringify({ version: data.task.version }),

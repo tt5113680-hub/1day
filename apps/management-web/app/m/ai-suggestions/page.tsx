@@ -1,4 +1,5 @@
 'use client';
+import { SessionApiClient } from '@oneday/session-client';
 
 import { useCallback, useEffect, useState } from 'react';
 import styles from './page.module.css';
@@ -17,6 +18,7 @@ type Suggestion = {
 };
 
 const api = process.env.NEXT_PUBLIC_API_BASE_URL ?? 'http://127.0.0.1:3001';
+const sessionApi = new SessionApiClient(api);
 
 export default function AiSuggestions() {
   const [state, setState] = useState<'loading' | 'ready' | 'forbidden' | 'error'>('loading');
@@ -26,12 +28,11 @@ export default function AiSuggestions() {
   const [fieldError, setFieldError] = useState<Record<string, string>>({});
 
   const load = useCallback(async () => {
-    const token = sessionStorage.getItem('oneday.accessToken');
-    if (!token) return setState('forbidden');
+    if (!(await sessionApi.context())) return setState('forbidden');
     setState('loading');
     try {
-      const response = await fetch(`${api}/api/v1/management/ai-suggestions`, {
-        headers: { authorization: `Bearer ${token}`, 'x-request-id': crypto.randomUUID() },
+      const response = await sessionApi.request(`${api}/api/v1/management/ai-suggestions`, {
+        headers: {},
       });
       if ([401, 403].includes(response.status)) return setState('forbidden');
       if (!response.ok) throw new Error('REQUEST_FAILED');
@@ -45,25 +46,25 @@ export default function AiSuggestions() {
   useEffect(() => void load(), [load]);
 
   const update = async (item: Suggestion, mode: 'accept' | 'feedback') => {
-    const token = sessionStorage.getItem('oneday.accessToken');
     const feedbackValue = feedback[item.id]?.trim() ?? '';
     if (mode === 'feedback' && !feedbackValue) {
       setFieldError((errors) => ({ ...errors, [item.id]: '请输入反馈后再提交。' }));
       return;
     }
     setFieldError((errors) => ({ ...errors, [item.id]: '' }));
-    const response = await fetch(`${api}/api/v1/management/ai-suggestions/${item.id}/${mode}`, {
-      method: 'POST',
-      headers: {
-        authorization: `Bearer ${token}`,
-        'x-request-id': crypto.randomUUID(),
-        'content-type': 'application/json',
+    const response = await sessionApi.request(
+      `${api}/api/v1/management/ai-suggestions/${item.id}/${mode}`,
+      {
+        method: 'POST',
+        headers: {
+          'content-type': 'application/json',
+        },
+        body: JSON.stringify({
+          version: item.version,
+          ...(mode === 'feedback' ? { feedback: feedbackValue } : {}),
+        }),
       },
-      body: JSON.stringify({
-        version: item.version,
-        ...(mode === 'feedback' ? { feedback: feedbackValue } : {}),
-      }),
-    });
+    );
     if (!response.ok) {
       setNote('操作未完成，请刷新后重试。');
       return;

@@ -19,7 +19,8 @@ export default async function ConsumerEntryPage({
 }: {
   searchParams: Promise<{ tenant?: string }>;
 }) {
-  const { tenant = 'system' } = await searchParams;
+  const { tenant } = await searchParams;
+  if (!tenant) return <EntryState kind="forbidden" />;
   try {
     const response = await fetch(
       `${process.env.API_BASE_URL ?? 'http://127.0.0.1:3001'}/api/v1/consumer/entry?tenant=${encodeURIComponent(tenant)}`,

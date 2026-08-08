@@ -1,4 +1,5 @@
 'use client';
+import { SessionApiClient } from '@oneday/session-client';
 import { useCallback, useEffect, useState } from 'react';
 import styles from './page.module.css';
 type Role = {
@@ -11,6 +12,7 @@ type Role = {
 };
 type Permission = { code: string; name: string };
 const api = process.env.NEXT_PUBLIC_API_BASE_URL ?? 'http://127.0.0.1:3001';
+const sessionApi = new SessionApiClient(api);
 const sensitive = new Set(['tenant.manage', 'organization.manage', 'employee.manage']);
 export default function RolesPermissionsPage() {
   const [state, setState] = useState<'loading' | 'ready' | 'forbidden' | 'error'>('loading'),
@@ -21,12 +23,11 @@ export default function RolesPermissionsPage() {
     [confirmed, setConfirmed] = useState(false),
     [note, setNote] = useState('');
   const load = useCallback(async () => {
-    const token = sessionStorage.getItem('oneday.accessToken');
-    if (!token) return setState('forbidden');
+    if (!(await sessionApi.context())) return setState('forbidden');
     setState('loading');
     try {
-      const r = await fetch(`${api}/api/v1/management/roles-permissions`, {
-        headers: { authorization: `Bearer ${token}`, 'x-request-id': crypto.randomUUID() },
+      const r = await sessionApi.request(`${api}/api/v1/management/roles-permissions`, {
+        headers: {},
       });
       if ([401, 403].includes(r.status)) return setState('forbidden');
       if (!r.ok) throw Error();
@@ -51,12 +52,9 @@ export default function RolesPermissionsPage() {
     if (!selected || !reason.trim()) return setNote('请填写权限变更原因。');
     const risky = selected.permissions.some((code) => sensitive.has(code));
     if (risky && !confirmed) return setNote('高风险权限需要确认影响范围。');
-    const token = sessionStorage.getItem('oneday.accessToken');
-    const r = await fetch(`${api}/api/v1/rbac/roles/${selected.id}/permissions`, {
+    const r = await sessionApi.request(`${api}/api/v1/rbac/roles/${selected.id}/permissions`, {
       method: 'POST',
       headers: {
-        authorization: `Bearer ${token}`,
-        'x-request-id': crypto.randomUUID(),
         'content-type': 'application/json',
       },
       body: JSON.stringify({

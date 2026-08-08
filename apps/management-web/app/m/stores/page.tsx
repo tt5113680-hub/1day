@@ -1,4 +1,5 @@
 'use client';
+import { SessionApiClient } from '@oneday/session-client';
 
 import { useCallback, useEffect, useState } from 'react';
 import styles from './page.module.css';
@@ -20,6 +21,7 @@ type Store = {
 };
 type Employee = { id: string; display_name: string; employee_code: string; status: string };
 const api = process.env.NEXT_PUBLIC_API_BASE_URL ?? 'http://127.0.0.1:3001';
+const sessionApi = new SessionApiClient(api);
 
 export default function StoresPage() {
   const [state, setState] = useState<'loading' | 'ready' | 'forbidden' | 'error'>('loading');
@@ -28,15 +30,14 @@ export default function StoresPage() {
   const [selected, setSelected] = useState<Record<string, string>>({});
   const [note, setNote] = useState('');
   const load = useCallback(async () => {
-    const token = sessionStorage.getItem('oneday.accessToken');
-    if (!token) return setState('forbidden');
+    if (!(await sessionApi.context())) return setState('forbidden');
     setState('loading');
     try {
-      const headers = { authorization: `Bearer ${token}`, 'x-request-id': crypto.randomUUID() };
+      const headers = {};
       const [storeResponse, employeeResponse] = await Promise.all([
-        fetch(`${api}/api/v1/management/stores`, { headers }),
-        fetch(`${api}/api/v1/employees`, {
-          headers: { ...headers, 'x-request-id': crypto.randomUUID() },
+        sessionApi.request(`${api}/api/v1/management/stores`, { headers }),
+        sessionApi.request(`${api}/api/v1/employees`, {
+          headers: { ...headers },
         }),
       ]);
       if ([401, 403].includes(storeResponse.status)) return setState('forbidden');
@@ -58,16 +59,16 @@ export default function StoresPage() {
   const assign = async (store: Store) => {
     const employeeId = selected[store.id];
     if (!employeeId) return setNote('请选择负责人后再保存。');
-    const token = sessionStorage.getItem('oneday.accessToken');
-    const response = await fetch(`${api}/api/v1/management/stores/${store.id}/manager`, {
-      method: 'PATCH',
-      headers: {
-        authorization: `Bearer ${token}`,
-        'x-request-id': crypto.randomUUID(),
-        'content-type': 'application/json',
+    const response = await sessionApi.request(
+      `${api}/api/v1/management/stores/${store.id}/manager`,
+      {
+        method: 'PATCH',
+        headers: {
+          'content-type': 'application/json',
+        },
+        body: JSON.stringify({ employeeId, version: store.version }),
       },
-      body: JSON.stringify({ employeeId, version: store.version }),
-    });
+    );
     if (!response.ok) return setNote('负责人未更新，请刷新后重试。');
     setNote('负责人已更新，变更已记入审计记录。');
     await load();

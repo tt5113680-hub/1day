@@ -1,4 +1,5 @@
 'use client';
+import { SessionApiClient } from '@oneday/session-client';
 
 import { useCallback, useEffect, useState } from 'react';
 import styles from './page.module.css';
@@ -17,6 +18,7 @@ type Funnel = {
   generatedAt: string;
 };
 const api = process.env.NEXT_PUBLIC_API_BASE_URL ?? 'http://127.0.0.1:3001';
+const sessionApi = new SessionApiClient(api);
 
 export default function ManagementFunnel({ params }: { params: Promise<{ id: string }> }) {
   const [id, setId] = useState('');
@@ -26,14 +28,16 @@ export default function ManagementFunnel({ params }: { params: Promise<{ id: str
     void params.then(({ id: value }) => setId(value));
   }, [params]);
   const load = useCallback(async () => {
-    const token = sessionStorage.getItem('oneday.accessToken');
-    if (!token) return setState('forbidden');
+    if (!(await sessionApi.context())) return setState('forbidden');
     if (!id) return;
     setState('loading');
     try {
-      const response = await fetch(`${api}/api/v1/management/funnels/${encodeURIComponent(id)}`, {
-        headers: { authorization: `Bearer ${token}`, 'x-request-id': crypto.randomUUID() },
-      });
+      const response = await sessionApi.request(
+        `${api}/api/v1/management/funnels/${encodeURIComponent(id)}`,
+        {
+          headers: {},
+        },
+      );
       if ([401, 403].includes(response.status)) return setState('forbidden');
       if (!response.ok) throw Error('LOAD');
       setData((await response.json()).data);

@@ -1,4 +1,5 @@
 'use client';
+import { SessionApiClient } from '@oneday/session-client';
 
 import Link from 'next/link';
 import { useCallback, useEffect, useState } from 'react';
@@ -29,6 +30,7 @@ type Detail = {
   timeline: { kind: string; label: string; at: string }[];
 };
 const api = process.env.NEXT_PUBLIC_API_BASE_URL ?? 'http://127.0.0.1:3001';
+const sessionApi = new SessionApiClient(api);
 
 export default function ManagementCustomerDetail({ params }: { params: Promise<{ id: string }> }) {
   const [id, setId] = useState('');
@@ -38,14 +40,16 @@ export default function ManagementCustomerDetail({ params }: { params: Promise<{
     void params.then((value) => setId(value.id));
   }, [params]);
   const load = useCallback(async () => {
-    const token = sessionStorage.getItem('oneday.accessToken');
-    if (!token) return setState('forbidden');
+    if (!(await sessionApi.context())) return setState('forbidden');
     if (!id) return;
     setState('loading');
     try {
-      const response = await fetch(`${api}/api/v1/management/customers/${encodeURIComponent(id)}`, {
-        headers: { authorization: `Bearer ${token}`, 'x-request-id': crypto.randomUUID() },
-      });
+      const response = await sessionApi.request(
+        `${api}/api/v1/management/customers/${encodeURIComponent(id)}`,
+        {
+          headers: {},
+        },
+      );
       if ([401, 403].includes(response.status)) return setState('forbidden');
       if (!response.ok) throw Error('DETAIL');
       setData((await response.json()).data);

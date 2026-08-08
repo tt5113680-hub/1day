@@ -1,4 +1,5 @@
 'use client';
+import { SessionApiClient } from '@oneday/session-client';
 
 import { useCallback, useEffect, useState } from 'react';
 import styles from './employee-profile.module.css';
@@ -17,6 +18,7 @@ type Data = {
   notificationPreference: { doNotDisturbUntil: string | null; version: number };
 };
 const api = process.env.NEXT_PUBLIC_API_BASE_URL ?? 'http://127.0.0.1:3001';
+const sessionApi = new SessionApiClient(api);
 const tools = [
   ['我的任务', '/e/workbench'],
   ['客户与跟进', '/e/nurture'],
@@ -30,17 +32,16 @@ export function EmployeeProfile() {
   const [data, setData] = useState<Data | null>(null);
   const [message, setMessage] = useState('');
   const [busy, setBusy] = useState(false);
-  const token = () => sessionStorage.getItem('oneday.accessToken') ?? '';
   const headers = () => ({
-    authorization: `Bearer ${token()}`,
     'content-type': 'application/json',
-    'x-request-id': crypto.randomUUID(),
   });
   const load = useCallback(async () => {
-    if (!token()) return setState('forbidden');
+    if (!(await sessionApi.context())) return setState('forbidden');
     setState('loading');
     try {
-      const response = await fetch(`${api}/api/v1/employee/profile`, { headers: headers() });
+      const response = await sessionApi.request(`${api}/api/v1/employee/profile`, {
+        headers: headers(),
+      });
       if ([401, 403].includes(response.status)) return setState('forbidden');
       if (!response.ok) throw Error('LOAD');
       setData((await response.json()).data);
@@ -57,16 +58,19 @@ export function EmployeeProfile() {
     setBusy(true);
     setMessage('');
     try {
-      const response = await fetch(`${api}/api/v1/employee/profile/notification-preferences`, {
-        method: 'POST',
-        headers: headers(),
-        body: JSON.stringify({
-          version: data.notificationPreference.version,
-          doNotDisturbUntil: data.notificationPreference.doNotDisturbUntil
-            ? null
-            : new Date(Date.now() + 8 * 3600000).toISOString(),
-        }),
-      });
+      const response = await sessionApi.request(
+        `${api}/api/v1/employee/profile/notification-preferences`,
+        {
+          method: 'POST',
+          headers: headers(),
+          body: JSON.stringify({
+            version: data.notificationPreference.version,
+            doNotDisturbUntil: data.notificationPreference.doNotDisturbUntil
+              ? null
+              : new Date(Date.now() + 8 * 3600000).toISOString(),
+          }),
+        },
+      );
       if (!response.ok) throw Error('DND');
       setMessage('通知设置已更新。');
       await load();

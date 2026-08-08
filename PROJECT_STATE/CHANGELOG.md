@@ -4,6 +4,8 @@
 
 - Added a shared browser session client and real tenant-slug login, refresh rotation and logout journeys for employee, management and platform terminals; protected backend routes are guarded at each terminal root layout.
 - Kept consumer access public and anonymous, removing the incorrect staff-style consumer login experiment.
+- Completed the systemic close-out: migrated 36 protected business pages / 54 direct token reads to `SessionApiClient`, which owns Bearer, request-id, refresh/retry and cleanup semantics; consumer public routes no longer default to `system`.
+- Added regression coverage for forced 401 refresh/retry and for the protected-page session boundary; verified 173 repository tests and 6 real H-002 Playwright journeys.
 - Added an automatically cleaned, test-only “瑞幸咖啡 · ONEDAY测试模拟租户” commercial fixture with a second isolated tenant, role accounts, stores, operational records, channel/circle relations, audit and Outbox data.
 
 ## 2026-08-08 H-001 PASS

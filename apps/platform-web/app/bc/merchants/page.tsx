@@ -1,4 +1,5 @@
 'use client';
+import { SessionApiClient } from '@oneday/session-client';
 
 import { FormEvent, useCallback, useEffect, useState } from 'react';
 import styles from './page.module.css';
@@ -22,10 +23,8 @@ type Member = {
 };
 type Data = { members: Member[]; merchantPool: { tenantId: string; name: string; slug: string }[] };
 const api = process.env.NEXT_PUBLIC_API_BASE_URL ?? 'http://127.0.0.1:3001';
-const headers = () => ({
-  authorization: `Bearer ${sessionStorage.getItem('oneday.accessToken')}`,
-  'x-request-id': crypto.randomUUID(),
-});
+const sessionApi = new SessionApiClient(api);
+const headers = () => ({});
 
 export default function BusinessCircleMerchants() {
   const [state, setState] = useState<'loading' | 'ready' | 'forbidden' | 'error'>('loading');
@@ -33,10 +32,12 @@ export default function BusinessCircleMerchants() {
   const [notice, setNotice] = useState('');
   const [busy, setBusy] = useState(false);
   const load = useCallback(async () => {
-    if (!sessionStorage.getItem('oneday.accessToken')) return setState('forbidden');
+    if (!(await sessionApi.context())) return setState('forbidden');
     setState('loading');
     try {
-      const response = await fetch(`${api}/api/v1/circle/merchants`, { headers: headers() });
+      const response = await sessionApi.request(`${api}/api/v1/circle/merchants`, {
+        headers: headers(),
+      });
       if ([401, 403].includes(response.status)) return setState('forbidden');
       if (!response.ok) throw Error();
       setData((await response.json()).data);
@@ -50,7 +51,7 @@ export default function BusinessCircleMerchants() {
     setBusy(true);
     setNotice('');
     try {
-      const response = await fetch(`${api}/api/v1/circle/merchants${path}`, {
+      const response = await sessionApi.request(`${api}/api/v1/circle/merchants${path}`, {
         method,
         headers: {
           ...headers(),

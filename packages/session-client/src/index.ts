@@ -1,4 +1,5 @@
 export type Session = { accessToken: string; refreshToken: string; expiresAt: number };
+export type SessionContext = { tenantId: string; userId: string; sessionId: string };
 export type LoginTenant = { id?: string; slug?: string };
 const accessKey = 'oneday.accessToken';
 const refreshKey = 'oneday.refreshToken';
@@ -73,6 +74,18 @@ export class BrowserSession {
       this.clear();
     }
   }
+  async context(): Promise<SessionContext | null> {
+    const token = await this.accessToken();
+    if (!token) return null;
+    const response = await fetch(`${this.apiBase}/api/v1/auth/context`, {
+      headers: { authorization: `Bearer ${token}` },
+    });
+    if (!response.ok) {
+      this.clear();
+      return null;
+    }
+    return (await response.json()) as SessionContext;
+  }
   private save(session: Session): Session {
     this.storage.setItem(accessKey, session.accessToken);
     this.storage.setItem(refreshKey, session.refreshToken);
@@ -83,6 +96,50 @@ export class BrowserSession {
     this.storage.removeItem(accessKey);
     this.storage.removeItem(refreshKey);
     this.storage.removeItem(expiryKey);
+  }
+}
+
+export class SessionApiClient {
+  constructor(
+    private readonly apiBase: string,
+    private readonly session = new BrowserSession(apiBase),
+  ) {}
+
+  async request(path: string, init: RequestInit = {}): Promise<Response> {
+    const url = this.url(path);
+    const headers = await this.headers(init.headers);
+    const response = await fetch(url, { ...init, headers });
+    if (response.status !== 401) return response;
+    try {
+      const refreshed = await this.session.refresh();
+      headers.set('authorization', `Bearer ${refreshed.accessToken}`);
+      return fetch(url, { ...init, headers });
+    } catch {
+      this.session.clear();
+      return response;
+    }
+  }
+
+  async headers(init?: HeadersInit): Promise<Headers> {
+    const token = await this.session.accessToken();
+    if (!token) throw new Error('AUTH_REQUIRED');
+    const headers = new Headers(init);
+    headers.set('authorization', `Bearer ${token}`);
+    if (!headers.has('x-request-id')) headers.set('x-request-id', crypto.randomUUID());
+    return headers;
+  }
+
+  async context(): Promise<SessionContext | null> {
+    const response = await this.request('/api/v1/auth/context');
+    if (!response.ok) {
+      this.session.clear();
+      return null;
+    }
+    return (await response.json()) as SessionContext;
+  }
+
+  private url(path: string): string {
+    return /^https?:\/\//.test(path) ? path : `${this.apiBase}${path}`;
   }
 }
 

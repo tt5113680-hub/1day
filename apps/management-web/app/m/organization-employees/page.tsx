@@ -1,4 +1,5 @@
 'use client';
+import { SessionApiClient } from '@oneday/session-client';
 
 import { useCallback, useEffect, useState } from 'react';
 import styles from './page.module.css';
@@ -33,6 +34,7 @@ type Invitation = {
 };
 type Data = { organizations: Organization[]; employees: Employee[]; invitations: Invitation[] };
 const api = process.env.NEXT_PUBLIC_API_BASE_URL ?? 'http://127.0.0.1:3001';
+const sessionApi = new SessionApiClient(api);
 
 export default function OrganizationEmployeesPage() {
   const [state, setState] = useState<'loading' | 'ready' | 'forbidden' | 'error'>('loading');
@@ -41,12 +43,11 @@ export default function OrganizationEmployeesPage() {
   const [note, setNote] = useState('');
   const [fieldError, setFieldError] = useState('');
   const load = useCallback(async () => {
-    const token = sessionStorage.getItem('oneday.accessToken');
-    if (!token) return setState('forbidden');
+    if (!(await sessionApi.context())) return setState('forbidden');
     setState('loading');
     try {
-      const response = await fetch(`${api}/api/v1/management/organization-employees`, {
-        headers: { authorization: `Bearer ${token}`, 'x-request-id': crypto.randomUUID() },
+      const response = await sessionApi.request(`${api}/api/v1/management/organization-employees`, {
+        headers: {},
       });
       if ([401, 403].includes(response.status)) return setState('forbidden');
       if (!response.ok) throw new Error('LOAD');
@@ -63,8 +64,6 @@ export default function OrganizationEmployeesPage() {
   }, []);
   useEffect(() => void load(), [load]);
   const headers = () => ({
-    authorization: `Bearer ${sessionStorage.getItem('oneday.accessToken')}`,
-    'x-request-id': crypto.randomUUID(),
     'content-type': 'application/json',
   });
   const invite = async () => {
@@ -73,7 +72,7 @@ export default function OrganizationEmployeesPage() {
       return;
     }
     setFieldError('');
-    const response = await fetch(`${api}/api/v1/employees/invitations`, {
+    const response = await sessionApi.request(`${api}/api/v1/employees/invitations`, {
       method: 'POST',
       headers: { ...headers(), 'idempotency-key': crypto.randomUUID() },
       body: JSON.stringify(form),
@@ -93,7 +92,7 @@ export default function OrganizationEmployeesPage() {
       )
     )
       return;
-    const response = await fetch(`${api}/api/v1/employees/${employee.id}/offboard`, {
+    const response = await sessionApi.request(`${api}/api/v1/employees/${employee.id}/offboard`, {
       method: 'POST',
       headers: headers(),
       body: JSON.stringify({ version: employee.version }),

@@ -1,7 +1,9 @@
 'use client';
+import { SessionApiClient } from '@oneday/session-client';
 import { useState } from 'react';
 import styles from './page.module.css';
 const api = process.env.NEXT_PUBLIC_API_BASE_URL ?? 'http://127.0.0.1:3001';
+const sessionApi = new SessionApiClient(api);
 export default function Onboarding() {
   const [form, setForm] = useState({
       slug: '',
@@ -18,15 +20,12 @@ export default function Onboarding() {
     [saving, setSaving] = useState(false);
   const update = (key: string, value: string) => setForm({ ...form, [key]: value });
   const submit = async () => {
-    const token = sessionStorage.getItem('oneday.accessToken');
-    if (!token) return setState('forbidden');
+    if (!(await sessionApi.context())) return setState('forbidden');
     setSaving(true);
     try {
-      const r = await fetch(`${api}/api/v1/platform/onboarding`, {
+      const r = await sessionApi.request(`${api}/api/v1/platform/onboarding`, {
         method: 'POST',
         headers: {
-          authorization: `Bearer ${token}`,
-          'x-request-id': crypto.randomUUID(),
           'idempotency-key': crypto.randomUUID(),
           'content-type': 'application/json',
         },

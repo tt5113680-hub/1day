@@ -1,4 +1,5 @@
 'use client';
+import { SessionApiClient } from '@oneday/session-client';
 
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
@@ -17,6 +18,7 @@ type Assignee = { id: string; displayName: string; title: string | null };
 type Filters = { search: string; tag: string; segment: string; source: string };
 
 const api = process.env.NEXT_PUBLIC_API_BASE_URL ?? 'http://127.0.0.1:3001';
+const sessionApi = new SessionApiClient(api);
 const emptyFilters: Filters = { search: '', tag: '', segment: '', source: '' };
 
 export default function ManagementCustomersPage() {
@@ -29,22 +31,19 @@ export default function ManagementCustomersPage() {
   const [assigneeId, setAssigneeId] = useState('');
   const [notice, setNotice] = useState('');
   const [busy, setBusy] = useState<'export' | 'ownership' | null>(null);
-  const token = () => sessionStorage.getItem('oneday.accessToken') ?? '';
   const headers = (idempotencyKey?: string) => ({
-    authorization: `Bearer ${token()}`,
-    'x-request-id': crypto.randomUUID(),
     'content-type': 'application/json',
     ...(idempotencyKey ? { 'idempotency-key': idempotencyKey } : {}),
   });
   const load = useCallback(
     async (nextFilters = applied) => {
-      if (!token()) return setState('forbidden');
+      if (!(await sessionApi.context())) return setState('forbidden');
       setState('loading');
       try {
         const params = new URLSearchParams(
           Object.entries(nextFilters).filter(([, value]) => value.trim()),
         );
-        const response = await fetch(`${api}/api/v1/management/customers?${params}`, {
+        const response = await sessionApi.request(`${api}/api/v1/management/customers?${params}`, {
           headers: headers(),
         });
         if ([401, 403].includes(response.status)) return setState('forbidden');
@@ -60,10 +59,13 @@ export default function ManagementCustomersPage() {
   );
   useEffect(() => void load(), [load]);
   useEffect(() => {
-    if (!token()) return;
-    void fetch(`${api}/api/v1/management/customers/assignees`, { headers: headers() })
-      .then((response) => (response.ok ? response.json() : { data: [] }))
-      .then((result) => setAssignees(result.data));
+    void (async () => {
+      if (!(await sessionApi.context())) return;
+      const response = await sessionApi.request(`${api}/api/v1/management/customers/assignees`, {
+        headers: headers(),
+      });
+      setAssignees(response.ok ? (await response.json()).data : []);
+    })();
   }, []);
 
   const selectedCustomers = useMemo(
@@ -82,7 +84,7 @@ export default function ManagementCustomersPage() {
     setBusy('export');
     setNotice('');
     try {
-      const response = await fetch(`${api}/api/v1/management/customers/exports`, {
+      const response = await sessionApi.request(`${api}/api/v1/management/customers/exports`, {
         method: 'POST',
         headers: headers(crypto.randomUUID()),
         body: JSON.stringify({ filters: applied }),
@@ -100,15 +102,18 @@ export default function ManagementCustomersPage() {
     setBusy('ownership');
     setNotice('');
     try {
-      const response = await fetch(`${api}/api/v1/management/customers/ownership/batch`, {
-        method: 'POST',
-        headers: headers(crypto.randomUUID()),
-        body: JSON.stringify({
-          items: selectedCustomers.map(({ id, version }) => ({ customerId: id, version })),
-          toEmployeeId: assigneeId,
-          reason: 'Management portfolio allocation',
-        }),
-      });
+      const response = await sessionApi.request(
+        `${api}/api/v1/management/customers/ownership/batch`,
+        {
+          method: 'POST',
+          headers: headers(crypto.randomUUID()),
+          body: JSON.stringify({
+            items: selectedCustomers.map(({ id, version }) => ({ customerId: id, version })),
+            toEmployeeId: assigneeId,
+            reason: 'Management portfolio allocation',
+          }),
+        },
+      );
       if (!response.ok) throw Error('OWNERSHIP');
       setNotice(`已发起 ${selectedCustomers.length} 位客户的归属转移审批。`);
       await load();

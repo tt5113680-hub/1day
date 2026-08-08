@@ -1,4 +1,5 @@
 'use client';
+import { SessionApiClient } from '@oneday/session-client';
 
 import { useCallback, useEffect, useState } from 'react';
 import styles from './lead-pool.module.css';
@@ -15,6 +16,7 @@ type Lead = {
 };
 type Assignee = { id: string; displayName: string; title: string };
 const api = process.env.NEXT_PUBLIC_API_BASE_URL ?? 'http://127.0.0.1:3001';
+const sessionApi = new SessionApiClient(api);
 
 export function LeadPool() {
   const [state, setState] = useState<'loading' | 'ready' | 'forbidden' | 'error'>('loading');
@@ -23,23 +25,22 @@ export function LeadPool() {
   const [status, setStatus] = useState('');
   const [busy, setBusy] = useState<string | null>(null);
   const [message, setMessage] = useState('');
-  const token = () => sessionStorage.getItem('oneday.accessToken') ?? '';
   const headers = () => ({
-    authorization: `Bearer ${token()}`,
-    'x-request-id': crypto.randomUUID(),
     'content-type': 'application/json',
   });
   const load = useCallback(async () => {
-    if (!token()) return setState('forbidden');
+    if (!(await sessionApi.context())) return setState('forbidden');
     setState('loading');
     try {
       const query = status ? `?status=${encodeURIComponent(status)}` : '';
-      const response = await fetch(`${api}/api/v1/employee/leads${query}`, { headers: headers() });
+      const response = await sessionApi.request(`${api}/api/v1/employee/leads${query}`, {
+        headers: headers(),
+      });
       if ([401, 403].includes(response.status)) return setState('forbidden');
       if (!response.ok) throw Error('LOAD');
       const [leadPayload, assigneeResponse] = await Promise.all([
         response.json(),
-        fetch(`${api}/api/v1/employee/leads/assignees`, { headers: headers() }),
+        sessionApi.request(`${api}/api/v1/employee/leads/assignees`, { headers: headers() }),
       ]);
       setLeads(leadPayload.data);
       if (assigneeResponse.ok) setAssignees((await assigneeResponse.json()).data);
@@ -59,11 +60,14 @@ export function LeadPool() {
     setBusy(lead.id);
     setMessage('');
     try {
-      const response = await fetch(`${api}/api/v1/employee/leads/${lead.id}/${actionName}`, {
-        method: 'POST',
-        headers: { ...headers(), 'idempotency-key': crypto.randomUUID() },
-        body: JSON.stringify({ version: lead.version, ...body }),
-      });
+      const response = await sessionApi.request(
+        `${api}/api/v1/employee/leads/${lead.id}/${actionName}`,
+        {
+          method: 'POST',
+          headers: { ...headers(), 'idempotency-key': crypto.randomUUID() },
+          body: JSON.stringify({ version: lead.version, ...body }),
+        },
+      );
       if (!response.ok) throw Error('ACTION');
       setMessage(
         actionName === 'claim'

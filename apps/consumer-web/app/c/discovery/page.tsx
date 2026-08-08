@@ -6,7 +6,8 @@ export default async function Page({
 }: {
   searchParams: Promise<{ tenant?: string; latitude?: string; longitude?: string }>;
 }) {
-  const { tenant = 'system', latitude, longitude } = await searchParams;
+  const { tenant, latitude, longitude } = await searchParams;
+  if (!tenant) return <DiscoveryState kind="forbidden" />;
   const query = new URLSearchParams({ tenant });
   if (latitude) query.set('latitude', latitude);
   if (longitude) query.set('longitude', longitude);

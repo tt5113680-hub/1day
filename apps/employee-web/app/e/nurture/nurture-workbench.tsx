@@ -1,4 +1,5 @@
 'use client';
+import { SessionApiClient } from '@oneday/session-client';
 
 import { useCallback, useEffect, useState } from 'react';
 import styles from './nurture-workbench.module.css';
@@ -15,6 +16,7 @@ type Profile = {
 };
 
 const api = process.env.NEXT_PUBLIC_API_BASE_URL ?? 'http://127.0.0.1:3001';
+const sessionApi = new SessionApiClient(api);
 const labels = { active: '持续养客', repurchase: '复购机会', dormant: '沉睡唤醒' };
 
 export function NurtureWorkbench() {
@@ -23,18 +25,15 @@ export function NurtureWorkbench() {
   const [segment, setSegment] = useState('');
   const [busy, setBusy] = useState<string | null>(null);
   const [message, setMessage] = useState('');
-  const token = () => sessionStorage.getItem('oneday.accessToken') ?? '';
   const headers = () => ({
-    authorization: `Bearer ${token()}`,
     'content-type': 'application/json',
-    'x-request-id': crypto.randomUUID(),
   });
   const load = useCallback(async () => {
-    if (!token()) return setState('forbidden');
+    if (!(await sessionApi.context())) return setState('forbidden');
     setState('loading');
     try {
       const query = segment ? `?segment=${encodeURIComponent(segment)}` : '';
-      const response = await fetch(`${api}/api/v1/employee/nurture${query}`, {
+      const response = await sessionApi.request(`${api}/api/v1/employee/nurture${query}`, {
         headers: headers(),
       });
       if ([401, 403].includes(response.status)) return setState('forbidden');
@@ -57,11 +56,14 @@ export function NurtureWorkbench() {
     setBusy(profile.customerId);
     setMessage('');
     try {
-      const response = await fetch(`${api}/api/v1/employee/nurture/${profile.customerId}${path}`, {
-        method: path ? 'POST' : 'PATCH',
-        headers: { ...headers(), 'idempotency-key': crypto.randomUUID() },
-        body: JSON.stringify({ version: profile.version, ...body }),
-      });
+      const response = await sessionApi.request(
+        `${api}/api/v1/employee/nurture/${profile.customerId}${path}`,
+        {
+          method: path ? 'POST' : 'PATCH',
+          headers: { ...headers(), 'idempotency-key': crypto.randomUUID() },
+          body: JSON.stringify({ version: profile.version, ...body }),
+        },
+      );
       if (!response.ok) throw Error('ACTION');
       setMessage(success);
       await load();

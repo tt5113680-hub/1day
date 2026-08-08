@@ -1,4 +1,5 @@
 'use client';
+import { SessionApiClient } from '@oneday/session-client';
 import { useCallback, useEffect, useState } from 'react';
 import styles from './page.module.css';
 type Tenant = {
@@ -13,6 +14,7 @@ type Tenant = {
   overdueTasks: number;
 };
 const api = process.env.NEXT_PUBLIC_API_BASE_URL ?? 'http://127.0.0.1:3001';
+const sessionApi = new SessionApiClient(api);
 export default function TenantsPage() {
   const [state, setState] = useState<'loading' | 'ready' | 'forbidden' | 'error'>('loading'),
     [items, setItems] = useState<Tenant[]>([]),
@@ -20,15 +22,12 @@ export default function TenantsPage() {
     [confirmation, setConfirmation] = useState(''),
     [note, setNote] = useState(''),
     [saving, setSaving] = useState(false);
-  const headers = () => ({
-    authorization: `Bearer ${sessionStorage.getItem('oneday.accessToken')}`,
-    'x-request-id': crypto.randomUUID(),
-  });
+  const headers = () => ({});
   const load = useCallback(async () => {
-    if (!sessionStorage.getItem('oneday.accessToken')) return setState('forbidden');
+    if (!(await sessionApi.context())) return setState('forbidden');
     setState('loading');
     try {
-      const r = await fetch(`${api}/api/v1/platform/tenants`, { headers: headers() });
+      const r = await sessionApi.request(`${api}/api/v1/platform/tenants`, { headers: headers() });
       if ([401, 403].includes(r.status)) return setState('forbidden');
       if (!r.ok) throw Error();
       const rows = (await r.json()).data;
@@ -44,7 +43,7 @@ export default function TenantsPage() {
     if (!selected) return;
     setSaving(true);
     try {
-      const r = await fetch(`${api}/api/v1/platform/tenants/${selected.id}`, {
+      const r = await sessionApi.request(`${api}/api/v1/platform/tenants/${selected.id}`, {
         method: 'PUT',
         headers: {
           ...headers(),

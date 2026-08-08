@@ -1,4 +1,5 @@
 'use client';
+import { SessionApiClient } from '@oneday/session-client';
 
 import { useCallback, useEffect, useState } from 'react';
 import styles from './page.module.css';
@@ -41,6 +42,7 @@ const empty: Form = {
   plan: 'starter',
 };
 const api = process.env.NEXT_PUBLIC_API_BASE_URL ?? 'http://127.0.0.1:3001';
+const sessionApi = new SessionApiClient(api);
 
 export default function ChannelMerchantOnboardingPage() {
   const [state, setState] = useState<'loading' | 'ready' | 'forbidden' | 'error'>('loading');
@@ -49,17 +51,14 @@ export default function ChannelMerchantOnboardingPage() {
     [form, setForm] = useState<Form>(empty),
     [note, setNote] = useState(''),
     [saving, setSaving] = useState(false);
-  const headers = () => ({
-    authorization: `Bearer ${sessionStorage.getItem('oneday.accessToken')}`,
-    'x-request-id': crypto.randomUUID(),
-  });
+  const headers = () => ({});
   const load = useCallback(async () => {
-    if (!sessionStorage.getItem('oneday.accessToken')) return setState('forbidden');
+    if (!(await sessionApi.context())) return setState('forbidden');
     setState('loading');
     try {
       const [channelResponse, onboardingResponse] = await Promise.all([
-        fetch(`${api}/api/v1/platform/channels`, { headers: headers() }),
-        fetch(`${api}/api/v1/channel/merchant-onboardings`, { headers: headers() }),
+        sessionApi.request(`${api}/api/v1/platform/channels`, { headers: headers() }),
+        sessionApi.request(`${api}/api/v1/channel/merchant-onboardings`, { headers: headers() }),
       ]);
       if (
         [401, 403].includes(channelResponse.status) ||
@@ -80,7 +79,7 @@ export default function ChannelMerchantOnboardingPage() {
     setSaving(true);
     setNote('');
     try {
-      const response = await fetch(`${api}/api/v1/channel/merchant-onboardings`, {
+      const response = await sessionApi.request(`${api}/api/v1/channel/merchant-onboardings`, {
         method: 'POST',
         headers: {
           ...headers(),
@@ -110,7 +109,7 @@ export default function ChannelMerchantOnboardingPage() {
     setSaving(true);
     setNote('');
     try {
-      const response = await fetch(
+      const response = await sessionApi.request(
         `${api}/api/v1/channel/merchant-onboardings/${item.id}/delivery`,
         {
           method: 'POST',

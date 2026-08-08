@@ -1,4 +1,5 @@
 'use client';
+import { SessionApiClient } from '@oneday/session-client';
 import { useParams } from 'next/navigation';
 import { useCallback, useEffect, useState } from 'react';
 import styles from '../task-detail.module.css';
@@ -12,6 +13,7 @@ type Item = {
   created_at: string;
 };
 const api = process.env.NEXT_PUBLIC_API_BASE_URL ?? 'http://127.0.0.1:3001';
+const sessionApi = new SessionApiClient(api);
 export function FollowUp() {
   const p = useParams<{ id: string }>();
   const id = Array.isArray(p.id) ? p.id[0] : p.id;
@@ -25,16 +27,15 @@ export function FollowUp() {
     [summary, setSummary] = useState(''),
     [nextTitle, setNextTitle] = useState(''),
     [nextDue, setNextDue] = useState('');
-  const token = () => sessionStorage.getItem('oneday.accessToken') ?? '';
   const load = useCallback(async () => {
-    if (!token() || !id) {
+    if (!(await sessionApi.context()) || !id) {
       setState('forbidden');
       return;
     }
     setState('loading');
     try {
-      const r = await fetch(`${api}/api/v1/employee/tasks/${id}/follow-ups`, {
-        headers: { authorization: `Bearer ${token()}`, 'x-request-id': crypto.randomUUID() },
+      const r = await sessionApi.request(`${api}/api/v1/employee/tasks/${id}/follow-ups`, {
+        headers: {},
       });
       if ([401, 403, 404].includes(r.status)) {
         setState('forbidden');
@@ -55,11 +56,9 @@ export function FollowUp() {
     setBusy(true);
     setMessage('');
     try {
-      const r = await fetch(`${api}/api/v1/employee/tasks/${id}/follow-ups`, {
+      const r = await sessionApi.request(`${api}/api/v1/employee/tasks/${id}/follow-ups`, {
         method: 'POST',
         headers: {
-          authorization: `Bearer ${token()}`,
-          'x-request-id': crypto.randomUUID(),
           'idempotency-key': crypto.randomUUID(),
           'content-type': 'application/json',
         },

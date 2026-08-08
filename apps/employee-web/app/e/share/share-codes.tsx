@@ -1,4 +1,5 @@
 'use client';
+import { SessionApiClient } from '@oneday/session-client';
 
 import QRCode from 'qrcode';
 import { useCallback, useEffect, useMemo, useState } from 'react';
@@ -17,6 +18,7 @@ type ShareCode = {
 };
 
 const api = process.env.NEXT_PUBLIC_API_BASE_URL ?? 'http://127.0.0.1:3001';
+const sessionApi = new SessionApiClient(api);
 const labels = { employee: '员工码', campaign: '活动码', channel: '渠道码' };
 
 export function ShareCodes() {
@@ -28,21 +30,20 @@ export function ShareCodes() {
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState('');
   const [qr, setQr] = useState('');
-  const token = () => sessionStorage.getItem('oneday.accessToken') ?? '';
   const link = useMemo(
     () => (selected ? `${window.location.origin}/c/share/${selected.code}` : ''),
     [selected],
   );
 
   const load = useCallback(async () => {
-    if (!token()) {
+    if (!(await sessionApi.context())) {
       setState('forbidden');
       return;
     }
     setState('loading');
     try {
-      const response = await fetch(`${api}/api/v1/employee/share-codes`, {
-        headers: { authorization: `Bearer ${token()}`, 'x-request-id': crypto.randomUUID() },
+      const response = await sessionApi.request(`${api}/api/v1/employee/share-codes`, {
+        headers: {},
       });
       if ([401, 403].includes(response.status)) {
         setState('forbidden');
@@ -74,11 +75,9 @@ export function ShareCodes() {
     setBusy(true);
     setMessage('');
     try {
-      const response = await fetch(`${api}/api/v1/employee/share-codes`, {
+      const response = await sessionApi.request(`${api}/api/v1/employee/share-codes`, {
         method: 'POST',
         headers: {
-          authorization: `Bearer ${token()}`,
-          'x-request-id': crypto.randomUUID(),
           'idempotency-key': crypto.randomUUID(),
           'content-type': 'application/json',
         },
@@ -105,15 +104,16 @@ export function ShareCodes() {
     setBusy(true);
     setMessage('');
     try {
-      const response = await fetch(`${api}/api/v1/employee/share-codes/${item.id}/revoke`, {
-        method: 'POST',
-        headers: {
-          authorization: `Bearer ${token()}`,
-          'x-request-id': crypto.randomUUID(),
-          'content-type': 'application/json',
+      const response = await sessionApi.request(
+        `${api}/api/v1/employee/share-codes/${item.id}/revoke`,
+        {
+          method: 'POST',
+          headers: {
+            'content-type': 'application/json',
+          },
+          body: JSON.stringify({ version: item.version }),
         },
-        body: JSON.stringify({ version: item.version }),
-      });
+      );
       if (!response.ok) throw new Error('REVOKE_FAILED');
       setMessage('分享码已失效，后续扫码不会进入经营入口。');
       await load();

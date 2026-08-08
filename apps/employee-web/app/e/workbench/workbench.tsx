@@ -1,4 +1,5 @@
 'use client';
+import { SessionApiClient } from '@oneday/session-client';
 
 import { useCallback, useEffect, useState } from 'react';
 import styles from './workbench.module.css';
@@ -22,6 +23,7 @@ type Data = {
 type State = 'loading' | 'ready' | 'forbidden' | 'error';
 
 const api = process.env.NEXT_PUBLIC_API_BASE_URL ?? 'http://127.0.0.1:3001';
+const sessionApi = new SessionApiClient(api);
 const time = (value: string) =>
   new Intl.DateTimeFormat('zh-CN', { hour: '2-digit', minute: '2-digit' }).format(new Date(value));
 
@@ -30,21 +32,20 @@ export function Workbench() {
   const [data, setData] = useState<Data | null>(null);
   const [message, setMessage] = useState('');
   const [busy, setBusy] = useState<string | null>(null);
-  const token = () => window.sessionStorage.getItem('oneday.accessToken') ?? '';
   const headers = () => ({
-    authorization: `Bearer ${token()}`,
-    'x-request-id': crypto.randomUUID(),
     'content-type': 'application/json',
   });
   const load = useCallback(async (preserveMessage = false) => {
-    if (!token()) {
+    if (!(await sessionApi.context())) {
       setState('forbidden');
       return;
     }
     setState('loading');
     if (!preserveMessage) setMessage('');
     try {
-      const response = await fetch(`${api}/api/v1/employee/workbench`, { headers: headers() });
+      const response = await sessionApi.request(`${api}/api/v1/employee/workbench`, {
+        headers: headers(),
+      });
       if (response.status === 401 || response.status === 403) {
         setState('forbidden');
         return;
@@ -63,11 +64,14 @@ export function Workbench() {
     setBusy(task.id);
     setMessage('');
     try {
-      const response = await fetch(`${api}/api/v1/employee/workbench/tasks/${task.id}/complete`, {
-        method: 'POST',
-        headers: headers(),
-        body: JSON.stringify({ version: task.version }),
-      });
+      const response = await sessionApi.request(
+        `${api}/api/v1/employee/workbench/tasks/${task.id}/complete`,
+        {
+          method: 'POST',
+          headers: headers(),
+          body: JSON.stringify({ version: task.version }),
+        },
+      );
       if (response.status === 409) throw Error('CONFLICT');
       if (!response.ok) throw Error('COMPLETE_FAILED');
       setMessage(`已完成「${task.title}」，行动记录已同步。`);
