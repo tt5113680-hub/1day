@@ -74,6 +74,7 @@ for (const id of [
   'AUDIT-BATCH-3',
   'AUDIT-BATCH-4',
   'AUDIT-BATCH-5',
+  'AUDIT-BATCH-6',
 ])
   test(`evidence directory exists: ${id}`, () =>
     assert.ok(existsSync(`evidence/${id}/ACCEPTANCE.md`) || id === 'FOUNDATION-010'));

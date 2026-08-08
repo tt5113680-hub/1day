@@ -6,7 +6,7 @@ import {
   NotFoundException,
   OnModuleDestroy,
 } from '@nestjs/common';
-import { randomUUID } from 'node:crypto';
+import { createHash, randomUUID } from 'node:crypto';
 import { type Pool, type PoolClient } from 'pg';
 import { createApiPool } from './database-pool';
 import type { OrganizationContext } from './organization.service';
@@ -18,6 +18,44 @@ const text = (value: unknown, max: number) =>
     : (() => {
         throw new BadRequestException('VALIDATION_ERROR');
       })();
+const IMAGE_TYPES = new Set(['image/png', 'image/jpeg', 'image/webp']);
+const EVIDENCE_TYPES = new Set(['screenshot', 'photo']);
+const MAX_EVIDENCE_BYTES = 5 * 1024 * 1024;
+const date = (value: unknown) => {
+  const result = text(value, 40);
+  if (Number.isNaN(Date.parse(result))) throw new BadRequestException('VALIDATION_ERROR');
+  return result;
+};
+const resultEvidence = (input: Record<string, unknown>) => {
+  const evidenceType = text(input.evidenceType, 32);
+  const originalFilename = text(input.originalFilename, 180);
+  const mediaType = text(input.mediaType, 100).toLowerCase();
+  const contentBase64 = text(input.contentBase64, 7_000_000);
+  if (!EVIDENCE_TYPES.has(evidenceType) || !IMAGE_TYPES.has(mediaType))
+    throw new BadRequestException('VALIDATION_ERROR');
+  if (
+    !/^[a-zA-Z0-9][a-zA-Z0-9._ -]*$/.test(originalFilename) ||
+    originalFilename.includes('..') ||
+    originalFilename.includes('/') ||
+    originalFilename.includes('\\') ||
+    !/^[a-zA-Z0-9+/]+={0,2}$/.test(contentBase64)
+  )
+    throw new BadRequestException('VALIDATION_ERROR');
+  const content = Buffer.from(contentBase64, 'base64');
+  if (!content.length || content.length > MAX_EVIDENCE_BYTES)
+    throw new BadRequestException('VALIDATION_ERROR');
+  const png = content.subarray(0, 8).equals(Buffer.from([137, 80, 78, 71, 13, 10, 26, 10]));
+  const jpeg = content.subarray(0, 3).equals(Buffer.from([255, 216, 255]));
+  const webp =
+    content.subarray(0, 4).toString() === 'RIFF' && content.subarray(8, 12).toString() === 'WEBP';
+  if (
+    (mediaType === 'image/png' && !png) ||
+    (mediaType === 'image/jpeg' && !jpeg) ||
+    (mediaType === 'image/webp' && !webp)
+  )
+    throw new BadRequestException('VALIDATION_ERROR');
+  return { evidenceType, originalFilename, mediaType, content };
+};
 
 @Injectable()
 export class EmployeeTaskDetailService implements OnModuleDestroy {
@@ -129,6 +167,101 @@ export class EmployeeTaskDetailService implements OnModuleDestroy {
     }
   }
 
+  async recordResult(
+    context: OrganizationContext,
+    taskId: string,
+    input: Record<string, unknown>,
+    key: string,
+    requestId: string,
+  ) {
+    if (!UUID.test(taskId) || !key.trim() || key.length > 200)
+      throw new BadRequestException('VALIDATION_ERROR');
+    const orderNumber = text(input.orderNumber, 120);
+    const occurredAt = date(input.occurredAt);
+    const evidenceInput = resultEvidence(input);
+    const employee = await this.employee(context);
+    const client = await this.pool.connect();
+    try {
+      await client.query('begin');
+      const replay = await client.query(
+        "select response from idempotency_keys where tenant_id=$1 and resource_type='employee_task_result' and idempotency_key=$2 and deleted_at is null",
+        [context.tenantId, key],
+      );
+      if (replay.rowCount) {
+        await client.query('commit');
+        return replay.rows[0].response;
+      }
+      const task = await this.task(client, context.tenantId, employee.id, taskId);
+      if (!task.customer_id || !['open', 'overdue'].includes(task.status))
+        throw new ConflictException('CONFLICT');
+      const order = (
+        await client.query(
+          'insert into customer_orders(id,tenant_id,customer_id,order_number,occurred_at,created_by,updated_by) values($1,$2,$3,$4,$5,$6,$6) returning id,customer_id,order_number,occurred_at,status,version',
+          [
+            randomUUID(),
+            context.tenantId,
+            task.customer_id,
+            orderNumber,
+            occurredAt,
+            context.userId,
+          ],
+        )
+      ).rows[0];
+      const evidence = (
+        await client.query(
+          'insert into evidence_files(id,tenant_id,order_id,evidence_type,original_filename,media_type,byte_size,content_sha256,content,created_by,updated_by) values($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$10) returning id,order_id,evidence_type,original_filename,media_type,byte_size,content_sha256,status,version',
+          [
+            randomUUID(),
+            context.tenantId,
+            order.id,
+            evidenceInput.evidenceType,
+            evidenceInput.originalFilename,
+            evidenceInput.mediaType,
+            evidenceInput.content.length,
+            createHash('sha256').update(evidenceInput.content).digest('hex'),
+            evidenceInput.content,
+            context.userId,
+          ],
+        )
+      ).rows[0];
+      const link = (
+        await client.query(
+          'insert into task_evidence_links(id,tenant_id,task_id,evidence_file_id,created_by,updated_by) values($1,$2,$3,$4,$5,$5) returning id,task_id,evidence_file_id,version',
+          [randomUUID(), context.tenantId, taskId, evidence.id, context.userId],
+        )
+      ).rows[0];
+      const data = { taskId, order, evidence, link };
+      const correlationId = UUID.test(requestId) ? requestId : randomUUID();
+      await this.audit(
+        client,
+        context,
+        'employee.task_result_recorded',
+        taskId,
+        correlationId,
+        data,
+      );
+      await this.event(
+        client,
+        context,
+        taskId,
+        correlationId,
+        data,
+        'employee.task.result_recorded.v1',
+      );
+      await client.query(
+        'insert into idempotency_keys(id,tenant_id,resource_type,idempotency_key,response,created_by,updated_by) values($1,$2,$3,$4,$5,$6,$6)',
+        [randomUUID(), context.tenantId, 'employee_task_result', key, data, context.userId],
+      );
+      await client.query('commit');
+      return data;
+    } catch (error) {
+      await client.query('rollback');
+      throw error;
+    } finally {
+      client.release();
+    }
+  }
+
   private async employee(context: OrganizationContext) {
     const result = await this.pool.query(
       `select e.id from employees e join memberships m on m.id=e.membership_id and m.tenant_id=e.tenant_id
@@ -185,10 +318,21 @@ export class EmployeeTaskDetailService implements OnModuleDestroy {
     taskId: string,
     correlationId: string,
     payload: unknown,
+    eventType = 'employee.task.evidence_linked.v1',
   ) {
     await client.query(
-      "insert into outbox_events(id,tenant_id,event_type,aggregate_type,aggregate_id,payload,correlation_id,trace_id,created_by,updated_by) values($1,$2,'employee.task.evidence_linked.v1','task',$3,$4,$5,'page-e-002',$6,$6)",
-      [randomUUID(), context.tenantId, taskId, { payload }, correlationId, context.userId],
+      'insert into outbox_events(id,tenant_id,event_type,aggregate_type,aggregate_id,payload,correlation_id,trace_id,created_by,updated_by) values($1,$2,$3,$4,$5,$6,$7,$8,$9,$9)',
+      [
+        randomUUID(),
+        context.tenantId,
+        eventType,
+        'task',
+        taskId,
+        { payload },
+        correlationId,
+        'page-e-002',
+        context.userId,
+      ],
     );
   }
 

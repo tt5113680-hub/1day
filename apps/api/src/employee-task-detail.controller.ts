@@ -73,4 +73,27 @@ export class EmployeeTaskDetailController {
       error: null,
     };
   }
+
+  @Post(':id/results')
+  async recordResult(
+    @Headers('authorization') a: string | undefined,
+    @Headers('x-tenant-context') t: string | undefined,
+    @Headers('x-request-id') r: string | undefined,
+    @Headers('idempotency-key') k: string | undefined,
+    @Param('id') id: string,
+    @Body() body: Record<string, unknown>,
+  ) {
+    const request = meta(r);
+    return {
+      data: await this.details.recordResult(
+        await this.authorization.require(a, 'task.manage', t),
+        id,
+        body,
+        k ?? '',
+        request.requestId,
+      ),
+      meta: request,
+      error: null,
+    };
+  }
 }

@@ -36,6 +36,18 @@ const when = (value: string) =>
     new Date(value),
   );
 const size = (value: number) => (value < 1024 ? `${value} B` : `${(value / 1024).toFixed(1)} KB`);
+const fileBase64 = (file: File) =>
+  new Promise<string>((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onerror = () => reject(reader.error);
+    reader.onload = () => {
+      const value = reader.result;
+      if (typeof value !== 'string' || !value.includes(','))
+        return reject(Error('FILE_READ_FAILED'));
+      resolve(value.slice(value.indexOf(',') + 1));
+    };
+    reader.readAsDataURL(file);
+  });
 
 export function TaskDetail() {
   const params = useParams<{ id: string }>();
@@ -43,7 +55,9 @@ export function TaskDetail() {
   const [state, setState] = useState<State>('loading');
   const [data, setData] = useState<Detail | null>(null);
   const [message, setMessage] = useState('');
-  const [busy, setBusy] = useState<'link' | 'complete' | null>(null);
+  const [busy, setBusy] = useState<'link' | 'complete' | 'result' | null>(null);
+  const [orderNumber, setOrderNumber] = useState('');
+  const [resultFile, setResultFile] = useState<File | null>(null);
   const headers = (extra: Record<string, string> = {}) => ({
     'content-type': 'application/json',
     ...extra,
@@ -124,6 +138,37 @@ export function TaskDetail() {
           ? '任务已被更新，请刷新后再试。'
           : '任务未能完成，请检查网络后重试。',
       );
+    } finally {
+      setBusy(null);
+    }
+  };
+  const recordResult = async () => {
+    if (!id || !data?.customer || !orderNumber.trim() || !resultFile) {
+      setMessage('请填写结果订单号并选择图片证据。');
+      return;
+    }
+    setBusy('result');
+    setMessage('');
+    try {
+      const response = await sessionApi.request(`${api}/api/v1/employee/tasks/${id}/results`, {
+        method: 'POST',
+        headers: headers({ 'idempotency-key': crypto.randomUUID() }),
+        body: JSON.stringify({
+          orderNumber: orderNumber.trim(),
+          occurredAt: new Date().toISOString(),
+          evidenceType: 'photo',
+          originalFilename: resultFile.name,
+          mediaType: resultFile.type,
+          contentBase64: await fileBase64(resultFile),
+        }),
+      });
+      if (!response.ok) throw Error('RESULT_FAILED');
+      setOrderNumber('');
+      setResultFile(null);
+      setMessage('结果与图片证据已关联到当前任务，执行记录已同步。');
+      await load(true);
+    } catch {
+      setMessage('结果或证据未能保存，请检查图片格式、大小和网络后重试。');
     } finally {
       setBusy(null);
     }
@@ -225,6 +270,34 @@ export function TaskDetail() {
           </div>
         )}
       </section>
+      {!done && data.customer && (
+        <section className={styles.section} aria-labelledby="result-title">
+          <h2 id="result-title">记录结果并上传证据</h2>
+          <p className={styles.card}>仅可为分配给本人的当前任务记录关联客户的真实结果。</p>
+          <label>
+            结果订单号
+            <input
+              aria-label="结果订单号"
+              value={orderNumber}
+              maxLength={120}
+              onChange={(event) => setOrderNumber(event.target.value)}
+              placeholder="例如：ONEDAY-RESULT-001"
+            />
+          </label>
+          <label>
+            图片证据
+            <input
+              aria-label="图片证据"
+              type="file"
+              accept="image/png,image/jpeg,image/webp"
+              onChange={(event) => setResultFile(event.target.files?.[0] ?? null)}
+            />
+          </label>
+          <button disabled={busy !== null} onClick={() => void recordResult()}>
+            {busy === 'result' ? '上传中…' : '保存结果与证据'}
+          </button>
+        </section>
+      )}
       <footer className={styles.footer}>
         <a href="/e/workbench">返回工作台</a>
         <a href={`/e/tasks/${data.task.id}/follow-up`}>记录跟进</a>

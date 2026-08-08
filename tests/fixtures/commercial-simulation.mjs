@@ -39,7 +39,9 @@ const ids = {
   evidence: '20000000-0000-4000-8000-000000000020',
   share: '20000000-0000-4000-8000-000000000021',
   suggestion: '20000000-0000-4000-8000-000000000022',
+  consumerAction: '20000000-0000-4000-8000-000000000023',
 };
+export const commercialSimulationIds = ids;
 
 const users = Object.entries(commercialSimulation.accounts).map(([key, email], index) => ({
   key,
@@ -189,11 +191,13 @@ export async function seedCommercialSimulation(databaseUrl = process.env.DATABAS
             'active',
           ],
         );
-    const taskRead = permissions.rows.find((entry) => entry.code === 'task.read').id;
-    await pool.query(
-      'insert into role_permissions(id,tenant_id,role_id,permission_id,status) values($1,$2,$3,$4,$5)',
-      [randomUUID(), luckin.id, role(402), taskRead, 'active'],
-    );
+    for (const permissionCode of ['task.read', 'task.manage']) {
+      const permissionId = permissions.rows.find((entry) => entry.code === permissionCode).id;
+      await pool.query(
+        'insert into role_permissions(id,tenant_id,role_id,permission_id,status) values($1,$2,$3,$4,$5)',
+        [randomUUID(), luckin.id, role(402), permissionId, 'active'],
+      );
+    }
     for (const entry of users) {
       const membership = membershipFor(entry.key);
       const roleId = ['platform', 'channel', 'circle'].includes(entry.key)
@@ -334,6 +338,10 @@ export async function seedCommercialSimulation(databaseUrl = process.env.DATABAS
         '/c/entry?tenant=luckin-oneday-test',
         'active',
       ],
+    );
+    await pool.query(
+      "insert into external_actions(id,tenant_id,code,name,action_type,platform,status) values($1,$2,'H002-LUCKIN-CONSULT','Luckin test consultation','platform_entry','web','active')",
+      [ids.consumerAction, luckin.id],
     );
     await pool.query(
       'insert into ai_suggestions(id,tenant_id,title,reason,impact,action_type,action_payload,model_name,model_version,status) values($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)',
