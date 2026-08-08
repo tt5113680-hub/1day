@@ -6,14 +6,14 @@
 - core_final_state_commit: df5ef65
 - last_completed_task: PRE-PILOT-POLISH PASS (approved pilot experience close-out at 268464d)
 - current_task: HUMAN-PILOT-HANDOFF
-- status: ACCEPTANCE_REQUIRED
-- branch: hardening/PRE-PILOT-POLISH
+- status: LOCAL_HUMAN_PILOT_READY
+- branch: hardening/HUMAN-PILOT-HANDOFF
 - last_safe_commit: 268464d (PRE-PILOT-POLISH business changes)
 - started_at: null
 - blocker: null
 - known_observation: H-002 Playwright binds development servers to 127.0.0.1, avoiding the prior cross-origin development-resource warning during four-terminal local acceptance.
 - verified_h002: SessionApiClient is the protected E/M/P request boundary; 36 pages / 54 direct token reads removed; consumer public routes require an explicit tenant and do not default to system; 173 repository tests and 6 H-002 Playwright journeys passed.
-- next_scope: HUMAN-PILOT-HANDOFF. PRE-PILOT-POLISH is PASS; controlled-pilot operator credentials, approved external authorizations and checklist signatures require human acceptance. Do not enter another development phase automatically.
+- next_scope: HUMAN-PILOT-HANDOFF. Local HUMAN-PILOT-SANDBOX is ready on an isolated `oneday_human_pilot` database; human acceptance, production credentials, external authorizations and checklist signatures still require a human operator. Do not enter another development phase automatically.
 - verified_pre_pilot_polish: PASS at 268464d. A-1/A-2/A-3, B-1/B-2/B-3 and D-1/D-3 are accepted in PROJECT_STATE/PRE_PILOT_POLISH_ACCEPTANCE.md; focused HTTP, updated browser, H-002, B2-B7, format, lint, 18-package typecheck/build, 184 repository tests and 74 evidence checks passed.
 - verified_audit_batch_2: PASS at 5c0ea50. Public consumer action, store consultation and service consultation atomically project one tenant-scoped operating trail. HTTP acceptance passed for concurrent/replayed idempotency, share-code employee ownership, employee follow-up/completion/evidence, management visibility, lead-pool fallback, cross-tenant denial and unauthenticated denial; 175 repository tests and all quality gates passed.
 - verified_audit_batch_3: Worker now consumes internal Outbox records with event-consumption de-duplication and retry diagnostics, and runs the shared reminder/overdue state machine. Isolated real Worker acceptance passed; 177 repository tests and static quality gates passed at 3998a7d.

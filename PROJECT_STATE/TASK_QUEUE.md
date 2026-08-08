@@ -13,6 +13,7 @@
 - [x] AUDIT REMEDIATION STAGE PASS - A through G are complete; see `PROJECT_STATE/AUDIT_REMEDIATION_CLOSEOUT.md`.
 - [x] PRE-PILOT-POLISH PASS (`268464d`) - completed only the eight approved pilot-experience/deterministic-defect items; acceptance is recorded in `PROJECT_STATE/PRE_PILOT_POLISH_ACCEPTANCE.md` and no Hardening expansion occurred.
 - [ ] HUMAN-PILOT-HANDOFF ACCEPTANCE REQUIRED - an operator must provision live credentials/authorizations and sign the controlled-pilot checklist; no new development phase starts automatically.
+- [x] LOCAL HUMAN-PILOT-SANDBOX READY - isolated `oneday_human_pilot` database migrated through 045, non-seed local accounts, six localhost services, machine preflight evidence and human runbook are ready. This is not public HTTPS, production acceptance or an external authorization.
 
 ## Final commercial acceptance status (final)
 

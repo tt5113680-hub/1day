@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## 2026-08-08 LOCAL HUMAN-PILOT-SANDBOX READY
+
+- Added an isolated, idempotently provisioned `oneday_human_pilot` local database workflow using migrations 001–045 and non-seed HUMAN PILOT identities; no production migration or business logic changed.
+- Started PostgreSQL, API, Worker and four localhost terminals; machine preflight passed API/Worker health, scheduler, anonymous consumer access, sessions, RBAC, tenant isolation and the customer/task/Outbox chain.
+- Added local-only account inventory, human operator runbook and evidence under `PROJECT_STATE/` and `evidence/HUMAN-PILOT-HANDOFF/`.
+
 ## 2026-08-08 PRE-PILOT-POLISH PASS
 
 - `268464d` closes only the approved pilot polish: truthful Discovery entry links, real consumer navigation, platform dashboard root redirect, honest consumer recommendation copy, accurate management AI execution receipts, active-tenant metric correction, and pilot AI/Redis documentation calibration.

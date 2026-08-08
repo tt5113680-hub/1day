@@ -10,3 +10,4 @@ evidence/**/playwright-output/
 .env
 .env.*
 !.env.example
+.local-human-pilot/

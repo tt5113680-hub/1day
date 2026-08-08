@@ -432,3 +432,11 @@
 ## 禁止
 
 不得修改旧工程 `D:\1DAY_V2`。
+
+## LOCAL HUMAN-PILOT-SANDBOX ready (2026-08-08)
+
+- Scope is local browser trial only: no business logic change, no public deployment, no real customer credential, no connector authorization and no production acceptance claim.
+- Database: `oneday_human_pilot`, independently migrated from 001 through 045 and provisioned via `scripts/local-human-pilot-seed.mjs`; it refuses any other database name and is separate from `oneday_v3_test`.
+- Running localhost terminals: Consumer `3171`, Employee `3172`, Management `3173`, Platform `3174`; API `3001`; Worker `3002`.
+- Operator files: `PROJECT_STATE/LOCAL_HUMAN_PILOT_ACCOUNTS.md`, `PROJECT_STATE/LOCAL_HUMAN_PILOT_RUNBOOK.md`; evidence: `evidence/HUMAN-PILOT-HANDOFF/LOCAL_MACHINE_PREFLIGHT.md`.
+- Verification: 18-package typecheck/build; actual API/Worker/terminal HTTP checks; local login, refresh, logout, scheduler, anonymous consumer, customer/task/Outbox, employee follow-up, management visibility, RBAC and cross-tenant isolation all passed.
