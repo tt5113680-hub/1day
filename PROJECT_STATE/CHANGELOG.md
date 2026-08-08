@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## 2026-08-08 — CONSUMER-COMMERCIAL-HOME-V1 follow-up
+
+- Added migration 047 and local TEST ONLY package/platform prices so the storefront directly displays Meituan, Douyin and partner group-buy prices for the same recommended package.
+- Aligned Consumer service-detail and external-action child-page cards, backgrounds and buttons with the storefront's warm commercial visual system.
+- Kept the task in `AWAITING_PRODUCT_OWNER_UI_ACCEPTANCE`; per-tenant theme/plugin editing remains a separately scoped, controlled configuration capability rather than arbitrary page code.
+
 ## 2026-08-08 — CONSUMER-COMMERCIAL-HOME-V1
 
 - Reworked the Consumer storefront into a mobile commercial home with store switching, Banner carousel, action grid, membership entry, offers, platform comparison, updates, benefits, store contact actions and five-item bottom navigation.

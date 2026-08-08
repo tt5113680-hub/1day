@@ -24,6 +24,9 @@ test('CONSUMER-COMMERCIAL-HOME-V1: three real test storefronts render distinct c
     await expect(page.getByRole('button', { name: /到店咨询/ })).toBeVisible();
   }
   await page.goto(url(stores[0][0]), { waitUntil: 'networkidle' });
+  await expect(page.getByText(/团购价\s*¥19.90/)).toBeVisible();
+  await expect(page.getByText(/团购价\s*¥21.90/)).toBeVisible();
+  await expect(page.getByText('当前低价', { exact: true })).toBeVisible();
   await page.getByRole('button', { name: /北京国贸测试店/ }).click();
   await expect(page.getByRole('dialog', { name: '选择门店' })).toBeVisible();
   await expect(page.getByRole('link', { name: /北京望京测试店/ })).toBeVisible();

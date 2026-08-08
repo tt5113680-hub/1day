@@ -31,3 +31,10 @@
 ## 人工验收入口
 
 `http://127.0.0.1:3201/c/stores/30000000-0000-4000-8000-000000000021?tenant=luckin-oneday-human-pilot`
+
+## Follow-up — package/platform prices and Consumer visual alignment (2026-08-08)
+
+- Migration `047_store_service_platform_offers` persists the relationship between one recommended package, one active store platform action and its offer/market price; it is not derived from a link label.
+- LOCAL HUMAN PILOT Guomao TEST ONLY evidence: Meituan `¥19.90`, Douyin `¥21.90`, partner `¥20.90`; the lowest-price marker is rendered on Meituan. The `2/2` storefront browser test checks the direct price values and the existing three-store/three-viewport path.
+- Refreshed screenshots: `storefront-375.png`, `storefront-390.png`, `storefront-430.png`. Consumer service and external-action child pages now share the storefront warm palette and button/card language.
+- Status remains `AWAITING_PRODUCT_OWNER_UI_ACCEPTANCE`; no assertion is made that the product owner has accepted the commercial UI.

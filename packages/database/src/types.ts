@@ -778,6 +778,23 @@ export interface StoreExternalActionsTable {
   deleted_at: Timestamp | null;
   version: Generated<number>;
 }
+export interface StoreServicePlatformOffersTable {
+  id: string;
+  tenant_id: string;
+  store_id: string;
+  service_id: string;
+  external_action_id: string;
+  offer_price: string;
+  market_price: string | null;
+  sort_order: number;
+  status: string;
+  created_at: Timestamp;
+  created_by: string | null;
+  updated_at: Timestamp;
+  updated_by: string | null;
+  deleted_at: Timestamp | null;
+  version: Generated<number>;
+}
 export interface ConsumerStoreOutboundEventsTable {
   id: string;
   tenant_id: string;
@@ -1170,6 +1187,7 @@ export interface Database {
   external_action_events: ExternalActionEventsTable;
   consumer_action_redirect_events: ConsumerActionRedirectEventsTable;
   store_external_actions: StoreExternalActionsTable;
+  store_service_platform_offers: StoreServicePlatformOffersTable;
   consumer_store_outbound_events: ConsumerStoreOutboundEventsTable;
   consumer_process_accesses: ConsumerProcessAccessesTable;
   consumer_profile_accesses: ConsumerProfileAccessesTable;

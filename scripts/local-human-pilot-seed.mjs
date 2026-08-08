@@ -173,9 +173,9 @@ const upsert = (text, values) => pool.query(text, values);
 
 try {
   const migration = await pool.query(
-    "select name from kysely_migration where name='046_commercial_storefront'",
+    "select name from kysely_migration where name='047_store_service_platform_offers'",
   );
-  assert.equal(migration.rowCount, 1, 'Migration 046 is required before human-pilot provisioning');
+  assert.equal(migration.rowCount, 1, 'Migration 047 is required before human-pilot provisioning');
   const passwordHash = `scrypt$oneday-human-pilot$${scryptSync(humanPilot.password, 'oneday-human-pilot', 64).toString('base64url')}`;
 
   await pool.query('begin');
@@ -469,6 +469,27 @@ try {
         detail.service[3],
       ],
     );
+    for (const [actionId, offerPrice, marketPrice, sortOrder] of [
+      [ids.meituanAction, [19.9, 22.9, 26.9][index], [38, 42, 48][index], 10],
+      [ids.douyinAction, [21.9, 23.9, 28.9][index], [38, 42, 48][index], 20],
+      [ids.externalAction, [20.9, 24.9, 29.9][index], [38, 42, 48][index], 30],
+    ]) {
+      await upsert(
+        `insert into store_service_platform_offers(id,tenant_id,store_id,service_id,external_action_id,offer_price,market_price,sort_order,status)
+         values($1,$2,$3,$4,$5,$6,$7,$8,'active')
+         on conflict (service_id,external_action_id) do update set offer_price=excluded.offer_price,market_price=excluded.market_price,sort_order=excluded.sort_order,status='active',deleted_at=null`,
+        [
+          id(1100 + index * 10 + sortOrder / 10),
+          humanPilot.tenantA.id,
+          storeId,
+          id(850 + index),
+          actionId,
+          offerPrice,
+          marketPrice,
+          sortOrder,
+        ],
+      );
+    }
     await upsert(
       `insert into store_benefits(id,tenant_id,store_id,title,description,external_action_id,rank,status) values($1,$2,$3,$4,$5,$6,1,'active')
        on conflict (id) do update set title=excluded.title,description=excluded.description,status='active',deleted_at=null`,
@@ -560,7 +581,7 @@ try {
     JSON.stringify(
       {
         database: parsed.pathname.slice(1),
-        migration: '046',
+        migration: '047',
         accounts: accounts.map(({ email, role, tenantId }) => ({ email, role, tenantId })),
       },
       null,

@@ -51,35 +51,47 @@ export class ConsumerStoreService implements OnModuleDestroy {
       )
     ).rows[0];
     if (!store) throw new NotFoundException('NOT_FOUND');
-    const [services, benefits, content, stores, actions, externalLinks] = await Promise.all([
-      this.pool.query(
-        "select id,name,description,duration_minutes,price_label from store_services where tenant_id=$1 and store_id=$2 and status='active' and deleted_at is null order by rank desc,name",
-        [tenant.id, storeId],
-      ),
-      this.pool.query(
-        "select b.id,b.title,b.description,b.external_action_id,a.name as action_name from store_benefits b left join external_actions a on a.id=b.external_action_id and a.tenant_id=b.tenant_id and a.status='active' and a.deleted_at is null where b.tenant_id=$1 and b.store_id=$2 and b.status='active' and b.deleted_at is null order by b.rank desc,b.title",
-        [tenant.id, storeId],
-      ),
-      this.pool.query(
-        "select id,content_type,title,summary from store_content_items where tenant_id=$1 and store_id=$2 and status='active' and deleted_at is null order by rank desc,title",
-        [tenant.id, storeId],
-      ),
-      this.pool.query(
-        "select id,name,address,business_hours,image_url from stores where tenant_id=$1 and merchant_id=$2 and status='active' and deleted_at is null order by name",
-        [tenant.id, store.merchant_id],
-      ),
-      this.pool.query(
-        "select id,name,action_type,target_url,mini_program_app_id,mini_program_path,platform from external_actions where tenant_id=$1 and status='active' and deleted_at is null order by case when action_type='platform_entry' then 0 else 1 end,created_at desc",
-        [tenant.id],
-      ),
-      this.pool.query(
-        `select sea.id as link_id,sea.description,sea.sort_order,a.id,a.name,a.action_type,a.target_url,a.platform
+    const [services, benefits, content, stores, actions, externalLinks, platformOffers] =
+      await Promise.all([
+        this.pool.query(
+          "select id,name,description,duration_minutes,price_label from store_services where tenant_id=$1 and store_id=$2 and status='active' and deleted_at is null order by rank desc,name",
+          [tenant.id, storeId],
+        ),
+        this.pool.query(
+          "select b.id,b.title,b.description,b.external_action_id,a.name as action_name from store_benefits b left join external_actions a on a.id=b.external_action_id and a.tenant_id=b.tenant_id and a.status='active' and a.deleted_at is null where b.tenant_id=$1 and b.store_id=$2 and b.status='active' and b.deleted_at is null order by b.rank desc,b.title",
+          [tenant.id, storeId],
+        ),
+        this.pool.query(
+          "select id,content_type,title,summary from store_content_items where tenant_id=$1 and store_id=$2 and status='active' and deleted_at is null order by rank desc,title",
+          [tenant.id, storeId],
+        ),
+        this.pool.query(
+          "select id,name,address,business_hours,image_url from stores where tenant_id=$1 and merchant_id=$2 and status='active' and deleted_at is null order by name",
+          [tenant.id, store.merchant_id],
+        ),
+        this.pool.query(
+          "select id,name,action_type,target_url,mini_program_app_id,mini_program_path,platform from external_actions where tenant_id=$1 and status='active' and deleted_at is null order by case when action_type='platform_entry' then 0 else 1 end,created_at desc",
+          [tenant.id],
+        ),
+        this.pool.query(
+          `select sea.id as link_id,sea.description,sea.sort_order,a.id,a.name,a.action_type,a.target_url,a.platform
          from store_external_actions sea join external_actions a on a.id=sea.external_action_id and a.tenant_id=sea.tenant_id
          where sea.tenant_id=$1 and sea.store_id=$2 and sea.enabled and sea.deleted_at is null and a.status='active' and a.deleted_at is null
          order by sea.sort_order,sea.created_at`,
-        [tenant.id, storeId],
-      ),
-    ]);
+          [tenant.id, storeId],
+        ),
+        this.pool.query(
+          `select spo.id as offer_id,spo.service_id,spo.external_action_id,spo.offer_price,spo.market_price,
+                ss.name as service_name,ss.price_label,a.name as action_name,a.platform,a.target_url
+         from store_service_platform_offers spo
+         join store_services ss on ss.id=spo.service_id and ss.tenant_id=spo.tenant_id and ss.status='active' and ss.deleted_at is null
+         join store_external_actions sea on sea.store_id=spo.store_id and sea.external_action_id=spo.external_action_id and sea.tenant_id=spo.tenant_id and sea.enabled and sea.deleted_at is null
+         join external_actions a on a.id=spo.external_action_id and a.tenant_id=spo.tenant_id and a.status='active' and a.deleted_at is null
+         where spo.tenant_id=$1 and spo.store_id=$2 and spo.status='active' and spo.deleted_at is null
+         order by ss.rank desc,spo.sort_order,a.name`,
+          [tenant.id, storeId],
+        ),
+      ]);
     return {
       tenant: { slug: tenant.slug, name: tenant.name },
       store: {
@@ -113,6 +125,18 @@ export class ConsumerStoreService implements OnModuleDestroy {
         platformType: row.platform,
         targetUrl: row.target_url,
         actionType: row.action_type,
+      })),
+      platformOffers: platformOffers.rows.map((row) => ({
+        id: row.external_action_id,
+        offerId: row.offer_id,
+        serviceId: row.service_id,
+        serviceName: row.service_name,
+        servicePriceLabel: row.price_label,
+        title: row.action_name,
+        platformType: row.platform,
+        offerPrice: Number(row.offer_price),
+        marketPrice: row.market_price === null ? null : Number(row.market_price),
+        targetUrl: row.target_url,
       })),
       stores: stores.rows.map((row) => ({
         id: row.id,

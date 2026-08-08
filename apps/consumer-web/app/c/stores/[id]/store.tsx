@@ -45,6 +45,18 @@ export type StoreDetail = {
     targetUrl: string;
     actionType: string;
   }[];
+  platformOffers: {
+    id: string;
+    offerId: string;
+    serviceId: string;
+    serviceName: string;
+    servicePriceLabel: string | null;
+    title: string;
+    platformType: 'meituan' | 'douyin' | 'external';
+    offerPrice: number;
+    marketPrice: number | null;
+    targetUrl: string | null;
+  }[];
 };
 
 const visual = (index: number) => ['◌', '▦', '✦', '♧', '◈', '⌁', '◍', '⌖', '↗', '⋯'][index] ?? '•';
@@ -90,11 +102,32 @@ export default function StorePage({
   const [switcher, setSwitcher] = useState(false);
   const [slide, setSlide] = useState(0);
   const consultAction = data.actions.find((item) => item.actionType !== 'link') ?? data.actions[0];
-  const platformAction = data.externalLinks[0];
+  const platformAction = data.platformOffers[0] ?? data.externalLinks[0];
   const sourceValue = source ?? 'consumer:storefront';
   const returnTo = `/c/stores/${data.store.id}?${query(data, sourceValue, 'storefront', shareCode).toString()}`;
   const actionUrl = (actionId: string, scene: string) =>
     `/c/actions/${actionId}?${query(data, sourceValue, scene, shareCode).toString()}&storeId=${encodeURIComponent(data.store.id)}&returnTo=${encodeURIComponent(returnTo)}`;
+  const groupedPlatformOffers = useMemo(() => {
+    const groups = new Map<
+      string,
+      {
+        serviceName: string;
+        servicePriceLabel: string | null;
+        offers: StoreDetail['platformOffers'];
+      }
+    >();
+    for (const item of data.platformOffers) {
+      const current = groups.get(item.serviceId) ?? {
+        serviceName: item.serviceName,
+        servicePriceLabel: item.servicePriceLabel,
+        offers: [],
+      };
+      current.offers.push(item);
+      groups.set(item.serviceId, current);
+    }
+    return [...groups.values()];
+  }, [data.platformOffers]);
+  const money = (value: number) => `¥${value.toFixed(value % 1 === 0 ? 0 : 2)}`;
   const navigationUrl =
     data.store.latitude !== null && data.store.longitude !== null
       ? `https://uri.amap.com/marker?position=${data.store.longitude},${data.store.latitude}&name=${encodeURIComponent(data.store.name)}&src=ONEDAY`
@@ -346,33 +379,80 @@ export default function StorePage({
         </Section>
 
         <Section title="全平台团购比价" hint="选好平台再前往下单" anchor="platforms">
-          {data.externalLinks.length ? (
-            <div className={styles.platformList}>
-              {data.externalLinks.map((item, index) => (
-                <a
-                  className={styles.platform}
-                  href={actionUrl(item.id, 'platform_compare')}
-                  key={item.linkId}
-                >
-                  <span
-                    className={`${styles.platformMark} ${styles[`platform${item.platformType}`]}`}
-                  >
-                    {item.platformType === 'meituan'
-                      ? '团'
-                      : item.platformType === 'douyin'
-                        ? '抖'
-                        : '荐'}
-                  </span>
-                  <span>
-                    <strong>{item.title}</strong>
-                    <p>{item.description ?? '前往对应平台查看'}</p>
-                  </span>
-                  <b>
-                    {index === 0 ? '优先查看' : '去比价'} <i>›</i>
-                  </b>
-                </a>
-              ))}
-            </div>
+          {data.platformOffers.length || data.externalLinks.length ? (
+            <>
+              {groupedPlatformOffers.map((group) => {
+                const lowest = Math.min(...group.offers.map((item) => item.offerPrice));
+                return (
+                  <article className={styles.comparisonPackage} key={group.offers[0]?.serviceId}>
+                    <header>
+                      <span>门店推荐套餐</span>
+                      <strong>{group.serviceName}</strong>
+                      {group.servicePriceLabel && <small>门店标价 {group.servicePriceLabel}</small>}
+                    </header>
+                    <div className={styles.priceRows}>
+                      {group.offers.map((item) => (
+                        <a
+                          className={styles.priceRow}
+                          href={actionUrl(item.id, 'platform_compare_price')}
+                          key={item.offerId}
+                        >
+                          <span
+                            className={`${styles.platformMark} ${styles[`platform${item.platformType}`]}`}
+                          >
+                            {item.platformType === 'meituan'
+                              ? '团'
+                              : item.platformType === 'douyin'
+                                ? '抖'
+                                : '荐'}
+                          </span>
+                          <span className={styles.pricePlatform}>
+                            <strong>{item.title}</strong>
+                            <small>
+                              {item.marketPrice
+                                ? `划线价 ${money(item.marketPrice)}`
+                                : '平台推荐套餐'}
+                            </small>
+                          </span>
+                          <b className={styles.priceValue}>
+                            {item.offerPrice === lowest && <em>当前低价</em>}
+                            团购价 {money(item.offerPrice)}
+                          </b>
+                        </a>
+                      ))}
+                    </div>
+                  </article>
+                );
+              })}
+              {!data.platformOffers.length && data.externalLinks.length ? (
+                <div className={styles.platformList}>
+                  {data.externalLinks.map((item, index) => (
+                    <a
+                      className={styles.platform}
+                      href={actionUrl(item.id, 'platform_compare')}
+                      key={item.linkId}
+                    >
+                      <span
+                        className={`${styles.platformMark} ${styles[`platform${item.platformType}`]}`}
+                      >
+                        {item.platformType === 'meituan'
+                          ? '团'
+                          : item.platformType === 'douyin'
+                            ? '抖'
+                            : '荐'}
+                      </span>
+                      <span>
+                        <strong>{item.title}</strong>
+                        <p>{item.description ?? '前往对应平台查看'}</p>
+                      </span>
+                      <b>
+                        {index === 0 ? '优先查看' : '去比价'} <i>›</i>
+                      </b>
+                    </a>
+                  ))}
+                </div>
+              ) : null}
+            </>
           ) : (
             <Empty>门店暂未配置可跳转的平台入口。</Empty>
           )}

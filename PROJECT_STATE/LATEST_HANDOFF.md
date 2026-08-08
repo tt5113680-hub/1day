@@ -1,5 +1,12 @@
 # LATEST_HANDOFF
 
+## CONSUMER-COMMERCIAL-HOME-V1 — 2026-08-08 follow-up, still awaiting product-owner acceptance
+
+- Migration `047_store_service_platform_offers` persists a package-to-active-platform-action offer price. The Guomao local TEST ONLY package currently displays Meituan `¥19.90`, Douyin `¥21.90`, and partner `¥20.90`, with a lowest-price marker; third-party pages remain the final authority for price, stock and promotions.
+- Service detail and external action pages now share the Consumer storefront's warm commercial palette/cards/buttons. The local runtime was migrated, re-seeded and rebuilt for API/Consumer.
+- Verified: database/API/Consumer typecheck; HUMAN-PILOT image build; repository tests `184/184`; Consumer Playwright `2/2`; evidence contract `74/74`; refreshed 375/390/430 screenshots. `format:check` remains blocked only by the same pre-existing untracked audit/test files; task-owned files are formatted.
+- Tenant customization direction: use a tenant-scoped, validated design-token/module registry (approved color tokens, icon keys, action types and ordering), never arbitrary plugin scripts. Management editing is intentionally outside this Consumer-only acceptance scope.
+
 ## CONSUMER-COMMERCIAL-HOME-V1 — awaiting product-owner UI acceptance
 
 - Consumer-only commercial storefront implementation is ready in the isolated local HUMAN-PILOT runtime. It uses persisted store/service/benefit/content/action data, local original coffee imagery, distinct Guomao/Wangjing/Zhongguancun test stores and a fixed five-item consumer navigation.
