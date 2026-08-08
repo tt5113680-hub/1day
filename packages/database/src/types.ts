@@ -1057,6 +1057,26 @@ export interface StoreManagersTable {
   version: Generated<number>;
 }
 
+export interface ConsumerOperatingProjectionsTable {
+  id: string;
+  tenant_id: string;
+  consumer_event_type: string;
+  consumer_event_id: string;
+  customer_id: string;
+  customer_source_id: string;
+  ownership_id: string | null;
+  task_id: string | null;
+  lead_pool_entry_id: string | null;
+  assignment_basis: string;
+  payload: unknown;
+  created_at: Timestamp;
+  created_by: string | null;
+  updated_at: Timestamp;
+  updated_by: string | null;
+  deleted_at: Timestamp | null;
+  version: Generated<number>;
+}
+
 export interface Database {
   tenants: TenantsTable;
   users: UsersTable;
@@ -1125,4 +1145,5 @@ export interface Database {
   customer_export_requests: CustomerExportRequestsTable;
   ai_suggestions: AiSuggestionsTable;
   store_managers: StoreManagersTable;
+  consumer_operating_projections: ConsumerOperatingProjectionsTable;
 }

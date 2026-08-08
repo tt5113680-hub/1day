@@ -1,5 +1,13 @@
 # LIVE_PROGRESS
 
+- 2026-08-08 Asia/Shanghai - AUDIT-BATCH-2 started on `hardening/AUDIT-BATCH-2`: reading the product success criteria and existing consumer-action, customer, attribution and task boundaries before implementing one idempotent commercial operating orchestrator.
+
+- 2026-08-08 Asia/Shanghai - AUDIT-BATCH-2 main implementation completed: public consumer action, store consultation and service consultation now atomically project the consumer event into customer, source, existing-rule ownership or lead pool, employee task/reminder where an assignee exists, audit and Outbox. A unique projection record plus transaction advisory lock makes retries/concurrent repeats return one result. Targeted Prettier and API/database/consumer typecheck passed. Next: migrate the test database and run real consumer-to-employee-to-management HTTP acceptance.
+
+- 2026-08-08 Asia/Shanghai - AUDIT-BATCH-2 targeted HTTP acceptance passed: 2/2 tests prove a public share action atomically creates exactly one customer/source/ownership/task/reminder/audit/Outbox trail under concurrent retry, the assigned employee follows up, completes work and uploads result evidence, and the manager reads source/ownership/task/result detail. The no-employee path enters the existing available lead pool. Cross-tenant and unauthenticated access are rejected. Next: full repository quality gates and evidence.
+
+- 2026-08-08 Asia/Shanghai - AUDIT-BATCH-2 repository verification completed: 18-package typecheck/build, lint, format, 175 repository tests and evidence check passed. Evidence and verified-pending-commit state are recorded; next after commit is Worker / Outbox consumption / reminder / overdue scheduling.
+
 - 2026-08-08 Asia/Shanghai - H-002 systemic session close-out PASS: SessionApiClient now owns Bearer, request-id, refresh/retry and logout semantics; 36 E/M/P business pages / 54 direct token reads migrated; consumer stays anonymous with explicit tenant links. Verified by typecheck, lint, format, build, 173 repository tests, 1 Vitest, 2 boundary contracts and 6 real Playwright/API journeys. Next: AUDIT-BATCH-2 commercial operating orchestration.
 
 - 2026-08-08 Asia/Shanghai — PAGE-M-009 PASS at `aea0630`: role templates, permission ranges and affected-member impact are visible before changes; high-risk changes require confirmation and continue to use CORE-003's audited versioned server flow. Next task: PAGE-M-010.

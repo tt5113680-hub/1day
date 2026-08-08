@@ -22,7 +22,7 @@ export class ConsumerServiceController {
   ) {
     const detail = await this.stores.serviceDetail(tenant ?? '', serviceId);
     return {
-      data: await this.stores.open(tenant ?? '', detail.store.id, actionId, key ?? '', body.source),
+      data: await this.stores.open(tenant ?? '', detail.store.id, actionId, key ?? '', body),
       meta: { public: true },
       error: null,
     };

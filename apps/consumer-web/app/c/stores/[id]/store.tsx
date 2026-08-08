@@ -33,7 +33,15 @@ export function StoreState({ kind }: { kind: 'error' | 'forbidden' }) {
     </main>
   );
 }
-export default function StorePage({ data, source }: { data: StoreDetail; source: string | null }) {
+export default function StorePage({
+  data,
+  source,
+  shareCode,
+}: {
+  data: StoreDetail;
+  source: string | null;
+  shareCode: string | null;
+}) {
   const [notice, setNotice] = useState('');
   const [pending, setPending] = useState(false);
   const action = data.actions[0];
@@ -46,7 +54,7 @@ export default function StorePage({ data, source }: { data: StoreDetail; source:
         {
           method: 'POST',
           headers: { 'content-type': 'application/json', 'idempotency-key': crypto.randomUUID() },
-          body: JSON.stringify({ source: source ?? 'store_detail' }),
+          body: JSON.stringify({ source: source ?? 'store_detail', shareCode }),
         },
       );
       if (!response.ok) throw Error();

@@ -34,6 +34,7 @@ import { ConsumerStoreService } from './consumer-store.service';
 import { ConsumerServiceController } from './consumer-service.controller';
 import { ConsumerActionController } from './consumer-action.controller';
 import { ConsumerActionService } from './consumer-action.service';
+import { ConsumerOperatingOrchestrator } from './consumer-operating-orchestrator.service';
 import { ConsumerProcessController } from './consumer-process.controller';
 import { ConsumerProcessService } from './consumer-process.service';
 import { ConsumerProfileController } from './consumer-profile.controller';
@@ -182,6 +183,7 @@ import { PlatformOnboardingService } from './platform-onboarding.service';
     ConsumerDiscoveryService,
     ConsumerStoreService,
     ConsumerActionService,
+    ConsumerOperatingOrchestrator,
     ConsumerProcessService,
     ConsumerProfileService,
     EmployeeWorkbenchService,

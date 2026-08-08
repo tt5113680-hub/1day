@@ -2,7 +2,12 @@ import { ActionPage, ActionState, type ConsumerAction } from './action';
 
 type Props = {
   params: Promise<{ id: string }>;
-  searchParams: Promise<{ tenant?: string; source?: string; returnTo?: string }>;
+  searchParams: Promise<{
+    tenant?: string;
+    source?: string;
+    returnTo?: string;
+    shareCode?: string;
+  }>;
 };
 
 export default async function ConsumerActionPage({ params, searchParams }: Props) {
@@ -27,6 +32,7 @@ export default async function ConsumerActionPage({ params, searchParams }: Props
         action={payload.data.action}
         source={query.source}
         returnTo={query.returnTo}
+        shareCode={query.shareCode}
       />
     );
   } catch {

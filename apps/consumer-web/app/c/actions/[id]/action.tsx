@@ -36,12 +36,14 @@ export function ActionPage({
   action,
   source,
   returnTo,
+  shareCode,
 }: {
   tenant: string;
   tenantName: string;
   action: ConsumerAction;
   source?: string;
   returnTo?: string;
+  shareCode?: string;
 }) {
   const [status, setStatus] = useState<'ready' | 'submitting' | 'failed' | 'copied'>('ready');
   const api = process.env.NEXT_PUBLIC_API_BASE_URL ?? 'http://127.0.0.1:3001';
@@ -56,7 +58,7 @@ export function ActionPage({
         {
           method: 'POST',
           headers: { 'content-type': 'application/json', 'idempotency-key': crypto.randomUUID() },
-          body: JSON.stringify({ source, returnTo: back }),
+          body: JSON.stringify({ source, returnTo: back, shareCode }),
         },
       );
       const payload = (await response.json()) as { data?: { destination?: string | null } };

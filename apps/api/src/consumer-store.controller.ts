@@ -21,7 +21,7 @@ export class ConsumerStoreController {
     @Body() body: Record<string, unknown>,
   ) {
     return {
-      data: await this.stores.open(tenant ?? '', storeId, actionId, key ?? '', body.source),
+      data: await this.stores.open(tenant ?? '', storeId, actionId, key ?? '', body),
       meta: { public: true },
       error: null,
     };

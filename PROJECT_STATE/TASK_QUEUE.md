@@ -4,7 +4,8 @@
 
 - [x] H-001 PASS - API startup fails closed without a safe authentication signing secret.
 - [x] H-002 PASS - systemic shared session boundary: real employee, management and platform login/refresh/logout; 36 E/M/P business pages migrated from 54 direct token reads; public consumer entry requires explicit tenant and remains anonymous; real Playwright 6/6 PASS.
-- [ ] AUDIT-BATCH-2 NEXT - commercial operating orchestration: consumer behaviour -> customer/source/ownership -> employee task -> follow-up/result evidence -> management projection.
+- [~] AUDIT-BATCH-2 VERIFIED_PENDING_COMMIT - commercial operating orchestration: public consumer behaviour now atomically projects customer/source/ownership or lead-pool/task/reminder/audit/Outbox, with HTTP full-chain evidence.
+- [ ] AUDIT-BATCH-3 NEXT - Worker / Outbox consumption / reminder / overdue scheduling.
 
 ## Final commercial acceptance status (final)
 

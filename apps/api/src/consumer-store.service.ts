@@ -6,6 +6,7 @@ import {
 } from '@nestjs/common';
 import { randomUUID } from 'node:crypto';
 import { Pool } from 'pg';
+import { ConsumerOperatingOrchestrator } from './consumer-operating-orchestrator.service';
 
 const SLUG = /^[a-z0-9][a-z0-9-]{0,62}$/;
 const UUID = /^[0-9a-f-]{36}$/i;
@@ -15,10 +16,18 @@ const source = (value: unknown) => {
     throw new BadRequestException('VALIDATION_ERROR');
   return value;
 };
+const shareCode = (value: unknown) => {
+  if (value === undefined || value === null || value === '') return null;
+  if (typeof value !== 'string' || !/^[A-Za-z0-9_-]{8,48}$/.test(value))
+    throw new BadRequestException('VALIDATION_ERROR');
+  return value;
+};
 
 @Injectable()
 export class ConsumerStoreService implements OnModuleDestroy {
   private readonly pool = new Pool({ connectionString: process.env.DATABASE_URL });
+
+  constructor(private readonly operating: ConsumerOperatingOrchestrator) {}
 
   async detail(tenantSlug: string, storeId: string) {
     if (!SLUG.test(tenantSlug) || !UUID.test(storeId))
@@ -121,24 +130,49 @@ export class ConsumerStoreService implements OnModuleDestroy {
     };
   }
 
-  async open(tenantSlug: string, storeId: string, actionId: string, key: string, value: unknown) {
+  async open(
+    tenantSlug: string,
+    storeId: string,
+    actionId: string,
+    key: string,
+    body: Record<string, unknown>,
+  ) {
     if (!SLUG.test(tenantSlug) || !UUID.test(storeId) || !UUID.test(actionId) || !key.trim())
       throw new BadRequestException('VALIDATION_ERROR');
     const tenant = await this.tenant(tenantSlug);
-    const eventSource = source(value);
+    const eventSource = source(body.source);
+    const safeShareCode = shareCode(body.shareCode);
     const client = await this.pool.connect();
     try {
       await client.query('begin');
+      await client.query('select pg_advisory_xact_lock(hashtext($1),hashtext($2))', [
+        tenant.id,
+        `consumer-store-open:${key}`,
+      ]);
       const prior = await client.query(
-        'select id,external_action_id from consumer_action_events where tenant_id=$1 and idempotency_key=$2 and deleted_at is null',
+        'select id,external_action_id,source,store_id from consumer_action_events where tenant_id=$1 and idempotency_key=$2 and deleted_at is null',
         [tenant.id, key],
       );
       if (prior.rowCount) {
+        const correlationId = randomUUID();
+        const traceId = randomUUID();
+        const operating = await this.operating.project(client, {
+          tenantId: tenant.id,
+          eventType: 'consumer_action_event',
+          eventId: prior.rows[0].id,
+          actionId: prior.rows[0].external_action_id,
+          storeId: prior.rows[0].store_id,
+          source: prior.rows[0].source,
+          shareCode: safeShareCode,
+          correlationId,
+          traceId,
+        });
         await client.query('commit');
         return {
           eventId: prior.rows[0].id,
           actionId: prior.rows[0].external_action_id,
           replayed: true,
+          operating,
         };
       }
       const valid = await client.query(
@@ -162,8 +196,19 @@ export class ConsumerStoreService implements OnModuleDestroy {
         "insert into outbox_events(id,tenant_id,event_type,aggregate_type,aggregate_id,payload,correlation_id,trace_id,created_by,updated_by) values($1,$2,'consumer.action.clicked.v1','consumer_action_event',$3,$4,$5,$6,null,null)",
         [randomUUID(), tenant.id, eventId, details, correlationId, traceId],
       );
+      const operating = await this.operating.project(client, {
+        tenantId: tenant.id,
+        eventType: 'consumer_action_event',
+        eventId,
+        actionId,
+        storeId,
+        source: eventSource,
+        shareCode: safeShareCode,
+        correlationId,
+        traceId,
+      });
       await client.query('commit');
-      return { eventId, actionId, replayed: false };
+      return { eventId, actionId, replayed: false, operating };
     } catch (error) {
       await client.query('rollback');
       throw error;
