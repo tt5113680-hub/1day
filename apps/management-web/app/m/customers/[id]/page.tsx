@@ -1,5 +1,6 @@
 'use client';
 import { SessionApiClient } from '@oneday/session-client';
+import { businessLabel, customerNameCopy, taskTitleCopy, timelineLabelCopy } from '@oneday/ui';
 
 import Link from 'next/link';
 import { useCallback, useEffect, useState } from 'react';
@@ -86,8 +87,8 @@ export default function ManagementCustomerDetail({ params }: { params: Promise<{
       </Link>
       <header>
         <div>
-          <p>客户全链路 / {data.customer.segment}</p>
-          <h1>{data.customer.displayName}</h1>
+          <p>客户全链路 / {businessLabel(data.customer.segment)}</p>
+          <h1>{customerNameCopy(data.customer.displayName) ?? '客户'}</h1>
           <span>
             {data.customer.identities
               .map((item) => `${item.type}: ${item.maskedValue}`)
@@ -110,48 +111,51 @@ export default function ManagementCustomerDetail({ params }: { params: Promise<{
       <section className={styles.grid}>
         <Panel title="来源与贡献">
           <List
-            items={data.sources.map(
-              (item) => `${item.source_role} · ${item.source_type} · ${item.status}`,
-            )}
+            items={data.sources.map((item) => ({
+              title: `${businessLabel(item.source_role)} · ${businessLabel(item.source_type)}`,
+              detail: businessLabel(item.status),
+            }))}
             empty="暂无来源记录"
           />
           <List
-            items={data.contributions.map(
-              (item) =>
-                `${item.employee_name} · ${item.contribution_role}${item.confirmed ? ' · 已确认' : ''}`,
-            )}
+            items={data.contributions.map((item) => ({
+              title: `${item.employee_name} · ${businessLabel(item.contribution_role)}`,
+              detail: item.confirmed ? '已确认贡献' : '待确认贡献',
+            }))}
             empty="暂无贡献记录"
           />
         </Panel>
         <Panel title="归属与审批">
           <List
-            items={data.ownerships.map(
-              (item) => `${item.employee_name} · ${item.ownership_role} · ${item.status}`,
-            )}
+            items={data.ownerships.map((item) => ({
+              title: `${item.employee_name} · ${businessLabel(item.ownership_role)}`,
+              detail: businessLabel(item.status),
+            }))}
             empty="暂无归属记录"
           />
           <List
-            items={data.transfers.map(
-              (item) => `${item.from_name} → ${item.to_name} · ${item.status} · ${item.reason}`,
-            )}
+            items={data.transfers.map((item) => ({
+              title: `${item.from_name} → ${item.to_name}`,
+              detail: `${businessLabel(item.status)} · ${item.reason}`,
+            }))}
             empty="暂无归属审批"
           />
         </Panel>
         <Panel title="订单与证据">
           <List
-            items={data.orders.map(
-              (item) =>
-                `${item.order_number} · ${item.status} · ${item.evidence_count} 份证据 · ${item.connector_count} 条回执`,
-            )}
+            items={data.orders.map((item) => ({
+              title: item.order_number,
+              detail: `${businessLabel(item.status)} · ${item.evidence_count} 份证据 · ${item.connector_count} 条回执`,
+            }))}
             empty="暂无订单结果"
           />
         </Panel>
         <Panel title="任务与异常">
           <List
-            items={data.tasks.map(
-              (item) =>
-                `${item.title} · ${item.status} · ${item.assignee_name}${item.escalation_level ? ` · 升级 ${item.escalation_level}` : ''}`,
-            )}
+            items={data.tasks.map((item) => ({
+              title: taskTitleCopy(item.title),
+              detail: `${businessLabel(item.status)} · ${item.assignee_name}${item.escalation_level ? ` · 已升级 ${item.escalation_level} 次` : ''}`,
+            }))}
             empty="暂无任务"
           />
         </Panel>
@@ -161,9 +165,14 @@ export default function ManagementCustomerDetail({ params }: { params: Promise<{
         {data.timeline.length ? (
           data.timeline.map((item, index) => (
             <article key={`${item.kind}-${index}`}>
-              <time>{new Date(item.at).toLocaleString()}</time>
-              <span>{item.kind}</span>
-              <p>{item.label}</p>
+              <time>
+                {new Intl.DateTimeFormat('zh-CN', {
+                  dateStyle: 'medium',
+                  timeStyle: 'short',
+                }).format(new Date(item.at))}
+              </time>
+              <span>{businessLabel(item.kind)}</span>
+              <p>{timelineLabelCopy(item.label)}</p>
             </article>
           ))
         ) : (
@@ -181,11 +190,16 @@ function Panel({ title, children }: { title: string; children: React.ReactNode }
     </section>
   );
 }
-function List({ items, empty }: { items: string[]; empty: string }) {
+function List({ items, empty }: { items: { title: string; detail: string }[]; empty: string }) {
   return (
     <ul>
       {items.length ? (
-        items.map((item) => <li key={item}>{item}</li>)
+        items.map((item) => (
+          <li key={`${item.title}-${item.detail}`}>
+            <strong>{item.title}</strong>
+            <span>{item.detail}</span>
+          </li>
+        ))
       ) : (
         <li className={styles.empty}>{empty}</li>
       )}

@@ -80,10 +80,20 @@
   list-style: none;
 }
 .panel li {
-  padding: 10px 0;
+  display: grid;
+  gap: 4px;
+  padding: 12px 0;
   border-top: 1px solid #eef2f7;
   color: #475569;
   line-height: 1.45;
+}
+.panel li strong {
+  color: #14213d;
+  font-size: 14px;
+}
+.panel li span {
+  color: #64748b;
+  font-size: 13px;
 }
 .panel li:first-child {
   border-top: 0;

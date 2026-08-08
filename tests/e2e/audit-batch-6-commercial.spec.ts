@@ -134,8 +134,8 @@ test('AUDIT-BATCH-6 runs the public consumer-to-employee-to-management journey w
     );
     await owner.waitForURL(`${managementBase}/m/dashboard`);
     await owner.goto(`${managementBase}/m/customers/${created.customer_id}`);
-    await expect(owner.locator('main')).toContainText('employee_share');
-    await expect(owner.locator('main')).toContainText('completed');
+    await expect(owner.locator('main')).toContainText('员工分享');
+    await expect(owner.locator('main')).toContainText('已完成');
     await owner.screenshot({
       path: 'evidence/AUDIT-BATCH-6/management-commercial-trail.png',
       fullPage: true,

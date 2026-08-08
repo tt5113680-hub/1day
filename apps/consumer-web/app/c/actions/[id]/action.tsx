@@ -82,6 +82,7 @@ export function ActionPage({
   };
   const platformCopy =
     action.actionType === 'mini_program' ? action.miniProgramPath : action.copyCode;
+  const requiresCopy = action.actionType !== 'link';
   return (
     <main className={styles.page}>
       <a className={styles.back} href={back}>
@@ -91,14 +92,18 @@ export function ActionPage({
       <h1>{action.name}</h1>
       <section className={styles.card}>
         <strong>
-          {action.actionType === 'link' ? '即将跳转到外部服务' : '请在目标平台继续操作'}
+          {action.actionType === 'link' ? '即将跳转到外部服务' : '先记录本次咨询，再前往目标平台'}
         </strong>
-        <p>跳转前会记录本次动作。外部页面不可用时，可复制口令并返回当前商家页面继续咨询。</p>
+        <p>
+          {requiresCopy
+            ? '确认后会记录本次咨询，并显示专属口令。请复制口令后在目标平台完成服务；也可随时返回商家页面继续咨询。'
+            : '确认后会记录本次咨询并跳转到外部服务。如未成功打开，可返回商家页面继续咨询。'}
+        </p>
       </section>
       {status === 'failed' && <p className={styles.error}>操作未完成，请检查网络后重试。</p>}
       {status === 'copied' && (
         <p className={styles.success}>
-          动作已记录。已准备好口令；如未自动打开，请复制后在目标平台继续。
+          本次咨询已记录。请复制下方口令，并在目标平台完成服务；返回商家页面可继续咨询。
         </p>
       )}
       <section className={styles.actions}>
@@ -107,11 +112,13 @@ export function ActionPage({
             ? '正在确认…'
             : action.actionType === 'link'
               ? '确认并打开'
-              : '确认动作'}
+              : requiresCopy
+                ? '记录咨询并获取口令'
+                : '确认并打开'}
         </button>
         {action.actionType !== 'link' && (
           <button className={styles.secondary} onClick={copyCode}>
-            复制口令
+            复制专属口令
           </button>
         )}
         {status === 'copied' && <code>{platformCopy}</code>}

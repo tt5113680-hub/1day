@@ -1,5 +1,6 @@
 'use client';
 import { SessionApiClient } from '@oneday/session-client';
+import { businessLabel, customerNameCopy, taskReasonCopy, taskTitleCopy } from '@oneday/ui';
 
 import { useParams } from 'next/navigation';
 import { useCallback, useEffect, useState } from 'react';
@@ -208,7 +209,7 @@ export function TaskDetail() {
         </button>
         <div>
           <p>ONEDAY / 我的任务</p>
-          <h1>{data.task.title}</h1>
+          <h1>{taskTitleCopy(data.task.title)}</h1>
         </div>
         <span className={done ? styles.done : styles.badge}>{done ? '已完成' : '待执行'}</span>
       </header>
@@ -228,9 +229,7 @@ export function TaskDetail() {
       </section>
       <section className={styles.section} aria-labelledby="reason-title">
         <h2 id="reason-title">任务原因</h2>
-        <p className={styles.card}>
-          {data.task.reason ?? '暂未补充任务原因，请按任务要求完成处理。'}
-        </p>
+        <p className={styles.card}>{taskReasonCopy(data.task.reason)}</p>
       </section>
       <section className={styles.section} aria-labelledby="customer-title">
         <h2 id="customer-title">关联客户</h2>
@@ -238,7 +237,7 @@ export function TaskDetail() {
           <span>客户</span>
           {data.customer ? (
             <a href={`/e/customers/${data.customer.id}`}>
-              <strong>{data.customer.displayName}</strong>
+              <strong>{customerNameCopy(data.customer.displayName) ?? '关联客户'}</strong>
             </a>
           ) : (
             <strong>内部执行任务</strong>
@@ -274,28 +273,30 @@ export function TaskDetail() {
         <section className={styles.section} aria-labelledby="result-title">
           <h2 id="result-title">记录结果并上传证据</h2>
           <p className={styles.card}>仅可为分配给本人的当前任务记录关联客户的真实结果。</p>
-          <label>
-            结果订单号
-            <input
-              aria-label="结果订单号"
-              value={orderNumber}
-              maxLength={120}
-              onChange={(event) => setOrderNumber(event.target.value)}
-              placeholder="例如：ONEDAY-RESULT-001"
-            />
-          </label>
-          <label>
-            图片证据
-            <input
-              aria-label="图片证据"
-              type="file"
-              accept="image/png,image/jpeg,image/webp"
-              onChange={(event) => setResultFile(event.target.files?.[0] ?? null)}
-            />
-          </label>
-          <button disabled={busy !== null} onClick={() => void recordResult()}>
-            {busy === 'result' ? '上传中…' : '保存结果与证据'}
-          </button>
+          <div className={styles.resultForm}>
+            <label>
+              结果订单号
+              <input
+                aria-label="结果订单号"
+                value={orderNumber}
+                maxLength={120}
+                onChange={(event) => setOrderNumber(event.target.value)}
+                placeholder="例如：ONEDAY-RESULT-001"
+              />
+            </label>
+            <label>
+              图片证据
+              <input
+                aria-label="图片证据"
+                type="file"
+                accept="image/png,image/jpeg,image/webp"
+                onChange={(event) => setResultFile(event.target.files?.[0] ?? null)}
+              />
+            </label>
+            <button disabled={busy !== null} onClick={() => void recordResult()}>
+              {busy === 'result' ? '上传中…' : '保存结果与证据'}
+            </button>
+          </div>
         </section>
       )}
       <footer className={styles.footer}>
@@ -318,7 +319,7 @@ function EvidenceLabel({ item }: { item: Evidence }) {
     <span>
       <strong>{item.original_filename}</strong>
       <small>
-        {item.evidence_type} · {item.media_type} · {size(item.byte_size)}
+        {businessLabel(item.evidence_type)} · {item.media_type} · {size(item.byte_size)}
       </small>
     </span>
   );

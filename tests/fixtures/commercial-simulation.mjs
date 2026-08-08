@@ -340,7 +340,7 @@ export async function seedCommercialSimulation(databaseUrl = process.env.DATABAS
       ],
     );
     await pool.query(
-      "insert into external_actions(id,tenant_id,code,name,action_type,platform,status) values($1,$2,'H002-LUCKIN-CONSULT','Luckin test consultation','platform_entry','web','active')",
+      "insert into external_actions(id,tenant_id,code,name,action_type,platform,status) values($1,$2,'H002-LUCKIN-CONSULT','瑞幸到店咨询','platform_entry','web','active')",
       [ids.consumerAction, luckin.id],
     );
     await pool.query(
