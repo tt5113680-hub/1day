@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## 2026-08-08 AUDIT-BATCH-5 PASS (`aa50e0e`)
+
+- Added migration-backed AI execution receipts and a controlled command boundary: only complete whitelisted tenant-local task commands run, while incomplete or unsupported suggestions remain `manual_required`.
+- Executed AI follow-ups now emit tenant-scoped task, audit, and Outbox evidence. Management/platform connector surfaces explicitly declare intent-only authorization and unavailable external delivery without exposing submitted secrets.
+- Added real API-process acceptance for command execution, manual fallback, audit/Outbox receipt, secret non-disclosure, and both connector capability surfaces.
+
 ## 2026-08-08 AUDIT-BATCH-4 PASS (207740e)
 
 - Consolidated API database access behind a bounded, application-owned PostgreSQL pool and added persistent, atomic limit windows for authentication and public consumer writes.
