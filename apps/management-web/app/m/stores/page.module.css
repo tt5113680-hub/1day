@@ -109,6 +109,67 @@
 .empty {
   text-align: center;
 }
+.commercial {
+  margin-top: 22px;
+  border-top: 1px solid #e2e8f0;
+  padding-top: 18px;
+}
+.commercial h3 {
+  margin: 0 0 8px;
+  font-size: 17px;
+}
+.help {
+  margin: 0 0 12px;
+  color: #64748b;
+  font-size: 13px;
+}
+.formGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  margin: 12px 0;
+}
+.formGrid label,
+.linkEditor label {
+  display: grid;
+  gap: 5px;
+  color: #475569;
+  font-size: 13px;
+  font-weight: 700;
+}
+.formGrid input,
+.linkEditor input,
+.linkEditor select {
+  width: 100%;
+  box-sizing: border-box;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  padding: 9px;
+  background: #fff;
+  font: inherit;
+}
+.linkEditor {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+  margin: 14px 0 0;
+  border: 1px solid #dbeafe;
+  border-radius: 10px;
+  padding: 14px;
+}
+.linkEditor legend {
+  padding: 0 5px;
+  color: #1e3a8a;
+  font-weight: 800;
+}
+.linkEditor .toggle {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+.linkEditor .toggle input {
+  width: auto;
+}
 .centered {
   display: grid;
   min-height: 70vh;
@@ -131,5 +192,9 @@
   }
   .card dl {
     grid-template-columns: 1fr 1fr;
+  }
+  .formGrid,
+  .linkEditor {
+    grid-template-columns: 1fr;
   }
 }

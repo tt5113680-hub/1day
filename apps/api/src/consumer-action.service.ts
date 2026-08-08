@@ -36,6 +36,13 @@ const shareCode = (value: unknown) => {
     throw new BadRequestException('VALIDATION_ERROR');
   return value;
 };
+const scene = (value: unknown) => source(value);
+const storeId = (value: unknown) => {
+  if (value === undefined || value === null || value === '') return null;
+  if (typeof value !== 'string' || !UUID.test(value))
+    throw new BadRequestException('VALIDATION_ERROR');
+  return value;
+};
 
 @Injectable()
 export class ConsumerActionService implements OnModuleDestroy {
@@ -54,6 +61,9 @@ export class ConsumerActionService implements OnModuleDestroy {
     const eventSource = source(body.source);
     const safeReturnTo = returnTo(body.returnTo);
     const safeShareCode = shareCode(body.shareCode);
+    const safeScene = scene(body.scene);
+    const safeStoreId = storeId(body.storeId);
+    if (safeStoreId) await this.assertStoreAction(tenant.id, safeStoreId, action.id);
     const client = await this.pool.connect();
     try {
       await client.query('begin');
@@ -73,7 +83,7 @@ export class ConsumerActionService implements OnModuleDestroy {
           eventType: 'consumer_action_redirect_event',
           eventId: prior.rows[0].id,
           actionId: action.id,
-          storeId: null,
+          storeId: safeStoreId,
           source: prior.rows[0].source,
           shareCode: safeShareCode,
           correlationId,
@@ -84,10 +94,28 @@ export class ConsumerActionService implements OnModuleDestroy {
       }
       const eventId = randomUUID();
       await client.query(
-        'insert into consumer_action_redirect_events(id,tenant_id,action_id,source,return_to,idempotency_key,created_by,updated_by) values($1,$2,$3,$4,$5,$6,null,null)',
-        [eventId, tenant.id, action.id, eventSource, safeReturnTo, key],
+        'insert into consumer_action_redirect_events(id,tenant_id,action_id,store_id,source,scene,share_code,return_to,idempotency_key,created_by,updated_by) values($1,$2,$3,$4,$5,$6,$7,$8,$9,null,null)',
+        [
+          eventId,
+          tenant.id,
+          action.id,
+          safeStoreId,
+          eventSource,
+          safeScene,
+          safeShareCode,
+          safeReturnTo,
+          key,
+        ],
       );
-      const details = { actionId, source: eventSource, returnTo: safeReturnTo };
+      const details = {
+        actionId,
+        storeId: safeStoreId,
+        source: eventSource,
+        scene: safeScene,
+        shareCode: safeShareCode,
+        returnTo: safeReturnTo,
+        targetUrl: action.target_url,
+      };
       const correlationId = randomUUID();
       const traceId = randomUUID();
       await client.query(
@@ -103,7 +131,7 @@ export class ConsumerActionService implements OnModuleDestroy {
         eventType: 'consumer_action_redirect_event',
         eventId,
         actionId: action.id,
-        storeId: null,
+        storeId: safeStoreId,
         source: eventSource,
         shareCode: safeShareCode,
         correlationId,
@@ -117,6 +145,16 @@ export class ConsumerActionService implements OnModuleDestroy {
     } finally {
       client.release();
     }
+  }
+
+  private async assertStoreAction(tenantId: string, safeStoreId: string, actionId: string) {
+    const result = await this.pool.query(
+      `select 1 from stores s where s.id=$1 and s.tenant_id=$2 and s.status='active' and s.deleted_at is null
+       and (exists(select 1 from store_external_actions sea where sea.store_id=s.id and sea.tenant_id=s.tenant_id and sea.external_action_id=$3 and sea.enabled and sea.deleted_at is null)
+            or exists(select 1 from store_benefits sb where sb.store_id=s.id and sb.tenant_id=s.tenant_id and sb.external_action_id=$3 and sb.status='active' and sb.deleted_at is null))`,
+      [safeStoreId, tenantId, actionId],
+    );
+    if (!result.rowCount) throw new NotFoundException('NOT_FOUND');
   }
 
   private async action(tenantSlug: string, actionId: string) {

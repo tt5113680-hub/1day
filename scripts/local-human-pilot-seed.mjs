@@ -42,6 +42,9 @@ const ids = {
   template: id(31),
   templateVersion: id(32),
   action: id(41),
+  meituanAction: id(42),
+  douyinAction: id(43),
+  externalAction: id(44),
   channel: id(51),
   circle: id(52),
   discoveryChannel: id(61),
@@ -170,9 +173,9 @@ const upsert = (text, values) => pool.query(text, values);
 
 try {
   const migration = await pool.query(
-    "select name from kysely_migration where name='045_ai_suggestion_execution'",
+    "select name from kysely_migration where name='046_commercial_storefront'",
   );
-  assert.equal(migration.rowCount, 1, 'Migration 045 is required before human-pilot provisioning');
+  assert.equal(migration.rowCount, 1, 'Migration 046 is required before human-pilot provisioning');
   const passwordHash = `scrypt$oneday-human-pilot$${scryptSync(humanPilot.password, 'oneday-human-pilot', 64).toString('base64url')}`;
 
   await pool.query('begin');
@@ -262,11 +265,24 @@ try {
      on conflict (id) do update set status='active',deleted_at=null`,
     [ids.tenantBStore, humanPilot.tenantB.id, ids.tenantBOrganization, ids.tenantBMerchant],
   );
-  for (const [storeId, code, name, address] of stores)
+  for (const [index, [storeId, code, name, address]] of stores.entries())
     await upsert(
-      `insert into stores(id,tenant_id,organization_id,merchant_id,code,name,address,status) values($1,$2,$3,$4,$5,$6,$7,'active')
-       on conflict (id) do update set name=excluded.name,address=excluded.address,status='active',deleted_at=null`,
-      [storeId, humanPilot.tenantA.id, ids.organization, ids.merchant, code, name, address],
+      `insert into stores(id,tenant_id,organization_id,merchant_id,code,name,address,phone,business_hours,image_url,latitude,longitude,status) values($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,'active')
+       on conflict (id) do update set name=excluded.name,address=excluded.address,phone=excluded.phone,business_hours=excluded.business_hours,image_url=excluded.image_url,latitude=excluded.latitude,longitude=excluded.longitude,status='active',deleted_at=null`,
+      [
+        storeId,
+        humanPilot.tenantA.id,
+        ids.organization,
+        ids.merchant,
+        code,
+        name,
+        address,
+        `400-820-${String(index + 1).padStart(4, '0')}`,
+        '每日 07:00–22:00',
+        `https://images.unsplash.com/photo-${['1495474472287-4d71bcdd2085', '1501339847302-ac426a4a7cbb', '1445116572660-236099ec97a0'][index]}?auto=format&fit=crop&w=1200&q=80`,
+        [39.9087, 39.9966, 39.9834][index],
+        [116.4619, 116.4805, 116.3168][index],
+      ],
     );
   for (const key of employeeAccounts) {
     const entry = account(key);
@@ -302,6 +318,50 @@ try {
      on conflict (id) do update set name=excluded.name,status='active',deleted_at=null`,
     [ids.action, humanPilot.tenantA.id],
   );
+  for (const [actionId, code, name, platform, targetUrl, rank] of [
+    [
+      ids.meituanAction,
+      'PILOT-MEITUAN-TEST',
+      '美团团购（TEST ONLY）',
+      'meituan',
+      'https://www.meituan.com/',
+      10,
+    ],
+    [
+      ids.douyinAction,
+      'PILOT-DOUYIN-TEST',
+      '抖音团购（TEST ONLY）',
+      'douyin',
+      'https://www.douyin.com/',
+      20,
+    ],
+    [
+      ids.externalAction,
+      'PILOT-EXTERNAL-TEST',
+      '合作平台入口（TEST ONLY）',
+      'external',
+      'https://example.com/',
+      30,
+    ],
+  ]) {
+    await upsert(
+      `insert into external_actions(id,tenant_id,code,name,action_type,target_url,platform,status) values($1,$2,$3,$4,'link',$5,$6,'active')
+       on conflict (id) do update set name=excluded.name,target_url=excluded.target_url,platform=excluded.platform,status='active',deleted_at=null`,
+      [actionId, humanPilot.tenantA.id, code, name, targetUrl, platform],
+    );
+    await upsert(
+      `insert into store_external_actions(id,tenant_id,store_id,external_action_id,description,sort_order,enabled) values($1,$2,$3,$4,$5,$6,true)
+       on conflict (store_id,external_action_id) do update set description=excluded.description,sort_order=excluded.sort_order,enabled=true,deleted_at=null`,
+      [
+        id(880 + rank),
+        humanPilot.tenantA.id,
+        ids.stores[0],
+        actionId,
+        `${name}，仅用于本地真人试点跳转和留痕验证。`,
+        rank,
+      ],
+    );
+  }
   await upsert(
     `insert into page_templates(id,tenant_id,code,name,target,published_version_id,status,industry_config) values($1,$2,'pilot-consumer','本地真人试用消费者入口','consumer',$3,'active',$4)
      on conflict (id) do update set published_version_id=excluded.published_version_id,status='active',deleted_at=null`,
@@ -312,6 +372,26 @@ try {
      on conflict (id) do update set status='published',deleted_at=null`,
     [ids.templateVersion, humanPilot.tenantA.id, ids.template],
   );
+  for (const [storeIndex, storeId] of ids.stores.slice(1).entries()) {
+    for (const [actionId, rank] of [
+      [ids.meituanAction, 10],
+      [ids.douyinAction, 20],
+      [ids.externalAction, 30],
+    ]) {
+      await upsert(
+        `insert into store_external_actions(id,tenant_id,store_id,external_action_id,description,sort_order,enabled) values($1,$2,$3,$4,$5,$6,true)
+         on conflict (store_id,external_action_id) do update set sort_order=excluded.sort_order,enabled=true,deleted_at=null`,
+        [
+          id(1000 + storeIndex * 100 + rank),
+          humanPilot.tenantA.id,
+          storeId,
+          actionId,
+          'LOCAL HUMAN PILOT TEST ONLY',
+          rank,
+        ],
+      );
+    }
+  }
   const modules = [
     [
       id(801),
@@ -432,7 +512,7 @@ try {
     JSON.stringify(
       {
         database: parsed.pathname.slice(1),
-        migration: '045',
+        migration: '046',
         accounts: accounts.map(({ email, role, tenantId }) => ({ email, role, tenantId })),
       },
       null,

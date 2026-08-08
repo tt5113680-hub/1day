@@ -215,6 +215,11 @@ export interface StoresTable {
   code: string;
   name: string;
   address: string | null;
+  phone: string | null;
+  business_hours: string | null;
+  image_url: string | null;
+  latitude: string | null;
+  longitude: string | null;
   status: string;
   created_at: Timestamp;
   created_by: string | null;
@@ -745,9 +750,43 @@ export interface ConsumerActionRedirectEventsTable {
   id: string;
   tenant_id: string;
   action_id: string;
+  store_id: string | null;
   source: string | null;
+  scene: string | null;
+  share_code: string | null;
   return_to: string | null;
   idempotency_key: string;
+  created_at: Timestamp;
+  created_by: string | null;
+  updated_at: Timestamp;
+  updated_by: string | null;
+  deleted_at: Timestamp | null;
+  version: Generated<number>;
+}
+export interface StoreExternalActionsTable {
+  id: string;
+  tenant_id: string;
+  store_id: string;
+  external_action_id: string;
+  description: string | null;
+  sort_order: number;
+  enabled: boolean;
+  created_at: Timestamp;
+  created_by: string | null;
+  updated_at: Timestamp;
+  updated_by: string | null;
+  deleted_at: Timestamp | null;
+  version: Generated<number>;
+}
+export interface ConsumerStoreOutboundEventsTable {
+  id: string;
+  tenant_id: string;
+  store_id: string;
+  outbound_type: string;
+  target_url: string;
+  source: string | null;
+  scene: string | null;
+  share_code: string | null;
   created_at: Timestamp;
   created_by: string | null;
   updated_at: Timestamp;
@@ -1130,6 +1169,8 @@ export interface Database {
   external_actions: ExternalActionsTable;
   external_action_events: ExternalActionEventsTable;
   consumer_action_redirect_events: ConsumerActionRedirectEventsTable;
+  store_external_actions: StoreExternalActionsTable;
+  consumer_store_outbound_events: ConsumerStoreOutboundEventsTable;
   consumer_process_accesses: ConsumerProcessAccessesTable;
   consumer_profile_accesses: ConsumerProfileAccessesTable;
   workflow_definitions: WorkflowDefinitionsTable;

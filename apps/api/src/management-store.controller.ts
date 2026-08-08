@@ -1,4 +1,14 @@
-import { BadRequestException, Body, Controller, Get, Headers, Param, Patch } from '@nestjs/common';
+import {
+  BadRequestException,
+  Body,
+  Controller,
+  Get,
+  Headers,
+  Param,
+  Patch,
+  Post,
+  Put,
+} from '@nestjs/common';
 import { AuthorizationService } from './authorization.service';
 import { ManagementStoreService } from './management-store.service';
 
@@ -40,6 +50,65 @@ export class ManagementStoreController {
       data: await this.stores.assignManager(
         await this.context(authorization, tenant, requestId),
         id,
+        body,
+        requestId!,
+      ),
+      meta: { requestId },
+      error: null,
+    };
+  }
+  @Put(':id/commercial')
+  async commercial(
+    @Param('id') id: string,
+    @Headers('authorization') authorization: string | undefined,
+    @Headers('x-tenant-context') tenant: string | undefined,
+    @Headers('x-request-id') requestId: string | undefined,
+    @Body() body: Record<string, unknown>,
+  ) {
+    return {
+      data: await this.stores.updateCommercial(
+        await this.context(authorization, tenant, requestId),
+        id,
+        body,
+        requestId!,
+      ),
+      meta: { requestId },
+      error: null,
+    };
+  }
+  @Post(':id/external-links')
+  async createLink(
+    @Param('id') id: string,
+    @Headers('authorization') authorization: string | undefined,
+    @Headers('x-tenant-context') tenant: string | undefined,
+    @Headers('x-request-id') requestId: string | undefined,
+    @Body() body: Record<string, unknown>,
+  ) {
+    return {
+      data: await this.stores.createExternalLink(
+        await this.context(authorization, tenant, requestId),
+        id,
+        body,
+        requestId!,
+      ),
+      meta: { requestId },
+      error: null,
+    };
+  }
+  @Patch(':id/external-links/:linkId')
+  async updateLink(
+    @Param('id') id: string,
+    @Param('linkId') linkId: string,
+    @Headers('authorization') authorization: string | undefined,
+    @Headers('x-tenant-context') tenant: string | undefined,
+    @Headers('x-request-id') requestId: string | undefined,
+    @Body() body: Record<string, unknown>,
+  ) {
+    return {
+      data: await this.stores.updateExternalLink(
+        await this.context(authorization, tenant, requestId),
+        id,
+        linkId,
         body,
         requestId!,
       ),

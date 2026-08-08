@@ -22,6 +22,17 @@ const shareCode = (value: unknown) => {
     throw new BadRequestException('VALIDATION_ERROR');
   return value;
 };
+const outboundUrl = (value: unknown) => {
+  if (typeof value !== 'string' || !value.trim()) throw new BadRequestException('VALIDATION_ERROR');
+  try {
+    const parsed = new URL(value.trim());
+    if (!['https:', 'tel:'].includes(parsed.protocol) || parsed.username || parsed.password)
+      throw new Error('unsafe');
+    return parsed.toString();
+  } catch {
+    throw new BadRequestException('VALIDATION_ERROR');
+  }
+};
 
 @Injectable()
 export class ConsumerStoreService implements OnModuleDestroy {
@@ -35,12 +46,12 @@ export class ConsumerStoreService implements OnModuleDestroy {
     const tenant = await this.tenant(tenantSlug);
     const store = (
       await this.pool.query(
-        "select s.id,s.name,s.address,m.id as merchant_id,m.name as merchant_name,l.address_label from stores s join merchants m on m.id=s.merchant_id and m.tenant_id=s.tenant_id and m.status='active' and m.deleted_at is null left join merchant_locations l on l.merchant_id=m.id and l.tenant_id=m.tenant_id and l.status='active' and l.deleted_at is null where s.id=$1 and s.tenant_id=$2 and s.status='active' and s.deleted_at is null",
+        "select s.id,s.name,s.address,s.phone,s.business_hours,s.image_url,s.latitude,s.longitude,m.id as merchant_id,m.name as merchant_name,l.address_label from stores s join merchants m on m.id=s.merchant_id and m.tenant_id=s.tenant_id and m.status='active' and m.deleted_at is null left join merchant_locations l on l.merchant_id=m.id and l.tenant_id=m.tenant_id and l.status='active' and l.deleted_at is null where s.id=$1 and s.tenant_id=$2 and s.status='active' and s.deleted_at is null",
         [storeId, tenant.id],
       )
     ).rows[0];
     if (!store) throw new NotFoundException('NOT_FOUND');
-    const [services, benefits, content, actions] = await Promise.all([
+    const [services, benefits, content, actions, externalLinks] = await Promise.all([
       this.pool.query(
         "select id,name,description,duration_minutes,price_label from store_services where tenant_id=$1 and store_id=$2 and status='active' and deleted_at is null order by rank desc,name",
         [tenant.id, storeId],
@@ -57,6 +68,13 @@ export class ConsumerStoreService implements OnModuleDestroy {
         "select id,name,action_type,target_url,mini_program_app_id,mini_program_path,platform from external_actions where tenant_id=$1 and status='active' and deleted_at is null order by created_at desc limit 3",
         [tenant.id],
       ),
+      this.pool.query(
+        `select sea.id as link_id,sea.description,sea.sort_order,a.id,a.name,a.action_type,a.target_url,a.platform
+         from store_external_actions sea join external_actions a on a.id=sea.external_action_id and a.tenant_id=sea.tenant_id
+         where sea.tenant_id=$1 and sea.store_id=$2 and sea.enabled and sea.deleted_at is null and a.status='active' and a.deleted_at is null
+         order by sea.sort_order,sea.created_at`,
+        [tenant.id, storeId],
+      ),
     ]);
     return {
       tenant: { slug: tenant.slug, name: tenant.name },
@@ -65,6 +83,11 @@ export class ConsumerStoreService implements OnModuleDestroy {
         name: store.name,
         address: store.address ?? store.address_label,
         merchant: store.merchant_name,
+        phone: store.phone,
+        businessHours: store.business_hours,
+        imageUrl: store.image_url,
+        latitude: store.latitude === null ? null : Number(store.latitude),
+        longitude: store.longitude === null ? null : Number(store.longitude),
       },
       services: services.rows,
       benefits: benefits.rows,
@@ -78,7 +101,58 @@ export class ConsumerStoreService implements OnModuleDestroy {
         miniProgramPath: row.mini_program_path,
         platform: row.platform,
       })),
+      externalLinks: externalLinks.rows.map((row) => ({
+        id: row.id,
+        linkId: row.link_id,
+        title: row.name,
+        description: row.description,
+        platformType: row.platform,
+        targetUrl: row.target_url,
+        actionType: row.action_type,
+      })),
     };
+  }
+
+  async trackOutbound(tenantSlug: string, storeId: string, body: Record<string, unknown>) {
+    if (!SLUG.test(tenantSlug) || !UUID.test(storeId))
+      throw new BadRequestException('VALIDATION_ERROR');
+    const tenant = await this.tenant(tenantSlug);
+    const outboundType = body.outboundType;
+    if (outboundType !== 'navigation' && outboundType !== 'phone')
+      throw new BadRequestException('VALIDATION_ERROR');
+    const targetUrl = outboundUrl(body.targetUrl);
+    const eventSource = source(body.source);
+    const safeScene = source(body.scene);
+    const safeShareCode = shareCode(body.shareCode);
+    const store = await this.pool.query(
+      "select id from stores where id=$1 and tenant_id=$2 and status='active' and deleted_at is null",
+      [storeId, tenant.id],
+    );
+    if (!store.rowCount) throw new NotFoundException('NOT_FOUND');
+    const eventId = randomUUID(),
+      correlationId = randomUUID(),
+      traceId = randomUUID();
+    const details = {
+      storeId,
+      outboundType,
+      targetUrl,
+      source: eventSource,
+      scene: safeScene,
+      shareCode: safeShareCode,
+    };
+    await this.pool.query(
+      'insert into consumer_store_outbound_events(id,tenant_id,store_id,outbound_type,target_url,source,scene,share_code,created_by,updated_by) values($1,$2,$3,$4,$5,$6,$7,$8,null,null)',
+      [eventId, tenant.id, storeId, outboundType, targetUrl, eventSource, safeScene, safeShareCode],
+    );
+    await this.pool.query(
+      "insert into audit_logs(id,tenant_id,actor_id,action,resource_type,resource_id,correlation_id,trace_id,details,created_by,updated_by) values($1,$2,null,'consumer.store_outbound','consumer_store_outbound_event',$3,$4,$5,$6,null,null)",
+      [randomUUID(), tenant.id, eventId, correlationId, traceId, details],
+    );
+    await this.pool.query(
+      "insert into outbox_events(id,tenant_id,event_type,aggregate_type,aggregate_id,payload,correlation_id,trace_id,created_by,updated_by) values($1,$2,'consumer.store.outbound.v1','consumer_store_outbound_event',$3,$4,$5,$6,null,null)",
+      [randomUUID(), tenant.id, eventId, details, correlationId, traceId],
+    );
+    return { eventId, requestId: correlationId, traceId };
   }
 
   async serviceDetail(tenantSlug: string, serviceId: string) {

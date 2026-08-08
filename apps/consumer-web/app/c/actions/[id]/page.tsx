@@ -7,6 +7,8 @@ type Props = {
     source?: string;
     returnTo?: string;
     shareCode?: string;
+    storeId?: string;
+    scene?: string;
   }>;
 };
 
@@ -33,6 +35,8 @@ export default async function ConsumerActionPage({ params, searchParams }: Props
         source={query.source}
         returnTo={query.returnTo}
         shareCode={query.shareCode}
+        storeId={query.storeId}
+        scene={query.scene}
       />
     );
   } catch {

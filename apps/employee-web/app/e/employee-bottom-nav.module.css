@@ -1,0 +1,29 @@
+.nav {
+  position: fixed;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 20;
+  display: flex;
+  justify-content: center;
+  gap: clamp(14px, 7vw, 42px);
+  border-top: 1px solid #dbe3ef;
+  padding: 12px 10px max(12px, env(safe-area-inset-bottom));
+  background: rgba(255, 255, 255, 0.97);
+  box-shadow: 0 -8px 20px rgba(15, 23, 42, 0.06);
+  backdrop-filter: blur(12px);
+}
+.nav a {
+  color: #334155;
+  font-size: 13px;
+  font-weight: 700;
+  text-decoration: none;
+}
+.nav a:first-child {
+  color: #2563eb;
+}
+@media (min-width: 700px) {
+  .nav {
+    display: none;
+  }
+}

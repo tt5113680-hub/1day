@@ -24,6 +24,32 @@
   color: #4b5563;
   font-size: 14px;
 }
+.cover {
+  width: 100%;
+  height: 188px;
+  margin-top: 16px;
+  border-radius: 18px;
+  object-fit: cover;
+  background: #e2e8f0;
+}
+.storeInfo {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 12px;
+  color: #334155;
+  font-size: 13px;
+}
+.storeInfo span,
+.storeInfo button {
+  border: 1px solid #dbeafe;
+  border-radius: 999px;
+  padding: 7px 10px;
+  background: #fff;
+  color: #1d4ed8;
+  font: inherit;
+  font-weight: 700;
+}
 .hero {
   margin-top: 20px;
   border-radius: 22px;
@@ -72,6 +98,11 @@
   padding: 15px;
   background: #fff;
   box-shadow: 0 5px 16px rgba(15, 23, 42, 0.05);
+}
+.card {
+  display: block;
+  color: inherit;
+  text-decoration: none;
 }
 .card strong {
   font-size: 16px;
@@ -162,6 +193,25 @@
 .button:focus-visible {
   outline: 3px solid #7c3aed;
   outline-offset: 3px;
+}
+.bottomNav {
+  position: fixed;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  display: flex;
+  justify-content: center;
+  gap: 22px;
+  padding: 12px;
+  border-top: 1px solid #e2e8f0;
+  background: rgba(255, 255, 255, 0.96);
+  backdrop-filter: blur(10px);
+}
+.bottomNav a {
+  color: #334155;
+  font-size: 13px;
+  font-weight: 700;
+  text-decoration: none;
 }
 @media (min-width: 700px) {
   .page {

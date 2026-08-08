@@ -37,6 +37,8 @@ export function ActionPage({
   source,
   returnTo,
   shareCode,
+  storeId,
+  scene,
 }: {
   tenant: string;
   tenantName: string;
@@ -44,6 +46,8 @@ export function ActionPage({
   source?: string;
   returnTo?: string;
   shareCode?: string;
+  storeId?: string;
+  scene?: string;
 }) {
   const [status, setStatus] = useState<'ready' | 'submitting' | 'failed' | 'copied'>('ready');
   const api = process.env.NEXT_PUBLIC_API_BASE_URL ?? 'http://127.0.0.1:3001';
@@ -58,7 +62,7 @@ export function ActionPage({
         {
           method: 'POST',
           headers: { 'content-type': 'application/json', 'idempotency-key': crypto.randomUUID() },
-          body: JSON.stringify({ source, returnTo: back, shareCode }),
+          body: JSON.stringify({ source, returnTo: back, shareCode, storeId, scene }),
         },
       );
       const payload = (await response.json()) as { data?: { destination?: string | null } };

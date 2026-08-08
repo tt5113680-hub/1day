@@ -204,6 +204,7 @@
   margin-bottom: 6px;
 }
 .nav {
+  display: none;
   position: fixed;
   z-index: 2;
   right: 0;

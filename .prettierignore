@@ -5,3 +5,5 @@ node_modules/
 pnpm-lock.yaml
 PROJECT_STATE/STOP_REPORT.md
 evidence/*/playwright-output/
+evidence/COMMERCIAL_UI_FULL_CHAIN_AUDIT/
+evidence/PRODUCT_UI_GAP_AUDIT/

@@ -26,4 +26,16 @@ export class ConsumerStoreController {
       error: null,
     };
   }
+  @Post(':storeId/outbound')
+  async outbound(
+    @Param('storeId') storeId: string,
+    @Query('tenant') tenant: string | undefined,
+    @Body() body: Record<string, unknown>,
+  ) {
+    return {
+      data: await this.stores.trackOutbound(tenant ?? '', storeId, body),
+      meta: { public: true },
+      error: null,
+    };
+  }
 }
