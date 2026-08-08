@@ -1,5 +1,12 @@
 # LATEST_HANDOFF
 
+## PRE-PILOT-POLISH PASS - HUMAN-PILOT-HANDOFF restored
+
+- Approved business commit: `268464d fix(pilot): polish truthful public entry flows`.
+- A-1/A-2/A-3, B-1/B-2/B-3 and D-1/D-3 are PASS. See `PROJECT_STATE/PRE_PILOT_POLISH_ACCEPTANCE.md` for the eight-item matrix, deferred scope and red-line confirmation.
+- Verified after the change: focused HTTP 3/3; updated consumer/Discovery/management/platform browser checks 9/9; H-002 6/6; B2-B5 5/5; B6/B7 four-terminal journeys 1/1 each; format, lint, 18-package typecheck/build, 184 repository tests and 74 evidence checks.
+- `POST_HARDENING = PASS FOR HUMAN PILOT` remains valid. No additional development starts automatically. Human/operator work remains: provision non-seed credentials and approved authorizations, then sign `docs/PILOT_ACCEPTANCE_CHECKLIST.md`.
+
 ## AUDIT remediation stage completed - acceptance required
 
 - A-G remediation is technically complete: systemic protected-session close-out, transactional consumer operating projection, Worker/Outbox scheduling, production process safety, controlled AI commands/connector boundaries, real multi-role cross-tenant commercial acceptance, and pilot-blocking UI/UX correction.

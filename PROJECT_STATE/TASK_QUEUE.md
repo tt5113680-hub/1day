@@ -11,6 +11,7 @@
 - [x] AUDIT-BATCH-6 PASS (`62f102b`) - real public consumer -> employee follow-up/result/evidence -> owner-management journey, with actual employee/owner/platform sessions and second-tenant/low-privilege API isolation denials.
 - [x] AUDIT-BATCH-7 PASS (`d175f64`) - shared commercial-language presentation, anonymous-customer minimization, accurate public platform-entry copy and non-overlapping 390px employee result form, verified by real four-terminal Playwright and full quality gates.
 - [x] AUDIT REMEDIATION STAGE PASS - A through G are complete; see `PROJECT_STATE/AUDIT_REMEDIATION_CLOSEOUT.md`.
+- [x] PRE-PILOT-POLISH PASS (`268464d`) - completed only the eight approved pilot-experience/deterministic-defect items; acceptance is recorded in `PROJECT_STATE/PRE_PILOT_POLISH_ACCEPTANCE.md` and no Hardening expansion occurred.
 - [ ] HUMAN-PILOT-HANDOFF ACCEPTANCE REQUIRED - an operator must provision live credentials/authorizations and sign the controlled-pilot checklist; no new development phase starts automatically.
 
 ## Final commercial acceptance status (final)

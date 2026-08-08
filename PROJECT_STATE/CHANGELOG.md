@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## 2026-08-08 PRE-PILOT-POLISH PASS
+
+- `268464d` closes only the approved pilot polish: truthful Discovery entry links, real consumer navigation, platform dashboard root redirect, honest consumer recommendation copy, accurate management AI execution receipts, active-tenant metric correction, and pilot AI/Redis documentation calibration.
+- Final acceptance: `PROJECT_STATE/PRE_PILOT_POLISH_ACCEPTANCE.md`.
+
 ## 2026-08-08 AUDIT-BATCH-7 PASS (`d175f64`)
 
 - Added shared business-language mappings for operating source, ownership, status, evidence and audit timeline values; the critical employee and owner flow now omits generated consumer identifiers while retaining the persisted business trace.

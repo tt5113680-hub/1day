@@ -1,5 +1,12 @@
 # LIVE_PROGRESS
 
+- 2026-08-08 Asia/Shanghai - PRE-PILOT-POLISH PASS at `268464d`: all eight approved items and final quality gates passed (format, lint, 18-package typecheck/build, 184 repository tests, 74 evidence checks). Status returns immediately to HUMAN-PILOT-HANDOFF; no additional Hardening work is authorized.
+
+- 2026-08-08 Asia/Shanghai - PRE-PILOT-POLISH full quality gates started: focused HTTP, consumer/management/platform browser, H-002 and B2-B7 regression gates are PASS; running repository-wide format, lint, 18-package typecheck/build, tests and evidence validation.
+
+- 2026-08-08 Asia/Shanghai - PRE-PILOT-POLISH browser acceptance started: API typechecks/builds and the focused A-1/B-2/D-1 HTTP regressions are PASS; running real consumer, management, platform and H-002 session journeys next.
+
+- 2026-08-08 Asia/Shanghai - PRE-PILOT-POLISH started on `hardening/PRE-PILOT-POLISH`: preserving independently produced audit records and executing only the eight approved items from `PROJECT_STATE/PRE_PILOT_DECISION.md` before returning to HUMAN-PILOT-HANDOFF.
 - 2026-08-08 Asia/Shanghai - AUDIT-BATCH-2 started on `hardening/AUDIT-BATCH-2`: reading the product success criteria and existing consumer-action, customer, attribution and task boundaries before implementing one idempotent commercial operating orchestrator.
 
 - 2026-08-08 Asia/Shanghai - AUDIT-BATCH-2 main implementation completed: public consumer action, store consultation and service consultation now atomically project the consumer event into customer, source, existing-rule ownership or lead pool, employee task/reminder where an assignee exists, audit and Outbox. A unique projection record plus transaction advisory lock makes retries/concurrent repeats return one result. Targeted Prettier and API/database/consumer typecheck passed. Next: migrate the test database and run real consumer-to-employee-to-management HTTP acceptance.
