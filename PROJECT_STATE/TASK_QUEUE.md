@@ -7,7 +7,8 @@
 - [x] AUDIT-BATCH-2 PASS (`5c0ea50`) - commercial operating orchestration: public consumer behaviour atomically projects customer/source/ownership or lead-pool/task/reminder/audit/Outbox, with HTTP full-chain evidence.
 - [x] AUDIT-BATCH-3 PASS (`3998a7d`) - Worker / Outbox consumption / reminder / overdue scheduling.
 - [x] AUDIT-BATCH-4 PASS (207740e) - shared API pool, database-backed auth/public-write rate limits, strict CORS and production TLS/proxy/edge-rate-limit startup controls; real HTTP security acceptance and 180 repository tests passed.
-- [~] AUDIT-BATCH-5 IN_PROGRESS - AI delivery and connector capability-boundary calibration.
+- [x] AUDIT-BATCH-5 PASS (`aa50e0e`) - controlled local AI task commands, `manual_required` fallback, execution audit/Outbox receipts, and honest management/platform connector capability boundaries.
+- [ ] AUDIT-BATCH-6 NEXT - multi-role commercial journey and cross-tenant security acceptance.
 
 ## Final commercial acceptance status (final)
 

@@ -1,5 +1,14 @@
 # LATEST_HANDOFF
 
+## AUDIT-BATCH-5 completed
+
+- Migration `045_ai_suggestion_execution` records whether an accepted AI suggestion executed a controlled command, requires manual action, and what local receipt was created. Only complete whitelisted local task commands execute; unsupported or incomplete payloads remain `manual_required` and cannot infer customer contact or external action.
+- A successful AI follow-up preserves the tenant-scoped source task ownership, writes `task.created_from_ai_suggestion` audit evidence and one `employee.task.created.v1` Outbox event in the same transaction.
+- Management and platform connector APIs/UI now explicitly state intent-only authorization and no external delivery. Management authorization retains only a secret fingerprint; the submitted secret never returns in the API response. Pilot documentation carries the identical communication boundary.
+- Real API acceptance passed (1/1), including local command/audit/Outbox evidence, manual fallback, secret non-disclosure and both connector surfaces. Full gates passed: 182 repository tests, 18-package typecheck/build, lint, format and 72 evidence checks.
+- PASS commit: `aa50e0e feat(hardening): constrain AI command execution`.
+- Next scope: AUDIT-BATCH-6 multi-role commercial journey and cross-tenant security acceptance.
+
 ## AUDIT-BATCH-4 completed
 
 - API service-local PostgreSQL pools are consolidated behind one bounded, application-owned pool. Migration 044 atomically enforces separate authentication and public-write limits with hashed subjects and deployment namespaces.
