@@ -1,6 +1,6 @@
 # CHANGELOG
 
-## 2026-08-08 AUDIT-BATCH-2 VERIFIED_PENDING_COMMIT
+## 2026-08-08 AUDIT-BATCH-2 PASS (`5c0ea50`)
 
 - Closed the consumer-to-operations break with a single transaction that projects a public consumer event into one customer, source, existing-rule ownership/task/reminder or existing lead-pool record, correlated audit and Outbox events.
 - Added concurrent/replay regression coverage and a real employee-to-management HTTP chain; consumer access remains public and anonymous.

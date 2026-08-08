@@ -1,11 +1,12 @@
 # LATEST_HANDOFF
 
-## AUDIT-BATCH-2 verified, commit pending
+## AUDIT-BATCH-2 completed
 
 - `042_consumer_operating_projections` and `ConsumerOperatingOrchestrator` close the P0-3 operating break without adding consumer login or browser-supplied employee identity. Public action, store and service writes retain event, audit, Outbox and operating projection in one transaction.
 - Assignment precedence is server-resolved active employee share code, then existing store manager for a store event, then the existing available lead pool. There is no invented round-robin or fabricated assignee.
 - `tests/audit-batch-2-e2e.test.mjs` passed 2/2 against PostgreSQL: concurrent/replayed consumer action creates one chain; an employee follows up/completes/uploads evidence; management reads the source/ownership/task/result chain; no-assignee enters the pool; cross-tenant and unauthenticated paths are rejected. Full repository verification passed (175 tests, 18-package typecheck/build, lint, format, evidence check).
-- Next after the commit: AUDIT-BATCH-3 Worker / Outbox consumption / reminder / overdue scheduling.
+- PASS commit: `5c0ea50 fix(hardening): close consumer operating loop`.
+- Current scope: AUDIT-BATCH-3 Worker / Outbox consumption / reminder / overdue scheduling.
 
 ## H-002 systemic close-out completed
 

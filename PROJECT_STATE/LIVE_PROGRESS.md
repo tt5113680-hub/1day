@@ -8,6 +8,8 @@
 
 - 2026-08-08 Asia/Shanghai - AUDIT-BATCH-2 repository verification completed: 18-package typecheck/build, lint, format, 175 repository tests and evidence check passed. Evidence and verified-pending-commit state are recorded; next after commit is Worker / Outbox consumption / reminder / overdue scheduling.
 
+- 2026-08-08 Asia/Shanghai - AUDIT-BATCH-2 PASS at `5c0ea50`: evidence, 18-package typecheck/build, lint, format, 175 repository tests and the 2/2 public-consumer-to-employee-to-management HTTP chain are complete. AUDIT-BATCH-3 Worker / Outbox consumption / reminder / overdue scheduling has started.
+
 - 2026-08-08 Asia/Shanghai - H-002 systemic session close-out PASS: SessionApiClient now owns Bearer, request-id, refresh/retry and logout semantics; 36 E/M/P business pages / 54 direct token reads migrated; consumer stays anonymous with explicit tenant links. Verified by typecheck, lint, format, build, 173 repository tests, 1 Vitest, 2 boundary contracts and 6 real Playwright/API journeys. Next: AUDIT-BATCH-2 commercial operating orchestration.
 
 - 2026-08-08 Asia/Shanghai — PAGE-M-009 PASS at `aea0630`: role templates, permission ranges and affected-member impact are visible before changes; high-risk changes require confirmation and continue to use CORE-003's audited versioned server flow. Next task: PAGE-M-010.
