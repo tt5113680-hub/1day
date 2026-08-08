@@ -44,8 +44,12 @@ export class ManagementStoreService implements OnModuleDestroy {
       `select s.id,s.code,s.name,s.address,s.phone,s.business_hours,s.image_url,s.latitude,s.longitude,s.status,s.version,m.name merchant_name,
        coalesce(json_agg(distinct jsonb_build_object('id',e.id,'name',u.display_name)) filter(where e.id is not null),'[]'::json) managers,
        (select count(*)::int from store_services ss where ss.tenant_id=s.tenant_id and ss.store_id=s.id and ss.status='active' and ss.deleted_at is null) active_services,
-       (select count(*)::int from store_external_actions sea where sea.tenant_id=s.tenant_id and sea.store_id=s.id and sea.enabled and sea.deleted_at is null) entry_count,
-       (select count(*)::int from consumer_action_events ce where ce.tenant_id=s.tenant_id and ce.store_id=s.id and ce.status='active' and ce.deleted_at is null and ce.created_at>=now()-interval '30 days') entry_opens_30d,
+       (select count(distinct entry_action_id)::int from (
+          select sea.external_action_id as entry_action_id from store_external_actions sea where sea.tenant_id=s.tenant_id and sea.store_id=s.id and sea.enabled and sea.deleted_at is null
+          union all
+          select sb.external_action_id as entry_action_id from store_benefits sb where sb.tenant_id=s.tenant_id and sb.store_id=s.id and sb.external_action_id is not null and sb.status='active' and sb.deleted_at is null
+        ) entries) entry_count,
+       (select count(*)::int from consumer_action_events ce where ce.tenant_id=s.tenant_id and ce.store_id=s.id and ce.deleted_at is null and ce.created_at>=now()-interval '30 days') entry_opens_30d,
        (select count(*)::int from tasks t join employees te on te.id=t.assignee_employee_id and te.tenant_id=t.tenant_id and te.deleted_at is null where t.tenant_id=s.tenant_id and te.organization_id=s.organization_id and t.status in ('open','overdue') and t.deleted_at is null) open_tasks
        from stores s join merchants m on m.id=s.merchant_id and m.tenant_id=s.tenant_id
        left join store_managers sm on sm.store_id=s.id and sm.tenant_id=s.tenant_id and sm.status='active' and sm.deleted_at is null

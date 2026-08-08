@@ -51,7 +51,7 @@ export class ConsumerStoreService implements OnModuleDestroy {
       )
     ).rows[0];
     if (!store) throw new NotFoundException('NOT_FOUND');
-    const [services, benefits, content, actions, externalLinks] = await Promise.all([
+    const [services, benefits, content, stores, actions, externalLinks] = await Promise.all([
       this.pool.query(
         "select id,name,description,duration_minutes,price_label from store_services where tenant_id=$1 and store_id=$2 and status='active' and deleted_at is null order by rank desc,name",
         [tenant.id, storeId],
@@ -65,7 +65,11 @@ export class ConsumerStoreService implements OnModuleDestroy {
         [tenant.id, storeId],
       ),
       this.pool.query(
-        "select id,name,action_type,target_url,mini_program_app_id,mini_program_path,platform from external_actions where tenant_id=$1 and status='active' and deleted_at is null order by created_at desc limit 3",
+        "select id,name,address,business_hours,image_url from stores where tenant_id=$1 and merchant_id=$2 and status='active' and deleted_at is null order by name",
+        [tenant.id, store.merchant_id],
+      ),
+      this.pool.query(
+        "select id,name,action_type,target_url,mini_program_app_id,mini_program_path,platform from external_actions where tenant_id=$1 and status='active' and deleted_at is null order by case when action_type='platform_entry' then 0 else 1 end,created_at desc",
         [tenant.id],
       ),
       this.pool.query(
@@ -109,6 +113,13 @@ export class ConsumerStoreService implements OnModuleDestroy {
         platformType: row.platform,
         targetUrl: row.target_url,
         actionType: row.action_type,
+      })),
+      stores: stores.rows.map((row) => ({
+        id: row.id,
+        name: row.name,
+        address: row.address,
+        businessHours: row.business_hours,
+        imageUrl: row.image_url,
       })),
     };
   }

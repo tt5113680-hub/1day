@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## 2026-08-08 — CONSUMER-COMMERCIAL-HOME-V1
+
+- Reworked the Consumer storefront into a mobile commercial home with store switching, Banner carousel, action grid, membership entry, offers, platform comparison, updates, benefits, store contact actions and five-item bottom navigation.
+- Seeded three distinct local TEST ONLY coffee storefronts using original project-local visual assets; added Consumer-only Playwright coverage and mobile screenshots.
+- Status is `AWAITING_PRODUCT_OWNER_UI_ACCEPTANCE`; this is not a final commercial UI pass.
+
 ## 2026-08-08 LOCAL HUMAN-PILOT-SANDBOX READY
 
 - Added an isolated, idempotently provisioned `oneday_human_pilot` local database workflow using migrations 001–045 and non-seed HUMAN PILOT identities; no production migration or business logic changed.

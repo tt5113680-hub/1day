@@ -1,5 +1,9 @@
 # TASK_QUEUE
 
+## Current product-owner acceptance
+
+- [ ] CONSUMER-COMMERCIAL-HOME-V1 AWAITING_PRODUCT_OWNER_UI_ACCEPTANCE - Consumer-only commercial storefront implemented and technically verified; final visual decision remains with the product owner. Evidence: `evidence/CONSUMER-COMMERCIAL-HOME-V1/ACCEPTANCE.md`.
+
 ## Audit hardening status (latest)
 
 - [x] H-001 PASS - API startup fails closed without a safe authentication signing secret.

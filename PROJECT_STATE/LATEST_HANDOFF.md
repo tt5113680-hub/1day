@@ -1,5 +1,11 @@
 # LATEST_HANDOFF
 
+## CONSUMER-COMMERCIAL-HOME-V1 — awaiting product-owner UI acceptance
+
+- Consumer-only commercial storefront implementation is ready in the isolated local HUMAN-PILOT runtime. It uses persisted store/service/benefit/content/action data, local original coffee imagery, distinct Guomao/Wangjing/Zhongguancun test stores and a fixed five-item consumer navigation.
+- Verified: 18-package typecheck/build, Vitest 2/2, repository tests 184/184, focused Consumer Playwright 2/2, plus screenshots at 375/390/430px. `format:check` remains blocked only by three unmodified pre-existing untracked audit/test files; task-owned files were formatted.
+- Human entry: `http://127.0.0.1:3201/c/stores/30000000-0000-4000-8000-000000000021?tenant=luckin-oneday-human-pilot`. Final status must remain `AWAITING_PRODUCT_OWNER_UI_ACCEPTANCE` until the product owner visually confirms it.
+
 ## PRE-PILOT-POLISH PASS - HUMAN-PILOT-HANDOFF restored
 
 - Approved business commit: `268464d fix(pilot): polish truthful public entry flows`.

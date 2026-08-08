@@ -279,7 +279,11 @@ try {
         address,
         `400-820-${String(index + 1).padStart(4, '0')}`,
         '每日 07:00–22:00',
-        `https://images.unsplash.com/photo-${['1495474472287-4d71bcdd2085', '1501339847302-ac426a4a7cbb', '1445116572660-236099ec97a0'][index]}?auto=format&fit=crop&w=1200&q=80`,
+        [
+          '/storefront/guomao-coffee.png',
+          '/storefront/wangjing-coffee.png',
+          '/storefront/zhongguancun-coffee.png',
+        ][index],
         [39.9087, 39.9966, 39.9834][index],
         [116.4619, 116.4805, 116.3168][index],
       ],
@@ -433,16 +437,60 @@ try {
        on conflict (id) do update set config=excluded.config,status='active',deleted_at=null`,
       [moduleId, humanPilot.tenantA.id, ids.templateVersion, type, position, config],
     );
+  const storefrontContent = [
+    {
+      service: ['生椰拿铁双杯', '生椰拿铁 × 2，到店自取', '¥38', '¥18.80'],
+      benefit: ['国贸早鸟礼遇', '07:00–10:00 到店可享测试门店专属福利'],
+      story: ['晨间好状态，从一杯开始', '国贸测试店今日推荐生椰拿铁双杯，到店自取更从容。'],
+    },
+    {
+      service: ['望京晚间轻咖套餐', '燕麦拿铁与美式任选，到店自取', '¥42', '¥21.90'],
+      benefit: ['望京夜间会员礼', '17:00 后到店，查看本地试点专属权益'],
+      story: ['蓝调时刻的咖啡灵感', '望京测试店为晚归路上的你准备了一杯温暖的咖啡。'],
+    },
+    {
+      service: ['中关村手冲体验', '精选单品手冲，到店现做', '¥48', '¥25.90'],
+      benefit: ['园区午间福利', '工作日午间到店可查看园区测试权益'],
+      story: ['一杯手冲，留给思考', '中关村测试店用当日咖啡豆陪伴每一次专注。'],
+    },
+  ];
   for (const [index, [storeId]] of stores.entries()) {
+    const detail = storefrontContent[index];
     await upsert(
-      `insert into store_services(id,tenant_id,store_id,code,name,description,duration_minutes,price_label,rank,status) values($1,$2,$3,$4,'本地试用咨询','用于真人试用的本地模拟服务',15,'免费',1,'active')
-       on conflict (id) do update set status='active',deleted_at=null`,
-      [id(850 + index), humanPilot.tenantA.id, storeId, `PILOT-SERVICE-${index + 1}`],
+      `insert into store_services(id,tenant_id,store_id,code,name,description,duration_minutes,price_label,rank,status) values($1,$2,$3,$4,$5,$6,15,$7,1,'active')
+       on conflict (id) do update set name=excluded.name,description=excluded.description,price_label=excluded.price_label,status='active',deleted_at=null`,
+      [
+        id(850 + index),
+        humanPilot.tenantA.id,
+        storeId,
+        `PILOT-SERVICE-${index + 1}`,
+        detail.service[0],
+        `${detail.service[1]} · 参考原价 ${detail.service[2]} · TEST ONLY`,
+        detail.service[3],
+      ],
     );
     await upsert(
-      `insert into store_benefits(id,tenant_id,store_id,title,description,external_action_id,rank,status) values($1,$2,$3,'本地试用权益','不连接任何真实外部平台',$4,1,'active')
-       on conflict (id) do update set status='active',deleted_at=null`,
-      [id(860 + index), humanPilot.tenantA.id, storeId, ids.action],
+      `insert into store_benefits(id,tenant_id,store_id,title,description,external_action_id,rank,status) values($1,$2,$3,$4,$5,$6,1,'active')
+       on conflict (id) do update set title=excluded.title,description=excluded.description,status='active',deleted_at=null`,
+      [
+        id(860 + index),
+        humanPilot.tenantA.id,
+        storeId,
+        detail.benefit[0],
+        `${detail.benefit[1]} · TEST ONLY`,
+        ids.action,
+      ],
+    );
+    await upsert(
+      `insert into store_content_items(id,tenant_id,store_id,content_type,title,summary,rank,status) values($1,$2,$3,'story',$4,$5,1,'active')
+       on conflict (id) do update set title=excluded.title,summary=excluded.summary,status='active',deleted_at=null`,
+      [
+        id(890 + index),
+        humanPilot.tenantA.id,
+        storeId,
+        detail.story[0],
+        `${detail.story[1]} · TEST ONLY`,
+      ],
     );
   }
   await upsert(

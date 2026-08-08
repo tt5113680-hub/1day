@@ -205,6 +205,23 @@ export default function DiscoveryPage({ data }: { data: Discovery }) {
           )}
         </section>
       </div>
+      <nav className={styles.bottomNav} aria-label="消费者主导航">
+        <a href={`/c/entry?tenant=${encodeURIComponent(data.tenant.slug)}`}>
+          <i>⌂</i>首页
+        </a>
+        <a className={styles.navActive} href="#nearby">
+          <i>⌖</i>附近
+        </a>
+        <a href="#circles">
+          <i>◎</i>商圈
+        </a>
+        <a href="#channels">
+          <i>✦</i>权益
+        </a>
+        <a href={`/c/entry?tenant=${encodeURIComponent(data.tenant.slug)}#membership`}>
+          <i>♧</i>我的
+        </a>
+      </nav>
     </main>
   );
 }
