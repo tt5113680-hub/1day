@@ -7,13 +7,19 @@ export type Collection = {
   id: string;
   name: string;
   description: string | null;
-  merchants: { id: string; name: string }[];
+  merchants: { id: string; name: string; entryUrl: string | null }[];
 };
 export type Discovery = {
   tenant: { slug: string; name: string };
   channels: Collection[];
   circles: Collection[];
-  nearby: { id: string; name: string; address: string | null; distanceKm: number }[];
+  nearby: {
+    id: string;
+    name: string;
+    address: string | null;
+    distanceKm: number;
+    entryUrl: string | null;
+  }[];
   locationRequired: boolean;
 };
 export function DiscoveryState({ kind }: { kind: 'forbidden' | 'error' }) {
@@ -88,11 +94,21 @@ export default function DiscoveryPage({ data }: { data: Discovery }) {
                   <strong>{item.name}</strong>
                   {item.description && <p>{item.description}</p>}
                   <div className={styles.merchantList}>
-                    {item.merchants.map((merchant) => (
-                      <span className={styles.merchant} key={merchant.id}>
-                        {merchant.name}
-                      </span>
-                    ))}
+                    {item.merchants.map((merchant) =>
+                      merchant.entryUrl ? (
+                        <a
+                          className={styles.merchantLink}
+                          href={merchant.entryUrl}
+                          key={merchant.id}
+                        >
+                          {merchant.name}
+                        </a>
+                      ) : (
+                        <span className={styles.merchant} key={merchant.id}>
+                          {merchant.name}
+                        </span>
+                      ),
+                    )}
                   </div>
                 </article>
               ))
@@ -116,11 +132,21 @@ export default function DiscoveryPage({ data }: { data: Discovery }) {
                   <strong>{item.name}</strong>
                   {item.description && <p>{item.description}</p>}
                   <div className={styles.merchantList}>
-                    {item.merchants.map((merchant) => (
-                      <span className={styles.merchant} key={merchant.id}>
-                        {merchant.name}
-                      </span>
-                    ))}
+                    {item.merchants.map((merchant) =>
+                      merchant.entryUrl ? (
+                        <a
+                          className={styles.merchantLink}
+                          href={merchant.entryUrl}
+                          key={merchant.id}
+                        >
+                          {merchant.name}
+                        </a>
+                      ) : (
+                        <span className={styles.merchant} key={merchant.id}>
+                          {merchant.name}
+                        </span>
+                      ),
+                    )}
                   </div>
                 </article>
               ))
@@ -150,16 +176,27 @@ export default function DiscoveryPage({ data }: { data: Discovery }) {
             </>
           ) : data.nearby.length ? (
             <div className={styles.nearby}>
-              {data.nearby.map((item) => (
-                <article className={styles.nearbyCard} key={item.id}>
-                  <span className={styles.pin}>⌖</span>
-                  <span>
-                    <strong>{item.name}</strong>
-                    <p>{item.address ?? '地址待商家补充'}</p>
-                  </span>
-                  <span className={styles.distance}>{item.distanceKm} km</span>
-                </article>
-              ))}
+              {data.nearby.map((item) => {
+                const content = (
+                  <>
+                    <span className={styles.pin}>⌖</span>
+                    <span>
+                      <strong>{item.name}</strong>
+                      <p>{item.address ?? '地址待商家补充'}</p>
+                    </span>
+                    <span className={styles.distance}>{item.distanceKm} km</span>
+                  </>
+                );
+                return item.entryUrl ? (
+                  <a className={styles.nearbyLink} href={item.entryUrl} key={item.id}>
+                    {content}
+                  </a>
+                ) : (
+                  <article className={styles.nearbyCard} key={item.id}>
+                    {content}
+                  </article>
+                );
+              })}
             </div>
           ) : (
             <div className={styles.empty}>

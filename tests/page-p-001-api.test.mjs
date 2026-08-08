@@ -39,6 +39,28 @@ async function login() {
 test.after(() => api.kill());
 test('platform dashboard requires platform.read and returns global operational signals', async () => {
   await ready();
+  const client = new (await import('../apps/api/node_modules/pg/esm/index.mjs')).Client({
+    connectionString: db,
+  });
+  await client.connect();
+  const inactiveTenant = randomUUID(),
+    inactiveCustomer = randomUUID();
+  try {
+    await client.query(
+      "insert into tenants(id,slug,name,status,created_by,updated_by) values($1,$2,'Inactive dashboard regression','inactive',null,null)",
+      [inactiveTenant, `inactive-dashboard-${Date.now()}`],
+    );
+    await client.query(
+      "insert into customers(id,tenant_id,display_name,status,created_by,updated_by) values($1,$2,'Inactive order customer','active',null,null)",
+      [inactiveCustomer, inactiveTenant],
+    );
+    await client.query(
+      "insert into customer_orders(id,tenant_id,customer_id,order_number,occurred_at,status,created_by,updated_by) values($1,$2,$3,$4,now(),'active',null,null)",
+      [randomUUID(), inactiveTenant, inactiveCustomer, `INACTIVE-DASH-${Date.now()}`],
+    );
+  } finally {
+    await client.end();
+  }
   assert.equal(
     (
       await fetch(`${base}/api/v1/platform/dashboard`, {
@@ -55,6 +77,18 @@ test('platform dashboard requires platform.read and returns global operational s
   const d = (await r.json()).data;
   assert.equal(typeof d.metrics.tenants, 'number');
   assert.equal(typeof d.metrics.channels, 'number');
+  const expectedClient = new (await import('../apps/api/node_modules/pg/esm/index.mjs')).Client({
+    connectionString: db,
+  });
+  await expectedClient.connect();
+  try {
+    const expected = await expectedClient.query(
+      "select count(*)::int as count from tenants t where t.status='active' and t.deleted_at is null and (exists(select 1 from tasks x where x.tenant_id=t.id and x.updated_at>=now()-interval '30 days') or exists(select 1 from customer_orders o where o.tenant_id=t.id and o.occurred_at>=now()-interval '30 days'))",
+    );
+    assert.equal(d.metrics.activeTenants, expected.rows[0].count);
+  } finally {
+    await expectedClient.end();
+  }
   assert.equal(d.system.database, 'available');
   assert.ok(Array.isArray(d.risks));
 });

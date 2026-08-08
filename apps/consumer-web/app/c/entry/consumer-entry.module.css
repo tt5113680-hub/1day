@@ -138,7 +138,7 @@
   text-align: left;
   background: #fff;
   box-shadow: 0 6px 18px rgba(15, 23, 42, 0.06);
-  cursor: pointer;
+  cursor: default;
 }
 .recommendation:focus-visible,
 .action:focus-visible,
@@ -286,6 +286,7 @@
   margin: 0 auto;
 }
 .navButton {
+  display: block;
   min-height: 64px;
   border: 0;
   padding: 8px 4px;
@@ -293,7 +294,8 @@
   background: transparent;
   font: inherit;
   font-size: 11px;
-  cursor: pointer;
+  text-align: center;
+  text-decoration: none;
 }
 .navButtonActive {
   color: #2563eb;

@@ -17,6 +17,7 @@ The demonstrated operating loop is: consumer action -> source/scenario recording
 
 - Accepting an AI suggestion executes only a reviewed, whitelisted local command with complete required fields. The current commands create a follow-up task inside the tenant transaction and write task, audit, and Outbox evidence.
 - Suggestions without an explicit supported command or complete payload are retained as `manual_required`; they do not create an inferred task, contact a customer, or invoke an external system.
+- The current AI pilot surface is limited to management-side, controlled, whitelisted local operating commands. Consumer, employee, and channel AI recommendation surfaces are explicitly deferred to V3.1; this pilot does not present CMS content as model-generated advice.
 - Connector authorization is an auditable intent record. Connector catalog and health observations do not provide external delivery; a real third-party outcome requires a separately authorized integration and its external receipt.
 
 ## Pilot operating constraints

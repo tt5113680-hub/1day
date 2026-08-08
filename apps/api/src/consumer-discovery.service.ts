@@ -48,13 +48,13 @@ export class ConsumerDiscoveryService implements OnModuleDestroy {
     if (!tenant) throw new NotFoundException('NOT_FOUND');
     const channelRows = (
       await this.pool.query(
-        "select c.id as collection_id,c.name as collection_name,c.description,m.id as merchant_id,m.name as merchant_name from discovery_channels c join discovery_channel_merchants cm on cm.channel_id=c.id and cm.tenant_id=c.tenant_id and cm.status='active' and cm.deleted_at is null join merchants m on m.id=cm.merchant_id and m.tenant_id=cm.tenant_id and m.status='active' and m.deleted_at is null where c.tenant_id=$1 and c.status='active' and c.deleted_at is null order by c.rank desc,cm.rank desc,m.name",
+        "select c.id as collection_id,c.name as collection_name,c.description,m.id as merchant_id,m.name as merchant_name,s.id as store_id from discovery_channels c join discovery_channel_merchants cm on cm.channel_id=c.id and cm.tenant_id=c.tenant_id and cm.status='active' and cm.deleted_at is null join merchants m on m.id=cm.merchant_id and m.tenant_id=cm.tenant_id and m.status='active' and m.deleted_at is null left join lateral (select id from stores s where s.tenant_id=m.tenant_id and s.merchant_id=m.id and s.status='active' and s.deleted_at is null order by s.created_at asc limit 1) s on true where c.tenant_id=$1 and c.status='active' and c.deleted_at is null order by c.rank desc,cm.rank desc,m.name",
         [tenant.id],
       )
     ).rows;
     const circleRows = (
       await this.pool.query(
-        "select c.id as collection_id,c.name as collection_name,c.description,m.id as merchant_id,m.name as merchant_name from business_circles c join business_circle_merchants cm on cm.business_circle_id=c.id and cm.tenant_id=c.tenant_id and cm.status='active' and cm.deleted_at is null join merchants m on m.id=cm.merchant_id and m.tenant_id=cm.tenant_id and m.status='active' and m.deleted_at is null where c.tenant_id=$1 and c.status='active' and c.deleted_at is null order by c.rank desc,cm.rank desc,m.name",
+        "select c.id as collection_id,c.name as collection_name,c.description,m.id as merchant_id,m.name as merchant_name,s.id as store_id from business_circles c join business_circle_merchants cm on cm.business_circle_id=c.id and cm.tenant_id=c.tenant_id and cm.status='active' and cm.deleted_at is null join merchants m on m.id=cm.merchant_id and m.tenant_id=cm.tenant_id and m.status='active' and m.deleted_at is null left join lateral (select id from stores s where s.tenant_id=m.tenant_id and s.merchant_id=m.id and s.status='active' and s.deleted_at is null order by s.created_at asc limit 1) s on true where c.tenant_id=$1 and c.status='active' and c.deleted_at is null order by c.rank desc,cm.rank desc,m.name",
         [tenant.id],
       )
     ).rows;
@@ -63,14 +63,14 @@ export class ConsumerDiscoveryService implements OnModuleDestroy {
         ? []
         : (
             await this.pool.query(
-              "select m.id,m.name,l.latitude,l.longitude,l.address_label from merchant_locations l join merchants m on m.id=l.merchant_id and m.tenant_id=l.tenant_id where l.tenant_id=$1 and l.status='active' and l.deleted_at is null and m.status='active' and m.deleted_at is null",
+              "select m.id,m.name,l.latitude,l.longitude,l.address_label,s.id as store_id from merchant_locations l join merchants m on m.id=l.merchant_id and m.tenant_id=l.tenant_id left join lateral (select id from stores s where s.tenant_id=m.tenant_id and s.merchant_id=m.id and s.status='active' and s.deleted_at is null order by s.created_at asc limit 1) s on true where l.tenant_id=$1 and l.status='active' and l.deleted_at is null and m.status='active' and m.deleted_at is null",
               [tenant.id],
             )
           ).rows;
     return {
       tenant: { slug: tenant.slug, name: tenant.name },
-      channels: this.collections(channelRows),
-      circles: this.collections(circleRows),
+      channels: this.collections(channelRows, tenant.slug),
+      circles: this.collections(circleRows, tenant.slug),
       nearby:
         latitude === undefined
           ? []
@@ -79,6 +79,7 @@ export class ConsumerDiscoveryService implements OnModuleDestroy {
                 id: row.id,
                 name: row.name,
                 address: row.address_label,
+                entryUrl: row.store_id ? `/c/stores/${row.store_id}?tenant=${tenant.slug}` : null,
                 distanceKm: Number(
                   distanceKm(
                     latitude,
@@ -95,14 +96,14 @@ export class ConsumerDiscoveryService implements OnModuleDestroy {
     };
   }
 
-  private collections(rows: Record<string, unknown>[]) {
+  private collections(rows: Record<string, unknown>[], tenantSlug: string) {
     const result = new Map<
       string,
       {
         id: string;
         name: string;
         description: string | null;
-        merchants: { id: string; name: string }[];
+        merchants: { id: string; name: string; entryUrl: string | null }[];
       }
     >();
     for (const row of rows) {
@@ -113,7 +114,11 @@ export class ConsumerDiscoveryService implements OnModuleDestroy {
         description: typeof row.description === 'string' ? row.description : null,
         merchants: [],
       };
-      collection.merchants.push({ id: String(row.merchant_id), name: String(row.merchant_name) });
+      collection.merchants.push({
+        id: String(row.merchant_id),
+        name: String(row.merchant_name),
+        entryUrl: row.store_id ? `/c/stores/${row.store_id}?tenant=${tenantSlug}` : null,
+      });
       result.set(id, collection);
     }
     return [...result.values()];

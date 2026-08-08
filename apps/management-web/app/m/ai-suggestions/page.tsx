@@ -20,6 +20,21 @@ type Suggestion = {
   version: number;
 };
 
+const executionCopy = (item: Suggestion) => {
+  const command = item.execution_result?.command;
+  if (item.execution_status === 'executed' && command === 'create_task') {
+    const task = item.execution_result.task;
+    const receipt =
+      task && typeof task === 'object' && typeof (task as Record<string, unknown>).id === 'string'
+        ? `（任务回执：${(task as Record<string, unknown>).id}）`
+        : '';
+    return `已创建跟进任务${receipt}`;
+  }
+  if (item.execution_status === 'manual_required')
+    return '尚未执行，需要人工进入现有业务入口处理。';
+  return `执行状态：${item.execution_status}`;
+};
+
 const api = process.env.NEXT_PUBLIC_API_BASE_URL ?? 'http://127.0.0.1:3001';
 const sessionApi = new SessionApiClient(api);
 
@@ -72,11 +87,8 @@ export default function AiSuggestions() {
       setNote('操作未完成，请刷新后重试。');
       return;
     }
-    setNote(
-      mode === 'accept'
-        ? '建议已采纳，实际业务动作仍需在对应业务入口确认执行。'
-        : '反馈已记录，用于后续建议评估。',
-    );
+    const updated = (await response.json()) as { data: Suggestion };
+    setNote(mode === 'accept' ? executionCopy(updated.data) : '反馈已记录，用于后续建议评估。');
     setFeedback((values) => ({ ...values, [item.id]: '' }));
     await load();
   };
@@ -140,7 +152,7 @@ export default function AiSuggestions() {
                 </div>
               </dl>
               {item.status === 'accepted' && (
-                <p data-testid="ai-execution-status">Execution: {item.execution_status}</p>
+                <p data-testid="ai-execution-status">{executionCopy(item)}</p>
               )}
               {item.feedback && <p className={styles.feedback}>反馈：{item.feedback}</p>}
               <div className={styles.feedbackForm}>

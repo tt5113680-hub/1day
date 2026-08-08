@@ -37,6 +37,8 @@ test('consumer discovery keeps channel, circle and LBS datasets tenant-scoped an
   const channelMerchant = randomUUID(),
     circleMerchant = randomUUID(),
     nearbyMerchant = randomUUID(),
+    channelStore = randomUUID(),
+    nearbyStore = randomUUID(),
     channel = randomUUID(),
     circle = randomUUID();
   try {
@@ -57,6 +59,28 @@ test('consumer discovery keeps channel, circle and LBS datasets tenant-scoped an
         [id, tenant, organization, code, name],
       );
     await client.query(
+      "insert into stores(id,tenant_id,organization_id,merchant_id,code,name,status,created_by,updated_by) values($1,$2,$3,$4,$5,$6,'active',null,null)",
+      [
+        channelStore,
+        tenant,
+        organization,
+        channelMerchant,
+        `channel-store-${stamp}`,
+        'Channel published store',
+      ],
+    );
+    await client.query(
+      "insert into stores(id,tenant_id,organization_id,merchant_id,code,name,status,created_by,updated_by) values($1,$2,$3,$4,$5,$6,'active',null,null)",
+      [
+        nearbyStore,
+        tenant,
+        organization,
+        nearbyMerchant,
+        `nearby-store-${stamp}`,
+        'Nearby published store',
+      ],
+    );
+    await client.query(
       "insert into discovery_channels(id,tenant_id,code,name,description,rank,status,created_by,updated_by) values($1,$2,$3,$4,$5,10,'active',null,null)",
       [channel, tenant, `channel-${stamp}`, '周末精选', '渠道编辑推荐'],
     );
@@ -73,7 +97,7 @@ test('consumer discovery keeps channel, circle and LBS datasets tenant-scoped an
       [randomUUID(), tenant, circle, circleMerchant],
     );
     await client.query(
-      "insert into merchant_locations(id,tenant_id,merchant_id,latitude,longitude,address_label,status,created_by,updated_by) values($1,$2,$3,31.230400,121.473700,$4,'active',null,null)",
+      "insert into merchant_locations(id,tenant_id,merchant_id,latitude,longitude,address_label,status,created_by,updated_by) values($1,$2,$3,31.231400,121.473700,$4,'active',null,null)",
       [randomUUID(), tenant, nearbyMerchant, '人民广场附近'],
     );
     await client.query(
@@ -84,7 +108,7 @@ test('consumer discovery keeps channel, circle and LBS datasets tenant-scoped an
     await client.end();
   }
   const response = await request(
-    '/api/v1/consumer/discovery?tenant=system&latitude=31.2304&longitude=121.4737',
+    '/api/v1/consumer/discovery?tenant=system&latitude=31.2314&longitude=121.4737',
   );
   assert.equal(response.status, 200);
   const data = (await response.json()).data;
@@ -97,12 +121,24 @@ test('consumer discovery keeps channel, circle and LBS datasets tenant-scoped an
     true,
   );
   assert.equal(
+    data.channels
+      .flatMap((item) => item.merchants)
+      .find((merchant) => merchant.id === channelMerchant).entryUrl,
+    `/c/stores/${channelStore}?tenant=system`,
+  );
+  assert.equal(
     data.circles.some(
       (item) =>
         item.name === '城市体验圈' &&
         item.merchants.some((merchant) => merchant.name === '商圈成员商户'),
     ),
     true,
+  );
+  assert.equal(
+    data.circles
+      .flatMap((item) => item.merchants)
+      .find((merchant) => merchant.id === circleMerchant).entryUrl,
+    null,
   );
   assert.equal(
     data.circles.some((item) =>
@@ -115,10 +151,14 @@ test('consumer discovery keeps channel, circle and LBS datasets tenant-scoped an
     true,
   );
   assert.equal(
+    data.nearby.find((item) => item.id === nearbyMerchant).entryUrl,
+    `/c/stores/${nearbyStore}?tenant=system`,
+  );
+  assert.equal(
     (
       await (
         await request(
-          `/api/v1/consumer/discovery?tenant=discovery-isolated-${stamp}&latitude=31.2304&longitude=121.4737`,
+          `/api/v1/consumer/discovery?tenant=discovery-isolated-${stamp}&latitude=31.2314&longitude=121.4737`,
         )
       ).json()
     ).data.nearby.length,

@@ -91,14 +91,27 @@ test('consumer entry renders real published content and supports mobile navigati
 }) => {
   await page.goto('http://127.0.0.1:3030/c/entry?tenant=system');
   await expect(page.getByRole('heading', { name: '把今天留给美好体验' })).toBeVisible();
-  await expect(page.getByRole('link', { name: '打开咨询商家' }).first()).toHaveAttribute(
+  await expect(page.locator('a[href^="/c/actions/"]').first()).toHaveAttribute(
     'href',
-    'https://example.com/consult',
+    /\/c\/actions\//,
   );
-  await page.getByRole('button', { name: '发现', exact: true }).click();
-  await expect(page.getByRole('button', { name: '发现', exact: true })).toHaveClass(
-    /navButtonActive/,
+  await expect(page.getByRole('link', { name: '发现', exact: true })).toHaveAttribute(
+    'href',
+    '/c/discovery?tenant=system',
   );
+  await expect(page.getByRole('link', { name: '权益', exact: true })).toHaveAttribute(
+    'href',
+    '#services',
+  );
+  await expect(page.getByRole('link', { name: '咨询', exact: true })).toHaveAttribute(
+    'href',
+    /\/c\/actions\//,
+  );
+  await page.getByRole('link', { name: '发现', exact: true }).click();
+  await expect(page).toHaveURL(/\/c\/discovery\?tenant=system/);
+  await page.goto('http://127.0.0.1:3030/c/entry?tenant=system');
+  await page.getByRole('link', { name: '咨询', exact: true }).click();
+  await expect(page).toHaveURL(/\/c\/actions\//);
   await page.screenshot({ path: 'evidence/PAGE-C-001/consumer-entry-mobile.png', fullPage: true });
 });
 

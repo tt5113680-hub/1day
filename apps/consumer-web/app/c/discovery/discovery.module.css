@@ -103,12 +103,16 @@
   gap: 7px;
   margin-top: 12px;
 }
-.merchant {
+.merchant,
+.merchantLink {
   border-radius: 999px;
   padding: 6px 9px;
   color: #1d4ed8;
   background: #eff6ff;
   font-size: 12px;
+}
+.merchantLink {
+  text-decoration: none;
 }
 .nearby {
   display: grid;
@@ -119,6 +123,19 @@
   grid-template-columns: 44px minmax(0, 1fr) auto;
   gap: 12px;
   align-items: center;
+}
+.nearbyLink {
+  display: grid;
+  grid-template-columns: 44px minmax(0, 1fr) auto;
+  gap: 12px;
+  align-items: center;
+  border: 1px solid #e5e7eb;
+  border-radius: 16px;
+  padding: 15px;
+  color: inherit;
+  text-decoration: none;
+  background: #fff;
+  box-shadow: 0 5px 16px rgba(15, 23, 42, 0.05);
 }
 .pin {
   display: grid;
@@ -146,7 +163,9 @@
   cursor: pointer;
 }
 .location:focus-visible,
-.tab:focus-visible {
+.tab:focus-visible,
+.merchantLink:focus-visible,
+.nearbyLink:focus-visible {
   outline: 3px solid #7c3aed;
   outline-offset: 3px;
 }

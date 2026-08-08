@@ -8,6 +8,7 @@ const discoveryTenant = `discovery-browser-${stamp}`;
 const emptyTenant = `discovery-empty-${stamp}`;
 const discoveryTenantId = randomUUID();
 const discoveryOrganizationId = randomUUID();
+const channelStoreId = randomUUID();
 const channelMerchantName = `渠道精选商户-${stamp}`;
 const circleMerchantName = `商圈成员商户-${stamp}`;
 const nearbyMerchantName = `附近位置商户-${stamp}`;
@@ -40,6 +41,16 @@ test.beforeAll(async () => {
         "insert into merchants(id,tenant_id,organization_id,code,name,status,created_by,updated_by) values($1,$2,$3,$4,$5,'active',null,null)",
         [id, discoveryTenantId, discoveryOrganizationId, code, name],
       );
+    await client.query(
+      "insert into stores(id,tenant_id,organization_id,merchant_id,code,name,status,created_by,updated_by) values($1,$2,$3,$4,$5,'Browser discovery store','active',null,null)",
+      [
+        channelStoreId,
+        discoveryTenantId,
+        discoveryOrganizationId,
+        channelMerchant,
+        `browser-store-${stamp}`,
+      ],
+    );
     const channel = randomUUID();
     await client.query(
       "insert into discovery_channels(id,tenant_id,code,name,description,rank,status,created_by,updated_by) values($1,$2,$3,$4,$5,0,'active',null,null)",
@@ -89,6 +100,16 @@ test('consumer discovery renders independent channel, circle and LBS results on 
   await expect(page.getByText(channelMerchantName)).toBeVisible();
   await expect(page.getByText(circleMerchantName)).toBeVisible();
   await expect(page.getByText(nearbyMerchantName)).toBeVisible();
+  await expect(page.getByRole('link', { name: channelMerchantName })).toHaveAttribute(
+    'href',
+    `/c/stores/${channelStoreId}?tenant=${discoveryTenant}`,
+  );
+  await expect(page.getByRole('link', { name: circleMerchantName })).toHaveCount(0);
+  await page.getByRole('link', { name: channelMerchantName }).click();
+  await expect(page).toHaveURL(
+    new RegExp(`/c/stores/${channelStoreId}\\?tenant=${discoveryTenant}`),
+  );
+  await page.goBack();
   await expect(page.getByText('仅按设备位置计算距离，不使用商圈成员关系。')).toBeVisible();
   await page.getByRole('button', { name: '附近商户', exact: true }).click();
   await expect(page.getByRole('heading', { name: '附近商户' })).toBeInViewport();

@@ -1,6 +1,3 @@
-'use client';
-
-import { useState } from 'react';
 import styles from './consumer-entry.module.css';
 
 export type ConsumerAction = {
@@ -38,13 +35,6 @@ const cards = (value: unknown): Card[] =>
         .filter((item) => item.title && item.description)
         .slice(0, 6)
     : [];
-const navigation: Array<[string, string]> = [
-  ['首页', '⌂'],
-  ['发现', '◈'],
-  ['权益', '◇'],
-  ['咨询', '◌'],
-];
-
 export function EntryState({ kind }: { kind: 'empty' | 'forbidden' | 'error' }) {
   const copy = {
     empty: ['暂未开放入口', '商家正在准备服务内容，请稍后再试。', '◌'],
@@ -68,7 +58,6 @@ export function EntryState({ kind }: { kind: 'empty' | 'forbidden' | 'error' }) 
 }
 
 export default function ConsumerEntry({ entry }: { entry: Entry }) {
-  const [active, setActive] = useState('首页');
   const hero = object(entry.modules.find((item) => item.module_type === 'hero')?.config);
   const content = entry.modules
     .filter((item) => item.module_type === 'content')
@@ -83,6 +72,19 @@ export default function ConsumerEntry({ entry }: { entry: Entry }) {
   const primary =
     entry.actions.find((item) => item.code.includes('consult') || item.name.includes('咨询')) ??
     entry.actions[0];
+  const entryUrl = `/c/entry?tenant=${encodeURIComponent(entry.tenant.slug)}`;
+  const actionUrl = (action: ConsumerAction) =>
+    `/c/actions/${action.id}?tenant=${encodeURIComponent(entry.tenant.slug)}&source=consumer:entry&returnTo=${encodeURIComponent(entryUrl)}`;
+  const navigation = [
+    { name: '首页', icon: '⌂', href: '#top' },
+    {
+      name: '发现',
+      icon: '◈',
+      href: `/c/discovery?tenant=${encodeURIComponent(entry.tenant.slug)}`,
+    },
+    { name: '权益', icon: '◇', href: content.length ? '#services' : '#recommendations' },
+    { name: '咨询', icon: '◌', href: primary ? actionUrl(primary) : '#actions' },
+  ];
   if (!entry.template)
     return (
       <main className={styles.empty}>
@@ -94,7 +96,7 @@ export default function ConsumerEntry({ entry }: { entry: Entry }) {
       </main>
     );
   return (
-    <main className={styles.page}>
+    <main id="top" className={styles.page}>
       <div className={styles.shell}>
         <section className={styles.hero}>
           <div className={styles.topbar}>
@@ -114,25 +116,19 @@ export default function ConsumerEntry({ entry }: { entry: Entry }) {
         <div className={styles.content}>
           <section className={styles.section} aria-labelledby="recommendations">
             <div className={styles.sectionHead}>
-              <h2 id="recommendations">AI 为你推荐</h2>
-              <p className={styles.sectionHint}>基于当前场景</p>
+              <h2 id="recommendations">商家推荐</h2>
+              <p className={styles.sectionHint}>由商家发布并按当前场景呈现</p>
             </div>
             <div className={styles.recommendations}>
               {recommendations.length ? (
                 recommendations.map((item, index) => (
-                  <button
-                    key={`${item.title}-${index}`}
-                    className={styles.recommendation}
-                    type="button"
-                    onClick={() => setActive('发现')}
-                  >
+                  <article key={`${item.title}-${index}`} className={styles.recommendation}>
                     <span className={styles.icon}>{['✦', '◈', '⌁'][index % 3]}</span>
                     <span>
                       <strong>{item.title}</strong>
                       <span>{item.description}</span>
                     </span>
-                    <span className={styles.arrow}>›</span>
-                  </button>
+                  </article>
                 ))
               ) : (
                 <p className={styles.sectionHint}>商家尚未配置推荐内容。</p>
@@ -167,7 +163,7 @@ export default function ConsumerEntry({ entry }: { entry: Entry }) {
                   <a
                     key={action.id}
                     className={`${styles.action} ${action.id === primary?.id ? styles.actionPrimary : ''}`}
-                    href={`/c/actions/${action.id}?tenant=${encodeURIComponent(entry.tenant.slug)}&source=consumer:entry&returnTo=${encodeURIComponent(`/c/entry?tenant=${encodeURIComponent(entry.tenant.slug)}`)}`}
+                    href={actionUrl(action)}
                     aria-label={`打开${action.name}`}
                   >
                     {action.name}
@@ -183,17 +179,11 @@ export default function ConsumerEntry({ entry }: { entry: Entry }) {
       </div>
       <nav className={styles.bottom} aria-label="消费者入口导航">
         <div className={styles.bottomInner}>
-          {navigation.map(([name, icon]) => (
-            <button
-              key={name}
-              type="button"
-              aria-label={name}
-              className={`${styles.navButton} ${active === name ? styles.navButtonActive : ''}`}
-              onClick={() => setActive(name)}
-            >
-              <span className={styles.navIcon}>{icon}</span>
-              {name}
-            </button>
+          {navigation.map((item) => (
+            <a key={item.name} aria-label={item.name} className={styles.navButton} href={item.href}>
+              <span className={styles.navIcon}>{item.icon}</span>
+              {item.name}
+            </a>
           ))}
         </div>
       </nav>

@@ -2,19 +2,19 @@
 
 ## Scope
 
-This guide is for a controlled first-pilot environment. It is not an instruction to expose a development database or the repository's demonstration credentials to the public internet. Keep PostgreSQL, Redis, application secrets, and audit exports in the pilot operator's controlled network.
+This guide is for a controlled first-pilot environment. It is not an instruction to expose a development database or the repository's demonstration credentials to the public internet. Keep PostgreSQL, application secrets, and audit exports in the pilot operator's controlled network.
 
 ## Prerequisites
 
 - Node.js 24 LTS and pnpm 10.
-- Docker Compose for PostgreSQL 18 and Redis 8, or equivalent managed services controlled by the pilot operator.
+- Docker Compose for PostgreSQL 18, or an equivalent managed PostgreSQL service controlled by the pilot operator.
 - A fresh PostgreSQL database and a least-privilege application database user.
-- Values for `DATABASE_URL`, `REDIS_URL`, `PORT`, `CORS_ORIGINS`, `PUBLIC_BASE_URL`, and a unique `AUTH_TOKEN_SECRET`; do not commit real values into this repository. In production the token secret must be at least 32 characters and may not be the retired development default.
+- Values for `DATABASE_URL`, `PORT`, `CORS_ORIGINS`, `PUBLIC_BASE_URL`, and a unique `AUTH_TOKEN_SECRET`; do not commit real values into this repository. In production the token secret must be at least 32 characters and may not be the retired development default. The current API and Worker do not use Redis at runtime, so `REDIS_URL` is not a required pilot-production setting.
 
 ## Controlled startup
 
 1. Install the locked workspace dependencies with `pnpm.cmd install --frozen-lockfile`.
-2. For local infrastructure, run `docker compose -f infra/docker/compose.yaml up -d postgres redis`.
+2. For local infrastructure, run `docker compose -f infra/docker/compose.yaml up -d postgres`. The repository's Redis container remains an optional local-development utility and is not a pilot runtime dependency.
 3. Set `DATABASE_URL` to the controlled target and run `pnpm.cmd db:migrate`. Run `pnpm.cmd db:seed` only when demonstration data is intentionally required.
 4. Supply `AUTH_TOKEN_SECRET` through the environment/secret store before starting the API. Missing, retired-default, or short production secrets make API startup fail closed. Start the API with `pnpm.cmd --filter @oneday/api dev` (or the containerized `api` service). The API listens on `PORT`, default `3001`; its ready endpoint is `GET /api/v1/health`.
 5. Start only the web terminals and worker that the pilot needs. Configure `CORS_ORIGINS` to the exact pilot web origins; never use a permissive production CORS policy.
@@ -27,7 +27,7 @@ The Compose API service is deliberately development-only. A production API must 
 - Set `CORS_ORIGINS` to a comma-separated, exact allowlist of browser origins. Wildcards, paths, and non-HTTP(S) values are rejected. The API allows only the documented methods and request headers, including `DELETE` for session revocation.
 - Configure the shared edge rate limiter/WAF for all API replicas and set `RATE_LIMIT_TRUSTED_EDGE=true` only after that rule is active. Set a stable, deployment-specific `RATE_LIMIT_NAMESPACE`; startup rejects the development default in production. The API adds a persistent PostgreSQL defense-in-depth limit for authentication and public consumer writes. Tune `RATE_LIMIT_WINDOW_MS`, `RATE_LIMIT_AUTH_MAX`, and `RATE_LIMIT_PUBLIC_WRITE_MAX` through the deployment environment; do not change source to tune an incident.
 - Set `DATABASE_POOL_MAX` to a value compatible with the managed PostgreSQL connection budget. API services share one pool per process, so calculate the total from API replicas plus worker replicas and administrative connections.
-- Terminate TLS with current certificates, redirect plaintext traffic at the edge, preserve the original client address only through the trusted proxy chain, and do not expose PostgreSQL or Redis on public interfaces.
+- Terminate TLS with current certificates, redirect plaintext traffic at the edge, preserve the original client address only through the trusted proxy chain, and do not expose PostgreSQL on public interfaces. If an operator separately runs Redis for local tooling, it must likewise remain non-public.
 
 ## Release go/no-go
 
@@ -44,7 +44,7 @@ If readiness returns HTTP 503, the database is unavailable: do not open the pilo
 ## Configuration and secret handling
 
 - Store real connection strings, signing material, external connector authorization, and operator credentials in the pilot secret store, not in source files, screenshots, tickets, or evidence committed to Git.
-- Restrict PostgreSQL and Redis to the application network. Rotate any credential that has been copied into a terminal or shared channel.
+- Restrict PostgreSQL to the application network. If Redis is separately used for local tooling, restrict it as well. Rotate any credential that has been copied into a terminal or shared channel.
 - Use a unique database name per rehearsal. `pnpm.cmd db:rollback` is only for an isolated, non-shared rehearsal database; shared pilot databases use forward-only migration repair.
 - The Docker Compose password `oneday_local_only` is local-development-only and must not be reused outside the controlled local setup.
 
