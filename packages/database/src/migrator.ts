@@ -41,6 +41,7 @@ import * as platformSecurityReviews from './migrations/039_platform_security_rev
 import * as channelMerchantOnboardings from './migrations/040_channel_merchant_onboardings.js';
 import * as circleMerchantManagement from './migrations/041_circle_merchant_management.js';
 import * as consumerOperatingProjections from './migrations/042_consumer_operating_projections.js';
+import * as workerDispatchState from './migrations/043_worker_dispatch_state.js';
 import type { Database } from './types.js';
 
 const migrationProvider: MigrationProvider = {
@@ -88,6 +89,7 @@ const migrationProvider: MigrationProvider = {
       '040_channel_merchant_onboardings': channelMerchantOnboardings,
       '041_circle_merchant_management': circleMerchantManagement,
       '042_consumer_operating_projections': consumerOperatingProjections,
+      '043_worker_dispatch_state': workerDispatchState,
     };
   },
 };

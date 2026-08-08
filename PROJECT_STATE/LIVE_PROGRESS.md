@@ -10,6 +10,10 @@
 
 - 2026-08-08 Asia/Shanghai - AUDIT-BATCH-2 PASS at `5c0ea50`: evidence, 18-package typecheck/build, lint, format, 175 repository tests and the 2/2 public-consumer-to-employee-to-management HTTP chain are complete. AUDIT-BATCH-3 Worker / Outbox consumption / reminder / overdue scheduling has started.
 
+- 2026-08-08 Asia/Shanghai - AUDIT-BATCH-3 main implementation completed: Worker now polls the transactionally locked Outbox and the shared task reminder/overdue state machine. Internal Outbox delivery is deduplicated with `event_consumptions`, failed internal handlers retain attempts, bounded retry availability and diagnostic error text, and the API fallback uses the same scheduler. `043_worker_dispatch_state` migrated on the isolated test database; a real scoped Worker process test passed for publish, reminder, overdue, notification, audit, retry and recovery. Targeted API/events/database/worker typecheck passed. Next: full repository quality gates and acceptance evidence.
+
+- 2026-08-08 Asia/Shanghai - AUDIT-BATCH-3 full test verification completed: 177 repository tests plus all package tests, 18-package typecheck, lint and format passed. Evidence and verified-pending-commit state are recorded; full build and final contract check remain before commit.
+
 - 2026-08-08 Asia/Shanghai - H-002 systemic session close-out PASS: SessionApiClient now owns Bearer, request-id, refresh/retry and logout semantics; 36 E/M/P business pages / 54 direct token reads migrated; consumer stays anonymous with explicit tenant links. Verified by typecheck, lint, format, build, 173 repository tests, 1 Vitest, 2 boundary contracts and 6 real Playwright/API journeys. Next: AUDIT-BATCH-2 commercial operating orchestration.
 
 - 2026-08-08 Asia/Shanghai — PAGE-M-009 PASS at `aea0630`: role templates, permission ranges and affected-member impact are visible before changes; high-risk changes require confirmation and continue to use CORE-003's audited versioned server flow. Next task: PAGE-M-010.

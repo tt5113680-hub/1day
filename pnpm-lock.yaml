@@ -59,6 +59,9 @@ importers:
       '@oneday/auth':
         specifier: workspace:*
         version: link:../../packages/auth
+      '@oneday/events':
+        specifier: workspace:*
+        version: link:../../packages/events
       fastify:
         specifier: 5.11.2
         version: 5.11.2
@@ -183,6 +186,10 @@ importers:
         version: 19.2.3(@types/react@19.2.7)
 
   apps/worker:
+    dependencies:
+      '@oneday/events':
+        specifier: workspace:*
+        version: link:../../packages/events
     devDependencies:
       '@types/node':
         specifier: 24.10.1

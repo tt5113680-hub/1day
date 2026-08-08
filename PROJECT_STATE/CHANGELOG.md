@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## 2026-08-08 AUDIT-BATCH-3 VERIFIED_PENDING_COMMIT
+
+- Replaced the health-only Worker with locked internal Outbox consumption, durable retry diagnostics and a shared reminder/overdue scheduler.
+- Added a real isolated Worker-process regression test covering delivery, notifications, overdue escalation and failed-event recovery.
+
 ## 2026-08-08 AUDIT-BATCH-2 PASS (`5c0ea50`)
 
 - Closed the consumer-to-operations break with a single transaction that projects a public consumer event into one customer, source, existing-rule ownership/task/reminder or existing lead-pool record, correlated audit and Outbox events.

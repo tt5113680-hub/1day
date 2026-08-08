@@ -111,6 +111,7 @@ export interface OutboxEventsTable {
   attempts: Generated<number>;
   available_at: Timestamp;
   published_at: Timestamp | null;
+  last_error: string | null;
   created_at: Timestamp;
   created_by: string | null;
   updated_at: Timestamp;

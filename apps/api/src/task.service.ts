@@ -183,38 +183,17 @@ export class TaskService implements OnModuleDestroy {
     return this.setNotificationPreferences(c, { ...b, employeeId: employee.rows[0].id }, r);
   }
   async processDue(c: OrganizationContext, r: string) {
-    const q = await this.pool.connect();
+    const { TaskDispatchScheduler } = await import('@oneday/events');
+    const scheduler = new TaskDispatchScheduler(process.env.DATABASE_URL ?? '');
     try {
-      await q.query('begin');
-      const reminders = await q.query(
-        "select r.id,r.task_id,t.assignee_employee_id from task_reminders r join tasks t on t.id=r.task_id and t.tenant_id=r.tenant_id left join employee_notification_preferences p on p.tenant_id=t.tenant_id and p.employee_id=t.assignee_employee_id and p.deleted_at is null where r.tenant_id=$1 and r.status='pending' and r.remind_at<=now() and t.status='open' and t.deleted_at is null and (p.do_not_disturb_until is null or p.do_not_disturb_until<=now()) for update of r skip locked",
-        [c.tenantId],
-      );
-      for (const reminder of reminders.rows) {
-        await q.query(
-          "update task_reminders set status='sent',version=version+1,updated_at=now(),updated_by=$1 where id=$2",
-          [c.userId, reminder.id],
-        );
-        await this.notification(q, c, reminder.task_id, reminder.assignee_employee_id, 'reminder');
-        await this.audit(q, c, 'task.reminder_sent', reminder.task_id, r, reminder);
-        await this.event(q, c, 'employee.task.reminder.v1', reminder.task_id, r, reminder);
-      }
-      const due = await q.query(
-        "update tasks set status='overdue',escalation_level=escalation_level+1,version=version+1,updated_by=$1,updated_at=now() where tenant_id=$2 and status='open' and due_at<=now() returning id,assignee_employee_id,escalation_level",
-        [c.userId, c.tenantId],
-      );
-      for (const x of due.rows) {
-        await this.notification(q, c, x.id, x.assignee_employee_id, 'overdue_escalation');
-        await this.audit(q, c, 'task.overdue_escalated', x.id, r, x);
-        await this.event(q, c, 'employee.task.overdue.v1', x.id, r, x);
-      }
-      await q.query('commit');
-      return { reminders: reminders.rowCount, overdue: due.rowCount };
-    } catch (e) {
-      await q.query('rollback');
-      throw e;
+      return await scheduler.dispatch({
+        tenantId: c.tenantId,
+        actorId: c.userId,
+        correlationId: correlation(r),
+        traceId: 'api.task.process_due',
+      });
     } finally {
-      q.release();
+      await scheduler.close();
     }
   }
   private async idempotent(

@@ -9,6 +9,9 @@
     "typecheck": "tsc --noEmit",
     "test": "node --test"
   },
+  "dependencies": {
+    "@oneday/events": "workspace:*"
+  },
   "devDependencies": {
     "@types/node": "24.10.1"
   }
