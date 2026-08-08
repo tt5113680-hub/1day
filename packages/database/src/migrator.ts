@@ -43,6 +43,7 @@ import * as circleMerchantManagement from './migrations/041_circle_merchant_mana
 import * as consumerOperatingProjections from './migrations/042_consumer_operating_projections.js';
 import * as workerDispatchState from './migrations/043_worker_dispatch_state.js';
 import * as rateLimitWindows from './migrations/044_rate_limit_windows.js';
+import * as aiSuggestionExecution from './migrations/045_ai_suggestion_execution.js';
 import type { Database } from './types.js';
 
 const migrationProvider: MigrationProvider = {
@@ -92,6 +93,7 @@ const migrationProvider: MigrationProvider = {
       '042_consumer_operating_projections': consumerOperatingProjections,
       '043_worker_dispatch_state': workerDispatchState,
       '044_rate_limit_windows': rateLimitWindows,
+      '045_ai_suggestion_execution': aiSuggestionExecution,
     };
   },
 };

@@ -14,6 +14,9 @@ type Suggestion = {
   model_version: string;
   status: string;
   feedback: string | null;
+  execution_status: string;
+  execution_result: Record<string, unknown>;
+  executed_at: string | null;
   version: number;
 };
 
@@ -136,6 +139,9 @@ export default function AiSuggestions() {
                   <dd>{item.action_type}</dd>
                 </div>
               </dl>
+              {item.status === 'accepted' && (
+                <p data-testid="ai-execution-status">Execution: {item.execution_status}</p>
+              )}
               {item.feedback && <p className={styles.feedback}>反馈：{item.feedback}</p>}
               <div className={styles.feedbackForm}>
                 <label htmlFor={`feedback-${item.id}`}>反馈</label>

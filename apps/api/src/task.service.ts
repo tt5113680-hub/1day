@@ -82,6 +82,65 @@ export class TaskService implements OnModuleDestroy {
       return row;
     });
   }
+  async createApprovedAiTask(
+    q: PoolClient,
+    c: OrganizationContext,
+    input: {
+      assigneeEmployeeId: unknown;
+      customerId?: unknown;
+      title: unknown;
+      reason?: unknown;
+      dueAt: unknown;
+      remindAt?: unknown;
+    },
+    requestId: string,
+    suggestionId: string,
+  ) {
+    const employeeId = text(input.assigneeEmployeeId, 36);
+    const title = text(input.title, 160);
+    const reason = input.reason === undefined ? null : text(input.reason, 1000);
+    const dueAt = text(input.dueAt, 40);
+    const remindAt = optionalDate(input.remindAt);
+    const customerId =
+      input.customerId === undefined || input.customerId === null
+        ? null
+        : text(input.customerId, 36);
+    if (!UUID.test(employeeId) || Number.isNaN(Date.parse(dueAt)))
+      throw new BadRequestException('VALIDATION_ERROR');
+    if (customerId !== null && !UUID.test(customerId))
+      throw new BadRequestException('VALIDATION_ERROR');
+    if (remindAt !== null && Date.parse(remindAt) > Date.parse(dueAt))
+      throw new BadRequestException('VALIDATION_ERROR');
+
+    const employee = await q.query(
+      "select id from employees where id=$1 and tenant_id=$2 and status='active'",
+      [employeeId, c.tenantId],
+    );
+    if (!employee.rowCount) throw new NotFoundException('NOT_FOUND');
+    if (customerId !== null) {
+      const customer = await q.query(
+        "select id from customers where id=$1 and tenant_id=$2 and status='active' and deleted_at is null",
+        [customerId, c.tenantId],
+      );
+      if (!customer.rowCount) throw new NotFoundException('NOT_FOUND');
+    }
+    const id = randomUUID();
+    const row = (
+      await q.query(
+        'insert into tasks(id,tenant_id,customer_id,assignee_employee_id,title,reason,due_at,created_by,updated_by) values($1,$2,$3,$4,$5,$6,$7,$8,$8) returning id,customer_id,assignee_employee_id,title,reason,due_at,status,escalation_level,version',
+        [id, c.tenantId, customerId, employeeId, title, reason, dueAt, c.userId],
+      )
+    ).rows[0];
+    if (remindAt !== null)
+      await q.query(
+        'insert into task_reminders(id,tenant_id,task_id,remind_at,created_by,updated_by) values($1,$2,$3,$4,$5,$5)',
+        [randomUUID(), c.tenantId, id, remindAt, c.userId],
+      );
+    const details = { ...row, remindAt, sourceSuggestionId: suggestionId };
+    await this.audit(q, c, 'task.created_from_ai_suggestion', id, requestId, details);
+    await this.event(q, c, 'employee.task.created.v1', id, requestId, details);
+    return row;
+  }
   async complete(c: OrganizationContext, id: string, b: Record<string, unknown>, r: string) {
     if (!UUID.test(id)) throw new BadRequestException('VALIDATION_ERROR');
     const v = version(b.version);

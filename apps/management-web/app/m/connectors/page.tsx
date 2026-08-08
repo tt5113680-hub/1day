@@ -12,6 +12,11 @@ type Connector = {
   version: number;
   updated_at: string;
   logs: { status: string; message: string; createdAt: string }[];
+  capability: {
+    authorization: string;
+    externalDelivery: string;
+    requiredEvidence: string;
+  };
 };
 
 const api = process.env.NEXT_PUBLIC_API_BASE_URL ?? 'http://127.0.0.1:3001';
@@ -155,6 +160,10 @@ export default function ConnectorPage() {
                 版本 {connector.version} · 最近更新{' '}
                 {new Date(connector.updated_at).toLocaleString()}
               </small>
+              <p data-testid="connector-delivery-boundary">
+                External delivery: {connector.capability.externalDelivery}; evidence:{' '}
+                {connector.capability.requiredEvidence}
+              </p>
               <div className={styles.logs}>
                 <h2>最近运行日志</h2>
                 {connector.logs.length ? (

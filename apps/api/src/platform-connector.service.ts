@@ -31,7 +31,7 @@ export class PlatformConnectorService implements OnModuleDestroy {
   private readonly pool = createApiPool();
 
   async list(context: OrganizationContext) {
-    return (
+    const connectors = (
       await this.pool.query(
         `select d.id,d.code,d.name,d.auth_mode,d.rate_limit_per_minute,d.health_status,d.health_checked_at,d.status,d.version,
           coalesce(a.authorizations,'[]'::json) authorizations,coalesce(l.logs,'[]'::json) logs
@@ -42,6 +42,14 @@ export class PlatformConnectorService implements OnModuleDestroy {
         [context.tenantId],
       )
     ).rows;
+    return connectors.map((connector) => ({
+      ...connector,
+      capability: {
+        definition: 'catalog_and_health_observation_only',
+        tenantAuthorization: 'intent_recorded_only',
+        externalDelivery: 'not_available',
+      },
+    }));
   }
 
   async create(

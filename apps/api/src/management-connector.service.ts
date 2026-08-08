@@ -17,12 +17,20 @@ export class ManagementConnectorService implements OnModuleDestroy {
   private readonly pool = createApiPool();
 
   async list(context: OrganizationContext) {
-    return (
+    const connectors = (
       await this.pool.query(
         `select x.id,x.code,x.status,x.secret_fingerprint,x.version,x.updated_at,coalesce(l.logs,'[]'::json) logs from connector_configs x left join lateral(select json_agg(json_build_object('status',status,'message',message,'createdAt',created_at) order by created_at desc) logs from (select status,message,created_at from connector_logs where connector_id=x.id and tenant_id=x.tenant_id order by created_at desc limit 5) s) l on true where x.tenant_id=$1 and x.deleted_at is null order by x.code`,
         [context.tenantId],
       )
     ).rows;
+    return connectors.map((connector) => ({
+      ...connector,
+      capability: {
+        authorization: 'intent_recorded_only',
+        externalDelivery: 'not_available',
+        requiredEvidence: 'manual_external_receipt',
+      },
+    }));
   }
 
   async requestAuthorization(

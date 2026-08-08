@@ -13,6 +13,12 @@ The demonstrated operating loop is: consumer action -> source/scenario recording
 - It does not automatically send direct messages, publish social posts, or perform third-party platform actions without the pilot's real API authorization and an auditable outcome.
 - A prepared external delivery state is not proof that an external platform received, published, or completed the action.
 
+## AI and connector execution boundary
+
+- Accepting an AI suggestion executes only a reviewed, whitelisted local command with complete required fields. The current commands create a follow-up task inside the tenant transaction and write task, audit, and Outbox evidence.
+- Suggestions without an explicit supported command or complete payload are retained as `manual_required`; they do not create an inferred task, contact a customer, or invoke an external system.
+- Connector authorization is an auditable intent record. Connector catalog and health observations do not provide external delivery; a real third-party outcome requires a separately authorized integration and its external receipt.
+
 ## Pilot operating constraints
 
 - The repository's Docker configuration and seed credentials are local-development aids, not production infrastructure.

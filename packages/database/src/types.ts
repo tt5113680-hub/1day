@@ -1039,6 +1039,9 @@ export interface AiSuggestionsTable {
   feedback: string | null;
   accepted_by: string | null;
   accepted_at: Timestamp | null;
+  execution_status: string;
+  execution_result: Record<string, unknown>;
+  executed_at: Timestamp | null;
   created_at: Timestamp;
   updated_at: Timestamp;
   version: number;

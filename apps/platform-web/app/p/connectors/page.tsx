@@ -16,6 +16,11 @@ type Connector = {
   version: number;
   authorizations: { status: string; count: number }[];
   logs: { status: string; message: string; observedAt: string }[];
+  capability: {
+    definition: string;
+    tenantAuthorization: string;
+    externalDelivery: string;
+  };
 };
 const api = process.env.NEXT_PUBLIC_API_BASE_URL ?? 'http://127.0.0.1:3001';
 const sessionApi = new SessionApiClient(api);
@@ -197,6 +202,9 @@ export default function PlatformConnectorsPage() {
                     ；日志：{item.logs[0]?.message || '暂无观察'}
                   </small>
                 </div>
+                <small data-testid="connector-delivery-boundary">
+                  External delivery: {item.capability.externalDelivery}
+                </small>
                 <button disabled={saving} onClick={() => void observe(item)}>
                   记录健康观察
                 </button>
