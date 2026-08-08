@@ -103,6 +103,9 @@ importers:
 
   apps/employee-web:
     dependencies:
+      '@oneday/session-client':
+        specifier: workspace:*
+        version: link:../../packages/session-client
       next:
         specifier: 16.3.0
         version: 16.3.0(@playwright/test@1.55.0)(@types/node@24.10.1)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
@@ -131,6 +134,9 @@ importers:
 
   apps/management-web:
     dependencies:
+      '@oneday/session-client':
+        specifier: workspace:*
+        version: link:../../packages/session-client
       next:
         specifier: 16.3.0
         version: 16.3.0(@playwright/test@1.55.0)(@types/node@24.10.1)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
@@ -153,6 +159,9 @@ importers:
 
   apps/platform-web:
     dependencies:
+      '@oneday/session-client':
+        specifier: workspace:*
+        version: link:../../packages/session-client
       next:
         specifier: 16.3.0
         version: 16.3.0(@playwright/test@1.55.0)(@types/node@24.10.1)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
@@ -228,6 +237,16 @@ importers:
         version: 8.15.6
 
   packages/observability: {}
+
+  packages/session-client:
+    dependencies:
+      react:
+        specifier: 19.2.8
+        version: 19.2.8
+    devDependencies:
+      '@types/react':
+        specifier: 19.2.7
+        version: 19.2.7
 
   packages/testing: {}
 

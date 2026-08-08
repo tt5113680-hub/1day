@@ -3,7 +3,7 @@
 ## Audit hardening status (latest)
 
 - [x] H-001 PASS - API startup fails closed without a safe authentication signing secret.
-- [ ] H-002 NEXT - add real login, refresh, and logout journeys to all four web terminals.
+- [x] H-002 PASS - real employee, management and platform login, refresh and logout journeys; public anonymous consumer entry; isolated reusable commercial test fixture.
 
 ## Final commercial acceptance status (final)
 

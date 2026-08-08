@@ -1,5 +1,11 @@
 # LATEST_HANDOFF
 
+## H-002 completed
+
+- `H-002` is PASS: employee, tenant-owner/management and platform browser sessions now use real tenant-slug login, automatic refresh rotation and server-side logout revocation. Consumer routes remain public and anonymous by the frozen product decision.
+- `tests/fixtures/commercial-simulation.mjs` supplies a repeatable, auto-cleaned, test-database-only fictional commercial environment: the Luckin-style test tenant, a second restaurant tenant, role accounts, three stores, customers, tasks/reminders, evidence, sharing code, AI, audit/Outbox, channel and fixed-circle relations.
+- Verification passed: 6-case Playwright + HTTP + PostgreSQL H-002 acceptance, lint, format, 18-package typecheck, Vitest, serialized repository suite, full build, migration/seed, evidence and diff checks. Evidence: `evidence/H-002/ACCEPTANCE.md`.
+
 ## H-001 completed
 
 - Removed the token-signing default fallback. API startup now rejects a missing or retired-default `AUTH_TOKEN_SECRET`, and requires 32+ characters in production.

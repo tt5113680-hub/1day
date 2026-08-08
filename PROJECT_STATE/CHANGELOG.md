@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## 2026-08-08 H-002 PASS
+
+- Added a shared browser session client and real tenant-slug login, refresh rotation and logout journeys for employee, management and platform terminals; protected backend routes are guarded at each terminal root layout.
+- Kept consumer access public and anonymous, removing the incorrect staff-style consumer login experiment.
+- Added an automatically cleaned, test-only “瑞幸咖啡 · ONEDAY测试模拟租户” commercial fixture with a second isolated tenant, role accounts, stores, operational records, channel/circle relations, audit and Outbox data.
+
 ## 2026-08-08 H-001 PASS
 
 - Closed pre-release P0-1 by removing the API authentication-secret fallback and making missing/unsafe production configuration fail closed.

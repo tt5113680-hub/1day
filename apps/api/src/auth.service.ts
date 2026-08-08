@@ -18,13 +18,28 @@ export class AuthService implements OnModuleDestroy {
   private readonly pool = new Pool({ connectionString: process.env.DATABASE_URL });
   private readonly secret = requireAuthTokenSecret();
 
-  async login(email: string, password: string, tenantId: string, deviceName?: string) {
+  async login(
+    email: string,
+    password: string,
+    tenantId?: string,
+    tenantSlug?: string,
+    deviceName?: string,
+  ) {
     const user = await this.pool.query(
       'select id, password_hash from users where email = $1 and deleted_at is null and status = $2',
       [email, 'active'],
     );
     if (user.rowCount !== 1 || !(await verifyPassword(password, user.rows[0].password_hash)))
       throw new UnauthorizedException('AUTH_REQUIRED');
+    if (!tenantId && tenantSlug) {
+      const tenant = await this.pool.query(
+        'select id from tenants where slug = $1 and status = $2 and deleted_at is null',
+        [tenantSlug, 'active'],
+      );
+      if (tenant.rowCount !== 1) throw new UnauthorizedException('AUTH_REQUIRED');
+      tenantId = tenant.rows[0].id;
+    }
+    if (!tenantId) throw new UnauthorizedException('AUTH_REQUIRED');
     const membership = await this.pool.query(
       'select id from memberships where user_id = $1 and tenant_id = $2 and status = $3 and deleted_at is null',
       [user.rows[0].id, tenantId, 'active'],

@@ -34,11 +34,29 @@ export class AuthController {
     return this.tenantContext.fromAuthorization(authorization, tenantId);
   }
   @Post('login') login(
-    @Body() body: { email?: string; password?: string; tenantId?: string; deviceName?: string },
+    @Body()
+    body: {
+      email?: string;
+      password?: string;
+      tenantId?: string;
+      tenantSlug?: string;
+      deviceName?: string;
+    },
   ) {
-    if (!body.email || !body.password || !body.tenantId)
+    if (
+      !body.email ||
+      !body.password ||
+      (!body.tenantId && !body.tenantSlug) ||
+      (body.tenantId && body.tenantSlug)
+    )
       throw new BadRequestException('VALIDATION_ERROR');
-    return this.auth.login(body.email, body.password, body.tenantId, body.deviceName);
+    return this.auth.login(
+      body.email,
+      body.password,
+      body.tenantId,
+      body.tenantSlug,
+      body.deviceName,
+    );
   }
   @Post('refresh') refresh(@Body() body: { refreshToken?: string }) {
     if (!body.refreshToken) throw new BadRequestException('VALIDATION_ERROR');
