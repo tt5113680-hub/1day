@@ -1,11 +1,12 @@
 # LATEST_HANDOFF
 
-## AUDIT-BATCH-3 verified, commit pending
+## AUDIT-BATCH-3 completed
 
 - Worker is no longer a health-only process. It uses the shared task dispatch state machine and an internal Outbox consumer that locks due records, persists consumption de-duplication, records bounded retry diagnostics, and publishes only internal delivery completion (never an unperformed third-party delivery).
 - `043_worker_dispatch_state` adds Outbox `last_error`. API `process-due` uses the same scheduler as the Worker through a dynamic ESM import compatible with the CommonJS API runtime.
 - `tests/audit-batch-3-worker.test.mjs` passed against a real isolated tenant/Worker process: internal event publish, reminder, overdue, notification, audit, Outbox, health signal, failure retry and recovery. Full quality gates passed: 177 repository tests, 18-package typecheck/build, lint, format and evidence contract.
-- Next after commit: AUDIT-BATCH-4 connection pool / rate limit / TLS-CORS production safety.
+- PASS commit: `3998a7d feat(worker): dispatch outbox and due tasks`.
+- Current scope: AUDIT-BATCH-4 connection pool / rate limit / TLS-CORS production safety.
 
 ## AUDIT-BATCH-2 completed
 

@@ -1,6 +1,6 @@
 # CHANGELOG
 
-## 2026-08-08 AUDIT-BATCH-3 VERIFIED_PENDING_COMMIT
+## 2026-08-08 AUDIT-BATCH-3 PASS (`3998a7d`)
 
 - Replaced the health-only Worker with locked internal Outbox consumption, durable retry diagnostics and a shared reminder/overdue scheduler.
 - Added a real isolated Worker-process regression test covering delivery, notifications, overdue escalation and failed-event recovery.
