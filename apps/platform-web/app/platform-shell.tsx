@@ -15,7 +15,13 @@ const navigation = [
   { href: '/p/security-audit', label: '安全审计' },
 ];
 
-export function PlatformShell({ children }: { children: ReactNode }) {
+export function PlatformShell({
+  children,
+  controls,
+}: {
+  children: ReactNode;
+  controls?: ReactNode;
+}) {
   const pathname = usePathname();
   if (pathname === '/login') return children;
   return (
@@ -23,6 +29,7 @@ export function PlatformShell({ children }: { children: ReactNode }) {
       activeHref={pathname}
       product="平台运营"
       context="系统租户 · 治理控制台"
+      controls={controls}
       navigation={navigation}
     >
       {children}

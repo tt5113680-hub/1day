@@ -12,9 +12,11 @@ export default function RootLayout({ children }: Readonly<{ children: ReactNode 
   return (
     <html lang="zh-CN">
       <body>
-        <SessionControls apiBase={api} loginPath="/e/login" />
         <SessionGuard apiBase={api} loginPath="/e/login">
-          <MobileShell mode="employee">
+          <MobileShell
+            controls={<SessionControls apiBase={api} loginPath="/e/login" />}
+            mode="employee"
+          >
             {children}
             <EmployeeBottomNav />
           </MobileShell>

@@ -11,9 +11,10 @@ export default function RootLayout({ children }: Readonly<{ children: ReactNode 
   return (
     <html lang="zh-CN">
       <body>
-        <SessionControls apiBase={api} loginPath="/login" />
         <SessionGuard apiBase={api} loginPath="/login">
-          <PlatformShell>{children}</PlatformShell>
+          <PlatformShell controls={<SessionControls apiBase={api} loginPath="/login" />}>
+            {children}
+          </PlatformShell>
         </SessionGuard>
       </body>
     </html>

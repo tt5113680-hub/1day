@@ -246,6 +246,12 @@ select:focus-visible {
 .od-mobile-shell--employee {
   background: var(--od-background);
 }
+.od-mobile-shell__controls {
+  position: fixed;
+  z-index: var(--od-z-overlay);
+  top: var(--od-space-3);
+  right: var(--od-space-3);
+}
 .od-admin-shell {
   display: grid;
   min-height: 100dvh;
@@ -334,6 +340,11 @@ select:focus-visible {
   backdrop-filter: blur(14px);
   font-size: 13px;
 }
+.od-admin-shell__topbar-end {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--od-space-3);
+}
 .od-admin-shell__content {
   width: min(100%, var(--od-content-max));
   margin: 0 auto;
@@ -403,6 +414,13 @@ select:focus-visible {
   background: var(--od-brand-700);
   font-weight: 700;
   cursor: pointer;
+}
+.od-admin-shell__topbar .od-session-control {
+  min-height: 32px;
+  border-color: var(--od-border);
+  border-radius: var(--od-radius-sm);
+  color: var(--od-brand-800);
+  background: var(--od-surface);
 }
 .od-session-login [role='alert'] {
   margin: 0;

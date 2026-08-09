@@ -16,7 +16,13 @@ const navigation = [
   { href: '/m/settings', label: '经营设置' },
 ];
 
-export function ManagementShell({ children }: { children: ReactNode }) {
+export function ManagementShell({
+  children,
+  controls,
+}: {
+  children: ReactNode;
+  controls?: ReactNode;
+}) {
   const pathname = usePathname();
   if (pathname === '/login') return children;
   return (
@@ -24,6 +30,7 @@ export function ManagementShell({ children }: { children: ReactNode }) {
       activeHref={pathname}
       product="商户经营"
       context="租户经营工作台"
+      controls={controls}
       navigation={navigation}
     >
       {children}

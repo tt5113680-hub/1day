@@ -1,86 +1,95 @@
 .page {
-  max-width: 1440px;
+  max-width: var(--od-content-max);
   min-height: 100vh;
-  margin: auto;
-  padding: 42px 48px;
-  background: #f6f8fb;
-  color: #111827;
+  margin: 0 auto;
+  padding: var(--od-space-2);
+  background: transparent;
+  color: var(--od-ink);
 }
+
 .page header {
   display: flex;
+  align-items: flex-start;
   justify-content: space-between;
-  gap: 24px;
+  gap: var(--od-space-6);
 }
+
 .page header p {
   margin: 0;
-  color: #7c3aed;
+  color: var(--od-brand-700);
   font-size: 13px;
   font-weight: 800;
 }
+
 .page h1 {
-  margin: 8px 0;
-  font-size: 34px;
+  margin: var(--od-space-2) 0;
+  font: 700 clamp(28px, 3vw, 40px) / 1.15 var(--od-font-display);
+  letter-spacing: -0.04em;
 }
+
 .page header span,
 .grid p,
 .grid small {
-  color: #4b5563;
+  color: var(--od-text-muted);
 }
-.page button {
-  border: 1px solid #cbd5e1;
-  border-radius: 8px;
-  background: #fff;
-  padding: 10px 14px;
-  font: inherit;
-  font-weight: 700;
-}
+
 .cards,
 .grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 16px;
-  margin: 28px 0;
+  gap: var(--od-space-4);
+  margin: var(--od-space-8) 0;
 }
+
 .cards article,
 .grid article {
-  padding: 20px;
-  border: 1px solid #e5e7eb;
-  border-radius: 16px;
-  background: #fff;
-  box-shadow: 0 5px 16px #11182708;
+  padding: var(--od-space-5);
+  border: 1px solid var(--od-border);
+  border-radius: var(--od-radius-lg);
+  background: var(--od-surface);
+  box-shadow: var(--od-shadow-low);
 }
+
 .cards span {
-  color: #64748b;
+  color: var(--od-text-muted);
 }
+
 .cards strong {
   display: block;
-  margin-top: 8px;
-  font-size: 34px;
+  margin-top: var(--od-space-2);
+  font-size: 32px;
 }
+
 .grid {
   grid-template-columns: repeat(2, 1fr);
 }
+
 .grid h2 {
   margin-top: 0;
 }
+
 .centered {
   display: grid;
   min-height: 70vh;
   place-items: center;
   text-align: center;
 }
+
 .centered section {
-  padding: 32px;
-  border-radius: 16px;
-  background: #fff;
+  padding: var(--od-space-8);
+  border-radius: var(--od-radius-lg);
+  background: var(--od-surface);
 }
+
 @media (max-width: 900px) {
   .page {
-    padding: 28px 18px;
+    padding: var(--od-space-2);
   }
+
   .page header {
     display: grid;
   }
+
   .cards,
   .grid {
     grid-template-columns: 1fr;

@@ -1,6 +1,6 @@
 'use client';
 import { SessionApiClient } from '@oneday/session-client';
-import { AppStatePanel, Button, MetricCard } from '@oneday/ui';
+import { AppStatePanel, Button, MetricCard, businessLabel } from '@oneday/ui';
 import { useCallback, useEffect, useState } from 'react';
 import styles from './page.module.css';
 type Data = {
@@ -99,7 +99,7 @@ export default function PlatformDashboard() {
           {data.risks.length ? (
             data.risks.map((risk) => (
               <p key={risk.type}>
-                <b>{risk.count}</b> · {risk.type}
+                <b>{risk.count}</b> · {businessLabel(risk.type)}
               </p>
             ))
           ) : (

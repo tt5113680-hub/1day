@@ -106,12 +106,19 @@ export function AppStatePanel({
 
 export function MobileShell({
   children,
+  controls,
   mode = 'consumer',
 }: {
   children: ReactNode;
+  controls?: ReactNode;
   mode?: 'consumer' | 'employee';
 }) {
-  return <div className={`od-mobile-shell od-mobile-shell--${mode}`}>{children}</div>;
+  return (
+    <div className={`od-mobile-shell od-mobile-shell--${mode}`}>
+      {controls ? <div className="od-mobile-shell__controls">{controls}</div> : null}
+      {children}
+    </div>
+  );
 }
 
 export type AdminNavItem = { href: string; label: string; group?: string };
@@ -121,12 +128,14 @@ export function AdminShell({
   context,
   navigation,
   activeHref,
+  controls,
   children,
 }: {
   product: string;
   context: string;
   navigation: AdminNavItem[];
   activeHref?: string;
+  controls?: ReactNode;
   children: ReactNode;
 }) {
   const isActive = (href: string) =>
@@ -156,7 +165,10 @@ export function AdminShell({
       <div className="od-admin-shell__main">
         <header className="od-admin-shell__topbar">
           <span>{context}</span>
-          <span>ONEDAY 经营系统</span>
+          <div className="od-admin-shell__topbar-end">
+            <span>ONEDAY 经营系统</span>
+            {controls}
+          </div>
         </header>
         <div className="od-admin-shell__content">{children}</div>
       </div>

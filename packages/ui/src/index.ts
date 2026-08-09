@@ -28,6 +28,9 @@ const labels: Record<string, string> = {
   screenshot: '页面截图',
   order: '结果已记录',
   task: '任务状态',
+  overdue_task: '逾期任务',
+  ownership_approval: '归属审批',
+  connector_attention: '连接器需关注',
 };
 
 /** Converts persisted operating enums into concise, stable commercial copy. */

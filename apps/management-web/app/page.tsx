@@ -1,6 +1,6 @@
 'use client';
 import { SessionApiClient } from '@oneday/session-client';
-import { AppStatePanel, Button, MetricCard } from '@oneday/ui';
+import { AppStatePanel, Button, MetricCard, taskTitleCopy } from '@oneday/ui';
 import { useCallback, useEffect, useState } from 'react';
 import styles from './page.module.css';
 type Data = {
@@ -102,7 +102,7 @@ export default function ManagementHome() {
               <a className={styles.anomaly} href={item.deepLink} key={item.id}>
                 <div>
                   <strong>{item.type === 'overdue_task' ? '任务逾期' : '归属审批'}</strong>
-                  <p>{item.title}</p>
+                  <p>{taskTitleCopy(item.title)}</p>
                 </div>
                 <time>{new Date(item.occurredAt).toLocaleDateString()}</time>
               </a>
