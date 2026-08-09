@@ -5,9 +5,13 @@ import { ConsumerStoreService } from './consumer-store.service';
 export class ConsumerStoreController {
   constructor(private readonly stores: ConsumerStoreService) {}
   @Get(':id')
-  async detail(@Param('id') id: string, @Query('tenant') tenant: string | undefined) {
+  async detail(
+    @Param('id') id: string,
+    @Query('tenant') tenant: string | undefined,
+    @Query('preview') preview: string | undefined,
+  ) {
     return {
-      data: await this.stores.detail(tenant ?? '', id),
+      data: await this.stores.detail(tenant ?? '', id, preview),
       meta: { public: true },
       error: null,
     };

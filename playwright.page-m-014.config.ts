@@ -22,7 +22,17 @@ export default defineConfig({
       command: 'pnpm.cmd --filter @oneday/management-web exec next dev --port 3114',
       url: 'http://localhost:3114',
       reuseExistingServer: false,
-      env: { ...process.env, NEXT_PUBLIC_API_BASE_URL: 'http://127.0.0.1:3113' },
+      env: {
+        ...process.env,
+        NEXT_PUBLIC_API_BASE_URL: 'http://127.0.0.1:3113',
+        NEXT_PUBLIC_CONSUMER_BASE_URL: 'http://localhost:3115',
+      },
+    },
+    {
+      command: 'pnpm.cmd --filter @oneday/consumer-web exec next dev --port 3115',
+      url: 'http://localhost:3115',
+      reuseExistingServer: false,
+      env: { ...process.env, API_BASE_URL: 'http://127.0.0.1:3113' },
     },
   ],
 });

@@ -16,6 +16,20 @@ type StoreOption = {
 };
 export type StoreDetail = {
   tenant: { slug: string; name: string };
+  storefront: {
+    mode: 'preview' | 'published';
+    bindingId: string;
+    bindingVersion: number;
+    templateVersionId: string;
+    publishedAt: string | null;
+    industry: { family?: string; label?: string; channels?: string[] };
+    modules: {
+      id: string;
+      module_type: string;
+      position: number;
+      config: Record<string, unknown>;
+    }[];
+  } | null;
   store: {
     id: string;
     name: string;
@@ -253,6 +267,11 @@ export default function StorePage({
   ];
   return (
     <ConsumerShell context={context} active="home">
+      {data.storefront?.mode === 'preview' ? (
+        <aside className={styles.previewBanner} role="status">
+          装修预览 · 当前内容尚未发布，消费者不会看到此版本
+        </aside>
+      ) : null}
       <main id="top" className={styles.page}>
         <div className={styles.shell}>
           <h1 className={styles.visuallyHidden}>{data.store.name}</h1>

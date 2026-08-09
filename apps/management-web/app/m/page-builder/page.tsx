@@ -1,4 +1,5 @@
 'use client';
+
 import { SessionApiClient } from '@oneday/session-client';
 import {
   AdminPageHeader,
@@ -10,6 +11,7 @@ import {
 } from '@oneday/ui';
 import { useCallback, useEffect, useState } from 'react';
 import styles from './page.module.css';
+
 type Template = {
   id: string;
   name: string;
@@ -17,67 +19,204 @@ type Template = {
   target: string;
   published_version_id: string | null;
   version: number;
+  binding_id: string | null;
+  store_id: string | null;
+  store_name: string | null;
+  draft_version_id: string | null;
+  live_version_id: string | null;
+  binding_version: number | null;
+  industry_config: { family?: string };
+};
+type TemplateVersion = { id: string; sequence: number; status: string; version: number };
+type Module = {
+  id: string;
+  module_type: string;
+  position: number;
+  config: Record<string, unknown>;
 };
 type Preview = {
-  template: Template;
-  version: { id: string; sequence: number; status: string } | null;
-  modules: { id: string; module_type: string; position: number; config: Record<string, unknown> }[];
+  template: {
+    id: string;
+    name: string;
+    code: string;
+    target: string;
+    version: number;
+    publishedVersionId: string | null;
+  };
+  binding: {
+    id: string;
+    storeId: string;
+    storeName: string;
+    draftVersionId: string;
+    liveVersionId: string;
+    version: number;
+  } | null;
+  version: TemplateVersion | null;
+  versions: TemplateVersion[];
+  modules: Module[];
 };
+
 const api = process.env.NEXT_PUBLIC_API_BASE_URL ?? 'http://127.0.0.1:3001';
+const consumer = process.env.NEXT_PUBLIC_CONSUMER_BASE_URL ?? 'http://localhost:3002';
 const sessionApi = new SessionApiClient(api);
+
 export default function PageBuilder() {
   const [state, setState] = useState<'loading' | 'ready' | 'forbidden' | 'error'>('loading'),
     [templates, setTemplates] = useState<Template[]>([]),
     [selected, setSelected] = useState<Preview | null>(null),
-    [note, setNote] = useState('');
-  const headers = () => ({
-    'content-type': 'application/json',
-  });
+    [modules, setModules] = useState<Module[]>([]),
+    [previewPath, setPreviewPath] = useState(''),
+    [note, setNote] = useState(''),
+    [saving, setSaving] = useState(false);
+  const headers = () => ({ 'content-type': 'application/json' });
   const load = useCallback(async () => {
     if (!(await sessionApi.context())) return setState('forbidden');
     setState('loading');
     try {
-      const r = await sessionApi.request(`${api}/api/v1/page-templates`, { headers: headers() });
-      if ([401, 403].includes(r.status)) return setState('forbidden');
-      if (!r.ok) throw Error();
-      setTemplates((await r.json()).data);
+      const response = await sessionApi.request(`${api}/api/v1/page-templates`, {
+        headers: headers(),
+      });
+      if ([401, 403].includes(response.status)) return setState('forbidden');
+      if (!response.ok) throw Error();
+      setTemplates((await response.json()).data);
       setState('ready');
     } catch {
       setState('error');
     }
   }, []);
   useEffect(() => void load(), [load]);
-  const preview = async (id: string) => {
-    const r = await sessionApi.request(`${api}/api/v1/page-templates/${id}/preview`, {
-      headers: headers(),
-    });
-    if (!r.ok) return setNote('模板预览不可用。');
-    setSelected((await r.json()).data);
+
+  const preview = async (id: string, versionId?: string) => {
+    const response = await sessionApi.request(
+      `${api}/api/v1/page-templates/${id}/preview${versionId ? `?versionId=${encodeURIComponent(versionId)}` : ''}`,
+      { headers: headers() },
+    );
+    if (!response.ok) return setNote('模板预览不可用。');
+    const data = (await response.json()).data as Preview;
+    setSelected(data);
+    setModules(data.modules);
+    setPreviewPath('');
   };
-  const publish = async () => {
+  const createDraft = async () => {
     if (!selected?.version) return;
-    const r = await sessionApi.request(
-      `${api}/api/v1/page-templates/${selected.template.id}/publish`,
+    setSaving(true);
+    try {
+      const response = await sessionApi.request(
+        `${api}/api/v1/page-templates/${selected.template.id}/drafts`,
+        {
+          method: 'POST',
+          headers: headers(),
+          body: JSON.stringify({ sourceVersionId: selected.version.id }),
+        },
+      );
+      if (!response.ok) throw Error();
+      const draft = (await response.json()).data as TemplateVersion;
+      await preview(selected.template.id, draft.id);
+      setNote(`草稿 V${draft.sequence} 已从当前版本创建，消费者仍读取已发布版本。`);
+      await load();
+    } catch {
+      setNote('创建草稿失败，请刷新版本后重试。');
+    } finally {
+      setSaving(false);
+    }
+  };
+  const move = (index: number, offset: number) => {
+    const target = index + offset;
+    if (target < 0 || target >= modules.length) return;
+    const next = [...modules];
+    [next[index], next[target]] = [next[target]!, next[index]!];
+    setModules(next.map((module, position) => ({ ...module, position: position + 1 })));
+  };
+  const toggle = (index: number) =>
+    setModules((current) =>
+      current.map((module, position) =>
+        position === index
+          ? {
+              ...module,
+              config: { ...module.config, visible: module.config.visible === false },
+            }
+          : module,
+      ),
+    );
+  const saveDraft = async () => {
+    if (!selected?.version || selected.version.status !== 'draft') return;
+    setSaving(true);
+    try {
+      const response = await sessionApi.request(
+        `${api}/api/v1/page-templates/${selected.template.id}/drafts/${selected.version.id}`,
+        {
+          method: 'PUT',
+          headers: headers(),
+          body: JSON.stringify({
+            version: selected.version.version,
+            modules: modules.map((module) => ({
+              moduleType: module.module_type,
+              config: module.config,
+            })),
+          }),
+        },
+      );
+      if (!response.ok) throw Error();
+      await preview(selected.template.id, selected.version.id);
+      setNote('草稿已保存；发布前可继续使用同一消费者渲染器预览。');
+    } catch {
+      setNote('保存失败：草稿版本可能已变化，请重新加载。');
+    } finally {
+      setSaving(false);
+    }
+  };
+  const createPreviewLink = async () => {
+    if (!selected?.binding || !selected.version) return;
+    const response = await sessionApi.request(
+      `${api}/api/v1/page-templates/${selected.template.id}/preview-link`,
       {
         method: 'POST',
         headers: headers(),
-        body: JSON.stringify({
-          versionId: selected.version.id,
-          templateVersion: selected.template.version,
-        }),
+        body: JSON.stringify({ versionId: selected.version.id }),
       },
     );
-    if (!r.ok) return setNote('发布失败：版本可能已变化，请刷新后重试。');
-    setNote('版本已发布，服务端已记录审计与事件。');
-    await load();
+    if (!response.ok) return setNote('无法生成安全预览链接。');
+    setPreviewPath((await response.json()).data.path);
+    setNote('30 分钟安全预览已生成；页面使用与正式数字门店相同的消费者渲染器。');
   };
+  const switchVersion = async (versionId: string, mode: 'publish' | 'rollback') => {
+    if (!selected) return;
+    setSaving(true);
+    try {
+      const response = await sessionApi.request(
+        `${api}/api/v1/page-templates/${selected.template.id}/${mode}`,
+        {
+          method: 'POST',
+          headers: headers(),
+          body: JSON.stringify({
+            versionId,
+            templateVersion: selected.template.version,
+            bindingVersion: selected.binding?.version,
+          }),
+        },
+      );
+      if (!response.ok) throw Error();
+      setNote(
+        mode === 'publish'
+          ? '数字门店已原子发布，Consumer 已读取新版本。'
+          : '数字门店已回滚并生成新的发布记录。',
+      );
+      await load();
+      await preview(selected.template.id, versionId);
+    } catch {
+      setNote('版本切换失败：数据可能已变化或未通过发布校验，请刷新后重试。');
+    } finally {
+      setSaving(false);
+    }
+  };
+
   if (state === 'loading')
     return (
       <main className={styles.centered}>
         <AppStatePanel
           kind="loading"
           title="正在加载模板与版本"
-          description="正在校验模板目录、草稿与发布版本。"
+          description="正在校验门店绑定、草稿与已发布版本。"
         />
       </main>
     );
@@ -105,9 +244,9 @@ export default function PageBuilder() {
   return (
     <main className={styles.page}>
       <AdminPageHeader
-        eyebrow="ONEDAY / 商户模板与发布"
+        eyebrow="ONEDAY / 数字门店装修与发布"
         title="在固定业务模块内维护模板、预览与版本"
-        description="不提供任意低代码执行能力；发布与版本锁由服务端控制。当前页面模板发布尚未等同于 Consumer Storefront 生效，完整绑定属于 Batch 2。"
+        description="草稿、手机/PC 预览、发布和回滚共用一套 Storefront 绑定；业务对象保持各自唯一真源。"
         actions={
           <Button tone="secondary" onClick={() => void load()}>
             刷新模板
@@ -121,21 +260,27 @@ export default function PageBuilder() {
       )}
       <section className={styles.layout}>
         <Card className={styles.panel}>
-          <h2>模板</h2>
+          <h2>门店模板</h2>
           {templates.length ? (
-            templates.map((t) => (
-              <article key={t.id}>
+            templates.map((template) => (
+              <article key={template.id}>
                 <div>
-                  <strong>{t.name}</strong>
+                  <strong>{template.name}</strong>
                   <span>
-                    {t.code} · {businessLabel(t.target)}
+                    {template.store_name
+                      ? `${template.store_name} · ${businessLabel(template.industry_config?.family ?? 'consumer')}`
+                      : `${template.code} · ${businessLabel(template.target)}`}
                   </span>
-                  <StatusBadge tone={t.published_version_id ? 'success' : 'warning'}>
-                    {t.published_version_id ? '已有已发布版本' : '尚未发布'}
+                  <StatusBadge tone={template.live_version_id ? 'success' : 'warning'}>
+                    {template.live_version_id
+                      ? '数字门店已发布'
+                      : template.published_version_id
+                        ? '模板已发布（未绑定门店）'
+                        : '尚未发布'}
                   </StatusBadge>
                 </div>
-                <Button tone="secondary" onClick={() => void preview(t.id)}>
-                  实时预览
+                <Button tone="secondary" onClick={() => void preview(template.id)}>
+                  进入装修
                 </Button>
               </article>
             ))
@@ -148,34 +293,114 @@ export default function PageBuilder() {
           )}
         </Card>
         <Card className={styles.panel}>
-          <h2>预览画布</h2>
+          <h2>装修与同渲染器预览</h2>
           {selected ? (
             <>
-              <p>
-                版本 {selected.version?.sequence ?? '—'} ·{' '}
-                {selected.version ? (
-                  <StatusBadge
-                    tone={selected.version.status === 'published' ? 'success' : 'warning'}
-                  >
-                    {businessLabel(selected.version.status)}
-                  </StatusBadge>
+              <div className={styles.versionHeader}>
+                <p>
+                  版本 V{selected.version?.sequence ?? '—'} ·{' '}
+                  {selected.version ? (
+                    <StatusBadge
+                      tone={selected.version.status === 'published' ? 'success' : 'warning'}
+                    >
+                      {businessLabel(selected.version.status)}
+                    </StatusBadge>
+                  ) : (
+                    '无可用版本'
+                  )}
+                </p>
+                {selected.binding ? (
+                  <StatusBadge tone="success">已绑定 {selected.binding.storeName}</StatusBadge>
                 ) : (
-                  '无可用版本'
+                  <StatusBadge tone="neutral">未绑定门店</StatusBadge>
                 )}
-              </p>
+              </div>
               <div className={styles.canvas}>
-                {selected.modules.map((m) => (
-                  <article key={m.id}>
-                    <span>{m.position}</span>
-                    <strong>{businessLabel(m.module_type)}</strong>
-                    <small>固定模块配置</small>
+                {modules.map((module, index) => (
+                  <article
+                    key={module.id}
+                    className={module.config.visible === false ? styles.hiddenModule : undefined}
+                  >
+                    <span>{index + 1}</span>
+                    <strong>{businessLabel(module.module_type)}</strong>
+                    <small>
+                      {module.config.visible === false ? '当前草稿隐藏' : '消费者可见模块'}
+                    </small>
+                    {selected.version?.status === 'draft' ? (
+                      <div className={styles.moduleActions}>
+                        <Button tone="quiet" onClick={() => move(index, -1)}>
+                          上移
+                        </Button>
+                        <Button tone="quiet" onClick={() => move(index, 1)}>
+                          下移
+                        </Button>
+                        <Button tone="quiet" onClick={() => toggle(index)}>
+                          {module.config.visible === false ? '显示' : '隐藏'}
+                        </Button>
+                      </div>
+                    ) : null}
                   </article>
                 ))}
               </div>
-              {selected.version && <Button onClick={() => void publish()}>发布当前版本</Button>}
+              <div className={styles.actions}>
+                {selected.binding && selected.version?.status !== 'draft' ? (
+                  <Button loading={saving} onClick={() => void createDraft()}>
+                    创建装修草稿
+                  </Button>
+                ) : null}
+                {selected.version?.status === 'draft' ? (
+                  <Button loading={saving} onClick={() => void saveDraft()}>
+                    保存草稿
+                  </Button>
+                ) : null}
+                {selected.binding && selected.version ? (
+                  <Button tone="secondary" onClick={() => void createPreviewLink()}>
+                    生成手机/PC 预览
+                  </Button>
+                ) : null}
+                {selected.version?.status === 'draft' ? (
+                  <Button
+                    loading={saving}
+                    onClick={() => void switchVersion(selected.version!.id, 'publish')}
+                  >
+                    发布当前草稿
+                  </Button>
+                ) : null}
+              </div>
+              {previewPath ? (
+                <a
+                  className={styles.previewLink}
+                  href={`${consumer}${previewPath}`}
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  在消费者渲染器打开安全预览
+                </a>
+              ) : null}
+              {selected.binding &&
+              selected.versions.some((version) => version.status === 'archived') ? (
+                <div className={styles.history}>
+                  <h3>发布历史</h3>
+                  {selected.versions
+                    .filter((version) => version.status === 'archived')
+                    .map((version) => (
+                      <Button
+                        key={version.id}
+                        tone="quiet"
+                        onClick={() => void switchVersion(version.id, 'rollback')}
+                      >
+                        回滚到 V{version.sequence}
+                      </Button>
+                    ))}
+                </div>
+              ) : null}
             </>
           ) : (
-            <p>选择模板后显示其持久化模块与版本。</p>
+            <AppStatePanel
+              kind="empty"
+              title="选择一间门店开始装修"
+              description="绑定门店会显示草稿、发布状态和可回滚历史。"
+            />
           )}
         </Card>
       </section>

@@ -66,6 +66,11 @@
   background: var(--od-brand-50);
 }
 
+.canvas .hiddenModule {
+  opacity: 0.62;
+  background: var(--od-surface-subtle);
+}
+
 .canvas span {
   grid-row: span 2;
   color: var(--od-brand-700);
@@ -74,6 +79,46 @@
 
 .canvas small {
   color: var(--od-text-muted);
+}
+
+.versionHeader,
+.actions,
+.moduleActions,
+.history {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+}
+
+.versionHeader {
+  justify-content: space-between;
+}
+
+.moduleActions {
+  grid-column: 2;
+}
+
+.actions {
+  margin-top: 16px;
+}
+
+.previewLink {
+  display: inline-flex;
+  margin-top: 14px;
+  color: var(--od-brand-700);
+  font-weight: 800;
+}
+
+.history {
+  margin-top: 20px;
+  padding-top: 16px;
+  border-top: 1px solid var(--od-border);
+}
+
+.history h3 {
+  flex-basis: 100%;
+  margin: 0;
 }
 
 .centered {

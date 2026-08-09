@@ -6,6 +6,7 @@ import {
   Headers,
   Param,
   Post,
+  Put,
   Query,
 } from '@nestjs/common';
 import { AuthorizationService } from './authorization.service';
@@ -82,6 +83,37 @@ export class PageTemplateController {
       m = meta(r);
     return {
       data: await this.templates.draft(c, id, String(b.sourceVersionId), m.requestId),
+      meta: m,
+      error: null,
+    };
+  }
+  @Put(':id/drafts/:versionId') async updateDraft(
+    @Headers('authorization') a: string | undefined,
+    @Headers('x-tenant-context') t: string | undefined,
+    @Headers('x-request-id') r: string | undefined,
+    @Param('id') id: string,
+    @Param('versionId') versionId: string,
+    @Body() b: Record<string, unknown>,
+  ) {
+    const c = await this.auth.require(a, 'page.manage', t),
+      m = meta(r);
+    return {
+      data: await this.templates.updateDraft(c, id, versionId, b, m.requestId),
+      meta: m,
+      error: null,
+    };
+  }
+  @Post(':id/preview-link') async previewLink(
+    @Headers('authorization') a: string | undefined,
+    @Headers('x-tenant-context') t: string | undefined,
+    @Headers('x-request-id') r: string | undefined,
+    @Param('id') id: string,
+    @Body() b: Record<string, unknown>,
+  ) {
+    const c = await this.auth.require(a, 'page.read', t),
+      m = meta(r);
+    return {
+      data: await this.templates.previewLink(c, id, b, m.requestId),
       meta: m,
       error: null,
     };

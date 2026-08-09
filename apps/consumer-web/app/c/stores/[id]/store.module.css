@@ -1,3 +1,16 @@
+.previewBanner {
+  position: sticky;
+  z-index: 20;
+  top: 0;
+  padding: 10px 16px;
+  color: var(--od-warning);
+  background: color-mix(in srgb, var(--od-warning) 10%, var(--od-surface));
+  border-bottom: 1px solid color-mix(in srgb, var(--od-warning) 35%, var(--od-border));
+  font-size: var(--od-font-size-sm);
+  font-weight: 800;
+  text-align: center;
+}
+
 .page {
   min-height: 100svh;
   padding: env(safe-area-inset-top) 0 calc(88px + env(safe-area-inset-bottom));

@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## 2026-08-10 - Batch 2 Storefront Draft/Preview/Publish/Rollback
+
+- Bound tenant-owned page-template versions to a store-level live/draft lifecycle with immutable publication history, optimistic locks and required-module validation.
+- Added short-lived store/version-bound preview tokens; Management opens the actual Consumer Storefront renderer while public reads remain pinned to the live version.
+- Upgraded the Management page builder to create and edit drafts, order or hide fixed modules, preview, publish and roll back. Real API and three-browser-state acceptance pass.
+
 ## 2026-08-10 - Batch 2 one-click commercial provisioning core
 
 - Added durable, idempotent Provisioning Runs with eleven auditable steps and explicit ready/failure states instead of treating an active tenant row as commercial delivery.

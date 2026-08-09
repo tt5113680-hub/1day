@@ -4,7 +4,7 @@ import {
   NotFoundException,
   OnModuleDestroy,
 } from '@nestjs/common';
-import { randomUUID } from 'node:crypto';
+import { createHash, randomUUID } from 'node:crypto';
 import { createApiPool } from './database-pool';
 import { ConsumerOperatingOrchestrator } from './consumer-operating-orchestrator.service';
 
@@ -40,7 +40,7 @@ export class ConsumerStoreService implements OnModuleDestroy {
 
   constructor(private readonly operating: ConsumerOperatingOrchestrator) {}
 
-  async detail(tenantSlug: string, storeId: string) {
+  async detail(tenantSlug: string, storeId: string, previewToken?: string) {
     if (!SLUG.test(tenantSlug) || !UUID.test(storeId))
       throw new BadRequestException('VALIDATION_ERROR');
     const tenant = await this.tenant(tenantSlug);
@@ -51,6 +51,43 @@ export class ConsumerStoreService implements OnModuleDestroy {
       )
     ).rows[0];
     if (!store) throw new NotFoundException('NOT_FOUND');
+    let storefront;
+    if (previewToken) {
+      if (!/^[A-Za-z0-9_-]{24,80}$/.test(previewToken))
+        throw new BadRequestException('VALIDATION_ERROR');
+      storefront = (
+        await this.pool.query(
+          `select sb.id as binding_id,sb.version as binding_version,spt.template_version_id,
+                  pt.industry_config,sb.published_at,'preview'::text as mode
+           from storefront_preview_tokens spt
+           join storefront_bindings sb on sb.store_id=spt.store_id and sb.tenant_id=spt.tenant_id and sb.status='active' and sb.deleted_at is null
+           join page_templates pt on pt.id=sb.template_id and pt.tenant_id=sb.tenant_id and pt.status='active' and pt.deleted_at is null
+           where spt.tenant_id=$1 and spt.store_id=$2 and spt.token_hash=$3 and spt.status='active'
+             and spt.expires_at>now() and spt.deleted_at is null`,
+          [tenant.id, storeId, createHash('sha256').update(previewToken).digest('hex')],
+        )
+      ).rows[0];
+      if (!storefront) throw new NotFoundException('NOT_FOUND');
+    } else {
+      storefront = (
+        await this.pool.query(
+          `select sb.id as binding_id,sb.version as binding_version,sb.live_version_id as template_version_id,
+                  pt.industry_config,sb.published_at,'published'::text as mode
+           from storefront_bindings sb
+           join page_templates pt on pt.id=sb.template_id and pt.tenant_id=sb.tenant_id and pt.status='active' and pt.deleted_at is null
+           where sb.tenant_id=$1 and sb.store_id=$2 and sb.status='active' and sb.live_version_id is not null and sb.deleted_at is null`,
+          [tenant.id, storeId],
+        )
+      ).rows[0];
+    }
+    const storefrontModules = storefront
+      ? (
+          await this.pool.query(
+            "select id,module_type,position,config from page_modules where tenant_id=$1 and template_version_id=$2 and status='active' and deleted_at is null order by position",
+            [tenant.id, storefront.template_version_id],
+          )
+        ).rows
+      : [];
     const [services, benefits, content, stores, actions, externalLinks, platformOffers] =
       await Promise.all([
         this.pool.query(
@@ -94,6 +131,17 @@ export class ConsumerStoreService implements OnModuleDestroy {
       ]);
     return {
       tenant: { slug: tenant.slug, name: tenant.name },
+      storefront: storefront
+        ? {
+            mode: storefront.mode,
+            bindingId: storefront.binding_id,
+            bindingVersion: storefront.binding_version,
+            templateVersionId: storefront.template_version_id,
+            publishedAt: storefront.published_at,
+            industry: storefront.industry_config,
+            modules: storefrontModules,
+          }
+        : null,
       store: {
         id: store.id,
         name: store.name,

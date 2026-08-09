@@ -5,13 +5,22 @@ export default async function Page({
   searchParams,
 }: {
   params: Promise<{ id: string }>;
-  searchParams: Promise<{ tenant?: string; source?: string; scene?: string; shareCode?: string }>;
+  searchParams: Promise<{
+    tenant?: string;
+    source?: string;
+    scene?: string;
+    shareCode?: string;
+    preview?: string;
+  }>;
 }) {
-  const [{ id }, { tenant, source, scene, shareCode }] = await Promise.all([params, searchParams]);
+  const [{ id }, { tenant, source, scene, shareCode, preview }] = await Promise.all([
+    params,
+    searchParams,
+  ]);
   if (!tenant) return <StoreState kind="forbidden" />;
   try {
     const response = await fetch(
-      `${process.env.API_BASE_URL ?? 'http://127.0.0.1:3001'}/api/v1/consumer/stores/${id}?tenant=${encodeURIComponent(tenant)}`,
+      `${process.env.API_BASE_URL ?? 'http://127.0.0.1:3001'}/api/v1/consumer/stores/${id}?tenant=${encodeURIComponent(tenant)}${preview ? `&preview=${encodeURIComponent(preview)}` : ''}`,
       { cache: 'no-store' },
     );
     if (response.status === 404) return <StoreState kind="forbidden" />;

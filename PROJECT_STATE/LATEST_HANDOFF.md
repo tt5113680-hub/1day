@@ -6,6 +6,7 @@
 - Verified foundation: Consumer is responsive at 390/768/1024/1440; Employee uses Mobile Shell; Management, Platform and restricted Channel/Circle modes use explicit Admin Shell identities and scoped navigation. Repository, session, tenant/RBAC isolation, commercial-chain and visual gates all pass.
 - Current: Batch 2 one-click tenant provisioning through verified commercial READY, with industry Storefront lifecycle, decoration, Offer operations, membership and ONE-CODE.
 - Verified Batch 2 subsystem: migration 048 and the commercial onboarding orchestration now produce one durable 11-step run, a published first Storefront, owner Management/Employee access and ONE-CODE before returning `ready`; API acceptance is 1/1 and Platform browser acceptance is 2/2. Next is Storefront Draft/Preview/Publish/Rollback on the same binding and renderer.
+- Verified Storefront lifecycle: migration 049, Management editing, expiring same-renderer Consumer preview, atomic publish and immutable rollback history pass API 1/1 and browser 3/3. Public Consumer reads stay on the prior live version until a validated switch. Next is service/package/Offer operations and Member enrollment/benefit use.
 
 - branch: `hardening/COMMERCIAL-COMPLETION`
 - HEAD: `42186a5e5d6b9aa8ac7edca4bc4636fe4d11fc18`

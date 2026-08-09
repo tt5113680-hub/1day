@@ -46,6 +46,7 @@ import * as rateLimitWindows from './migrations/044_rate_limit_windows.js';
 import * as aiSuggestionExecution from './migrations/045_ai_suggestion_execution.js';
 import * as commercialStorefront from './migrations/046_commercial_storefront.js';
 import * as commercialProvisioning from './migrations/048_commercial_provisioning.js';
+import * as storefrontLifecycle from './migrations/049_storefront_lifecycle.js';
 import * as storeServicePlatformOffers from './migrations/047_store_service_platform_offers.js';
 import type { Database } from './types.js';
 
@@ -100,6 +101,7 @@ const migrationProvider: MigrationProvider = {
       '046_commercial_storefront': commercialStorefront,
       '047_store_service_platform_offers': storeServicePlatformOffers,
       '048_commercial_provisioning': commercialProvisioning,
+      '049_storefront_lifecycle': storefrontLifecycle,
     };
   },
 };

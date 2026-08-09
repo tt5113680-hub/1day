@@ -841,6 +841,21 @@ export interface OneCodeEntriesTable {
   deleted_at: Timestamp | null;
   version: Generated<number>;
 }
+export interface StorefrontPreviewTokensTable {
+  id: string;
+  tenant_id: string;
+  store_id: string;
+  template_version_id: string;
+  token_hash: string;
+  expires_at: Timestamp;
+  status: string;
+  created_at: Timestamp;
+  created_by: string | null;
+  updated_at: Timestamp;
+  updated_by: string | null;
+  deleted_at: Timestamp | null;
+  version: Generated<number>;
+}
 export interface ExternalActionsTable {
   id: string;
   tenant_id: string;
@@ -1322,6 +1337,7 @@ export interface Database {
   membership_enrollments: MembershipEnrollmentsTable;
   member_benefit_ledger: MemberBenefitLedgerTable;
   one_code_entries: OneCodeEntriesTable;
+  storefront_preview_tokens: StorefrontPreviewTokensTable;
   consumer_store_outbound_events: ConsumerStoreOutboundEventsTable;
   consumer_process_accesses: ConsumerProcessAccessesTable;
   consumer_profile_accesses: ConsumerProfileAccessesTable;
