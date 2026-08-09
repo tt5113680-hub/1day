@@ -65,3 +65,16 @@ test('management approval and placement reach the consumer store without a separ
     fullPage: true,
   });
 });
+
+test('consumer discovery exposes only the platform relations approved for the merchant', async ({
+  page,
+}) => {
+  const storePath = `/c/stores/20000000-0000-4000-8000-000000000200?tenant=${tenant.slug}`;
+  await page.goto(`http://localhost:3245/c/discovery?tenant=${tenant.slug}`);
+  await expect(page.locator(`a[href="${storePath}"]`).first()).toBeVisible();
+  await expect(page.locator(`a[href="${storePath}"]`)).toHaveCount(2);
+  await page.screenshot({
+    path: 'evidence/BATCH-3-CONTENT-SYNC/consumer-network-discovery.png',
+    fullPage: true,
+  });
+});
