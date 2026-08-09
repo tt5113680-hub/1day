@@ -1,5 +1,13 @@
 'use client';
 import { SessionApiClient } from '@oneday/session-client';
+import {
+  AdminPageHeader,
+  AppStatePanel,
+  businessLabel,
+  Button,
+  Card,
+  StatusBadge,
+} from '@oneday/ui';
 import { useCallback, useEffect, useState } from 'react';
 import styles from './page.module.css';
 type Item = {
@@ -48,35 +56,50 @@ export default function ContentPage() {
     setNote('草稿已创建，待审批后才能登记分发。');
     await load();
   };
-  if (state === 'loading') return <main className={styles.centered}>正在加载内容中心…</main>;
+  if (state === 'loading')
+    return (
+      <main className={styles.centered}>
+        <AppStatePanel
+          kind="loading"
+          title="正在加载内容中心"
+          description="正在校验内容状态与已登记渠道。"
+        />
+      </main>
+    );
   if (state === 'forbidden')
     return (
       <main className={styles.centered}>
-        <section>
-          <h1>无权查看内容中心</h1>
-        </section>
+        <AppStatePanel
+          kind="forbidden"
+          title="无权查看内容中心"
+          description="请使用具备内容经营权限的账号。"
+        />
       </main>
     );
   if (state === 'error')
     return (
       <main className={styles.centered}>
-        <section>
-          <h1>内容中心暂不可用</h1>
-          <button onClick={() => void load()}>重新加载</button>
-        </section>
+        <AppStatePanel
+          kind="error"
+          title="内容中心暂不可用"
+          description="内容数据未能完成加载，请重试。"
+          action={<Button onClick={() => void load()}>重新加载</Button>}
+        />
       </main>
     );
   return (
     <main className={styles.page}>
-      <header>
-        <div>
-          <p>ONEDAY / 内容中心</p>
-          <h1>让内容生产、审批与渠道连接保持可追溯</h1>
-          <span>渠道分发只登记待授权请求；没有第三方授权时不会伪造发送结果。</span>
-        </div>
-        <button onClick={() => void load()}>刷新</button>
-      </header>
-      <section className={styles.create}>
+      <AdminPageHeader
+        eyebrow="ONEDAY / 商户内容中心"
+        title="让内容生产、审批与渠道连接保持可追溯"
+        description="渠道分发只登记待授权请求；没有第三方授权时不会伪造发送结果。"
+        actions={
+          <Button tone="secondary" onClick={() => void load()}>
+            刷新内容
+          </Button>
+        }
+      />
+      <Card className={styles.create}>
         <label>
           文章标题
           <input
@@ -86,23 +109,38 @@ export default function ContentPage() {
             maxLength={200}
           />
         </label>
-        <button onClick={() => void create()}>创建草稿</button>
+        <Button onClick={() => void create()}>创建草稿</Button>
         {note && <p role="status">{note}</p>}
-      </section>
+      </Card>
       <section className={styles.grid}>
         {items.length ? (
           items.map((x) => (
             <article key={x.id}>
-              <span>{x.kind}</span>
-              <strong>{x.title}</strong>
-              <p>{x.status === 'approved' ? '已批准，可登记渠道待授权分发' : '草稿，等待审批'}</p>
-              <small>
-                {x.channels?.length ? `已登记：${x.channels.join('、')}` : '尚未登记分发渠道'}
-              </small>
+              <Card className={styles.contentCard}>
+                <div className={styles.contentMeta}>
+                  <StatusBadge tone="info">{businessLabel(x.kind)}</StatusBadge>
+                  <StatusBadge tone={x.status === 'approved' ? 'success' : 'warning'}>
+                    {businessLabel(x.status)}
+                  </StatusBadge>
+                </div>
+                <strong>{x.title}</strong>
+                <p>{x.status === 'approved' ? '已批准，可登记渠道待授权分发' : '草稿，等待审批'}</p>
+                <small>
+                  {x.channels?.length
+                    ? `已登记：${x.channels.map(businessLabel).join('、')}`
+                    : '尚未登记分发渠道'}
+                </small>
+              </Card>
             </article>
           ))
         ) : (
-          <section className={styles.empty}>暂无内容。创建草稿开始内容流程。</section>
+          <div className={styles.empty}>
+            <AppStatePanel
+              kind="empty"
+              title="暂无内容"
+              description="创建草稿，开始可追溯的内容审批流程。"
+            />
+          </div>
         )}
       </section>
     </main>
