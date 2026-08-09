@@ -7,24 +7,28 @@ import {
 } from '../fixtures/commercial-simulation.mjs';
 
 process.env.NODE_ENV = 'test';
-const api = 'http://127.0.0.1:3170';
+const api = process.env.H002_API_BASE ?? 'http://127.0.0.1:3170';
+const consumer = process.env.H002_CONSUMER_BASE ?? 'http://127.0.0.1:3171';
+const employee = process.env.H002_EMPLOYEE_BASE ?? 'http://127.0.0.1:3172';
+const management = process.env.H002_MANAGEMENT_BASE ?? 'http://127.0.0.1:3173';
+const platform = process.env.H002_PLATFORM_BASE ?? 'http://127.0.0.1:3174';
 const databaseUrl = 'postgresql://oneday:oneday_local_only@localhost:5434/oneday_v3_test';
 const terminals = [
   {
-    login: 'http://127.0.0.1:3172/e/login',
-    target: 'http://127.0.0.1:3172/e/workbench',
+    login: `${employee}/e/login`,
+    target: `${employee}/e/workbench`,
     role: 'employee01',
     tenant: 'luckin',
   },
   {
-    login: 'http://127.0.0.1:3173/login',
-    target: 'http://127.0.0.1:3173/m/dashboard',
+    login: `${management}/login`,
+    target: `${management}/m/dashboard`,
     role: 'owner',
     tenant: 'luckin',
   },
   {
-    login: 'http://127.0.0.1:3174/login',
-    target: 'http://127.0.0.1:3174/p/dashboard',
+    login: `${platform}/login`,
+    target: `${platform}/p/dashboard`,
     role: 'platform',
     tenant: 'system',
   },
@@ -71,7 +75,7 @@ for (const terminal of terminals) {
 }
 
 test('消费者保持公开匿名访问，不出现后台登录墙', async ({ page }) => {
-  await page.goto('http://127.0.0.1:3171/c/entry?tenant=luckin-oneday-test');
+  await page.goto(`${consumer}/c/entry?tenant=luckin-oneday-test`);
   await expect(page).not.toHaveURL(/\/c\/login/);
 });
 

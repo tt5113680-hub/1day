@@ -1,7 +1,7 @@
 import { expect, test } from '@playwright/test';
 const api = 'http://127.0.0.1:3123',
   tenant = '00000000-0000-4000-8000-000000000001';
-let token = '';
+let session = { accessToken: '', refreshToken: '', expiresAt: '' };
 test.beforeAll(async () => {
   const r = await fetch(`${api}/api/v1/auth/login`, {
     method: 'POST',
@@ -13,10 +13,19 @@ test.beforeAll(async () => {
     }),
   });
   expect(r.status).toBe(201);
-  token = (await r.json()).accessToken;
+  const login = await r.json();
+  session = {
+    accessToken: login.accessToken,
+    refreshToken: login.refreshToken,
+    expiresAt: login.expiresAt,
+  };
 });
 test('platform admin updates a tenant after second confirmation', async ({ page }) => {
-  await page.addInitScript((v) => sessionStorage.setItem('oneday.accessToken', v), token);
+  await page.addInitScript((value) => {
+    sessionStorage.setItem('oneday.accessToken', value.accessToken);
+    sessionStorage.setItem('oneday.refreshToken', value.refreshToken);
+    sessionStorage.setItem('oneday.accessExpiresAt', value.expiresAt);
+  }, session);
   await page.goto('/p/tenants');
   await expect(page.getByRole('heading', { name: '租户开通、暂停与经营边界' })).toBeVisible();
   await page.getByLabel('套餐').selectOption('enterprise');
@@ -31,7 +40,8 @@ test('platform admin updates a tenant after second confirmation', async ({ page 
 });
 test('tenant manager page rejects missing session', async ({ page }) => {
   await page.goto('/p/tenants');
-  await expect(page.getByRole('heading', { name: '无权查看平台租户管理' })).toBeVisible();
+  await expect(page).toHaveURL(/\/login$/);
+  await expect(page.getByRole('heading', { name: '平台登录' })).toBeVisible();
   await page.screenshot({
     path: 'evidence/PAGE-P-002/platform-tenants-forbidden.png',
     fullPage: true,
