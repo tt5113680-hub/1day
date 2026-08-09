@@ -1,5 +1,13 @@
 'use client';
 import { SessionApiClient } from '@oneday/session-client';
+import {
+  AdminPageHeader,
+  AppStatePanel,
+  Button,
+  Card,
+  StatusBadge,
+  businessLabel,
+} from '@oneday/ui';
 
 import { useCallback, useEffect, useState } from 'react';
 import styles from './page.module.css';
@@ -121,41 +129,52 @@ export default function BusinessCirclesPage() {
       setSaving(false);
     }
   };
-  if (state === 'loading') return <main className={styles.centered}>正在加载固定商圈…</main>;
+  if (state === 'loading')
+    return (
+      <main className={styles.centered}>
+        <AppStatePanel
+          kind="loading"
+          title="正在加载固定商圈"
+          description="正在汇总商圈、推荐商户与平台审批记录。"
+        />
+      </main>
+    );
   if (state === 'forbidden')
     return (
       <main className={styles.centered}>
-        <section>
-          <h1>无权查看固定商圈管理</h1>
-        </section>
+        <AppStatePanel kind="forbidden" title="无权查看固定商圈管理" />
       </main>
     );
   if (state === 'error')
     return (
       <main className={styles.centered}>
-        <section>
-          <h1>固定商圈管理暂不可用</h1>
-          <button onClick={() => void load()}>重新加载</button>
-        </section>
+        <AppStatePanel
+          kind="error"
+          title="固定商圈管理暂不可用"
+          description="网络或服务连接出现问题。"
+          action={<Button onClick={() => void load()}>重新加载</Button>}
+        />
       </main>
     );
   return (
     <main className={styles.page}>
-      <header>
-        <div>
-          <p>ONEDAY / 平台固定商圈</p>
-          <h1>显式推荐、权益配置与平台审批</h1>
-          <span>附近商户不会自动进入固定商圈，所有加入均需持久化推荐和批准。</span>
-        </div>
-        <button onClick={() => void load()}>刷新</button>
-      </header>
+      <AdminPageHeader
+        eyebrow="ONEDAY / 平台固定商圈"
+        title="显式推荐、权益配置与平台审批"
+        description="附近商户不会自动进入固定商圈，所有加入均需持久化推荐和批准。"
+        actions={
+          <Button tone="secondary" onClick={() => void load()}>
+            刷新
+          </Button>
+        }
+      />
       {note && (
         <p role="status" className={styles.note}>
           {note}
         </p>
       )}
       <section className={styles.grid}>
-        <section className={styles.panel}>
+        <Card className={styles.panel}>
           <h2>创建商圈与推荐商户</h2>
           <label>
             商圈编码
@@ -213,11 +232,15 @@ export default function BusinessCirclesPage() {
               onChange={(e) => setForm({ ...form, recommendationReason: e.target.value })}
             />
           </label>
-          <button disabled={saving || !data.merchantPool.length} onClick={() => void create()}>
-            {saving ? '正在保存…' : '建立商圈并提交推荐'}
-          </button>
-        </section>
-        <section className={styles.panel}>
+          <Button
+            disabled={!data.merchantPool.length}
+            loading={saving}
+            onClick={() => void create()}
+          >
+            建立商圈并提交推荐
+          </Button>
+        </Card>
+        <Card className={styles.panel}>
           <h2>可推荐商户池</h2>
           {data.merchantPool.length ? (
             data.merchantPool.map((m) => (
@@ -229,9 +252,9 @@ export default function BusinessCirclesPage() {
           ) : (
             <p>暂无可推荐商户。</p>
           )}
-        </section>
+        </Card>
       </section>
-      <section className={styles.circles}>
+      <Card className={styles.circles}>
         <h2>固定商圈与审批队列</h2>
         {data.circles.length ? (
           data.circles.map((circle) => (
@@ -249,16 +272,21 @@ export default function BusinessCirclesPage() {
                   <div>
                     <b>{m.name}</b>
                     <span>
-                      {m.slug} · {m.approvalStatus}
+                      {m.slug} · {businessLabel(m.approvalStatus ?? '')}
                     </span>
                     <small>
                       权益：{m.benefits?.join('、')}；推荐：{m.recommendationReason}
                     </small>
                   </div>
                   {m.approvalStatus === 'pending' && (
-                    <button disabled={saving} onClick={() => void approve(circle, m)}>
+                    <Button loading={saving} onClick={() => void approve(circle, m)}>
                       批准加入
-                    </button>
+                    </Button>
+                  )}
+                  {m.approvalStatus !== 'pending' && (
+                    <StatusBadge tone={m.approvalStatus === 'approved' ? 'success' : 'neutral'}>
+                      {businessLabel(m.approvalStatus ?? '')}
+                    </StatusBadge>
                   )}
                 </section>
               ))}
@@ -267,7 +295,7 @@ export default function BusinessCirclesPage() {
         ) : (
           <p className={styles.empty}>尚未创建固定商圈。</p>
         )}
-      </section>
+      </Card>
     </main>
   );
 }

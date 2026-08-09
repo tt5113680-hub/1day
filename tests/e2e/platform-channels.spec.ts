@@ -46,7 +46,9 @@ test('platform admin creates a first-level channel from the merchant pool', asyn
   });
 });
 
-test('platform channel management redirects to secure sign-in without a session', async ({ page }) => {
+test('platform channel management redirects to secure sign-in without a session', async ({
+  page,
+}) => {
   await page.goto('/p/channels');
   await expect(page).toHaveURL(/\/login$/);
   await expect(page.getByRole('heading')).toBeVisible();
