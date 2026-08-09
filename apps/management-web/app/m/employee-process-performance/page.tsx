@@ -1,5 +1,6 @@
 'use client';
 import { SessionApiClient } from '@oneday/session-client';
+import { AdminPageHeader, AppStatePanel, Button, Card, StatusBadge } from '@oneday/ui';
 import { useCallback, useEffect, useState } from 'react';
 import styles from './page.module.css';
 type Employee = {
@@ -39,38 +40,50 @@ export default function EmployeeProcessPerformancePage() {
     }
   }, []);
   useEffect(() => void load(), [load]);
-  if (state === 'loading') return <main className={styles.centered}>正在汇总员工过程信号…</main>;
+  if (state === 'loading')
+    return (
+      <main className={styles.centered}>
+        <AppStatePanel
+          kind="loading"
+          title="正在汇总员工过程信号"
+          description="正在加载任务、跟进、证据与贡献过程数据。"
+        />
+      </main>
+    );
   if (state === 'forbidden')
     return (
       <main className={styles.centered}>
-        <section>
-          <h1>无权查看员工过程绩效</h1>
-          <p>请使用具备经营管理权限的账号。</p>
-        </section>
+        <AppStatePanel
+          kind="forbidden"
+          title="无权查看员工过程绩效"
+          description="请使用具备经营管理权限的账号。"
+        />
       </main>
     );
   if (state === 'error')
     return (
       <main className={styles.centered}>
-        <section>
-          <h1>员工过程数据暂不可用</h1>
-          <button onClick={() => void load()}>重新加载</button>
-        </section>
+        <AppStatePanel
+          kind="error"
+          title="员工过程数据暂不可用"
+          description="网络或服务连接出现问题。"
+          action={<Button onClick={() => void load()}>重新加载</Button>}
+        />
       </main>
     );
   return (
     <main className={styles.page}>
-      <header>
-        <div>
-          <p>ONEDAY / 员工过程绩效</p>
-          <h1>用任务、跟进、证据与贡献过程支持辅导</h1>
-          <span>
-            参与客户成交来自已确认贡献关联的订单，不表示个人成交额，也不作为唯一绩效结论。
-          </span>
-        </div>
-        <button onClick={() => void load()}>刷新数据</button>
-      </header>
-      <section className={styles.panel}>
+      <AdminPageHeader
+        eyebrow="ONEDAY / 员工过程绩效"
+        title="用任务、跟进、证据与贡献过程支持辅导"
+        description="参与客户成交来自已确认贡献关联的订单，不表示个人成交额，也不作为唯一绩效结论。"
+        actions={
+          <Button tone="secondary" onClick={() => void load()}>
+            刷新数据
+          </Button>
+        }
+      />
+      <Card className={styles.panel}>
         <h2>过程视图</h2>
         {employees.length ? (
           <div className={styles.rows}>
@@ -87,7 +100,10 @@ export default function EmployeeProcessPerformancePage() {
                   <div>
                     <dt>待办 / 逾期</dt>
                     <dd>
-                      {employee.openTasks} / <em>{employee.overdueTasks}</em>
+                      {employee.openTasks} /{' '}
+                      <StatusBadge tone={employee.overdueTasks ? 'danger' : 'neutral'}>
+                        {employee.overdueTasks}
+                      </StatusBadge>
                     </dd>
                   </div>
                   <div>
@@ -111,7 +127,7 @@ export default function EmployeeProcessPerformancePage() {
         ) : (
           <div className={styles.empty}>当前没有可展示的在职员工过程记录。</div>
         )}
-      </section>
+      </Card>
     </main>
   );
 }
