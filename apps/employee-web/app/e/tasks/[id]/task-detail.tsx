@@ -223,13 +223,14 @@ export function TaskDetail() {
   return (
     <main className={styles.page}>
       <header className={styles.header}>
-        <button
+        <Button
+          tone="quiet"
           className={styles.back}
           onClick={() => window.history.back()}
           aria-label="返回工作台"
         >
           ←
-        </button>
+        </Button>
         <div>
           <p>ONEDAY / 我的任务</p>
           <h1>{taskTitleCopy(data.task.title)}</h1>
@@ -284,9 +285,14 @@ export function TaskDetail() {
             {data.availableEvidence.map((item) => (
               <div className={styles.availableRow} key={item.id}>
                 <EvidenceLabel item={item} />
-                <button disabled={busy !== null} onClick={() => void linkEvidence(item.id)}>
-                  {busy === 'link' ? '关联中…' : '关联'}
-                </button>
+                <Button
+                  tone="secondary"
+                  disabled={busy !== null}
+                  loading={busy === 'link'}
+                  onClick={() => void linkEvidence(item.id)}
+                >
+                  关联
+                </Button>
               </div>
             ))}
           </div>
@@ -316,22 +322,27 @@ export function TaskDetail() {
                 onChange={(event) => setResultFile(event.target.files?.[0] ?? null)}
               />
             </label>
-            <button disabled={busy !== null} onClick={() => void recordResult()}>
-              {busy === 'result' ? '上传中…' : '保存结果与证据'}
-            </button>
+            <Button
+              disabled={busy !== null}
+              loading={busy === 'result'}
+              onClick={() => void recordResult()}
+            >
+              保存结果与证据
+            </Button>
           </div>
         </section>
       )}
       <footer className={styles.footer}>
         <a href="/e/workbench">返回工作台</a>
         <a href={`/e/tasks/${data.task.id}/follow-up`}>记录跟进</a>
-        <button
+        <Button
           className={styles.complete}
           disabled={busy !== null || done}
+          loading={busy === 'complete'}
           onClick={() => void complete()}
         >
-          {done ? '任务已完成' : busy === 'complete' ? '处理中…' : '完成任务'}
-        </button>
+          {done ? '任务已完成' : '完成任务'}
+        </Button>
       </footer>
     </main>
   );
