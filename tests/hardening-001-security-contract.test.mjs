@@ -41,6 +41,12 @@ test('non-public controller families cannot bypass AuthorizationService', () => 
 
 test('access-token claims require an active, unrevoked persistent session', () => {
   const auth = source('auth.service.ts');
-  assert.match(auth, /auth_sessions where id=\$1 and user_id=\$2 and tenant_id=\$3/);
-  assert.match(auth, /status='active' and revoked_at is null and expires_at>now\(\)/);
+  assert.match(
+    auth,
+    /auth_sessions s join tenants t on t\.id=s\.tenant_id and t\.status='active' and t\.deleted_at is null/,
+  );
+  assert.match(
+    auth,
+    /s\.id=\$1 and s\.user_id=\$2 and s\.tenant_id=\$3 and s\.status='active' and s\.revoked_at is null and s\.expires_at>now\(\)/,
+  );
 });
