@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## 2026-08-10 - Matrix gap Wave 3 PASS
+
+- MG-F closes remaining high-value PARTIAL P0: MB-01 enrollment/consent, SE-01 multi-device revoke, P-02 suspend session convergence, CT-01 no dual-write placements, M-01 store_manager API denials, WO-01 concurrent SKIP LOCKED consumption.
+- P0 COVERED now 23/26 (~88%). Remaining PARTIAL: M-02, XT-02 depth, RC-01 rebuild. See `MATRIX_GAP_WAVE_3_ACCEPTANCE.md` and `evidence/MATRIX-GAP-WAVE-3/`.
+
 ## 2026-08-10 - Matrix gap Wave 2 PASS
 
 - MG-E isolation contracts: XT-01 route inventory denies cross-tenant context/resources; MS-01 two-store service isolation; XL-01 rejects javascript/http external links; XT-02 light covers invalid preview and tenant/storeId swap without leak.

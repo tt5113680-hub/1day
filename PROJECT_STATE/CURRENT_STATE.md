@@ -4,22 +4,23 @@
 - completed_tasks: 69/69
 - foundation_final_state_commit: 239114e
 - core_final_state_commit: df5ef65
-- last_completed_task: MATRIX-GAP-WAVE-2 PASS (MG-E isolation contracts)
-- current_task: ONEDAY-V3-COMMERCIAL-COMPLETION / matrix gap close-out (MG-F+ next)
-- status: MATRIX_GAP_WAVE_1_PASS; MATRIX_GAP_WAVE_2_PASS; MG_F_NEXT
+- last_completed_task: MATRIX-GAP-WAVE-3 PASS (MG-F PARTIAL P0)
+- current_task: ONEDAY-V3-COMMERCIAL-COMPLETION / matrix gap close-out (optional MG-G depth)
+- status: MATRIX_GAP_WAVE_1_PASS; MATRIX_GAP_WAVE_2_PASS; MATRIX_GAP_WAVE_3_PASS; MG_G_OPTIONAL
 - branch: hardening/COMMERCIAL-COMPLETION
 - executor: Cursor Agent (2026-08-10; see PROJECT_STATE/EXECUTOR_HANDOFF.md)
-- last_safe_commit: 29df5f9 (Matrix gap Wave 1+2 PASS)
-- verified_matrix_gap_wave_2: PASS. XT-01 route inventory, MS-01 two-store isolation, XL-01 link safety, XT-02 light. See PROJECT_STATE/MATRIX_GAP_WAVE_2_ACCEPTANCE.md and evidence/MATRIX-GAP-WAVE-2/.
-- verified_matrix_gap_wave_1: PASS. Sync gateway SY-01/02, concurrent TP-02/SF-01/MB-02, WO-02 DLQ/replay, RC-01 recovery counts. See PROJECT_STATE/MATRIX_GAP_WAVE_1_ACCEPTANCE.md and evidence/MATRIX-GAP-WAVE-1/.
+- last_safe_commit: pending Wave 3 commit
+- verified_matrix_gap_wave_3: PASS — MB-01, SE-01, P-02, CT-01, M-01, WO-01. See PROJECT_STATE/MATRIX_GAP_WAVE_3_ACCEPTANCE.md and evidence/MATRIX-GAP-WAVE-3/.
+- verified_matrix_gap_wave_2: PASS at 29df5f9 — XT-01, MS-01, XL-01, XT-02 light.
+- verified_matrix_gap_wave_1: PASS at 29df5f9 — SY-01/02, TP-02/SF-01/MB-02, WO-02, RC-01 counts.
 - verified_storefront_module_renderer: PASS at source commit ec28727.
 - verified_batch_4: PASS at source commit 04c863f.
 - started_at: 2026-08-09T20:29:46+08:00
 - blocker: null
 - verified_batch_1: PASS at source commit 1aecf81.
 - verified_batch_3: PASS at source commit ead41e4.
-- next_scope: MG-F+ remaining PARTIAL P0 then scoped P1; still no page-level patches. Honest claim: not full matrix green / not 全部商用. Tencent Cloud out of scope (G).
-- progress_p0_covered: 17/26 (~65%)
-- progress_matrix_waves: 2/3 (~70%)
+- next_scope: Optional MG-G (M-02 packaging, XT-02 depth, RC-01 rebuild). Remaining PARTIAL 3/26. Still no page-level patches. Not 全部商用. Tencent Cloud out of scope (G).
+- progress_p0_covered: 23/26 (~88%)
+- progress_matrix_waves: 3/3 core (~90%); optional depth remains
 - verified_pre_pilot_polish: PASS at 268464d.
 - remediation_stage: A-G PASS. See PROJECT_STATE/AUDIT_REMEDIATION_CLOSEOUT.md.

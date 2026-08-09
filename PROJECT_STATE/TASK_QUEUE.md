@@ -10,7 +10,8 @@
 - [x] ONEDAY-V3-COMMERCIAL-COMPLETION / Storefront module-renderer unification PASS - Consumer renders from `storefront.modules`; hard-coded Banner/shortcuts removed; Management order/visibility projects to Consumer; see `STOREFRONT_MODULE_RENDERER_ACCEPTANCE.md`.
 - [x] ONEDAY-V3-COMMERCIAL-COMPLETION / matrix gap Wave 1 PASS - sync gateway (SY-01/02), concurrent harness (TP-02/SF-01/MB-02), worker DLQ/replay (WO-02), recovery commercial counts (RC-01); see `MATRIX_GAP_WAVE_1_ACCEPTANCE.md`.
 - [x] ONEDAY-V3-COMMERCIAL-COMPLETION / matrix gap Wave 2 PASS - MG-E isolation (XT-01, MS-01, XL-01, XT-02 light); see `MATRIX_GAP_WAVE_2_ACCEPTANCE.md`.
-- [ ] ONEDAY-V3-COMMERCIAL-COMPLETION / matrix gap close-out CONTINUES - MG-F+ remaining PARTIAL P0/P1 without page-level patches.
+- [x] ONEDAY-V3-COMMERCIAL-COMPLETION / matrix gap Wave 3 PASS - MG-F PARTIAL P0 (MB-01, SE-01, P-02, CT-01, M-01, WO-01); see `MATRIX_GAP_WAVE_3_ACCEPTANCE.md`.
+- [ ] ONEDAY-V3-COMMERCIAL-COMPLETION / matrix gap optional MG-G - M-02 packaging, XT-02 depth, RC-01 rebuild; remaining PARTIAL 3/26; not 全部商用.
 
 ## Current product-owner acceptance
 

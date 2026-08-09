@@ -35,7 +35,7 @@
 
 **Matrix gap close-out (authorized by A):**
 
-Wave 1–2 PASS (sync/DLQ/concurrency + isolation XT/MS/XL). Next: MG-F+ remaining PARTIAL P0. Still no page-level patches or arbitrary low-code. Tencent Cloud / public HTTPS out of scope (G).
+Waves 1–3 PASS (sync, isolation, membership/session/content/RBAC/worker). Optional MG-G: M-02 packaging, XT-02 depth, RC-01 rebuild. Still no page-level patches. Not 全部商用. Tencent Cloud out of scope (G).
 
 ## Secrets and cloud
 
