@@ -31,6 +31,12 @@
 | Public HTTPS pilot on Tencent Cloud | STOP — phase G says not this phase |
 | Change PRODUCT_FREEZE / claim SaaS commercial | STOP — need explicit owner decision |
 
+## Owner cooperation protocol (2026-08-10)
+
+- Agent must warn **before** chat usage/context is full and provide a new-window paste prompt.
+- Agent must front-load all owner cooperation questions at session start / before long runs.
+- Owner keeps machine awake, Cursor open, and Agent Auto-run enabled during autonomous work (authorization H).
+
 ## Current blockers
 
 None.

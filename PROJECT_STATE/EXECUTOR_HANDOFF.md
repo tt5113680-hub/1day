@@ -53,3 +53,11 @@ Storefront module renderer unification: Consumer must render from `storefront.mo
 - Do not store passwords or tokens in chat or Git.
 - Batch 4 local rehearsal uses Docker PostgreSQL and localhost services.
 - Tencent Cloud / public HTTPS out of scope (authorization G).
+
+## Session / usage monitoring (owner rule 2026-08-10)
+
+1. Agent must monitor conversation length and usage pressure across construction work.
+2. When context/usage is approaching the limit, **warn the owner early** and provide a ready-to-paste new-window starter prompt. Do not wait until quality collapses.
+3. Before long autonomous runs, **front-load every owner cooperation item** (approvals, machine stay-awake, Auto-run, decisions). Do not drip-feed questions mid-batch.
+4. New Agent windows cold-start only from: `EXECUTOR_HANDOFF.md`, `LATEST_HANDOFF.md`, `DECISION_REQUIRED.md`, `CURRENT_STATE.md`, current TASK, `git status`.
+5. Display name "1day" is the GitHub remote; the only writable root remains `D:\ONEDAY_V3`.
