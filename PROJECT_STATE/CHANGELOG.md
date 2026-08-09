@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## 2026-08-09 — ONEDAY-V3-COMMERCIAL-COMPLETION Batch 1 management permission foundation
+
+- Migrated Management role templates, member impact, permission selection, high-risk confirmation and change-reason controls to shared Admin Shell primitives and the canonical commercial token contract.
+- Mapped all persisted permission codes to operator-facing capability names while preserving service-side version locking, explicit confirmation and audit behavior.
+- Format, workspace lint, Management typecheck/build and real 1440px browser suite (2/2) pass with refreshed visual and trace evidence. Batch 1 remains in progress.
+
 ## 2026-08-09 — ONEDAY-V3-COMMERCIAL-COMPLETION Batch 1 management organization foundation
 
 - Migrated Management organization tree, employee invitation, employment status and offboarding handoff risk to shared Admin Shell primitives and the canonical commercial token contract.
