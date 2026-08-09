@@ -9,7 +9,7 @@
 - status: MATRIX_GAP_WAVE_1_PASS; MATRIX_GAP_WAVE_2_PASS; MATRIX_GAP_WAVE_3_PASS; MG_G_OPTIONAL
 - branch: hardening/COMMERCIAL-COMPLETION
 - executor: Cursor Agent (2026-08-10; see PROJECT_STATE/EXECUTOR_HANDOFF.md)
-- last_safe_commit: pending Wave 3 commit
+- last_safe_commit: e070e17 (Matrix gap Wave 3 PASS)
 - verified_matrix_gap_wave_3: PASS — MB-01, SE-01, P-02, CT-01, M-01, WO-01. See PROJECT_STATE/MATRIX_GAP_WAVE_3_ACCEPTANCE.md and evidence/MATRIX-GAP-WAVE-3/.
 - verified_matrix_gap_wave_2: PASS at 29df5f9 — XT-01, MS-01, XL-01, XT-02 light.
 - verified_matrix_gap_wave_1: PASS at 29df5f9 — SY-01/02, TP-02/SF-01/MB-02, WO-02, RC-01 counts.
