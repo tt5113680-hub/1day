@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## 2026-08-10 - ONEDAY-V3-COMMERCIAL-COMPLETION Batch 4 PASS
+
+- Clean-tenant commercial rehearsal provisions a brand-new tenant without shared H-002/commercial-simulation fixture repair and proves READY, ONE-CODE, published Storefront, Consumer enrollment, Employee redemption/follow-up, Management outcome, content placement, Platform channel/circle discovery, second-tenant isolation and suspend/resume recovery.
+- Platform circle approval now converges `invitation_status='accepted'` and `circle_approval_status='approved'` so Consumer discovery projects approved clean-tenant memberships without seed repair.
+- Full workspace quality gates, 189 repository tests, 74 evidence checks, Batch 4 API rehearsal 1/1 and Playwright browser evidence 1/1 passed. See `BATCH_4_ACCEPTANCE.md` and `evidence/BATCH-4/`.
+- Authorized continuation: Storefront module-renderer unification (Consumer renders from `storefront.modules`; remove hard-coded Banner/shortcuts).
+
 ## 2026-08-10 - ONEDAY-V3-COMMERCIAL-COMPLETION Batch 3 PASS
 
 - Tenant suspension now revokes active sessions and tenant status is enforced at login, refresh and token claims checks; recovery requires a fresh authenticated session.

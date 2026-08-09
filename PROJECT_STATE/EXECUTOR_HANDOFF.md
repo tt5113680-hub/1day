@@ -19,34 +19,23 @@
 
 ## Codex read-only handoff (verified)
 
-| Item | Verified fact |
-| ---- | ------------- |
-| Branch | `hardening/COMMERCIAL-COMPLETION` |
-| HEAD at handoff | `9dc4df5` — `fix(provisioning): seed published content placements` |
-| Working tree at handoff | clean |
-| Remote | `origin` → `https://github.com/tt5113680-hub/1day.git` |
-| Batch 3 | `BATCH_3_PASS` at source `ead41e4`; see `BATCH_3_ACCEPTANCE.md` |
-| Batch 4 | `IN_PROGRESS`; clean-tenant rehearsal not yet PASS |
-| `.env*` in repo | none |
-| Tencent Cloud docs in repo | none |
-| External checkpoint | `D:\ONEDAY_V3_SAFE_CHECKPOINT\20260809-202946` |
+| Item                       | Verified fact                                                       |
+| -------------------------- | ------------------------------------------------------------------- |
+| Branch                     | `hardening/COMMERCIAL-COMPLETION`                                   |
+| HEAD at handoff            | `9dc4df5` — `fix(provisioning): seed published content placements`  |
+| Working tree at handoff    | clean                                                               |
+| Remote                     | `origin` → `https://github.com/tt5113680-hub/1day.git`              |
+| Batch 3                    | `BATCH_3_PASS` at source `ead41e4`; see `BATCH_3_ACCEPTANCE.md`     |
+| Batch 4                    | `BATCH_4_PASS`; see `BATCH_4_ACCEPTANCE.md` and `evidence/BATCH-4/` |
+| `.env*` in repo            | none                                                                |
+| Tencent Cloud docs in repo | none                                                                |
+| External checkpoint        | `D:\ONEDAY_V3_SAFE_CHECKPOINT\20260809-202946`                      |
 
 ## Current engineering focus
 
-**Batch 4 — clean-tenant commercial rehearsal (G5):**
+**Storefront module-renderer unification (authorized by A after Batch 4 PASS):**
 
-Provision a brand-new tenant from zero (not the shared H-002/commercial simulation fixture), then prove in one isolated run:
-
-- Platform one-click READY + ONE-CODE
-- Published Storefront on Consumer
-- Consumer enrollment → Employee redemption/follow-up → Management outcome
-- Approved content placement visible on Consumer
-- Platform channel/circle discovery where approved
-- Cross-tenant isolation and tenant suspend/resume recovery
-
-## Post–Batch 4 (authorized by A)
-
-Storefront module renderer unification: Consumer must render from `storefront.modules`; remove transitional hard-coded Banner/shortcut arrays; Management module order/visibility must affect Consumer.
+Consumer must render from `storefront.modules`; remove transitional hard-coded Banner/shortcut arrays; Management module order/visibility must affect Consumer. Then matrix gap close-out. Still no page-level patches or arbitrary low-code.
 
 ## Secrets and cloud
 

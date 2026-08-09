@@ -186,7 +186,7 @@ export class CircleMerchantService implements OnModuleDestroy {
       key,
       requestId,
       'circle_merchant_platform_approval',
-      "approval_status='approved',approved_by=$1,approved_at=now()",
+      "invitation_status='accepted',approval_status='approved',approved_by=$1,approved_at=now()",
       "circle_approval_status='approved' and approval_status='pending'",
       'circle.merchant_platform_approved',
       'circle.merchant.platform_approved.v1',

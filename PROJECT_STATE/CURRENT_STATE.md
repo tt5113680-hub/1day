@@ -5,19 +5,19 @@
 - foundation_final_state_commit: 239114e
 - core_final_state_commit: df5ef65
 - last_completed_task: PRE-PILOT-POLISH PASS (approved pilot experience close-out at 268464d)
-- current_task: ONEDAY-V3-COMMERCIAL-COMPLETION / BATCH 4
-- status: BATCH_4_IN_PROGRESS
+- current_task: ONEDAY-V3-COMMERCIAL-COMPLETION / Storefront module-renderer unification
+- status: BATCH_4_PASS; STOREFRONT_MODULE_RENDERER_IN_PROGRESS
 - branch: hardening/COMMERCIAL-COMPLETION
 - executor: Cursor Agent (2026-08-10; see PROJECT_STATE/EXECUTOR_HANDOFF.md)
-- last_safe_commit: ead41e4 (Batch 3 cross-terminal synchronization verification)
-- batch_4_wip_commit: 9dc4df5 (provisioning published content placement seed; not yet verified as Batch 4 PASS)
+- last_safe_commit: pending Batch 4 PASS commit on this branch
+- verified_batch_4: PASS — clean-tenant commercial rehearsal without shared H-002/commercial-simulation fixture repair. Platform one-click READY + ONE-CODE + published Storefront; Consumer enrollment; Employee redemption/follow-up; Management outcome; content placement; approved Platform channel/circle discovery; second-tenant isolation; suspend/resume recovery. See PROJECT_STATE/BATCH_4_ACCEPTANCE.md and evidence/BATCH-4/.
 - started_at: 2026-08-09T20:29:46+08:00
 - blocker: null
 - verified_batch_1: PASS at source commit 1aecf81. The full format, lint, 18-workspace typecheck/build, 184 repository tests, 74 evidence checks, H-002 session/isolation 6/6, real Consumer-to-Employee-to-Management 2/2, Platform tenant/channel/circle 14/14 and four-terminal visual 3/3 gates passed. See PROJECT_STATE/COMMERCIAL_UI_FOUNDATION_ACCEPTANCE.md.
 - known_observation: H-002 Playwright binds development servers to 127.0.0.1, avoiding the prior cross-origin development-resource warning during four-terminal local acceptance.
 - verified_h002: SessionApiClient is the protected E/M/P request boundary; 36 pages / 54 direct token reads removed; consumer public routes require an explicit tenant and do not default to system; 173 repository tests and 6 H-002 Playwright journeys passed.
 - verified_batch_3: PASS at source commit ead41e4. Platform tenant lifecycle now converges persistent sessions and public access; Management-to-Consumer content placement and approved Platform Channel/Circle Consumer discovery are verified alongside the retained Consumer-to-Employee-to-Management operating chain. See PROJECT_STATE/BATCH_3_ACCEPTANCE.md.
-- next_scope: Run the clean-tenant, no-history Batch 4 commercial rehearsal from one-click provisioning through recovery and full isolation.
+- next_scope: Storefront module-renderer unification — Consumer renders from storefront.modules; remove transitional hard-coded Banner/shortcut arrays; Management module order/visibility must affect Consumer; then matrix gap close-out.
 - verified_pre_pilot_polish: PASS at 268464d. A-1/A-2/A-3, B-1/B-2/B-3 and D-1/D-3 are accepted in PROJECT_STATE/PRE_PILOT_POLISH_ACCEPTANCE.md; focused HTTP, updated browser, H-002, B2-B7, format, lint, 18-package typecheck/build, 184 repository tests and 74 evidence checks passed.
 - verified_audit_batch_2: PASS at 5c0ea50. Public consumer action, store consultation and service consultation atomically project one tenant-scoped operating trail. HTTP acceptance passed for concurrent/replayed idempotency, share-code employee ownership, employee follow-up/completion/evidence, management visibility, lead-pool fallback, cross-tenant denial and unauthenticated denial; 175 repository tests and all quality gates passed.
 - verified_audit_batch_3: Worker now consumes internal Outbox records with event-consumption de-duplication and retry diagnostics, and runs the shared reminder/overdue state machine. Isolated real Worker acceptance passed; 177 repository tests and static quality gates passed at 3998a7d.

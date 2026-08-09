@@ -6,7 +6,8 @@
 
 - [x] ONEDAY-V3-COMMERCIAL-COMPLETION / BATCH 2 PASS - provisioning READY, four industry Storefronts, lifecycle, Offer, content placement, membership and ONE-CODE are accepted at `c79812b`.
 - [x] ONEDAY-V3-COMMERCIAL-COMPLETION / BATCH 3 PASS - cross-terminal tenant lifecycle, content placement and approved Platform network discovery pass at source commit `ead41e4`; see `BATCH_3_ACCEPTANCE.md`.
-- [ ] ONEDAY-V3-COMMERCIAL-COMPLETION / BATCH 4 IN_PROGRESS - run a fresh-tenant commercial rehearsal without historical fixture repair.
+- [x] ONEDAY-V3-COMMERCIAL-COMPLETION / BATCH 4 PASS - clean-tenant commercial rehearsal (READY/ONE-CODE/Storefront through isolation and suspend/resume) verified; see `BATCH_4_ACCEPTANCE.md` and `evidence/BATCH-4/`.
+- [ ] ONEDAY-V3-COMMERCIAL-COMPLETION / Storefront module-renderer unification IN_PROGRESS - Consumer must render from `storefront.modules`; remove hard-coded Banner/shortcuts; Management module order/visibility must affect Consumer.
 
 ## Current product-owner acceptance
 

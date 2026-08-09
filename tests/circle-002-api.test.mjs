@@ -143,6 +143,11 @@ test('circle invitation requires circle review, platform review, configuration a
     assert.equal(platformApproved.status, 201);
     const afterPlatform = (await platformApproved.json()).data;
     assert.equal(afterPlatform.platformApprovalStatus, 'approved');
+    const accepted = await client.query(
+      'select invitation_status from platform_business_circle_merchants where id=$1',
+      [invited.id],
+    );
+    assert.equal(accepted.rows[0].invitation_status, 'accepted');
     const hidden = await request(token, `/${invited.id}/display`, 'PUT', {
       version: afterPlatform.version,
       displayConfig: { visible: false, sortOrder: 7, headline: 'Hidden' },

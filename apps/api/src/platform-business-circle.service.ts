@@ -193,7 +193,7 @@ export class PlatformBusinessCircleService implements OnModuleDestroy {
         throw new ConflictException('CONFLICT');
       const updated = (
         await q.query(
-          "update platform_business_circle_merchants set approval_status='approved',approved_by=$1,approved_at=now(),updated_at=now(),updated_by=$1,version=version+1 where id=$2 returning id,circle_id,merchant_tenant_id,approval_status,version",
+          "update platform_business_circle_merchants set approval_status='approved',invitation_status='accepted',circle_approval_status='approved',approved_by=$1,approved_at=now(),updated_at=now(),updated_by=$1,version=version+1 where id=$2 returning id,circle_id,merchant_tenant_id,approval_status,version",
           [context.userId, membership.id],
         )
       ).rows[0];
