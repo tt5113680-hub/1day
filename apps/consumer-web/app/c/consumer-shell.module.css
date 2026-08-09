@@ -1,0 +1,63 @@
+.bottomNav {
+  position: fixed;
+  z-index: 20;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  border-top: 1px solid #ece1da;
+  padding: 7px max(10px, env(safe-area-inset-right)) calc(8px + env(safe-area-inset-bottom))
+    max(10px, env(safe-area-inset-left));
+  background: rgba(255, 253, 250, 0.97);
+  box-shadow: 0 -8px 24px rgba(68, 37, 26, 0.06);
+  backdrop-filter: blur(18px);
+}
+
+.bottomNav a {
+  display: grid;
+  min-height: 47px;
+  gap: 3px;
+  place-items: center;
+  color: #8f7d75;
+  font-size: 10px;
+  line-height: 1;
+  text-decoration: none;
+}
+
+.bottomNav i {
+  display: grid;
+  width: 22px;
+  height: 22px;
+  place-items: center;
+  border-radius: 8px;
+  font-size: 13px;
+  font-style: normal;
+  font-weight: 900;
+}
+
+.bottomNav a.active {
+  color: #b54935;
+  font-weight: 900;
+}
+
+.bottomNav a.active i {
+  color: #fff;
+  background: #b54935;
+}
+
+.bottomNav a:focus-visible {
+  outline: 3px solid #9b4937;
+  outline-offset: -2px;
+}
+
+@media (min-width: 700px) {
+  .bottomNav {
+    left: 50%;
+    width: 520px;
+    transform: translateX(-50%);
+    border: 1px solid #eaded6;
+    border-bottom: 0;
+    border-radius: 18px 18px 0 0;
+  }
+}

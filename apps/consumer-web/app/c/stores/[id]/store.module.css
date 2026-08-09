@@ -394,7 +394,9 @@
   font-size: 11px;
   line-height: 1.45;
 }
-.memberCard button {
+.memberCard button,
+.memberCard a,
+.memberCard > span {
   flex: 0 0 auto;
   border: 0;
   border-radius: 999px;
@@ -405,6 +407,7 @@
   font-size: 12px;
   font-weight: 800;
   cursor: pointer;
+  text-decoration: none;
 }
 .section {
   padding: 16px;
@@ -694,7 +697,9 @@
   line-height: 1.4;
   opacity: 0.78;
 }
-.benefit button {
+.benefit button,
+.benefit a,
+.benefit > span {
   border: 0;
   padding: 0;
   color: inherit;
@@ -703,6 +708,7 @@
   font-size: 11px;
   font-weight: 800;
   cursor: pointer;
+  text-decoration: none;
 }
 .storeInfo {
   margin: 16px;
@@ -732,7 +738,10 @@
   gap: 6px;
   margin-top: 18px;
 }
-.storeInfo button {
+.storeInfo button,
+.storeInfo a {
+  display: grid;
+  place-items: center;
   min-height: 39px;
   border: 1px solid rgba(255, 255, 255, 0.14);
   border-radius: 11px;
@@ -742,6 +751,7 @@
   font: inherit;
   font-size: 11px;
   cursor: pointer;
+  text-decoration: none;
 }
 .notice {
   margin: 0 16px 12px;
@@ -925,7 +935,9 @@
   bottom: 82px;
   margin: 0 16px 14px;
 }
-.floatingConsult button {
+.floatingConsult button,
+.floatingConsult a {
+  display: grid;
   width: 100%;
   min-height: 50px;
   border: 0;
@@ -937,6 +949,7 @@
   font-size: 15px;
   font-weight: 800;
   cursor: pointer;
+  text-decoration: none;
 }
 .floatingConsult button:disabled {
   opacity: 0.6;

@@ -1,0 +1,349 @@
+.page {
+  min-height: 100svh;
+  padding: 22px 14px calc(96px + env(safe-area-inset-bottom));
+  color: #392119;
+  background: radial-gradient(circle at 100% 0, #fff0e4 0, transparent 30%), #fff9f5;
+}
+.shell {
+  max-width: 560px;
+  margin: auto;
+}
+.header > a {
+  color: #a84331;
+  font-size: 13px;
+  font-weight: 800;
+  text-decoration: none;
+}
+.header > p {
+  margin: 18px 0 5px;
+  color: #9a6757;
+  font-size: 12px;
+  font-weight: 800;
+}
+.header h1 {
+  margin: 0;
+  font-size: 28px;
+  letter-spacing: -0.05em;
+}
+.header > span {
+  display: block;
+  margin-top: 7px;
+  color: #826c64;
+  font-size: 13px;
+  line-height: 1.5;
+}
+.section,
+.menu,
+.stack {
+  margin-top: 22px;
+}
+.package {
+  overflow: hidden;
+  margin-bottom: 12px;
+  border: 1px solid #efdcd2;
+  border-radius: 20px;
+  background: #fff;
+  box-shadow: 0 8px 20px rgba(83, 42, 27, 0.06);
+}
+.package > header {
+  display: grid;
+  gap: 3px;
+  padding: 14px;
+  border-bottom: 1px solid #f1e4de;
+}
+.package > header span {
+  color: #a6654d;
+  font-size: 10px;
+  font-weight: 900;
+  letter-spacing: 0.06em;
+}
+.package > header strong {
+  font-size: 16px;
+}
+.package > header small {
+  color: #94786d;
+  font-size: 11px;
+}
+.platformRow {
+  display: grid;
+  grid-template-columns: 38px minmax(0, 1fr) auto;
+  gap: 10px;
+  align-items: center;
+  padding: 12px 14px;
+  color: inherit;
+  text-decoration: none;
+}
+.platformRow + .platformRow {
+  border-top: 1px solid #f4e9e4;
+}
+.platformRow > span:nth-child(2) {
+  display: grid;
+  min-width: 0;
+  gap: 3px;
+}
+.platformRow strong {
+  overflow: hidden;
+  font-size: 13px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.platformRow small {
+  color: #947b70;
+  font-size: 10px;
+}
+.platformRow > b {
+  display: grid;
+  justify-items: end;
+  gap: 3px;
+  color: #b54935;
+  font-size: 14px;
+}
+.platformRow em {
+  border-radius: 999px;
+  padding: 2px 5px;
+  color: #fff;
+  background: #b54935;
+  font-size: 9px;
+  font-style: normal;
+}
+.platformRow i {
+  font-size: 20px;
+  font-style: normal;
+  line-height: 0;
+}
+.platformBadge {
+  display: grid;
+  width: 38px;
+  height: 38px;
+  place-items: center;
+  border-radius: 12px;
+  color: #fff;
+  background: #866cbe;
+  font-size: 15px;
+  font-weight: 900;
+}
+.platformmeituan {
+  background: #ff8c30;
+}
+.platformdouyin {
+  background: #171717;
+}
+.platformexternal {
+  background: #866cbe;
+}
+.disclaimer {
+  margin: 10px 3px;
+  color: #9c857a;
+  font-size: 10px;
+  line-height: 1.5;
+}
+.menu {
+  display: grid;
+  gap: 12px;
+}
+.menuCard {
+  display: grid;
+  grid-template-columns: 88px minmax(0, 1fr) auto;
+  gap: 12px;
+  align-items: stretch;
+  min-height: 114px;
+  overflow: hidden;
+  border: 1px solid #f0ded5;
+  border-radius: 18px;
+  color: inherit;
+  background: #fff;
+  box-shadow: 0 7px 18px rgba(83, 42, 27, 0.05);
+  text-decoration: none;
+}
+.menuCard img,
+.menuImage {
+  width: 88px;
+  height: 100%;
+  min-height: 114px;
+  object-fit: cover;
+}
+.menuImage {
+  display: grid;
+  place-items: center;
+  color: #fff;
+  background: linear-gradient(135deg, #5d3327, #b54935);
+  font-size: 12px;
+  font-weight: 900;
+}
+.menuCard > span {
+  padding: 13px 0;
+  min-width: 0;
+}
+.menuCard em {
+  color: #b54935;
+  font-size: 10px;
+  font-style: normal;
+  font-weight: 900;
+}
+.menuCard strong {
+  display: block;
+  margin-top: 5px;
+  font-size: 15px;
+}
+.menuCard p {
+  display: -webkit-box;
+  overflow: hidden;
+  margin: 5px 0;
+  color: #826c64;
+  font-size: 11px;
+  line-height: 1.45;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+.menuCard small {
+  color: #a18b82;
+  font-size: 10px;
+}
+.menuCard > b {
+  align-self: end;
+  padding: 0 12px 14px 0;
+  color: #b54935;
+  font-size: 14px;
+  white-space: nowrap;
+}
+.stack {
+  display: grid;
+  gap: 11px;
+}
+.memberHero,
+.benefit,
+.profileHero,
+.profileLink {
+  border-radius: 19px;
+  padding: 18px;
+}
+.memberHero {
+  color: #fff;
+  background: linear-gradient(120deg, #3c2824, #8d5035);
+  box-shadow: 0 12px 28px rgba(76, 40, 26, 0.19);
+}
+.memberHero span,
+.profileHero span {
+  color: #f3c2a4;
+  font-size: 10px;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+}
+.memberHero h2,
+.profileHero h2,
+.benefit h2 {
+  margin: 7px 0;
+  font-size: 18px;
+  letter-spacing: -0.03em;
+}
+.memberHero p,
+.profileHero p,
+.benefit p {
+  margin: 0;
+  font-size: 12px;
+  line-height: 1.6;
+}
+.memberHero p {
+  color: #f3dfd1;
+}
+.memberHero button,
+.memberHero a,
+.memberHero > span,
+.benefit button,
+.benefit a,
+.benefit > span,
+.profileButton {
+  display: inline-grid;
+  place-items: center;
+  margin-top: 14px;
+  border: 0;
+  border-radius: 12px;
+  padding: 10px 13px;
+  color: #643a2a;
+  background: #fff5ef;
+  font: inherit;
+  font-size: 12px;
+  font-weight: 900;
+  text-decoration: none;
+}
+.benefit {
+  color: #563921;
+  background: linear-gradient(145deg, #fff5d9, #f4dec0);
+}
+.benefit span {
+  font-size: 10px;
+  font-weight: 900;
+  letter-spacing: 0.07em;
+}
+.benefit p {
+  color: #7c5e45;
+}
+.benefit button {
+  color: #754830;
+  background: rgba(255, 255, 255, 0.72);
+}
+.profileHero {
+  color: #fff;
+  background: #2e2421;
+}
+.profileHero p {
+  color: #d9c7be;
+}
+.profileLink {
+  display: grid;
+  gap: 6px;
+  color: inherit;
+  background: #fff;
+  box-shadow: 0 7px 18px rgba(83, 42, 27, 0.05);
+  text-decoration: none;
+}
+.profileLink span {
+  color: #9a6757;
+  font-size: 10px;
+  font-weight: 900;
+  letter-spacing: 0.06em;
+}
+.profileLink b {
+  font-size: 14px;
+}
+.profileButton {
+  display: grid;
+  place-items: center;
+  width: 100%;
+  margin-top: 0;
+  color: #fff;
+  background: #b54935;
+}
+.memberHero button:disabled,
+.benefit button:disabled,
+.profileButton:disabled {
+  opacity: 0.6;
+}
+.notice {
+  margin: 16px 0;
+  color: #397454;
+  font-size: 13px;
+  line-height: 1.5;
+  text-align: center;
+}
+.empty {
+  border: 1px dashed #dfc9be;
+  border-radius: 18px;
+  padding: 22px;
+  color: #826c64;
+  background: #fff;
+  font-size: 13px;
+  text-align: center;
+}
+@media (min-width: 700px) {
+  .page {
+    padding-top: 38px;
+  }
+  .shell {
+    border: 1px solid #f0e0d8;
+    border-radius: 25px;
+    padding: 26px;
+    background: #fffdfb;
+    box-shadow: 0 20px 56px rgba(83, 42, 27, 0.1);
+  }
+}

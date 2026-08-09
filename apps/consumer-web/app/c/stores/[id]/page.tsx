@@ -5,9 +5,9 @@ export default async function Page({
   searchParams,
 }: {
   params: Promise<{ id: string }>;
-  searchParams: Promise<{ tenant?: string; source?: string; shareCode?: string }>;
+  searchParams: Promise<{ tenant?: string; source?: string; scene?: string; shareCode?: string }>;
 }) {
-  const [{ id }, { tenant, source, shareCode }] = await Promise.all([params, searchParams]);
+  const [{ id }, { tenant, source, scene, shareCode }] = await Promise.all([params, searchParams]);
   if (!tenant) return <StoreState kind="forbidden" />;
   try {
     const response = await fetch(
@@ -21,6 +21,7 @@ export default async function Page({
         data={((await response.json()) as { data: StoreDetail }).data}
         source={source ?? null}
         shareCode={shareCode ?? null}
+        scene={scene ?? null}
       />
     );
   } catch {

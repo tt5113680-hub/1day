@@ -4,6 +4,13 @@
 
 状态：`AWAITING_PRODUCT_OWNER_UI_ACCEPTANCE`
 
+## Navigation and interaction alignment (2026-08-09)
+
+- The current restaurant/store navigation is now `首页 / 团购 / 菜单 / 会员 / 我的`; it is a single Consumer Shell used on the storefront, each channel, service detail and action-confirmation page. Every tab leads to a real store-scoped page and preserves tenant, store, source, scene and share-code context.
+- Group-buy pages show persisted store-package platform offers and route to the existing confirmation/audit page. Menu product CTA, membership consultation, benefit consultation and storefront consultation use the same confirmation path before a configured external link is opened. Map, phone and share retain explicit tracked outbound behavior.
+- Verification after this change: `pnpm.cmd typecheck` 18/18; `pnpm.cmd build` 18/18; `node --test tests/page-c-004-api.test.mjs` 1/1; `pnpm.cmd exec playwright test --config playwright.consumer-commercial-home.config.ts` 2/2; `pnpm.cmd exec playwright test --config playwright.page-c-004.config.ts` 2/2. The storefront browser suite verifies three stores, five bottom tabs and 375/390/430px screenshots; service/browser verification covers product → confirmation → recorded action.
+- Product-owner visual acceptance remains required. This is not a claim that a real third-party price, stock, order or payment has been verified.
+
 ## 已实现
 
 - `/c/stores/[id]` 以持久化门店、服务、权益、内容及外部动作渲染为移动商业门店首页；含门店切换、轮播 Banner、十宫格、会员加入意向、套餐、第三方比价、动态、商圈权益、位置和固定五栏导航。

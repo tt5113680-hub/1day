@@ -1,6 +1,6 @@
 import { expect, test } from '@playwright/test';
 
-const consumer = 'http://127.0.0.1:3201';
+const consumer = process.env.CONSUMER_URL ?? 'http://127.0.0.1:3201';
 const tenant = 'luckin-oneday-human-pilot';
 const stores = [
   ['30000000-0000-4000-8000-000000000021', '北京国贸测试店', '生椰拿铁双杯'],
@@ -20,13 +20,46 @@ test('CONSUMER-COMMERCIAL-HOME-V1: three real test storefronts render distinct c
     await expect(page.getByRole('heading', { name: storeName })).toBeAttached();
     await expect(page.locator('a[href*="/c/services/"]').filter({ hasText: offer })).toBeVisible();
     await expect(page.getByText('全平台团购比价', { exact: true })).toBeVisible();
-    await expect(page.locator('nav[aria-label="消费者主导航"] a')).toHaveCount(5);
-    await expect(page.getByRole('button', { name: /到店咨询/ })).toBeVisible();
+    await expect(page.locator('nav[aria-label="门店主导航"] a')).toHaveCount(5);
+    await expect(page.getByRole('link', { name: /到店咨询/ })).toBeVisible();
   }
   await page.goto(url(stores[0][0]), { waitUntil: 'networkidle' });
   await expect(page.getByText(/团购价\s*¥19.90/)).toBeVisible();
   await expect(page.getByText(/团购价\s*¥21.90/)).toBeVisible();
   await expect(page.getByText('当前低价', { exact: true })).toBeVisible();
+  await page.getByRole('link', { name: '团购', exact: true }).click();
+  await expect(page).toHaveURL(/\/group-buy\?/);
+  await expect(page.getByText('全平台团购', { exact: true })).toBeVisible();
+  await page.screenshot({
+    path: 'evidence/CONSUMER-COMMERCIAL-HOME-V1/group-buy-390.png',
+    fullPage: true,
+  });
+  await page.getByRole('link', { name: '菜单', exact: true }).click();
+  await expect(page).toHaveURL(/\/menu\?/);
+  await expect(page.getByText('门店菜单', { exact: true })).toBeVisible();
+  await page.screenshot({
+    path: 'evidence/CONSUMER-COMMERCIAL-HOME-V1/menu-390.png',
+    fullPage: true,
+  });
+  await page.getByRole('link', { name: '会员', exact: true }).click();
+  await expect(page).toHaveURL(/\/membership\?/);
+  await expect(page.getByText('会员权益', { exact: true })).toBeVisible();
+  await page.screenshot({
+    path: 'evidence/CONSUMER-COMMERCIAL-HOME-V1/membership-390.png',
+    fullPage: true,
+  });
+  await page.getByRole('link', { name: '我的', exact: true }).click();
+  await expect(page).toHaveURL(/\/profile\?/);
+  await expect(page.getByRole('heading', { name: '我的服务', exact: true })).toBeVisible();
+  await page.screenshot({
+    path: 'evidence/CONSUMER-COMMERCIAL-HOME-V1/profile-390.png',
+    fullPage: true,
+  });
+  await expect(page.getByRole('link', { name: '首页', exact: true })).toHaveAttribute(
+    'href',
+    new RegExp(`/c/stores/${stores[0][0]}\\?`),
+  );
+  await page.goto(url(stores[0][0]), { waitUntil: 'networkidle' });
   await page.getByRole('button', { name: /北京国贸测试店/ }).click();
   await expect(page.getByRole('dialog', { name: '选择门店' })).toBeVisible();
   await expect(page.getByRole('link', { name: /北京望京测试店/ })).toBeVisible();
@@ -44,7 +77,7 @@ test('CONSUMER-COMMERCIAL-HOME-V1: storefront is clear at target mobile widths',
     await expect(page.getByText('商圈权益', { exact: true })).toBeVisible();
     await expect(page.locator('body')).not.toHaveJSProperty('scrollWidth', width + 1);
     await page.screenshot({
-      path: `evidence/CONSUMER-COMMERCIAL-HOME-V1/storefront-${width}.png`,
+      path: `evidence/CONSUMER-COMMERCIAL-HOME-V1/storefront-commercial-${width}.png`,
       fullPage: true,
     });
     await page.close();

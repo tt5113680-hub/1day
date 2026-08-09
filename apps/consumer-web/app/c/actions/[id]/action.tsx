@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { ConsumerShell } from '../../consumer-shell';
 import styles from './action.module.css';
 
 export type ConsumerAction = {
@@ -87,7 +88,7 @@ export function ActionPage({
   const platformCopy =
     action.actionType === 'mini_program' ? action.miniProgramPath : action.copyCode;
   const requiresCopy = action.actionType !== 'link';
-  return (
+  const page = (
     <main className={styles.page}>
       <a className={styles.back} href={back}>
         返回上一页
@@ -131,5 +132,15 @@ export function ActionPage({
         </a>
       </section>
     </main>
+  );
+  return storeId ? (
+    <ConsumerShell
+      context={{ tenant, storeId, source, scene: scene ?? 'external_action', shareCode }}
+      active="group-buy"
+    >
+      {page}
+    </ConsumerShell>
+  ) : (
+    page
   );
 }

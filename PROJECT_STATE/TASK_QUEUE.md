@@ -2,7 +2,7 @@
 
 ## Current product-owner acceptance
 
-- [ ] CONSUMER-COMMERCIAL-HOME-V1 AWAITING_PRODUCT_OWNER_UI_ACCEPTANCE - Consumer-only commercial storefront implemented and technically verified. Follow-ups add persisted package-to-platform comparison prices, align Consumer service/action child-page styling, restructure the storefront header with LBS, a future recommendation placeholder and a persisted-data store-information card, and expand the service detail into a product page with package details, purchase notes and store-scoped platform prices; final visual decision remains with the product owner. Evidence: `evidence/CONSUMER-COMMERCIAL-HOME-V1/ACCEPTANCE.md`.
+- [ ] CONSUMER-COMMERCIAL-HOME-V1 AWAITING_PRODUCT_OWNER_UI_ACCEPTANCE - Consumer-only commercial storefront implemented and technically verified. The restaurant store now has a unified `首页 / 团购 / 菜单 / 会员 / 我的` shell, real store-scoped channels, source/share-code continuity and a consistent action-confirmation route before external hand-off; product, group-buy and action pages use the same navigation. Persisted package/platform prices, the LBS header, store-information card and product details remain in place. Final visual decision remains with the product owner. Evidence: `evidence/CONSUMER-COMMERCIAL-HOME-V1/ACCEPTANCE.md`.
 
 ## Audit hardening status (latest)
 

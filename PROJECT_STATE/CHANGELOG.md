@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## 2026-08-09 — CONSUMER-COMMERCIAL-HOME-V1 navigation and interaction alignment
+
+- Replaced the fixed platform-style consumer tabs with the restaurant storefront contract: `首页 / 团购 / 菜单 / 会员 / 我的`. Each item has a store-scoped page rather than an in-page placeholder.
+- Added a shared Consumer Shell to storefront, group-buy, menu, membership, profile, product-detail and external-action pages. Tenant, store, source, scene and share-code context remain present across each consumer journey.
+- Routed all product, group-buy and consultation actions through the existing confirmation/audit path before an external hand-off. Map, phone and sharing retain their explicit outbound behavior; no payment, fabricated order or third-party delivery claim was added.
+- Verification: full 18-package typecheck/build, focused service API test, Consumer storefront Playwright 2/2 and mobile service/action Playwright 2/2. Status remains `AWAITING_PRODUCT_OWNER_UI_ACCEPTANCE`.
+
 ## 2026-08-09 — CONSUMER-COMMERCIAL-HOME-V1 store-information card
 
 - Replaced the storefront's single-line store title/business-hours area with a reference-inspired store-information card: existing store image, persisted store name, open state, business hours, service method and TEST ONLY marker.
@@ -441,6 +448,7 @@
 
 - 建立统一 ESLint、Prettier、Commitlint 和 Zod 环境变量校验。
 - 通过格式、类型、Lint、26 项契约测试、17 工作区构建和生产依赖安全审计。
+
 ## 2026-08-09 — CONSUMER-COMMERCIAL-HOME-V1 service product detail follow-up
 
 - Expanded the Consumer service detail into a warm, mobile product page: product card, package data, purchase notes, applicable store facts, benefits and a store-scoped platform-price list with lowest-price indication.

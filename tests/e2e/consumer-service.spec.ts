@@ -73,8 +73,11 @@ test('consumer service detail renders product data and platform price', async ({
   await expect(page.getByText('商品详情', { exact: true })).toBeVisible();
   await expect(page.getByText('购买须知', { exact: true })).toBeVisible();
   await expect(page.getByText('门店资料', { exact: true })).toBeVisible();
-  await page.getByRole('button', { name: '去购买', exact: true }).click();
-  await expect(page.getByRole('status')).toContainText('已记录');
+  await page.getByRole('link', { name: '去购买', exact: true }).click();
+  await expect(page).toHaveURL(/\/c\/actions\//);
+  await expect(page.getByRole('heading', { name: '美团团购' })).toBeVisible();
+  await page.getByRole('button', { name: /记录咨询/ }).click();
+  await expect(page.getByText(/本次咨询已记录/)).toBeVisible();
   await page.screenshot({
     path: 'evidence/CONSUMER-COMMERCIAL-HOME-V1/service-detail-mobile.png',
     fullPage: true,

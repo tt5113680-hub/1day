@@ -3,7 +3,7 @@
   min-height: 100svh;
   color: #392119;
   background: radial-gradient(circle at 92% 0%, #fff0e4 0, transparent 27%), #fff9f5;
-  padding: 28px 16px;
+  padding: 28px 16px calc(104px + env(safe-area-inset-bottom));
   font-family: Arial, sans-serif;
 }
 .page {

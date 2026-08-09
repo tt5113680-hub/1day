@@ -1,5 +1,11 @@
 # LATEST_HANDOFF
 
+## CONSUMER-COMMERCIAL-HOME-V1 — 2026-08-09 navigation and interaction alignment
+
+- Consumer is now shaped as the current merchant's own restaurant storefront: the fixed platform-like bottom bar is replaced with `首页 / 团购 / 菜单 / 会员 / 我的`. All five entries are real store-scoped routes and retain tenant, store, source, scene and share-code context.
+- The shared Consumer Shell is used by the store, all four channels, service detail and action-confirmation screen. Product and group-buy purchases, plus membership/consultation requests, first reach the existing auditable confirmation route; no fake third-party order, payment or delivery status is shown.
+- Verified: root typecheck/build (18 packages), `tests/page-c-004-api.test.mjs` 1/1, storefront Playwright 2/2 at 375/390/430px, and service/action Playwright 2/2. Refreshed evidence is under `evidence/CONSUMER-COMMERCIAL-HOME-V1/`. Status is still `AWAITING_PRODUCT_OWNER_UI_ACCEPTANCE`; do not mark Consumer commercially accepted until the product owner reviews the refreshed public preview.
+
 ## CONSUMER-COMMERCIAL-HOME-V1 — 2026-08-09 store-information-card follow-up
 
 - The storefront's former one-line store identity/business-hours row is now a compact information card using only persisted/known facts: store image, merchant/store name, open state, business hours, pickup method and TEST ONLY marker. It follows the supplied information hierarchy without copying unsupported score, sales or delivery data.
@@ -463,6 +469,7 @@
 - Running localhost terminals: Consumer `3171`, Employee `3172`, Management `3173`, Platform `3174`; API `3001`; Worker `3002`.
 - Operator files: `PROJECT_STATE/LOCAL_HUMAN_PILOT_ACCOUNTS.md`, `PROJECT_STATE/LOCAL_HUMAN_PILOT_RUNBOOK.md`; evidence: `evidence/HUMAN-PILOT-HANDOFF/LOCAL_MACHINE_PREFLIGHT.md`.
 - Verification: 18-package typecheck/build; actual API/Worker/terminal HTTP checks; local login, refresh, logout, scheduler, anonymous consumer, customer/task/Outbox, employee follow-up, management visibility, RBAC and cross-tenant isolation all passed.
+
 ## CONSUMER-COMMERCIAL-HOME-V1 — 2026-08-09 service product-detail follow-up
 
 - The Consumer service child page is now a complete product-information page in the existing warm palette. It shows the package card, persisted per-store platform group-buy prices (including the current-lowest marker), product/store materials, applicable-store facts, purchase notes and service benefits.
