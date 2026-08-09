@@ -274,6 +274,50 @@ export default function StorePage({
               <small>即将开放</small>
             </span>
           </div>
+          <div className={styles.storeOverview}>
+            <button
+              className={styles.storeIdentity}
+              type="button"
+              onClick={() => setSwitcher(true)}
+              aria-haspopup="dialog"
+            >
+              {data.store.imageUrl ? (
+                <img className={styles.storeThumb} src={data.store.imageUrl} alt="" />
+              ) : (
+                <span className={styles.brandMark}>O</span>
+              )}
+              <span className={styles.storeIdentityCopy}>
+                <small>{data.store.merchant}</small>
+                <strong>{data.store.name}</strong>
+              </span>
+            </button>
+            <button
+              className={styles.shareButton}
+              type="button"
+              onClick={share}
+              aria-label="分享门店"
+            >
+              ↗
+            </button>
+          </div>
+          <dl className={styles.storeFacts} aria-label="门店基础信息">
+            <div>
+              <dt>门店状态</dt>
+              <dd>营业中</dd>
+            </div>
+            <div>
+              <dt>营业时间</dt>
+              <dd>{data.store.businessHours ?? '以门店为准'}</dd>
+            </div>
+            <div>
+              <dt>服务方式</dt>
+              <dd>到店自取</dd>
+            </div>
+            <div>
+              <dt>门店标识</dt>
+              <dd>TEST ONLY</dd>
+            </div>
+          </dl>
           <button
             className={styles.storeButton}
             type="button"

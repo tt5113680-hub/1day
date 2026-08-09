@@ -12,11 +12,10 @@
 }
 .topbar {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) auto 36px;
-  grid-template-rows: 30px minmax(42px, auto);
+  grid-template-columns: minmax(0, 1fr);
   gap: 8px;
   align-items: center;
-  min-height: 100px;
+  min-height: 174px;
   padding: 8px 16px 12px;
   background: rgba(247, 244, 239, 0.96);
 }
@@ -84,6 +83,91 @@
   color: #9a6757;
   font-size: 8px;
   white-space: nowrap;
+}
+.storeOverview {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 36px;
+  gap: 10px;
+  align-items: center;
+  padding-top: 2px;
+}
+.storeIdentity {
+  display: flex;
+  min-width: 0;
+  gap: 10px;
+  align-items: center;
+  border: 0;
+  padding: 0;
+  color: inherit;
+  background: transparent;
+  font: inherit;
+  text-align: left;
+}
+.storeThumb {
+  width: 52px;
+  height: 52px;
+  flex: 0 0 auto;
+  border-radius: 14px;
+  object-fit: cover;
+}
+.storeIdentityCopy {
+  display: grid;
+  min-width: 0;
+  gap: 3px;
+}
+.storeIdentityCopy small,
+.storeIdentityCopy strong {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.storeIdentityCopy small {
+  color: #9a6757;
+  font-size: 10px;
+  font-weight: 600;
+}
+.storeIdentityCopy strong {
+  font-size: 18px;
+  letter-spacing: -0.03em;
+}
+.storeFacts {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  margin: 0;
+  border-top: 1px solid #ece1da;
+  padding-top: 9px;
+}
+.storeFacts > div {
+  min-width: 0;
+  padding: 0 8px;
+}
+.storeFacts > div:first-child {
+  padding-left: 0;
+}
+.storeFacts > div + div {
+  border-left: 1px solid #ece1da;
+}
+.storeFacts dt {
+  overflow: hidden;
+  color: #9a6757;
+  font-size: 9px;
+  font-weight: 700;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.storeFacts dd {
+  overflow: hidden;
+  margin: 4px 0 0;
+  color: #271a17;
+  font-size: 11px;
+  font-weight: 800;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.topbar > .storeButton,
+.topbar > .openState,
+.topbar > .shareButton {
+  display: none;
 }
 .storeButton,
 .shareButton {

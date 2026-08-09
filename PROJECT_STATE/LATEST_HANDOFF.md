@@ -1,5 +1,10 @@
 # LATEST_HANDOFF
 
+## CONSUMER-COMMERCIAL-HOME-V1 — 2026-08-09 store-information-card follow-up
+
+- The storefront's former one-line store identity/business-hours row is now a compact information card using only persisted/known facts: store image, merchant/store name, open state, business hours, pickup method and TEST ONLY marker. It follows the supplied information hierarchy without copying unsupported score, sales or delivery data.
+- Existing colors, the LBS/future-recommendation row, Banner and all lower sections remain unchanged. 390px visual evidence: `evidence/CONSUMER-COMMERCIAL-HOME-V1/storefront-store-info-390.png`; Consumer typecheck/build passed. Status remains `AWAITING_PRODUCT_OWNER_UI_ACCEPTANCE`.
+
 ## CONSUMER-COMMERCIAL-HOME-V1 — 2026-08-09 storefront-header follow-up
 
 - Only the storefront header was restyled: the upper row now has a tracked LBS-location action on the left and a non-interactive future “business circle / OEM recommendation” placeholder on the right. The existing colors, store identity/status/share row, Banner and all lower sections are unchanged.

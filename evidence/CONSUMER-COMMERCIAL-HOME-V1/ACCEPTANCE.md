@@ -38,6 +38,12 @@
 - The existing warm palette, store title/status/share row, Banner and all lower modules remain unchanged. Visual evidence: `storefront-top-layout-390.png`.
 - Consumer typecheck and production build passed. Status remains `AWAITING_PRODUCT_OWNER_UI_ACCEPTANCE`.
 
+## Store-information card follow-up (2026-08-09)
+
+- Replaced only the prior compact store-title/business-hours row with a card hierarchy derived from the supplied reference: existing store thumbnail, persisted merchant/store name, then four fact cells for open state, business hours, pickup method and TEST ONLY status.
+- No rating, monthly sales, delivery time, promotion or recommendation score was added because the local merchant model does not persist those facts. The existing colors, LBS/future-recommendation row, Banner and all lower content remain unchanged.
+- 390px visual evidence: `storefront-store-info-390.png`. Consumer typecheck and production build passed; status remains `AWAITING_PRODUCT_OWNER_UI_ACCEPTANCE`.
+
 ## Follow-up — package/platform prices and Consumer visual alignment (2026-08-08)
 
 - Migration `047_store_service_platform_offers` persists the relationship between one recommended package, one active store platform action and its offer/market price; it is not derived from a link label.

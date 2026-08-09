@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## 2026-08-09 — CONSUMER-COMMERCIAL-HOME-V1 store-information card
+
+- Replaced the storefront's single-line store title/business-hours area with a reference-inspired store-information card: existing store image, persisted store name, open state, business hours, service method and TEST ONLY marker.
+- Kept the existing LBS/future-recommendation row, warm color system, Banner and lower storefront modules unchanged; no rating, sales or other unsupported marketing metrics were invented.
+
 ## 2026-08-09 — CONSUMER-COMMERCIAL-HOME-V1 storefront header layout
 
 - Reworked only the storefront introduction/header layout without changing its color system: LBS location is on the upper left and a non-interactive future “business circle / OEM recommendation” placeholder is on the upper right.
