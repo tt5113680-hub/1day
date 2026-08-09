@@ -17,6 +17,28 @@
   color: #271a17;
   background: #f7f4ef;
 }
+.page[data-industry='beauty'] {
+  --store-accent: #7d405f;
+  --store-soft: #f9e9ef;
+}
+.page[data-industry='education'] {
+  --store-accent: #295b91;
+  --store-soft: #e8f1fc;
+}
+.page[data-industry='retail'] {
+  --store-accent: #8a4a1e;
+  --store-soft: #fff0dd;
+}
+.page[data-industry='beauty'] .hero,
+.page[data-industry='education'] .hero,
+.page[data-industry='retail'] .hero {
+  background: var(--store-accent);
+}
+.page[data-industry='beauty'] .sectionTitle,
+.page[data-industry='education'] .sectionTitle,
+.page[data-industry='retail'] .sectionTitle {
+  color: var(--store-accent);
+}
 .shell {
   width: min(100%, 520px);
   margin: 0 auto;

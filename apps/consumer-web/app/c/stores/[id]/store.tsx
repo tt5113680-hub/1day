@@ -133,6 +133,7 @@ export default function StorePage({
     scene: scene ?? 'storefront',
     shareCode,
   };
+  const industry = data.storefront?.industry.family ?? 'restaurant';
   const returnTo = `/c/stores/${data.store.id}?${query(data, sourceValue, 'storefront', shareCode).toString()}`;
   const actionUrl = (actionId: string, scene: string) =>
     `/c/actions/${actionId}?${query(data, sourceValue, scene, shareCode).toString()}&storeId=${encodeURIComponent(data.store.id)}&returnTo=${encodeURIComponent(returnTo)}`;
@@ -275,7 +276,7 @@ export default function StorePage({
           装修预览 · 当前内容尚未发布，消费者不会看到此版本
         </aside>
       ) : null}
-      <main id="top" className={styles.page}>
+      <main id="top" className={styles.page} data-industry={industry}>
         <div className={styles.shell}>
           <h1 className={styles.visuallyHidden}>{data.store.name}</h1>
           <header className={styles.topbar}>
