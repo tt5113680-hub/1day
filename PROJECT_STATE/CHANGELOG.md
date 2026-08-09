@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## 2026-08-09 — ONEDAY-V3-COMMERCIAL-COMPLETION Batch 1 employee task-detail foundation
+
+- Migrated the protected Employee task-detail surface to shared `Button`, `StatusBadge` and `AppStatePanel` primitives and replaced local blue/purple visual rules with the canonical commercial token contract.
+- Preserved evidence association, result-evidence upload, idempotent task completion, session recovery and tenant/RBAC behavior. Verified format, workspace lint, Employee typecheck/build and real 390px Employee session regression (2/2), with refreshed screenshot and trace evidence.
+- Batch 1 remains in progress; this is an internal migration checkpoint, not a Batch 1 acceptance claim.
+
 ## 2026-08-09 — ONEDAY-V3-COMMERCIAL-COMPLETION Batch 1 state and shell continuation
 
 - Added active-route feedback to the shared Admin Shell and removed the duplicate Employee Workbench navigation so the employee app has one authoritative mobile task bar.

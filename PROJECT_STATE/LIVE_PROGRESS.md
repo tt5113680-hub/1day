@@ -1,5 +1,7 @@
 # LIVE_PROGRESS
 
+- 2026-08-09 Asia/Shanghai - ONEDAY-V3-COMMERCIAL-COMPLETION Batch 1 employee task-detail migration: the task detail now reuses the shared Button, StatusBadge and AppStatePanel primitives and replaces its legacy blue/purple page styling with the canonical commercial token contract. Its existing protected-session, evidence association, result-evidence and task-completion behavior remains unchanged. Format, workspace lint, Employee typecheck/build and the real 390px session regression are PASS (2/2); refreshed visual and trace evidence are stored under `evidence/PAGE-E-002/`. Batch 1 remains in progress pending the remaining core-page migration and full cross-terminal gates.
+
 - 2026-08-09 Asia/Shanghai - ONEDAY-V3-COMMERCIAL-COMPLETION Batch 1 core management migration: Customer Assets now uses AdminPageHeader, Button, StatusBadge, AppStatePanel and the centralized token contract. Seed/internal customer, segment and owner labels are converted to commercial language in the owner console. Its isolated 1440px capture joins the four-terminal visual suite (3/3 PASS); targeted management typecheck, lint and format pass. Batch 1 remains in progress: remaining core-page migration and final repository/commercial-chain gates are still pending.
 
 - 2026-08-08 Asia/Shanghai - PRE-PILOT-POLISH PASS at `268464d`: all eight approved items and final quality gates passed (format, lint, 18-package typecheck/build, 184 repository tests, 74 evidence checks). Status returns immediately to HUMAN-PILOT-HANDOFF; no additional Hardening work is authorized.
