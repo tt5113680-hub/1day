@@ -4,7 +4,8 @@
 
 - [x] BATCH 1 PASS - unified four-terminal commercial UI foundation and all repository/session/isolation/commercial-chain/visual gates passed at source commit `1aecf81`; see `COMMERCIAL_UI_FOUNDATION_ACCEPTANCE.md`.
 
-- [ ] ONEDAY-V3-COMMERCIAL-COMPLETION / BATCH 2 IN_PROGRESS - complete one-click tenant provisioning to verified READY with industry Storefront lifecycle, decoration, Offer operations, minimum real membership loop and ONE-CODE.
+- [x] ONEDAY-V3-COMMERCIAL-COMPLETION / BATCH 2 PASS - provisioning READY, four industry Storefronts, lifecycle, Offer, content placement, membership and ONE-CODE are accepted at `c79812b`.
+- [ ] ONEDAY-V3-COMMERCIAL-COMPLETION / BATCH 3 IN_PROGRESS - deepen four-product operations and formalize cross-terminal synchronization.
 
 ## Current product-owner acceptance
 
