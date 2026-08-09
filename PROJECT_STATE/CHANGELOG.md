@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## 2026-08-09 — ONEDAY-V3-COMMERCIAL-COMPLETION Batch 1 management organization foundation
+
+- Migrated Management organization tree, employee invitation, employment status and offboarding handoff risk to shared Admin Shell primitives and the canonical commercial token contract.
+- Preserved tenant-scoped invitation/offboarding behavior while converting organization/status values to commercial labels and adding separate visual evidence for the below-fold employee handoff surface.
+- Format, workspace lint, UI/Management typecheck/build and real 1440px browser suite (2/2) pass with refreshed visual and trace evidence. Batch 1 remains in progress.
+
 ## 2026-08-09 — ONEDAY-V3-COMMERCIAL-COMPLETION Batch 1 management template foundation
 
 - Migrated Management tenant template catalog, fixed-module preview and controlled version publish to shared Admin Shell primitives and the canonical commercial token contract.
