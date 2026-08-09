@@ -2,6 +2,7 @@
 
 ## Current product-owner acceptance
 
+- [x] HARDENING-006 PASS - Docker workspace dependency build order repaired for API, Worker and human-pilot image targets. Verified by 18-package typecheck and clean Docker human-pilot artifact build. Evidence: `evidence/HARDENING-006/ACCEPTANCE.md`.
 - [ ] CONSUMER-COMMERCIAL-HOME-V1 AWAITING_PRODUCT_OWNER_UI_ACCEPTANCE - Consumer-only commercial storefront implemented and technically verified. Follow-ups add persisted package-to-platform comparison prices, align Consumer service/action child-page styling, and restructure the storefront header with LBS, a future recommendation placeholder and a persisted-data store-information card; final visual decision remains with the product owner. Evidence: `evidence/CONSUMER-COMMERCIAL-HOME-V1/ACCEPTANCE.md`.
 
 ## Audit hardening status (latest)

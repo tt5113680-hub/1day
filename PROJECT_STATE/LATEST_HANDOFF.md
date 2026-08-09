@@ -1,5 +1,10 @@
 # LATEST_HANDOFF
 
+## HARDENING-006 - Docker deployment build repaired
+
+- Docker targets now compile `@oneday/auth` and `@oneday/events` in a shared dependency stage before API, Worker or HUMAN-PILOT compilation. A clean `human-pilot` image build and its Auth/Events/API/Worker/Consumer artifact checks passed; evidence is in `evidence/HARDENING-006/ACCEPTANCE.md`.
+- The Consumer visual-acceptance task remains `AWAITING_PRODUCT_OWNER_UI_ACCEPTANCE`. Next operational step is Tencent Cloud preview startup without seeding demo or customer data.
+
 ## CONSUMER-COMMERCIAL-HOME-V1 — 2026-08-09 store-information-card follow-up
 
 - The storefront's former one-line store identity/business-hours row is now a compact information card using only persisted/known facts: store image, merchant/store name, open state, business hours, pickup method and TEST ONLY marker. It follows the supplied information hierarchy without copying unsupported score, sales or delivery data.

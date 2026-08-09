@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## 2026-08-09 - HARDENING-006 Docker deployment build repair
+
+- Added a workspace-dependencies Docker stage that compiles `@oneday/auth` and `@oneday/events` before API, Worker and HUMAN-PILOT targets compile their dependent applications.
+- Verified 18-package typecheck, clean HUMAN-PILOT image build and all expected built artifacts. This change does not publish demo data or customer credentials.
+
 ## 2026-08-09 — CONSUMER-COMMERCIAL-HOME-V1 store-information card
 
 - Replaced the storefront's single-line store title/business-hours area with a reference-inspired store-information card: existing store image, persisted store name, open state, business hours, service method and TEST ONLY marker.
