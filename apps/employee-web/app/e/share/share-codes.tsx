@@ -1,5 +1,6 @@
 'use client';
 import { SessionApiClient } from '@oneday/session-client';
+import { AppStatePanel, Button, Card, StatusBadge } from '@oneday/ui';
 
 import QRCode from 'qrcode';
 import { useCallback, useEffect, useMemo, useState } from 'react';
@@ -134,24 +135,35 @@ export function ShareCodes() {
     }
   };
 
-  if (state === 'loading') return <main className={styles.centered}>正在准备分享工具…</main>;
+  if (state === 'loading')
+    return (
+      <main className={styles.centered}>
+        <AppStatePanel
+          kind="loading"
+          title="正在准备分享工具"
+          description="正在同步当前员工的可追踪分享入口。"
+        />
+      </main>
+    );
   if (state === 'forbidden')
     return (
       <main className={styles.centered}>
-        <section>
-          <h1>无法管理分享码</h1>
-          <p>请登录拥有任务管理权限的员工账号。</p>
-          <a href="/e/workbench">返回工作台</a>
-        </section>
+        <AppStatePanel
+          kind="forbidden"
+          title="无法管理分享码"
+          description="请登录拥有任务管理权限的员工账号。"
+        />
       </main>
     );
   if (state === 'error')
     return (
       <main className={styles.centered}>
-        <section>
-          <h1>分享工具暂不可用</h1>
-          <button onClick={() => void load()}>重新加载</button>
-        </section>
+        <AppStatePanel
+          kind="error"
+          title="分享工具暂不可用"
+          description="分享入口未能完成加载。"
+          action={<Button onClick={() => void load()}>重新加载</Button>}
+        />
       </main>
     );
 
@@ -162,7 +174,14 @@ export function ShareCodes() {
           <p>ONEDAY / 获客分享</p>
           <h1>把每次触达变成可追踪的入口</h1>
         </div>
-        <a href="/e/workbench">工作台</a>
+        <Button
+          tone="quiet"
+          onClick={() => {
+            window.location.href = '/e/workbench';
+          }}
+        >
+          工作台
+        </Button>
       </header>
       {message && (
         <p className={styles.feedback} role="status">
@@ -181,7 +200,7 @@ export function ShareCodes() {
           <div className={styles.qrPlaceholder}>生成二维码</div>
         )}
       </section>
-      <section className={styles.create}>
+      <Card className={styles.create}>
         <div>
           <h2>新建分享码</h2>
           <p>默认进入消费者经营入口，可选设置自动失效时间。</p>
@@ -210,15 +229,15 @@ export function ShareCodes() {
               onChange={(event) => setExpiresAt(event.target.value)}
             />
           </label>
-          <button className={styles.primary} disabled={busy} onClick={() => void create()}>
-            {busy ? '生成中…' : '生成分享码'}
-          </button>
+          <Button loading={busy} onClick={() => void create()}>
+            生成分享码
+          </Button>
         </div>
-      </section>
-      <section className={styles.section}>
+      </Card>
+      <Card className={styles.section}>
         <div className={styles.sectionTitle}>
           <h2>我的分享码</h2>
-          <span>{codes.length} 个</span>
+          <StatusBadge tone="info">{codes.length} 个</StatusBadge>
         </div>
         {codes.length ? (
           <div className={styles.list}>
@@ -239,32 +258,34 @@ export function ShareCodes() {
                   </small>
                 </button>
                 <div className={styles.cardActions}>
-                  <button onClick={() => setSelected(item)}>查看二维码</button>
+                  <Button tone="secondary" onClick={() => setSelected(item)}>
+                    查看二维码
+                  </Button>
                   {item.status === 'active' && (
-                    <button
-                      className={styles.danger}
-                      disabled={busy}
-                      onClick={() => void revoke(item)}
-                    >
+                    <Button tone="danger" loading={busy} onClick={() => void revoke(item)}>
                       立即失效
-                    </button>
+                    </Button>
                   )}
                 </div>
               </article>
             ))}
           </div>
         ) : (
-          <p className={styles.empty}>还没有分享码。创建一个用于本次客户触达。</p>
+          <AppStatePanel
+            kind="empty"
+            title="还没有分享码"
+            description="创建一个用于本次客户触达。"
+          />
         )}
-      </section>
+      </Card>
       {selected && (
-        <section className={styles.linkPanel}>
+        <Card className={styles.linkPanel}>
           <div>
             <h2>{labels[selected.scenario]}链接</h2>
             <p>{link}</p>
           </div>
-          <button onClick={() => void copy()}>复制链接</button>
-        </section>
+          <Button onClick={() => void copy()}>复制链接</Button>
+        </Card>
       )}
     </main>
   );

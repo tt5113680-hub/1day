@@ -2,8 +2,7 @@
   max-width: 900px;
   margin: 0 auto;
   padding: 24px 18px 48px;
-  color: #1b1b20;
-  font-family: Arial, sans-serif;
+  color: var(--od-ink);
 }
 .header,
 .sectionTitle,
@@ -18,7 +17,7 @@
 .header p,
 .hero span {
   margin: 0;
-  color: #6f46d9;
+  color: var(--od-brand-700);
   font-size: 12px;
   font-weight: 700;
   letter-spacing: 0.08em;
@@ -28,11 +27,6 @@
   font-size: clamp(25px, 6vw, 42px);
   line-height: 1.1;
 }
-.header a {
-  color: #5425bd;
-  font-weight: 700;
-  text-decoration: none;
-}
 .hero {
   display: flex;
   align-items: center;
@@ -41,8 +35,8 @@
   margin: 28px 0 16px;
   padding: 26px;
   border-radius: 24px;
-  color: #fff;
-  background: linear-gradient(130deg, #4b16b6, #8d61ef);
+  color: var(--od-surface);
+  background: linear-gradient(130deg, var(--od-brand-700), var(--od-brand-800));
 }
 .hero h2 {
   margin: 8px 0;
@@ -52,7 +46,7 @@
   max-width: 530px;
   margin: 0;
   line-height: 1.6;
-  color: #eee8ff;
+  color: var(--od-brand-100);
 }
 .qr,
 .qrPlaceholder {
@@ -60,12 +54,12 @@
   height: 132px;
   flex: none;
   border-radius: 14px;
-  background: #fff;
+  background: var(--od-surface);
 }
 .qrPlaceholder {
   display: grid;
   place-items: center;
-  color: #6540c3;
+  color: var(--od-brand-700);
   font-size: 12px;
 }
 .create,
@@ -73,10 +67,10 @@
 .linkPanel {
   margin-top: 16px;
   padding: 22px;
-  border: 1px solid #e7e0f5;
+  border: 1px solid var(--od-border);
   border-radius: 20px;
-  background: #fff;
-  box-shadow: 0 5px 20px rgba(45, 19, 98, 0.05);
+  background: var(--od-surface);
+  box-shadow: var(--od-shadow-low);
 }
 .create h2,
 .section h2,
@@ -87,7 +81,7 @@
 .create p,
 .linkPanel p {
   margin: 7px 0 0;
-  color: #676272;
+  color: var(--od-text-muted);
   font-size: 14px;
 }
 .controls {
@@ -99,18 +93,18 @@
 .controls label {
   display: grid;
   gap: 5px;
-  color: #595364;
+  color: var(--od-text-muted);
   font-size: 12px;
   font-weight: 700;
 }
 .controls select,
 .controls input,
 .page button {
-  border: 1px solid #d8cdec;
+  border: 1px solid var(--od-border);
   border-radius: 10px;
   padding: 10px 12px;
   color: inherit;
-  background: #fff;
+  background: var(--od-surface);
 }
 .primary {
   border: 0;
@@ -121,8 +115,8 @@
 .sectionTitle span {
   padding: 5px 9px;
   border-radius: 999px;
-  color: #5425bd;
-  background: #f0eaff;
+  color: var(--od-brand-700);
+  background: var(--od-brand-100);
   font-size: 12px;
 }
 .list {
@@ -132,13 +126,13 @@
 }
 .card,
 .selected {
-  border: 1px solid #eee9f6;
+  border: 1px solid var(--od-border);
   border-radius: 14px;
   overflow: hidden;
 }
 .selected {
-  border-color: #7c4ae0;
-  box-shadow: 0 0 0 2px #eee7ff;
+  border-color: var(--od-brand-600);
+  box-shadow: 0 0 0 2px var(--od-brand-100);
 }
 .cardBody {
   width: 100%;
@@ -151,12 +145,12 @@
   cursor: pointer;
 }
 .code {
-  color: #777080;
+  color: var(--od-text-muted);
   font-family: monospace;
 }
 .cardBody small {
   grid-column: 1 / -1;
-  color: #777080;
+  color: var(--od-text-muted);
 }
 .cardActions {
   padding: 0 12px 11px;
@@ -166,8 +160,8 @@
   font-size: 12px;
 }
 .danger {
-  color: #a21f3e;
-  border-color: #ffc7d2;
+  color: var(--od-danger);
+  border-color: color-mix(in srgb, var(--od-danger) 35%, var(--od-border));
 }
 .linkPanel p {
   max-width: 570px;
@@ -182,11 +176,11 @@
 .feedback {
   padding: 10px 13px;
   border-radius: 10px;
-  color: #3f227f;
-  background: #f1ebff;
+  color: var(--od-brand-800);
+  background: var(--od-brand-100);
 }
 .empty {
-  color: #777080;
+  color: var(--od-text-muted);
 }
 .centered {
   display: grid;
@@ -197,7 +191,7 @@
 }
 .centered button,
 .centered a {
-  color: #5425bd;
+  color: var(--od-brand-700);
   font-weight: 700;
 }
 @media (max-width: 600px) {
