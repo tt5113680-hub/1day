@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## 2026-08-09 — ONEDAY-V3-COMMERCIAL-COMPLETION Batch 1 management permission-audit foundation
+
+- Migrated Management permission audit summary, risk filters, audit records and expandable correlation/trace evidence to shared Admin Shell primitives and the canonical commercial token contract.
+- Preserved tenant-scoped audit retrieval and raw evidence visibility only behind explicit expansion; risk and persisted audit kinds use operator-facing language.
+- Format, workspace lint, UI/Management typecheck/build and real 1440px filter/evidence/session browser suite (2/2) pass with refreshed visual and trace evidence. Batch 1 remains in progress.
+
 ## 2026-08-09 — ONEDAY-V3-COMMERCIAL-COMPLETION Batch 1 management connector foundation
 
 - Migrated Management tenant connector authorization intent, secret fingerprint, capability boundary and recent logs to shared Admin Shell primitives and the canonical commercial token contract.

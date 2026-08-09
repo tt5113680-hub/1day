@@ -38,6 +38,7 @@
 - Management Roles/Permissions page-local header, recovery/card/button/checkbox/risk styling and raw permission-code presentation are deprecated at `34d4090`; operator labels must not weaken server version-lock, confirmation or audit controls.
 - Management Settings page-local header, recovery/button/form-card styling and page-level colors are deprecated at `155c529`; native grouped inputs remain while save preserves version, idempotency, audit and event controls.
 - Management Connectors page-local header, recovery/request/card/button/status styling and raw capability/log presentation are deprecated at `56f95bd`; secret and external-delivery boundaries remain explicit.
+- Management Permission Audit page-local header, recovery/metric/filter/record styling and raw audit-kind presentation are deprecated at `a4728c0`; risk review remains tenant-scoped and correlation/trace evidence stays explicit.
 
 1. 新页面或新交互不得再新增页面级颜色、圆角、阴影、按钮或状态体系；必须使用 token 与 primitive。
 2. 每次迁移保留现有 Session、RBAC、tenant scope、幂等和审计行为，并通过关联回归。
