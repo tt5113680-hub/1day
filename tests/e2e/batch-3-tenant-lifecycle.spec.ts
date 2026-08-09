@@ -3,6 +3,7 @@ import { Pool } from 'pg';
 import {
   cleanupCommercialSimulation,
   commercialSimulation,
+  commercialSimulationIds,
   seedCommercialSimulation,
 } from '../fixtures/commercial-simulation.mjs';
 
@@ -25,6 +26,36 @@ test.beforeAll(async () => {
 });
 test.afterAll(async () => {
   await cleanupCommercialSimulation(databaseUrl);
+});
+
+test('approved platform channel and business-circle memberships project to the member consumer discovery', async ({
+  request,
+}) => {
+  const discovery = await request.get(`${api}/api/v1/consumer/discovery?tenant=${luckin.slug}`);
+  expect(discovery.status()).toBe(200);
+  const body = (await discovery.json()).data as {
+    channels: Array<{ id: string; merchants: Array<{ entryUrl: string | null }> }>;
+    circles: Array<{ id: string; merchants: Array<{ entryUrl: string | null }> }>;
+  };
+  const channel = body.channels.find((item) => item.id === commercialSimulationIds.channel);
+  const circle = body.circles.find((item) => item.id === commercialSimulationIds.circle);
+  expect(channel?.merchants[0]?.entryUrl).toBe(
+    `/c/stores/20000000-0000-4000-8000-000000000200?tenant=${luckin.slug}`,
+  );
+  expect(circle?.merchants[0]?.entryUrl).toBe(
+    `/c/stores/20000000-0000-4000-8000-000000000200?tenant=${luckin.slug}`,
+  );
+
+  const unapproved = await request.get(
+    `${api}/api/v1/consumer/discovery?tenant=${commercialSimulation.tenants.restaurantB.slug}`,
+  );
+  expect(unapproved.status()).toBe(200);
+  const other = (await unapproved.json()).data as {
+    channels: Array<{ id: string }>;
+    circles: Array<{ id: string }>;
+  };
+  expect(other.channels.some((item) => item.id === commercialSimulationIds.channel)).toBeFalsy();
+  expect(other.circles.some((item) => item.id === commercialSimulationIds.circle)).toBeFalsy();
 });
 
 test('platform suspension revokes commercial sessions and hides the public storefront until recovery', async ({
@@ -59,8 +90,13 @@ test('platform suspension revokes commercial sessions and hides the public store
   );
   expect(target).toBeTruthy();
 
+  const suspendRequestId = crypto.randomUUID();
   const suspend = await request.put(`${api}/api/v1/platform/tenants/${luckin.id}`, {
-    headers: { ...headers(platform.accessToken), 'idempotency-key': crypto.randomUUID() },
+    headers: {
+      authorization: `Bearer ${platform.accessToken}`,
+      'x-request-id': suspendRequestId,
+      'idempotency-key': crypto.randomUUID(),
+    },
     data: {
       plan: 'starter',
       quotas: { users: 10, customers: 1000, stores: 3 },
@@ -101,12 +137,12 @@ test('platform suspension revokes commercial sessions and hides the public store
         [luckin.id],
       ),
       pool.query(
-        "select count(*)::int as count from audit_logs where tenant_id=$1 and action='platform.tenant_updated' and details->>'status'='suspended'",
-        [system.id],
+        "select count(*)::int as count from audit_logs where tenant_id=$1 and action='platform.tenant_updated' and correlation_id=$2 and details->>'status'='suspended'",
+        [system.id, suspendRequestId],
       ),
       pool.query(
-        "select count(*)::int as count from outbox_events where tenant_id=$1 and event_type='platform.tenant.updated.v1' and payload->>'status'='suspended'",
-        [system.id],
+        "select count(*)::int as count from outbox_events where tenant_id=$1 and event_type='platform.tenant.updated.v1' and correlation_id=$2 and payload->>'status'='suspended'",
+        [system.id, suspendRequestId],
       ),
     ]);
     expect(checks.map((result) => result.rows[0].count)).toEqual([0, 1, 1]);
