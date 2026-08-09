@@ -33,9 +33,9 @@
 
 ## Current engineering focus
 
-**Storefront module-renderer unification (authorized by A after Batch 4 PASS):**
+**Matrix gap close-out (authorized by A):**
 
-Consumer must render from `storefront.modules`; remove transitional hard-coded Banner/shortcut arrays; Management module order/visibility must affect Consumer. Then matrix gap close-out. Still no page-level patches or arbitrary low-code.
+Batch 4 PASS and Storefront module-renderer unification PASS. Close remaining `COMMERCIAL_ACCEPTANCE_MATRIX` gaps. Still no page-level patches or arbitrary low-code. Tencent Cloud / public HTTPS out of scope (G).
 
 ## Secrets and cloud
 

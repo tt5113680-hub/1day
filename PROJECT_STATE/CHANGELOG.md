@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## 2026-08-10 - Storefront module-renderer unification PASS
+
+- Consumer store home now renders from published `storefront.modules` order and omits modules with `config.visible === false`.
+- Removed transitional hard-coded Banner/shortcut arrays; `banner_carousel` and `quick_actions` use module config plus domain data.
+- Management draft reorder/hide → publish is verified by API and Playwright DOM evidence. Fixed five-tab Consumer shell remains for the transition.
+- See `STOREFRONT_MODULE_RENDERER_ACCEPTANCE.md` and `evidence/STOREFRONT-MODULE-RENDERER/`.
+
 ## 2026-08-10 - ONEDAY-V3-COMMERCIAL-COMPLETION Batch 4 PASS
 
 - Clean-tenant commercial rehearsal provisions a brand-new tenant without shared H-002/commercial-simulation fixture repair and proves READY, ONE-CODE, published Storefront, Consumer enrollment, Employee redemption/follow-up, Management outcome, content placement, Platform channel/circle discovery, second-tenant isolation and suspend/resume recovery.

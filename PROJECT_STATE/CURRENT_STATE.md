@@ -5,25 +5,17 @@
 - foundation_final_state_commit: 239114e
 - core_final_state_commit: df5ef65
 - last_completed_task: PRE-PILOT-POLISH PASS (approved pilot experience close-out at 268464d)
-- current_task: ONEDAY-V3-COMMERCIAL-COMPLETION / Storefront module-renderer unification
-- status: BATCH_4_PASS; STOREFRONT_MODULE_RENDERER_IN_PROGRESS
+- current_task: ONEDAY-V3-COMMERCIAL-COMPLETION / matrix gap close-out
+- status: STOREFRONT_MODULE_RENDERER_PASS; MATRIX_GAP_CLOSEOUT_NEXT
 - branch: hardening/COMMERCIAL-COMPLETION
 - executor: Cursor Agent (2026-08-10; see PROJECT_STATE/EXECUTOR_HANDOFF.md)
-- last_safe_commit: 04c863f (Batch 4 clean-tenant commercial rehearsal PASS)
-- verified_batch_4: PASS at source commit 04c863f. Clean-tenant commercial rehearsal without shared H-002/commercial-simulation fixture repair. Platform one-click READY + ONE-CODE + published Storefront; Consumer enrollment; Employee redemption/follow-up; Management outcome; content placement; approved Platform channel/circle discovery; second-tenant isolation; suspend/resume recovery. See PROJECT_STATE/BATCH_4_ACCEPTANCE.md and evidence/BATCH-4/.
+- last_safe_commit: pending Storefront module-renderer PASS commit on this branch
+- verified_storefront_module_renderer: PASS — Consumer store home renders from storefront.modules order/visibility; hard-coded Banner/shortcut arrays removed; Management publish projects to Consumer DOM. See PROJECT_STATE/STOREFRONT_MODULE_RENDERER_ACCEPTANCE.md and evidence/STOREFRONT-MODULE-RENDERER/.
+- verified_batch_4: PASS at source commit 04c863f. Clean-tenant commercial rehearsal without shared H-002/commercial-simulation fixture repair. See PROJECT_STATE/BATCH_4_ACCEPTANCE.md and evidence/BATCH-4/.
 - started_at: 2026-08-09T20:29:46+08:00
 - blocker: null
-- verified_batch_1: PASS at source commit 1aecf81. The full format, lint, 18-workspace typecheck/build, 184 repository tests, 74 evidence checks, H-002 session/isolation 6/6, real Consumer-to-Employee-to-Management 2/2, Platform tenant/channel/circle 14/14 and four-terminal visual 3/3 gates passed. See PROJECT_STATE/COMMERCIAL_UI_FOUNDATION_ACCEPTANCE.md.
-- known_observation: H-002 Playwright binds development servers to 127.0.0.1, avoiding the prior cross-origin development-resource warning during four-terminal local acceptance.
-- verified_h002: SessionApiClient is the protected E/M/P request boundary; 36 pages / 54 direct token reads removed; consumer public routes require an explicit tenant and do not default to system; 173 repository tests and 6 H-002 Playwright journeys passed.
-- verified_batch_3: PASS at source commit ead41e4. Platform tenant lifecycle now converges persistent sessions and public access; Management-to-Consumer content placement and approved Platform Channel/Circle Consumer discovery are verified alongside the retained Consumer-to-Employee-to-Management operating chain. See PROJECT_STATE/BATCH_3_ACCEPTANCE.md.
-- next_scope: Storefront module-renderer unification — Consumer renders from storefront.modules; remove transitional hard-coded Banner/shortcut arrays; Management module order/visibility must affect Consumer; then matrix gap close-out.
-- verified_pre_pilot_polish: PASS at 268464d. A-1/A-2/A-3, B-1/B-2/B-3 and D-1/D-3 are accepted in PROJECT_STATE/PRE_PILOT_POLISH_ACCEPTANCE.md; focused HTTP, updated browser, H-002, B2-B7, format, lint, 18-package typecheck/build, 184 repository tests and 74 evidence checks passed.
-- verified_audit_batch_2: PASS at 5c0ea50. Public consumer action, store consultation and service consultation atomically project one tenant-scoped operating trail. HTTP acceptance passed for concurrent/replayed idempotency, share-code employee ownership, employee follow-up/completion/evidence, management visibility, lead-pool fallback, cross-tenant denial and unauthenticated denial; 175 repository tests and all quality gates passed.
-- verified_audit_batch_3: Worker now consumes internal Outbox records with event-consumption de-duplication and retry diagnostics, and runs the shared reminder/overdue state machine. Isolated real Worker acceptance passed; 177 repository tests and static quality gates passed at 3998a7d.
-- passed_audit_batch_3: PASS at 3998a7d. Internal Outbox consumption, retry diagnostics and Worker task scheduling are deployed to the local runtime and verified by an isolated real process.
-- verified_audit_batch_4: PASS at 207740e. All API services now share one bounded pool per process; migration 044 provides database-backed auth/public-write rate limits; production refuses unsafe CORS, non-HTTPS public transport, untrusted proxy or absent edge-rate-limit declaration. Real API process acceptance and 180 repository tests passed.
-- verified_audit_batch_5: PASS at aa50e0e. Migration 045 records AI execution state; accepted AI suggestions only execute complete whitelisted tenant-local task commands with task/audit/Outbox receipts, while unsupported payloads remain manual_required. Management and platform connectors declare intent-only/no-external-delivery capability and do not expose submitted secrets. Real API acceptance, 182 repository tests and all quality gates passed.
-- verified_audit_batch_6: PASS at 62f102b. A public consumer action reaches one real employee through existing share-code ownership; the employee records a follow-up, task-scoped result and image evidence, then completes the task. Owner management sees the trail; second-tenant owner and unassigned employee receive API-level 404 isolation denials. Real four-terminal Playwright, 183 repository tests and all quality gates passed.
-- verified_audit_batch_7: PASS at d175f64. Shared business-language UI mapping removes internal operating enums and anonymous hashes from the verified commercial journey; the public action accurately describes consultation logging/code copying, and the 390px employee result form no longer overlaps page-end controls. Real four-terminal Playwright, 184 repository tests and all quality gates passed.
+- verified_batch_1: PASS at source commit 1aecf81. See PROJECT_STATE/COMMERCIAL_UI_FOUNDATION_ACCEPTANCE.md.
+- verified_batch_3: PASS at source commit ead41e4. See PROJECT_STATE/BATCH_3_ACCEPTANCE.md.
+- next_scope: Matrix gap close-out per authorization A; still no page-level patches or arbitrary low-code. Tencent Cloud / public HTTPS remain out of scope (authorization G).
+- verified_pre_pilot_polish: PASS at 268464d.
 - remediation_stage: A-G PASS. See PROJECT_STATE/AUDIT_REMEDIATION_CLOSEOUT.md; remaining work is human controlled-pilot handoff, not an unverified technical claim.
