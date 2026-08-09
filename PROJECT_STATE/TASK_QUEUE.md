@@ -12,6 +12,7 @@
 - [x] ONEDAY-V3-COMMERCIAL-COMPLETION / matrix gap Wave 2 PASS - MG-E isolation (XT-01, MS-01, XL-01, XT-02 light); see `MATRIX_GAP_WAVE_2_ACCEPTANCE.md`.
 - [x] ONEDAY-V3-COMMERCIAL-COMPLETION / matrix gap Wave 3 PASS - MG-F PARTIAL P0 (MB-01, SE-01, P-02, CT-01, M-01, WO-01); see `MATRIX_GAP_WAVE_3_ACCEPTANCE.md`.
 - [x] ONEDAY-V3-COMMERCIAL-COMPLETION / matrix gap Wave 4 PASS - MG-G depth (M-02, XT-02, RC-01); P0 minimum COVERED 26/26; see `MATRIX_GAP_WAVE_4_ACCEPTANCE.md`.
+- [x] COMMERCIAL-FIXTURES generator PASS - unified 1–3 READY tenants with products/offers/content/materials for local/test; see `COMMERCIAL_FIXTURE_GENERATOR.md` and `evidence/COMMERCIAL-FIXTURES/`.
 - [ ] HUMAN-PILOT-HANDOFF / product-owner UI acceptance — local sandbox refreshed through migration `053` + storefront bindings (Playwright 4/4); **human sign-off still required**; not auto-claimed as 全部商用. Optional scoped P1 only after product-owner decision.
 
 ## Current product-owner acceptance

@@ -8,6 +8,7 @@ test-results/
 .cursor/
 evidence/**/playwright-output/
 evidence/**/h002-playwright-output/
+evidence/COMMERCIAL-FIXTURES/test-runs/
 *.tsbuildinfo
 .env
 .env.*

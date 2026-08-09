@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## 2026-08-10 - Commercial fixture generator PASS
+
+- Added `scripts/generate-commercial-fixtures.mjs` to provision 1–3 READY tenants via Platform onboarding and enrich them with real Management products, platform offers, content placements, and local `/fixtures` materials.
+- Industries: restaurant / beauty / education. Evidence under `evidence/COMMERCIAL-FIXTURES/`; contract test `tests/commercial-fixture-generator.test.mjs` 1/1.
+- LOCAL TEST ONLY — not 全部商用. See `PROJECT_STATE/COMMERCIAL_FIXTURE_GENERATOR.md`.
+
 ## 2026-08-10 - HUMAN-PILOT sandbox refresh (post-matrix)
 
 - Migrated local `oneday_human_pilot` through `053_sync_gateway` and rebuilt Docker human-pilot services on ports 3200–3205 against current HEAD.

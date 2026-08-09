@@ -1,0 +1,259 @@
+{
+  "recorded_at": "2026-08-09T23:56:18.455Z",
+  "result": "PASS",
+  "mode": "LOCAL_TEST_ONLY",
+  "claim": "Not a public commercial claim. Fixtures are TEST ONLY with simulated third-party links and local materials.",
+  "apiBase": "http://127.0.0.1:3200",
+  "consumerBase": "http://127.0.0.1:3201",
+  "databaseName": "oneday_human_pilot",
+  "stamp": "pilot-20260810075617",
+  "count": 3,
+  "tenants": [
+    {
+      "tenantId": "d8e6e3ed-5d36-4b28-827b-cf07872147bb",
+      "slug": "fx-restaurant-pilot-20260810075617-1",
+      "industry": "restaurant",
+      "label": "餐饮",
+      "ownerEmail": "fx-restaurant-pilot-20260810075617-1@oneday.fixture.local",
+      "ownerPassword": "Fixture-pilot-20260810075617-1!Aa",
+      "storeId": "9cb77d12-8973-4aef-b527-9f1abee11bd2",
+      "storeName": "餐饮国贸店",
+      "imageUrl": "/fixtures/stores/restaurant-a.png",
+      "consumerUrl": "http://127.0.0.1:3201/c/stores/9cb77d12-8973-4aef-b527-9f1abee11bd2?tenant=fx-restaurant-pilot-20260810075617-1",
+      "oneCode": "8EAC95E1D5C247FABEC3",
+      "services": [
+        {
+          "id": "4b729c2e-796a-40c6-b9a4-ac16e1a61e30",
+          "code": "lattee-duo",
+          "name": "生椰拿铁双杯",
+          "offers": [
+            {
+              "platform": "meituan",
+              "title": "美团团购（TEST ONLY）",
+              "offerPrice": 19.9,
+              "marketPrice": 38,
+              "id": "d88b3f07-b33a-4fd6-89ca-4032ca2f2130",
+              "externalActionId": "469afb30-e810-4661-a476-af7924459511"
+            },
+            {
+              "platform": "douyin",
+              "title": "抖音团购（TEST ONLY）",
+              "offerPrice": 21.9,
+              "marketPrice": 38,
+              "id": "dcb09e95-eae2-4911-afb2-fcfc44627362",
+              "externalActionId": "9b6b8315-7aa9-48d4-864b-3745ed2f599c"
+            },
+            {
+              "platform": "external",
+              "title": "合作伙伴套餐（TEST ONLY）",
+              "offerPrice": 20.9,
+              "marketPrice": 38,
+              "id": "f38fb535-9a06-489e-8f21-6e2c89ffd4ca",
+              "externalActionId": "79d9ad07-e151-41a9-8e96-c075e684a90a"
+            }
+          ]
+        },
+        {
+          "id": "31bdbd4e-8797-40ac-a451-3a70d2ba4bd0",
+          "code": "americano-set",
+          "name": "美式轻享套餐",
+          "offers": [
+            {
+              "platform": "meituan",
+              "title": "美团团购（TEST ONLY）",
+              "offerPrice": 23.9,
+              "marketPrice": 42,
+              "id": "276cdc09-c650-4627-bef2-29a37df15411",
+              "externalActionId": "469afb30-e810-4661-a476-af7924459511"
+            },
+            {
+              "platform": "douyin",
+              "title": "抖音团购（TEST ONLY）",
+              "offerPrice": 24.9,
+              "marketPrice": 42,
+              "id": "c1418bfb-d611-47b0-84a4-81d0d87a4009",
+              "externalActionId": "9b6b8315-7aa9-48d4-864b-3745ed2f599c"
+            }
+          ]
+        }
+      ],
+      "contents": [
+        {
+          "id": "ae60cb23-fc96-4561-b844-759359e8c5d3",
+          "title": "晨间好状态，从一杯开始",
+          "mediaPath": "/fixtures/materials/restaurant-story-a.png"
+        },
+        {
+          "id": "6e28e5f8-1fdd-4840-8073-383637c704f6",
+          "title": "国贸午后轻食上新",
+          "mediaPath": "/fixtures/materials/restaurant-story-b.png"
+        }
+      ],
+      "platformOfferCount": 5,
+      "moduleTypes": [
+        "store_hero",
+        "banner_carousel",
+        "quick_actions",
+        "offer_compare",
+        "service_catalog",
+        "member_entry",
+        "content_feed",
+        "store_info"
+      ]
+    },
+    {
+      "tenantId": "920a94bd-1b86-40d9-be81-0b451812dd16",
+      "slug": "fx-beauty-pilot-20260810075617-2",
+      "industry": "beauty",
+      "label": "美业",
+      "ownerEmail": "fx-beauty-pilot-20260810075617-2@oneday.fixture.local",
+      "ownerPassword": "Fixture-pilot-20260810075617-2!Aa",
+      "storeId": "528aa513-a266-4281-a521-c1a3ffaab97f",
+      "storeName": "美业三里屯店",
+      "imageUrl": "/fixtures/stores/beauty-a.png",
+      "consumerUrl": "http://127.0.0.1:3201/c/stores/528aa513-a266-4281-a521-c1a3ffaab97f?tenant=fx-beauty-pilot-20260810075617-2",
+      "oneCode": "70545FF52CB94A29B80E",
+      "services": [
+        {
+          "id": "65a260ac-6cf7-4325-a97c-8e9ad270e707",
+          "code": "facial-basic",
+          "name": "深层清洁护理",
+          "offers": [
+            {
+              "platform": "meituan",
+              "title": "美团服务（TEST ONLY）",
+              "offerPrice": 169,
+              "marketPrice": 299,
+              "id": "64f9e305-3cd1-40ed-96a3-c00c5eb87e2a",
+              "externalActionId": "38e4ea7f-4343-4f61-b3fb-bec25e30d820"
+            },
+            {
+              "platform": "douyin",
+              "title": "抖音服务（TEST ONLY）",
+              "offerPrice": 179,
+              "marketPrice": 299,
+              "id": "927c509a-505a-4189-887d-591bab83a766",
+              "externalActionId": "57899c42-3cf5-48f8-92e4-6eab8d8c5160"
+            }
+          ]
+        },
+        {
+          "id": "f5ea52a3-9cf4-4ec4-8463-d6407fd6c855",
+          "code": "hair-trim",
+          "name": "造型修剪体验",
+          "offers": [
+            {
+              "platform": "meituan",
+              "title": "美团服务（TEST ONLY）",
+              "offerPrice": 98,
+              "marketPrice": 168,
+              "id": "633dc6a0-e11a-4535-b127-f24abb528e05",
+              "externalActionId": "38e4ea7f-4343-4f61-b3fb-bec25e30d820"
+            },
+            {
+              "platform": "external",
+              "title": "合作预约（TEST ONLY）",
+              "offerPrice": 108,
+              "marketPrice": 168,
+              "id": "38cae3ec-bcd7-4de3-8196-624a22507a4c",
+              "externalActionId": "3cec6199-07db-4d07-965d-3a9869b3b147"
+            }
+          ]
+        }
+      ],
+      "contents": [
+        {
+          "id": "897fc6c3-4578-4a00-addf-b6293e42e2ab",
+          "title": "本周护理案例（已授权）",
+          "mediaPath": "/fixtures/materials/beauty-story-a.png"
+        }
+      ],
+      "platformOfferCount": 4,
+      "moduleTypes": [
+        "store_hero",
+        "quick_actions",
+        "service_catalog",
+        "content_feed",
+        "member_entry",
+        "store_info"
+      ]
+    },
+    {
+      "tenantId": "8e7df6a6-018c-460b-b29d-b90c9db63bf6",
+      "slug": "fx-education-pilot-20260810075617-3",
+      "industry": "education",
+      "label": "教育",
+      "ownerEmail": "fx-education-pilot-20260810075617-3@oneday.fixture.local",
+      "ownerPassword": "Fixture-pilot-20260810075617-3!Aa",
+      "storeId": "748cc99c-2358-4b9c-80ed-3202be1204eb",
+      "storeName": "教育中关村校区",
+      "imageUrl": "/fixtures/stores/education-a.png",
+      "consumerUrl": "http://127.0.0.1:3201/c/stores/748cc99c-2358-4b9c-80ed-3202be1204eb?tenant=fx-education-pilot-20260810075617-3",
+      "oneCode": "DE8A361543334508A714",
+      "services": [
+        {
+          "id": "9aafce9c-920c-425b-99bf-d4fb8c6f11eb",
+          "code": "trial-math",
+          "name": "数学思维试听课",
+          "offers": [
+            {
+              "platform": "douyin",
+              "title": "抖音试听（TEST ONLY）",
+              "offerPrice": 9.9,
+              "marketPrice": 99,
+              "id": "bc9e50d7-7b03-43d4-b7cc-e06e880b78ba",
+              "externalActionId": "a77dc388-9e02-47c9-bf9f-635615851719"
+            },
+            {
+              "platform": "external",
+              "title": "官网试听（TEST ONLY）",
+              "offerPrice": 0,
+              "marketPrice": 99,
+              "id": "adf8149f-4eeb-4fd6-beeb-8a00dd1f3baf",
+              "externalActionId": "dd295413-b731-42c6-be64-5ff006059877"
+            }
+          ]
+        },
+        {
+          "id": "9f68f9db-d9cf-4845-af14-22759f5fff25",
+          "code": "stem-camp",
+          "name": "周末 STEM 体验营",
+          "offers": [
+            {
+              "platform": "meituan",
+              "title": "美团课程（TEST ONLY）",
+              "offerPrice": 259,
+              "marketPrice": 399,
+              "id": "4296d96f-3e22-4baf-bd17-a405efe65297",
+              "externalActionId": "edae3c7e-e348-4397-8e84-3fcd6d7bd812"
+            },
+            {
+              "platform": "douyin",
+              "title": "抖音课程（TEST ONLY）",
+              "offerPrice": 269,
+              "marketPrice": 399,
+              "id": "99e2a15d-0e8f-4259-b829-6210183d31c7",
+              "externalActionId": "a77dc388-9e02-47c9-bf9f-635615851719"
+            }
+          ]
+        }
+      ],
+      "contents": [
+        {
+          "id": "5bbcc6c4-3d3a-4e2e-bbf4-081cc174eb7c",
+          "title": "本周校区公开课预告",
+          "mediaPath": "/fixtures/materials/education-story-a.png"
+        }
+      ],
+      "platformOfferCount": 4,
+      "moduleTypes": [
+        "store_hero",
+        "quick_actions",
+        "service_catalog",
+        "content_feed",
+        "store_info",
+        "member_entry"
+      ]
+    }
+  ]
+}

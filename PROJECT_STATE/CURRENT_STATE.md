@@ -4,23 +4,17 @@
 - completed_tasks: 69/69
 - foundation_final_state_commit: 239114e
 - core_final_state_commit: df5ef65
-- last_completed_task: MATRIX-GAP-WAVE-4 PASS (MG-G residual PARTIAL depth)
-- current_task: ONEDAY-V3-COMMERCIAL-COMPLETION / HUMAN-PILOT-HANDOFF (sandbox refreshed; product-owner UI acceptance pending)
-- status: MATRIX_GAP_WAVE_1_PASS; MATRIX_GAP_WAVE_2_PASS; MATRIX_GAP_WAVE_3_PASS; MATRIX_GAP_WAVE_4_PASS; MATRIX_GAP_CLOSEOUT_COMPLETE; HUMAN_PILOT_SANDBOX_REFRESHED
+- last_completed_task: COMMERCIAL-FIXTURES generator PASS (1-3 READY tenants with products/materials)
+- current_task: ONEDAY-V3-COMMERCIAL-COMPLETION / HUMAN-PILOT-HANDOFF + commercial fixture generator READY
+- status: MATRIX_GAP_CLOSEOUT_COMPLETE; HUMAN_PILOT_SANDBOX_REFRESHED; COMMERCIAL_FIXTURES_GENERATOR_PASS
 - branch: hardening/COMMERCIAL-COMPLETION
 - executor: Cursor Agent (2026-08-10; see PROJECT_STATE/EXECUTOR_HANDOFF.md)
-- last_safe_commit: cd3d75a (state record bf90fb6)
+- last_safe_commit: pending this commit
 - verified_matrix_gap_wave_4: PASS ? M-02 packaging, XT-02 depth, RC-01 rebuild report. See PROJECT_STATE/MATRIX_GAP_WAVE_4_ACCEPTANCE.md and evidence/MATRIX-GAP-WAVE-4/.
-- verified_matrix_gap_wave_3: PASS at e070e17 ? MB-01, SE-01, P-02, CT-01, M-01, WO-01.
-- verified_matrix_gap_wave_2: PASS at 29df5f9 ? XT-01, MS-01, XL-01, XT-02 light.
-- verified_matrix_gap_wave_1: PASS at 29df5f9 ? SY-01/02, TP-02/SF-01/MB-02, WO-02, RC-01 counts.
-- verified_storefront_module_renderer: PASS at source commit ec28727.
-- verified_batch_4: PASS at source commit 04c863f.
-- verified_human_pilot_sandbox_refresh: PASS ? `oneday_human_pilot` through 053; storefront bindings; Playwright 4/4. See evidence/HUMAN-PILOT-HANDOFF/POST_MATRIX_PREFLIGHT.md.
+- verified_human_pilot_sandbox_refresh: PASS ? oneday_human_pilot through 053; storefront bindings; Playwright 4/4.
+- verified_commercial_fixtures_generator: PASS ? scripts/generate-commercial-fixtures.mjs; evidence/COMMERCIAL-FIXTURES/; tests/commercial-fixture-generator.test.mjs 1/1.
 - started_at: 2026-08-09T20:29:46+08:00
 - blocker: null
-- verified_batch_1: PASS at source commit 1aecf81.
-- verified_batch_3: PASS at source commit ead41e4.
 - next_scope: Product-owner UI sign-off on localhost HUMAN-PILOT; optional scoped matrix P1 after human decision. Still no page-level patches. Not a public ???? claim without human pilot. Tencent Cloud out of scope (G).
 - progress_p0_covered: 26/26 (100%)
 - progress_matrix_waves: 4/4 close-out complete

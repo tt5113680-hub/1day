@@ -23,6 +23,7 @@
     "db:recovery:clone": "pnpm --filter @oneday/database recovery:clone",
     "human-pilot:seed": "node scripts/local-human-pilot-seed.mjs",
     "human-pilot:start": "powershell -ExecutionPolicy Bypass -File scripts/local-human-pilot-start.ps1",
+    "fixtures:generate": "node scripts/generate-commercial-fixtures.mjs",
     "test:unit": "vitest run",
     "test:e2e": "playwright test",
     "evidence:check": "node tests/evidence-contract.test.mjs"
