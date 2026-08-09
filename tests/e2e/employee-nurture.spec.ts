@@ -7,6 +7,8 @@ const tenant = '00000000-0000-4000-8000-000000000001';
 const api = 'http://127.0.0.1:3073';
 let client: Client;
 let token = '';
+let refreshToken = '';
+let accessExpiresAt = '';
 let customerName = '';
 
 test.beforeAll(async () => {
@@ -54,16 +56,26 @@ test.beforeAll(async () => {
     body: JSON.stringify({ email, password: 'ChangeMe123!', tenantId: tenant }),
   });
   expect(response.status).toBe(201);
-  token = (await response.json()).accessToken;
+  const login = await response.json();
+  token = login.accessToken;
+  refreshToken = login.refreshToken;
+  accessExpiresAt = login.accessExpiresAt;
 });
 
 test.afterAll(async () => client.end());
 
 test('employee retiers, records touch and creates a nurture task at 390px', async ({ page }) => {
-  await page.addInitScript((value) => sessionStorage.setItem('oneday.accessToken', value), token);
+  await page.addInitScript(
+    ({ accessToken, refreshToken, accessExpiresAt }) => {
+      sessionStorage.setItem('oneday.accessToken', accessToken);
+      sessionStorage.setItem('oneday.refreshToken', refreshToken);
+      sessionStorage.setItem('oneday.accessExpiresAt', accessExpiresAt);
+    },
+    { accessToken: token, refreshToken, accessExpiresAt },
+  );
   await page.goto('/e/nurture');
   await expect(page.locator('main > header h1')).toBeVisible();
-  const card = page.locator('article', { hasText: customerName });
+  const card = page.locator('section.od-card', { hasText: customerName });
   await expect(card).toBeVisible();
   await card.locator('select').selectOption('repurchase');
   await expect(page.getByRole('status')).toBeVisible();
@@ -73,16 +85,17 @@ test('employee retiers, records touch and creates a nurture task at 390px', asyn
   await card.locator('button').nth(1).click();
   await expect(page.getByRole('status')).toBeVisible();
   await page.screenshot({
-    path: 'evidence/PAGE-E-007/employee-nurture-mobile.png',
+    path: 'evidence/PAGE-E-007/employee-nurture-mobile-v2.png',
     fullPage: false,
   });
 });
 
 test('employee nurture route provides recovery without a session', async ({ page }) => {
   await page.goto('/e/nurture');
-  await expect(page.locator('main h1')).toBeVisible();
+  await expect(page).toHaveURL(/\/login/);
+  await expect(page.getByRole('heading', { name: '员工登录' })).toBeVisible();
   await page.screenshot({
-    path: 'evidence/PAGE-E-007/employee-nurture-forbidden.png',
+    path: 'evidence/PAGE-E-007/employee-nurture-forbidden-v2.png',
     fullPage: true,
   });
 });

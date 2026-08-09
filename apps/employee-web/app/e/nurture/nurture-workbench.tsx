@@ -1,5 +1,6 @@
 'use client';
 import { SessionApiClient } from '@oneday/session-client';
+import { AppStatePanel, Button, Card, StatusBadge } from '@oneday/ui';
 
 import { useCallback, useEffect, useState } from 'react';
 import styles from './nurture-workbench.module.css';
@@ -73,39 +74,55 @@ export function NurtureWorkbench() {
       setBusy(null);
     }
   };
-  if (state === 'loading') return <main className={styles.centered}>正在加载养客工作台…</main>;
+  if (state === 'loading')
+    return (
+      <main className={styles.centered}>
+        <AppStatePanel
+          kind="loading"
+          title="正在加载养客工作台"
+          description="正在同步客户分层与下一次触达安排。"
+        />
+      </main>
+    );
   if (state === 'forbidden')
     return (
       <main className={styles.centered}>
-        <section>
-          <h1>无法访问养客工作台</h1>
-          <p>请使用具备客户权限的员工账号登录。</p>
-          <a href="/e/workbench">返回工作台</a>
-        </section>
+        <AppStatePanel
+          kind="forbidden"
+          title="无法访问养客工作台"
+          description="请使用具备客户权限的员工账号登录。"
+        />
       </main>
     );
   if (state === 'error')
     return (
       <main className={styles.centered}>
-        <section>
-          <h1>养客工作台暂不可用</h1>
-          <button onClick={() => void load()}>重新加载</button>
-        </section>
+        <AppStatePanel
+          kind="error"
+          title="养客工作台暂不可用"
+          description="客户经营队列未能完成加载。"
+          action={<Button onClick={() => void load()}>重新加载</Button>}
+        />
       </main>
     );
   return (
     <main className={styles.page}>
-      <header>
-        <p>ONEDAY / 客户经营</p>
-        <h1>把下一次复购变成今天的行动</h1>
-        <span>分层查看复购机会与沉睡客户，记录每次触达，并把关键承诺转成可执行任务。</span>
+      <header className={styles.header}>
+        <div>
+          <p>ONEDAY / 客户经营</p>
+          <h1>把下一次复购变成今天的行动</h1>
+          <span>分层查看复购机会与沉睡客户，记录每次触达，并把关键承诺转成可执行任务。</span>
+        </div>
+        <Button tone="quiet" onClick={() => void load()}>
+          刷新
+        </Button>
       </header>
       {message && (
         <p className={styles.feedback} role="status">
           {message}
         </p>
       )}
-      <section className={styles.toolbar}>
+      <Card className={styles.toolbar}>
         <label>
           客户分层
           <select
@@ -120,13 +137,23 @@ export function NurtureWorkbench() {
           </select>
         </label>
         <strong>{profiles.length} 位</strong>
-      </section>
+      </Card>
       <section className={styles.list}>
         {profiles.length ? (
           profiles.map((profile) => (
-            <article className={styles.card} key={profile.customerId}>
+            <Card className={styles.card} key={profile.customerId}>
               <div>
-                <span className={styles[profile.segment]}>{labels[profile.segment]}</span>
+                <StatusBadge
+                  tone={
+                    profile.segment === 'dormant'
+                      ? 'warning'
+                      : profile.segment === 'repurchase'
+                        ? 'success'
+                        : 'info'
+                  }
+                >
+                  {labels[profile.segment]}
+                </StatusBadge>
                 <h2>{profile.customerName}</h2>
                 <p>
                   成交 {profile.orderCount} 次 ·{' '}
@@ -159,8 +186,9 @@ export function NurtureWorkbench() {
                   <option value="repurchase">复购机会</option>
                   <option value="dormant">沉睡唤醒</option>
                 </select>
-                <button
-                  disabled={busy === profile.customerId}
+                <Button
+                  tone="secondary"
+                  loading={busy === profile.customerId}
                   onClick={() =>
                     void send(
                       profile,
@@ -170,11 +198,10 @@ export function NurtureWorkbench() {
                     )
                   }
                 >
-                  {busy === profile.customerId ? '处理中…' : '记录触达'}
-                </button>
-                <button
-                  className={styles.primary}
-                  disabled={busy === profile.customerId}
+                  记录触达
+                </Button>
+                <Button
+                  loading={busy === profile.customerId}
                   onClick={() =>
                     void send(
                       profile,
@@ -191,15 +218,16 @@ export function NurtureWorkbench() {
                   }
                 >
                   安排跟进
-                </button>
+                </Button>
               </div>
-            </article>
+            </Card>
           ))
         ) : (
-          <div className={styles.empty}>
-            <strong>暂时没有需要养护的客户</strong>
-            <p>把获客池中的线索转入养客后，会在这里形成可执行的经营队列。</p>
-          </div>
+          <AppStatePanel
+            kind="empty"
+            title="暂时没有需要养护的客户"
+            description="把获客池中的线索转入养客后，会在这里形成可执行的经营队列。"
+          />
         )}
       </section>
     </main>
