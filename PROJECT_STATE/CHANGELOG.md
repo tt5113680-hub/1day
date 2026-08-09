@@ -441,3 +441,8 @@
 
 - 建立统一 ESLint、Prettier、Commitlint 和 Zod 环境变量校验。
 - 通过格式、类型、Lint、26 项契约测试、17 工作区构建和生产依赖安全审计。
+## 2026-08-09 — CONSUMER-COMMERCIAL-HOME-V1 service product detail follow-up
+
+- Expanded the Consumer service detail into a warm, mobile product page: product card, package data, purchase notes, applicable store facts, benefits and a store-scoped platform-price list with lowest-price indication.
+- Service-detail API data is now restricted to active store-linked actions and returns persisted `store_service_platform_offers`, store facts and content materials. Product-page action clicks retain the existing public intent record before an external destination is opened.
+- Verified: API/Consumer typecheck and production builds; focused service-detail HTTP acceptance; focused mobile Playwright 2/2. Visual evidence: `evidence/CONSUMER-COMMERCIAL-HOME-V1/service-detail-mobile.png`.

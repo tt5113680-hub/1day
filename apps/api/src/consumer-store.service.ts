@@ -196,19 +196,38 @@ export class ConsumerStoreService implements OnModuleDestroy {
     const tenant = await this.tenant(tenantSlug);
     const service = (
       await this.pool.query(
-        "select ss.id,ss.name,ss.description,ss.duration_minutes,ss.price_label,s.id as store_id,s.name as store_name,s.address,m.name as merchant_name from store_services ss join stores s on s.id=ss.store_id and s.tenant_id=ss.tenant_id and s.status='active' and s.deleted_at is null join merchants m on m.id=s.merchant_id and m.tenant_id=s.tenant_id and m.status='active' and m.deleted_at is null where ss.id=$1 and ss.tenant_id=$2 and ss.status='active' and ss.deleted_at is null",
+        "select ss.id,ss.name,ss.description,ss.duration_minutes,ss.price_label,s.id as store_id,s.name as store_name,s.address,s.phone,s.business_hours,s.image_url,m.name as merchant_name from store_services ss join stores s on s.id=ss.store_id and s.tenant_id=ss.tenant_id and s.status='active' and s.deleted_at is null join merchants m on m.id=s.merchant_id and m.tenant_id=s.tenant_id and m.status='active' and m.deleted_at is null where ss.id=$1 and ss.tenant_id=$2 and ss.status='active' and ss.deleted_at is null",
         [serviceId, tenant.id],
       )
     ).rows[0];
     if (!service) throw new NotFoundException('NOT_FOUND');
-    const [benefits, actions] = await Promise.all([
+    const [benefits, content, actions, platformOffers] = await Promise.all([
       this.pool.query(
         "select b.id,b.title,b.description,b.external_action_id from store_benefits b where b.tenant_id=$1 and b.store_id=$2 and b.status='active' and b.deleted_at is null order by b.rank desc,b.title",
         [tenant.id, service.store_id],
       ),
       this.pool.query(
-        "select id,name,action_type,target_url,mini_program_app_id,mini_program_path,platform from external_actions where tenant_id=$1 and status='active' and deleted_at is null order by created_at desc limit 3",
-        [tenant.id],
+        "select id,content_type,title,summary from store_content_items where tenant_id=$1 and store_id=$2 and status='active' and deleted_at is null order by rank desc,title",
+        [tenant.id, service.store_id],
+      ),
+      this.pool.query(
+        `select a.id,a.name,a.action_type,a.target_url,a.mini_program_app_id,a.mini_program_path,a.platform
+         from store_external_actions sea
+         join external_actions a on a.id=sea.external_action_id and a.tenant_id=sea.tenant_id
+         where sea.tenant_id=$1 and sea.store_id=$2 and sea.enabled and sea.deleted_at is null
+           and a.status='active' and a.deleted_at is null
+         order by case when a.action_type='platform_entry' then 0 else 1 end,sea.sort_order,sea.created_at`,
+        [tenant.id, service.store_id],
+      ),
+      this.pool.query(
+        `select spo.id as offer_id,spo.external_action_id,spo.offer_price,spo.market_price,
+                a.name as action_name,a.platform,a.target_url
+         from store_service_platform_offers spo
+         join store_external_actions sea on sea.store_id=spo.store_id and sea.external_action_id=spo.external_action_id and sea.tenant_id=spo.tenant_id and sea.enabled and sea.deleted_at is null
+         join external_actions a on a.id=spo.external_action_id and a.tenant_id=spo.tenant_id and a.status='active' and a.deleted_at is null
+         where spo.tenant_id=$1 and spo.store_id=$2 and spo.service_id=$3 and spo.status='active' and spo.deleted_at is null
+         order by spo.sort_order,a.name`,
+        [tenant.id, service.store_id, service.id],
       ),
     ]);
     return {
@@ -225,8 +244,12 @@ export class ConsumerStoreService implements OnModuleDestroy {
         name: service.store_name,
         address: service.address,
         merchant: service.merchant_name,
+        phone: service.phone,
+        businessHours: service.business_hours,
+        imageUrl: service.image_url,
       },
       benefits: benefits.rows,
+      content: content.rows,
       actions: actions.rows.map((row) => ({
         id: row.id,
         name: row.name,
@@ -235,6 +258,15 @@ export class ConsumerStoreService implements OnModuleDestroy {
         miniProgramAppId: row.mini_program_app_id,
         miniProgramPath: row.mini_program_path,
         platform: row.platform,
+      })),
+      platformOffers: platformOffers.rows.map((row) => ({
+        id: row.external_action_id,
+        offerId: row.offer_id,
+        title: row.action_name,
+        platformType: row.platform,
+        offerPrice: Number(row.offer_price),
+        marketPrice: row.market_price === null ? null : Number(row.market_price),
+        targetUrl: row.target_url,
       })),
     };
   }

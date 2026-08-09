@@ -463,3 +463,8 @@
 - Running localhost terminals: Consumer `3171`, Employee `3172`, Management `3173`, Platform `3174`; API `3001`; Worker `3002`.
 - Operator files: `PROJECT_STATE/LOCAL_HUMAN_PILOT_ACCOUNTS.md`, `PROJECT_STATE/LOCAL_HUMAN_PILOT_RUNBOOK.md`; evidence: `evidence/HUMAN-PILOT-HANDOFF/LOCAL_MACHINE_PREFLIGHT.md`.
 - Verification: 18-package typecheck/build; actual API/Worker/terminal HTTP checks; local login, refresh, logout, scheduler, anonymous consumer, customer/task/Outbox, employee follow-up, management visibility, RBAC and cross-tenant isolation all passed.
+## CONSUMER-COMMERCIAL-HOME-V1 — 2026-08-09 service product-detail follow-up
+
+- The Consumer service child page is now a complete product-information page in the existing warm palette. It shows the package card, persisted per-store platform group-buy prices (including the current-lowest marker), product/store materials, applicable-store facts, purchase notes and service benefits.
+- Only active actions linked to this store are returned. Every visible platform purchase action first uses the existing tenant-scoped service-intent record, then opens the configured external target; platform price, inventory and final promotion remain authoritative on that external page.
+- Focused HTTP service-detail acceptance passed; Consumer service mobile Playwright passed 2/2. Visual evidence: `evidence/CONSUMER-COMMERCIAL-HOME-V1/service-detail-mobile.png`. Status remains `AWAITING_PRODUCT_OWNER_UI_ACCEPTANCE`.
