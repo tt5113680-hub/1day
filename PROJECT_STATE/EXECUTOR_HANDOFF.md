@@ -33,9 +33,9 @@
 
 ## Current engineering focus
 
-**Matrix gap close-out (authorized by A):**
+**HUMAN-PILOT-HANDOFF (authorized continuation after matrix close-out):**
 
-Waves 1–4 PASS. P0 minimum set COVERED 26/26. Next human/pilot/P1 scope only — do not claim 全部商用. Tencent Cloud out of scope (G).
+Local sandbox refreshed through migration `053` with published storefront bindings. Product-owner UI acceptance is the human gate. Optional scoped P1 only after that decision. Do not claim 全部商用. Tencent Cloud out of scope (G).
 
 ## Secrets and cloud
 

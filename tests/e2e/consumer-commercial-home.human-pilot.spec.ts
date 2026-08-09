@@ -74,7 +74,8 @@ test('CONSUMER-COMMERCIAL-HOME-V1: storefront is clear at target mobile widths',
     const page = await browser.newPage({ viewport: { width, height: 844 } });
     await page.goto(url(stores[0][0]), { waitUntil: 'networkidle' });
     await expect(page.getByText('今日推荐', { exact: true })).toBeVisible();
-    await expect(page.getByText('商圈权益', { exact: true })).toBeVisible();
+    await expect(page.getByText('全平台团购比价', { exact: true })).toBeVisible();
+    await expect(page.getByText('门店权益', { exact: true })).toBeVisible();
     await expect(page.locator('body')).not.toHaveJSProperty('scrollWidth', width + 1);
     await page.screenshot({
       path: `evidence/CONSUMER-COMMERCIAL-HOME-V1/storefront-commercial-${width}.png`,

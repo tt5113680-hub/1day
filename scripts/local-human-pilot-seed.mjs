@@ -50,6 +50,8 @@ const ids = {
   discoveryChannel: id(61),
   discoveryCircle: id(62),
   shareCode: id(71),
+  bindings: [id(91), id(92), id(93)],
+  publications: [id(94), id(95), id(96)],
 };
 
 const accounts = [
@@ -172,10 +174,22 @@ const pool = new Pool({ connectionString: databaseUrl });
 const upsert = (text, values) => pool.query(text, values);
 
 try {
-  const migration = await pool.query(
+  const requiredMigration = await pool.query(
     "select name from kysely_migration where name='047_store_service_platform_offers'",
   );
-  assert.equal(migration.rowCount, 1, 'Migration 047 is required before human-pilot provisioning');
+  assert.equal(
+    requiredMigration.rowCount,
+    1,
+    'Migration 047 is required before human-pilot provisioning',
+  );
+  const latestMigration = await pool.query(
+    'select name from kysely_migration order by name desc limit 1',
+  );
+  assert.equal(
+    latestMigration.rows[0]?.name,
+    '053_sync_gateway',
+    'Human-pilot DB must be migrated through 053_sync_gateway before provisioning',
+  );
   const passwordHash = `scrypt$oneday-human-pilot$${scryptSync(humanPilot.password, 'oneday-human-pilot', 64).toString('base64url')}`;
 
   await pool.query('begin');
@@ -366,10 +380,18 @@ try {
       ],
     );
   }
+  const ownerUserId = account('owner').userId;
+  const industryConfig = {
+    family: 'restaurant',
+    label: '餐饮',
+    themeVariant: 'warm',
+    schemaVersion: 1,
+    channels: ['menu', 'group-buy', 'membership'],
+  };
   await upsert(
-    `insert into page_templates(id,tenant_id,code,name,target,published_version_id,status,industry_config) values($1,$2,'pilot-consumer','本地真人试用消费者入口','consumer',$3,'active',$4)
-     on conflict (id) do update set published_version_id=excluded.published_version_id,status='active',deleted_at=null`,
-    [ids.template, humanPilot.tenantA.id, ids.templateVersion, { industry: 'coffee' }],
+    `insert into page_templates(id,tenant_id,code,name,target,published_version_id,status,industry_config) values($1,$2,'consumer-storefront','本地真人试用餐饮店铺','consumer',$3,'active',$4)
+     on conflict (id) do update set code=excluded.code,name=excluded.name,published_version_id=excluded.published_version_id,industry_config=excluded.industry_config,status='active',deleted_at=null`,
+    [ids.template, humanPilot.tenantA.id, ids.templateVersion, industryConfig],
   );
   await upsert(
     `insert into page_template_versions(id,tenant_id,template_id,sequence,status) values($1,$2,$3,1,'published')
@@ -396,47 +418,45 @@ try {
       );
     }
   }
+  // Align with restaurant industry catalog used by Platform provisioning / module-renderer.
   const modules = [
-    [
-      id(801),
-      'hero',
-      1,
-      {
-        title: '瑞幸咖啡北京测试门店',
-        sceneLabel: 'LOCAL HUMAN PILOT',
-        summary: '本地真人试用：浏览、进店并提交一次模拟咨询。',
-        benefit: '仅限本机模拟数据',
-      },
-    ],
-    [
-      id(802),
-      'action_grid',
-      2,
-      {
-        recommendations: [
-          { title: '北京国贸测试店', description: '进入门店并提交一次本地模拟咨询', tag: '推荐' },
-          { title: '北京望京测试店', description: '浏览测试门店资料', tag: '测试' },
-        ],
-      },
-    ],
-    [
-      id(803),
-      'content',
-      3,
-      {
-        cards: [
-          { title: '到店咨询', description: '咨询将创建本地模拟客户与跟进任务', tag: '本地' },
-          { title: '员工跟进', description: '由测试店长接收后续任务', tag: '闭环' },
-        ],
-      },
-    ],
+    [id(801), 'store_hero', 1, { emphasis: 'nearby_visit' }],
+    [id(802), 'banner_carousel', 2, { limit: 3 }],
+    [id(803), 'quick_actions', 3, { capabilities: ['consult', 'phone', 'navigation'] }],
+    [id(804), 'offer_compare', 4, { source: 'store_service_platform_offers' }],
+    [id(805), 'service_catalog', 5, { presentation: 'menu' }],
+    [id(806), 'member_entry', 6, { mode: 'enrollment' }],
+    [id(807), 'content_feed', 7, { kind: 'store_story' }],
+    [id(808), 'store_info', 8, {}],
   ];
   for (const [moduleId, type, position, config] of modules)
     await upsert(
       `insert into page_modules(id,tenant_id,template_version_id,module_type,position,config,status) values($1,$2,$3,$4,$5,$6,'active')
-       on conflict (id) do update set config=excluded.config,status='active',deleted_at=null`,
+       on conflict (id) do update set module_type=excluded.module_type,position=excluded.position,config=excluded.config,status='active',deleted_at=null`,
       [moduleId, humanPilot.tenantA.id, ids.templateVersion, type, position, config],
     );
+  for (const [index, storeId] of ids.stores.entries()) {
+    const bindingId = ids.bindings[index];
+    await upsert(
+      `insert into storefront_bindings(id,tenant_id,store_id,template_id,draft_version_id,live_version_id,status,published_at,created_by,updated_by)
+       values($1,$2,$3,$4,$5,$5,'active',now(),$6,$6)
+       on conflict (store_id) do update set template_id=excluded.template_id,draft_version_id=excluded.draft_version_id,live_version_id=excluded.live_version_id,status='active',published_at=now(),deleted_at=null,updated_by=excluded.updated_by,updated_at=now()`,
+      [bindingId, humanPilot.tenantA.id, storeId, ids.template, ids.templateVersion, ownerUserId],
+    );
+    await upsert(
+      `insert into storefront_publications(id,tenant_id,binding_id,template_version_id,publication_type,sequence,correlation_id,created_by,updated_by)
+       values($1,$2,$3,$4,'publish',1,$5,$6,$6)
+       on conflict (binding_id,sequence) do update set template_version_id=excluded.template_version_id,publication_type='publish',deleted_at=null,updated_at=now()`,
+      [
+        ids.publications[index],
+        humanPilot.tenantA.id,
+        bindingId,
+        ids.templateVersion,
+        id(970 + index),
+        ownerUserId,
+      ],
+    );
+  }
   const storefrontContent = [
     {
       service: ['生椰拿铁双杯', '生椰拿铁 × 2，到店自取', '¥38', '¥18.80'],
@@ -581,7 +601,7 @@ try {
     JSON.stringify(
       {
         database: parsed.pathname.slice(1),
-        migration: '047',
+        migration: latestMigration.rows[0].name,
         accounts: accounts.map(({ email, role, tenantId }) => ({ email, role, tenantId })),
       },
       null,

@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## 2026-08-10 - HUMAN-PILOT sandbox refresh (post-matrix)
+
+- Migrated local `oneday_human_pilot` through `053_sync_gateway` and rebuilt Docker human-pilot services on ports 3200–3205 against current HEAD.
+- Pilot seed now publishes restaurant `storefront_bindings` with the eight module-renderer module types so Consumer no longer falls back to hero-only.
+- Playwright `commercial-ui-alignment` 2/2 and `consumer-commercial-home` 2/2 PASS on the refreshed sandbox.
+- Added `PROJECT_STATE/PRODUCT_OWNER_UI_ACCEPTANCE.md` and `evidence/HUMAN-PILOT-HANDOFF/POST_MATRIX_PREFLIGHT.md`. Human UI sign-off and 全部商用 remain unclaimed.
+
 ## 2026-08-10 - Matrix gap Wave 4 PASS
 
 - MG-G closes remaining P0 PARTIAL depth: M-02 Management→Consumer CRUD package, XT-02 share/sync/ETag tenant isolation, RC-01 live recovery clone with commercial object count report (content/membership/sync tables; terminate backends before template clone).

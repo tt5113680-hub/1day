@@ -32,11 +32,11 @@ test('COMMERCIAL-UI-ALIGNMENT: commercial storefront uses real store data and ou
     await page.goto(
       `${consumer}/c/stores/${storeId}?tenant=${luckin}&source=discovery:commercial-ui&scene=human_pilot&shareCode=COMMERCIAL-UI`,
     );
-    await expect(page.locator('main')).toBeVisible();
-    await expect(page.locator('img')).toHaveCount(1);
+    await expect(page.locator('main#top')).toBeVisible();
+    await expect(page.locator('main#top img').first()).toBeVisible();
     await expect(page.getByText(/400-820-000/)).toHaveCount(1);
-    await expect(page.locator(`a[href*="/c/actions/${externalAction}"]`)).toHaveCount(1);
-    await expect(page.getByText('地图导航', { exact: true })).toHaveCount(1);
+    await expect(page.locator(`a[href*="/c/actions/${externalAction}"]`).first()).toBeVisible();
+    await expect(page.getByRole('button', { name: /导航/ }).first()).toBeVisible();
   }
 
   await page.goto(
@@ -50,7 +50,7 @@ test('COMMERCIAL-UI-ALIGNMENT: commercial storefront uses real store data and ou
       response.url().startsWith(`${api}/api/v1/consumer/stores/${stores[0]}/outbound`) &&
       response.status() === 201,
   );
-  await page.getByText('地图导航', { exact: true }).click();
+  await page.getByRole('button', { name: /导航/ }).first().click();
   await navigationOutbound;
   await page.goto(
     `${consumer}/c/stores/${stores[0]}?tenant=${luckin}&source=discovery:commercial-ui&scene=human_pilot&shareCode=COMMERCIAL-UI`,
