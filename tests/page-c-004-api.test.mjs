@@ -60,6 +60,14 @@ test('consumer service detail preserves store, benefit and action boundaries', a
       [service, tenant, store, `svc-${stamp}`],
     );
     await c.query(
+      'insert into store_external_actions(id,tenant_id,store_id,external_action_id,sort_order,enabled,created_by,updated_by) values($1,$2,$3,$4,0,true,null,null)',
+      [randomUUID(), tenant, store, action],
+    );
+    await c.query(
+      "insert into store_service_platform_offers(id,tenant_id,store_id,service_id,external_action_id,offer_price,market_price,sort_order,status,created_by,updated_by) values($1,$2,$3,$4,$5,199,299,0,'active',null,null)",
+      [randomUUID(), tenant, store, service, action],
+    );
+    await c.query(
       "insert into store_benefits(id,tenant_id,store_id,title,description,external_action_id,status,created_by,updated_by) values($1,$2,$3,'服务专属权益','完成咨询后发放',$4,'active',null,null)",
       [randomUUID(), tenant, store, action],
     );
@@ -76,6 +84,8 @@ test('consumer service detail preserves store, benefit and action boundaries', a
   assert.equal(data.service.name, '定制服务');
   assert.equal(data.store.name, '服务体验门店');
   assert.equal(data.benefits[0].title, '服务专属权益');
+  assert.equal(data.platformOffers[0].offerPrice, 199);
+  assert.equal(data.platformOffers[0].marketPrice, 299);
   const key = `service-open-${stamp}`;
   const open = () =>
     request(`/api/v1/consumer/services/${service}/actions/${action}/open?tenant=system`, {

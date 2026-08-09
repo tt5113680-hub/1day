@@ -44,6 +44,13 @@
 - No rating, monthly sales, delivery time, promotion or recommendation score was added because the local merchant model does not persist those facts. The existing colors, LBS/future-recommendation row, Banner and all lower content remain unchanged.
 - 390px visual evidence: `storefront-store-info-390.png`. Consumer typecheck and production build passed; status remains `AWAITING_PRODUCT_OWNER_UI_ACCEPTANCE`.
 
+## Service product-detail follow-up (2026-08-09)
+
+- The Consumer service page now follows a product-information hierarchy: product card, store-scoped platform group-buy prices, package/material details, purchase notes, applicable-store facts and benefits. The existing warm visual palette remains unchanged.
+- The API returns only active store-linked external actions and the persisted `store_service_platform_offers` records for the selected service. Each purchase click preserves the existing tenant-scoped service-intent record before any configured external target is opened.
+- Verified: API typecheck/build; Consumer typecheck/build; focused service-detail HTTP acceptance `1/1`; focused mobile Playwright `2/2`. Visual evidence: `service-detail-mobile.png` and `service-detail-forbidden.png`.
+- Status remains `AWAITING_PRODUCT_OWNER_UI_ACCEPTANCE`; the page is not represented as a live third-party offer and platform price, stock and promotions remain authoritative on the destination platform.
+
 ## Follow-up — package/platform prices and Consumer visual alignment (2026-08-08)
 
 - Migration `047_store_service_platform_offers` persists the relationship between one recommended package, one active store platform action and its offer/market price; it is not derived from a link label.
