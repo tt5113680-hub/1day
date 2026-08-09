@@ -29,14 +29,14 @@
   --store-accent: #8a4a1e;
   --store-soft: #fff0dd;
 }
-.page[data-industry='beauty'] .hero,
-.page[data-industry='education'] .hero,
-.page[data-industry='retail'] .hero {
+.page[data-industry='beauty'] .banner,
+.page[data-industry='education'] .banner,
+.page[data-industry='retail'] .banner {
   background: var(--store-accent);
 }
-.page[data-industry='beauty'] .sectionTitle,
-.page[data-industry='education'] .sectionTitle,
-.page[data-industry='retail'] .sectionTitle {
+.page[data-industry='beauty'] .section h2,
+.page[data-industry='education'] .section h2,
+.page[data-industry='retail'] .section h2 {
   color: var(--store-accent);
 }
 .shell {
