@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## 2026-08-09 — ONEDAY-V3-COMMERCIAL-COMPLETION Batch 1 employee workbench foundation
+
+- Migrated the daily Employee workbench to shared `Button`, `StatusBadge` and `MetricCard` primitives with the canonical commercial token contract.
+- Preserved real task completion, scoped customer/opportunity context and mobile navigation. Updated the browser fixture to the access/refresh/expiry session contract and verified the secure no-session login redirect.
+- Format, workspace lint, Employee typecheck/build and real 390px browser suite (2/2) pass with refreshed visual and trace evidence. Batch 1 remains in progress.
+
 ## 2026-08-09 — ONEDAY-V3-COMMERCIAL-COMPLETION Batch 1 employee task-detail foundation
 
 - Migrated the protected Employee task-detail surface to shared `Button`, `StatusBadge` and `AppStatePanel` primitives and replaced local blue/purple visual rules with the canonical commercial token contract.

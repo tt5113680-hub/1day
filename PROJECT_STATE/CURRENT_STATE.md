@@ -8,10 +8,10 @@
 - current_task: ONEDAY-V3-COMMERCIAL-COMPLETION / BATCH 1
 - status: BATCH_1_IN_PROGRESS
 - branch: hardening/COMMERCIAL-COMPLETION
-- last_safe_commit: 35af54f (Employee task-detail foundation migration)
+- last_safe_commit: 694a231 (Employee workbench foundation migration)
 - started_at: 2026-08-09T20:29:46+08:00
 - blocker: null
-- verified_batch_1_continuation: Active Admin navigation, shared role-specific root state routes, E/M/P session-login recovery styling, non-blank Consumer/Employee critical nested loading routes, shell-integrated session controls, isolated four-terminal visual capture, and one canonical design-token CSS source are implemented. Employee task detail now uses shared Button/StatusBadge/AppStatePanel with the canonical token contract, retaining protected session, evidence and completion behavior. The token projection check, capture suite 3/3, focused Employee 390px session regression 2/2, Employee production build and static quality checks pass. Batch 1 is not yet accepted.
+- verified_batch_1_continuation: Active Admin navigation, shared role-specific root state routes, E/M/P session-login recovery styling, non-blank Consumer/Employee critical nested loading routes, shell-integrated session controls, isolated four-terminal visual capture, and one canonical design-token CSS source are implemented. Employee workbench and task detail use shared Button/StatusBadge/AppStatePanel/MetricCard primitives with the canonical token contract, retaining protected session, evidence and completion behavior. The token projection check, capture suite 3/3, focused Employee 390px workbench/task-detail session regressions 2/2 each, Employee production build and static quality checks pass. Batch 1 is not yet accepted.
 - known_observation: H-002 Playwright binds development servers to 127.0.0.1, avoiding the prior cross-origin development-resource warning during four-terminal local acceptance.
 - verified_h002: SessionApiClient is the protected E/M/P request boundary; 36 pages / 54 direct token reads removed; consumer public routes require an explicit tenant and do not default to system; 173 repository tests and 6 H-002 Playwright journeys passed.
 - next_scope: Batch 1 commercial UI foundation. Batch 0 completed with an external safe checkpoint at `D:\ONEDAY_V3_SAFE_CHECKPOINT\20260809-202946`, a clean baseline, and the historical zip archived outside the repository. Shared tokens, primitives and Mobile/Admin Shell migration are in progress; do not claim final commercial readiness before Batches 2–4.
