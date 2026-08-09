@@ -1,5 +1,6 @@
 'use client';
 import { SessionApiClient } from '@oneday/session-client';
+import { AdminPageHeader, AppStatePanel, Button, StatusBadge } from '@oneday/ui';
 import { useCallback, useEffect, useState } from 'react';
 import styles from './page.module.css';
 type Tenant = {
@@ -64,34 +65,22 @@ export default function TenantsPage() {
       setSaving(false);
     }
   };
-  if (state === 'loading') return <main className={styles.centered}>正在加载租户管理…</main>;
+  if (state === 'loading') return <main className={styles.centered}><AppStatePanel kind="loading" title="正在加载租户治理" description="正在同步租户生命周期、配额与风险信息。" /></main>;
   if (state === 'forbidden')
     return (
       <main className={styles.centered}>
-        <section>
-          <h1>无权查看平台租户管理</h1>
-        </section>
+        <AppStatePanel kind="forbidden" title="无权查看平台租户管理" description="请使用平台运营账号登录。" />
       </main>
     );
   if (state === 'error')
     return (
       <main className={styles.centered}>
-        <section>
-          <h1>租户管理暂不可用</h1>
-          <button onClick={() => void load()}>重新加载</button>
-        </section>
+        <AppStatePanel kind="error" title="租户治理暂不可用" description="请检查网络后重新加载。" action={<Button onClick={() => void load()}>重新加载</Button>} />
       </main>
     );
   return (
     <main className={styles.page}>
-      <header>
-        <div>
-          <p>ONEDAY / 平台租户管理</p>
-          <h1>租户开通、暂停与经营边界</h1>
-          <span>生命周期变更需精确二次确认；套餐、配额和风险等级均由平台侧持久化与审计。</span>
-        </div>
-        <button onClick={() => void load()}>刷新</button>
-      </header>
+      <AdminPageHeader eyebrow="平台租户治理" title="租户开通、暂停与经营边界" description="生命周期变更需精确二次确认；套餐、配额和风险等级均由平台侧持久化与审计。" actions={<Button tone="secondary" onClick={() => void load()}>刷新</Button>} />
       {note && (
         <p role="status" className={styles.note}>
           {note}
@@ -110,9 +99,7 @@ export default function TenantsPage() {
                 }}
               >
                 <strong>{x.name}</strong>
-                <span>
-                  {x.slug} · {x.status}
-                </span>
+                <span>{x.slug} · <StatusBadge tone={x.status === 'active' ? 'success' : 'warning'}>{x.status === 'active' ? '开通' : '暂停'}</StatusBadge></span>
                 <small>
                   {x.plan} · 风险 {x.riskLevel} · 逾期 {x.overdueTasks}
                 </small>
@@ -189,9 +176,9 @@ export default function TenantsPage() {
               请输入 {selected.status === 'suspended' ? 'SUSPEND' : 'ACTIVATE'}:{selected.slug}{' '}
               才能保存。
             </small>
-            <button disabled={saving} onClick={() => void save()}>
+            <Button disabled={saving} onClick={() => void save()}>
               {saving ? '正在保存…' : '保存租户设置'}
-            </button>
+            </Button>
           </section>
         )}
       </section>

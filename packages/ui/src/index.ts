@@ -61,12 +61,14 @@ export const timelineLabelCopy = (value: string) => {
 };
 
 export {
+  AdminPageHeader,
   AdminShell,
   AppStatePanel,
   Button,
   Card,
   MetricCard,
   MobileShell,
+  StatusBadge,
   type AdminNavItem,
   type ButtonProps,
 } from './components.js';

@@ -32,6 +32,14 @@ export function MetricCard({ label, value, hint }: { label: string; value: React
   );
 }
 
+export function AdminPageHeader({ eyebrow, title, description, actions }: { eyebrow: string; title: string; description?: string; actions?: ReactNode }) {
+  return <header className="od-page-header"><div><p>{eyebrow}</p><h1>{title}</h1>{description ? <span>{description}</span> : null}</div>{actions ? <div className="od-page-header__actions">{actions}</div> : null}</header>;
+}
+
+export function StatusBadge({ tone = 'neutral', children }: { tone?: 'success' | 'warning' | 'danger' | 'info' | 'neutral'; children: ReactNode }) {
+  return <span className={`od-status-badge od-status-badge--${tone}`}>{children}</span>;
+}
+
 export function AppStatePanel({
   kind,
   title,
