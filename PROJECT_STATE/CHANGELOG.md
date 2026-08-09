@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## 2026-08-09 — ONEDAY-V3-COMMERCIAL-COMPLETION Batch 1 management template foundation
+
+- Migrated Management tenant template catalog, fixed-module preview and controlled version publish to shared Admin Shell primitives and the canonical commercial token contract.
+- Preserved existing version publication while converting target/module/status enums to commercial labels and explicitly stating that Consumer Storefront binding remains Batch 2 scope.
+- Format, workspace lint, Management typecheck/build and real 1440px browser suite (2/2) pass with refreshed visual and trace evidence. Batch 1 remains in progress.
+
 ## 2026-08-09 — ONEDAY-V3-COMMERCIAL-COMPLETION Batch 1 management content foundation
 
 - Migrated Management content draft creation, approval state and channel-registration summary to shared Admin Shell primitives and the canonical commercial token contract.

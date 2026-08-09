@@ -2,8 +2,8 @@
 
 ## Current Batch 1 continuation
 
-- Base HEAD: `a77958d`; all Platform core governance pages and the Management performance/attribution/AI/workflow/content operating views now use the tokenized Admin Shell product foundation. Onboarding explicitly labels the current result as basic initialization rather than falsely claiming Batch 2 commercial READY.
-- Current verified scope: active Admin navigation; unified Consumer/Employee/Management/Platform root loading, empty, error and permission surfaces; E/M/P session recovery and login styling; non-blank Consumer/Employee critical nested loading routes; integrated shell session controls; repeatable Consumer/Employee/Management/Platform visual captures; and a single design-token CSS source with typed-projection coverage. Employee workbench/task-detail, Management performance/attribution/AI/workflows/content and all focused Platform suites pass, and affected production builds pass.
+- Base HEAD: `c361021`; all Platform core governance pages and the Management performance/attribution/AI/workflow/content/template operating views now use the tokenized Admin Shell product foundation. Onboarding and template publication explicitly avoid falsely claiming Batch 2 commercial READY or Consumer Storefront activation.
+- Current verified scope: active Admin navigation; unified Consumer/Employee/Management/Platform root loading, empty, error and permission surfaces; E/M/P session recovery and login styling; non-blank Consumer/Employee critical nested loading routes; integrated shell session controls; repeatable Consumer/Employee/Management/Platform visual captures; and a single design-token CSS source with typed-projection coverage. Employee workbench/task-detail, Management performance/attribution/AI/workflows/content/templates and all focused Platform suites pass, and affected production builds pass.
 - Next: migrate remaining Employee/Management core-page legacy styling, audit Consumer responsive core routes, and complete Batch 1 repository and commercial-chain regression gates. Do not declare Batch 1 pass yet.
 
 - branch: `hardening/COMMERCIAL-COMPLETION`
