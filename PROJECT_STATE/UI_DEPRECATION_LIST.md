@@ -29,6 +29,7 @@
 - Platform Templates page-local header, recovery panel, button, card and raw enum styling are deprecated at `96fbf4c`; fixed component values remain persisted API contracts while their UI labels use shared commercial-language mapping.
 - Platform Connectors page-local header, recovery panel, form/card/button and raw capability/status styling are deprecated at `e7e1d63`; connector definitions remain intent-only and may not imply external delivery.
 - Platform Security Audit page-local header, recovery panel, cards/buttons and raw audit-enum presentation are deprecated at `70e2b19`; operator-facing language must retain the full request correlation identifier.
+- Management Attribution page-local header, metric cards, recovery panel, enum pills and source-ID presentation are deprecated at `6637cb1`; customer deep links stay intact while internal source UUIDs remain out of the operating view.
 
 1. 新页面或新交互不得再新增页面级颜色、圆角、阴影、按钮或状态体系；必须使用 token 与 primitive。
 2. 每次迁移保留现有 Session、RBAC、tenant scope、幂等和审计行为，并通过关联回归。

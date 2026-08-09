@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## 2026-08-09 — ONEDAY-V3-COMMERCIAL-COMPLETION Batch 1 management attribution foundation
+
+- Migrated Management source attribution metrics, filters and customer records to shared Admin Shell primitives and the canonical commercial token contract.
+- Mapped source/evidence enums and anonymous customer names to commercial language, removed internal source UUID display, and preserved customer deep links and persisted attribution semantics.
+- Format, workspace lint, UI/Management typecheck/build and real 1440px browser suite (2/2) pass with refreshed visual and trace evidence. Batch 1 remains in progress.
+
 ## 2026-08-09 — ONEDAY-V3-COMMERCIAL-COMPLETION Batch 1 platform security foundation
 
 - Migrated Platform risk signals, dispositions and security-event timeline to shared Admin Shell primitives and the canonical commercial token contract.
