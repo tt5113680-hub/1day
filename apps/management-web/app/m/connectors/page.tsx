@@ -1,5 +1,13 @@
 'use client';
 import { SessionApiClient } from '@oneday/session-client';
+import {
+  AdminPageHeader,
+  AppStatePanel,
+  businessLabel,
+  Button,
+  Card,
+  StatusBadge,
+} from '@oneday/ui';
 
 import { useCallback, useEffect, useState } from 'react';
 import styles from './page.module.css';
@@ -27,6 +35,10 @@ const labels: Record<string, string> = {
   meituan: '美团',
   'manual-import': '人工导入',
 };
+const logCopy = (value: string) =>
+  value === 'Authorization requested; no external call has been made.'
+    ? '授权请求已登记，尚未执行外部调用。'
+    : value;
 
 export default function ConnectorPage() {
   const [state, setState] = useState<'loading' | 'ready' | 'forbidden' | 'error'>('loading');
@@ -81,37 +93,52 @@ export default function ConnectorPage() {
     }
   };
 
-  if (state === 'loading') return <main className={styles.centered}>正在加载连接器状态…</main>;
+  if (state === 'loading')
+    return (
+      <main className={styles.centered}>
+        <AppStatePanel
+          kind="loading"
+          title="正在加载连接器状态"
+          description="正在校验租户授权意图、能力边界与运行记录。"
+        />
+      </main>
+    );
   if (state === 'forbidden')
     return (
       <main className={styles.centered}>
-        <section>
-          <h1>无权查看连接器管理</h1>
-        </section>
+        <AppStatePanel
+          kind="forbidden"
+          title="无权查看连接器管理"
+          description="请使用具备租户连接器管理权限的账号。"
+        />
       </main>
     );
   if (state === 'error')
     return (
       <main className={styles.centered}>
-        <section>
-          <h1>连接器管理暂不可用</h1>
-          <button onClick={() => void load()}>重新加载</button>
-        </section>
+        <AppStatePanel
+          kind="error"
+          title="连接器管理暂不可用"
+          description="授权与运行状态未能完成加载，请重试。"
+          action={<Button onClick={() => void load()}>重新加载</Button>}
+        />
       </main>
     );
 
   return (
     <main className={styles.page}>
-      <header>
-        <div>
-          <p>ONEDAY / 插件连接器</p>
-          <h1>连接器授权与运行状态保持可验证</h1>
-          <span>仅登记授权意图与状态；密钥不落明文，未完成授权时不会伪造外部执行结果。</span>
-        </div>
-        <button onClick={() => void load()}>刷新</button>
-      </header>
+      <AdminPageHeader
+        eyebrow="ONEDAY / 商户连接器授权"
+        title="连接器授权与运行状态保持可验证"
+        description="仅登记授权意图与状态；密钥不落明文，未完成授权时不会伪造外部执行结果。"
+        actions={
+          <Button tone="secondary" onClick={() => void load()}>
+            刷新连接器
+          </Button>
+        }
+      />
 
-      <section className={styles.request} aria-label="授权请求">
+      <Card className={styles.request}>
         <label>
           连接器
           <select
@@ -137,10 +164,10 @@ export default function ConnectorPage() {
             autoComplete="off"
           />
         </label>
-        <button disabled={submitting} onClick={() => void requestAuthorization()}>
-          {submitting ? '正在登记…' : '登记授权请求'}
-        </button>
-      </section>
+        <Button loading={submitting} onClick={() => void requestAuthorization()}>
+          登记授权请求
+        </Button>
+      </Card>
       {note && (
         <p role="status" className={styles.notice}>
           {note}
@@ -151,35 +178,45 @@ export default function ConnectorPage() {
         {connectors.length ? (
           connectors.map((connector) => (
             <article key={connector.id}>
-              <div className={styles.title}>
-                <strong>{labels[connector.code] ?? connector.code}</strong>
-                <span>{connector.status}</span>
-              </div>
-              <p>密钥摘要：{connector.secret_fingerprint ?? '尚未登记'}</p>
-              <small>
-                版本 {connector.version} · 最近更新{' '}
-                {new Date(connector.updated_at).toLocaleString()}
-              </small>
-              <p data-testid="connector-delivery-boundary">
-                External delivery: {connector.capability.externalDelivery}; evidence:{' '}
-                {connector.capability.requiredEvidence}
-              </p>
-              <div className={styles.logs}>
-                <h2>最近运行日志</h2>
-                {connector.logs.length ? (
-                  connector.logs.map((log, index) => (
-                    <p key={`${log.createdAt}-${index}`}>
-                      <b>{log.status}</b> · {log.message}
-                    </p>
-                  ))
-                ) : (
-                  <p>暂无日志</p>
-                )}
-              </div>
+              <Card className={styles.connectorCard}>
+                <div className={styles.title}>
+                  <strong>{labels[connector.code] ?? connector.code}</strong>
+                  <StatusBadge tone={connector.status === 'authorized' ? 'success' : 'warning'}>
+                    {businessLabel(connector.status)}
+                  </StatusBadge>
+                </div>
+                <p>密钥摘要：{connector.secret_fingerprint ?? '尚未登记'}</p>
+                <small>
+                  版本 {connector.version} · 最近更新{' '}
+                  {new Date(connector.updated_at).toLocaleString('zh-CN', { hour12: false })}
+                </small>
+                <p data-testid="connector-delivery-boundary">
+                  外部投递：{businessLabel(connector.capability.externalDelivery)}；所需证据：
+                  {businessLabel(connector.capability.requiredEvidence)}
+                </p>
+                <div className={styles.logs}>
+                  <h2>最近运行日志</h2>
+                  {connector.logs.length ? (
+                    connector.logs.map((log, index) => (
+                      <p key={`${log.createdAt}-${index}`}>
+                        <b>{businessLabel(log.status)}</b> · {logCopy(log.message)}
+                      </p>
+                    ))
+                  ) : (
+                    <p>暂无日志</p>
+                  )}
+                </div>
+              </Card>
             </article>
           ))
         ) : (
-          <section className={styles.empty}>暂无授权请求。登记后可查看真实授权与运行状态。</section>
+          <div className={styles.empty}>
+            <AppStatePanel
+              kind="empty"
+              title="暂无授权请求"
+              description="登记后可查看真实授权与运行状态。"
+            />
+          </div>
         )}
       </section>
     </main>
