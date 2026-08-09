@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## 2026-08-09 — ONEDAY-V3-COMMERCIAL-COMPLETION Batch 1 employee lead-pool foundation
+
+- Migrated Employee lead filtering, priority/status cards, claim/allocation/conversion actions and recovery states to shared Card/Button/StatusBadge/AppStatePanel primitives and the canonical token contract.
+- Preserved tenant-scoped assignment, optimistic version and idempotent action boundaries; the 390px acceptance now targets the shared Card surface.
+- Format, workspace lint, UI/Employee typecheck/build and real claim/allocation/conversion/session browser suite (2/2) pass with refreshed visual and trace evidence. Batch 1 remains in progress.
+
 ## 2026-08-09 — ONEDAY-V3-COMMERCIAL-COMPLETION Batch 1 management permission-audit foundation
 
 - Migrated Management permission audit summary, risk filters, audit records and expandable correlation/trace evidence to shared Admin Shell primitives and the canonical commercial token contract.
