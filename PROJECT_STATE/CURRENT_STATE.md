@@ -9,11 +9,11 @@
 - status: MATRIX_GAP_WAVE_1_PASS; MATRIX_GAP_WAVE_2_PASS; MATRIX_GAP_WAVE_3_PASS; MATRIX_GAP_WAVE_4_PASS; MATRIX_GAP_CLOSEOUT_COMPLETE
 - branch: hardening/COMMERCIAL-COMPLETION
 - executor: Cursor Agent (2026-08-10; see PROJECT_STATE/EXECUTOR_HANDOFF.md)
-- last_safe_commit: pending Wave 4 commit
-- verified_matrix_gap_wave_4: PASS — M-02 packaging, XT-02 depth, RC-01 rebuild report. See PROJECT_STATE/MATRIX_GAP_WAVE_4_ACCEPTANCE.md and evidence/MATRIX-GAP-WAVE-4/.
-- verified_matrix_gap_wave_3: PASS at e070e17 — MB-01, SE-01, P-02, CT-01, M-01, WO-01.
-- verified_matrix_gap_wave_2: PASS at 29df5f9 — XT-01, MS-01, XL-01, XT-02 light.
-- verified_matrix_gap_wave_1: PASS at 29df5f9 — SY-01/02, TP-02/SF-01/MB-02, WO-02, RC-01 counts.
+- last_safe_commit: 2f6b181 (Matrix gap Wave 4 PASS)
+- verified_matrix_gap_wave_4: PASS �?M-02 packaging, XT-02 depth, RC-01 rebuild report. See PROJECT_STATE/MATRIX_GAP_WAVE_4_ACCEPTANCE.md and evidence/MATRIX-GAP-WAVE-4/.
+- verified_matrix_gap_wave_3: PASS at e070e17 �?MB-01, SE-01, P-02, CT-01, M-01, WO-01.
+- verified_matrix_gap_wave_2: PASS at 29df5f9 �?XT-01, MS-01, XL-01, XT-02 light.
+- verified_matrix_gap_wave_1: PASS at 29df5f9 �?SY-01/02, TP-02/SF-01/MB-02, WO-02, RC-01 counts.
 - verified_storefront_module_renderer: PASS at source commit ec28727.
 - verified_batch_4: PASS at source commit 04c863f.
 - started_at: 2026-08-09T20:29:46+08:00
