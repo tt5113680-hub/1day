@@ -1,5 +1,13 @@
 'use client';
 import { SessionApiClient } from '@oneday/session-client';
+import {
+  AdminPageHeader,
+  AppStatePanel,
+  businessLabel,
+  Button,
+  Card,
+  StatusBadge,
+} from '@oneday/ui';
 
 import { useCallback, useEffect, useState } from 'react';
 import styles from './page.module.css';
@@ -24,6 +32,10 @@ type Connector = {
 };
 const api = process.env.NEXT_PUBLIC_API_BASE_URL ?? 'http://127.0.0.1:3001';
 const sessionApi = new SessionApiClient(api);
+const observationCopy = (value?: string) =>
+  value === 'Platform observation recorded; no external call was performed.'
+    ? '平台健康观察已记录，未执行外部调用。'
+    : value || '暂无观察';
 export default function PlatformConnectorsPage() {
   const [state, setState] = useState<'loading' | 'ready' | 'forbidden' | 'error'>('loading');
   const [items, setItems] = useState<Connector[]>([]);
@@ -108,41 +120,56 @@ export default function PlatformConnectorsPage() {
       setSaving(false);
     }
   };
-  if (state === 'loading') return <main className={styles.centered}>正在加载平台连接器…</main>;
+  if (state === 'loading')
+    return (
+      <main className={styles.centered}>
+        <AppStatePanel
+          kind="loading"
+          title="正在加载平台连接器"
+          description="正在校验平台权限、租户授权与健康观察。"
+        />
+      </main>
+    );
   if (state === 'forbidden')
     return (
       <main className={styles.centered}>
-        <section>
-          <h1>无权查看平台连接器</h1>
-        </section>
+        <AppStatePanel
+          kind="forbidden"
+          title="无权查看平台连接器"
+          description="该能力仅向具备平台连接器治理权限的运营人员开放。"
+        />
       </main>
     );
   if (state === 'error')
     return (
       <main className={styles.centered}>
-        <section>
-          <h1>平台连接器暂不可用</h1>
-          <button onClick={() => void load()}>重新加载</button>
-        </section>
+        <AppStatePanel
+          kind="error"
+          title="平台连接器暂不可用"
+          description="连接器目录未能完成加载，请重试。"
+          action={<Button onClick={() => void load()}>重新加载</Button>}
+        />
       </main>
     );
   return (
     <main className={styles.page}>
-      <header>
-        <div>
-          <p>ONEDAY / 平台连接器</p>
-          <h1>定义、租户授权、健康、限流与日志</h1>
-          <span>密钥不在平台页面读取；状态来自持久化授权与可审计观察，外部调用必须另行授权。</span>
-        </div>
-        <button onClick={() => void load()}>刷新</button>
-      </header>
+      <AdminPageHeader
+        eyebrow="ONEDAY / 平台连接器治理"
+        title="定义、租户授权、健康、限流与日志"
+        description="密钥不在平台页面读取；状态来自持久化授权与可审计观察。当前连接器仅声明意图边界，外部调用必须另行授权。"
+        actions={
+          <Button tone="secondary" onClick={() => void load()}>
+            刷新目录
+          </Button>
+        }
+      />
       {note && (
         <p role="status" className={styles.notice}>
           {note}
         </p>
       )}
       <section className={styles.grid}>
-        <section className={styles.panel}>
+        <Card className={styles.panel}>
           <h2>定义连接器</h2>
           <label>
             连接器编码
@@ -168,9 +195,9 @@ export default function PlatformConnectorsPage() {
               value={form.authMode}
               onChange={(e) => setForm({ ...form, authMode: e.target.value })}
             >
-              <option value="api_key">api_key</option>
-              <option value="oauth">oauth</option>
-              <option value="manual">manual</option>
+              <option value="api_key">API 密钥</option>
+              <option value="oauth">OAuth 授权</option>
+              <option value="manual">人工授权</option>
             </select>
           </label>
           <label>
@@ -182,11 +209,11 @@ export default function PlatformConnectorsPage() {
               onChange={(e) => setForm({ ...form, rateLimitPerMinute: e.target.value })}
             />
           </label>
-          <button disabled={saving} onClick={() => void create()}>
-            {saving ? '正在保存…' : '保存连接器定义'}
-          </button>
-        </section>
-        <section className={styles.panel}>
+          <Button className={styles.submit} loading={saving} onClick={() => void create()}>
+            保存连接器定义
+          </Button>
+        </Card>
+        <Card className={styles.panel}>
           <h2>已定义连接器</h2>
           {items.length ? (
             items.map((item) => (
@@ -194,26 +221,38 @@ export default function PlatformConnectorsPage() {
                 <div>
                   <strong>{item.name}</strong>
                   <span>
-                    {item.code} · {item.auth_mode} · {item.rate_limit_per_minute}/min
+                    {item.code} · {businessLabel(item.auth_mode)} · 每分钟{' '}
+                    {item.rate_limit_per_minute} 次
                   </span>
                   <small>
-                    健康：{item.health_status}；租户授权：
-                    {item.authorizations.map((x) => `${x.status} ${x.count}`).join('，') || '暂无'}
-                    ；日志：{item.logs[0]?.message || '暂无观察'}
+                    租户授权：
+                    {item.authorizations
+                      .map((x) => `${businessLabel(x.status)} ${x.count}`)
+                      .join('，') || '暂无'}
+                    ；日志：{observationCopy(item.logs[0]?.message)}
                   </small>
                 </div>
-                <small data-testid="connector-delivery-boundary">
-                  External delivery: {item.capability.externalDelivery}
-                </small>
-                <button disabled={saving} onClick={() => void observe(item)}>
-                  记录健康观察
-                </button>
+                <div className={styles.actions}>
+                  <StatusBadge tone={item.health_status === 'healthy' ? 'success' : 'warning'}>
+                    {businessLabel(item.health_status)}
+                  </StatusBadge>
+                  <small data-testid="connector-delivery-boundary">
+                    外部投递：{businessLabel(item.capability.externalDelivery)}
+                  </small>
+                  <Button tone="secondary" loading={saving} onClick={() => void observe(item)}>
+                    记录健康观察
+                  </Button>
+                </div>
               </article>
             ))
           ) : (
-            <p>暂无平台连接器。</p>
+            <AppStatePanel
+              kind="empty"
+              title="暂无平台连接器"
+              description="在左侧登记第一个受控连接器定义。"
+            />
           )}
-        </section>
+        </Card>
       </section>
     </main>
   );
