@@ -9,7 +9,7 @@
 - status: MATRIX_GAP_CLOSEOUT_COMPLETE; HUMAN_PILOT_SANDBOX_REFRESHED; COMMERCIAL_FIXTURES_GENERATOR_PASS
 - branch: hardening/COMMERCIAL-COMPLETION
 - executor: Cursor Agent (2026-08-10; see PROJECT_STATE/EXECUTOR_HANDOFF.md)
-- last_safe_commit: pending this commit
+- last_safe_commit: c365280
 - verified_matrix_gap_wave_4: PASS ? M-02 packaging, XT-02 depth, RC-01 rebuild report. See PROJECT_STATE/MATRIX_GAP_WAVE_4_ACCEPTANCE.md and evidence/MATRIX-GAP-WAVE-4/.
 - verified_human_pilot_sandbox_refresh: PASS ? oneday_human_pilot through 053; storefront bindings; Playwright 4/4.
 - verified_commercial_fixtures_generator: PASS ? scripts/generate-commercial-fixtures.mjs; evidence/COMMERCIAL-FIXTURES/; tests/commercial-fixture-generator.test.mjs 1/1.
