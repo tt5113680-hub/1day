@@ -32,13 +32,21 @@ export default function PlatformDashboard() {
   if (state === 'loading')
     return (
       <main className={styles.centered}>
-        <AppStatePanel kind="loading" title="正在加载平台经营信号" description="正在连接租户、渠道和安全数据。" />
+        <AppStatePanel
+          kind="loading"
+          title="正在加载平台经营信号"
+          description="正在连接租户、渠道和安全数据。"
+        />
       </main>
     );
   if (state === 'forbidden')
     return (
       <main className={styles.centered}>
-        <AppStatePanel kind="forbidden" title="无权查看平台总览" description="请使用平台运营账号登录。" />
+        <AppStatePanel
+          kind="forbidden"
+          title="无权查看平台总览"
+          description="请使用平台运营账号登录。"
+        />
       </main>
     );
   if (state === 'error')
@@ -55,7 +63,11 @@ export default function PlatformDashboard() {
   if (!data)
     return (
       <main className={styles.centered}>
-        <AppStatePanel kind="empty" title="暂无平台数据" description="请先完成租户开通或刷新数据。" />
+        <AppStatePanel
+          kind="empty"
+          title="暂无平台数据"
+          description="请先完成租户开通或刷新数据。"
+        />
       </main>
     );
   const cards = [
@@ -72,7 +84,9 @@ export default function PlatformDashboard() {
           <h1>跨租户经营信号与系统状态</h1>
           <span>仅平台专用权限可查看；指标来自真实租户、渠道、任务、订单和事件记录。</span>
         </div>
-        <Button tone="secondary" onClick={() => void load()}>刷新</Button>
+        <Button tone="secondary" onClick={() => void load()}>
+          刷新
+        </Button>
       </header>
       <section className={styles.cards}>
         {cards.map(([label, value]) => (

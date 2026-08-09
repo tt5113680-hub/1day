@@ -90,13 +90,21 @@ export function Workbench() {
   if (state === 'loading')
     return (
       <main className={styles.centered}>
-        <AppStatePanel kind="loading" title="正在汇总今天的行动" description="正在同步你的任务与客户提醒。" />
+        <AppStatePanel
+          kind="loading"
+          title="正在汇总今天的行动"
+          description="正在同步你的任务与客户提醒。"
+        />
       </main>
     );
   if (state === 'forbidden')
     return (
       <main className={styles.centered}>
-        <AppStatePanel kind="forbidden" title="需要员工登录" description="请使用已授权的员工账号登录后，再打开工作台。" />
+        <AppStatePanel
+          kind="forbidden"
+          title="需要员工登录"
+          description="请使用已授权的员工账号登录后，再打开工作台。"
+        />
       </main>
     );
   if (state === 'error')

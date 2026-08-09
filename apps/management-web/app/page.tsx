@@ -34,13 +34,21 @@ export default function ManagementHome() {
   if (state === 'loading')
     return (
       <main className={styles.centered}>
-        <AppStatePanel kind="loading" title="正在汇总经营信号" description="正在连接客户、订单与任务数据。" />
+        <AppStatePanel
+          kind="loading"
+          title="正在汇总经营信号"
+          description="正在连接客户、订单与任务数据。"
+        />
       </main>
     );
   if (state === 'forbidden')
     return (
       <main className={styles.centered}>
-        <AppStatePanel kind="forbidden" title="无法查看经营总览" description="请使用具备管理权限的账号登录。" />
+        <AppStatePanel
+          kind="forbidden"
+          title="无法查看经营总览"
+          description="请使用具备管理权限的账号登录。"
+        />
       </main>
     );
   if (state === 'error')
@@ -69,11 +77,18 @@ export default function ManagementHome() {
           <h1>让每个经营信号，都能落到行动</h1>
           <span>数据来自客户、订单与任务明细，异常和建议均可追溯。</span>
         </div>
-        <Button tone="secondary" onClick={() => void load()}>刷新数据</Button>
+        <Button tone="secondary" onClick={() => void load()}>
+          刷新数据
+        </Button>
       </header>
       <section className={styles.metrics}>
         {cards.map(([label, value]) => (
-          <MetricCard hint="实时经营快照" key={label as string} label={label as string} value={value} />
+          <MetricCard
+            hint="实时经营快照"
+            key={label as string}
+            label={label as string}
+            value={value}
+          />
         ))}
       </section>
       <section className={styles.grid}>

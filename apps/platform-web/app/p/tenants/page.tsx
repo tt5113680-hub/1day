@@ -65,22 +65,49 @@ export default function TenantsPage() {
       setSaving(false);
     }
   };
-  if (state === 'loading') return <main className={styles.centered}><AppStatePanel kind="loading" title="正在加载租户治理" description="正在同步租户生命周期、配额与风险信息。" /></main>;
+  if (state === 'loading')
+    return (
+      <main className={styles.centered}>
+        <AppStatePanel
+          kind="loading"
+          title="正在加载租户治理"
+          description="正在同步租户生命周期、配额与风险信息。"
+        />
+      </main>
+    );
   if (state === 'forbidden')
     return (
       <main className={styles.centered}>
-        <AppStatePanel kind="forbidden" title="无权查看平台租户管理" description="请使用平台运营账号登录。" />
+        <AppStatePanel
+          kind="forbidden"
+          title="无权查看平台租户管理"
+          description="请使用平台运营账号登录。"
+        />
       </main>
     );
   if (state === 'error')
     return (
       <main className={styles.centered}>
-        <AppStatePanel kind="error" title="租户治理暂不可用" description="请检查网络后重新加载。" action={<Button onClick={() => void load()}>重新加载</Button>} />
+        <AppStatePanel
+          kind="error"
+          title="租户治理暂不可用"
+          description="请检查网络后重新加载。"
+          action={<Button onClick={() => void load()}>重新加载</Button>}
+        />
       </main>
     );
   return (
     <main className={styles.page}>
-      <AdminPageHeader eyebrow="平台租户治理" title="租户开通、暂停与经营边界" description="生命周期变更需精确二次确认；套餐、配额和风险等级均由平台侧持久化与审计。" actions={<Button tone="secondary" onClick={() => void load()}>刷新</Button>} />
+      <AdminPageHeader
+        eyebrow="平台租户治理"
+        title="租户开通、暂停与经营边界"
+        description="生命周期变更需精确二次确认；套餐、配额和风险等级均由平台侧持久化与审计。"
+        actions={
+          <Button tone="secondary" onClick={() => void load()}>
+            刷新
+          </Button>
+        }
+      />
       {note && (
         <p role="status" className={styles.note}>
           {note}
@@ -99,7 +126,12 @@ export default function TenantsPage() {
                 }}
               >
                 <strong>{x.name}</strong>
-                <span>{x.slug} · <StatusBadge tone={x.status === 'active' ? 'success' : 'warning'}>{x.status === 'active' ? '开通' : '暂停'}</StatusBadge></span>
+                <span>
+                  {x.slug} ·{' '}
+                  <StatusBadge tone={x.status === 'active' ? 'success' : 'warning'}>
+                    {x.status === 'active' ? '开通' : '暂停'}
+                  </StatusBadge>
+                </span>
                 <small>
                   {x.plan} · 风险 {x.riskLevel} · 逾期 {x.overdueTasks}
                 </small>

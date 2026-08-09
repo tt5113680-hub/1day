@@ -165,22 +165,49 @@ export default function StoresPage() {
       setBusy(null);
     }
   };
-  if (state === 'loading') return <main className={styles.centered}><AppStatePanel kind="loading" title="正在汇总门店经营数据" description="正在连接门店、员工与外链配置。" /></main>;
+  if (state === 'loading')
+    return (
+      <main className={styles.centered}>
+        <AppStatePanel
+          kind="loading"
+          title="正在汇总门店经营数据"
+          description="正在连接门店、员工与外链配置。"
+        />
+      </main>
+    );
   if (state === 'forbidden')
     return (
       <main className={styles.centered}>
-        <AppStatePanel kind="forbidden" title="无权查看门店管理" description="请使用具备经营管理权限的账号登录。" />
+        <AppStatePanel
+          kind="forbidden"
+          title="无权查看门店管理"
+          description="请使用具备经营管理权限的账号登录。"
+        />
       </main>
     );
   if (state === 'error')
     return (
       <main className={styles.centered}>
-        <AppStatePanel kind="error" title="门店数据暂不可用" description="请检查网络后重新加载。" action={<Button onClick={() => void load()}>重新加载</Button>} />
+        <AppStatePanel
+          kind="error"
+          title="门店数据暂不可用"
+          description="请检查网络后重新加载。"
+          action={<Button onClick={() => void load()}>重新加载</Button>}
+        />
       </main>
     );
   return (
     <main className={styles.page}>
-      <AdminPageHeader eyebrow="门店经营" title="把每家门店的资料、入口和跟进责任放在一起管理" description="第三方入口仅记录跳转行为，不代表 ONEDAY 代替平台完成下单、支付或核销。" actions={<Button tone="secondary" onClick={() => void load()}>刷新</Button>} />
+      <AdminPageHeader
+        eyebrow="门店经营"
+        title="把每家门店的资料、入口和跟进责任放在一起管理"
+        description="第三方入口仅记录跳转行为，不代表 ONEDAY 代替平台完成下单、支付或核销。"
+        actions={
+          <Button tone="secondary" onClick={() => void load()}>
+            刷新
+          </Button>
+        }
+      />
       {note && (
         <p className={styles.notice} role="status">
           {note}
@@ -191,7 +218,9 @@ export default function StoresPage() {
           <article className={styles.card} key={store.id}>
             <div className={styles.head}>
               <div>
-                <StatusBadge tone={store.status === 'active' ? 'success' : 'neutral'}>{store.status === 'active' ? '营业中' : '已停用'}</StatusBadge>
+                <StatusBadge tone={store.status === 'active' ? 'success' : 'neutral'}>
+                  {store.status === 'active' ? '营业中' : '已停用'}
+                </StatusBadge>
                 <h2>{store.name}</h2>
                 <p>
                   {store.code} · {store.merchantName} · {store.address ?? '未配置地址'}

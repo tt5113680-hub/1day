@@ -5,7 +5,14 @@ export type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
   loading?: boolean;
 };
 
-export function Button({ tone = 'primary', loading = false, className, children, disabled, ...props }: ButtonProps) {
+export function Button({
+  tone = 'primary',
+  loading = false,
+  className,
+  children,
+  disabled,
+  ...props
+}: ButtonProps) {
   return (
     <button
       {...props}
@@ -22,7 +29,15 @@ export function Card({ children, className }: { children: ReactNode; className?:
   return <section className={['od-card', className].filter(Boolean).join(' ')}>{children}</section>;
 }
 
-export function MetricCard({ label, value, hint }: { label: string; value: ReactNode; hint?: string }) {
+export function MetricCard({
+  label,
+  value,
+  hint,
+}: {
+  label: string;
+  value: ReactNode;
+  hint?: string;
+}) {
   return (
     <article className="od-metric-card">
       <span>{label}</span>
@@ -32,11 +47,36 @@ export function MetricCard({ label, value, hint }: { label: string; value: React
   );
 }
 
-export function AdminPageHeader({ eyebrow, title, description, actions }: { eyebrow: string; title: string; description?: string; actions?: ReactNode }) {
-  return <header className="od-page-header"><div><p>{eyebrow}</p><h1>{title}</h1>{description ? <span>{description}</span> : null}</div>{actions ? <div className="od-page-header__actions">{actions}</div> : null}</header>;
+export function AdminPageHeader({
+  eyebrow,
+  title,
+  description,
+  actions,
+}: {
+  eyebrow: string;
+  title: string;
+  description?: string;
+  actions?: ReactNode;
+}) {
+  return (
+    <header className="od-page-header">
+      <div>
+        <p>{eyebrow}</p>
+        <h1>{title}</h1>
+        {description ? <span>{description}</span> : null}
+      </div>
+      {actions ? <div className="od-page-header__actions">{actions}</div> : null}
+    </header>
+  );
 }
 
-export function StatusBadge({ tone = 'neutral', children }: { tone?: 'success' | 'warning' | 'danger' | 'info' | 'neutral'; children: ReactNode }) {
+export function StatusBadge({
+  tone = 'neutral',
+  children,
+}: {
+  tone?: 'success' | 'warning' | 'danger' | 'info' | 'neutral';
+  children: ReactNode;
+}) {
   return <span className={`od-status-badge od-status-badge--${tone}`}>{children}</span>;
 }
 
@@ -64,7 +104,13 @@ export function AppStatePanel({
   );
 }
 
-export function MobileShell({ children, mode = 'consumer' }: { children: ReactNode; mode?: 'consumer' | 'employee' }) {
+export function MobileShell({
+  children,
+  mode = 'consumer',
+}: {
+  children: ReactNode;
+  mode?: 'consumer' | 'employee';
+}) {
   return <div className={`od-mobile-shell od-mobile-shell--${mode}`}>{children}</div>;
 }
 

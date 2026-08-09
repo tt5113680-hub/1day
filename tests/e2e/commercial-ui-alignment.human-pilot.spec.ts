@@ -42,7 +42,9 @@ test('COMMERCIAL-UI-ALIGNMENT: commercial storefront uses real store data and ou
   await page.goto(
     `${consumer}/c/stores/${stores[0]}?tenant=${luckin}&source=discovery:commercial-ui&scene=human_pilot&shareCode=COMMERCIAL-UI`,
   );
-  await page.route('https://uri.amap.com/**', (route) => route.fulfill({ status: 200, body: 'map' }));
+  await page.route('https://uri.amap.com/**', (route) =>
+    route.fulfill({ status: 200, body: 'map' }),
+  );
   const navigationOutbound = page.waitForResponse(
     (response) =>
       response.url().startsWith(`${api}/api/v1/consumer/stores/${stores[0]}/outbound`) &&
@@ -57,7 +59,8 @@ test('COMMERCIAL-UI-ALIGNMENT: commercial storefront uses real store data and ou
   await expect(page).toHaveURL(/\/c\/actions\//);
   const outbound = page.waitForResponse(
     (response) =>
-      response.url() === `${api}/api/v1/consumer/actions/${externalAction}/confirm?tenant=${luckin}` &&
+      response.url() ===
+        `${api}/api/v1/consumer/actions/${externalAction}/confirm?tenant=${luckin}` &&
       response.status() === 201,
   );
   await page.locator('button').first().click();
