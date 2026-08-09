@@ -47,6 +47,8 @@
 - Employee Customer Detail and Follow-up page-local recovery/button/status/form styling plus raw identity/source/action enums are deprecated at `f5ee466`; customer visibility, task ownership, raw notes and editable summaries retain their service contracts.
 - Management Customer Detail and Funnel page-local header, recovery/card/button/status styling and raw identity/risk/result presentation are deprecated at `be25103`; tenant aggregation and inferred-versus-confirmed data boundaries remain explicit.
 - Consumer Store/Service/Action/Process/Discovery/Entry/Profile page-local loading, error and permission cards plus the mobile-only shell assumption are deprecated at `91f5711`; 390/768 retain mobile navigation, 1024/1440 use the desktop store navigation and balanced PC composition, while Storefront module binding remains Batch 2 scope.
+- Channel/Circle legacy global Platform navigation, blue/purple headers, raw state cards and page-local color systems are deprecated at `837c733`; `/ch/*` and `/bc/*` now select restricted Admin Shell product modes with explicit authorized scope, commercial components and formal session fixtures.
+- Remaining E/M/P page CSS color literals are deprecated at `837c733`; semantic emphasis is expressed through the canonical token contract. Consumer restaurant-template visual values remain the documented Batch 2 Storefront binding scope rather than a second shared-token source.
 
 1. 新页面或新交互不得再新增页面级颜色、圆角、阴影、按钮或状态体系；必须使用 token 与 primitive。
 2. 每次迁移保留现有 Session、RBAC、tenant scope、幂等和审计行为，并通过关联回归。

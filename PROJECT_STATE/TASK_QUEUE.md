@@ -2,7 +2,7 @@
 
 ## Current commercial completion engineering
 
-- [ ] Batch 1 final gates: all four terminal core UI migrations and 390/768/1024/1440 Consumer evidence are complete at `91f5711`. Close deprecation inventory, then execute full repository, H-002/session, tenant-isolation and four-role commercial-chain acceptance before deciding PASS/HOLD.
+- [ ] Batch 1 final gates: all terminal core UI migrations, restricted Channel/Circle Admin modes, E/M/P token cleanup and 390/768/1024/1440 Consumer evidence are complete through `837c733`. Execute full repository, H-002/session, tenant-isolation and four-role commercial-chain acceptance before deciding PASS/HOLD.
 
 - [ ] ONEDAY-V3-COMMERCIAL-COMPLETION / BATCH 1 IN_PROGRESS - Batch 0 safe workspace recovery is complete: the external checkpoint is preserved, baseline audit/evidence is committed at `42186a5`, and the generated source zip is archived outside the repository. Batch 1 is establishing the shared Design System and two Shells without changing business truth or security boundaries.
 

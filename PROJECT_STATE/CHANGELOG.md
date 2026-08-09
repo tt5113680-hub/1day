@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## 2026-08-10 — ONEDAY-V3-COMMERCIAL-COMPLETION Batch 1 Channel/Circle Admin modes
+
+- Added distinct restricted Admin Shell modes for Platform, Channel and Circle, each with explicit role context and navigation instead of exposing the platform-global menu to every route.
+- Migrated Channel dashboard/onboarding and Circle dashboard/member governance to shared Admin primitives, commercial Chinese operating copy and the canonical token contract; removed remaining hard-coded E/M/P page colors.
+- UI/Employee/Management/Platform typechecks, workspace lint, all three affected production builds and the four real Channel/Circle browser suites (8/8) pass with refreshed desktop, denial and trace evidence.
+
 ## 2026-08-09 — ONEDAY-V3-COMMERCIAL-COMPLETION Batch 1 Consumer responsive foundation
 
 - Completed one responsive Consumer product shell across 390/768/1024/1440 widths: mobile/tablet retain the bottom navigation, PC uses a tokenized sticky store navigation and a balanced two-column digital-store composition.

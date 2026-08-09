@@ -2,9 +2,9 @@
 
 ## Current Batch 1 continuation
 
-- Base HEAD: `91f5711`; all Consumer, Employee, Management and Platform core surfaces now use their role-appropriate tokenized product foundation. Browser fixtures use the real access/refresh/`expiresAt` session triple where authentication applies. Onboarding, template publication and connector authorization explicitly avoid falsely claiming Batch 2 commercial READY, Consumer Storefront activation or external delivery.
-- Current verified scope: Consumer is one responsive application at 390/768/1024/1440, with context-preserving links, mobile/tablet and desktop-specific navigation, no horizontal overflow, and shared loading/error/permission primitives. Employee uses the Mobile Shell; Management and Platform use distinct Admin Shell identities. The real four-terminal visual suite is 3/3 PASS and affected static/build gates pass.
-- Next: close the remaining deprecation inventory and run the complete Batch 1 repository, H-002/session, tenant-isolation and four-role commercial-chain gates. Do not declare Batch 1 pass until every gate is recorded.
+- Base HEAD: `837c733`; all Consumer, Employee, Management, Platform, Channel and Circle core surfaces now use their role-appropriate tokenized product foundation. Browser fixtures use the real access/refresh/`expiresAt` session triple where authentication applies.
+- Current verified scope: Consumer is one responsive application at 390/768/1024/1440; Employee uses Mobile Shell; Management, Platform and restricted Channel/Circle modes use explicit Admin Shell identities and scoped navigation. The four-terminal visual suite is 3/3 PASS, Channel/Circle operating suites are 8/8 PASS, affected builds pass, and E/M/P page CSS has no hard-coded color literals.
+- Next: run the complete Batch 1 repository, H-002/session, tenant-isolation and four-role commercial-chain gates. Do not declare Batch 1 pass until every gate is recorded.
 
 - branch: `hardening/COMMERCIAL-COMPLETION`
 - HEAD: `42186a5e5d6b9aa8ac7edca4bc4636fe4d11fc18`
