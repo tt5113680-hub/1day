@@ -2,6 +2,8 @@
 
 ## Current commercial completion engineering
 
+- [ ] Batch 1 continuation verified pending internal commit: active Admin navigation, shared role-specific state surfaces, E/M/P session-login recovery styling, and non-blank Consumer/Employee critical nested loading routes are complete. Continue core-page migration, visual evidence and full gates.
+
 - [ ] ONEDAY-V3-COMMERCIAL-COMPLETION / BATCH 1 IN_PROGRESS - Batch 0 safe workspace recovery is complete: the external checkpoint is preserved, baseline audit/evidence is committed at `42186a5`, and the generated source zip is archived outside the repository. Batch 1 is establishing the shared Design System and two Shells without changing business truth or security boundaries.
 
 ## Current product-owner acceptance

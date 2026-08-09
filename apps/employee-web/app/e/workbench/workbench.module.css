@@ -203,26 +203,6 @@
   display: block;
   margin-bottom: 6px;
 }
-.nav {
-  display: none;
-  position: fixed;
-  z-index: 2;
-  right: 0;
-  bottom: 0;
-  left: 0;
-  display: flex;
-  justify-content: center;
-  gap: min(9vw, 48px);
-  padding: 16px;
-  border-top: 1px solid #e5e7eb;
-  background: #fffd;
-  backdrop-filter: blur(10px);
-  color: #6b7280;
-  font-size: 13px;
-}
-.nav strong {
-  color: #2563eb;
-}
 .centered {
   display: grid;
   min-height: 100vh;
@@ -257,8 +237,5 @@
   }
   .hero {
     grid-template-columns: 240px 1fr;
-  }
-  .nav {
-    display: none;
   }
 }

@@ -20,7 +20,12 @@ export function ManagementShell({ children }: { children: ReactNode }) {
   const pathname = usePathname();
   if (pathname === '/login') return children;
   return (
-    <AdminShell product="商户经营" context="租户经营工作台" navigation={navigation}>
+    <AdminShell
+      activeHref={pathname}
+      product="商户经营"
+      context="租户经营工作台"
+      navigation={navigation}
+    >
       {children}
     </AdminShell>
   );

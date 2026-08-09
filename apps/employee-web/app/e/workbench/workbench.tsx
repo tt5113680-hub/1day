@@ -217,12 +217,6 @@ export function Workbench() {
           ))
         )}
       </section>
-      <nav className={styles.nav} aria-label="员工工作流">
-        <strong>工作台</strong>
-        <span>客户</span>
-        <span>提醒</span>
-        <span>我的</span>
-      </nav>
     </main>
   );
 }

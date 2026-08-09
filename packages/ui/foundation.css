@@ -305,6 +305,11 @@ select:focus-visible {
   color: #fff;
   background: rgb(255 255 255 / 10%);
 }
+.od-admin-shell__sidebar nav a.od-admin-shell__nav-link--active {
+  color: #fff;
+  background: rgb(198 238 155 / 20%);
+  box-shadow: inset 3px 0 #c6ee9b;
+}
 .od-admin-shell__context {
   margin: auto var(--od-space-2) var(--od-space-2);
   color: #a9c5af;
@@ -333,6 +338,75 @@ select:focus-visible {
   width: min(100%, var(--od-content-max));
   margin: 0 auto;
   padding: clamp(var(--od-space-5), 3vw, var(--od-space-8));
+}
+.od-route-state,
+.od-session-recovery {
+  display: grid;
+  min-height: 100dvh;
+  place-items: center;
+  padding: var(--od-space-6);
+}
+.od-session-recovery {
+  color: var(--od-text-muted);
+}
+.od-session-login {
+  display: grid;
+  min-height: 100dvh;
+  place-items: center;
+  padding: var(--od-space-6);
+  background:
+    radial-gradient(circle at 10% 10%, rgb(198 238 155 / 38%), transparent 30%),
+    var(--od-background);
+}
+.od-session-login__card {
+  width: min(100%, 420px);
+  padding: clamp(var(--od-space-6), 5vw, var(--od-space-8));
+  border: 1px solid var(--od-border);
+  border-radius: var(--od-radius-card);
+  background: var(--od-surface);
+  box-shadow: var(--od-shadow-high);
+}
+.od-session-login__brand,
+.od-session-login h1 {
+  margin: 0;
+  font-family: var(--od-font-display);
+}
+.od-session-login__brand {
+  color: var(--od-brand-700);
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+}
+.od-session-login h1 {
+  margin-top: var(--od-space-2);
+  font-size: 28px;
+}
+.od-session-login form {
+  display: grid;
+  gap: var(--od-space-3);
+  margin-top: var(--od-space-6);
+}
+.od-session-login input {
+  min-height: 44px;
+  padding: 0 var(--od-space-3);
+  border: 1px solid var(--od-border);
+  border-radius: var(--od-radius-sm);
+  background: var(--od-surface-subtle);
+}
+.od-session-login button,
+.od-session-control {
+  min-height: 40px;
+  border: 1px solid transparent;
+  border-radius: var(--od-radius-md);
+  padding: 0 var(--od-space-4);
+  color: #fff;
+  background: var(--od-brand-700);
+  font-weight: 700;
+  cursor: pointer;
+}
+.od-session-login [role='alert'] {
+  margin: 0;
+  color: var(--od-danger);
 }
 
 @media (max-width: 900px) {

@@ -15,6 +15,11 @@
 
 ## 完成条件
 
+## 2026-08-09 continuation record
+
+- `AppStatePanel` now owns all four root loading, empty, error and permission routes, plus the Consumer and Employee critical nested loading boundaries previously capable of rendering blank content.
+- The Workbench-local navigation residue is removed; `EmployeeBottomNav` is the sole fixed employee navigation surface.
+
 1. 新页面或新交互不得再新增页面级颜色、圆角、阴影、按钮或状态体系；必须使用 token 与 primitive。
 2. 每次迁移保留现有 Session、RBAC、tenant scope、幂等和审计行为，并通过关联回归。
 3. Batch 2 Storefront 绑定完成后，Consumer business components 必须从硬编码派生数据迁入受控模块接口。

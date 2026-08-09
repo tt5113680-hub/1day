@@ -1,11 +1,9 @@
-import styles from './store.module.css';
+import { AppStatePanel } from '@oneday/ui';
+
 export default function Loading() {
   return (
-    <main className={styles.message} aria-busy="true">
-      <section className={styles.messageCard}>
-        <h1>正在准备门店详情</h1>
-        <p>服务、权益和咨询入口正在加载。</p>
-      </section>
+    <main className="od-route-state">
+      <AppStatePanel kind="loading" title="正在打开门店" description="正在准备该门店的公开内容。" />
     </main>
   );
 }

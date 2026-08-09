@@ -35,21 +35,24 @@ export function SessionLogin({
     }
   };
   return (
-    <main>
-      <h1>{title}</h1>
-      <form action={submit}>
-        <input name="tenantSlug" required autoComplete="organization" placeholder="租户标识" />
-        <input name="email" type="email" required autoComplete="username" placeholder="邮箱" />
-        <input
-          name="password"
-          type="password"
-          required
-          autoComplete="current-password"
-          placeholder="密码"
-        />
-        <button disabled={submitting}>{submitting ? '正在登录…' : '登录'}</button>
-        {error && <p role="alert">{error}</p>}
-      </form>
+    <main className="od-session-login">
+      <section className="od-session-login__card">
+        <p className="od-session-login__brand">ONEDAY / SECURE ACCESS</p>
+        <h1>{title}</h1>
+        <form action={submit}>
+          <input name="tenantSlug" required autoComplete="organization" placeholder="租户标识" />
+          <input name="email" type="email" required autoComplete="username" placeholder="邮箱" />
+          <input
+            name="password"
+            type="password"
+            required
+            autoComplete="current-password"
+            placeholder="密码"
+          />
+          <button disabled={submitting}>{submitting ? '正在登录…' : '登录'}</button>
+          {error && <p role="alert">{error}</p>}
+        </form>
+      </section>
     </main>
   );
 }
@@ -71,7 +74,7 @@ export function SessionGuard({
       setReady(true);
     });
   }, [apiBase, loginPath]);
-  return ready ? <>{children}</> : <main>正在恢复安全会话…</main>;
+  return ready ? <>{children}</> : <main className="od-session-recovery">正在恢复安全会话…</main>;
 }
 
 export function SessionControls({ apiBase, loginPath }: { apiBase: string; loginPath: string }) {
@@ -82,6 +85,7 @@ export function SessionControls({ apiBase, loginPath }: { apiBase: string; login
   if (!signedIn) return null;
   return (
     <button
+      className="od-session-control"
       onClick={async () => {
         await new BrowserSession(apiBase).logout();
         window.location.assign(loginPath);

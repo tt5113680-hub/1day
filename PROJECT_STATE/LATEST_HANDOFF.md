@@ -1,5 +1,11 @@
 # LATEST_HANDOFF
 
+## Current Batch 1 continuation
+
+- Base HEAD: `e86c787`; the current worktree is verified pending its next Batch 1 internal commit.
+- Current verified scope: active Admin navigation; unified Consumer/Employee/Management/Platform root loading, empty, error and permission surfaces; E/M/P session recovery and login styling; non-blank Consumer/Employee critical nested loading routes; and removal of the redundant Employee Workbench navigation.
+- Next: continue core-page token and business-component migration, then produce real four-terminal visual evidence and complete Batch 1 regression gates. Do not declare Batch 1 pass yet.
+
 - branch: `hardening/COMMERCIAL-COMPLETION`
 - HEAD: `42186a5e5d6b9aa8ac7edca4bc4636fe4d11fc18`
 - 当前阶段: `ONEDAY-V3-COMMERCIAL-COMPLETION / BATCH 1` 正在施工。Batch 0 已完成：外部安全检查点为 `D:\ONEDAY_V3_SAFE_CHECKPOINT\20260809-202946`，审计与证据已独立提交，zip 已移至仓库外 artifacts，工作区恢复为干净基线。

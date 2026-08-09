@@ -1,5 +1,7 @@
 # LIVE_PROGRESS
 
+- 2026-08-09 Asia/Shanghai - ONEDAY-V3-COMMERCIAL-COMPLETION Batch 1 foundation continuation: shared Admin active navigation, role-specific permission/session/login recovery surfaces, and route-level loading/error/empty coverage now span Consumer, Employee, Management and Platform. Duplicate Employee Workbench navigation and blank Consumer/Employee nested loading boundaries were removed. Format, shared-package builds, Consumer/Employee typecheck, full-workspace typecheck, lint, and format check passed. Batch 1 remains in progress; visual evidence and full repository/commercial-chain gates are pending.
+
 - 2026-08-08 Asia/Shanghai - PRE-PILOT-POLISH PASS at `268464d`: all eight approved items and final quality gates passed (format, lint, 18-package typecheck/build, 184 repository tests, 74 evidence checks). Status returns immediately to HUMAN-PILOT-HANDOFF; no additional Hardening work is authorized.
 
 - 2026-08-08 Asia/Shanghai - PRE-PILOT-POLISH full quality gates started: focused HTTP, consumer/management/platform browser, H-002 and B2-B7 regression gates are PASS; running repository-wide format, lint, 18-package typecheck/build, tests and evidence validation.

@@ -1,3 +1,13 @@
+import { AppStatePanel } from '@oneday/ui';
+
 export default function NotFound() {
-  return <main>暂时没有可展示的数据。</main>;
+  return (
+    <main className="od-route-state">
+      <AppStatePanel
+        kind="empty"
+        title="没有找到治理页面"
+        description="请从左侧导航返回当前平台权限范围内的功能。"
+      />
+    </main>
+  );
 }

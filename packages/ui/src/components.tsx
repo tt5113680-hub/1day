@@ -120,13 +120,17 @@ export function AdminShell({
   product,
   context,
   navigation,
+  activeHref,
   children,
 }: {
   product: string;
   context: string;
   navigation: AdminNavItem[];
+  activeHref?: string;
   children: ReactNode;
 }) {
+  const isActive = (href: string) =>
+    activeHref === href || (href !== '/' && activeHref?.startsWith(`${href}/`));
   return (
     <div className="od-admin-shell">
       <aside className="od-admin-shell__sidebar" aria-label={`${product} 主导航`}>
@@ -137,7 +141,12 @@ export function AdminShell({
         <p className="od-admin-shell__product">{product}</p>
         <nav>
           {navigation.map((item) => (
-            <a href={item.href} key={item.href}>
+            <a
+              aria-current={isActive(item.href) ? 'page' : undefined}
+              className={isActive(item.href) ? 'od-admin-shell__nav-link--active' : undefined}
+              href={item.href}
+              key={item.href}
+            >
               {item.label}
             </a>
           ))}

@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## 2026-08-09 — ONEDAY-V3-COMMERCIAL-COMPLETION Batch 1 state and shell continuation
+
+- Added active-route feedback to the shared Admin Shell and removed the duplicate Employee Workbench navigation so the employee app has one authoritative mobile task bar.
+- Unified Consumer, Employee, Management and Platform root loading, empty, error and permission routes; replaced blank Consumer/Employee nested loading boundaries; aligned protected-session recovery and E/M/P login pages with the shared foundation.
+- Confirmed format, lint and all-workspace typecheck after rebuilding the affected shared packages. Batch 1 remains in progress pending core-page migration, visual evidence and full acceptance regressions.
+
 ## 2026-08-09 — ONEDAY-V3-COMMERCIAL-COMPLETION Batch 0 + Batch 1 foundation start
 
 - Preserved all pre-existing dirty workspace material in `D:\ONEDAY_V3_SAFE_CHECKPOINT\20260809-202946`; committed valid baseline audit/evidence separately and archived the historical zip outside the repository.

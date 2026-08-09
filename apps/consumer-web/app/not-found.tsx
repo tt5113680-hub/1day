@@ -1,3 +1,13 @@
+import { AppStatePanel } from '@oneday/ui';
+
 export default function NotFound() {
-  return <main>暂时没有可展示的数据。</main>;
+  return (
+    <main className="od-route-state">
+      <AppStatePanel
+        kind="empty"
+        title="没有找到这个门店页面"
+        description="链接可能已失效，或该门店暂未对外开放。"
+      />
+    </main>
+  );
 }

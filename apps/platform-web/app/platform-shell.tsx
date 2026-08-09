@@ -19,7 +19,12 @@ export function PlatformShell({ children }: { children: ReactNode }) {
   const pathname = usePathname();
   if (pathname === '/login') return children;
   return (
-    <AdminShell product="平台运营" context="系统租户 · 治理控制台" navigation={navigation}>
+    <AdminShell
+      activeHref={pathname}
+      product="平台运营"
+      context="系统租户 · 治理控制台"
+      navigation={navigation}
+    >
       {children}
     </AdminShell>
   );
