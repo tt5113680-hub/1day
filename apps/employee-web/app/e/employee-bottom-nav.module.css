@@ -9,8 +9,8 @@
   gap: clamp(14px, 7vw, 42px);
   border-top: 1px solid var(--od-border);
   padding: 12px 10px max(12px, env(safe-area-inset-bottom));
-  background: rgba(255, 255, 255, 0.97);
-  box-shadow: 0 -8px 20px rgb(24 37 31 / 6%);
+  background: color-mix(in srgb, var(--od-surface) 97%, transparent);
+  box-shadow: 0 -8px 20px color-mix(in srgb, var(--od-ink) 6%, transparent);
   backdrop-filter: blur(12px);
 }
 .nav a {

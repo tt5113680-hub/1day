@@ -108,8 +108,8 @@
 }
 .primary {
   border: 0;
-  color: #fff;
-  background: #5425bd;
+  color: var(--od-surface);
+  background: var(--od-brand-700);
   font-weight: 700;
 }
 .sectionTitle span {
@@ -168,9 +168,9 @@
   overflow-wrap: anywhere;
 }
 .linkPanel > button {
-  color: #fff;
+  color: var(--od-surface);
   border: 0;
-  background: #5425bd;
+  background: var(--od-brand-700);
   font-weight: 700;
 }
 .feedback {

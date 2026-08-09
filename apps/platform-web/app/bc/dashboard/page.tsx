@@ -1,5 +1,6 @@
 'use client';
 import { SessionApiClient } from '@oneday/session-client';
+import { AdminPageHeader, AppStatePanel, Button, Card, MetricCard } from '@oneday/ui';
 
 import { useCallback, useEffect, useState } from 'react';
 import styles from './page.module.css';
@@ -52,58 +53,48 @@ export default function BusinessCircleDashboard() {
     }
   }, []);
   useEffect(() => void load(), [load]);
-  if (state === 'loading')
-    return <main className={styles.centered}>Loading fixed business-circle operations…</main>;
-  if (state === 'forbidden')
+  if (state !== 'ready')
     return (
-      <main className={styles.centered}>
-        <section>
-          <h1>Business-circle dashboard access is restricted</h1>
-        </section>
-      </main>
-    );
-  if (state === 'error')
-    return (
-      <main className={styles.centered}>
-        <section>
-          <h1>Business-circle dashboard is temporarily unavailable</h1>
-          <button onClick={() => void load()}>Retry</button>
-        </section>
-      </main>
+      <AppStatePanel
+        kind={state}
+        title={
+          state === 'loading'
+            ? '正在读取商圈经营数据'
+            : state === 'forbidden'
+              ? '当前账号无商圈经营权限'
+              : '商圈经营数据暂时不可用'
+        }
+        description="这里只展示已获平台批准的商圈成员聚合经营数据。"
+        action={
+          state === 'error' ? <Button onClick={() => void load()}>重新加载</Button> : undefined
+        }
+      />
     );
   const metrics = data?.metrics;
   return (
     <main className={styles.page}>
-      <header className={styles.header}>
-        <div>
-          <p>ONEDAY / FIXED BUSINESS CIRCLES</p>
-          <h1>Merchant benefits, content, traffic and conversion</h1>
-          <span>
-            Only platform-approved fixed-circle members appear here. Merchant operational data
-            remains tenant-owned and is projected as aggregate metrics only.
-          </span>
-        </div>
-        <button onClick={() => void load()}>Refresh</button>
-      </header>
+      <AdminPageHeader
+        eyebrow="ONEDAY / 商圈经营"
+        title="成员权益、内容、流量与转化"
+        description="仅展示平台已批准的固定商圈成员；商户经营数据仍归属各租户，本页只呈现聚合指标。"
+        actions={<Button onClick={() => void load()}>刷新数据</Button>}
+      />
       <section className={styles.metrics} aria-label="Business-circle metrics">
         {[
-          ['Fixed circles', metrics?.circle_count ?? 0],
-          ['Approved merchants', metrics?.merchant_count ?? 0],
-          ['Consumer action events', metrics?.traffic_events ?? 0],
-          ['Confirmed orders', metrics?.conversion_orders ?? 0],
+          ['固定商圈', metrics?.circle_count ?? 0],
+          ['已批准商户', metrics?.merchant_count ?? 0],
+          ['Consumer 行为', metrics?.traffic_events ?? 0],
+          ['已确认订单', metrics?.conversion_orders ?? 0],
         ].map(([label, value]) => (
-          <article key={String(label)}>
-            <small>{label}</small>
-            <strong>{value}</strong>
-          </article>
+          <MetricCard label={String(label)} value={value} key={String(label)} />
         ))}
       </section>
-      <section className={styles.panel}>
-        <h2>Fixed business-circle operations</h2>
+      <Card className={styles.panel}>
+        <h2>固定商圈经营明细</h2>
         {data?.circles.length ? (
           <div className={styles.circles}>
             {data.circles.map((circle) => (
-              <article key={circle.id} className={styles.circle}>
+              <Card key={circle.id} className={styles.circle}>
                 <header>
                   <div>
                     <strong>{circle.name}</strong>
@@ -111,7 +102,7 @@ export default function BusinessCircleDashboard() {
                       {circle.code} · {circle.description}
                     </span>
                   </div>
-                  <small>{circle.merchants.length} approved merchants</small>
+                  <small>{circle.merchants.length} 家已批准商户</small>
                 </header>
                 {circle.merchants.length ? (
                   <div className={styles.merchants}>
@@ -124,19 +115,19 @@ export default function BusinessCircleDashboard() {
                         <p>
                           {merchant.benefits.length
                             ? merchant.benefits.join(' · ')
-                            : 'No fixed benefits configured'}
+                            : '暂未配置固定权益'}
                         </p>
                         <dl>
                           <div>
-                            <dt>Approved content</dt>
+                            <dt>已批准内容</dt>
                             <dd>{merchant.contentCount}</dd>
                           </div>
                           <div>
-                            <dt>Traffic events</dt>
+                            <dt>访问行为</dt>
                             <dd>{merchant.trafficEvents}</dd>
                           </div>
                           <div>
-                            <dt>Orders</dt>
+                            <dt>订单</dt>
                             <dd>{merchant.conversionOrders}</dd>
                           </div>
                         </dl>
@@ -144,20 +135,15 @@ export default function BusinessCircleDashboard() {
                     ))}
                   </div>
                 ) : (
-                  <p className={styles.empty}>
-                    No approved merchant is currently assigned to this fixed circle.
-                  </p>
+                  <p className={styles.empty}>当前固定商圈尚无已批准商户。</p>
                 )}
-              </article>
+              </Card>
             ))}
           </div>
         ) : (
-          <p className={styles.empty}>
-            No fixed business circle exists yet. Create and approve one from platform
-            business-circle management.
-          </p>
+          <p className={styles.empty}>当前尚无固定商圈，请先在平台商圈治理中创建并批准。</p>
         )}
-      </section>
+      </Card>
     </main>
   );
 }

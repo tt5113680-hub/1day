@@ -1,5 +1,13 @@
 'use client';
 import { SessionApiClient } from '@oneday/session-client';
+import {
+  AdminPageHeader,
+  AppStatePanel,
+  businessLabel,
+  Button,
+  Card,
+  StatusBadge,
+} from '@oneday/ui';
 
 import { FormEvent, useCallback, useEffect, useState } from 'react';
 import styles from './page.module.css';
@@ -25,6 +33,8 @@ type Data = { members: Member[]; merchantPool: { tenantId: string; name: string;
 const api = process.env.NEXT_PUBLIC_API_BASE_URL ?? 'http://127.0.0.1:3001';
 const sessionApi = new SessionApiClient(api);
 const headers = () => ({});
+const statusLabel = (value: string) =>
+  value === 'not_required' ? '无需审核' : businessLabel(value);
 
 export default function BusinessCircleMerchants() {
   const [state, setState] = useState<'loading' | 'ready' | 'forbidden' | 'error'>('loading');
@@ -61,10 +71,10 @@ export default function BusinessCircleMerchants() {
         body: JSON.stringify(body),
       });
       if (!response.ok) throw Error();
-      setNotice('Saved with an auditable state transition.');
+      setNotice('变更已保存，并记录可审计的状态流转。');
       await load();
     } catch {
-      setNotice('The change was not saved. Refresh and check the current approval version.');
+      setNotice('变更未保存，请刷新并检查当前审批版本。');
     } finally {
       setBusy(false);
     }
@@ -87,47 +97,40 @@ export default function BusinessCircleMerchants() {
       },
     });
   };
-  if (state === 'loading')
-    return <main className={styles.centered}>Loading merchant governance…</main>;
-  if (state === 'forbidden')
+  if (state !== 'ready')
     return (
-      <main className={styles.centered}>
-        <section>
-          <h1>Business-circle merchant management is restricted</h1>
-        </section>
-      </main>
-    );
-  if (state === 'error')
-    return (
-      <main className={styles.centered}>
-        <section>
-          <h1>Merchant governance is temporarily unavailable</h1>
-          <button onClick={() => void load()}>Retry</button>
-        </section>
-      </main>
+      <AppStatePanel
+        kind={state}
+        title={
+          state === 'loading'
+            ? '正在读取商圈成员治理数据'
+            : state === 'forbidden'
+              ? '当前账号无商圈成员治理权限'
+              : '商圈成员治理暂时不可用'
+        }
+        description="邀请、双重审批、展示与退出均受商圈授权范围约束。"
+        action={
+          state === 'error' ? <Button onClick={() => void load()}>重新加载</Button> : undefined
+        }
+      />
     );
   const circles = Array.from(
     new Map(data?.members.map((member) => [member.circleId, member]) ?? []).values(),
   );
   return (
     <main className={styles.page}>
-      <header className={styles.header}>
-        <div>
-          <p>ONEDAY / FIXED BUSINESS CIRCLES</p>
-          <h1>Invite, review and display approved merchants</h1>
-          <span>
-            Invitation delivery is prepared only. A member reaches the dashboard only after separate
-            circle and platform approvals.
-          </span>
-        </div>
-        <button onClick={() => void load()}>Refresh</button>
-      </header>
-      <section className={styles.invite}>
-        <h2>Prepare a merchant invitation</h2>
+      <AdminPageHeader
+        eyebrow="ONEDAY / 商圈成员治理"
+        title="邀请、审核并展示已批准商户"
+        description="邀请仅记录为已准备；成员必须分别通过商圈和平台审批后，才会进入经营总览。"
+        actions={<Button onClick={() => void load()}>刷新数据</Button>}
+      />
+      <Card className={styles.invite}>
+        <h2>准备商户邀请</h2>
         {circles.length && data?.merchantPool.length ? (
           <form onSubmit={invite}>
             <label>
-              Fixed circle
+              固定商圈
               <select name="circleId" required>
                 {circles.map((circle) => (
                   <option key={circle.circleId} value={circle.circleId}>
@@ -137,7 +140,7 @@ export default function BusinessCircleMerchants() {
               </select>
             </label>
             <label>
-              Merchant
+              商户
               <select name="merchantTenantId" required>
                 {data.merchantPool.map((merchant) => (
                   <option key={merchant.tenantId} value={merchant.tenantId}>
@@ -147,37 +150,34 @@ export default function BusinessCircleMerchants() {
               </select>
             </label>
             <label>
-              Benefits
-              <input name="benefits" required placeholder="e.g. joint voucher, member rate" />
+              联合权益
+              <input name="benefits" required placeholder="例如：联合券、会员价" />
             </label>
             <label>
-              Invitation note
-              <input name="invitationNote" required placeholder="Why this merchant is invited" />
+              邀请说明
+              <input name="invitationNote" required placeholder="说明邀请该商户的原因" />
             </label>
             <label>
-              Dashboard headline
-              <input name="headline" placeholder="Optional approved-display label" />
+              总览展示标题
+              <input name="headline" placeholder="可选的批准后展示文案" />
             </label>
             <label>
-              Sort order
+              展示顺序
               <input name="sortOrder" type="number" min="0" max="999" defaultValue="0" required />
             </label>
             <label className={styles.checkbox}>
               <input name="visible" type="checkbox" defaultChecked />
-              Show after approval
+              审批后展示
             </label>
-            <button disabled={busy}>Prepare invitation</button>
+            <Button loading={busy}>准备邀请</Button>
           </form>
         ) : (
-          <p className={styles.empty}>
-            A fixed circle and an eligible merchant are required before an invitation can be
-            prepared.
-          </p>
+          <p className={styles.empty}>准备邀请前，需要先有固定商圈和符合条件的商户。</p>
         )}
-      </section>
+      </Card>
       {notice ? <p className={styles.notice}>{notice}</p> : null}
-      <section className={styles.panel}>
-        <h2>Merchant review queue</h2>
+      <Card className={styles.panel}>
+        <h2>商户审核队列</h2>
         {data?.members.length ? (
           <div className={styles.members}>
             {data.members.map((member) => (
@@ -189,36 +189,40 @@ export default function BusinessCircleMerchants() {
                       {member.circleName} · {member.slug}
                     </span>
                   </div>
-                  <small>{member.platformApprovalStatus}</small>
+                  <StatusBadge
+                    tone={member.platformApprovalStatus === 'approved' ? 'success' : 'warning'}
+                  >
+                    {statusLabel(member.platformApprovalStatus)}
+                  </StatusBadge>
                 </header>
                 <p>{member.benefits.join(' · ')}</p>
                 <dl>
                   <div>
-                    <dt>Invitation</dt>
-                    <dd>{member.invitationStatus}</dd>
+                    <dt>邀请</dt>
+                    <dd>{statusLabel(member.invitationStatus)}</dd>
                   </div>
                   <div>
-                    <dt>Circle review</dt>
-                    <dd>{member.circleApprovalStatus}</dd>
+                    <dt>商圈审核</dt>
+                    <dd>{statusLabel(member.circleApprovalStatus)}</dd>
                   </div>
                   <div>
-                    <dt>Platform review</dt>
-                    <dd>{member.platformApprovalStatus}</dd>
+                    <dt>平台审核</dt>
+                    <dd>{statusLabel(member.platformApprovalStatus)}</dd>
                   </div>
                   <div>
-                    <dt>Visibility</dt>
+                    <dt>展示状态</dt>
                     <dd>
-                      {member.displayConfig.visible ? 'Visible' : 'Hidden'} /{' '}
+                      {member.displayConfig.visible ? '展示' : '隐藏'} /{' '}
                       {member.displayConfig.sortOrder}
                     </dd>
                   </div>
                 </dl>
                 {member.exitReason ? (
-                  <p className={styles.exit}>Exited: {member.exitReason}</p>
+                  <p className={styles.exit}>已退出：{member.exitReason}</p>
                 ) : null}
                 <footer>
                   {member.circleApprovalStatus === 'pending' ? (
-                    <button
+                    <Button
                       disabled={busy}
                       onClick={() =>
                         void mutate(`/${member.id}/circle-approve`, 'POST', {
@@ -226,12 +230,12 @@ export default function BusinessCircleMerchants() {
                         })
                       }
                     >
-                      Approve for circle
-                    </button>
+                      商圈审核通过
+                    </Button>
                   ) : null}
                   {member.circleApprovalStatus === 'approved' &&
                   member.platformApprovalStatus === 'pending' ? (
-                    <button
+                    <Button
                       disabled={busy}
                       onClick={() =>
                         void mutate(`/${member.id}/platform-approve`, 'POST', {
@@ -239,12 +243,12 @@ export default function BusinessCircleMerchants() {
                         })
                       }
                     >
-                      Approve for platform
-                    </button>
+                      平台审核通过
+                    </Button>
                   ) : null}
                   {member.platformApprovalStatus === 'approved' ? (
                     <>
-                      <button
+                      <Button
                         disabled={busy}
                         onClick={() =>
                           void mutate(`/${member.id}/display`, 'PUT', {
@@ -256,13 +260,13 @@ export default function BusinessCircleMerchants() {
                           })
                         }
                       >
-                        {member.displayConfig.visible ? 'Hide from dashboard' : 'Show on dashboard'}
-                      </button>
-                      <button
-                        className={styles.danger}
+                        {member.displayConfig.visible ? '从总览隐藏' : '在总览展示'}
+                      </Button>
+                      <Button
+                        tone="danger"
                         disabled={busy}
                         onClick={() => {
-                          const reason = window.prompt('Exit reason');
+                          const reason = window.prompt('请输入退出原因');
                           if (reason)
                             void mutate(`/${member.id}/exit`, 'POST', {
                               version: member.version,
@@ -270,8 +274,8 @@ export default function BusinessCircleMerchants() {
                             });
                         }}
                       >
-                        Exit circle
-                      </button>
+                        退出商圈
+                      </Button>
                     </>
                   ) : null}
                 </footer>
@@ -279,11 +283,9 @@ export default function BusinessCircleMerchants() {
             ))}
           </div>
         ) : (
-          <p className={styles.empty}>
-            No merchant invitations or memberships are present for this business circle.
-          </p>
+          <p className={styles.empty}>当前商圈尚无商户邀请或成员记录。</p>
         )}
-      </section>
+      </Card>
     </main>
   );
 }

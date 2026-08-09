@@ -2,7 +2,7 @@ import { expect, test } from '@playwright/test';
 
 const api = 'http://127.0.0.1:3152';
 const systemTenantId = '00000000-0000-4000-8000-000000000001';
-let token = '';
+let session = { accessToken: '', refreshToken: '', expiresAt: '' };
 
 test.beforeAll(async () => {
   const login = await fetch(`${api}/api/v1/auth/login`, {
@@ -15,9 +15,14 @@ test.beforeAll(async () => {
     }),
   });
   expect(login.status).toBe(201);
-  token = (await login.json()).accessToken;
+  const loginData = await login.json();
+  session = {
+    accessToken: loginData.accessToken,
+    refreshToken: loginData.refreshToken,
+    expiresAt: loginData.expiresAt,
+  };
   const headers = {
-    authorization: `Bearer ${token}`,
+    authorization: `Bearer ${session.accessToken}`,
     'x-request-id': crypto.randomUUID(),
     'content-type': 'application/json',
   };
@@ -58,12 +63,16 @@ test.beforeAll(async () => {
 });
 
 test('channel operator sees approved fixed-circle operating projections', async ({ page }) => {
-  await page.addInitScript((value) => sessionStorage.setItem('oneday.accessToken', value), token);
+  await page.addInitScript((value) => {
+    sessionStorage.setItem('oneday.accessToken', value.accessToken);
+    sessionStorage.setItem('oneday.refreshToken', value.refreshToken);
+    sessionStorage.setItem('oneday.accessExpiresAt', value.expiresAt);
+  }, session);
   await page.goto('/bc/dashboard');
   await expect(page.locator('h1')).toBeVisible();
   await expect(page.getByLabel('Business-circle metrics')).toBeVisible();
   await page.screenshot({
-    path: 'evidence/CIRCLE-001/business-circle-dashboard-desktop.png',
+    path: 'evidence/CIRCLE-001/business-circle-dashboard-desktop-v2.png',
     fullPage: false,
   });
 });
@@ -72,7 +81,7 @@ test('business-circle dashboard rejects a missing session', async ({ page }) => 
   await page.goto('/bc/dashboard');
   await expect(page.locator('h1')).toBeVisible();
   await page.screenshot({
-    path: 'evidence/CIRCLE-001/business-circle-dashboard-forbidden.png',
+    path: 'evidence/CIRCLE-001/business-circle-dashboard-forbidden-v2.png',
     fullPage: true,
   });
 });

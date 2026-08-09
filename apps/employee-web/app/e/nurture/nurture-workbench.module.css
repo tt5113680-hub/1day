@@ -92,16 +92,16 @@
   font-weight: 700;
 }
 .active {
-  color: #1d4ed8;
-  background: #dbeafe;
+  color: var(--od-info);
+  background: color-mix(in srgb, var(--od-info) 14%, var(--od-surface));
 }
 .repurchase {
-  color: #166534;
-  background: #dcfce7;
+  color: var(--od-success);
+  background: color-mix(in srgb, var(--od-success) 14%, var(--od-surface));
 }
 .dormant {
-  color: #b45309;
-  background: #fef3c7;
+  color: var(--od-warning);
+  background: color-mix(in srgb, var(--od-warning) 16%, var(--od-surface));
 }
 .actions {
   display: flex;
@@ -120,8 +120,8 @@
 }
 .actions .primary {
   border: 0;
-  color: #fff;
-  background: #2563eb;
+  color: var(--od-surface);
+  background: var(--od-brand-700);
 }
 .feedback {
   padding: 12px;

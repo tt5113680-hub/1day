@@ -46,7 +46,7 @@
 }
 .summary a {
   margin-left: auto;
-  color: #fff;
+  color: var(--od-surface);
   font-size: 14px;
   font-weight: 700;
 }
@@ -114,20 +114,20 @@
   font-weight: 700;
 }
 .task {
-  color: #1d4ed8;
-  background: #dbeafe;
+  color: var(--od-info);
+  background: color-mix(in srgb, var(--od-info) 14%, var(--od-surface));
 }
 .anomaly {
-  color: #b91c1c;
-  background: #fee2e2;
+  color: var(--od-danger);
+  background: color-mix(in srgb, var(--od-danger) 14%, var(--od-surface));
 }
 .approval {
-  color: #92400e;
-  background: #fef3c7;
+  color: var(--od-warning);
+  background: color-mix(in srgb, var(--od-warning) 16%, var(--od-surface));
 }
 .system {
-  color: #5b21b6;
-  background: #ede9fe;
+  color: var(--od-brand-800);
+  background: var(--od-brand-100);
 }
 .actions {
   display: flex;

@@ -1,7 +1,7 @@
 import { expect, test } from '@playwright/test';
 
 const api = 'http://127.0.0.1:3155';
-let token = '';
+let session = { accessToken: '', refreshToken: '', expiresAt: '' };
 test.beforeAll(async () => {
   const login = await fetch(`${api}/api/v1/auth/login`, {
     method: 'POST',
@@ -13,23 +13,33 @@ test.beforeAll(async () => {
     }),
   });
   expect(login.status).toBe(201);
-  token = (await login.json()).accessToken;
+  const loginData = await login.json();
+  session = {
+    accessToken: loginData.accessToken,
+    refreshToken: loginData.refreshToken,
+    expiresAt: loginData.expiresAt,
+  };
 });
 test('circle manager sees prepared invitations and approval controls', async ({ page }) => {
-  await page.addInitScript((value) => sessionStorage.setItem('oneday.accessToken', value), token);
+  await page.addInitScript((value) => {
+    sessionStorage.setItem('oneday.accessToken', value.accessToken);
+    sessionStorage.setItem('oneday.refreshToken', value.refreshToken);
+    sessionStorage.setItem('oneday.accessExpiresAt', value.expiresAt);
+  }, session);
   await page.goto('/bc/merchants');
-  await expect(page.locator('h1')).toContainText('Invite, review and display');
-  await expect(page.getByText('Merchant review queue')).toBeVisible();
+  await expect(page.locator('h1')).toContainText('邀请、审核并展示');
+  await expect(page.getByText('商户审核队列')).toBeVisible();
   await page.screenshot({
-    path: 'evidence/CIRCLE-002/business-circle-merchants-desktop.png',
+    path: 'evidence/CIRCLE-002/business-circle-merchants-desktop-v2.png',
     fullPage: false,
   });
 });
 test('circle merchant management rejects a missing session', async ({ page }) => {
   await page.goto('/bc/merchants');
-  await expect(page.locator('h1')).toContainText('restricted');
+  await expect(page).toHaveURL(/\/login$/);
+  await expect(page.locator('h1')).toContainText('平台登录');
   await page.screenshot({
-    path: 'evidence/CIRCLE-002/business-circle-merchants-forbidden.png',
+    path: 'evidence/CIRCLE-002/business-circle-merchants-forbidden-v2.png',
     fullPage: true,
   });
 });

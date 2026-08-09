@@ -3,8 +3,8 @@
   min-height: 100vh;
   margin: auto;
   padding: 42px 48px;
-  background: #f6f8fb;
-  color: #111827;
+  background: var(--od-background);
+  color: var(--od-ink);
 }
 .page header {
   display: flex;
@@ -13,7 +13,7 @@
 }
 .page header p {
   margin: 0;
-  color: #7c3aed;
+  color: var(--od-brand-700);
   font-size: 13px;
   font-weight: 800;
 }
@@ -23,14 +23,14 @@
 }
 .page header span,
 .panel small {
-  color: #4b5563;
+  color: var(--od-text-muted);
 }
 .page button,
 .page input,
 .page select {
-  border: 1px solid #cbd5e1;
+  border: 1px solid var(--od-border);
   border-radius: 8px;
-  background: #fff;
+  background: var(--od-surface);
   padding: 10px 14px;
   font: inherit;
 }
@@ -50,8 +50,8 @@
   gap: 12px;
   padding: 20px;
   border-radius: 16px;
-  background: #fff;
-  box-shadow: 0 5px 16px #11182708;
+  background: var(--od-surface);
+  box-shadow: var(--od-shadow-low);
 }
 .list button {
   display: grid;
@@ -59,8 +59,8 @@
   text-align: left;
 }
 .selected {
-  border-color: #7c3aed !important;
-  background: #f5f3ff !important;
+  border-color: var(--od-brand-600) !important;
+  background: var(--od-brand-100) !important;
 }
 .panel label {
   display: grid;
@@ -68,11 +68,11 @@
   font-weight: 700;
 }
 .panel button {
-  background: #7c3aed;
-  color: #fff;
+  background: var(--od-brand-700);
+  color: var(--od-surface);
 }
 .note {
-  color: #166534;
+  color: var(--od-success);
   font-weight: 700;
 }
 .centered {
@@ -84,7 +84,7 @@
 .centered section {
   padding: 32px;
   border-radius: 16px;
-  background: #fff;
+  background: var(--od-surface);
 }
 @media (max-width: 900px) {
   .page {
