@@ -22,6 +22,7 @@
 - `AppStatePanel` now owns all four root loading, empty, error and permission routes, plus the Consumer and Employee critical nested loading boundaries previously capable of rendering blank content.
 - The Workbench-local navigation residue is removed; `EmployeeBottomNav` is the sole fixed employee navigation surface.
 - Employee Workbench legacy blue/purple task cards and page-local completion button styling are deprecated at `694a231`; new employee work surfaces must use the shared Button, StatusBadge, MetricCard and foundation token contract. Its browser session fixture must provide access token, refresh token and expiry together.
+- Management employee-performance page-local header, recovery state, card and overdue-pill CSS are deprecated at `96300c9`; new Management operating views must use the Admin Shell primitives and the same refresh-session test contract.
 
 1. 新页面或新交互不得再新增页面级颜色、圆角、阴影、按钮或状态体系；必须使用 token 与 primitive。
 2. 每次迁移保留现有 Session、RBAC、tenant scope、幂等和审计行为，并通过关联回归。

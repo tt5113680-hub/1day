@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## 2026-08-09 — ONEDAY-V3-COMMERCIAL-COMPLETION Batch 1 management performance foundation
+
+- Migrated Management employee process performance to shared `AdminPageHeader`, `Card`, `Button`, `StatusBadge` and `AppStatePanel` primitives in the Admin Shell.
+- Preserved tenant-scoped task, follow-up, evidence and confirmed-contribution semantics. Updated the browser fixture to the access/refresh/expiry session contract and verified secure login recovery.
+- Format, workspace lint, Management typecheck/build and real 1440px browser suite (2/2) pass with refreshed visual and trace evidence. Batch 1 remains in progress.
+
 ## 2026-08-09 — ONEDAY-V3-COMMERCIAL-COMPLETION Batch 1 employee workbench foundation
 
 - Migrated the daily Employee workbench to shared `Button`, `StatusBadge` and `MetricCard` primitives with the canonical commercial token contract.

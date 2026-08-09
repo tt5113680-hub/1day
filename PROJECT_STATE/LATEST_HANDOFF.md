@@ -2,8 +2,8 @@
 
 ## Current Batch 1 continuation
 
-- Base HEAD: `694a231`; Employee workbench and task detail are tokenized Mobile Shell surfaces using shared Button, StatusBadge, AppStatePanel and MetricCard primitives without changing protected session, evidence-link, result-upload or task-completion contracts.
-- Current verified scope: active Admin navigation; unified Consumer/Employee/Management/Platform root loading, empty, error and permission surfaces; E/M/P session recovery and login styling; non-blank Consumer/Employee critical nested loading routes; integrated shell session controls; repeatable Consumer/Employee/Management/Platform visual captures; and a single design-token CSS source with typed-projection coverage. The Employee workbench and task-detail 390px evidence/session suites each pass 2/2, and the Employee production build passes.
+- Base HEAD: `96300c9`; Management employee performance joins the tokenized Admin Shell system through shared AdminPageHeader, Card, Button, StatusBadge and AppStatePanel primitives, while Employee workbench and task detail remain tokenized Mobile Shell surfaces.
+- Current verified scope: active Admin navigation; unified Consumer/Employee/Management/Platform root loading, empty, error and permission surfaces; E/M/P session recovery and login styling; non-blank Consumer/Employee critical nested loading routes; integrated shell session controls; repeatable Consumer/Employee/Management/Platform visual captures; and a single design-token CSS source with typed-projection coverage. The Employee workbench/task-detail and Management performance session suites each pass 2/2, and the affected production builds pass.
 - Next: migrate remaining Employee/Management/Platform core-page legacy styling and complete Batch 1 repository and commercial-chain regression gates. Do not declare Batch 1 pass yet.
 
 - branch: `hardening/COMMERCIAL-COMPLETION`
