@@ -1,6 +1,6 @@
 # ONEDAY V3 开发规则
 
-本仓库唯一写代码执行器为 Codex。禁止 Cursor Agent、Headless CLI、第二个写入代理及任何并行代理写入仓库。
+本仓库唯一写代码执行器为 **Cursor Agent**（2026-08-10 接替 Codex，见 `PROJECT_STATE/EXECUTOR_HANDOFF.md`）。禁止 Codex、Headless CLI、第二个写入代理及任何并行代理同时写入仓库。
 
 ## 任务纪律
 

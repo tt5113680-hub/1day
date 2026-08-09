@@ -1,35 +1,45 @@
 # LATEST_HANDOFF
 
-## Current Batch 4 continuation
+## Executor
 
-- Batch 1: `BATCH_1_PASS` at `1aecf81`; Batch 2: `BATCH_2_PASS` at `c79812b`; Batch 3: `BATCH_3_PASS` at source `ead41e4`.
-- Batch 3 adds immediate tenant lifecycle authorization convergence, Management-to-Consumer approved content placement, and Consumer discovery of only approved Platform Channel/Circle relations. Evidence and full-gate results are in `BATCH_3_ACCEPTANCE.md`.
-- Current: Batch 4 must provision a brand-new tenant and run the whole commercial path without reliance on the shared H-002 fixture or historical seed repairs.
+- Cursor Agent is the sole write executor as of 2026-08-10.
+- Codex stopped writing; read-only facts are in `PROJECT_STATE/EXECUTOR_HANDOFF.md`.
 
-## Historical Batch 2 continuation
-
-- Batch 1: `BATCH_1_PASS` at source commit `1aecf81`; exact full-gate and visual evidence is recorded in `COMMERCIAL_UI_FOUNDATION_ACCEPTANCE.md`.
-- Verified foundation: Consumer is responsive at 390/768/1024/1440; Employee uses Mobile Shell; Management, Platform and restricted Channel/Circle modes use explicit Admin Shell identities and scoped navigation. Repository, session, tenant/RBAC isolation, commercial-chain and visual gates all pass.
-- Current: Batch 2 one-click tenant provisioning through verified commercial READY, with industry Storefront lifecycle, decoration, Offer operations, membership and ONE-CODE.
-- Verified Batch 2 subsystem: migration 048 and the commercial onboarding orchestration now produce one durable 11-step run, a published first Storefront, owner Management/Employee access and ONE-CODE before returning `ready`; API acceptance is 1/1 and Platform browser acceptance is 2/2. Next is Storefront Draft/Preview/Publish/Rollback on the same binding and renderer.
-- Verified Storefront lifecycle: migration 049, Management editing, expiring same-renderer Consumer preview, atomic publish and immutable rollback history pass API 1/1 and browser 3/3. Public Consumer reads stay on the prior live version until a validated switch. Next is service/package/Offer operations and Member enrollment/benefit use.
-- Verified Offer operations: migration 050 makes service/package and Offer price provenance explicit. Management creates idempotent services and HTTPS-bound Offers, and Consumer renders the same persisted source/update metadata; invalid prices, disabled Offers and cross-tenant operations are rejected. API acceptance passes 1/1 and Management/Consumer browser acceptance passes 2/2. Next is real Member enrollment, benefit-ledger issuance and Employee redemption.
-- Verified Membership loop: consented Consumer enrollment, Management grant, authorized Employee redemption, wallet balance and cross-tenant denial pass real API acceptance; Consumer-to-Employee mobile browser acceptance passes 1/1. Next: remaining Batch 2 industry-template/content truth-source acceptance.
-- Verified content truth source: migration 052 backfills legacy rows and replaces Consumer reads with approved `content_items` through tenant/store placements. Management create/approve/place to Consumer real API acceptance passes 1/1. Next: four-industry responsive visual evidence and Batch 2 full matrix gates.
+## Current task — Batch 4
 
 - branch: `hardening/COMMERCIAL-COMPLETION`
-- HEAD: `42186a5e5d6b9aa8ac7edca4bc4636fe4d11fc18`
-- 当前阶段: `ONEDAY-V3-COMMERCIAL-COMPLETION / BATCH 1` 正在施工。Batch 0 已完成：外部安全检查点为 `D:\ONEDAY_V3_SAFE_CHECKPOINT\20260809-202946`，审计与证据已独立提交，zip 已移至仓库外 artifacts，工作区恢复为干净基线。
-- 已完成的 Batch 1 基座: `@oneday/ui` 已新增唯一 token CSS、按钮/卡片/指标/状态 Primitive 与 Mobile/Admin Shell；Consumer/Employee 接入 Mobile Shell，Management/Platform 接入响应式 Admin Shell，两个首页已使用统一状态与指标组件。
-- 边界: 这只是 UI Foundation，未改变模板真源、租户隔离、RBAC、Session、Outbox 或现有业务写链；不得将其描述为 Batch 1 或最终商用验收通过。
-- 下一步: 继续完成四端关键页的 Shell/状态迁移、视觉证据与完整回归，再进入 Batch 2。
+- HEAD: `9dc4df5` (Batch 4 WIP — provisioning content placement seed; **not** a verified Batch 4 PASS)
+- last_verified_batch: Batch 3 PASS at source `ead41e4` (`BATCH_3_ACCEPTANCE.md`)
+- current_task: `ONEDAY-V3-COMMERCIAL-COMPLETION / BATCH 4`
+- status: `BATCH_4_IN_PROGRESS`
+- blocker: null
 
-## Previous baseline preserved from the safe-recovery checkpoint
+### Product anchors (do not rely on chat memory)
 
-- branch: `hardening/COMMERCIAL-UI-ALIGNMENT`
-- HEAD: `1e3e8dcc1535328c6c38bfc8daf5b7ec6ba0ced7`
-- 当前阶段: `CONSUMER-COMMERCIAL-HOME-V1` 技术实现已提交，等待产品负责人 UI 验收；LOCAL HUMAN-PILOT 正在运行。
-- 已完成: Consumer 餐饮门店壳、五个 store-scoped 路由、套餐/平台 offer 展示、受控外链与电话/导航留痕；Employee/Management/Platform 已有已提交商业运营基础能力。
-- WIP: Consumer 商业首页视觉产品验收；门店 Banner/快捷入口/底栏配置、套餐/内容/offer 后台运营、真实会员闭环尚未施工。
-- BLOCKED: 无技术阻塞；公网 Consumer 预览部署曾受服务器到 GitHub 网络不稳定阻塞，详情见 `PROJECT_STATE/BLOCKED_REPORT.md`。
-- 下一建议动作: 先冻结门店装修配置与会员最小闭环的数据契约（并决定是否复用 Page Template），再创建唯一下一 TASK；不要立即施工。
+- Weapon: unified entry + multi-platform jump/trace + employee tasks + owner attribution + channel/circle network.
+- Forbidden: replace Meituan/Douyin UIs; page-level patches; dual storefront truth; PASS without matrix evidence.
+- Consumer tabs: fixed five-tab shell for transition during Batch 4.
+
+### Batch 4 gate (from `BATCH_3_ACCEPTANCE.md`)
+
+Run a **clean-tenant** commercial rehearsal without the shared H-002/commercial simulation fixture or historical seed repair. Prove:
+
+1. Fresh provisioning → READY + ONE-CODE + published Storefront
+2. Consumer public read + enrollment / action chain
+3. Employee redemption or follow-up + Management visibility
+4. Management content placement → Consumer
+5. Approved Platform channel/circle → Consumer discovery
+6. Second-tenant isolation + tenant suspend/resume session/public convergence
+
+### Next action for Cursor Agent
+
+1. Finish/verify provisioning content placement at `9dc4df5` inside the clean-tenant path.
+2. Add Batch 4 acceptance test + evidence under `evidence/BATCH-4/`.
+3. Run full gates (format, lint, 18-workspace typecheck/build, repository tests, evidence check).
+4. Update `CURRENT_STATE.md`, `TASK_QUEUE.md`, `CHANGELOG.md` only after verified PASS.
+
+## Completed batches (reference)
+
+- Batch 1 PASS `1aecf81` — `COMMERCIAL_UI_FOUNDATION_ACCEPTANCE.md`
+- Batch 2 PASS `c79812b` — `BATCH_2_ACCEPTANCE.md`
+- Batch 3 PASS `ead41e4` — `BATCH_3_ACCEPTANCE.md`

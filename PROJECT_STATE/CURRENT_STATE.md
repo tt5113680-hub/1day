@@ -8,7 +8,9 @@
 - current_task: ONEDAY-V3-COMMERCIAL-COMPLETION / BATCH 4
 - status: BATCH_4_IN_PROGRESS
 - branch: hardening/COMMERCIAL-COMPLETION
+- executor: Cursor Agent (2026-08-10; see PROJECT_STATE/EXECUTOR_HANDOFF.md)
 - last_safe_commit: ead41e4 (Batch 3 cross-terminal synchronization verification)
+- batch_4_wip_commit: 9dc4df5 (provisioning published content placement seed; not yet verified as Batch 4 PASS)
 - started_at: 2026-08-09T20:29:46+08:00
 - blocker: null
 - verified_batch_1: PASS at source commit 1aecf81. The full format, lint, 18-workspace typecheck/build, 184 repository tests, 74 evidence checks, H-002 session/isolation 6/6, real Consumer-to-Employee-to-Management 2/2, Platform tenant/channel/circle 14/14 and four-terminal visual 3/3 gates passed. See PROJECT_STATE/COMMERCIAL_UI_FOUNDATION_ACCEPTANCE.md.
