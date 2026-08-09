@@ -3,6 +3,7 @@ dist/
 node_modules/
 **/next-env.d.ts
 pnpm-lock.yaml
+.cursor/
 PROJECT_STATE/STOP_REPORT.md
 evidence/*/playwright-output/
 evidence/**/h002-playwright-output/

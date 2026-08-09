@@ -87,7 +87,8 @@ export class PlatformTenantService implements OnModuleDestroy {
       ).rows[0];
       const updated = (
         await q.query(
-          'update tenants set status=$1,version=version+1,updated_at=now(),updated_by=$2 where id=$3 returning id,slug,name,status,version',
+          `update tenants set status=$1,version=version+1,auth_epoch=auth_epoch+1,updated_at=now(),updated_by=$2
+           where id=$3 returning id,slug,name,status,version,auth_epoch`,
           [status, context.userId, id],
         )
       ).rows[0];
@@ -102,6 +103,7 @@ export class PlatformTenantService implements OnModuleDestroy {
         quotas: setting.quotas,
         riskLevel: setting.risk_level,
         settingsVersion: setting.version,
+        authEpoch: updated.auth_epoch,
       };
       const correlation = uuid.test(requestId) ? requestId : randomUUID();
       await q.query(
@@ -111,6 +113,21 @@ export class PlatformTenantService implements OnModuleDestroy {
       await q.query(
         "insert into outbox_events(id,tenant_id,event_type,aggregate_type,aggregate_id,payload,correlation_id,trace_id,created_by,updated_by) values($1,$2,'platform.tenant.updated.v1','tenant',$3,$4,$5,'page-p-002',$6,$6)",
         [randomUUID(), context.tenantId, id, response, correlation, context.userId],
+      );
+      await q.query(
+        "insert into outbox_events(id,tenant_id,event_type,aggregate_type,aggregate_id,payload,correlation_id,trace_id,created_by,updated_by) values($1,$2,'tenant.lifecycle.changed.v1','tenant',$3,$4,$5,'page-p-002',$6,$6)",
+        [
+          randomUUID(),
+          id,
+          id,
+          {
+            status,
+            authEpoch: updated.auth_epoch,
+            version: updated.version,
+          },
+          correlation,
+          context.userId,
+        ],
       );
       await q.query(
         'insert into idempotency_keys(id,tenant_id,resource_type,idempotency_key,response,created_by,updated_by) values($1,$2,$3,$4,$5,$6,$6)',

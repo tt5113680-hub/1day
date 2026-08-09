@@ -6,6 +6,10 @@ const SNAPSHOT_TABLES = [
   'tenant_operating_settings',
   'connector_configs',
   'evidence_files',
+  'tenant_provisioning_runs',
+  'storefront_bindings',
+  'member_benefit_ledger',
+  'outbox_events',
 ] as const;
 
 function databaseName(connectionString: string) {

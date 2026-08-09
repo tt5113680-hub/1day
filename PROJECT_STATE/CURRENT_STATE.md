@@ -4,18 +4,22 @@
 - completed_tasks: 69/69
 - foundation_final_state_commit: 239114e
 - core_final_state_commit: df5ef65
-- last_completed_task: PRE-PILOT-POLISH PASS (approved pilot experience close-out at 268464d)
-- current_task: ONEDAY-V3-COMMERCIAL-COMPLETION / matrix gap close-out
-- status: STOREFRONT_MODULE_RENDERER_PASS; MATRIX_GAP_CLOSEOUT_NEXT
+- last_completed_task: MATRIX-GAP-WAVE-2 PASS (MG-E isolation contracts)
+- current_task: ONEDAY-V3-COMMERCIAL-COMPLETION / matrix gap close-out (MG-F+ next)
+- status: MATRIX_GAP_WAVE_1_PASS; MATRIX_GAP_WAVE_2_PASS; MG_F_NEXT
 - branch: hardening/COMMERCIAL-COMPLETION
 - executor: Cursor Agent (2026-08-10; see PROJECT_STATE/EXECUTOR_HANDOFF.md)
-- last_safe_commit: ec28727 (Storefront module-renderer PASS)
-- verified_storefront_module_renderer: PASS at source commit ec28727. Consumer store home renders from storefront.modules order/visibility; hard-coded Banner/shortcut arrays removed; Management publish projects to Consumer DOM. See PROJECT_STATE/STOREFRONT_MODULE_RENDERER_ACCEPTANCE.md and evidence/STOREFRONT-MODULE-RENDERER/.
-- verified_batch_4: PASS at source commit 04c863f. Clean-tenant commercial rehearsal without shared H-002/commercial-simulation fixture repair. See PROJECT_STATE/BATCH_4_ACCEPTANCE.md and evidence/BATCH-4/.
+- last_safe_commit: pending Wave 1+2 commit
+- verified_matrix_gap_wave_2: PASS. XT-01 route inventory, MS-01 two-store isolation, XL-01 link safety, XT-02 light. See PROJECT_STATE/MATRIX_GAP_WAVE_2_ACCEPTANCE.md and evidence/MATRIX-GAP-WAVE-2/.
+- verified_matrix_gap_wave_1: PASS. Sync gateway SY-01/02, concurrent TP-02/SF-01/MB-02, WO-02 DLQ/replay, RC-01 recovery counts. See PROJECT_STATE/MATRIX_GAP_WAVE_1_ACCEPTANCE.md and evidence/MATRIX-GAP-WAVE-1/.
+- verified_storefront_module_renderer: PASS at source commit ec28727.
+- verified_batch_4: PASS at source commit 04c863f.
 - started_at: 2026-08-09T20:29:46+08:00
 - blocker: null
-- verified_batch_1: PASS at source commit 1aecf81. See PROJECT_STATE/COMMERCIAL_UI_FOUNDATION_ACCEPTANCE.md.
-- verified_batch_3: PASS at source commit ead41e4. See PROJECT_STATE/BATCH_3_ACCEPTANCE.md.
-- next_scope: Matrix gap close-out per authorization A; still no page-level patches or arbitrary low-code. Tencent Cloud / public HTTPS remain out of scope (authorization G).
+- verified_batch_1: PASS at source commit 1aecf81.
+- verified_batch_3: PASS at source commit ead41e4.
+- next_scope: MG-F+ remaining PARTIAL P0 then scoped P1; still no page-level patches. Honest claim: not full matrix green / not 全部商用. Tencent Cloud out of scope (G).
+- progress_p0_covered: 17/26 (~65%)
+- progress_matrix_waves: 2/3 (~70%)
 - verified_pre_pilot_polish: PASS at 268464d.
-- remediation_stage: A-G PASS. See PROJECT_STATE/AUDIT_REMEDIATION_CLOSEOUT.md; remaining work is human controlled-pilot handoff, not an unverified technical claim.
+- remediation_stage: A-G PASS. See PROJECT_STATE/AUDIT_REMEDIATION_CLOSEOUT.md.

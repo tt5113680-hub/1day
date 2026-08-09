@@ -8,7 +8,9 @@
 - [x] ONEDAY-V3-COMMERCIAL-COMPLETION / BATCH 3 PASS - cross-terminal tenant lifecycle, content placement and approved Platform network discovery pass at source commit `ead41e4`; see `BATCH_3_ACCEPTANCE.md`.
 - [x] ONEDAY-V3-COMMERCIAL-COMPLETION / BATCH 4 PASS - clean-tenant commercial rehearsal (READY/ONE-CODE/Storefront through isolation and suspend/resume) verified; see `BATCH_4_ACCEPTANCE.md` and `evidence/BATCH-4/`.
 - [x] ONEDAY-V3-COMMERCIAL-COMPLETION / Storefront module-renderer unification PASS - Consumer renders from `storefront.modules`; hard-coded Banner/shortcuts removed; Management order/visibility projects to Consumer; see `STOREFRONT_MODULE_RENDERER_ACCEPTANCE.md`.
-- [ ] ONEDAY-V3-COMMERCIAL-COMPLETION / matrix gap close-out NEXT - close remaining COMMERCIAL_ACCEPTANCE_MATRIX gaps without page-level patches.
+- [x] ONEDAY-V3-COMMERCIAL-COMPLETION / matrix gap Wave 1 PASS - sync gateway (SY-01/02), concurrent harness (TP-02/SF-01/MB-02), worker DLQ/replay (WO-02), recovery commercial counts (RC-01); see `MATRIX_GAP_WAVE_1_ACCEPTANCE.md`.
+- [x] ONEDAY-V3-COMMERCIAL-COMPLETION / matrix gap Wave 2 PASS - MG-E isolation (XT-01, MS-01, XL-01, XT-02 light); see `MATRIX_GAP_WAVE_2_ACCEPTANCE.md`.
+- [ ] ONEDAY-V3-COMMERCIAL-COMPLETION / matrix gap close-out CONTINUES - MG-F+ remaining PARTIAL P0/P1 without page-level patches.
 
 ## Current product-owner acceptance
 

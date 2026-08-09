@@ -12,6 +12,10 @@ test('recovery clone only accepts a guarded test-database namespace and verifies
   assert.match(recovery, /'tenant_operating_settings'/);
   assert.match(recovery, /'connector_configs'/);
   assert.match(recovery, /'evidence_files'/);
+  assert.match(recovery, /'tenant_provisioning_runs'/);
+  assert.match(recovery, /'storefront_bindings'/);
+  assert.match(recovery, /'member_benefit_ledger'/);
+  assert.match(recovery, /'outbox_events'/);
   assert.match(recovery, /Recovery count mismatch/);
   assert.match(cli, /recovery:clone/);
   assert.match(runbook, /never overwrites a database/);

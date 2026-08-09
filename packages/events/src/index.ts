@@ -71,8 +71,122 @@ export class PostgresOutbox {
   }
 }
 
-export type OutboxDispatchResult = { published: number; retried: number; skipped: number };
+export type OutboxDispatchResult = {
+  published: number;
+  retried: number;
+  skipped: number;
+  deadLetter: number;
+};
 export type OutboxHandler = (event: DomainEvent) => Promise<void>;
+
+export const OUTBOX_MAX_ATTEMPTS = 8;
+export const SYNC_POLL_HINT_SECONDS = 30;
+
+export type SyncTopic =
+  | 'operating'
+  | 'storefront'
+  | 'content'
+  | 'membership'
+  | 'lifecycle'
+  | 'rbac'
+  | 'channel'
+  | 'circle';
+
+export function mapEventToSyncTopics(eventName: string): SyncTopic[] {
+  if (
+    eventName.startsWith('consumer.action.') ||
+    eventName.startsWith('consumer.operating.') ||
+    eventName.startsWith('employee.task.') ||
+    eventName.startsWith('employee.workbench.') ||
+    eventName.startsWith('evidence.')
+  )
+    return ['operating'];
+  if (eventName.startsWith('storefront.')) return ['storefront'];
+  if (eventName.startsWith('content.') || eventName.includes('placement')) return ['content'];
+  if (eventName.startsWith('member.') || eventName.startsWith('membership.')) return ['membership'];
+  if (
+    eventName.startsWith('tenant.lifecycle.') ||
+    eventName === 'platform.tenant.updated.v1' ||
+    eventName.startsWith('tenant.provisioning.')
+  )
+    return ['lifecycle'];
+  if (eventName.startsWith('rbac.') || eventName.startsWith('scope.')) return ['rbac'];
+  if (eventName.startsWith('channel.')) return ['channel'];
+  if (eventName.startsWith('circle.') || eventName.includes('business_circle')) return ['circle'];
+  return ['operating'];
+}
+
+export function syncTopicKey(tenantId: string, topic: SyncTopic, storeId?: string | null) {
+  return storeId ? `tenant:${tenantId}:store:${storeId}:${topic}` : `tenant:${tenantId}:${topic}`;
+}
+
+function payloadStoreId(payload: unknown): string | null {
+  if (!payload || typeof payload !== 'object' || Array.isArray(payload)) return null;
+  const value = (payload as Record<string, unknown>).storeId;
+  return typeof value === 'string' && /^[0-9a-f-]{36}$/i.test(value) ? value : null;
+}
+
+function payloadVersion(payload: unknown): number {
+  if (!payload || typeof payload !== 'object' || Array.isArray(payload)) return 1;
+  const value = (payload as Record<string, unknown>).version;
+  return Number.isInteger(value) && (value as number) > 0 ? (value as number) : 1;
+}
+
+/** Projects durable outbox events into tenant-scoped sync topics for SSE / ETag poll. */
+export function createSyncNotificationHandler(connectionString: string): OutboxHandler {
+  const pool = new Pool({ connectionString });
+  return async (event) => {
+    const topics = mapEventToSyncTopics(event.eventName);
+    const storeId = payloadStoreId(event.payload);
+    const version = payloadVersion(event.payload);
+    const client = await pool.connect();
+    try {
+      for (const topic of topics) {
+        await client.query(
+          `insert into sync_notifications(
+             id,tenant_id,store_id,topic,event_type,event_id,aggregate_type,aggregate_id,
+             aggregate_version,correlation_id,occurred_at
+           ) values($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,now())
+           on conflict(event_id, topic) do nothing`,
+          [
+            randomUUID(),
+            event.tenantId,
+            storeId,
+            syncTopicKey(event.tenantId, topic, storeId),
+            event.eventName,
+            event.eventId,
+            event.aggregateType,
+            event.aggregateId,
+            version,
+            event.correlationId,
+          ],
+        );
+      }
+    } finally {
+      client.release();
+    }
+  };
+}
+
+export async function replayOutboxEvent(
+  connectionString: string,
+  input: { tenantId: string; eventId: string; actorId?: string | null },
+): Promise<{ eventId: string; status: string }> {
+  const pool = new Pool({ connectionString });
+  try {
+    const result = await pool.query(
+      `update outbox_events
+       set status='pending', available_at=now(), attempts=0, last_error=null, updated_at=now(), updated_by=$3
+       where id=$1 and tenant_id=$2 and status='needs_attention' and deleted_at is null
+       returning id,status`,
+      [input.eventId, input.tenantId, input.actorId ?? null],
+    );
+    if (result.rowCount !== 1) throw new Error('OUTBOX_REPLAY_NOT_FOUND');
+    return { eventId: result.rows[0].id as string, status: result.rows[0].status as string };
+  } finally {
+    await pool.end();
+  }
+}
 
 /**
  * Consumes the durable outbox for internal subscribers. A published event means the worker
@@ -91,7 +205,12 @@ export class OutboxDispatcher {
 
   async dispatch(limit = 50): Promise<OutboxDispatchResult> {
     const client = await this.pool.connect();
-    const result: OutboxDispatchResult = { published: 0, retried: 0, skipped: 0 };
+    const result: OutboxDispatchResult = {
+      published: 0,
+      retried: 0,
+      skipped: 0,
+      deadLetter: 0,
+    };
     try {
       await client.query('begin');
       const events = await client.query(
@@ -139,13 +258,23 @@ export class OutboxDispatcher {
           await client.query('rollback to savepoint outbox_event');
           const message =
             error instanceof Error ? error.message.slice(0, 1000) : 'worker handler failed';
-          await client.query(
-            `update outbox_events set attempts=attempts+1,available_at=now() + (least(attempts + 1, 8) * interval '15 seconds'),
-             last_error=$3,updated_at=now() where id=$1 and tenant_id=$2`,
-            [row.id, row.tenant_id, message],
-          );
+          const nextAttempts = Number(row.attempts ?? 0) + 1;
+          if (nextAttempts >= OUTBOX_MAX_ATTEMPTS) {
+            await client.query(
+              `update outbox_events set attempts=$3,status='needs_attention',last_error=$4,updated_at=now()
+               where id=$1 and tenant_id=$2`,
+              [row.id, row.tenant_id, nextAttempts, message],
+            );
+            result.deadLetter += 1;
+          } else {
+            await client.query(
+              `update outbox_events set attempts=attempts+1,available_at=now() + (least(attempts + 1, 8) * interval '15 seconds'),
+               last_error=$3,updated_at=now() where id=$1 and tenant_id=$2`,
+              [row.id, row.tenant_id, message],
+            );
+            result.retried += 1;
+          }
           await client.query('release savepoint outbox_event');
-          result.retried += 1;
         }
       }
       await client.query('commit');

@@ -233,7 +233,9 @@ export class PlatformOnboardingService implements OnModuleDestroy {
       return this.get(context, runId);
     } catch (error) {
       await client.query('rollback');
-      const terminal = error instanceof ConflictException || error instanceof BadRequestException;
+      const conflict =
+        error instanceof ConflictException || (error as { code?: string }).code === '23505';
+      const terminal = conflict || error instanceof BadRequestException;
       await this.pool.query(
         'update tenant_provisioning_runs set state=$2,error_code=$3,error_detail=$4,updated_at=now(),updated_by=$5 where id=$1',
         [
@@ -244,6 +246,8 @@ export class PlatformOnboardingService implements OnModuleDestroy {
           context.userId,
         ],
       );
+      if (conflict && !(error instanceof ConflictException))
+        throw new ConflictException('CONFLICT');
       throw error;
     } finally {
       client.release();
@@ -323,10 +327,15 @@ export class PlatformOnboardingService implements OnModuleDestroy {
       benefitId: randomUUID(),
       contentId: randomUUID(),
     };
-    await client.query(
-      'insert into tenants(id,slug,name,created_by,updated_by) values($1,$2,$3,$4,$4)',
-      [ids.tenantId, input.slug, input.tenantName, context.userId],
-    );
+    try {
+      await client.query(
+        'insert into tenants(id,slug,name,created_by,updated_by) values($1,$2,$3,$4,$4)',
+        [ids.tenantId, input.slug, input.tenantName, context.userId],
+      );
+    } catch (error) {
+      if ((error as { code?: string }).code === '23505') throw new ConflictException('CONFLICT');
+      throw error;
+    }
     await client.query(
       "insert into platform_tenant_settings(id,tenant_id,plan,quotas,risk_level,created_by,updated_by) values($1,$2,$3,$4,'low',$5,$5)",
       [randomUUID(), ids.tenantId, input.plan, this.quotas(input.plan), context.userId],
@@ -347,16 +356,21 @@ export class PlatformOnboardingService implements OnModuleDestroy {
     );
     await this.completeStep(client, runId, 'tenant_foundation', { tenantId: ids.tenantId });
 
-    await client.query(
-      'insert into users(id,email,display_name,password_hash,created_by,updated_by) values($1,$2,$3,$4,$5,$5)',
-      [
-        ids.userId,
-        input.adminEmail,
-        input.adminName,
-        `scrypt$oneday-onboarding$${scryptSync(input.adminPassword, 'oneday-onboarding', 64).toString('base64url')}`,
-        context.userId,
-      ],
-    );
+    try {
+      await client.query(
+        'insert into users(id,email,display_name,password_hash,created_by,updated_by) values($1,$2,$3,$4,$5,$5)',
+        [
+          ids.userId,
+          input.adminEmail,
+          input.adminName,
+          `scrypt$oneday-onboarding$${scryptSync(input.adminPassword, 'oneday-onboarding', 64).toString('base64url')}`,
+          context.userId,
+        ],
+      );
+    } catch (error) {
+      if ((error as { code?: string }).code === '23505') throw new ConflictException('CONFLICT');
+      throw error;
+    }
     await client.query(
       'insert into memberships(id,tenant_id,user_id,created_by,updated_by) values($1,$2,$3,$4,$4)',
       [ids.membershipId, ids.tenantId, ids.userId, context.userId],

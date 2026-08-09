@@ -1,5 +1,16 @@
 # CHANGELOG
 
+## 2026-08-10 - Matrix gap Wave 2 PASS
+
+- MG-E isolation contracts: XT-01 route inventory denies cross-tenant context/resources; MS-01 two-store service isolation; XL-01 rejects javascript/http external links; XT-02 light covers invalid preview and tenant/storeId swap without leak.
+- See `MATRIX_GAP_WAVE_2_ACCEPTANCE.md` and `evidence/MATRIX-GAP-WAVE-2/`. Next: MG-F+ remaining PARTIAL P0.
+
+## 2026-08-10 - Matrix gap Wave 1 PASS
+
+- Added sync gateway: Worker projects outbox events into `sync_notifications`; API exposes ETag poll (`/api/v1/sync/changes`), SSE stream, and public storefront version poll; tenant suspend bumps `auth_epoch` and emits `tenant.lifecycle.changed.v1`.
+- Outbox dead-letter (`needs_attention`) after max attempts with Platform list/replay; recovery clone verifies provisioning runs, storefront bindings, member ledger and outbox counts.
+- Concurrent harness covers TP-02 slug conflict, SF-01 publish/read races and MB-02 single-success redeem. See `MATRIX_GAP_WAVE_1_ACCEPTANCE.md` and `evidence/MATRIX-GAP-WAVE-1/`.
+
 ## 2026-08-10 - Storefront module-renderer unification PASS
 
 - Consumer store home now renders from published `storefront.modules` order and omits modules with `config.visible === false`.

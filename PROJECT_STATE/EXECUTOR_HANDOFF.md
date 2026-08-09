@@ -35,7 +35,7 @@
 
 **Matrix gap close-out (authorized by A):**
 
-Batch 4 PASS and Storefront module-renderer unification PASS. Close remaining `COMMERCIAL_ACCEPTANCE_MATRIX` gaps. Still no page-level patches or arbitrary low-code. Tencent Cloud / public HTTPS out of scope (G).
+Wave 1–2 PASS (sync/DLQ/concurrency + isolation XT/MS/XL). Next: MG-F+ remaining PARTIAL P0. Still no page-level patches or arbitrary low-code. Tencent Cloud / public HTTPS out of scope (G).
 
 ## Secrets and cloud
 

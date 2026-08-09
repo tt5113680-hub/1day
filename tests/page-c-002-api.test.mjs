@@ -41,18 +41,30 @@ test('consumer discovery keeps channel, circle and LBS datasets tenant-scoped an
     nearbyStore = randomUUID(),
     channel = randomUUID(),
     circle = randomUUID();
+  const channelMerchantName = `渠道精选商户-${stamp}`;
+  const circleMerchantName = `商圈成员商户-${stamp}`;
+  const nearbyMerchantName = `附近位置商户-${stamp}`;
+  const channelName = `周末精选-${stamp}`;
+  const circleName = `城市体验圈-${stamp}`;
   try {
-    const organization = (
+    let organization = (
       await client.query('select id from organizations where tenant_id=$1 and status=$2 limit 1', [
         tenant,
         'active',
       ])
     ).rows[0]?.id;
+    if (!organization) {
+      organization = randomUUID();
+      await client.query(
+        "insert into organizations(id,tenant_id,code,name,organization_type,status,created_by,updated_by) values($1,$2,$3,$4,'company','active',null,null)",
+        [organization, tenant, `discovery-org-${stamp}`, `Discovery Org ${stamp}`],
+      );
+    }
     assert.ok(organization);
     for (const [id, code, name] of [
-      [channelMerchant, `channel-${stamp}`, '渠道精选商户'],
-      [circleMerchant, `circle-${stamp}`, '商圈成员商户'],
-      [nearbyMerchant, `nearby-${stamp}`, '附近位置商户'],
+      [channelMerchant, `channel-${stamp}`, channelMerchantName],
+      [circleMerchant, `circle-${stamp}`, circleMerchantName],
+      [nearbyMerchant, `nearby-${stamp}`, nearbyMerchantName],
     ])
       await client.query(
         "insert into merchants(id,tenant_id,organization_id,code,name,status,created_by,updated_by) values($1,$2,$3,$4,$5,'active',null,null)",
@@ -82,7 +94,7 @@ test('consumer discovery keeps channel, circle and LBS datasets tenant-scoped an
     );
     await client.query(
       "insert into discovery_channels(id,tenant_id,code,name,description,rank,status,created_by,updated_by) values($1,$2,$3,$4,$5,10,'active',null,null)",
-      [channel, tenant, `channel-${stamp}`, '周末精选', '渠道编辑推荐'],
+      [channel, tenant, `channel-${stamp}`, channelName, '渠道编辑推荐'],
     );
     await client.query(
       "insert into discovery_channel_merchants(id,tenant_id,channel_id,merchant_id,status,created_by,updated_by) values($1,$2,$3,$4,'active',null,null)",
@@ -90,7 +102,7 @@ test('consumer discovery keeps channel, circle and LBS datasets tenant-scoped an
     );
     await client.query(
       "insert into business_circles(id,tenant_id,code,name,description,rank,status,created_by,updated_by) values($1,$2,$3,$4,$5,10,'active',null,null)",
-      [circle, tenant, `circle-${stamp}`, '城市体验圈', '商家主动加入的服务圈'],
+      [circle, tenant, `circle-${stamp}`, circleName, '商家主动加入的服务圈'],
     );
     await client.query(
       "insert into business_circle_merchants(id,tenant_id,business_circle_id,merchant_id,status,created_by,updated_by) values($1,$2,$3,$4,'active',null,null)",
@@ -115,8 +127,8 @@ test('consumer discovery keeps channel, circle and LBS datasets tenant-scoped an
   assert.equal(
     data.channels.some(
       (item) =>
-        item.name === '周末精选' &&
-        item.merchants.some((merchant) => merchant.name === '渠道精选商户'),
+        item.name === channelName &&
+        item.merchants.some((merchant) => merchant.name === channelMerchantName),
     ),
     true,
   );
@@ -129,8 +141,8 @@ test('consumer discovery keeps channel, circle and LBS datasets tenant-scoped an
   assert.equal(
     data.circles.some(
       (item) =>
-        item.name === '城市体验圈' &&
-        item.merchants.some((merchant) => merchant.name === '商圈成员商户'),
+        item.name === circleName &&
+        item.merchants.some((merchant) => merchant.name === circleMerchantName),
     ),
     true,
   );
@@ -142,12 +154,12 @@ test('consumer discovery keeps channel, circle and LBS datasets tenant-scoped an
   );
   assert.equal(
     data.circles.some((item) =>
-      item.merchants.some((merchant) => merchant.name === '渠道精选商户'),
+      item.merchants.some((merchant) => merchant.name === channelMerchantName),
     ),
     false,
   );
   assert.equal(
-    data.nearby.some((item) => item.name === '附近位置商户' && item.distanceKm === 0),
+    data.nearby.some((item) => item.name === nearbyMerchantName && item.distanceKm === 0),
     true,
   );
   assert.equal(

@@ -134,7 +134,12 @@ test('worker atomically dispatches tenant-scoped outbox, reminders and overdue t
       },
       ids.tenant,
     );
-    assert.deepEqual(await failing.dispatch(), { published: 0, retried: 1, skipped: 0 });
+    assert.deepEqual(await failing.dispatch(), {
+      published: 0,
+      retried: 1,
+      skipped: 0,
+      deadLetter: 0,
+    });
     await failing.close();
     const failed = await client.query(
       'select status,attempts,last_error from outbox_events where id=$1 and tenant_id=$2',
@@ -152,7 +157,12 @@ test('worker atomically dispatches tenant-scoped outbox, reminders and overdue t
       async () => undefined,
       ids.tenant,
     );
-    assert.deepEqual(await recovered.dispatch(), { published: 1, retried: 0, skipped: 0 });
+    assert.deepEqual(await recovered.dispatch(), {
+      published: 1,
+      retried: 0,
+      skipped: 0,
+      deadLetter: 0,
+    });
     await recovered.close();
   } finally {
     worker?.kill();

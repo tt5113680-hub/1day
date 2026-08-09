@@ -1,6 +1,10 @@
 import { createServer } from 'node:http';
 import { randomUUID } from 'node:crypto';
-import { OutboxDispatcher, TaskDispatchScheduler } from '@oneday/events';
+import {
+  createSyncNotificationHandler,
+  OutboxDispatcher,
+  TaskDispatchScheduler,
+} from '@oneday/events';
 
 export const workerServiceName = 'oneday-worker';
 
@@ -12,7 +16,7 @@ const tenantScope = process.env.WORKER_TENANT_ID;
 const outbox = new OutboxDispatcher(
   databaseUrl,
   'oneday-worker.internal',
-  async () => undefined,
+  createSyncNotificationHandler(databaseUrl),
   tenantScope,
 );
 const scheduler = new TaskDispatchScheduler(databaseUrl);
@@ -23,6 +27,7 @@ let lastRun: {
   overdue: number;
   published: number;
   retried: number;
+  deadLetter: number;
 } | null = null;
 let lastError: string | null = null;
 
@@ -42,6 +47,7 @@ async function tick() {
       ...tasks,
       published: events.published,
       retried: events.retried,
+      deadLetter: events.deadLetter,
     };
     lastError = null;
   } catch (error) {

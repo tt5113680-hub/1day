@@ -5,6 +5,7 @@ dist/
 coverage/
 playwright-report/
 test-results/
+.cursor/
 evidence/**/playwright-output/
 evidence/**/h002-playwright-output/
 *.tsbuildinfo

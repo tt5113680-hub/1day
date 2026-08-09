@@ -21,8 +21,15 @@ async function bootstrap() {
     await app.enableCors({
       origin: security.corsOrigins,
       methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
-      allowedHeaders: ['authorization', 'content-type', 'idempotency-key', 'x-request-id'],
-      exposedHeaders: ['x-request-id'],
+      allowedHeaders: [
+        'authorization',
+        'content-type',
+        'idempotency-key',
+        'x-request-id',
+        'if-none-match',
+        'last-event-id',
+      ],
+      exposedHeaders: ['x-request-id', 'etag'],
       maxAge: 600,
     });
   const limiter = security.rateLimitEnabled ? new DatabaseRateLimiter() : undefined;

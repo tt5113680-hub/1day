@@ -7,12 +7,28 @@ export interface TenantsTable {
   slug: string;
   name: string;
   status: string;
+  auth_epoch: Generated<number>;
   created_at: Timestamp;
   created_by: string | null;
   updated_at: Timestamp;
   updated_by: string | null;
   deleted_at: Timestamp | null;
   version: Generated<number>;
+}
+
+export interface SyncNotificationsTable {
+  id: string;
+  tenant_id: string;
+  store_id: string | null;
+  topic: string;
+  event_type: string;
+  event_id: string;
+  aggregate_type: string;
+  aggregate_id: string;
+  aggregate_version: number;
+  correlation_id: string;
+  occurred_at: Timestamp;
+  created_at: Timestamp;
 }
 
 export interface UsersTable {
@@ -1285,6 +1301,7 @@ export interface ConsumerOperatingProjectionsTable {
 
 export interface Database {
   tenants: TenantsTable;
+  sync_notifications: SyncNotificationsTable;
   users: UsersTable;
   memberships: MembershipsTable;
   roles: RolesTable;
