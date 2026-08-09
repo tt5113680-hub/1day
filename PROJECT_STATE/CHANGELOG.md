@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## 2026-08-09 — ONEDAY-V3-COMMERCIAL-COMPLETION Batch 1 management customer analytics foundation
+
+- Migrated Management customer-chain risk/context panels, auditable timeline and confirmed/inferred funnel stages to shared AdminPageHeader/Card/Button/StatusBadge/AppStatePanel primitives and the canonical token contract.
+- Replaced internal identity/source/risk values with operator language while preserving tenant-scoped aggregation, evidence links and explicit inferred-data boundaries.
+- Format, workspace lint, UI/Management typecheck/build and real 1440px customer-chain/funnel/session browser suites (4/4) pass with refreshed visual and trace evidence. Management core-page foundation migration is complete; Batch 1 remains in progress.
+
 ## 2026-08-09 — ONEDAY-V3-COMMERCIAL-COMPLETION Batch 1 employee customer-workflow foundation
 
 - Migrated Employee related-customer context and task follow-up entry to shared Button/StatusBadge/AppStatePanel primitives, commercial source/identity labels and tokenized mobile form controls.

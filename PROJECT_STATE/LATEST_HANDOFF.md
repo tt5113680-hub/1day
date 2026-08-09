@@ -2,9 +2,9 @@
 
 ## Current Batch 1 continuation
 
-- Base HEAD: `f5ee466`; all Platform core governance pages, the migrated Management operating views and all Employee core work surfaces now use the tokenized product foundation. Employee browser fixtures use the real access/refresh/`expiresAt` session triple, including deep-link navigation. Onboarding, template publication and connector authorization explicitly avoid falsely claiming Batch 2 commercial READY, Consumer Storefront activation or external delivery.
+- Base HEAD: `be25103`; all Platform core governance pages, all Management core operating views and all Employee core work surfaces now use the tokenized product foundation. Browser fixtures use the real access/refresh/`expiresAt` session triple, including deep-link navigation. Onboarding, template publication and connector authorization explicitly avoid falsely claiming Batch 2 commercial READY, Consumer Storefront activation or external delivery.
 - Current verified scope: active Admin navigation; unified Consumer/Employee/Management/Platform root loading, empty, error and permission surfaces; E/M/P session recovery and login styling; non-blank Consumer/Employee critical nested loading routes; integrated shell session controls; repeatable Consumer/Employee/Management/Platform visual captures; and a single design-token CSS source with typed-projection coverage. Employee workbench/task-detail, Management performance/attribution/AI/workflows/content/templates/organization/permissions/settings/connectors and all focused Platform suites pass, and affected production builds pass.
-- Next: migrate remaining Management nested core-page legacy styling, audit Consumer responsive core routes, and complete Batch 1 repository and commercial-chain regression gates. Do not declare Batch 1 pass yet.
+- Next: audit Consumer mobile/desktop responsive core routes, close remaining deprecation inventory, and complete Batch 1 repository and commercial-chain regression gates. Do not declare Batch 1 pass yet.
 
 - branch: `hardening/COMMERCIAL-COMPLETION`
 - HEAD: `42186a5e5d6b9aa8ac7edca4bc4636fe4d11fc18`
