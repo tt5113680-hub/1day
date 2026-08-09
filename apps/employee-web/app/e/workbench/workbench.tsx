@@ -33,6 +33,8 @@ export function Workbench() {
   const [data, setData] = useState<Data | null>(null);
   const [message, setMessage] = useState('');
   const [busy, setBusy] = useState<string | null>(null);
+  const [memberCode, setMemberCode] = useState('');
+  const [benefitId, setBenefitId] = useState('');
   const headers = () => ({
     'content-type': 'application/json',
   });
@@ -82,6 +84,21 @@ export function Workbench() {
         error instanceof Error && error.message === 'CONFLICT'
           ? '任务已被更新，请刷新后重试。'
           : '操作未完成，请检查网络后重试。',
+      );
+    } finally {
+      setBusy(null);
+    }
+  };
+  const redeem = async () => {
+    setBusy('membership');
+    try {
+      const response = await sessionApi.request(`${api}/api/v1/employee/memberships/redeem`, {
+        method: 'POST',
+        headers: { ...headers(), 'idempotency-key': crypto.randomUUID() },
+        body: JSON.stringify({ memberCode, benefitId }),
+      });
+      setMessage(
+        response.ok ? '会员权益已核销，余额已实时更新。' : '核销未完成，请核对会员码与权益编号。',
       );
     } finally {
       setBusy(null);
@@ -216,6 +233,41 @@ export function Workbench() {
             </article>
           ))
         )}
+      </section>
+      <section className={styles.section} aria-label="会员权益核销">
+        <div className={styles.sectionHead}>
+          <h2>会员权益核销</h2>
+          <span>仅核销门店已发放权益</span>
+        </div>
+        <div className={styles.task}>
+          <div>
+            <label>
+              会员码
+              <input
+                aria-label="会员码"
+                value={memberCode}
+                onChange={(event) => setMemberCode(event.target.value.toUpperCase())}
+                placeholder="12 位会员码"
+              />
+            </label>
+            <label>
+              权益编号
+              <input
+                aria-label="权益编号"
+                value={benefitId}
+                onChange={(event) => setBenefitId(event.target.value)}
+                placeholder="由经营端选择的权益编号"
+              />
+            </label>
+          </div>
+          <Button
+            loading={busy === 'membership'}
+            disabled={!memberCode || !benefitId}
+            onClick={() => void redeem()}
+          >
+            确认核销
+          </Button>
+        </div>
       </section>
     </main>
   );
