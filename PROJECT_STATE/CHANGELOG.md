@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## 2026-08-09 — ONEDAY-V3-COMMERCIAL-COMPLETION Batch 1 employee nurture foundation
+
+- Migrated Employee customer-segment queue, touchpoint logging, follow-up task creation and recovery states to shared Card/Button/StatusBadge/AppStatePanel primitives and the canonical token contract.
+- Preserved tenant-scoped profile versioning and idempotent touchpoint/task writes; the 390px acceptance now targets the shared Card surface and waits for ready content.
+- Format, workspace lint, UI/Employee typecheck/build and real retier/touch/task/session browser suite (2/2) pass with refreshed visual and trace evidence. Batch 1 remains in progress.
+
 ## 2026-08-09 — ONEDAY-V3-COMMERCIAL-COMPLETION Batch 1 employee notifications foundation
 
 - Migrated Employee notification summary, filters, safe task links, mark-read action and recovery states to shared Card/Button/StatusBadge/AppStatePanel primitives and the canonical token contract.
