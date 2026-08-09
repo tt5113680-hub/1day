@@ -2,9 +2,9 @@
 
 ## Current Batch 1 continuation
 
-- Base HEAD: `be25103`; all Platform core governance pages, all Management core operating views and all Employee core work surfaces now use the tokenized product foundation. Browser fixtures use the real access/refresh/`expiresAt` session triple, including deep-link navigation. Onboarding, template publication and connector authorization explicitly avoid falsely claiming Batch 2 commercial READY, Consumer Storefront activation or external delivery.
-- Current verified scope: active Admin navigation; unified Consumer/Employee/Management/Platform root loading, empty, error and permission surfaces; E/M/P session recovery and login styling; non-blank Consumer/Employee critical nested loading routes; integrated shell session controls; repeatable Consumer/Employee/Management/Platform visual captures; and a single design-token CSS source with typed-projection coverage. Employee workbench/task-detail, Management performance/attribution/AI/workflows/content/templates/organization/permissions/settings/connectors and all focused Platform suites pass, and affected production builds pass.
-- Next: audit Consumer mobile/desktop responsive core routes, close remaining deprecation inventory, and complete Batch 1 repository and commercial-chain regression gates. Do not declare Batch 1 pass yet.
+- Base HEAD: `91f5711`; all Consumer, Employee, Management and Platform core surfaces now use their role-appropriate tokenized product foundation. Browser fixtures use the real access/refresh/`expiresAt` session triple where authentication applies. Onboarding, template publication and connector authorization explicitly avoid falsely claiming Batch 2 commercial READY, Consumer Storefront activation or external delivery.
+- Current verified scope: Consumer is one responsive application at 390/768/1024/1440, with context-preserving links, mobile/tablet and desktop-specific navigation, no horizontal overflow, and shared loading/error/permission primitives. Employee uses the Mobile Shell; Management and Platform use distinct Admin Shell identities. The real four-terminal visual suite is 3/3 PASS and affected static/build gates pass.
+- Next: close the remaining deprecation inventory and run the complete Batch 1 repository, H-002/session, tenant-isolation and four-role commercial-chain gates. Do not declare Batch 1 pass until every gate is recorded.
 
 - branch: `hardening/COMMERCIAL-COMPLETION`
 - HEAD: `42186a5e5d6b9aa8ac7edca4bc4636fe4d11fc18`

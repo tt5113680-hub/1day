@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## 2026-08-09 — ONEDAY-V3-COMMERCIAL-COMPLETION Batch 1 Consumer responsive foundation
+
+- Completed one responsive Consumer product shell across 390/768/1024/1440 widths: mobile/tablet retain the bottom navigation, PC uses a tokenized sticky store navigation and a balanced two-column digital-store composition.
+- Migrated Consumer store, service, action, process, discovery, entry and profile loading/error/permission surfaces to shared AppStatePanel/Button primitives without changing public tenant/source/store/scene continuity or business behavior.
+- Format, workspace lint, Design Tokens/UI/Consumer typecheck/build and the real four-terminal visual suite (3/3) pass. Consumer deep links, viewport overflow and responsive navigation visibility are asserted, with refreshed evidence under `evidence/COMMERCIAL-UI-FOUNDATION/`.
+
 ## 2026-08-09 — ONEDAY-V3-COMMERCIAL-COMPLETION Batch 1 management customer analytics foundation
 
 - Migrated Management customer-chain risk/context panels, auditable timeline and confirmed/inferred funnel stages to shared AdminPageHeader/Card/Button/StatusBadge/AppStatePanel primitives and the canonical token contract.
