@@ -8,7 +8,7 @@
 - current_task: ONEDAY-V3-COMMERCIAL-COMPLETION / BATCH 1
 - status: BATCH_1_IN_PROGRESS
 - branch: hardening/COMMERCIAL-COMPLETION
-- last_safe_commit: aeaf454 (Employee lead-pool foundation migration)
+- last_safe_commit: e4ee7a5 (Employee notifications foundation migration)
 - started_at: 2026-08-09T20:29:46+08:00
 - blocker: null
 - verified_batch_1_continuation: Active Admin navigation, shared role-specific root state routes, E/M/P session-login recovery styling, non-blank Consumer/Employee critical nested loading routes, shell-integrated session controls, isolated four-terminal visual capture, and one canonical design-token CSS source are implemented. Employee workbench/task detail, Management employee performance/attribution/AI suggestions/workflows/content/templates/organization/permissions/settings/connectors and all Platform core governance pages use shared primitives with the canonical token contract, retaining protected sessions and persisted operating behavior. Operating enums and permission codes are commercial-language mapped without exposing internal source/task UUIDs or connector secrets. Management template publication explicitly does not claim Consumer Storefront activation before Batch 2 binding. Focused browser regressions, affected production builds and static quality checks pass. Batch 1 is not yet accepted.

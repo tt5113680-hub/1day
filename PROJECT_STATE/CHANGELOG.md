@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## 2026-08-09 — ONEDAY-V3-COMMERCIAL-COMPLETION Batch 1 employee notifications foundation
+
+- Migrated Employee notification summary, filters, safe task links, mark-read action and recovery states to shared Card/Button/StatusBadge/AppStatePanel primitives and the canonical token contract.
+- Preserved tenant-scoped visibility, optimistic version and idempotent read boundaries; the 390px visual fixture now waits for the ready state before capture.
+- Format, workspace lint, UI/Employee typecheck/build and real read/deep-link/session browser suite (2/2) pass with refreshed visual and trace evidence. Batch 1 remains in progress.
+
 ## 2026-08-09 — ONEDAY-V3-COMMERCIAL-COMPLETION Batch 1 employee lead-pool foundation
 
 - Migrated Employee lead filtering, priority/status cards, claim/allocation/conversion actions and recovery states to shared Card/Button/StatusBadge/AppStatePanel primitives and the canonical token contract.

@@ -40,6 +40,7 @@
 - Management Connectors page-local header, recovery/request/card/button/status styling and raw capability/log presentation are deprecated at `56f95bd`; secret and external-delivery boundaries remain explicit.
 - Management Permission Audit page-local header, recovery/metric/filter/record styling and raw audit-kind presentation are deprecated at `a4728c0`; risk review remains tenant-scoped and correlation/trace evidence stays explicit.
 - Employee Lead Pool page-local header, recovery/form/card/button/status styling is deprecated at `aeaf454`; claim, allocation, conversion, optimistic-version and idempotency behavior remain tenant-scoped.
+- Employee Notifications page-local header, recovery/summary/filter/card/button/status styling is deprecated at `e4ee7a5`; safe task deep links and idempotent mark-read behavior remain tenant-scoped.
 
 1. 新页面或新交互不得再新增页面级颜色、圆角、阴影、按钮或状态体系；必须使用 token 与 primitive。
 2. 每次迁移保留现有 Session、RBAC、tenant scope、幂等和审计行为，并通过关联回归。
