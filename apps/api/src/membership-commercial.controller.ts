@@ -90,4 +90,15 @@ export class MembershipCommercialController {
       error: null,
     };
   }
+  @Get('employee/memberships/benefits') async employeeBenefits(
+    @Headers('authorization') a: string | undefined,
+    @Headers('x-tenant-context') t: string | undefined,
+    @Headers('x-request-id') r: string | undefined,
+  ) {
+    return {
+      data: await this.memberships.benefits(await this.context(a, t, r, 'task.read')),
+      meta: { requestId: r },
+      error: null,
+    };
+  }
 }

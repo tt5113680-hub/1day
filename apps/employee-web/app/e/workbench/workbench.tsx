@@ -22,6 +22,7 @@ type Data = {
   generatedAt: string;
 };
 type State = 'loading' | 'ready' | 'forbidden' | 'error';
+type Benefit = { id: string; title: string };
 
 const api = process.env.NEXT_PUBLIC_API_BASE_URL ?? 'http://127.0.0.1:3001';
 const sessionApi = new SessionApiClient(api);
@@ -35,6 +36,7 @@ export function Workbench() {
   const [busy, setBusy] = useState<string | null>(null);
   const [memberCode, setMemberCode] = useState('');
   const [benefitId, setBenefitId] = useState('');
+  const [benefits, setBenefits] = useState<Benefit[]>([]);
   const headers = () => ({
     'content-type': 'application/json',
   });
@@ -55,6 +57,11 @@ export function Workbench() {
       }
       if (!response.ok) throw Error('LOAD_FAILED');
       setData((await response.json()).data as Data);
+      const membershipBenefits = await sessionApi.request(
+        `${api}/api/v1/employee/memberships/benefits`,
+        { headers: headers() },
+      );
+      if (membershipBenefits.ok) setBenefits((await membershipBenefits.json()).data as Benefit[]);
       setState('ready');
     } catch {
       setState('error');
@@ -251,13 +258,19 @@ export function Workbench() {
               />
             </label>
             <label>
-              权益编号
-              <input
-                aria-label="权益编号"
+              权益
+              <select
+                aria-label="核销权益"
                 value={benefitId}
                 onChange={(event) => setBenefitId(event.target.value)}
-                placeholder="由经营端选择的权益编号"
-              />
+              >
+                <option value="">选择已发放权益</option>
+                {benefits.map((benefit) => (
+                  <option key={benefit.id} value={benefit.id}>
+                    {benefit.title}
+                  </option>
+                ))}
+              </select>
             </label>
           </div>
           <Button

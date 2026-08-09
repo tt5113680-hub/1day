@@ -176,6 +176,14 @@ export class MembershipCommercialService implements OnModuleDestroy {
     ]);
     return { enrollments: enrollments.rows, benefits: benefits.rows };
   }
+  async benefits(context: OrganizationContext) {
+    return (
+      await this.pool.query(
+        "select id,title,description from store_benefits where tenant_id=$1 and status='active' and deleted_at is null order by title",
+        [context.tenantId],
+      )
+    ).rows;
+  }
   async grant(
     context: OrganizationContext,
     enrollmentId: string,
