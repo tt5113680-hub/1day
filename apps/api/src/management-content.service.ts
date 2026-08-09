@@ -22,7 +22,21 @@ export class ManagementContentService implements OnModuleDestroy {
   private readonly pool = createApiPool();
   async list(c: OrganizationContext) {
     const r = await this.pool.query(
-      `select i.id,i.kind,i.title,i.body,i.media_url,i.status,i.version,i.created_at,coalesce(d.channels,'{}') channels from content_items i left join lateral(select array_agg(channel order by channel) channels from content_distributions where content_id=i.id and tenant_id=i.tenant_id and deleted_at is null) d on true where i.tenant_id=$1 and i.deleted_at is null order by i.created_at desc`,
+      `select i.id,i.kind,i.title,i.body,i.media_url,i.status,i.version,i.created_at,
+        coalesce(d.channels,'{}') channels,
+        coalesce(p.placements,'[]'::json) placements
+       from content_items i
+       left join lateral(
+         select array_agg(channel order by channel) channels
+         from content_distributions where content_id=i.id and tenant_id=i.tenant_id and deleted_at is null
+       ) d on true
+       left join lateral(
+         select json_agg(json_build_object('storeId',p.store_id,'storeName',s.name,'rank',p.rank,'status',p.status,'version',p.version) order by p.rank desc,s.name) placements
+         from content_store_placements p
+         join stores s on s.id=p.store_id and s.tenant_id=p.tenant_id and s.deleted_at is null
+         where p.content_id=i.id and p.tenant_id=i.tenant_id and p.status='active' and p.deleted_at is null
+       ) p on true
+       where i.tenant_id=$1 and i.deleted_at is null order by i.created_at desc`,
       [c.tenantId],
     );
     return r.rows;

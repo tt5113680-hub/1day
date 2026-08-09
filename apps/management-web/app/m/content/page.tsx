@@ -17,24 +17,42 @@ type Item = {
   status: string;
   version: number;
   channels: string[];
+  placements: {
+    storeId: string;
+    storeName: string;
+    rank: number;
+    status: string;
+    version: number;
+  }[];
 };
+type Store = { id: string; name: string; status: string };
 const api = process.env.NEXT_PUBLIC_API_BASE_URL ?? 'http://127.0.0.1:3001';
 const sessionApi = new SessionApiClient(api);
 export default function ContentPage() {
   const [state, setState] = useState<'loading' | 'ready' | 'forbidden' | 'error'>('loading'),
     [items, setItems] = useState<Item[]>([]),
+    [stores, setStores] = useState<Store[]>([]),
     [title, setTitle] = useState(''),
+    [placement, setPlacement] = useState<Record<string, { storeId: string; rank: number }>>({}),
+    [busy, setBusy] = useState<string | null>(null),
     [note, setNote] = useState('');
   const load = useCallback(async () => {
     if (!(await sessionApi.context())) return setState('forbidden');
     setState('loading');
     try {
-      const r = await sessionApi.request(`${api}/api/v1/management/content`, {
-        headers: {},
-      });
+      const [r, storesResponse] = await Promise.all([
+        sessionApi.request(`${api}/api/v1/management/content`, { headers: {} }),
+        sessionApi.request(`${api}/api/v1/management/stores`),
+      ]);
       if ([401, 403].includes(r.status)) return setState('forbidden');
       if (!r.ok) throw Error();
       setItems((await r.json()).data);
+      if (storesResponse.ok)
+        setStores(
+          ((await storesResponse.json()).data as Store[]).filter(
+            (store) => store.status === 'active',
+          ),
+        );
       setState('ready');
     } catch {
       setState('error');
@@ -55,6 +73,50 @@ export default function ContentPage() {
     setTitle('');
     setNote('草稿已创建，待审批后才能登记分发。');
     await load();
+  };
+  const approve = async (item: Item) => {
+    setBusy(`approve-${item.id}`);
+    setNote('');
+    try {
+      const response = await sessionApi.request(
+        `${api}/api/v1/management/content/${item.id}/approve`,
+        {
+          method: 'POST',
+          headers: { 'content-type': 'application/json' },
+          body: JSON.stringify({ version: item.version }),
+        },
+      );
+      if (!response.ok) throw new Error('APPROVE');
+      setNote('内容已审批，可以登记渠道并投放到消费者门店。');
+      await load();
+    } catch {
+      setNote('内容审批未完成，请刷新后检查版本和权限。');
+    } finally {
+      setBusy(null);
+    }
+  };
+  const place = async (item: Item) => {
+    const draft = placement[item.id];
+    if (!draft?.storeId) return setNote('请选择要展示这条内容的门店。');
+    setBusy(`place-${item.id}`);
+    setNote('');
+    try {
+      const response = await sessionApi.request(
+        `${api}/api/v1/management/content/${item.id}/placements`,
+        {
+          method: 'POST',
+          headers: { 'content-type': 'application/json' },
+          body: JSON.stringify(draft),
+        },
+      );
+      if (!response.ok) throw new Error('PLACE');
+      setNote('消费者门店内容已更新，刷新门店详情即可看到最新投放。');
+      await load();
+    } catch {
+      setNote('内容投放未完成，请检查门店状态后重试。');
+    } finally {
+      setBusy(null);
+    }
   };
   if (state === 'loading')
     return (
@@ -130,6 +192,62 @@ export default function ContentPage() {
                     ? `已登记：${x.channels.map(businessLabel).join('、')}`
                     : '尚未登记分发渠道'}
                 </small>
+                {x.placements?.length > 0 && (
+                  <small>
+                    门店投放：
+                    {x.placements
+                      .map((item) => `${item.storeName}（排序 ${item.rank}）`)
+                      .join('、')}
+                  </small>
+                )}
+                {x.status === 'draft' ? (
+                  <Button disabled={busy === `approve-${x.id}`} onClick={() => void approve(x)}>
+                    审批并允许投放
+                  </Button>
+                ) : (
+                  <div className={styles.placement}>
+                    <label>
+                      消费者展示门店
+                      <select
+                        aria-label={`${x.title} 展示门店`}
+                        value={placement[x.id]?.storeId ?? ''}
+                        onChange={(event) =>
+                          setPlacement((value) => ({
+                            ...value,
+                            [x.id]: { storeId: event.target.value, rank: value[x.id]?.rank ?? 0 },
+                          }))
+                        }
+                      >
+                        <option value="">选择门店</option>
+                        {stores.map((store) => (
+                          <option key={store.id} value={store.id}>
+                            {store.name}
+                          </option>
+                        ))}
+                      </select>
+                    </label>
+                    <label>
+                      展示排序
+                      <input
+                        aria-label={`${x.title} 展示排序`}
+                        type="number"
+                        value={placement[x.id]?.rank ?? 0}
+                        onChange={(event) =>
+                          setPlacement((value) => ({
+                            ...value,
+                            [x.id]: {
+                              storeId: value[x.id]?.storeId ?? '',
+                              rank: Number(event.target.value) || 0,
+                            },
+                          }))
+                        }
+                      />
+                    </label>
+                    <Button disabled={busy === `place-${x.id}`} onClick={() => void place(x)}>
+                      投放到消费者门店
+                    </Button>
+                  </div>
+                )}
               </Card>
             </article>
           ))
