@@ -108,6 +108,8 @@ import { PlatformOnboardingController } from './platform-onboarding.controller';
 import { PlatformOnboardingService } from './platform-onboarding.service';
 import { OneCodeController } from './one-code.controller';
 import { OneCodeService } from './one-code.service';
+import { ManagementCatalogController } from './management-catalog.controller';
+import { ManagementCatalogService } from './management-catalog.service';
 
 @Module({
   controllers: [
@@ -167,6 +169,7 @@ import { OneCodeService } from './one-code.service';
     PlatformTenantController,
     PlatformOnboardingController,
     OneCodeController,
+    ManagementCatalogController,
   ],
   providers: [
     AuthService,
@@ -223,6 +226,7 @@ import { OneCodeService } from './one-code.service';
     PlatformTenantService,
     PlatformOnboardingService,
     OneCodeService,
+    ManagementCatalogService,
   ],
 })
 export class AppModule {}

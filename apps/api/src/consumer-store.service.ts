@@ -118,7 +118,7 @@ export class ConsumerStoreService implements OnModuleDestroy {
           [tenant.id, storeId],
         ),
         this.pool.query(
-          `select spo.id as offer_id,spo.service_id,spo.external_action_id,spo.offer_price,spo.market_price,
+          `select spo.id as offer_id,spo.service_id,spo.external_action_id,spo.offer_price,spo.market_price,spo.currency,spo.price_source,spo.source_updated_at,
                 ss.name as service_name,ss.price_label,a.name as action_name,a.platform,a.target_url
          from store_service_platform_offers spo
          join store_services ss on ss.id=spo.service_id and ss.tenant_id=spo.tenant_id and ss.status='active' and ss.deleted_at is null
@@ -184,6 +184,9 @@ export class ConsumerStoreService implements OnModuleDestroy {
         platformType: row.platform,
         offerPrice: Number(row.offer_price),
         marketPrice: row.market_price === null ? null : Number(row.market_price),
+        currency: row.currency,
+        priceSource: row.price_source,
+        sourceUpdatedAt: row.source_updated_at,
         targetUrl: row.target_url,
       })),
       stores: stores.rows.map((row) => ({
@@ -268,7 +271,7 @@ export class ConsumerStoreService implements OnModuleDestroy {
         [tenant.id, service.store_id],
       ),
       this.pool.query(
-        `select spo.id as offer_id,spo.external_action_id,spo.offer_price,spo.market_price,
+        `select spo.id as offer_id,spo.external_action_id,spo.offer_price,spo.market_price,spo.currency,spo.price_source,spo.source_updated_at,
                 a.name as action_name,a.platform,a.target_url
          from store_service_platform_offers spo
          join store_external_actions sea on sea.store_id=spo.store_id and sea.external_action_id=spo.external_action_id and sea.tenant_id=spo.tenant_id and sea.enabled and sea.deleted_at is null
@@ -314,6 +317,9 @@ export class ConsumerStoreService implements OnModuleDestroy {
         platformType: row.platform,
         offerPrice: Number(row.offer_price),
         marketPrice: row.market_price === null ? null : Number(row.market_price),
+        currency: row.currency,
+        priceSource: row.price_source,
+        sourceUpdatedAt: row.source_updated_at,
         targetUrl: row.target_url,
       })),
     };

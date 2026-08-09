@@ -928,6 +928,9 @@ export interface StoreServicePlatformOffersTable {
   external_action_id: string;
   offer_price: string;
   market_price: string | null;
+  currency: string;
+  price_source: string;
+  source_updated_at: Timestamp;
   sort_order: number;
   status: string;
   created_at: Timestamp;

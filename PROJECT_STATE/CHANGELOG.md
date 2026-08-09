@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## 2026-08-10 - Batch 2 service/package/Offer operations
+
+- Added tenant-scoped Management catalog operations for services/packages and truthful platform Offers, including idempotency, optimistic versions, audit/Outbox receipts and a strict enabled HTTPS action boundary.
+- Added source-of-price and registered-update metadata, price validation and immediate Consumer removal when an Offer is disabled; Consumer renders the same persisted comparison data without a third-party synchronization claim.
+- Real API acceptance passes 1/1; Management/Consumer browser acceptance passes 2/2 with desktop, mobile and Management-session-denial evidence.
+
 ## 2026-08-10 - Batch 2 Storefront Draft/Preview/Publish/Rollback
 
 - Bound tenant-owned page-template versions to a store-level live/draft lifecycle with immutable publication history, optimistic locks and required-module validation.

@@ -7,6 +7,7 @@
 - Current: Batch 2 one-click tenant provisioning through verified commercial READY, with industry Storefront lifecycle, decoration, Offer operations, membership and ONE-CODE.
 - Verified Batch 2 subsystem: migration 048 and the commercial onboarding orchestration now produce one durable 11-step run, a published first Storefront, owner Management/Employee access and ONE-CODE before returning `ready`; API acceptance is 1/1 and Platform browser acceptance is 2/2. Next is Storefront Draft/Preview/Publish/Rollback on the same binding and renderer.
 - Verified Storefront lifecycle: migration 049, Management editing, expiring same-renderer Consumer preview, atomic publish and immutable rollback history pass API 1/1 and browser 3/3. Public Consumer reads stay on the prior live version until a validated switch. Next is service/package/Offer operations and Member enrollment/benefit use.
+- Verified Offer operations: migration 050 makes service/package and Offer price provenance explicit. Management creates idempotent services and HTTPS-bound Offers, and Consumer renders the same persisted source/update metadata; invalid prices, disabled Offers and cross-tenant operations are rejected. API acceptance passes 1/1 and Management/Consumer browser acceptance passes 2/2. Next is real Member enrollment, benefit-ledger issuance and Employee redemption.
 
 - branch: `hardening/COMMERCIAL-COMPLETION`
 - HEAD: `42186a5e5d6b9aa8ac7edca4bc4636fe4d11fc18`

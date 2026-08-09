@@ -1,30 +1,23 @@
-# 消费者端公网预览部署阻塞报告
+# BLOCKED REPORT
 
-- 记录时间：2026-08-09（Asia/Shanghai）
-- 关联提交：`1e3e8dcc1535328c6c38bfc8daf5b7ec6ba0ced7`
-- 关联任务：`CONSUMER-COMMERCIAL-HOME-V1`
-- 公网实例：`49.232.124.130:18080`
+- task: `ONEDAY-V3-COMMERCIAL-COMPLETION / BATCH 2`
+- subsystem: service/package/Offer operations browser acceptance
+- recorded_at: 2026-08-10T01:10:00+08:00
+- state: `RESOLVED_ON_RESUME`
+- resolved_at: 2026-08-10T03:10:00+08:00
 
-## 已完成
+## Verified facts
 
-- 消费者端商业化导航、团购、菜单、会员、个人页与受控跳转确认页已完成编码、类型检查、构建和 Playwright 验收。
-- 变更已推送至 GitHub 分支 `hardening/COMMERCIAL-UI-ALIGNMENT`。
-- 腾讯云上原 ONEDAY 容器保持运行，未切换至不完整版本；服务器其它项目未改动。
+- Migration `050_offer_operations` is applied to the isolated test database.
+- Database, API, Management and Consumer typecheck/build passed before browser acceptance.
+- Real API acceptance `tests/batch-2-offer-operations.test.mjs` passes `1/1`, including idempotency, price validation, Consumer visibility, Offer disable and cross-tenant denial.
+- The Management browser journey successfully provisions a fresh tenant, creates a service/package and creates the HTTPS-bound Offer.
+- The no-session browser journey passes and redirects to Management login.
 
-## 阻塞事实
+## Resolved condition
 
-腾讯云实例到 GitHub 的网络连接不稳定，连续三种安全下载方式均未能得到可校验的完整源码：
+The third pre-resume browser failure was isolated to the Consumer visual assertion: the test navigated to provisioning `delivery.consumerPath`, which is the ONE-CODE `/c/entry` storefront landing, while the package/Offer comparison is rendered on `/c/stores/:storeId?tenant=:slug`.
 
-1. 浅克隆在约 8 MB 传输后失败，报 `curl 92 HTTP/2 stream ... CANCEL`、`unexpected disconnect` 与 `early EOF`。
-2. 从 `raw.githubusercontent.com` 逐文件拉取时，第一个消费者端文件请求长期无响应，已仅终止本次新建的下载进程。
-3. HTTP/1.1 与 `--filter=blob:none` 重试均未完成连接；随后 OrcaTerm 远程会话因网络波动断开。
+## Exact continuation
 
-## 未执行的操作
-
-- 未重建或替换线上 `oneday-v3-preview-consumer-1` 容器。
-- 未修改已有数据库、API、Worker、反向代理或任何非 ONEDAY 服务器文件。
-- 未删除任何原有服务器目录；新建的未完成下载目录不参与运行环境。
-
-## 恢复条件
-
-待服务器到 GitHub 的稳定连接恢复后，从提交 `1e3e8dc` 重新获得完整源码、构建新 ONEDAY 预览镜像，并在切换消费者端容器前后验证公网店铺页及 5 项导航。
+The resumed fixture now retains `storeId` and `slug`, navigates to `/c/stores/${storeId}?tenant=${slug}` and scopes assertions to the platform comparison section. Browser acceptance passes `2/2`, including the Management no-session redirect. The Offer subsystem remains subject to its normal state update and commit gates.

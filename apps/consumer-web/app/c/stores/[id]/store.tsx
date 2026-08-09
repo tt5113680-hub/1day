@@ -71,6 +71,9 @@ export type StoreDetail = {
     platformType: 'meituan' | 'douyin' | 'external';
     offerPrice: number;
     marketPrice: number | null;
+    currency: string;
+    priceSource: string;
+    sourceUpdatedAt: string;
     targetUrl: string | null;
   }[];
 };
@@ -500,6 +503,8 @@ export default function StorePage({
                                   {item.marketPrice
                                     ? `划线价 ${money(item.marketPrice)}`
                                     : '平台推荐套餐'}
+                                  {' · '}商家登记于{' '}
+                                  {new Date(item.sourceUpdatedAt).toLocaleDateString('zh-CN')}
                                 </small>
                               </span>
                               <b className={styles.priceValue}>
