@@ -1,6 +1,14 @@
 'use client';
 import { SessionApiClient } from '@oneday/session-client';
-import { businessLabel, customerNameCopy, taskReasonCopy, taskTitleCopy } from '@oneday/ui';
+import {
+  AppStatePanel,
+  Button,
+  StatusBadge,
+  businessLabel,
+  customerNameCopy,
+  taskReasonCopy,
+  taskTitleCopy,
+} from '@oneday/ui';
 
 import { useParams } from 'next/navigation';
 import { useCallback, useEffect, useState } from 'react';
@@ -174,25 +182,40 @@ export function TaskDetail() {
       setBusy(null);
     }
   };
-  if (state === 'loading') return <main className={styles.centered}>正在加载任务详情…</main>;
+  if (state === 'loading')
+    return (
+      <main className={styles.centered}>
+        <AppStatePanel
+          kind="loading"
+          title="正在加载任务详情"
+          description="正在连接任务和证据记录。"
+        />
+      </main>
+    );
   if (state === 'forbidden')
     return (
       <main className={styles.centered}>
-        <section>
-          <h1>无法查看此任务</h1>
-          <p>请使用已授权的员工账号，且仅可查看分配给自己的任务。</p>
-          <a href="/e/workbench">返回工作台</a>
-        </section>
+        <AppStatePanel
+          kind="forbidden"
+          title="无法查看此任务"
+          description="请使用已授权的员工账号，且仅可查看分配给自己的任务。"
+          action={
+            <Button tone="secondary" onClick={() => (window.location.href = '/e/workbench')}>
+              返回工作台
+            </Button>
+          }
+        />
       </main>
     );
   if (state === 'error')
     return (
       <main className={styles.centered}>
-        <section>
-          <h1>任务详情暂不可用</h1>
-          <p>网络或服务连接出现问题。</p>
-          <button onClick={() => void load()}>重新加载</button>
-        </section>
+        <AppStatePanel
+          kind="error"
+          title="任务详情暂不可用"
+          description="网络或服务连接出现问题。"
+          action={<Button onClick={() => void load()}>重新加载</Button>}
+        />
       </main>
     );
   if (!data) return null;
@@ -211,7 +234,7 @@ export function TaskDetail() {
           <p>ONEDAY / 我的任务</p>
           <h1>{taskTitleCopy(data.task.title)}</h1>
         </div>
-        <span className={done ? styles.done : styles.badge}>{done ? '已完成' : '待执行'}</span>
+        <StatusBadge tone={done ? 'success' : 'info'}>{done ? '已完成' : '待执行'}</StatusBadge>
       </header>
       {message && (
         <p className={styles.feedback} role="status">
