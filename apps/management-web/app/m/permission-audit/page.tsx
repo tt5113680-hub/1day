@@ -1,6 +1,13 @@
 'use client';
 import { SessionApiClient } from '@oneday/session-client';
-
+import {
+  AdminPageHeader,
+  AppStatePanel,
+  Button,
+  Card,
+  StatusBadge,
+  businessLabel,
+} from '@oneday/ui';
 import { useCallback, useEffect, useState } from 'react';
 import styles from './page.module.css';
 
@@ -35,6 +42,12 @@ const labels: Record<AuditRecord['kind'], string> = {
   unattributed_privileged: '未归属特权操作',
   trace: '追溯记录',
 };
+const filterLabels: Record<Filter, string> = {
+  all: '全部审计记录',
+  change: '权限变更',
+  export: '数据导出',
+  risk: '风险信号',
+};
 
 export default function PermissionAuditPage() {
   const [state, setState] = useState<'loading' | 'ready' | 'forbidden' | 'error'>('loading');
@@ -48,9 +61,7 @@ export default function PermissionAuditPage() {
       try {
         const response = await sessionApi.request(
           `${api}/api/v1/management/permission-audit?filter=${next}`,
-          {
-            headers: {},
-          },
+          { headers: {} },
         );
         if ([401, 403].includes(response.status)) return setState('forbidden');
         if (!response.ok) throw Error('LOAD');
@@ -68,55 +79,75 @@ export default function PermissionAuditPage() {
     setOpen(null);
     void load(next);
   };
-  if (state === 'loading') return <main className={styles.centered}>正在核验权限审计证据…</main>;
+
+  if (state === 'loading')
+    return (
+      <main className={styles.centered}>
+        <AppStatePanel
+          kind="loading"
+          title="正在加载权限审计"
+          description="正在核验当前租户的可追溯安全证据。"
+        />
+      </main>
+    );
   if (state === 'forbidden')
     return (
       <main className={styles.centered}>
-        <section>
-          <h1>无权查看权限审计</h1>
-          <p>请使用具备经营管理权限的账号。</p>
-        </section>
+        <AppStatePanel
+          kind="forbidden"
+          title="无权查看权限审计"
+          description="请使用具备经营管理权限的账号。"
+        />
       </main>
     );
   if (state === 'error')
     return (
       <main className={styles.centered}>
-        <section>
-          <h1>权限审计暂不可用</h1>
-          <button onClick={() => void load()}>重新加载</button>
-        </section>
+        <AppStatePanel
+          kind="error"
+          title="权限审计暂不可用"
+          description="审计证据未能完成加载，请稍后重试。"
+          action={<Button onClick={() => void load()}>重新加载</Button>}
+        />
       </main>
     );
   if (!data) return null;
+
   return (
     <main className={styles.page}>
-      <header>
-        <div>
-          <p>ONEDAY / 权限审计</p>
-          <h1>将权限变更、风险信号与证据链放在同一审计视图</h1>
-          <span>风险信号需要复核，不等同于已确认的越权；每条记录均可追溯到关联与 trace 标识。</span>
-        </div>
-        <button onClick={() => void load()}>刷新记录</button>
-      </header>
+      <AdminPageHeader
+        eyebrow="ONEDAY / 平台安全 · 商户权限审计"
+        title="将权限变更、风险信号与证据链放在同一审计视图"
+        description="风险信号需要复核，不等同于已确认的越权；每条记录均可追溯到关联与 trace 标识。"
+        actions={
+          <Button tone="secondary" onClick={() => void load()}>
+            刷新记录
+          </Button>
+        }
+      />
       <section className={styles.metrics} aria-label="审计摘要">
-        <article>
+        <Card className={styles.metric}>
           <span>权限变更</span>
           <strong>{data.summary.changes}</strong>
-        </article>
-        <article>
+          <small>已写入变更证据</small>
+        </Card>
+        <Card className={styles.metric}>
           <span>数据导出</span>
           <strong>{data.summary.exports}</strong>
-        </article>
-        <article>
+          <small>当前租户导出记录</small>
+        </Card>
+        <Card className={styles.metric}>
           <span>风险信号</span>
           <strong>{data.summary.risks}</strong>
-        </article>
+          <small>需要人工复核</small>
+        </Card>
       </section>
-      <section className={styles.panel}>
+      <Card className={styles.panel}>
         <div className={styles.controls}>
           <div>
+            <div className={styles.panelEyebrow}>SECURITY REVIEW</div>
             <h2>审计记录</h2>
-            <p>仅显示当前租户保留的可追溯记录。</p>
+            <p>仅显示当前租户保留的可追溯记录，原始关联标识仅在展开证据时呈现。</p>
           </div>
           <label>
             筛选类型
@@ -132,57 +163,70 @@ export default function PermissionAuditPage() {
             </select>
           </label>
         </div>
+        <div className={styles.filterSummary}>
+          <StatusBadge tone={filter === 'risk' ? 'warning' : 'info'}>
+            {filterLabels[filter]}
+          </StatusBadge>
+          <span>{data.records.length} 条记录</span>
+        </div>
         {data.records.length ? (
           <div className={styles.records}>
-            {data.records.map((record) => (
-              <article className={styles.record} key={record.id}>
-                <div className={styles.recordMain}>
-                  <span
-                    className={
-                      record.kind.includes('privilege') || record.kind.includes('unattributed')
-                        ? styles.risk
-                        : styles.kind
-                    }
-                  >
-                    {labels[record.kind]}
-                  </span>
-                  <strong>{record.action}</strong>
-                  <p>
-                    {record.actorName} · {record.resource.type} ·{' '}
-                    {new Date(record.createdAt).toLocaleString('zh-CN')}
-                  </p>
-                </div>
-                <button onClick={() => setOpen(open === record.id ? null : record.id)}>
-                  {open === record.id ? '收起证据' : '查看证据'}
-                </button>
-                {open === record.id && (
-                  <div className={styles.evidence}>
-                    <dl>
-                      <div>
-                        <dt>关联 ID</dt>
-                        <dd>{record.correlationId}</dd>
-                      </div>
-                      <div>
-                        <dt>Trace ID</dt>
-                        <dd>{record.traceId}</dd>
-                      </div>
-                      <div>
-                        <dt>资源 ID</dt>
-                        <dd>{record.resource.id}</dd>
-                      </div>
-                    </dl>
-                    {record.detail !== null && record.detail !== undefined && (
-                      <pre>{JSON.stringify(record.detail, null, 2)}</pre>
-                    )}
+            {data.records.map((record) => {
+              const isRisk =
+                record.kind.includes('privilege') || record.kind.includes('unattributed');
+              return (
+                <article className={styles.record} key={record.id}>
+                  <div className={styles.recordMain}>
+                    <div className={styles.recordMeta}>
+                      <StatusBadge tone={isRisk ? 'warning' : 'neutral'}>
+                        {labels[record.kind]}
+                      </StatusBadge>
+                      <span>{new Date(record.createdAt).toLocaleString('zh-CN')}</span>
+                    </div>
+                    <strong>{record.action}</strong>
+                    <p>
+                      {record.actorName} · {businessLabel(record.resource.type)} · 租户内记录
+                    </p>
                   </div>
-                )}
-              </article>
-            ))}
+                  <Button
+                    tone="secondary"
+                    onClick={() => setOpen(open === record.id ? null : record.id)}
+                  >
+                    {open === record.id ? '收起证据' : '查看证据'}
+                  </Button>
+                  {open === record.id && (
+                    <div className={styles.evidence}>
+                      <dl>
+                        <div>
+                          <dt>关联 ID</dt>
+                          <dd>{record.correlationId}</dd>
+                        </div>
+                        <div>
+                          <dt>Trace ID</dt>
+                          <dd>{record.traceId}</dd>
+                        </div>
+                        <div>
+                          <dt>资源 ID</dt>
+                          <dd>{record.resource.id}</dd>
+                        </div>
+                      </dl>
+                      {record.detail !== null && record.detail !== undefined && (
+                        <pre>{JSON.stringify(record.detail, null, 2)}</pre>
+                      )}
+                    </div>
+                  )}
+                </article>
+              );
+            })}
           </div>
         ) : (
-          <div className={styles.empty}>当前筛选下没有审计记录。</div>
+          <AppStatePanel
+            kind="empty"
+            title="当前筛选下没有审计记录"
+            description="调整筛选条件后可继续查看租户安全证据。"
+          />
         )}
-      </section>
+      </Card>
     </main>
   );
 }

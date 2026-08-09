@@ -1,125 +1,119 @@
 .page {
-  max-width: 1440px;
+  width: min(100%, 1400px);
   min-height: 100vh;
-  margin: auto;
-  padding: 42px 48px;
-  background: #f6f8fb;
-  color: #111827;
-}
-.page header {
-  display: flex;
-  justify-content: space-between;
-  gap: 24px;
-}
-.page header p {
-  margin: 0;
-  color: #2563eb;
-  font-size: 13px;
-  font-weight: 800;
-}
-.page h1 {
-  margin: 8px 0;
-  font-size: 34px;
-  max-width: 820px;
-}
-.page header span,
-.controls p,
-.record p {
-  color: #4b5563;
-}
-.page button,
-.page select {
-  border: 1px solid #cbd5e1;
-  border-radius: 8px;
-  background: #fff;
-  padding: 10px 14px;
-  font: inherit;
-  font-weight: 700;
+  margin: 0 auto;
+  padding: 48px;
 }
 .metrics {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 16px;
-  margin: 28px 0;
+  gap: 18px;
+  margin-top: 30px;
 }
-.metrics article,
-.panel {
-  background: #fff;
-  border: 1px solid #e5e7eb;
-  border-radius: 16px;
-  box-shadow: 0 5px 16px #11182708;
-}
-.metrics article {
+.metric {
   display: grid;
   gap: 8px;
   padding: 20px;
 }
-.metrics span {
-  color: #64748b;
+.metric span {
+  color: var(--od-text-muted);
   font-size: 14px;
+  font-weight: 700;
 }
-.metrics strong {
-  font-size: 30px;
+.metric strong {
+  color: var(--od-ink);
+  font-size: 32px;
+  line-height: 1;
+}
+.metric small {
+  color: var(--od-text-muted);
 }
 .panel {
+  margin-top: 18px;
   padding: 22px;
+}
+.panelEyebrow {
+  color: var(--od-brand-700);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.12em;
 }
 .controls {
   display: flex;
-  justify-content: space-between;
   align-items: end;
-  gap: 16px;
+  justify-content: space-between;
+  gap: 18px;
 }
 .controls h2 {
-  margin: 0;
+  margin: 6px 0;
+}
+.controls p,
+.record p {
+  color: var(--od-text-muted);
 }
 .controls p {
-  margin-bottom: 0;
+  margin: 0;
 }
 .controls label {
   display: grid;
+  min-width: 220px;
   gap: 6px;
   font-weight: 700;
 }
-.records {
+.controls select {
+  min-height: 42px;
+  border: 1px solid var(--od-border);
+  border-radius: var(--od-radius-sm);
+  padding: 8px 12px;
+  color: var(--od-ink);
+  background: var(--od-surface);
+  font: inherit;
+}
+.filterSummary {
+  display: flex;
+  align-items: center;
+  gap: 10px;
   margin-top: 20px;
-  border-top: 1px solid #e5e7eb;
+  color: var(--od-text-muted);
+  font-size: 13px;
+}
+.records {
+  margin-top: 14px;
+  border-top: 1px solid var(--od-border);
 }
 .record {
   display: grid;
   grid-template-columns: 1fr auto;
-  gap: 14px;
   align-items: center;
-  padding: 16px 0;
-  border-bottom: 1px solid #e5e7eb;
+  gap: 14px;
+  padding: 17px 0;
+  border-bottom: 1px solid var(--od-border);
 }
 .recordMain {
   display: grid;
-  gap: 6px;
+  gap: 7px;
+  min-width: 0;
+}
+.recordMain strong {
+  font-size: 16px;
 }
 .record p {
   margin: 0;
   font-size: 13px;
 }
-.kind,
-.risk {
-  width: fit-content;
-  border-radius: 999px;
-  padding: 3px 8px;
-  background: #eff6ff;
-  color: #1d4ed8;
+.recordMeta {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--od-text-muted);
   font-size: 12px;
-  font-weight: 800;
-}
-.risk {
-  background: #fff7ed;
-  color: #b45309;
 }
 .evidence {
   grid-column: 1 / -1;
-  padding: 14px;
-  border-radius: 10px;
-  background: #f8fafc;
+  padding: 16px;
+  border: 1px solid var(--od-border);
+  border-radius: var(--od-radius-sm);
+  background: var(--od-surface-subtle);
 }
 .evidence dl {
   display: grid;
@@ -128,51 +122,42 @@
   margin: 0;
 }
 .evidence dt {
-  color: #64748b;
+  color: var(--od-text-muted);
   font-size: 12px;
 }
 .evidence dd {
   margin: 3px 0 0;
   overflow-wrap: anywhere;
+  color: var(--od-ink);
   font-family: ui-monospace, monospace;
   font-size: 12px;
 }
 .evidence pre {
   overflow: auto;
   padding: 12px;
-  background: #111827;
-  color: #dbeafe;
-  border-radius: 8px;
+  border-radius: var(--od-radius-sm);
+  background: var(--od-ink);
+  color: var(--od-surface);
   font-size: 12px;
-}
-.empty {
-  margin-top: 20px;
-  padding: 32px;
-  border-radius: 10px;
-  background: #f8fafc;
-  color: #475569;
-  text-align: center;
 }
 .centered {
   display: grid;
   min-height: 70vh;
   place-items: center;
+  padding: 24px;
   text-align: center;
-}
-.centered section {
-  padding: 32px;
-  border-radius: 16px;
-  background: #fff;
 }
 @media (max-width: 900px) {
   .page {
     padding: 28px 18px;
   }
-  .page header,
-  .controls,
-  .metrics {
-    display: grid;
+  .metrics,
+  .controls {
     grid-template-columns: 1fr;
+    display: grid;
+  }
+  .controls label {
+    min-width: 0;
   }
   .record {
     grid-template-columns: 1fr;

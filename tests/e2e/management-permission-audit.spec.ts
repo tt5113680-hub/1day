@@ -4,6 +4,8 @@ import { expect, test } from '@playwright/test';
 const tenant = '00000000-0000-4000-8000-000000000001';
 const api = 'http://127.0.0.1:3105';
 let token = '';
+let refreshToken = '';
+let accessExpiresAt = '';
 
 test.beforeAll(async () => {
   const response = await fetch(`${api}/api/v1/auth/login`, {
@@ -16,7 +18,10 @@ test.beforeAll(async () => {
     }),
   });
   expect(response.status).toBe(201);
-  token = (await response.json()).accessToken;
+  const login = await response.json();
+  token = login.accessToken;
+  refreshToken = login.refreshToken;
+  accessExpiresAt = login.accessExpiresAt;
   const headers = {
     authorization: `Bearer ${token}`,
     'content-type': 'application/json',
@@ -45,7 +50,14 @@ test.beforeAll(async () => {
 test('manager filters audit records and opens persisted evidence at desktop width', async ({
   page,
 }) => {
-  await page.addInitScript((value) => sessionStorage.setItem('oneday.accessToken', value), token);
+  await page.addInitScript(
+    ({ accessToken, refreshToken, accessExpiresAt }) => {
+      sessionStorage.setItem('oneday.accessToken', accessToken);
+      sessionStorage.setItem('oneday.refreshToken', refreshToken);
+      sessionStorage.setItem('oneday.accessExpiresAt', accessExpiresAt);
+    },
+    { accessToken: token, refreshToken, accessExpiresAt },
+  );
   await page.goto('/m/permission-audit');
   await expect(
     page.getByRole('heading', { name: '将权限变更、风险信号与证据链放在同一审计视图' }),
@@ -55,16 +67,17 @@ test('manager filters audit records and opens persisted evidence at desktop widt
   await page.getByRole('button', { name: '查看证据' }).first().click();
   await expect(page.getByText('Trace ID')).toBeVisible();
   await page.screenshot({
-    path: 'evidence/PAGE-M-010/management-permission-audit-desktop.png',
+    path: 'evidence/PAGE-M-010/management-permission-audit-desktop-v2.png',
     fullPage: false,
   });
 });
 
 test('permission audit recovers without a session', async ({ page }) => {
   await page.goto('/m/permission-audit');
-  await expect(page.getByRole('heading', { name: '无权查看权限审计' })).toBeVisible();
+  await expect(page).toHaveURL(/\/login/);
+  await expect(page.getByRole('heading', { name: '管理端登录' })).toBeVisible();
   await page.screenshot({
-    path: 'evidence/PAGE-M-010/management-permission-audit-forbidden.png',
+    path: 'evidence/PAGE-M-010/management-permission-audit-forbidden-v2.png',
     fullPage: true,
   });
 });
