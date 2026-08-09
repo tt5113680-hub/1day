@@ -12,7 +12,23 @@ import type { OrganizationContext } from './organization.service';
 
 const UUID = /^[0-9a-f-]{36}$/i;
 const TARGETS = new Set(['consumer', 'employee', 'management']);
-const MODULES = new Set(['hero', 'action_grid', 'content', 'result_list']);
+const MODULES = new Set([
+  'hero',
+  'action_grid',
+  'content',
+  'result_list',
+  'store_hero',
+  'banner_carousel',
+  'quick_actions',
+  'operating_channels',
+  'service_catalog',
+  'offer_compare',
+  'member_entry',
+  'content_feed',
+  'store_info',
+  'discovery_entry',
+  'member_wallet',
+]);
 const text = (v: unknown, n: number) => {
   if (typeof v !== 'string' || !v.trim() || v.trim().length > n)
     throw new BadRequestException('VALIDATION_ERROR');

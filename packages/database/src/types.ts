@@ -714,6 +714,133 @@ export interface PageModulesTable {
   deleted_at: Timestamp | null;
   version: Generated<number>;
 }
+export interface TenantProvisioningRunsTable {
+  id: string;
+  requested_by_tenant_id: string;
+  tenant_id: string | null;
+  source_mode: string;
+  request_slug: string;
+  idempotency_key: string;
+  state: string;
+  industry: string;
+  plan: string;
+  input: unknown;
+  delivery: unknown;
+  verification: unknown;
+  correlation_id: string;
+  error_code: string | null;
+  error_detail: string | null;
+  ready_at: Timestamp | null;
+  created_at: Timestamp;
+  created_by: string | null;
+  updated_at: Timestamp;
+  updated_by: string | null;
+  deleted_at: Timestamp | null;
+  version: Generated<number>;
+}
+export interface TenantProvisioningStepsTable {
+  id: string;
+  run_id: string;
+  step_code: string;
+  position: number;
+  state: string;
+  attempts: number;
+  started_at: Timestamp | null;
+  ended_at: Timestamp | null;
+  error_code: string | null;
+  output: unknown;
+  created_at: Timestamp;
+  created_by: string | null;
+  updated_at: Timestamp;
+  updated_by: string | null;
+  deleted_at: Timestamp | null;
+  version: Generated<number>;
+}
+export interface StorefrontBindingsTable {
+  id: string;
+  tenant_id: string;
+  store_id: string;
+  template_id: string;
+  draft_version_id: string | null;
+  live_version_id: string | null;
+  status: string;
+  published_at: Timestamp | null;
+  created_at: Timestamp;
+  created_by: string | null;
+  updated_at: Timestamp;
+  updated_by: string | null;
+  deleted_at: Timestamp | null;
+  version: Generated<number>;
+}
+export interface StorefrontPublicationsTable {
+  id: string;
+  tenant_id: string;
+  binding_id: string;
+  template_version_id: string;
+  publication_type: string;
+  sequence: number;
+  correlation_id: string;
+  created_at: Timestamp;
+  created_by: string | null;
+  updated_at: Timestamp;
+  updated_by: string | null;
+  deleted_at: Timestamp | null;
+  version: Generated<number>;
+}
+export interface MembershipEnrollmentsTable {
+  id: string;
+  tenant_id: string;
+  customer_id: string;
+  store_id: string | null;
+  tier: string;
+  enrollment_status: string;
+  source: string | null;
+  joined_at: Timestamp | null;
+  suspended_at: Timestamp | null;
+  cancelled_at: Timestamp | null;
+  created_at: Timestamp;
+  created_by: string | null;
+  updated_at: Timestamp;
+  updated_by: string | null;
+  deleted_at: Timestamp | null;
+  version: Generated<number>;
+}
+export interface MemberBenefitLedgerTable {
+  id: string;
+  tenant_id: string;
+  enrollment_id: string;
+  benefit_id: string;
+  store_id: string | null;
+  entry_type: string;
+  quantity: number;
+  balance_after: number;
+  business_reference: string;
+  occurred_at: Timestamp;
+  created_at: Timestamp;
+  created_by: string | null;
+  updated_at: Timestamp;
+  updated_by: string | null;
+  deleted_at: Timestamp | null;
+  version: Generated<number>;
+}
+export interface OneCodeEntriesTable {
+  id: string;
+  tenant_id: string;
+  store_id: string | null;
+  code: string;
+  scene: string;
+  source: string;
+  target_path: string;
+  role_targets: unknown;
+  status: string;
+  expires_at: Timestamp | null;
+  created_at: Timestamp;
+  created_by: string | null;
+  updated_at: Timestamp;
+  updated_by: string | null;
+  deleted_at: Timestamp | null;
+  version: Generated<number>;
+}
 export interface ExternalActionsTable {
   id: string;
   tenant_id: string;
@@ -1188,6 +1315,13 @@ export interface Database {
   consumer_action_redirect_events: ConsumerActionRedirectEventsTable;
   store_external_actions: StoreExternalActionsTable;
   store_service_platform_offers: StoreServicePlatformOffersTable;
+  tenant_provisioning_runs: TenantProvisioningRunsTable;
+  tenant_provisioning_steps: TenantProvisioningStepsTable;
+  storefront_bindings: StorefrontBindingsTable;
+  storefront_publications: StorefrontPublicationsTable;
+  membership_enrollments: MembershipEnrollmentsTable;
+  member_benefit_ledger: MemberBenefitLedgerTable;
+  one_code_entries: OneCodeEntriesTable;
   consumer_store_outbound_events: ConsumerStoreOutboundEventsTable;
   consumer_process_accesses: ConsumerProcessAccessesTable;
   consumer_profile_accesses: ConsumerProfileAccessesTable;

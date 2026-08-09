@@ -5,6 +5,7 @@
 - Batch 1: `BATCH_1_PASS` at source commit `1aecf81`; exact full-gate and visual evidence is recorded in `COMMERCIAL_UI_FOUNDATION_ACCEPTANCE.md`.
 - Verified foundation: Consumer is responsive at 390/768/1024/1440; Employee uses Mobile Shell; Management, Platform and restricted Channel/Circle modes use explicit Admin Shell identities and scoped navigation. Repository, session, tenant/RBAC isolation, commercial-chain and visual gates all pass.
 - Current: Batch 2 one-click tenant provisioning through verified commercial READY, with industry Storefront lifecycle, decoration, Offer operations, membership and ONE-CODE.
+- Verified Batch 2 subsystem: migration 048 and the commercial onboarding orchestration now produce one durable 11-step run, a published first Storefront, owner Management/Employee access and ONE-CODE before returning `ready`; API acceptance is 1/1 and Platform browser acceptance is 2/2. Next is Storefront Draft/Preview/Publish/Rollback on the same binding and renderer.
 
 - branch: `hardening/COMMERCIAL-COMPLETION`
 - HEAD: `42186a5e5d6b9aa8ac7edca4bc4636fe4d11fc18`

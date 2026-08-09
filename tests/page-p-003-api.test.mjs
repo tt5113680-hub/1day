@@ -40,7 +40,7 @@ async function login() {
   return (await r.json()).accessToken;
 }
 test.after(() => api.kill());
-test('platform onboarding atomically provisions tenant resources and is idempotent', async () => {
+test('platform one-click provisioning reaches a machine-verifiable READY state', async () => {
   await ready();
   const token = await login(),
     key = randomUUID(),
@@ -49,11 +49,16 @@ test('platform onboarding atomically provisions tenant resources and is idempote
       slug: `trial-${suffix}`,
       tenantName: `Trial ${suffix}`,
       organizationName: 'HQ',
+      merchantName: 'Trial Merchant',
       storeName: 'Main',
+      address: '88 Commercial Road',
+      phone: '021-55550000',
+      businessHours: '09:00-21:00',
       adminName: 'Owner',
       adminEmail: `owner-${suffix}@example.test`,
       adminPassword: `Owner-${suffix}-Password!`,
-      template: 'starter',
+      industry: 'restaurant',
+      plan: 'starter',
     },
     headers = {
       authorization: `Bearer ${token}`,
@@ -88,6 +93,12 @@ test('platform onboarding atomically provisions tenant resources and is idempote
   });
   assert.equal(first.status, 201);
   const created = (await first.json()).data;
+  assert.equal(created.state, 'ready');
+  assert.equal(created.steps.length, 11);
+  assert.equal(created.steps.filter((step) => step.state === 'succeeded').length, 10);
+  assert.equal(created.steps.filter((step) => step.state === 'skipped').length, 1);
+  assert.ok(Object.values(created.verification).every(Boolean));
+  assert.match(created.delivery.oneCode, /^[A-Z0-9]{20}$/);
   const repeated = await fetch(`${base}/api/v1/platform/onboarding`, {
     method: 'POST',
     headers,
@@ -105,21 +116,51 @@ test('platform onboarding atomically provisions tenant resources and is idempote
     }),
   });
   assert.equal(tenantLogin.status, 201);
+  const ownerSession = await tenantLogin.json();
+  for (const path of ['/api/v1/management/dashboard', '/api/v1/employee/workbench']) {
+    const response = await fetch(`${base}${path}`, {
+      headers: {
+        authorization: `Bearer ${ownerSession.accessToken}`,
+        'x-tenant-context': created.tenantId,
+        'x-request-id': randomUUID(),
+      },
+    });
+    assert.equal(response.status, 200, `${path} must be immediately available to the owner`);
+  }
+  const resolved = await fetch(`${base}${created.delivery.resolvePath}`);
+  assert.equal(resolved.status, 200);
+  const oneCode = (await resolved.json()).data;
+  assert.equal(oneCode.tenant.slug, body.slug);
+  assert.equal(oneCode.role, 'consumer');
+  assert.ok(oneCode.targetPath.startsWith('/c/entry?tenant='));
+  assert.equal((await fetch(`${base}${created.delivery.resolvePath}?role=unknown`)).status, 400);
+  const publicEntry = await fetch(
+    `${base}/api/v1/consumer/entry?tenant=${encodeURIComponent(body.slug)}`,
+  );
+  assert.equal(publicEntry.status, 200);
+  const storefront = (await publicEntry.json()).data;
+  assert.ok(storefront.storefront.liveVersionId);
+  assert.equal(storefront.storefront.industry.family, 'restaurant');
+  assert.ok(storefront.modules.length >= 6);
   const client = new Client({ connectionString: db });
   await client.connect();
   try {
     const counts = await client.query(
-      "select (select count(*) from organizations where tenant_id=$1)::int as organizations,(select count(*) from stores where tenant_id=$1)::int as stores,(select count(*) from page_templates where tenant_id=$1 and code='consumer-starter')::int as templates,(select count(*) from membership_roles where tenant_id=$1)::int as memberships,(select count(*) from audit_logs where tenant_id=$2 and action='platform.tenant_onboarded' and resource_id=$1)::int as audits,(select count(*) from outbox_events where tenant_id=$2 and event_type='platform.tenant.onboarded.v1' and aggregate_id=$1)::int as outbox,(select count(*) from idempotency_keys where tenant_id=$2 and resource_type='platform_onboarding' and idempotency_key=$3)::int as keys",
-      [created.tenantId, tenant, key],
+      "select (select count(*) from organizations where tenant_id=$1)::int as organizations,(select count(*) from stores where tenant_id=$1)::int as stores,(select count(*) from page_templates where tenant_id=$1 and code='consumer-storefront' and published_version_id is not null)::int as templates,(select count(*) from storefront_bindings where tenant_id=$1 and live_version_id is not null)::int as bindings,(select count(*) from membership_roles where tenant_id=$1)::int as memberships,(select count(*) from employees where tenant_id=$1)::int as employees,(select count(*) from tenant_provisioning_runs where tenant_id=$1 and state='ready')::int as ready_runs,(select count(*) from tenant_provisioning_steps s join tenant_provisioning_runs r on r.id=s.run_id where r.tenant_id=$1)::int as steps,(select count(*) from audit_logs where tenant_id=$2 and action='platform.tenant_ready' and resource_id=$3)::int as audits,(select count(*) from outbox_events where tenant_id=$2 and event_type='tenant.provisioning.ready.v1' and aggregate_id=$3)::int as outbox,(select count(*) from one_code_entries where tenant_id=$1 and status='active')::int as one_codes",
+      [created.tenantId, tenant, created.runId],
     );
     assert.deepEqual(counts.rows[0], {
       organizations: 1,
       stores: 1,
       templates: 1,
+      bindings: 1,
       memberships: 1,
+      employees: 1,
+      ready_runs: 1,
+      steps: 11,
       audits: 1,
       outbox: 1,
-      keys: 1,
+      one_codes: 1,
     });
   } finally {
     await client.end();

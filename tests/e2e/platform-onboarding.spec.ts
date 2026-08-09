@@ -34,20 +34,26 @@ test('platform admin completes the tenant onboarding wizard', async ({ page }) =
     { accessToken: token, refresh: refreshToken },
   );
   await page.goto('/p/tenants/new');
-  await expect(page.getByRole('heading', { name: /一次提交完成主体/ })).toBeVisible();
-  const inputs = page.locator('input');
-  await inputs.nth(0).fill(slug);
-  await inputs.nth(1).fill(`Browser ${suffix}`);
-  await inputs.nth(2).fill('Browser HQ');
-  await inputs.nth(3).fill('Browser Main');
-  await inputs.nth(4).fill('Browser Owner');
-  await inputs.nth(5).fill(`browser-owner-${suffix}@example.test`);
-  await inputs.nth(6).fill(`Browser-${suffix}-Password!`);
-  await page.locator('select').selectOption('service');
-  await page.getByRole('button', { name: '提交并初始化' }).click();
-  await expect(page.getByRole('status')).toContainText(slug);
+  await expect(page.getByRole('heading', { name: /生成可登录、可经营、可访问/ })).toBeVisible();
+  await page.getByLabel('租户标识').fill(slug);
+  await page.getByLabel('商户名称').fill(`Browser ${suffix}`);
+  await page.getByLabel('总部组织名称').fill('Browser HQ');
+  await page.getByLabel('经营主体名称').fill('Browser Merchant');
+  await page.getByLabel('首店名称').fill('Browser Main');
+  await page.getByLabel('门店电话').fill('021-55550000');
+  await page.getByLabel('门店地址').fill('88 Browser Road');
+  await page.getByLabel('营业时间').fill('09:00-21:00');
+  await page.getByLabel('老板姓名').fill('Browser Owner');
+  await page.getByLabel('老板邮箱').fill(`browser-owner-${suffix}@example.test`);
+  await page.getByLabel('初始登录密码').fill(`Browser-${suffix}-Password!`);
+  await page.getByLabel('行业模板').selectOption('beauty');
+  await page.getByRole('button', { name: '一键开通并验证 READY' }).click();
+  await expect(page.getByRole('status')).toContainText(`${slug} 已完成机器验证并进入 READY`);
+  await expect(page.getByText('生成 READY 交付包')).toBeVisible();
+  await expect(page.getByText('ONE-CODE', { exact: true })).toBeVisible();
+  await page.getByRole('status').scrollIntoViewIfNeeded();
   await page.screenshot({
-    path: 'evidence/PAGE-P-003/platform-onboarding-desktop.png',
+    path: 'evidence/PAGE-P-003/platform-onboarding-ready-v2.png',
     fullPage: false,
   });
 });

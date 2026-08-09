@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## 2026-08-10 - Batch 2 one-click commercial provisioning core
+
+- Added durable, idempotent Provisioning Runs with eleven auditable steps and explicit ready/failure states instead of treating an active tenant row as commercial delivery.
+- A successful run now creates an immediately usable owner session for Management and Employee, complete tenant/store/plan settings, a published tenant-owned industry Storefront binding, honest starter operating objects and a role-aware ONE-CODE delivery entry.
+- Added machine READY assertions, public ONE-CODE resolution, binding-aware Consumer entry and a Platform run-result UI. Real API and browser acceptance pass.
+
 ## 2026-08-10 - ONEDAY-V3-COMMERCIAL-COMPLETION Batch 1 PASS
 
 - Accepted the unified Consumer, Employee, Management, Platform, Channel and Circle commercial UI foundation at source commit `1aecf81`.

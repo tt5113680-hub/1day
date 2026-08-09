@@ -106,6 +106,8 @@ import { PlatformTenantController } from './platform-tenant.controller';
 import { PlatformTenantService } from './platform-tenant.service';
 import { PlatformOnboardingController } from './platform-onboarding.controller';
 import { PlatformOnboardingService } from './platform-onboarding.service';
+import { OneCodeController } from './one-code.controller';
+import { OneCodeService } from './one-code.service';
 
 @Module({
   controllers: [
@@ -164,6 +166,7 @@ import { PlatformOnboardingService } from './platform-onboarding.service';
     PlatformSecurityAuditController,
     PlatformTenantController,
     PlatformOnboardingController,
+    OneCodeController,
   ],
   providers: [
     AuthService,
@@ -219,6 +222,7 @@ import { PlatformOnboardingService } from './platform-onboarding.service';
     PlatformSecurityAuditService,
     PlatformTenantService,
     PlatformOnboardingService,
+    OneCodeService,
   ],
 })
 export class AppModule {}
