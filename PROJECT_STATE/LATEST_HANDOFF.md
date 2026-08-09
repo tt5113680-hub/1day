@@ -2,7 +2,7 @@
 
 ## HARDENING-006 - Docker deployment build repair in progress
 
-- Docker targets now compile Auth, Events, Session Client and UI packages in a shared dependency stage before API, Worker or HUMAN-PILOT compilation. Fresh server image verification is in progress; evidence is in `evidence/HARDENING-006/ACCEPTANCE.md`.
+- Docker targets now compile Auth, Events, Database, Session Client and UI packages in a shared dependency stage before API, Worker or HUMAN-PILOT compilation. Fresh server image/migration verification is in progress; evidence is in `evidence/HARDENING-006/ACCEPTANCE.md`.
 - The Consumer visual-acceptance task remains `AWAITING_PRODUCT_OWNER_UI_ACCEPTANCE`. No demo or customer data has been seeded.
 
 ## CONSUMER-COMMERCIAL-HOME-V1 — 2026-08-09 store-information-card follow-up

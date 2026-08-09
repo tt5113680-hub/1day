@@ -9,6 +9,7 @@ RUN pnpm install --frozen-lockfile
 FROM build AS workspace-dependencies
 RUN pnpm --filter @oneday/auth build \
  && pnpm --filter @oneday/events build \
+ && pnpm --filter @oneday/database build \
  && pnpm --filter @oneday/session-client build \
  && pnpm --filter @oneday/ui build
 

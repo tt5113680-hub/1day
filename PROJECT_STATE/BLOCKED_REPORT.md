@@ -44,4 +44,4 @@ RUN pnpm --filter @oneday/auth build \
 
 ## Resolution follow-up（2026-08-09）
 
-HARDENING-006 已恢复处理：服务器干净镜像构建还发现 `@oneday/session-client` 和 `@oneday/ui` 也须先构建。Dockerfile 已补齐该依赖阶段，正在进行新的干净构建验证。证据见 `evidence/HARDENING-006/ACCEPTANCE.md`。
+HARDENING-006 已恢复处理：服务器干净镜像构建还发现 Session Client、UI 与 Database 包也须先构建。Dockerfile 已补齐该依赖阶段，正在进行新的干净构建/迁移验证。证据见 `evidence/HARDENING-006/ACCEPTANCE.md`。
