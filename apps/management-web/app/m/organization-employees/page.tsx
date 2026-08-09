@@ -1,5 +1,13 @@
 'use client';
 import { SessionApiClient } from '@oneday/session-client';
+import {
+  AdminPageHeader,
+  AppStatePanel,
+  businessLabel,
+  Button,
+  Card,
+  StatusBadge,
+} from '@oneday/ui';
 
 import { useCallback, useEffect, useState } from 'react';
 import styles from './page.module.css';
@@ -104,59 +112,75 @@ export default function OrganizationEmployeesPage() {
     setNote('员工已离职；交接风险仍在页面中保留，需由管理者安排处理。');
     await load();
   };
-  if (state === 'loading') return <main className={styles.centered}>正在加载组织与员工数据…</main>;
+  if (state === 'loading')
+    return (
+      <main className={styles.centered}>
+        <AppStatePanel
+          kind="loading"
+          title="正在加载组织与员工数据"
+          description="正在校验组织归属、邀请状态与交接风险。"
+        />
+      </main>
+    );
   if (state === 'forbidden')
     return (
       <main className={styles.centered}>
-        <section>
-          <h1>无权查看组织与员工</h1>
-          <p>请使用具备经营管理权限的账号。</p>
-        </section>
+        <AppStatePanel
+          kind="forbidden"
+          title="无权查看组织与员工"
+          description="请使用具备经营管理权限的账号。"
+        />
       </main>
     );
   if (state === 'error')
     return (
       <main className={styles.centered}>
-        <section>
-          <h1>组织数据暂不可用</h1>
-          <button onClick={() => void load()}>重新加载</button>
-        </section>
+        <AppStatePanel
+          kind="error"
+          title="组织数据暂不可用"
+          description="组织与员工数据未能完成加载，请重试。"
+          action={<Button onClick={() => void load()}>重新加载</Button>}
+        />
       </main>
     );
   if (!data) return null;
   return (
     <main className={styles.page}>
-      <header>
-        <div>
-          <p>ONEDAY / 组织与员工</p>
-          <h1>让每位员工的归属、待办与离职交接可见</h1>
-          <span>组织、邀请、员工和交接风险均从租户隔离的业务数据读取。</span>
-        </div>
-        <button onClick={() => void load()}>刷新</button>
-      </header>
+      <AdminPageHeader
+        eyebrow="ONEDAY / 商户组织与员工"
+        title="让每位员工的归属、待办与离职交接可见"
+        description="组织、邀请、员工和交接风险均从当前租户的隔离业务数据读取。"
+        actions={
+          <Button tone="secondary" onClick={() => void load()}>
+            刷新组织
+          </Button>
+        }
+      />
       {note && (
         <p className={styles.notice} role="status">
           {note}
         </p>
       )}
       <section className={styles.grid}>
-        <aside className={styles.panel}>
-          <h2>组织树</h2>
-          {data.organizations.length ? (
-            data.organizations.map((organization) => (
-              <article className={styles.org} key={organization.id}>
-                <strong>{organization.name}</strong>
-                <span>
-                  {organization.code} · {organization.organization_type}
-                </span>
-                <small>{organization.active_employee_count} 名在岗员工</small>
-              </article>
-            ))
-          ) : (
-            <p>暂无组织。</p>
-          )}
+        <aside>
+          <Card className={styles.panel}>
+            <h2>组织树</h2>
+            {data.organizations.length ? (
+              data.organizations.map((organization) => (
+                <article className={styles.org} key={organization.id}>
+                  <strong>{organization.name}</strong>
+                  <span>
+                    {organization.code} · {businessLabel(organization.organization_type)}
+                  </span>
+                  <small>{organization.active_employee_count} 名在岗员工</small>
+                </article>
+              ))
+            ) : (
+              <AppStatePanel kind="empty" title="暂无组织" />
+            )}
+          </Card>
         </aside>
-        <section className={styles.panel}>
+        <Card className={styles.panel}>
           <h2>邀请员工</h2>
           <div className={styles.form}>
             <label>
@@ -194,22 +218,22 @@ export default function OrganizationEmployeesPage() {
               />
             </label>
             {fieldError && <p className={styles.fieldError}>{fieldError}</p>}
-            <button onClick={() => void invite()}>创建邀请</button>
+            <Button onClick={() => void invite()}>创建邀请</Button>
           </div>
           <h3>待接受邀请</h3>
           {data.invitations.length ? (
             data.invitations.map((invitation) => (
               <p className={styles.invite} key={invitation.id}>
                 {invitation.email} · {invitation.employee_code} · 截止{' '}
-                {new Date(invitation.expires_at).toLocaleDateString()}
+                {new Date(invitation.expires_at).toLocaleDateString('zh-CN')}
               </p>
             ))
           ) : (
             <p>暂无待接受邀请。</p>
           )}
-        </section>
+        </Card>
       </section>
-      <section className={styles.panel}>
+      <Card className={styles.panel}>
         <h2>员工与交接风险</h2>
         {data.employees.length ? (
           <div className={styles.table}>
@@ -218,9 +242,12 @@ export default function OrganizationEmployeesPage() {
                 <div>
                   <strong>{employee.display_name}</strong>
                   <span>
-                    {employee.employee_code} · {employee.title ?? '未设置职务'} · {employee.status}
+                    {employee.employee_code} · {employee.title ?? '未设置职务'}
                   </span>
                   <small>{employee.email}</small>
+                  <StatusBadge tone={employee.status === 'active' ? 'success' : 'neutral'}>
+                    {businessLabel(employee.status)}
+                  </StatusBadge>
                 </div>
                 <div>
                   <b>{employee.open_task_count}</b>
@@ -230,19 +257,20 @@ export default function OrganizationEmployeesPage() {
                   <b>{employee.active_customer_count}</b>
                   <small>客户</small>
                 </div>
-                <button
+                <Button
+                  tone="secondary"
                   disabled={employee.status !== 'active'}
                   onClick={() => void offboard(employee)}
                 >
                   办理离职
-                </button>
+                </Button>
               </article>
             ))}
           </div>
         ) : (
-          <p className={styles.empty}>暂无员工。</p>
+          <AppStatePanel kind="empty" title="暂无员工" description="创建邀请以添加首位员工。" />
         )}
-      </section>
+      </Card>
     </main>
   );
 }
