@@ -1,5 +1,6 @@
 'use client';
 import { SessionApiClient } from '@oneday/session-client';
+import { AppStatePanel, Button, Card, StatusBadge } from '@oneday/ui';
 
 import { useCallback, useEffect, useState } from 'react';
 import styles from './notification-center.module.css';
@@ -71,47 +72,59 @@ export function NotificationCenter() {
       setBusy(null);
     }
   };
-  if (state === 'loading') return <main className={styles.centered}>正在整理你的通知…</main>;
+  if (state === 'loading')
+    return (
+      <main className={styles.centered}>
+        <AppStatePanel
+          kind="loading"
+          title="正在整理你的通知"
+          description="正在同步当前员工的任务与经营提醒。"
+        />
+      </main>
+    );
   if (state === 'forbidden')
     return (
       <main className={styles.centered}>
-        <section>
-          <h1>无法查看通知</h1>
-          <p>请使用已授权的员工账号登录。</p>
-          <a href="/e/workbench">返回工作台</a>
-        </section>
+        <AppStatePanel
+          kind="forbidden"
+          title="无法查看通知"
+          description="请使用已授权的员工账号登录。"
+        />
       </main>
     );
   if (state === 'error')
     return (
       <main className={styles.centered}>
-        <section>
-          <h1>通知中心暂不可用</h1>
-          <p>网络或服务连接出现问题。</p>
-          <button onClick={() => void load()}>重新加载</button>
-        </section>
+        <AppStatePanel
+          kind="error"
+          title="通知中心暂不可用"
+          description="网络或服务连接出现问题。"
+          action={<Button onClick={() => void load()}>重新加载</Button>}
+        />
       </main>
     );
   return (
     <main className={styles.page}>
-      <header>
-        <p>ONEDAY / 执行提醒</p>
-        <h1>把该处理的事，留在眼前</h1>
-        <span>
-          任务、异常、审批与系统提醒只会显示给当前员工；每条提醒都能回到安全的工作上下文。
-        </span>
+      <header className={styles.header}>
+        <div>
+          <p>ONEDAY / 执行提醒</p>
+          <h1>把该处理的事，留在眼前</h1>
+          <span>
+            任务、异常、审批与系统提醒只会显示给当前员工；每条提醒都能回到安全的工作上下文。
+          </span>
+        </div>
       </header>
       {message && (
         <p className={styles.feedback} role="status">
           {message}
         </p>
       )}
-      <section className={styles.summary} aria-label="通知概览">
+      <Card className={styles.summary}>
         <strong>{data.unreadCount}</strong>
         <span>条未读通知</span>
         <a href="/e/workbench">回到工作台</a>
-      </section>
-      <section className={styles.filters} aria-label="通知筛选">
+      </Card>
+      <Card className={styles.filters}>
         <label>
           类型
           <select value={category} onChange={(event) => setCategory(event.target.value)}>
@@ -130,18 +143,26 @@ export function NotificationCenter() {
             <option value="read">已读</option>
           </select>
         </label>
-      </section>
+      </Card>
       <section className={styles.list} aria-label="通知列表">
         {data.items.length ? (
           data.items.map((notification) => (
-            <article
+            <Card
               className={`${styles.card} ${notification.readAt ? styles.read : styles.unread}`}
               key={notification.id}
             >
               <div>
-                <span className={styles[notification.category]}>
+                <StatusBadge
+                  tone={
+                    notification.category === 'anomaly'
+                      ? 'danger'
+                      : notification.category === 'approval'
+                        ? 'warning'
+                        : 'info'
+                  }
+                >
                   {labels[notification.category]}
-                </span>
+                </StatusBadge>
                 <h2>{notification.title}</h2>
                 <p>{notification.body}</p>
                 <small>{new Date(notification.sentAt).toLocaleString()}</small>
@@ -149,21 +170,23 @@ export function NotificationCenter() {
               <div className={styles.actions}>
                 <a href={notification.deepLink}>查看处理</a>
                 {!notification.readAt && (
-                  <button
-                    disabled={busy === notification.id}
+                  <Button
+                    tone="secondary"
+                    loading={busy === notification.id}
                     onClick={() => void markRead(notification)}
                   >
-                    {busy === notification.id ? '处理中…' : '标为已读'}
-                  </button>
+                    标为已读
+                  </Button>
                 )}
               </div>
-            </article>
+            </Card>
           ))
         ) : (
-          <div className={styles.empty}>
-            <strong>这里暂时没有通知</strong>
-            <p>任务提醒、超时异常、归属审批和系统消息会在产生后汇总到这里。</p>
-          </div>
+          <AppStatePanel
+            kind="empty"
+            title="这里暂时没有通知"
+            description="任务提醒、超时异常、归属审批和系统消息会在产生后汇总到这里。"
+          />
         )}
       </section>
     </main>

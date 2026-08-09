@@ -7,6 +7,8 @@ const tenant = '00000000-0000-4000-8000-000000000001';
 const api = 'http://127.0.0.1:3076';
 let client: Client;
 let token = '';
+let refreshToken = '';
+let accessExpiresAt = '';
 let taskId = '';
 
 test.beforeAll(async () => {
@@ -58,7 +60,10 @@ test.beforeAll(async () => {
     body: JSON.stringify({ email, password: 'ChangeMe123!', tenantId: tenant }),
   });
   expect(response.status).toBe(201);
-  token = (await response.json()).accessToken;
+  const login = await response.json();
+  token = login.accessToken;
+  refreshToken = login.refreshToken;
+  accessExpiresAt = login.accessExpiresAt;
 });
 
 test.afterAll(async () => client.end());
@@ -66,10 +71,17 @@ test.afterAll(async () => client.end());
 test('employee reads a task notification and retains its safe task deep link at 390px', async ({
   page,
 }) => {
-  await page.addInitScript((value) => sessionStorage.setItem('oneday.accessToken', value), token);
+  await page.addInitScript(
+    ({ accessToken, refreshToken, accessExpiresAt }) => {
+      sessionStorage.setItem('oneday.accessToken', accessToken);
+      sessionStorage.setItem('oneday.refreshToken', refreshToken);
+      sessionStorage.setItem('oneday.accessExpiresAt', accessExpiresAt);
+    },
+    { accessToken: token, refreshToken, accessExpiresAt },
+  );
   await page.goto('/e/notifications');
   await expect(page.getByRole('heading', { name: '把该处理的事，留在眼前' })).toBeVisible();
-  const card = page.locator('article', { hasText: 'Confirm mobile notification' });
+  const card = page.locator('section.od-card', { hasText: 'Confirm mobile notification' });
   await expect(card).toBeVisible();
   await expect(card.getByRole('link', { name: '查看处理' })).toHaveAttribute(
     'href',
@@ -78,16 +90,17 @@ test('employee reads a task notification and retains its safe task deep link at 
   await card.getByRole('button', { name: '标为已读' }).click();
   await expect(page.getByRole('status')).toHaveText('通知已标记为已读。');
   await page.screenshot({
-    path: 'evidence/PAGE-E-008/employee-notifications-mobile.png',
+    path: 'evidence/PAGE-E-008/employee-notifications-mobile-v3.png',
     fullPage: false,
   });
 });
 
 test('employee notifications provides recovery without a session', async ({ page }) => {
   await page.goto('/e/notifications');
-  await expect(page.getByRole('heading', { name: '无法查看通知' })).toBeVisible();
+  await expect(page).toHaveURL(/\/login/);
+  await expect(page.getByRole('heading', { name: '员工登录' })).toBeVisible();
   await page.screenshot({
-    path: 'evidence/PAGE-E-008/employee-notifications-forbidden.png',
+    path: 'evidence/PAGE-E-008/employee-notifications-forbidden-v2.png',
     fullPage: true,
   });
 });

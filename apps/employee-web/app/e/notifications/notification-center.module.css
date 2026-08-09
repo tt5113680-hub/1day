@@ -1,17 +1,21 @@
 :global(body) {
   margin: 0;
-  background: #f6f8fb;
-  color: #111827;
-  font-family: Arial, 'Microsoft YaHei', sans-serif;
+  background: var(--od-background);
+  color: var(--od-ink);
 }
 .page {
   max-width: 680px;
   margin: auto;
   padding: 28px 16px 48px;
 }
+.header {
+  display: flex;
+  justify-content: space-between;
+  gap: 18px;
+}
 .page header p {
   margin: 0;
-  color: #2563eb;
+  color: var(--od-brand-700);
   font-size: 13px;
   font-weight: 700;
 }
@@ -23,7 +27,7 @@
 .page header span,
 .card p,
 .card small {
-  color: #4b5563;
+  color: var(--od-text-muted);
   font-size: 14px;
   line-height: 1.5;
 }
@@ -34,8 +38,8 @@
   margin-top: 24px;
   padding: 18px;
   border-radius: 16px;
-  color: #eff6ff;
-  background: linear-gradient(135deg, #1d4ed8, #0f766e);
+  color: var(--od-surface);
+  background: linear-gradient(135deg, var(--od-brand-700), var(--od-brand-800));
 }
 .summary strong {
   font-size: 30px;
@@ -49,13 +53,14 @@
 .filters {
   display: flex;
   gap: 10px;
+  padding: 16px;
   margin-top: 14px;
 }
 .filters label {
   display: grid;
   flex: 1;
   gap: 5px;
-  color: #374151;
+  color: var(--od-ink);
   font-size: 12px;
   font-weight: 700;
 }
@@ -63,9 +68,9 @@
 .actions button {
   min-height: 44px;
   padding: 0 12px;
-  border: 1px solid #dbe4f0;
+  border: 1px solid var(--od-border);
   border-radius: 10px;
-  background: #fff;
+  background: var(--od-surface);
   font: inherit;
 }
 .list {
@@ -78,13 +83,13 @@
   justify-content: space-between;
   gap: 12px;
   padding: 16px;
-  border: 1px solid #e5e7eb;
+  border: 1px solid var(--od-border);
   border-radius: 16px;
-  background: #fff;
-  box-shadow: 0 5px 16px #11182708;
+  background: var(--od-surface);
+  box-shadow: var(--od-shadow-low);
 }
 .unread {
-  border-left: 4px solid #2563eb;
+  border-left: 4px solid var(--od-brand-600);
 }
 .read {
   opacity: 0.72;
@@ -133,7 +138,7 @@
 }
 .actions a,
 .actions button {
-  color: #2563eb;
+  color: var(--od-brand-700);
   font-weight: 700;
 }
 .actions button {
@@ -142,15 +147,15 @@
 .feedback {
   padding: 12px;
   border-radius: 10px;
-  color: #166534;
-  background: #dcfce7;
+  color: var(--od-success);
+  background: var(--od-brand-100);
 }
 .empty {
   padding: 28px;
-  border: 1px dashed #cbd5e1;
+  border: 1px dashed var(--od-border-strong);
   border-radius: 16px;
   text-align: center;
-  color: #4b5563;
+  color: var(--od-text-muted);
 }
 .centered {
   display: grid;
@@ -163,12 +168,12 @@
   max-width: 320px;
   padding: 28px;
   border-radius: 16px;
-  background: #fff;
-  box-shadow: 0 10px 30px #11182712;
+  background: var(--od-surface);
+  box-shadow: var(--od-shadow-mid);
 }
 .centered a,
 .centered button {
-  color: #2563eb;
+  color: var(--od-brand-700);
   font-weight: 700;
 }
 @media (max-width: 480px) {
