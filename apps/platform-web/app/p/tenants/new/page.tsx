@@ -1,5 +1,6 @@
 'use client';
 import { SessionApiClient } from '@oneday/session-client';
+import { AdminPageHeader, AppStatePanel, Button, Card, StatusBadge } from '@oneday/ui';
 import { useState } from 'react';
 import styles from './page.module.css';
 const api = process.env.NEXT_PUBLIC_API_BASE_URL ?? 'http://127.0.0.1:3001';
@@ -46,19 +47,17 @@ export default function Onboarding() {
   if (state === 'forbidden')
     return (
       <main className={styles.centered}>
-        <section>
-          <h1>无权开通租户</h1>
-        </section>
+        <AppStatePanel kind="forbidden" title="无权开通租户" />
       </main>
     );
   return (
     <main className={styles.page}>
-      <header>
-        <p>ONEDAY / 租户开通向导</p>
-        <h1>一次提交完成主体、门店、管理员与模板初始化</h1>
-        <span>所有资源在同一事务中创建；失败不会留下半开通数据。</span>
-      </header>
-      <section className={styles.form}>
+      <AdminPageHeader
+        eyebrow="ONEDAY / 平台租户开通"
+        title="一次提交完成主体、门店、管理员与模板初始化"
+        description="所有资源在同一事务中创建；失败不会留下半开通数据。当前阶段仅声明基础初始化完成，不提前宣称商业 READY。"
+      />
+      <Card className={styles.form}>
         <label>
           租户 slug
           <input
@@ -126,15 +125,22 @@ export default function Onboarding() {
             value={form.template}
             onChange={(e) => update('template', e.target.value)}
           >
-            <option value="starter">starter</option>
-            <option value="service">service</option>
+            <option value="starter">通用起步模板</option>
+            <option value="service">服务行业模板</option>
           </select>
         </label>
-        <button disabled={saving} onClick={() => void submit()}>
-          {saving ? '正在开通…' : '提交并初始化'}
-        </button>
-        {note && <p role="status">{note}</p>}
-      </section>
+        <Button className={styles.submit} loading={saving} onClick={() => void submit()}>
+          提交并初始化
+        </Button>
+        {note && (
+          <p className={styles.note} role="status">
+            <StatusBadge tone={state === 'done' ? 'success' : 'danger'}>
+              {state === 'done' ? '基础初始化完成' : '需要处理'}
+            </StatusBadge>
+            <span>{note}</span>
+          </p>
+        )}
+      </Card>
     </main>
   );
 }
