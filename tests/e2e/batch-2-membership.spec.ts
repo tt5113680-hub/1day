@@ -1,4 +1,4 @@
-import { expect, test } from '@playwright/test';
+import { expect, test, type Page } from '@playwright/test';
 const api = 'http://127.0.0.1:3231',
   system = '00000000-0000-4000-8000-000000000001';
 let owner = '',
@@ -6,7 +6,8 @@ let owner = '',
   slug = '',
   storeId = '',
   benefitId = '',
-  memberCode = '';
+  memberCode = '',
+  tenantId = '';
 const h = (token: string, tenant: string, more = {}) => ({
   authorization: `Bearer ${token}`,
   'x-tenant-context': tenant,
@@ -62,9 +63,9 @@ test.beforeAll(async () => {
     headers: h(owner, run.tenantId),
   });
   benefitId = (await benefits.json()).data.benefits[0].id;
-  (globalThis as any).tenantId = run.tenantId;
+  tenantId = run.tenantId;
 });
-const session = (page: any) =>
+const session = (page: Page) =>
   page.addInitScript(
     ([a, r]: string[]) => {
       sessionStorage.setItem('oneday.accessToken', a);
@@ -87,12 +88,13 @@ test('consumer enrolls, management grants and employee redeems', async ({ browse
     path: 'evidence/BATCH-2-MEMBERSHIP/consumer-enrollment-mobile.png',
     fullPage: true,
   });
-  const tenant = (globalThis as any).tenantId;
-  const list = await fetch(`${api}/api/v1/management/memberships`, { headers: h(owner, tenant) });
+  const list = await fetch(`${api}/api/v1/management/memberships`, {
+    headers: h(owner, tenantId),
+  });
   const e = (await list.json()).data.enrollments[0];
   await fetch(`${api}/api/v1/management/memberships/${e.id}/grants`, {
     method: 'POST',
-    headers: h(owner, tenant, { 'idempotency-key': crypto.randomUUID() }),
+    headers: h(owner, tenantId, { 'idempotency-key': crypto.randomUUID() }),
     body: JSON.stringify({ benefitId, quantity: 1 }),
   });
   const ec = await browser.newContext({ viewport: { width: 390, height: 844 } }),

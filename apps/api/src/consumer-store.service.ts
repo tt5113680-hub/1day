@@ -99,7 +99,7 @@ export class ConsumerStoreService implements OnModuleDestroy {
           [tenant.id, storeId],
         ),
         this.pool.query(
-          "select i.id,i.kind as content_type,i.title,i.body as summary from content_store_placements p join content_items i on i.id=p.content_id and i.tenant_id=p.tenant_id and i.status='approved' and i.deleted_at is null where p.tenant_id=$1 and p.store_id=$2 and p.status='active' and p.deleted_at is null order by p.rank desc,i.title",
+          "select i.id,i.kind as content_type,i.title,i.body as summary,p.rank from content_store_placements p join content_items i on i.id=p.content_id and i.tenant_id=p.tenant_id and i.status='approved' and i.deleted_at is null where p.tenant_id=$1 and p.store_id=$2 and p.status='active' and p.deleted_at is null union all select legacy.id,legacy.content_type,legacy.title,legacy.summary,legacy.rank from store_content_items legacy where legacy.tenant_id=$1 and legacy.store_id=$2 and legacy.status='active' and legacy.deleted_at is null and not exists(select 1 from content_store_placements p where p.tenant_id=legacy.tenant_id and p.content_id=legacy.id and p.store_id=legacy.store_id and p.deleted_at is null) order by rank desc,title",
           [tenant.id, storeId],
         ),
         this.pool.query(
@@ -258,7 +258,7 @@ export class ConsumerStoreService implements OnModuleDestroy {
         [tenant.id, service.store_id],
       ),
       this.pool.query(
-        "select i.id,i.kind as content_type,i.title,i.body as summary from content_store_placements p join content_items i on i.id=p.content_id and i.tenant_id=p.tenant_id and i.status='approved' and i.deleted_at is null where p.tenant_id=$1 and p.store_id=$2 and p.status='active' and p.deleted_at is null order by p.rank desc,i.title",
+        "select i.id,i.kind as content_type,i.title,i.body as summary,p.rank from content_store_placements p join content_items i on i.id=p.content_id and i.tenant_id=p.tenant_id and i.status='approved' and i.deleted_at is null where p.tenant_id=$1 and p.store_id=$2 and p.status='active' and p.deleted_at is null union all select legacy.id,legacy.content_type,legacy.title,legacy.summary,legacy.rank from store_content_items legacy where legacy.tenant_id=$1 and legacy.store_id=$2 and legacy.status='active' and legacy.deleted_at is null and not exists(select 1 from content_store_placements p where p.tenant_id=legacy.tenant_id and p.content_id=legacy.id and p.store_id=legacy.store_id and p.deleted_at is null) order by rank desc,title",
         [tenant.id, service.store_id],
       ),
       this.pool.query(

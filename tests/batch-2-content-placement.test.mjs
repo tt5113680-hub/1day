@@ -1,3 +1,4 @@
+/* global fetch, setTimeout */
 import assert from 'node:assert/strict';
 import { spawn } from 'node:child_process';
 import { randomUUID } from 'node:crypto';
@@ -36,7 +37,9 @@ test('approved content is placed from the single content entity source into Cons
   for (let i = 0; i < 40; i += 1) {
     try {
       if ((await fetch(`${base}/api/v1/health`)).ok) break;
-    } catch {}
+    } catch {
+      // API is starting.
+    }
     await wait(100);
   }
   const n = `content-${Date.now()}`,

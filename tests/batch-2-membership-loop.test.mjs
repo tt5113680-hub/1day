@@ -1,3 +1,4 @@
+/* global fetch, setTimeout */
 import assert from 'node:assert/strict';
 import { spawn } from 'node:child_process';
 import { randomUUID } from 'node:crypto';
@@ -27,7 +28,9 @@ async function ready() {
   for (let i = 0; i < 40; i += 1) {
     try {
       if ((await fetch(`${base}/api/v1/health`)).ok) return;
-    } catch {}
+    } catch {
+      // API is starting.
+    }
     await wait(100);
   }
   throw Error('API did not start');
