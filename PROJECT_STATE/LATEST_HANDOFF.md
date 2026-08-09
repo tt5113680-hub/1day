@@ -2,8 +2,8 @@
 
 ## Current Batch 1 continuation
 
-- Base HEAD: `077002d`; Platform channel governance now joins the tokenized Admin Shell system through shared AdminPageHeader, Card, Button, StatusBadge and AppStatePanel primitives, with commercial labels for persisted channel lifecycle states.
-- Current verified scope: active Admin navigation; unified Consumer/Employee/Management/Platform root loading, empty, error and permission surfaces; E/M/P session recovery and login styling; non-blank Consumer/Employee critical nested loading routes; integrated shell session controls; repeatable Consumer/Employee/Management/Platform visual captures; and a single design-token CSS source with typed-projection coverage. The Employee workbench/task-detail, Management performance and Platform channel suites each pass 2/2, and the affected production builds pass.
+- Base HEAD: `4ee4679`; Platform channel and business-circle governance are tokenized Admin Shell surfaces using shared AdminPageHeader, Card, Button, StatusBadge and AppStatePanel primitives, with commercial labels for persisted lifecycle states.
+- Current verified scope: active Admin navigation; unified Consumer/Employee/Management/Platform root loading, empty, error and permission surfaces; E/M/P session recovery and login styling; non-blank Consumer/Employee critical nested loading routes; integrated shell session controls; repeatable Consumer/Employee/Management/Platform visual captures; and a single design-token CSS source with typed-projection coverage. Employee workbench/task-detail, Management performance, Platform channel and Platform business-circle suites each pass 2/2, and the affected production builds pass.
 - Next: migrate remaining Employee/Management/Platform core-page legacy styling and complete Batch 1 repository and commercial-chain regression gates. Do not declare Batch 1 pass yet.
 
 - branch: `hardening/COMMERCIAL-COMPLETION`
