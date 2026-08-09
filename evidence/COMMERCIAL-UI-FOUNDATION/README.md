@@ -2,6 +2,8 @@
 
 Status: Batch 1 in progress; this directory records a verified visual subsystem, not a Batch 1 acceptance result.
 
+The common shell and primitive CSS is projected from `packages/design-tokens/foundation.css`; `packages/ui/foundation.css` is retained solely as the application compatibility import.
+
 ## Capture contract
 
 - Consumer storefront at 390px and 1440px; its primary navigation is present and the 390px document does not overflow horizontally.

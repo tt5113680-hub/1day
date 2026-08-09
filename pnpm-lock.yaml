@@ -271,6 +271,9 @@ importers:
 
   packages/ui:
     dependencies:
+      '@oneday/design-tokens':
+        specifier: workspace:*
+        version: link:../design-tokens
       react:
         specifier: 19.2.8
         version: 19.2.8

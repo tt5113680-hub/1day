@@ -2,9 +2,9 @@
 
 ## Current Batch 1 continuation
 
-- Base HEAD: `26e0fe8`; the current worktree is verified pending its next Batch 1 internal commit.
-- Current verified scope: active Admin navigation; unified Consumer/Employee/Management/Platform root loading, empty, error and permission surfaces; E/M/P session recovery and login styling; non-blank Consumer/Employee critical nested loading routes; integrated shell session controls; and repeatable Consumer/Employee/Management/Platform visual captures.
-- Next: consolidate the token source and migrate remaining core-page legacy styling, then complete Batch 1 repository and commercial-chain regression gates. Do not declare Batch 1 pass yet.
+- Base HEAD: `d881d3b`; the current worktree is verified pending its next Batch 1 internal commit.
+- Current verified scope: active Admin navigation; unified Consumer/Employee/Management/Platform root loading, empty, error and permission surfaces; E/M/P session recovery and login styling; non-blank Consumer/Employee critical nested loading routes; integrated shell session controls; repeatable Consumer/Employee/Management/Platform visual captures; and a single design-token CSS source with typed-projection coverage.
+- Next: migrate remaining core-page legacy styling and complete Batch 1 repository and commercial-chain regression gates. Do not declare Batch 1 pass yet.
 
 - branch: `hardening/COMMERCIAL-COMPLETION`
 - HEAD: `42186a5e5d6b9aa8ac7edca4bc4636fe4d11fc18`

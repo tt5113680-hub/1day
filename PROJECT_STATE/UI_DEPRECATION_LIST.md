@@ -5,6 +5,7 @@
 
 | 旧实现范围                                               | 当前替代                                    | 迁移批次  | 风险与处理                                                                                                   |
 | -------------------------------------------------------- | ------------------------------------------- | --------- | ------------------------------------------------------------------------------------------------------------ |
+| `@oneday/ui/foundation.css` 中的 token 定义              | `@oneday/design-tokens/foundation.css`      | Batch 1   | UI 包只保留兼容入口；应用不得再维护第二份 root token 定义。                                                  |
 | 四端页面级 `button`、`input`、聚焦和 disabled CSS        | `Button` 与 foundation token/focus contract | Batch 1   | 写操作页面必须逐页验证 disabled、错误和键盘焦点，避免 CSS 优先级改变误伤提交。                               |
 | 四端各自 `centered` loading/forbidden/error 块           | `AppStatePanel`                             | Batch 1   | 已迁移 Dashboard、Employee Workbench、Stores、Tenants；其余核心页按真实状态接口逐步替换。                    |
 | Management/Platform 页面内 header 文案与刷新按钮         | `AdminPageHeader` + `Button`                | Batch 1   | 已迁移 Dashboard、Stores、Tenants；其它管理页保留旧 header，直至连同权限/筛选行为一起迁移。                  |

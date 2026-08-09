@@ -1,6 +1,6 @@
 # LIVE_PROGRESS
 
-- 2026-08-09 Asia/Shanghai - ONEDAY-V3-COMMERCIAL-COMPLETION Batch 1 visual-shell continuation: Consumer desktop/390px storefront, Employee 390px workbench, and Management/Platform 1440px administration shells now have repeatable isolated Playwright evidence. Session controls are integrated into shared Mobile/Admin shells; Management and Platform dashboard cards, actions and operating labels use the commercial foundation rather than local legacy colors/copy. The capture suite passes 3/3; format, lint and 18-package typecheck pass. Batch 1 remains in progress: token-source consolidation, remaining core-page migration, and full repository/commercial-chain gates are still pending.
+- 2026-08-09 Asia/Shanghai - ONEDAY-V3-COMMERCIAL-COMPLETION Batch 1 token consolidation: `@oneday/design-tokens/foundation.css` is now the single visual-token source. The former UI CSS file is a compatibility import only; the typed contract and a Vitest projection check protect the shared color, spacing, radius and layout values. The full 18-package production build, format, lint, typecheck and isolated four-terminal visual capture all pass. Batch 1 remains in progress: remaining core-page migration and final repository/commercial-chain gates are still pending.
 
 - 2026-08-08 Asia/Shanghai - PRE-PILOT-POLISH PASS at `268464d`: all eight approved items and final quality gates passed (format, lint, 18-package typecheck/build, 184 repository tests, 74 evidence checks). Status returns immediately to HUMAN-PILOT-HANDOFF; no additional Hardening work is authorized.
 
