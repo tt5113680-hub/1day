@@ -7,6 +7,7 @@ const tenant = '00000000-0000-4000-8000-000000000001';
 const api = 'http://127.0.0.1:3054';
 let client: Client;
 let token = '';
+let refreshToken = '';
 
 test.beforeAll(async () => {
   client = new Client({ connectionString: db });
@@ -52,12 +53,22 @@ test.beforeAll(async () => {
     body: JSON.stringify({ email, password: 'ChangeMe123!', tenantId: tenant }),
   });
   expect(login.status).toBe(201);
-  token = (await login.json()).accessToken;
+  ({ accessToken: token, refreshToken } = (await login.json()) as {
+    accessToken: string;
+    refreshToken: string;
+  });
 });
 test.afterAll(async () => client.end());
 
 test('employee completes a real customer task at 390px', async ({ page }) => {
-  await page.addInitScript((value) => sessionStorage.setItem('oneday.accessToken', value), token);
+  await page.addInitScript(
+    ({ accessToken, refresh }) => {
+      sessionStorage.setItem('oneday.accessToken', accessToken);
+      sessionStorage.setItem('oneday.refreshToken', refresh);
+      sessionStorage.setItem('oneday.accessExpiresAt', String(Date.now() + 30 * 60 * 1000));
+    },
+    { accessToken: token, refresh: refreshToken },
+  );
   await page.goto('/e/workbench');
   await expect(page.getByRole('heading', { name: '你好，Mobile Advisor' })).toBeVisible();
   await expect(
@@ -72,9 +83,10 @@ test('employee completes a real customer task at 390px', async ({ page }) => {
   await expect(page.getByRole('status')).toContainText('行动记录已同步');
 });
 
-test('employee workbench shows login recovery state without a session', async ({ page }) => {
+test('employee workbench redirects to secure sign-in without a session', async ({ page }) => {
   await page.goto('/e/workbench');
-  await expect(page.getByRole('heading', { name: '需要员工登录' })).toBeVisible();
+  await expect(page).toHaveURL(/\/e\/login$/);
+  await expect(page.getByRole('heading', { name: '员工登录' })).toBeVisible();
   await page.screenshot({
     path: 'evidence/PAGE-E-001/employee-workbench-forbidden.png',
     fullPage: true,

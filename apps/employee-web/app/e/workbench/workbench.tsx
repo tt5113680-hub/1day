@@ -1,6 +1,6 @@
 'use client';
 import { SessionApiClient } from '@oneday/session-client';
-import { AppStatePanel, Button, MetricCard } from '@oneday/ui';
+import { AppStatePanel, Button, MetricCard, StatusBadge } from '@oneday/ui';
 
 import { useCallback, useEffect, useState } from 'react';
 import styles from './workbench.module.css';
@@ -154,9 +154,9 @@ export function Workbench() {
           data.tasks.map((task) => (
             <article className={styles.task} key={task.id}>
               <div>
-                <span className={task.status === 'overdue' ? styles.overdue : styles.badge}>
+                <StatusBadge tone={task.status === 'overdue' ? 'danger' : 'info'}>
                   {task.status === 'overdue' ? '已逾期' : `${time(task.dueAt)} 前`}
-                </span>
+                </StatusBadge>
                 <h3>{task.title}</h3>
                 <p>
                   {task.customer?.displayName
@@ -167,9 +167,9 @@ export function Workbench() {
               </div>
               <div className={styles.taskActions}>
                 <a href={`/e/tasks/${task.id}`}>详情</a>
-                <button disabled={busy === task.id} onClick={() => void complete(task)}>
-                  {busy === task.id ? '处理中…' : '完成'}
-                </button>
+                <Button loading={busy === task.id} onClick={() => void complete(task)}>
+                  完成
+                </Button>
               </div>
             </article>
           ))
