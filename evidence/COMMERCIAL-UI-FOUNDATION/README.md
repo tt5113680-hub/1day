@@ -9,6 +9,7 @@ The common shell and primitive CSS is projected from `packages/design-tokens/fou
 - Consumer storefront at 390px and 1440px; its primary navigation is present and the 390px document does not overflow horizontally.
 - Employee workbench at 390px; its five-item operating navigation and Mobile Shell session control are present.
 - Management and Platform dashboards at 1440px; each has the role-specific Admin Shell, visible navigation, and integrated top-bar session control.
+- Management customer assets at 1440px; the page uses the common Admin header, Button, StatusBadge and recovery states.
 
 ## Reproduction
 

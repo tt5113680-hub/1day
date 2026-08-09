@@ -1,5 +1,13 @@
 'use client';
 import { SessionApiClient } from '@oneday/session-client';
+import {
+  AdminPageHeader,
+  AppStatePanel,
+  Button,
+  StatusBadge,
+  businessLabel,
+  customerNameCopy,
+} from '@oneday/ui';
 
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
@@ -20,6 +28,8 @@ type Filters = { search: string; tag: string; segment: string; source: string };
 const api = process.env.NEXT_PUBLIC_API_BASE_URL ?? 'http://127.0.0.1:3001';
 const sessionApi = new SessionApiClient(api);
 const emptyFilters: Filters = { search: '', tag: '', segment: '', source: '' };
+const ownerNameCopy = (value: string) =>
+  value === 'Store Manager' ? '门店负责人' : value === 'Follow-up Employee' ? '跟进员工' : value;
 
 export default function ManagementCustomersPage() {
   const [state, setState] = useState<'loading' | 'ready' | 'forbidden' | 'error'>('loading');
@@ -124,44 +134,54 @@ export default function ManagementCustomersPage() {
     }
   };
 
-  if (state === 'loading') return <main className={styles.centered}>正在加载客户资产…</main>;
+  if (state === 'loading')
+    return (
+      <main className={styles.centered}>
+        <AppStatePanel
+          kind="loading"
+          title="正在加载客户资产"
+          description="正在连接客户、归属与订单数据。"
+        />
+      </main>
+    );
   if (state === 'forbidden')
     return (
       <main className={styles.centered}>
-        <section>
-          <h1>无权查看客户资产</h1>
-          <p>请使用具备经营管理权限的账号登录后重试。</p>
-        </section>
+        <AppStatePanel
+          kind="forbidden"
+          title="无权查看客户资产"
+          description="请使用具备经营管理权限的账号登录后重试。"
+        />
       </main>
     );
   if (state === 'error')
     return (
       <main className={styles.centered}>
-        <section>
-          <h1>客户资产暂不可用</h1>
-          <button onClick={() => void load()}>重新加载</button>
-        </section>
+        <AppStatePanel
+          kind="error"
+          title="客户资产暂不可用"
+          description="请检查网络后重新加载。"
+          action={<Button onClick={() => void load()}>重新加载</Button>}
+        />
       </main>
     );
 
   return (
     <main className={styles.page}>
-      <header className={styles.header}>
-        <div>
-          <p>ONEDAY / 客户资产</p>
-          <h1>用客户分层驱动每一次经营动作</h1>
-          <span>
-            基于已沉淀的来源、标签、归属和订单数据筛选；导出与归属变更均保留审批和审计记录。
-          </span>
-        </div>
-        <button
-          className={styles.primary}
-          disabled={busy === 'export'}
-          onClick={() => void requestExport()}
-        >
-          {busy === 'export' ? '提交中…' : '申请导出'}
-        </button>
-      </header>
+      <AdminPageHeader
+        eyebrow="客户资产"
+        title="用客户分层驱动每一次经营动作"
+        description="基于已沉淀的来源、标签、归属和订单数据筛选；导出与归属变更均保留审批和审计记录。"
+        actions={
+          <Button
+            disabled={busy === 'export'}
+            loading={busy === 'export'}
+            onClick={() => void requestExport()}
+          >
+            申请导出
+          </Button>
+        }
+      />
       <section className={styles.filters} aria-label="客户筛选">
         <label>
           搜索客户
@@ -199,7 +219,9 @@ export default function ManagementCustomersPage() {
             placeholder="如 campaign"
           />
         </label>
-        <button onClick={apply}>应用筛选</button>
+        <Button tone="secondary" onClick={apply}>
+          应用筛选
+        </Button>
       </section>
       <section className={styles.batch} aria-label="批量归属操作">
         <div>
@@ -219,12 +241,13 @@ export default function ManagementCustomersPage() {
             </option>
           ))}
         </select>
-        <button
+        <Button
           disabled={!selected.length || !assigneeId || busy === 'ownership'}
+          loading={busy === 'ownership'}
           onClick={() => void requestOwnership()}
         >
-          {busy === 'ownership' ? '发起中…' : '批量发起归属审批'}
-        </button>
+          批量发起归属审批
+        </Button>
       </section>
       {notice && (
         <p className={styles.notice} role="status">
@@ -271,11 +294,13 @@ export default function ManagementCustomersPage() {
                     />
                   </td>
                   <td>
-                    <Link href={`/m/customers/${customer.id}`}>{customer.displayName}</Link>
+                    <Link href={`/m/customers/${customer.id}`}>
+                      {customerNameCopy(customer.displayName)}
+                    </Link>
                     <small>{customer.id.slice(0, 8)}</small>
                   </td>
                   <td>
-                    <span className={styles.segment}>{customer.segment}</span>
+                    <StatusBadge tone="info">{businessLabel(customer.segment)}</StatusBadge>
                     <div className={styles.tags}>
                       {customer.tags.length ? (
                         customer.tags.map((tag) => <span key={tag}>{tag}</span>)
@@ -284,7 +309,7 @@ export default function ManagementCustomersPage() {
                       )}
                     </div>
                   </td>
-                  <td>{customer.owner.name}</td>
+                  <td>{ownerNameCopy(customer.owner.name)}</td>
                   <td>{customer.orders}</td>
                 </tr>
               ))}

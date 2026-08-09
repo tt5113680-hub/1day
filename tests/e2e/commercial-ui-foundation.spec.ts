@@ -73,6 +73,15 @@ test('Batch 1 visual foundation captures Management and Platform administration 
     path: 'evidence/COMMERCIAL-UI-FOUNDATION/management-desktop-1440.png',
     fullPage: true,
   });
+  await management.goto(`${applications.management}/m/customers`, { waitUntil: 'networkidle' });
+  await expect(
+    management.getByRole('heading', { name: '用客户分层驱动每一次经营动作' }),
+  ).toBeVisible();
+  await expect(management.locator('.od-page-header')).toBeVisible();
+  await management.screenshot({
+    path: 'evidence/COMMERCIAL-UI-FOUNDATION/management-customers-desktop-1440.png',
+    fullPage: true,
+  });
 
   const platform = await browser.newPage({ viewport: { width: 1440, height: 1024 } });
   await signIn(

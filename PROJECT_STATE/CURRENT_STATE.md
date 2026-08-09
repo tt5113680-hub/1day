@@ -8,7 +8,7 @@
 - current_task: ONEDAY-V3-COMMERCIAL-COMPLETION / BATCH 1
 - status: BATCH_1_IN_PROGRESS
 - branch: hardening/COMMERCIAL-COMPLETION
-- last_safe_commit: d881d3b (Batch 1 visual-shell evidence base)
+- last_safe_commit: e242cf9 (Batch 1 canonical design-token base)
 - started_at: 2026-08-09T20:29:46+08:00
 - blocker: null
 - verified_batch_1_continuation: Active Admin navigation, shared role-specific root state routes, E/M/P session-login recovery styling, non-blank Consumer/Employee critical nested loading routes, shell-integrated session controls, isolated four-terminal visual capture, and one canonical design-token CSS source are implemented. The token projection check, capture suite 3/3, full build and static quality checks pass. Batch 1 is not yet accepted.

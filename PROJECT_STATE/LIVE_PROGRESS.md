@@ -1,6 +1,6 @@
 # LIVE_PROGRESS
 
-- 2026-08-09 Asia/Shanghai - ONEDAY-V3-COMMERCIAL-COMPLETION Batch 1 token consolidation: `@oneday/design-tokens/foundation.css` is now the single visual-token source. The former UI CSS file is a compatibility import only; the typed contract and a Vitest projection check protect the shared color, spacing, radius and layout values. The full 18-package production build, format, lint, typecheck and isolated four-terminal visual capture all pass. Batch 1 remains in progress: remaining core-page migration and final repository/commercial-chain gates are still pending.
+- 2026-08-09 Asia/Shanghai - ONEDAY-V3-COMMERCIAL-COMPLETION Batch 1 core management migration: Customer Assets now uses AdminPageHeader, Button, StatusBadge, AppStatePanel and the centralized token contract. Seed/internal customer, segment and owner labels are converted to commercial language in the owner console. Its isolated 1440px capture joins the four-terminal visual suite (3/3 PASS); targeted management typecheck, lint and format pass. Batch 1 remains in progress: remaining core-page migration and final repository/commercial-chain gates are still pending.
 
 - 2026-08-08 Asia/Shanghai - PRE-PILOT-POLISH PASS at `268464d`: all eight approved items and final quality gates passed (format, lint, 18-package typecheck/build, 184 repository tests, 74 evidence checks). Status returns immediately to HUMAN-PILOT-HANDOFF; no additional Hardening work is authorized.
 
