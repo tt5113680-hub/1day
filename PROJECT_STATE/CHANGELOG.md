@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## 2026-08-09 — ONEDAY-V3-COMMERCIAL-COMPLETION Batch 0 + Batch 1 foundation start
+
+- Preserved all pre-existing dirty workspace material in `D:\ONEDAY_V3_SAFE_CHECKPOINT\20260809-202946`; committed valid baseline audit/evidence separately and archived the historical zip outside the repository.
+- Started the shared Commercial UI Foundation: one token source and reusable primitives now back the Consumer/Employee Mobile Shell and Management/Platform Admin Shell. Management and Platform dashboards use the shared state and metric primitives.
+- Verified this foundation checkpoint with all-workspace typecheck and build. Batch 1 remains in progress; no business capability or final commercial-pass claim was made.
+
 ## 2026-08-09 — CONSUMER-COMMERCIAL-HOME-V1 navigation and interaction alignment
 
 - Replaced the fixed platform-style consumer tabs with the restaurant storefront contract: `首页 / 团购 / 菜单 / 会员 / 我的`. Each item has a store-scoped page rather than an in-page placeholder.

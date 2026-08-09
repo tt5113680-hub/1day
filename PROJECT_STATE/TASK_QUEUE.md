@@ -1,5 +1,9 @@
 # TASK_QUEUE
 
+## Current commercial completion engineering
+
+- [ ] ONEDAY-V3-COMMERCIAL-COMPLETION / BATCH 1 IN_PROGRESS - Batch 0 safe workspace recovery is complete: the external checkpoint is preserved, baseline audit/evidence is committed at `42186a5`, and the generated source zip is archived outside the repository. Batch 1 is establishing the shared Design System and two Shells without changing business truth or security boundaries.
+
 ## Current product-owner acceptance
 
 - [ ] CONSUMER-COMMERCIAL-HOME-V1 AWAITING_PRODUCT_OWNER_UI_ACCEPTANCE - Consumer-only commercial storefront implemented and technically verified. The restaurant store now has a unified `首页 / 团购 / 菜单 / 会员 / 我的` shell, real store-scoped channels, source/share-code continuity and a consistent action-confirmation route before external hand-off; product, group-buy and action pages use the same navigation. Persisted package/platform prices, the LBS header, store-information card and product details remain in place. Final visual decision remains with the product owner. Evidence: `evidence/CONSUMER-COMMERCIAL-HOME-V1/ACCEPTANCE.md`.

@@ -1,5 +1,6 @@
 'use client';
 import { SessionApiClient } from '@oneday/session-client';
+import { AppStatePanel, Button, MetricCard } from '@oneday/ui';
 import { useCallback, useEffect, useState } from 'react';
 import styles from './page.module.css';
 type Data = {
@@ -30,23 +31,27 @@ export default function ManagementHome() {
   useEffect(() => {
     void load();
   }, [load]);
-  if (state === 'loading') return <main className={styles.centered}>正在汇总经营信号…</main>;
+  if (state === 'loading')
+    return (
+      <main className={styles.centered}>
+        <AppStatePanel kind="loading" title="正在汇总经营信号" description="正在连接客户、订单与任务数据。" />
+      </main>
+    );
   if (state === 'forbidden')
     return (
       <main className={styles.centered}>
-        <section>
-          <h1>无法查看经营总览</h1>
-          <p>请使用具备管理权限的账号登录。</p>
-        </section>
+        <AppStatePanel kind="forbidden" title="无法查看经营总览" description="请使用具备管理权限的账号登录。" />
       </main>
     );
   if (state === 'error')
     return (
       <main className={styles.centered}>
-        <section>
-          <h1>经营数据暂不可用</h1>
-          <button onClick={() => void load()}>重新加载</button>
-        </section>
+        <AppStatePanel
+          kind="error"
+          title="经营数据暂不可用"
+          description="请检查网络后重新加载。"
+          action={<Button onClick={() => void load()}>重新加载</Button>}
+        />
       </main>
     );
   if (!data) return null;
@@ -64,15 +69,11 @@ export default function ManagementHome() {
           <h1>让每个经营信号，都能落到行动</h1>
           <span>数据来自客户、订单与任务明细，异常和建议均可追溯。</span>
         </div>
-        <button onClick={() => void load()}>刷新数据</button>
+        <Button tone="secondary" onClick={() => void load()}>刷新数据</Button>
       </header>
       <section className={styles.metrics}>
         {cards.map(([label, value]) => (
-          <article key={label as string}>
-            <span>{label}</span>
-            <strong>{value}</strong>
-            <small>实时经营快照</small>
-          </article>
+          <MetricCard hint="实时经营快照" key={label as string} label={label as string} value={value} />
         ))}
       </section>
       <section className={styles.grid}>

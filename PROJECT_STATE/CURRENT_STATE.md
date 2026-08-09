@@ -5,15 +5,15 @@
 - foundation_final_state_commit: 239114e
 - core_final_state_commit: df5ef65
 - last_completed_task: PRE-PILOT-POLISH PASS (approved pilot experience close-out at 268464d)
-- current_task: CONSUMER-COMMERCIAL-HOME-V1
-- status: AWAITING_PRODUCT_OWNER_UI_ACCEPTANCE
-- branch: hardening/COMMERCIAL-UI-ALIGNMENT
-- last_safe_commit: 268464d (PRE-PILOT-POLISH business changes)
-- started_at: null
+- current_task: ONEDAY-V3-COMMERCIAL-COMPLETION / BATCH 1
+- status: BATCH_1_IN_PROGRESS
+- branch: hardening/COMMERCIAL-COMPLETION
+- last_safe_commit: 42186a5 (Batch 0 evidence checkpoint)
+- started_at: 2026-08-09T20:29:46+08:00
 - blocker: null
 - known_observation: H-002 Playwright binds development servers to 127.0.0.1, avoiding the prior cross-origin development-resource warning during four-terminal local acceptance.
 - verified_h002: SessionApiClient is the protected E/M/P request boundary; 36 pages / 54 direct token reads removed; consumer public routes require an explicit tenant and do not default to system; 173 repository tests and 6 H-002 Playwright journeys passed.
-- next_scope: Product owner visual acceptance for `CONSUMER-COMMERCIAL-HOME-V1`. The Consumer storefront now uses a single restaurant-store shell with real `首页 / 团购 / 菜单 / 会员 / 我的` channel routes, source/share-code continuity, and a single external-action confirmation path for store, product and membership consultations. The isolated HUMAN-PILOT database retains persisted package-platform prices (migration 047), the LBS/future-recommendation header, store-information card and product details; do not expand Employee, Management or Platform while this acceptance is pending.
+- next_scope: Batch 1 commercial UI foundation. Batch 0 completed with an external safe checkpoint at `D:\ONEDAY_V3_SAFE_CHECKPOINT\20260809-202946`, a clean baseline, and the historical zip archived outside the repository. Shared tokens, primitives and Mobile/Admin Shell migration are in progress; do not claim final commercial readiness before Batches 2–4.
 - verified_pre_pilot_polish: PASS at 268464d. A-1/A-2/A-3, B-1/B-2/B-3 and D-1/D-3 are accepted in PROJECT_STATE/PRE_PILOT_POLISH_ACCEPTANCE.md; focused HTTP, updated browser, H-002, B2-B7, format, lint, 18-package typecheck/build, 184 repository tests and 74 evidence checks passed.
 - verified_audit_batch_2: PASS at 5c0ea50. Public consumer action, store consultation and service consultation atomically project one tenant-scoped operating trail. HTTP acceptance passed for concurrent/replayed idempotency, share-code employee ownership, employee follow-up/completion/evidence, management visibility, lead-pool fallback, cross-tenant denial and unauthenticated denial; 175 repository tests and all quality gates passed.
 - verified_audit_batch_3: Worker now consumes internal Outbox records with event-consumption de-duplication and retry diagnostics, and runs the shared reminder/overdue state machine. Isolated real Worker acceptance passed; 177 repository tests and static quality gates passed at 3998a7d.

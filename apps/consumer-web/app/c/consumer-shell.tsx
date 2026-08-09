@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react';
+import { MobileShell } from '@oneday/ui';
 import styles from './consumer-shell.module.css';
 
 export type ConsumerContext = {
@@ -43,7 +44,7 @@ export function ConsumerShell({
   children: ReactNode;
 }) {
   return (
-    <>
+    <MobileShell>
       {children}
       <nav className={styles.bottomNav} aria-label="门店主导航">
         {tabs.map((tab) => (
@@ -57,6 +58,6 @@ export function ConsumerShell({
           </a>
         ))}
       </nav>
-    </>
+    </MobileShell>
   );
 }

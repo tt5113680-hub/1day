@@ -1,5 +1,6 @@
 'use client';
 import { SessionApiClient } from '@oneday/session-client';
+import { AppStatePanel, Button, MetricCard } from '@oneday/ui';
 import { useCallback, useEffect, useState } from 'react';
 import styles from './page.module.css';
 type Data = {
@@ -28,25 +29,35 @@ export default function PlatformDashboard() {
     }
   }, []);
   useEffect(() => void load(), [load]);
-  if (state === 'loading') return <main className={styles.centered}>正在加载平台经营信号…</main>;
+  if (state === 'loading')
+    return (
+      <main className={styles.centered}>
+        <AppStatePanel kind="loading" title="正在加载平台经营信号" description="正在连接租户、渠道和安全数据。" />
+      </main>
+    );
   if (state === 'forbidden')
     return (
       <main className={styles.centered}>
-        <section>
-          <h1>无权查看平台总览</h1>
-        </section>
+        <AppStatePanel kind="forbidden" title="无权查看平台总览" description="请使用平台运营账号登录。" />
       </main>
     );
   if (state === 'error')
     return (
       <main className={styles.centered}>
-        <section>
-          <h1>平台总览暂不可用</h1>
-          <button onClick={() => void load()}>重新加载</button>
-        </section>
+        <AppStatePanel
+          kind="error"
+          title="平台总览暂不可用"
+          description="请检查网络后重新加载。"
+          action={<Button onClick={() => void load()}>重新加载</Button>}
+        />
       </main>
     );
-  if (!data) return <main className={styles.centered}>暂无平台数据。</main>;
+  if (!data)
+    return (
+      <main className={styles.centered}>
+        <AppStatePanel kind="empty" title="暂无平台数据" description="请先完成租户开通或刷新数据。" />
+      </main>
+    );
   const cards = [
     ['活跃租户', data.metrics.tenants],
     ['已接入渠道', data.metrics.channels],
@@ -61,14 +72,11 @@ export default function PlatformDashboard() {
           <h1>跨租户经营信号与系统状态</h1>
           <span>仅平台专用权限可查看；指标来自真实租户、渠道、任务、订单和事件记录。</span>
         </div>
-        <button onClick={() => void load()}>刷新</button>
+        <Button tone="secondary" onClick={() => void load()}>刷新</Button>
       </header>
       <section className={styles.cards}>
         {cards.map(([label, value]) => (
-          <article key={label as string}>
-            <span>{label}</span>
-            <strong>{value}</strong>
-          </article>
+          <MetricCard key={label as string} label={label as string} value={value} />
         ))}
       </section>
       <section className={styles.grid}>
