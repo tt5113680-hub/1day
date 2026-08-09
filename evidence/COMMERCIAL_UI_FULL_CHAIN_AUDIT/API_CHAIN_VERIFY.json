@@ -1,0 +1,148 @@
+{
+  "steps": [
+    {
+      "step": "consumer_action",
+      "status": 201,
+      "body": "{\"data\":{\"eventId\":\"95926eec-f384-42b7-b136-e53c57bdb225\",\"replayed\":false,\"operating\":{\"id\":\"83f18b06-0f2b-406d-9aec-641cd1031e82\",\"customerId\":\"864823d7-b722-417d-8fe0-3ff79bf42821\",\"customerSourceId\":\"cb8d8c8e-2845-4e31-a18b-11a2e5cafb37\",\"ownershipId\":\"1679b0b7-dafe-4c2b-ba8d-3aea57e09394\",\"taskId\":\"72571b05-123f-4e57-992f-ba9a8391e5aa\",\"leadPoolEntryId\":null,\"assignmentBasis\":\"employee_share\"},\"action\":{\"id\":\"30000000-0000-4000-8000-000000000041\",\"name\":\"到店咨询（本地模拟）\",\"actionType\":\"platform_entry\",\"targetUrl\":null,\"miniProgramAppId\":null,\"miniProgramPath\":null,\"platform\":\"local\",\"copyCode\":\"PILOT-CONSULT\"},\"returnTo\":null,\"destination\":null},\"meta\":{\"public\":true},\"error\":null}",
+      "path": "confirm"
+    },
+    {
+      "step": "store_open",
+      "status": 201,
+      "body": "{\"data\":{\"eventId\":\"c2367d25-b037-45d4-b3d5-145d5ee5b76e\",\"actionId\":\"30000000-0000-4000-8000-000000000041\",\"replayed\":false,\"operating\":{\"id\":\"ebf33712-7097-4dc0-9853-859f5bb29a4e\",\"customerId\":\"d2569726-f3ed-438b-8679-df09c0221090\",\"customerSourceId\":\"ea341143-c1d1-4b9e-a39a-5ca16654a9a0\",\"ownershipId\":\"b2c3b3ed-23b3-4ffa-be3a-dc60dbb1e460\",\"taskId\":\"09f57078-a062-47fc-a925-59b78c54f41c\",\"leadPoolEntryId\":null,\"assignmentBasis\":\"employee_share\"}},\"meta\":{\"public\":true},\"error\":null}"
+    },
+    {
+      "step": "logins",
+      "follow": 201,
+      "storemanager": 201,
+      "owner": 201,
+      "emp1": 201,
+      "tenantB": 201,
+      "platform": 201
+    },
+    {
+      "step": "storemanager_workbench",
+      "status": 400,
+      "sample": "{\"message\":\"VALIDATION_ERROR\",\"error\":\"Bad Request\",\"statusCode\":400}"
+    },
+    {
+      "step": "followup_workbench",
+      "status": 400,
+      "sample": "{\"message\":\"VALIDATION_ERROR\",\"error\":\"Bad Request\",\"statusCode\":400}"
+    },
+    {
+      "step": "owner_reads",
+      "dash": 400,
+      "customers": 400,
+      "stores": 400,
+      "attribution": 400,
+      "externalActions": 400,
+      "externalSample": "{\"message\":\"VALIDATION_ERROR\",\"error\":\"Bad Request\",\"statusCode\":400}"
+    },
+    {
+      "step": "bad_link",
+      "url": "javascript:alert(1)",
+      "status": 400,
+      "body": "{\"message\":\"VALIDATION_ERROR\",\"error\":\"Bad Request\",\"statusCode\":400}"
+    },
+    {
+      "step": "bad_link",
+      "url": "data:text/html,x",
+      "status": 400,
+      "body": "{\"message\":\"VALIDATION_ERROR\",\"error\":\"Bad Request\",\"statusCode\":400}"
+    },
+    {
+      "step": "bad_link",
+      "url": "ftp://x",
+      "status": 400,
+      "body": "{\"message\":\"VALIDATION_ERROR\",\"error\":\"Bad Request\",\"statusCode\":400}"
+    },
+    {
+      "step": "emp_mgmt_denied",
+      "status": 400
+    },
+    {
+      "step": "platform",
+      "dash": 400,
+      "tenants": 400
+    },
+    {
+      "step": "browser_employee",
+      "url": "http://127.0.0.1:3202/e/workbench",
+      "text": "退出登录\n\nONEDAY / 今日执行\n\n你好，Store Manager\n店长 · 所有行动仅显示你的任务范围\n刷新\n\n今日任务\n\n2项待推进\n\n优先完成有时限的客户动作，完成后会自动保留执行记录。\n\n今天要做\n可直接完成\n16:55 前\nFollow up public consumer action\n\n客户：Public consumer da51dd5f\n\n详情\n完成\n16:56 前\nFollow up public consumer action\n\n客户：Public consumer 0e049745\n\n详情\n完成\n智能机会\n来自任务时限信号\n行动建议\n建议推进：Follow up public consumer action\n\n来源：今日待办时限信号，建议在到期前完成客户动作。\n\n行动建议\n建议推进：Follow up public consumer action\n\n来源：今日待办时限信号，建议在到期前完成客户动作。\n\n客户提醒\n与你有关的待办\nPublic consumer da51dd5f\n\nFollow up public consumer action\n\n16:5"
+    },
+    {
+      "step": "browser_management",
+      "url": "http://127.0.0.1:3203/m/dashboard",
+      "text": "正在恢复安全会话…",
+      "chunkFails": [
+        {
+          "url": "http://127.0.0.1:3203/_next/static/chunks/_0dpj65e._.js",
+          "status": 403
+        },
+        {
+          "url": "http://127.0.0.1:3203/_next/static/chunks/_0dpj65e._.js",
+          "err": "net::ERR_ABORTED"
+        },
+        {
+          "url": "http://127.0.0.1:3203/_next/static/chunks/_0t5d1oi._.js",
+          "status": 403
+        },
+        {
+          "url": "http://127.0.0.1:3203/_next/static/chunks/_0t5d1oi._.js",
+          "err": "net::ERR_ABORTED"
+        },
+        {
+          "url": "http://127.0.0.1:3203/_next/static/chunks/_0t5d1oi._.js",
+          "status": 403
+        },
+        {
+          "url": "http://127.0.0.1:3203/_next/static/chunks/_0t5d1oi._.js",
+          "err": "net::ERR_ABORTED"
+        },
+        {
+          "url": "http://127.0.0.1:3203/_next/static/chunks/_0dpj65e._.js",
+          "status": 403
+        },
+        {
+          "url": "http://127.0.0.1:3203/_next/static/chunks/_0dpj65e._.js",
+          "err": "net::ERR_ABORTED"
+        },
+        {
+          "url": "http://127.0.0.1:3203/_next/static/chunks/_0o2pka4._.js",
+          "status": 403
+        },
+        {
+          "url": "http://127.0.0.1:3203/_next/static/chunks/_0o2pka4._.js",
+          "err": "net::ERR_ABORTED"
+        }
+      ]
+    },
+    {
+      "step": "browser_platform",
+      "text": "正在恢复安全会话…",
+      "chunkFails": [
+        {
+          "url": "http://127.0.0.1:3204/_next/static/chunks/_0dpj65e._.js",
+          "status": 403
+        },
+        {
+          "url": "http://127.0.0.1:3204/_next/static/chunks/_10p1f98._.js",
+          "status": 403
+        },
+        {
+          "url": "http://127.0.0.1:3204/_next/static/chunks/_0dpj65e._.js",
+          "status": 403
+        },
+        {
+          "url": "http://127.0.0.1:3204/_next/static/chunks/_10p1f98._.js",
+          "status": 403
+        },
+        {
+          "url": "http://127.0.0.1:3204/_next/static/chunks/_08ne5jr._.js",
+          "status": 403
+        }
+      ]
+    }
+  ]
+}

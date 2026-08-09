@@ -1,0 +1,116 @@
+﻿{
+  "data": [
+    {
+      "id": "d2569726-f3ed-438b-8679-df09c0221090",
+      "displayName": "Public consumer c2367d25",
+      "version": 1,
+      "owner": {
+        "id": "30000000-0000-4000-8000-000000000504",
+        "name": "Follow-up Employee"
+      },
+      "segment": "active",
+      "tags": [],
+      "orders": 0
+    },
+    {
+      "id": "864823d7-b722-417d-8fe0-3ff79bf42821",
+      "displayName": "Public consumer 95926eec",
+      "version": 1,
+      "owner": {
+        "id": "30000000-0000-4000-8000-000000000504",
+        "name": "Follow-up Employee"
+      },
+      "segment": "active",
+      "tags": [],
+      "orders": 0
+    },
+    {
+      "id": "2eb7634f-e126-40a4-a87e-3be440ce6889",
+      "displayName": "Public consumer e04a5914",
+      "version": 1,
+      "owner": {
+        "id": "30000000-0000-4000-8000-000000000504",
+        "name": "Follow-up Employee"
+      },
+      "segment": "active",
+      "tags": [],
+      "orders": 0
+    },
+    {
+      "id": "7d741a40-0bfd-4cea-bbf6-f39e34d17a8b",
+      "displayName": "Public consumer ed068753",
+      "version": 1,
+      "owner": {
+        "id": "30000000-0000-4000-8000-000000000504",
+        "name": "Follow-up Employee"
+      },
+      "segment": "active",
+      "tags": [],
+      "orders": 0
+    },
+    {
+      "id": "5ee5f89a-740d-4310-bded-66979b80ba30",
+      "displayName": "Public consumer 294ab282",
+      "version": 1,
+      "owner": {
+        "id": "30000000-0000-4000-8000-000000000504",
+        "name": "Follow-up Employee"
+      },
+      "segment": "active",
+      "tags": [],
+      "orders": 0
+    },
+    {
+      "id": "afb6c1c9-e84c-4f9c-8a90-14082577c620",
+      "displayName": "Public consumer eba8e20e",
+      "version": 1,
+      "owner": {
+        "id": "30000000-0000-4000-8000-000000000504",
+        "name": "Follow-up Employee"
+      },
+      "segment": "active",
+      "tags": [],
+      "orders": 0
+    },
+    {
+      "id": "a72dc81f-2e8c-4432-b4fd-bec520d73334",
+      "displayName": "Public consumer 7b0db175",
+      "version": 1,
+      "owner": {
+        "id": "30000000-0000-4000-8000-000000000504",
+        "name": "Follow-up Employee"
+      },
+      "segment": "active",
+      "tags": [],
+      "orders": 0
+    },
+    {
+      "id": "26fa05cf-c825-486e-8831-bd2d5e44d6fd",
+      "displayName": "Public consumer 0e049745",
+      "version": 1,
+      "owner": {
+        "id": "30000000-0000-4000-8000-000000000501",
+        "name": "Store Manager"
+      },
+      "segment": "active",
+      "tags": [],
+      "orders": 0
+    },
+    {
+      "id": "e3e9f6a7-5be0-44b7-a82d-bf052fc3fdde",
+      "displayName": "Public consumer da51dd5f",
+      "version": 1,
+      "owner": {
+        "id": "30000000-0000-4000-8000-000000000501",
+        "name": "Store Manager"
+      },
+      "segment": "active",
+      "tags": [],
+      "orders": 0
+    }
+  ],
+  "meta": {
+    "requestId": "953ab086-51cc-4d9a-a6a4-4a85ef9b5e04"
+  },
+  "error": null
+}

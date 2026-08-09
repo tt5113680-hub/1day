@@ -1,0 +1,20 @@
+﻿{
+  "data": [
+    {
+      "id": "30000000-0000-4000-8000-000000000041",
+      "code": "PILOT-CONSULT",
+      "name": "到店咨询（本地模拟）",
+      "action_type": "platform_entry",
+      "target_url": null,
+      "mini_program_app_id": null,
+      "mini_program_path": null,
+      "platform": "local",
+      "status": "active",
+      "version": 1
+    }
+  ],
+  "meta": {
+    "requestId": "0ab6d8ca-6ea8-405c-85e4-9242c217b2c0"
+  },
+  "error": null
+}

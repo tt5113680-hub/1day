@@ -1,0 +1,53 @@
+{
+  "body": "正在恢复安全会话…",
+  "inputs": 0,
+  "logs": [
+    [
+      "console",
+      "error",
+      "Failed to load resource: the server responded with a status of 403 (Forbidden)"
+    ],
+    ["fail", "http://127.0.0.1:3203/_next/static/chunks/_0dpj65e._.js", "net::ERR_ABORTED"],
+    [
+      "console",
+      "error",
+      "Failed to load resource: the server responded with a status of 403 (Forbidden)"
+    ],
+    ["fail", "http://127.0.0.1:3203/_next/static/chunks/_0t5d1oi._.js", "net::ERR_ABORTED"],
+    [
+      "console",
+      "info",
+      "%cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold"
+    ],
+    [
+      "console",
+      "error",
+      "WebSocket connection to 'ws://127.0.0.1:3203/_next/hmr?id=ZDmo9uxg2YjHjx6yVkkj-' failed: Error during WebSocket handshake: net::ERR_INVALID_HTTP_RESPONSE"
+    ],
+    [
+      "console",
+      "error",
+      "WebSocket connection to 'ws://127.0.0.1:3203/_next/hmr?id=ZDmo9uxg2YjHjx6yVkkj-' failed: Error during WebSocket handshake: net::ERR_INVALID_HTTP_RESPONSE"
+    ],
+    [
+      "console",
+      "error",
+      "WebSocket connection to 'ws://127.0.0.1:3203/_next/hmr?id=ZDmo9uxg2YjHjx6yVkkj-' failed: Error during WebSocket handshake: net::ERR_INVALID_HTTP_RESPONSE"
+    ],
+    [
+      "console",
+      "error",
+      "WebSocket connection to 'ws://127.0.0.1:3203/_next/hmr?id=ZDmo9uxg2YjHjx6yVkkj-' failed: Error during WebSocket handshake: net::ERR_INVALID_HTTP_RESPONSE"
+    ],
+    [
+      "console",
+      "error",
+      "WebSocket connection to 'ws://127.0.0.1:3203/_next/hmr?id=ZDmo9uxg2YjHjx6yVkkj-' failed: Error during WebSocket handshake: net::ERR_INVALID_HTTP_RESPONSE"
+    ],
+    [
+      "console",
+      "error",
+      "WebSocket connection to 'ws://127.0.0.1:3203/_next/hmr?id=ZDmo9uxg2YjHjx6yVkkj-' failed: Error during WebSocket handshake: net::ERR_INVALID_HTTP_RESPONSE"
+    ]
+  ]
+}

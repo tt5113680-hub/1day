@@ -1,0 +1,80 @@
+﻿{
+  "data": {
+    "tenant": {
+      "slug": "luckin-oneday-human-pilot",
+      "name": "瑞幸咖啡 · ONEDAY测试模拟租户"
+    },
+    "template": {
+      "id": "30000000-0000-4000-8000-000000000031",
+      "code": "pilot-consumer",
+      "name": "本地真人试用消费者入口"
+    },
+    "modules": [
+      {
+        "id": "30000000-0000-4000-8000-000000000801",
+        "module_type": "hero",
+        "position": 1,
+        "config": {
+          "title": "瑞幸咖啡北京测试门店",
+          "benefit": "仅限本机模拟数据",
+          "summary": "本地真人试用：浏览、进店并提交一次模拟咨询。",
+          "sceneLabel": "LOCAL HUMAN PILOT"
+        }
+      },
+      {
+        "id": "30000000-0000-4000-8000-000000000802",
+        "module_type": "action_grid",
+        "position": 2,
+        "config": {
+          "recommendations": [
+            {
+              "tag": "推荐",
+              "title": "北京国贸测试店",
+              "description": "进入门店并提交一次本地模拟咨询"
+            },
+            {
+              "tag": "测试",
+              "title": "北京望京测试店",
+              "description": "浏览测试门店资料"
+            }
+          ]
+        }
+      },
+      {
+        "id": "30000000-0000-4000-8000-000000000803",
+        "module_type": "content",
+        "position": 3,
+        "config": {
+          "cards": [
+            {
+              "tag": "本地",
+              "title": "到店咨询",
+              "description": "咨询将创建本地模拟客户与跟进任务"
+            },
+            {
+              "tag": "闭环",
+              "title": "员工跟进",
+              "description": "由测试店长接收后续任务"
+            }
+          ]
+        }
+      }
+    ],
+    "actions": [
+      {
+        "id": "30000000-0000-4000-8000-000000000041",
+        "code": "PILOT-CONSULT",
+        "name": "到店咨询（本地模拟）",
+        "actionType": "platform_entry",
+        "targetUrl": null,
+        "miniProgramAppId": null,
+        "miniProgramPath": null,
+        "platform": "local"
+      }
+    ]
+  },
+  "meta": {
+    "public": true
+  },
+  "error": null
+}

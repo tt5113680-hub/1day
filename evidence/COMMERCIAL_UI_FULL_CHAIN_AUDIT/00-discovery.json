@@ -1,0 +1,50 @@
+﻿{
+  "data": {
+    "tenant": {
+      "slug": "luckin-oneday-human-pilot",
+      "name": "瑞幸咖啡 · ONEDAY测试模拟租户"
+    },
+    "channels": [
+      {
+        "id": "30000000-0000-4000-8000-000000000061",
+        "name": "本地推荐门店",
+        "description": "供真人试用的瑞幸测试门店",
+        "merchants": [
+          {
+            "id": "30000000-0000-4000-8000-000000000012",
+            "name": "瑞幸咖啡 · ONEDAY测试模拟租户",
+            "entryUrl": "/c/stores/30000000-0000-4000-8000-000000000021?tenant=luckin-oneday-human-pilot"
+          }
+        ]
+      }
+    ],
+    "circles": [
+      {
+        "id": "30000000-0000-4000-8000-000000000062",
+        "name": "国贸本地测试商圈",
+        "description": "本地商圈发现测试",
+        "merchants": [
+          {
+            "id": "30000000-0000-4000-8000-000000000012",
+            "name": "瑞幸咖啡 · ONEDAY测试模拟租户",
+            "entryUrl": "/c/stores/30000000-0000-4000-8000-000000000021?tenant=luckin-oneday-human-pilot"
+          }
+        ]
+      }
+    ],
+    "nearby": [
+      {
+        "id": "30000000-0000-4000-8000-000000000012",
+        "name": "瑞幸咖啡 · ONEDAY测试模拟租户",
+        "address": "北京国贸测试地点",
+        "entryUrl": "/c/stores/30000000-0000-4000-8000-000000000021?tenant=luckin-oneday-human-pilot",
+        "distanceKm": 0
+      }
+    ],
+    "locationRequired": false
+  },
+  "meta": {
+    "public": true
+  },
+  "error": null
+}

@@ -1,0 +1,182 @@
+﻿{
+  "data": {
+    "employee": {
+      "id": "30000000-0000-4000-8000-000000000504",
+      "displayName": "Follow-up Employee",
+      "title": "跟进员工"
+    },
+    "tasks": [
+      {
+        "id": "c6ce9de5-64b9-45c0-a5c5-aaa42a693762",
+        "title": "Follow up public consumer action",
+        "dueAt": "2026-08-08T09:04:01.270Z",
+        "status": "open",
+        "escalationLevel": 0,
+        "version": 1,
+        "customer": {
+          "id": "a72dc81f-2e8c-4432-b4fd-bec520d73334",
+          "displayName": "Public consumer 7b0db175"
+        }
+      },
+      {
+        "id": "5b191a01-9ff9-4390-aa1c-dc91d80f5781",
+        "title": "Follow up public consumer action",
+        "dueAt": "2026-08-08T09:04:48.595Z",
+        "status": "open",
+        "escalationLevel": 0,
+        "version": 1,
+        "customer": {
+          "id": "afb6c1c9-e84c-4f9c-8a90-14082577c620",
+          "displayName": "Public consumer eba8e20e"
+        }
+      },
+      {
+        "id": "441b123b-08b0-467c-807e-43b4fc2daba5",
+        "title": "Follow up public consumer action",
+        "dueAt": "2026-08-08T09:38:51.437Z",
+        "status": "open",
+        "escalationLevel": 0,
+        "version": 1,
+        "customer": {
+          "id": "5ee5f89a-740d-4310-bded-66979b80ba30",
+          "displayName": "Public consumer 294ab282"
+        }
+      },
+      {
+        "id": "0eb760fb-1700-4646-a7f1-685e90d1af8a",
+        "title": "Follow up public consumer action",
+        "dueAt": "2026-08-08T09:38:54.941Z",
+        "status": "open",
+        "escalationLevel": 0,
+        "version": 1,
+        "customer": {
+          "id": "7d741a40-0bfd-4cea-bbf6-f39e34d17a8b",
+          "displayName": "Public consumer ed068753"
+        }
+      },
+      {
+        "id": "067373d2-9ebc-4cfe-8dbc-4a2e284a79f4",
+        "title": "Follow up public consumer action",
+        "dueAt": "2026-08-08T09:38:57.967Z",
+        "status": "open",
+        "escalationLevel": 0,
+        "version": 1,
+        "customer": {
+          "id": "2eb7634f-e126-40a4-a87e-3be440ce6889",
+          "displayName": "Public consumer e04a5914"
+        }
+      },
+      {
+        "id": "72571b05-123f-4e57-992f-ba9a8391e5aa",
+        "title": "Follow up public consumer action",
+        "dueAt": "2026-08-08T09:46:08.576Z",
+        "status": "open",
+        "escalationLevel": 0,
+        "version": 1,
+        "customer": {
+          "id": "864823d7-b722-417d-8fe0-3ff79bf42821",
+          "displayName": "Public consumer 95926eec"
+        }
+      },
+      {
+        "id": "09f57078-a062-47fc-a925-59b78c54f41c",
+        "title": "Follow up public consumer action",
+        "dueAt": "2026-08-08T09:46:08.603Z",
+        "status": "open",
+        "escalationLevel": 0,
+        "version": 1,
+        "customer": {
+          "id": "d2569726-f3ed-438b-8679-df09c0221090",
+          "displayName": "Public consumer c2367d25"
+        }
+      }
+    ],
+    "customerReminders": [
+      {
+        "id": "c6ce9de5-64b9-45c0-a5c5-aaa42a693762",
+        "title": "Follow up public consumer action",
+        "dueAt": "2026-08-08T09:04:01.270Z",
+        "status": "open",
+        "escalationLevel": 0,
+        "version": 1,
+        "customer": {
+          "id": "a72dc81f-2e8c-4432-b4fd-bec520d73334",
+          "displayName": "Public consumer 7b0db175"
+        }
+      },
+      {
+        "id": "5b191a01-9ff9-4390-aa1c-dc91d80f5781",
+        "title": "Follow up public consumer action",
+        "dueAt": "2026-08-08T09:04:48.595Z",
+        "status": "open",
+        "escalationLevel": 0,
+        "version": 1,
+        "customer": {
+          "id": "afb6c1c9-e84c-4f9c-8a90-14082577c620",
+          "displayName": "Public consumer eba8e20e"
+        }
+      },
+      {
+        "id": "441b123b-08b0-467c-807e-43b4fc2daba5",
+        "title": "Follow up public consumer action",
+        "dueAt": "2026-08-08T09:38:51.437Z",
+        "status": "open",
+        "escalationLevel": 0,
+        "version": 1,
+        "customer": {
+          "id": "5ee5f89a-740d-4310-bded-66979b80ba30",
+          "displayName": "Public consumer 294ab282"
+        }
+      },
+      {
+        "id": "0eb760fb-1700-4646-a7f1-685e90d1af8a",
+        "title": "Follow up public consumer action",
+        "dueAt": "2026-08-08T09:38:54.941Z",
+        "status": "open",
+        "escalationLevel": 0,
+        "version": 1,
+        "customer": {
+          "id": "7d741a40-0bfd-4cea-bbf6-f39e34d17a8b",
+          "displayName": "Public consumer ed068753"
+        }
+      },
+      {
+        "id": "067373d2-9ebc-4cfe-8dbc-4a2e284a79f4",
+        "title": "Follow up public consumer action",
+        "dueAt": "2026-08-08T09:38:57.967Z",
+        "status": "open",
+        "escalationLevel": 0,
+        "version": 1,
+        "customer": {
+          "id": "2eb7634f-e126-40a4-a87e-3be440ce6889",
+          "displayName": "Public consumer e04a5914"
+        }
+      }
+    ],
+    "opportunities": [
+      {
+        "taskId": "c6ce9de5-64b9-45c0-a5c5-aaa42a693762",
+        "title": "建议推进：Follow up public consumer action",
+        "reason": "来源：今日待办时限信号，建议在到期前完成客户动作。",
+        "source": "task_due_signal"
+      },
+      {
+        "taskId": "5b191a01-9ff9-4390-aa1c-dc91d80f5781",
+        "title": "建议推进：Follow up public consumer action",
+        "reason": "来源：今日待办时限信号，建议在到期前完成客户动作。",
+        "source": "task_due_signal"
+      },
+      {
+        "taskId": "441b123b-08b0-467c-807e-43b4fc2daba5",
+        "title": "建议推进：Follow up public consumer action",
+        "reason": "来源：今日待办时限信号，建议在到期前完成客户动作。",
+        "source": "task_due_signal"
+      }
+    ],
+    "generatedAt": "2026-08-08T08:47:25.094Z"
+  },
+  "meta": {
+    "requestId": "9f9d4215-c64e-4cde-aaaf-7bb0d708612b"
+  },
+  "error": null
+}

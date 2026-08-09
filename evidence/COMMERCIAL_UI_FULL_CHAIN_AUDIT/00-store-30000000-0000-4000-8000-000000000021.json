@@ -1,0 +1,48 @@
+﻿{
+  "data": {
+    "tenant": {
+      "slug": "luckin-oneday-human-pilot",
+      "name": "瑞幸咖啡 · ONEDAY测试模拟租户"
+    },
+    "store": {
+      "id": "30000000-0000-4000-8000-000000000021",
+      "name": "北京国贸测试店",
+      "address": "北京市朝阳区国贸测试路 1 号",
+      "merchant": "瑞幸咖啡 · ONEDAY测试模拟租户"
+    },
+    "services": [
+      {
+        "id": "30000000-0000-4000-8000-000000000850",
+        "name": "本地试用咨询",
+        "description": "用于真人试用的本地模拟服务",
+        "duration_minutes": 15,
+        "price_label": "免费"
+      }
+    ],
+    "benefits": [
+      {
+        "id": "30000000-0000-4000-8000-000000000860",
+        "title": "本地试用权益",
+        "description": "不连接任何真实外部平台",
+        "external_action_id": "30000000-0000-4000-8000-000000000041",
+        "action_name": "到店咨询（本地模拟）"
+      }
+    ],
+    "content": [],
+    "actions": [
+      {
+        "id": "30000000-0000-4000-8000-000000000041",
+        "name": "到店咨询（本地模拟）",
+        "actionType": "platform_entry",
+        "targetUrl": null,
+        "miniProgramAppId": null,
+        "miniProgramPath": null,
+        "platform": "local"
+      }
+    ]
+  },
+  "meta": {
+    "public": true
+  },
+  "error": null
+}

@@ -1,0 +1,159 @@
+{
+  "generatedAt": "2026-08-08T08:41:08.671Z",
+  "ports": {
+    "api": 3200,
+    "consumer": 3201,
+    "employee": 3202,
+    "management": 3203,
+    "platform": 3204
+  },
+  "journeys": [
+    {
+      "id": "J1",
+      "status": "PARTIAL",
+      "detail": "能进店；地图/电话/团购缺失",
+      "evidence": [
+        "J1-01-entry.png",
+        "J1-02-discovery.png",
+        "J1-03-store-guomao.png",
+        "J1-store-wangjing.png",
+        "J1-store-zgc.png"
+      ]
+    },
+    {
+      "id": "J2",
+      "status": "PASS_PARTIAL",
+      "detail": "分享上下文咨询可记录；无第三方外链可测",
+      "evidence": [
+        "J2-01-share.png",
+        "J2-02-store-shared.png",
+        "J2-03-after-consult-click.png",
+        "J2-04-action-confirm.png",
+        "J2-05-action-recorded.png"
+      ]
+    },
+    {
+      "id": "J3",
+      "status": "ERROR",
+      "detail": "TimeoutError: locator.click: Timeout 30000ms exceeded.\nCall log:\n  - waiting for locator('button[type=\"submit\"]')\n",
+      "evidence": ["J3-01-consumer-action.png"]
+    },
+    {
+      "id": "J4",
+      "status": "PASS_PARTIAL",
+      "detail": "三店可分别打开且名称不同；无独立坐标/电话/团购",
+      "evidence": ["J4-guomao.png", "J4-wangjing.png", "J4-zgc.png"]
+    },
+    {
+      "id": "J5",
+      "status": "ERROR",
+      "detail": "TimeoutError: locator.fill: Timeout 30000ms exceeded.\nCall log:\n  - waiting for locator('input[name=\"tenantSlug\"]')\n",
+      "evidence": []
+    },
+    {
+      "id": "J6",
+      "status": "ERROR",
+      "detail": "TimeoutError: locator.fill: Timeout 30000ms exceeded.\nCall log:\n  - waiting for locator('input[name=\"tenantSlug\"]')\n",
+      "evidence": []
+    },
+    {
+      "id": "J7",
+      "status": "ERROR",
+      "detail": "TimeoutError: locator.click: Timeout 30000ms exceeded.\nCall log:\n  - waiting for locator('button[type=\"submit\"]')\n",
+      "evidence": []
+    },
+    {
+      "id": "J8",
+      "status": "PASS_PARTIAL",
+      "detail": "异常页可打开；需人工看是否商业语言",
+      "evidence": ["J8-01-bad-tenant.png", "J8-02-missing-store.png", "J8-03-missing-action.png"]
+    }
+  ],
+  "findings": [
+    {
+      "cat": "D",
+      "severity": "P1",
+      "title": "Consumer首屏充满测试/模拟文案",
+      "detail": "首屏可见 LOCAL HUMAN PILOT / 模拟 / 测试，不像真实商家产品",
+      "evidence": "J1-01-entry.png",
+      "at": "2026-08-08T08:38:43.544Z"
+    },
+    {
+      "cat": "A",
+      "severity": "P0",
+      "title": "商家推荐不可点击",
+      "detail": "看起来像快捷入口，实际是静态卡片",
+      "evidence": "J1-01-entry.png",
+      "at": "2026-08-08T08:38:43.550Z"
+    },
+    {
+      "cat": "D",
+      "severity": "P1",
+      "title": "Discovery文案偏工程说明",
+      "detail": "向消费者解释内部模型差异，不像商业发现页",
+      "evidence": "J1-02-discovery.png",
+      "at": "2026-08-08T08:38:44.279Z"
+    },
+    {
+      "cat": "E",
+      "severity": "P1",
+      "title": "门店无电话入口",
+      "detail": "无 tel: 链接；stores表无phone字段",
+      "evidence": "J1-03-store-guomao.png",
+      "at": "2026-08-08T08:38:47.113Z"
+    },
+    {
+      "cat": "E",
+      "severity": "P1",
+      "title": "门店无地图/导航入口",
+      "detail": "地址为纯文本；虽有merchant_locations坐标但未接到门店页",
+      "evidence": "J1-03-store-guomao.png",
+      "at": "2026-08-08T08:38:47.113Z"
+    },
+    {
+      "cat": "A",
+      "severity": "P1",
+      "title": "门店无美团/抖音/团购入口",
+      "detail": "仅有本地模拟咨询；无第三方团购卡片",
+      "evidence": "J1-03-store-guomao.png",
+      "at": "2026-08-08T08:38:47.113Z"
+    },
+    {
+      "cat": "C",
+      "severity": "P2",
+      "title": "服务卡片不可进入详情",
+      "detail": "门店服务列表无深链到 /c/services",
+      "evidence": "J1-03-store-guomao.png",
+      "at": "2026-08-08T08:38:47.114Z"
+    },
+    {
+      "cat": "A",
+      "severity": "P1",
+      "title": "门店页无消费者底栏",
+      "detail": "深链进店后导航体系断裂",
+      "evidence": "J1-03-store-guomao.png",
+      "at": "2026-08-08T08:38:47.115Z"
+    },
+    {
+      "cat": "Q",
+      "severity": "info",
+      "title": "创建外链需鉴权",
+      "detail": "unauth POST status=401",
+      "evidence": null,
+      "at": "2026-08-08T08:38:57.066Z"
+    },
+    {
+      "cat": "E",
+      "severity": "P2",
+      "title": "三店坐标相同",
+      "detail": "merchant_locations 国贸/望京/中关村共用同一经纬度，导航即使补上也会错店",
+      "evidence": null,
+      "at": "2026-08-08T08:39:33.688Z"
+    }
+  ],
+  "counts": {
+    "findings": 10,
+    "p0": 1,
+    "p1": 6
+  }
+}
