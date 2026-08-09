@@ -42,6 +42,6 @@ RUN pnpm --filter @oneday/auth build \
 
 随后在干净 Docker 环境完成镜像构建验证，再恢复部署。该修复需作为一个新的、可验证的任务处理。
 
-## Resolution（2026-08-09）
+## Resolution follow-up（2026-08-09）
 
-HARDENING-006 已完成：`infra/docker/Dockerfile` 现会在 API、Worker 与 HUMAN-PILOT 之前构建工作区依赖包；干净 human-pilot 镜像构建已通过。证据见 `evidence/HARDENING-006/ACCEPTANCE.md`。
+HARDENING-006 已恢复处理：服务器干净镜像构建还发现 `@oneday/session-client` 和 `@oneday/ui` 也须先构建。Dockerfile 已补齐该依赖阶段，正在进行新的干净构建验证。证据见 `evidence/HARDENING-006/ACCEPTANCE.md`。

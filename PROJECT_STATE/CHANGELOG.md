@@ -1,9 +1,9 @@
 # CHANGELOG
 
-## 2026-08-09 - HARDENING-006 Docker deployment build repair
+## 2026-08-09 - HARDENING-006 Docker deployment build repair (in progress)
 
-- Added a workspace-dependencies Docker stage that compiles `@oneday/auth` and `@oneday/events` before API, Worker and HUMAN-PILOT targets compile their dependent applications.
-- Verified 18-package typecheck, clean HUMAN-PILOT image build and all expected built artifacts. This change does not publish demo data or customer credentials.
+- Added a workspace-dependencies Docker stage that compiles Auth, Events, Session Client and UI packages before API, Worker and HUMAN-PILOT targets compile their dependent applications.
+- Typecheck and lint passed. Server clean-image validation found the Session Client/UI dependency gap and the final fresh image verification is pending. No demo data or customer credentials have been published.
 
 ## 2026-08-09 — CONSUMER-COMMERCIAL-HOME-V1 store-information card
 
