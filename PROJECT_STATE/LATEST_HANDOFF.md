@@ -27,7 +27,7 @@ If usage approaches the limit during Storefront module-renderer work, open a NEW
 ## Current task — Storefront module-renderer unification
 
 - branch: `hardening/COMMERCIAL-COMPLETION`
-- last_verified_batch: Batch 4 PASS — see `BATCH_4_ACCEPTANCE.md` and `evidence/BATCH-4/`
+- last_verified_batch: Batch 4 PASS at `04c863f` — see `BATCH_4_ACCEPTANCE.md` and `evidence/BATCH-4/`
 - current_task: Storefront module-renderer unification (authorization A)
 - status: `STOREFRONT_MODULE_RENDERER_IN_PROGRESS`
 - blocker: null

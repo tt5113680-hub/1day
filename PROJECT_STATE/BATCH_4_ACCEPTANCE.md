@@ -4,6 +4,8 @@
 
 `BATCH_4_PASS`
 
+Source implementation commit: `04c863f`.
+
 ## Delivered clean-tenant boundary
 
 - A brand-new tenant is provisioned through Platform one-click onboarding without the shared commercial simulation fixture or historical seed repair.

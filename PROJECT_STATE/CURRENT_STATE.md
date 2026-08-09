@@ -9,8 +9,8 @@
 - status: BATCH_4_PASS; STOREFRONT_MODULE_RENDERER_IN_PROGRESS
 - branch: hardening/COMMERCIAL-COMPLETION
 - executor: Cursor Agent (2026-08-10; see PROJECT_STATE/EXECUTOR_HANDOFF.md)
-- last_safe_commit: pending Batch 4 PASS commit on this branch
-- verified_batch_4: PASS — clean-tenant commercial rehearsal without shared H-002/commercial-simulation fixture repair. Platform one-click READY + ONE-CODE + published Storefront; Consumer enrollment; Employee redemption/follow-up; Management outcome; content placement; approved Platform channel/circle discovery; second-tenant isolation; suspend/resume recovery. See PROJECT_STATE/BATCH_4_ACCEPTANCE.md and evidence/BATCH-4/.
+- last_safe_commit: 04c863f (Batch 4 clean-tenant commercial rehearsal PASS)
+- verified_batch_4: PASS at source commit 04c863f. Clean-tenant commercial rehearsal without shared H-002/commercial-simulation fixture repair. Platform one-click READY + ONE-CODE + published Storefront; Consumer enrollment; Employee redemption/follow-up; Management outcome; content placement; approved Platform channel/circle discovery; second-tenant isolation; suspend/resume recovery. See PROJECT_STATE/BATCH_4_ACCEPTANCE.md and evidence/BATCH-4/.
 - started_at: 2026-08-09T20:29:46+08:00
 - blocker: null
 - verified_batch_1: PASS at source commit 1aecf81. The full format, lint, 18-workspace typecheck/build, 184 repository tests, 74 evidence checks, H-002 session/isolation 6/6, real Consumer-to-Employee-to-Management 2/2, Platform tenant/channel/circle 14/14 and four-terminal visual 3/3 gates passed. See PROJECT_STATE/COMMERCIAL_UI_FOUNDATION_ACCEPTANCE.md.
