@@ -1,5 +1,6 @@
 'use client';
 import { SessionApiClient } from '@oneday/session-client';
+import { AdminPageHeader, AppStatePanel, Button } from '@oneday/ui';
 
 import { useCallback, useEffect, useState } from 'react';
 import styles from './page.module.css';
@@ -71,35 +72,55 @@ export default function SettingsPage() {
       setSaving(false);
     }
   };
-  if (state === 'loading') return <main className={styles.centered}>正在加载经营设置…</main>;
+  if (state === 'loading')
+    return (
+      <main className={styles.centered}>
+        <AppStatePanel
+          kind="loading"
+          title="正在加载经营设置"
+          description="正在校验租户规则、版本与经营权限。"
+        />
+      </main>
+    );
   if (state === 'forbidden')
     return (
       <main className={styles.centered}>
-        <section>
-          <h1>无权查看租户经营设置</h1>
-        </section>
+        <AppStatePanel
+          kind="forbidden"
+          title="无权查看租户经营设置"
+          description="请使用具备租户经营设置权限的账号。"
+        />
       </main>
     );
   if (state === 'error')
     return (
       <main className={styles.centered}>
-        <section>
-          <h1>经营设置暂不可用</h1>
-          <button onClick={() => void load()}>重新加载</button>
-        </section>
+        <AppStatePanel
+          kind="error"
+          title="经营设置暂不可用"
+          description="经营规则未能完成加载，请重试。"
+          action={<Button onClick={() => void load()}>重新加载</Button>}
+        />
       </main>
     );
-  if (!settings) return <main className={styles.centered}>暂无可用设置。</main>;
+  if (!settings)
+    return (
+      <main className={styles.centered}>
+        <AppStatePanel kind="empty" title="暂无可用设置" />
+      </main>
+    );
   return (
     <main className={styles.page}>
-      <header>
-        <div>
-          <p>ONEDAY / 租户经营设置</p>
-          <h1>{settings.brand.displayName} 的可审计经营规则</h1>
-          <span>保存需经过服务端权限、版本、审计和事件校验；员工个人免打扰偏好不会被覆盖。</span>
-        </div>
-        <button onClick={() => void load()}>刷新</button>
-      </header>
+      <AdminPageHeader
+        eyebrow="ONEDAY / 商户经营设置"
+        title={`${settings.brand.displayName} 的可审计经营规则`}
+        description="保存需经过服务端权限、版本、审计和事件校验；员工个人免打扰偏好不会被覆盖。"
+        actions={
+          <Button tone="secondary" onClick={() => void load()}>
+            刷新设置
+          </Button>
+        }
+      />
       {note && (
         <p role="status" className={styles.notice}>
           {note}
@@ -237,9 +258,9 @@ export default function SettingsPage() {
           </label>
         </fieldset>
       </section>
-      <button className={styles.save} disabled={saving} onClick={() => void save()}>
-        {saving ? '正在保存…' : '保存经营设置'}
-      </button>
+      <Button className={styles.save} loading={saving} onClick={() => void save()}>
+        保存经营设置
+      </Button>
     </main>
   );
 }
