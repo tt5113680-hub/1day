@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## 2026-08-09 — ONEDAY-V3-COMMERCIAL-COMPLETION Batch 1 platform channel foundation
+
+- Migrated the Platform first-level channel and merchant-pool operating surface to shared `AdminPageHeader`, `Card`, `Button`, `StatusBadge` and `AppStatePanel` primitives in the platform Admin Shell.
+- Added commercial-language labels for persisted platform channel lifecycle values while preserving real channel creation, idempotency, audit and Outbox behavior. The browser fixture now uses the access/refresh/expiry session contract.
+- Format, workspace lint, Platform/UI typecheck, Platform build and the real 1440px browser suite (2/2) pass with refreshed visual and trace evidence. Batch 1 remains in progress.
+
 ## 2026-08-09 — ONEDAY-V3-COMMERCIAL-COMPLETION Batch 1 management performance foundation
 
 - Migrated Management employee process performance to shared `AdminPageHeader`, `Card`, `Button`, `StatusBadge` and `AppStatePanel` primitives in the Admin Shell.
