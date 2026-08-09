@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import {
   ConsumerShell,
   storeHref,
@@ -25,6 +25,15 @@ export default function StoreChannel({
   context: ConsumerContext;
   channel: Channel;
 }) {
+  const [phone, setPhone] = useState(''),
+    [consent, setConsent] = useState(false),
+    [member, setMember] = useState<{
+      memberCode: string;
+      profileAccessId: string;
+      profileAccess: string;
+    } | null>(null),
+    [membershipNote, setMembershipNote] = useState(''),
+    [joining, setJoining] = useState(false);
   const consultAction = data.actions.find((item) => item.actionType !== 'link') ?? data.actions[0];
   const groups = useMemo(() => {
     const result = new Map<
@@ -52,6 +61,28 @@ export default function StoreChannel({
     });
     if (context.shareCode) params.set('shareCode', context.shareCode);
     return `/c/actions/${actionId}?${params.toString()}`;
+  };
+  const enroll = async () => {
+    setJoining(true);
+    setMembershipNote('');
+    try {
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_BASE_URL ?? 'http://127.0.0.1:3001'}/api/v1/consumer/memberships/enroll?tenant=${encodeURIComponent(context.tenant)}`,
+        {
+          method: 'POST',
+          headers: { 'content-type': 'application/json', 'idempotency-key': crypto.randomUUID() },
+          body: JSON.stringify({ storeId: context.storeId, phone, consent }),
+        },
+      );
+      if (!response.ok) throw Error();
+      const data = (await response.json()).data;
+      setMember(data);
+      setMembershipNote(`入会成功。请保存会员码 ${data.memberCode}，到店核销时出示。`);
+    } catch {
+      setMembershipNote('暂时无法完成入会，请确认手机号、授权与门店状态后重试。');
+    } finally {
+      setJoining(false);
+    }
   };
 
   const title =
@@ -185,18 +216,31 @@ export default function StoreChannel({
                 <span>ONEDAY 会员</span>
                 <h2>加入会员，获取本店专属服务</h2>
                 <p>无需先创建复杂账号；提交意向后，由门店以合规方式确认服务。</p>
-                {consultAction ? (
-                  <a
-                    href={actionHref(
-                      consultAction.id,
-                      'membership_join',
-                      storeHref(context, '/membership', 'tab_membership'),
-                    )}
-                  >
-                    立即咨询加入
-                  </a>
-                ) : (
-                  <span>暂未开放</span>
+                <label>
+                  手机号
+                  <input
+                    aria-label="入会手机号"
+                    inputMode="tel"
+                    value={phone}
+                    onChange={(event) => setPhone(event.target.value)}
+                    placeholder="用于生成本店会员身份"
+                  />
+                </label>
+                <label>
+                  <input
+                    aria-label="同意会员隐私授权"
+                    type="checkbox"
+                    checked={consent}
+                    onChange={(event) => setConsent(event.target.checked)}
+                  />{' '}
+                  我同意门店为会员服务处理手机号。
+                </label>
+                <button disabled={joining || !consent} onClick={() => void enroll()}>
+                  {joining ? '正在入会' : '确认加入会员'}
+                </button>
+                {membershipNote && <p role="status">{membershipNote}</p>}
+                {member && (
+                  <small>会员凭证仅在本设备当前会话展示；会员码：{member.memberCode}</small>
                 )}
               </article>
               {data.benefits.length ? (

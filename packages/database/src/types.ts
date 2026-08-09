@@ -792,6 +792,7 @@ export interface MembershipEnrollmentsTable {
   tenant_id: string;
   customer_id: string;
   store_id: string | null;
+  member_code: string;
   tier: string;
   enrollment_status: string;
   source: string | null;

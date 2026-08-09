@@ -110,6 +110,8 @@ import { OneCodeController } from './one-code.controller';
 import { OneCodeService } from './one-code.service';
 import { ManagementCatalogController } from './management-catalog.controller';
 import { ManagementCatalogService } from './management-catalog.service';
+import { MembershipCommercialController } from './membership-commercial.controller';
+import { MembershipCommercialService } from './membership-commercial.service';
 
 @Module({
   controllers: [
@@ -170,6 +172,7 @@ import { ManagementCatalogService } from './management-catalog.service';
     PlatformOnboardingController,
     OneCodeController,
     ManagementCatalogController,
+    MembershipCommercialController,
   ],
   providers: [
     AuthService,
@@ -227,6 +230,7 @@ import { ManagementCatalogService } from './management-catalog.service';
     PlatformOnboardingService,
     OneCodeService,
     ManagementCatalogService,
+    MembershipCommercialService,
   ],
 })
 export class AppModule {}

@@ -10,6 +10,7 @@ const navigation = [
   { href: '/m/workflows', label: '运营流程' },
   { href: '/m/stores', label: '门店与外链' },
   { href: '/m/offers', label: '套餐与 Offer' },
+  { href: '/m/memberships', label: '会员与权益' },
   { href: '/m/content', label: '内容中心' },
   { href: '/m/page-builder', label: '模板与发布' },
   { href: '/m/organization-employees', label: '组织与员工' },
