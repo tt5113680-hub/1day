@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## 2026-08-10 - ONEDAY-V3-COMMERCIAL-COMPLETION Batch 3 PASS
+
+- Tenant suspension now revokes active sessions and tenant status is enforced at login, refresh and token claims checks; recovery requires a fresh authenticated session.
+- Management can approve and place the single content entity source directly into Consumer Storefronts, with real browser evidence.
+- Approved Platform Channel/Circle relations now appear in the authorized member tenant's Consumer discovery and remain hidden from non-members.
+- Full workspace quality gates, repository tests, H-002 session/isolation, Consumer-to-Employee-to-Management and Batch 3 browser evidence passed. See `BATCH_3_ACCEPTANCE.md`.
+
 ## 2026-08-10 - Batch 2 content placement truth source
 
 - Replaced Consumer's legacy `store_content_items` read path with approved `content_items` projected through tenant/store placements, with migration backfill for existing content.

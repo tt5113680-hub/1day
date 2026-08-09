@@ -1,6 +1,12 @@
 # LATEST_HANDOFF
 
-## Current Batch 2 continuation
+## Current Batch 4 continuation
+
+- Batch 1: `BATCH_1_PASS` at `1aecf81`; Batch 2: `BATCH_2_PASS` at `c79812b`; Batch 3: `BATCH_3_PASS` at source `ead41e4`.
+- Batch 3 adds immediate tenant lifecycle authorization convergence, Management-to-Consumer approved content placement, and Consumer discovery of only approved Platform Channel/Circle relations. Evidence and full-gate results are in `BATCH_3_ACCEPTANCE.md`.
+- Current: Batch 4 must provision a brand-new tenant and run the whole commercial path without reliance on the shared H-002 fixture or historical seed repairs.
+
+## Historical Batch 2 continuation
 
 - Batch 1: `BATCH_1_PASS` at source commit `1aecf81`; exact full-gate and visual evidence is recorded in `COMMERCIAL_UI_FOUNDATION_ACCEPTANCE.md`.
 - Verified foundation: Consumer is responsive at 390/768/1024/1440; Employee uses Mobile Shell; Management, Platform and restricted Channel/Circle modes use explicit Admin Shell identities and scoped navigation. Repository, session, tenant/RBAC isolation, commercial-chain and visual gates all pass.
