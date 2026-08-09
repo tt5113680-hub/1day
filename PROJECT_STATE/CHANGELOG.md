@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## 2026-08-09 — ONEDAY-V3-COMMERCIAL-COMPLETION Batch 1 management connector foundation
+
+- Migrated Management tenant connector authorization intent, secret fingerprint, capability boundary and recent logs to shared Admin Shell primitives and the canonical commercial token contract.
+- Preserved secret non-disclosure and intent-only/no-external-delivery behavior while converting known connector, status, capability and authorization-log values to operator language.
+- Format, workspace lint, UI/Management typecheck/build and real 1440px browser suite (2/2) pass with refreshed visual and trace evidence. Batch 1 remains in progress.
+
 ## 2026-08-09 — ONEDAY-V3-COMMERCIAL-COMPLETION Batch 1 management settings foundation
 
 - Migrated Management reminder/escalation, approval, quiet-hours, tagging, allocation and brand rules to the shared Admin Shell foundation and canonical commercial token contract.
