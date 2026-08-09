@@ -44,6 +44,7 @@
 - Employee Nurture page-local header, recovery/filter/card/button/status styling is deprecated at `9f7f74b`; profile versioning and idempotent touchpoint/task writes remain tenant-scoped.
 - Employee Profile page-local header, recovery/card/button/chip styling and raw permission-code presentation are deprecated at `0bc1a0c`; employee, organization and store context remain explicit.
 - Employee Share page-local purple header, recovery/form/card/button/status styling is deprecated at `8f9b626`; QR generation, attribution/open counts and versioned revocation remain real service behavior.
+- Employee Customer Detail and Follow-up page-local recovery/button/status/form styling plus raw identity/source/action enums are deprecated at `f5ee466`; customer visibility, task ownership, raw notes and editable summaries retain their service contracts.
 
 1. 新页面或新交互不得再新增页面级颜色、圆角、阴影、按钮或状态体系；必须使用 token 与 primitive。
 2. 每次迁移保留现有 Session、RBAC、tenant scope、幂等和审计行为，并通过关联回归。

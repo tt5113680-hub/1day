@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## 2026-08-09 — ONEDAY-V3-COMMERCIAL-COMPLETION Batch 1 employee customer-workflow foundation
+
+- Migrated Employee related-customer context and task follow-up entry to shared Button/StatusBadge/AppStatePanel primitives, commercial source/identity labels and tokenized mobile form controls.
+- Preserved server-side customer visibility and task assignment, and corrected migrated browser fixtures to persist the actual login `expiresAt` field so deep-link navigation does not depend on a refresh-token race.
+- Format, workspace lint, UI/Employee typecheck/build and real customer/task-link plus follow-up/session browser suites (4/4) pass with refreshed visual and trace evidence. Employee core-page foundation migration is complete; Batch 1 remains in progress.
+
 ## 2026-08-09 — ONEDAY-V3-COMMERCIAL-COMPLETION Batch 1 employee share-tools foundation
 
 - Migrated Employee tracked share-code creation, QR presentation, expiry, selection, revocation and recovery states to shared Card/Button/StatusBadge/AppStatePanel primitives and the canonical token contract.
