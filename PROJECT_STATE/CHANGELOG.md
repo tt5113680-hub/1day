@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## 2026-08-09 — ONEDAY-V3-COMMERCIAL-COMPLETION Batch 1 employee profile foundation
+
+- Migrated Employee identity, organization/store context, permission summary, notification preference and common tools to shared Card/Button/StatusBadge/AppStatePanel primitives and the canonical token contract.
+- Replaced persisted permission codes with operator-facing capability names while preserving the versioned own-profile notification write.
+- Format, workspace lint, UI/Employee typecheck/build and real 390px notification-setting/session browser suite (2/2) pass with refreshed visual and trace evidence. Batch 1 remains in progress.
+
 ## 2026-08-09 — ONEDAY-V3-COMMERCIAL-COMPLETION Batch 1 employee nurture foundation
 
 - Migrated Employee customer-segment queue, touchpoint logging, follow-up task creation and recovery states to shared Card/Button/StatusBadge/AppStatePanel primitives and the canonical token contract.
