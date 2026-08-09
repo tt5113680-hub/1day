@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## 2026-08-09 — ONEDAY-V3-COMMERCIAL-COMPLETION Batch 1 management workflow foundation
+
+- Migrated Management workflow metrics, pending approvals, template state and instance responsibility table to shared Admin Shell primitives and the canonical commercial token contract.
+- Preserved the real workflow aggregation/filter behavior while converting lifecycle and step enums to commercial labels and rendering timestamps consistently in Chinese 24-hour format.
+- Format, workspace lint, UI/Management typecheck/build and real 1440px browser suite (2/2) pass with refreshed visual and trace evidence. Batch 1 remains in progress.
+
 ## 2026-08-09 — ONEDAY-V3-COMMERCIAL-COMPLETION Batch 1 management AI foundation
 
 - Migrated Management governed AI suggestions, model/source context, execution state and feedback controls to shared Admin Shell primitives and the canonical commercial token contract.

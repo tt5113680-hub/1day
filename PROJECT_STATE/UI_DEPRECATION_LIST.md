@@ -31,6 +31,7 @@
 - Platform Security Audit page-local header, recovery panel, cards/buttons and raw audit-enum presentation are deprecated at `70e2b19`; operator-facing language must retain the full request correlation identifier.
 - Management Attribution page-local header, metric cards, recovery panel, enum pills and source-ID presentation are deprecated at `6637cb1`; customer deep links stay intact while internal source UUIDs remain out of the operating view.
 - Management AI Suggestions page-local header, recovery/card/button/status styling and task-receipt UUID display are deprecated at `630a939`; the model/version and governed execution boundary stay visible.
+- Management Workflows page-local header, metric cards, recovery/table/status styling and raw lifecycle enum display are deprecated at `4314652`; filters must return to ready before visual acceptance captures.
 
 1. 新页面或新交互不得再新增页面级颜色、圆角、阴影、按钮或状态体系；必须使用 token 与 primitive。
 2. 每次迁移保留现有 Session、RBAC、tenant scope、幂等和审计行为，并通过关联回归。
