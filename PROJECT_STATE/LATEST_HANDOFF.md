@@ -2,8 +2,8 @@
 
 ## Current Batch 1 continuation
 
-- Base HEAD: `96fbf4c`; Platform onboarding, channel, business-circle and fixed-component template governance are tokenized Admin Shell surfaces. Onboarding explicitly labels the current result as basic initialization rather than falsely claiming Batch 2 commercial READY.
-- Current verified scope: active Admin navigation; unified Consumer/Employee/Management/Platform root loading, empty, error and permission surfaces; E/M/P session recovery and login styling; non-blank Consumer/Employee critical nested loading routes; integrated shell session controls; repeatable Consumer/Employee/Management/Platform visual captures; and a single design-token CSS source with typed-projection coverage. Employee workbench/task-detail, Management performance and the four migrated Platform suites each pass 2/2, and affected production builds pass.
+- Base HEAD: `e7e1d63`; Platform onboarding, channel, business-circle, fixed-component template and capability-bounded connector governance are tokenized Admin Shell surfaces. Onboarding explicitly labels the current result as basic initialization rather than falsely claiming Batch 2 commercial READY.
+- Current verified scope: active Admin navigation; unified Consumer/Employee/Management/Platform root loading, empty, error and permission surfaces; E/M/P session recovery and login styling; non-blank Consumer/Employee critical nested loading routes; integrated shell session controls; repeatable Consumer/Employee/Management/Platform visual captures; and a single design-token CSS source with typed-projection coverage. Employee workbench/task-detail, Management performance and the five migrated Platform suites each pass 2/2, and affected production builds pass.
 - Next: migrate remaining Employee/Management/Platform core-page legacy styling and complete Batch 1 repository and commercial-chain regression gates. Do not declare Batch 1 pass yet.
 
 - branch: `hardening/COMMERCIAL-COMPLETION`

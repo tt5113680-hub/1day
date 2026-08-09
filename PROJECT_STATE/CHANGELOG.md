@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## 2026-08-09 — ONEDAY-V3-COMMERCIAL-COMPLETION Batch 1 platform connector foundation
+
+- Migrated Platform connector definition, tenant authorization summary, health observation, limit and log views to shared Admin Shell primitives and the canonical commercial token contract.
+- Preserved connector transactions and the intent-only capability boundary while converting persisted health, authorization and delivery-state values to stable commercial language.
+- Format, workspace lint, UI/Platform typecheck/build and real 1440px browser suite (2/2) pass with refreshed visual and trace evidence. Batch 1 remains in progress.
+
 ## 2026-08-09 — ONEDAY-V3-COMMERCIAL-COMPLETION Batch 1 platform template foundation
 
 - Migrated Platform fixed-component template draft, preview and controlled publish to shared Admin Shell primitives and the canonical commercial token contract.

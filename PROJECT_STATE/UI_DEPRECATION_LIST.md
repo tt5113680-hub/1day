@@ -27,6 +27,7 @@
 - Platform Business Circles page-local purple header, recovery state, form and approval-button CSS are deprecated at `4ee4679`; circle acceptance must locate the fresh per-run business object rather than an accumulated historical record.
 - Platform Onboarding page-local purple header, form and completion message CSS are deprecated at `fc4d0bc`; the Batch 1 surface may claim only atomic basic initialization, not Batch 2 commercial READY.
 - Platform Templates page-local header, recovery panel, button, card and raw enum styling are deprecated at `96fbf4c`; fixed component values remain persisted API contracts while their UI labels use shared commercial-language mapping.
+- Platform Connectors page-local header, recovery panel, form/card/button and raw capability/status styling are deprecated at `e7e1d63`; connector definitions remain intent-only and may not imply external delivery.
 
 1. 新页面或新交互不得再新增页面级颜色、圆角、阴影、按钮或状态体系；必须使用 token 与 primitive。
 2. 每次迁移保留现有 Session、RBAC、tenant scope、幂等和审计行为，并通过关联回归。
