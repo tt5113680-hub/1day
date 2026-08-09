@@ -68,6 +68,8 @@ const labels: Record<string, string> = {
   review_tasks: '复核任务队列',
   create_task: '创建跟进任务',
   create_follow_up: '创建后续跟进',
+  timed_out: '已超时',
+  unpublished: '未发布',
   photo: '现场图片',
   screenshot: '页面截图',
   order: '结果已记录',
