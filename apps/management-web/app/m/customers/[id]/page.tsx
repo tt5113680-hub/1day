@@ -1,6 +1,16 @@
 'use client';
 import { SessionApiClient } from '@oneday/session-client';
-import { businessLabel, customerNameCopy, taskTitleCopy, timelineLabelCopy } from '@oneday/ui';
+import {
+  AdminPageHeader,
+  AppStatePanel,
+  Button,
+  Card,
+  StatusBadge,
+  businessLabel,
+  customerNameCopy,
+  taskTitleCopy,
+  timelineLabelCopy,
+} from '@oneday/ui';
 
 import Link from 'next/link';
 import { useCallback, useEffect, useState } from 'react';
@@ -60,23 +70,35 @@ export default function ManagementCustomerDetail({ params }: { params: Promise<{
     }
   }, [id]);
   useEffect(() => void load(), [load]);
-  if (state === 'loading') return <main className={styles.centered}>正在加载客户全链路…</main>;
+  if (state === 'loading')
+    return (
+      <main className={styles.centered}>
+        <AppStatePanel
+          kind="loading"
+          title="正在加载客户全链路"
+          description="正在汇总当前租户的来源、归属、任务与结果证据。"
+        />
+      </main>
+    );
   if (state === 'forbidden')
     return (
       <main className={styles.centered}>
-        <section>
-          <h1>无权查看客户详情</h1>
-          <p>请使用具备经营管理权限的账号。</p>
-        </section>
+        <AppStatePanel
+          kind="forbidden"
+          title="无权查看客户详情"
+          description="请使用具备经营管理权限的账号。"
+        />
       </main>
     );
   if (state === 'error')
     return (
       <main className={styles.centered}>
-        <section>
-          <h1>客户详情暂不可用</h1>
-          <button onClick={() => void load()}>重新加载</button>
-        </section>
+        <AppStatePanel
+          kind="error"
+          title="客户详情暂不可用"
+          description="客户经营链路未能完成加载。"
+          action={<Button onClick={() => void load()}>重新加载</Button>}
+        />
       </main>
     );
   if (!data) return null;
@@ -85,25 +107,26 @@ export default function ManagementCustomerDetail({ params }: { params: Promise<{
       <Link className={styles.back} href="/m/customers">
         ← 返回客户资产
       </Link>
-      <header>
-        <div>
-          <p>客户全链路 / {businessLabel(data.customer.segment)}</p>
-          <h1>{customerNameCopy(data.customer.displayName) ?? '客户'}</h1>
-          <span>
-            {data.customer.identities
-              .map((item) => `${item.type}: ${item.maskedValue}`)
-              .join(' · ') || '未绑定身份'}{' '}
-            · {data.tags.map((item) => item.label).join(' / ') || '无标签'}
-          </span>
-        </div>
-        <button onClick={() => void load()}>刷新</button>
-      </header>
+      <AdminPageHeader
+        eyebrow={`ONEDAY / 客户全链路 · ${businessLabel(data.customer.segment)}`}
+        title={customerNameCopy(data.customer.displayName) ?? '客户'}
+        description={`${
+          data.customer.identities
+            .map((item) => `${businessLabel(item.type)}：${item.maskedValue}`)
+            .join(' · ') || '未绑定身份'
+        } · ${data.tags.map((item) => item.label).join(' / ') || '无标签'}`}
+        actions={
+          <Button tone="secondary" onClick={() => void load()}>
+            刷新客户
+          </Button>
+        }
+      />
       {data.anomalies.length > 0 && (
         <section className={styles.alerts} aria-label="经营异常">
           {data.anomalies.map((item) => (
             <article key={`${item.type}-${item.title}`}>
-              <strong>{item.type}</strong>
-              <span>{item.title}</span>
+              <StatusBadge tone="warning">{businessLabel(item.type)}</StatusBadge>
+              <span>{businessLabel(item.title)}</span>
             </article>
           ))}
         </section>
@@ -160,7 +183,7 @@ export default function ManagementCustomerDetail({ params }: { params: Promise<{
           />
         </Panel>
       </section>
-      <section className={styles.timeline}>
+      <Card className={styles.timeline}>
         <h2>可审计时间线</h2>
         {data.timeline.length ? (
           data.timeline.map((item, index) => (
@@ -178,16 +201,16 @@ export default function ManagementCustomerDetail({ params }: { params: Promise<{
         ) : (
           <p>尚无可展示的链路事件。</p>
         )}
-      </section>
+      </Card>
     </main>
   );
 }
 function Panel({ title, children }: { title: string; children: React.ReactNode }) {
   return (
-    <section className={styles.panel}>
+    <Card className={styles.panel}>
       <h2>{title}</h2>
       {children}
-    </section>
+    </Card>
   );
 }
 function List({ items, empty }: { items: { title: string; detail: string }[]; empty: string }) {

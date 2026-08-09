@@ -2,37 +2,12 @@
   max-width: 1440px;
   margin: auto;
   padding: 40px 48px;
-  color: #111827;
+  color: var(--od-ink);
 }
-.page header {
-  display: flex;
-  justify-content: space-between;
-  gap: 24px;
-  align-items: start;
-}
-.page header p {
-  margin: 0;
-  color: #2563eb;
-  font-size: 13px;
-  font-weight: 700;
-}
-.page h1 {
-  margin: 8px 0;
-  font-size: 36px;
-}
-.page header span,
 .funnel p,
 .funnel small,
 .notice p {
-  color: #4b5563;
-}
-.page button {
-  padding: 11px 16px;
-  border: 0;
-  border-radius: 8px;
-  background: #2563eb;
-  color: #fff;
-  font-weight: 700;
+  color: var(--od-text-muted);
 }
 .funnel {
   display: grid;
@@ -43,10 +18,10 @@
 .confirmed,
 .inferred,
 .notice {
-  border: 1px solid #e5e7eb;
+  border: 1px solid var(--od-border);
   border-radius: 16px;
-  background: #fff;
-  box-shadow: 0 5px 16px #11182708;
+  background: var(--od-surface);
+  box-shadow: var(--od-shadow-low);
 }
 .confirmed,
 .inferred {
@@ -54,11 +29,11 @@
   padding: 20px;
 }
 .confirmed {
-  border-top: 4px solid #2563eb;
+  border-top: 4px solid var(--od-success);
 }
 .inferred {
-  border-top: 4px solid #a855f7;
-  background: #faf5ff;
+  border-top: 4px solid var(--od-warning);
+  background: color-mix(in srgb, var(--od-warning) 6%, var(--od-surface));
 }
 .funnel span,
 .funnel strong {
@@ -87,11 +62,6 @@
   padding: 24px;
   text-align: center;
 }
-.centered section {
-  padding: 32px;
-  border-radius: 16px;
-  background: #fff;
-}
 @media (max-width: 1100px) {
   .funnel {
     grid-template-columns: repeat(3, 1fr);
@@ -101,13 +71,7 @@
   .page {
     padding: 28px 20px;
   }
-  .page header {
-    flex-direction: column;
-  }
   .funnel {
     grid-template-columns: 1fr;
-  }
-  .page h1 {
-    font-size: 28px;
   }
 }

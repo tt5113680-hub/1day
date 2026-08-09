@@ -3,38 +3,15 @@
   min-height: 100vh;
   margin: auto;
   padding: 38px 48px 70px;
-  background: #f7f9fc;
-  color: #14213d;
+  color: var(--od-ink);
 }
 .back {
-  color: #2563eb;
+  color: var(--od-brand-700);
   font-weight: 700;
   text-decoration: none;
 }
-.page header {
-  display: flex;
-  justify-content: space-between;
-  gap: 20px;
+.page > :global(.od-page-header) {
   margin: 26px 0;
-}
-.page header p {
-  margin: 0;
-  color: #2563eb;
-  font-weight: 800;
-}
-.page h1 {
-  margin: 8px 0;
-  font-size: 34px;
-}
-.page header span {
-  color: #64748b;
-}
-.page button {
-  border: 1px solid #cbd5e1;
-  border-radius: 8px;
-  background: #fff;
-  padding: 10px 14px;
-  font-weight: 700;
 }
 .alerts {
   display: grid;
@@ -45,14 +22,14 @@
 .alerts article {
   display: grid;
   gap: 4px;
-  border: 1px solid #fed7aa;
-  border-left: 4px solid #f97316;
+  border: 1px solid color-mix(in srgb, var(--od-warning) 30%, var(--od-border));
+  border-left: 4px solid var(--od-warning);
   border-radius: 10px;
   padding: 13px;
-  background: #fff7ed;
+  background: color-mix(in srgb, var(--od-warning) 8%, var(--od-surface));
 }
 .alerts strong {
-  color: #9a3412;
+  color: var(--od-warning);
   text-transform: uppercase;
   font-size: 12px;
 }
@@ -63,10 +40,10 @@
 }
 .panel,
 .timeline {
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--od-border);
   border-radius: 14px;
-  background: #fff;
-  box-shadow: 0 8px 24px #1e293b0a;
+  background: var(--od-surface);
+  box-shadow: var(--od-shadow-low);
   padding: 20px;
 }
 .panel h2,
@@ -83,23 +60,23 @@
   display: grid;
   gap: 4px;
   padding: 12px 0;
-  border-top: 1px solid #eef2f7;
-  color: #475569;
+  border-top: 1px solid var(--od-border);
+  color: var(--od-text-muted);
   line-height: 1.45;
 }
 .panel li strong {
-  color: #14213d;
+  color: var(--od-ink);
   font-size: 14px;
 }
 .panel li span {
-  color: #64748b;
+  color: var(--od-text-muted);
   font-size: 13px;
 }
 .panel li:first-child {
   border-top: 0;
 }
 .empty {
-  color: #94a3b8;
+  color: var(--od-text-muted);
 }
 .timeline {
   margin-top: 16px;
@@ -109,11 +86,11 @@
   grid-template-columns: 175px 110px 1fr;
   gap: 12px;
   padding: 11px 0;
-  border-top: 1px solid #eef2f7;
+  border-top: 1px solid var(--od-border);
 }
 .timeline time,
 .timeline span {
-  color: #64748b;
+  color: var(--od-text-muted);
   font-size: 13px;
 }
 .timeline p {
@@ -125,17 +102,9 @@
   place-items: center;
   text-align: center;
 }
-.centered section {
-  padding: 32px;
-  border-radius: 16px;
-  background: #fff;
-}
 @media (max-width: 800px) {
   .page {
     padding: 28px 18px;
-  }
-  .page header {
-    flex-direction: column;
   }
   .grid {
     grid-template-columns: 1fr;

@@ -123,6 +123,8 @@ const labels: Record<string, string> = {
   visit: '到店沟通',
   message: '消息沟通',
   other: '其他跟进',
+  unassigned: '未分配负责人',
+  'No active customer owner': '当前客户未分配负责人',
 };
 
 /** Converts persisted operating enums into concise, stable commercial copy. */
