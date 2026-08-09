@@ -1,5 +1,6 @@
 'use client';
 import { SessionApiClient } from '@oneday/session-client';
+import { AdminPageHeader, AppStatePanel, Button, Card, StatusBadge } from '@oneday/ui';
 import { useCallback, useEffect, useState } from 'react';
 import styles from './page.module.css';
 type Role = {
@@ -14,6 +15,34 @@ type Permission = { code: string; name: string };
 const api = process.env.NEXT_PUBLIC_API_BASE_URL ?? 'http://127.0.0.1:3001';
 const sessionApi = new SessionApiClient(api);
 const sensitive = new Set(['tenant.manage', 'organization.manage', 'employee.manage']);
+const permissionNames: Record<string, string> = {
+  'tenant.read': '查看租户经营',
+  'tenant.manage': '管理租户经营',
+  'organization.read': '查看组织',
+  'organization.manage': '管理组织',
+  'employee.read': '查看员工',
+  'employee.manage': '管理员工',
+  'customer.read': '查看客户',
+  'customer.manage': '管理客户',
+  'task.read': '查看任务',
+  'task.manage': '管理任务',
+  'attribution.read': '查看归因',
+  'attribution.manage': '管理归因',
+  'ownership.approve': '审批客户归属',
+  'action.read': '查看外部行动',
+  'action.manage': '管理外部行动',
+  'evidence.read': '查看业务证据',
+  'evidence.manage': '管理业务证据',
+  'page.read': '查看页面模板',
+  'page.manage': '管理页面模板',
+  'workflow.read': '查看运营流程',
+  'workflow.manage': '管理运营流程',
+  'platform.read': '查看平台治理',
+  'platform.manage': '管理平台治理',
+  'circle.manage': '管理商圈',
+};
+const permissionCopy = (permission: Permission) =>
+  permission.name?.trim() || permissionNames[permission.code] || '受控业务权限';
 export default function RolesPermissionsPage() {
   const [state, setState] = useState<'loading' | 'ready' | 'forbidden' | 'error'>('loading'),
     [roles, setRoles] = useState<Role[]>([]),
@@ -71,68 +100,92 @@ export default function RolesPermissionsPage() {
     setConfirmed(false);
     await load();
   };
-  if (state === 'loading') return <main className={styles.centered}>正在加载角色与权限…</main>;
+  if (state === 'loading')
+    return (
+      <main className={styles.centered}>
+        <AppStatePanel
+          kind="loading"
+          title="正在加载角色与权限"
+          description="正在校验角色范围、成员影响与高风险权限。"
+        />
+      </main>
+    );
   if (state === 'forbidden')
     return (
       <main className={styles.centered}>
-        <section>
-          <h1>无权查看角色与权限</h1>
-          <p>请使用具备经营管理权限的账号。</p>
-        </section>
+        <AppStatePanel
+          kind="forbidden"
+          title="无权查看角色与权限"
+          description="请使用具备经营管理权限的账号。"
+        />
       </main>
     );
   if (state === 'error')
     return (
       <main className={styles.centered}>
-        <section>
-          <h1>权限数据暂不可用</h1>
-          <button onClick={() => void load()}>重新加载</button>
-        </section>
+        <AppStatePanel
+          kind="error"
+          title="权限数据暂不可用"
+          description="角色与权限数据未能完成加载，请重试。"
+          action={<Button onClick={() => void load()}>重新加载</Button>}
+        />
       </main>
     );
   return (
     <main className={styles.page}>
-      <header>
-        <div>
-          <p>ONEDAY / 角色与权限</p>
-          <h1>在变更前看清权限范围与成员影响</h1>
-          <span>高风险权限必须二次确认；最终校验、版本锁和审计均在服务端执行。</span>
-        </div>
-        <button onClick={() => void load()}>刷新</button>
-      </header>
+      <AdminPageHeader
+        eyebrow="ONEDAY / 商户角色与权限"
+        title="在变更前看清权限范围与成员影响"
+        description="高风险权限必须二次确认；最终校验、版本锁和审计均在服务端执行。"
+        actions={
+          <Button tone="secondary" onClick={() => void load()}>
+            刷新权限
+          </Button>
+        }
+      />
       {note && (
         <p role="status" className={styles.notice}>
           {note}
         </p>
       )}
       <section className={styles.grid}>
-        <section className={styles.panel}>
+        <Card className={styles.panel}>
           <h2>角色模板</h2>
           {roles.length ? (
             roles.map((role) => (
               <article className={styles.role} key={role.id}>
                 <div>
                   <strong>{role.name}</strong>
-                  <span>
-                    {role.code} · 影响 {role.member_count} 位成员
-                  </span>
-                  <p>{role.permissions.join('、') || '暂无权限'}</p>
+                  <span>影响 {role.member_count} 位成员</span>
+                  <p>
+                    {role.permissions
+                      .map((code) => {
+                        const permission = permissions.find((item) => item.code === code);
+                        return permission ? permissionCopy(permission) : '受控业务权限';
+                      })
+                      .join('、') || '暂无权限'}
+                  </p>
                 </div>
-                <button
+                <Button
+                  tone="secondary"
                   onClick={() => setSelected({ ...role, permissions: [...role.permissions] })}
                 >
                   查看与变更
-                </button>
+                </Button>
               </article>
             ))
           ) : (
-            <p>暂无角色。</p>
+            <AppStatePanel kind="empty" title="暂无角色" />
           )}
-        </section>
+        </Card>
         {selected ? (
-          <section className={styles.panel}>
+          <Card className={styles.panel}>
             <h2>变更 {selected.name}</h2>
-            <p>该变更将影响 {selected.member_count} 位成员。</p>
+            <p>
+              <StatusBadge tone={selected.member_count ? 'warning' : 'neutral'}>
+                影响 {selected.member_count} 位成员
+              </StatusBadge>
+            </p>
             <div className={styles.permissions}>
               {permissions.map((permission) => (
                 <label key={permission.code}>
@@ -142,7 +195,7 @@ export default function RolesPermissionsPage() {
                     onChange={() => toggle(permission.code)}
                   />
                   <span>
-                    {permission.code}
+                    {permissionCopy(permission)}
                     {sensitive.has(permission.code) ? '（高风险）' : ''}
                   </span>
                 </label>
@@ -167,17 +220,17 @@ export default function RolesPermissionsPage() {
               </label>
             )}
             <div className={styles.actions}>
-              <button onClick={() => setSelected(null)}>取消</button>
-              <button className={styles.primary} onClick={() => void save()}>
-                确认权限变更
-              </button>
+              <Button tone="secondary" onClick={() => setSelected(null)}>
+                取消
+              </Button>
+              <Button onClick={() => void save()}>确认权限变更</Button>
             </div>
-          </section>
+          </Card>
         ) : (
-          <section className={styles.panel}>
+          <Card className={styles.panel}>
             <h2>影响预览</h2>
             <p>选择角色即可审查权限范围、受影响成员数与高风险权限提示。</p>
-          </section>
+          </Card>
         )}
       </section>
     </main>
