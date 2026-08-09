@@ -1,5 +1,10 @@
 # LATEST_HANDOFF
 
+## CONSUMER-COMMERCIAL-HOME-V1 — 2026-08-09 storefront-header follow-up
+
+- Only the storefront header was restyled: the upper row now has a tracked LBS-location action on the left and a non-interactive future “business circle / OEM recommendation” placeholder on the right. The existing colors, store identity/status/share row, Banner and all lower sections are unchanged.
+- Verified at 390px in `evidence/CONSUMER-COMMERCIAL-HOME-V1/storefront-top-layout-390.png`, plus Consumer typecheck and production build. Final status remains `AWAITING_PRODUCT_OWNER_UI_ACCEPTANCE`.
+
 ## CONSUMER-COMMERCIAL-HOME-V1 — 2026-08-08 follow-up, still awaiting product-owner acceptance
 
 - Migration `047_store_service_platform_offers` persists a package-to-active-platform-action offer price. The Guomao local TEST ONLY package currently displays Meituan `¥19.90`, Douyin `¥21.90`, and partner `¥20.90`, with a lowest-price marker; third-party pages remain the final authority for price, stock and promotions.

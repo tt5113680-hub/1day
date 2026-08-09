@@ -13,11 +13,77 @@
 .topbar {
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto 36px;
+  grid-template-rows: 30px minmax(42px, auto);
   gap: 8px;
   align-items: center;
-  min-height: 72px;
-  padding: 12px 16px;
+  min-height: 100px;
+  padding: 8px 16px 12px;
   background: rgba(247, 244, 239, 0.96);
+}
+.topMeta {
+  display: grid;
+  grid-column: 1 / -1;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 8px;
+  align-items: center;
+  min-width: 0;
+  padding-bottom: 7px;
+  border-bottom: 1px solid #ece1da;
+}
+.lbsButton {
+  display: grid;
+  grid-template-columns: auto auto minmax(0, 1fr);
+  gap: 4px;
+  align-items: center;
+  min-width: 0;
+  border: 0;
+  padding: 0;
+  color: #9a6757;
+  background: transparent;
+  font: inherit;
+  text-align: left;
+}
+.lbsButton:disabled {
+  opacity: 0.55;
+}
+.lbsButton i,
+.futureRecommend i {
+  color: #b54935;
+  font-size: 14px;
+  font-style: normal;
+}
+.lbsButton span {
+  color: #8f5d36;
+  font-size: 10px;
+  font-weight: 800;
+}
+.lbsButton b {
+  overflow: hidden;
+  color: #9a6757;
+  font-size: 10px;
+  font-weight: 600;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.futureRecommend {
+  display: inline-grid;
+  grid-template-columns: auto auto;
+  column-gap: 4px;
+  align-items: center;
+  justify-items: end;
+  min-width: 0;
+  color: #9a6757;
+}
+.futureRecommend > span {
+  font-size: 10px;
+  font-weight: 800;
+  white-space: nowrap;
+}
+.futureRecommend small {
+  grid-column: 2;
+  color: #9a6757;
+  font-size: 8px;
+  white-space: nowrap;
 }
 .storeButton,
 .shareButton {

@@ -32,6 +32,12 @@
 
 `http://127.0.0.1:3201/c/stores/30000000-0000-4000-8000-000000000021?tenant=luckin-oneday-human-pilot`
 
+## Storefront header layout follow-up (2026-08-09)
+
+- Updated only the top storefront introduction layout. The upper-left `LBS 定位` action uses the existing tracked navigation behavior and displays the persisted store address; the upper-right `商圈 / OEM 推荐` is an explicitly non-interactive future placeholder.
+- The existing warm palette, store title/status/share row, Banner and all lower modules remain unchanged. Visual evidence: `storefront-top-layout-390.png`.
+- Consumer typecheck and production build passed. Status remains `AWAITING_PRODUCT_OWNER_UI_ACCEPTANCE`.
+
 ## Follow-up — package/platform prices and Consumer visual alignment (2026-08-08)
 
 - Migration `047_store_service_platform_offers` persists the relationship between one recommended package, one active store platform action and its offer/market price; it is not derived from a link label.

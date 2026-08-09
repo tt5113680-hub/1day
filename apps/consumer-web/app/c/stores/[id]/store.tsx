@@ -257,6 +257,23 @@ export default function StorePage({
       <div className={styles.shell}>
         <h1 className={styles.visuallyHidden}>{data.store.name}</h1>
         <header className={styles.topbar}>
+          <div className={styles.topMeta}>
+            <button
+              className={styles.lbsButton}
+              type="button"
+              onClick={openNavigation}
+              disabled={!navigationUrl}
+            >
+              <i>⌖</i>
+              <span>LBS 定位</span>
+              <b>{data.store.address ?? '定位当前门店'}</b>
+            </button>
+            <span className={styles.futureRecommend} aria-label="商圈或 OEM 品牌推荐，暂未开放">
+              <i>◇</i>
+              <span>商圈 / OEM 推荐</span>
+              <small>即将开放</small>
+            </span>
+          </div>
           <button
             className={styles.storeButton}
             type="button"

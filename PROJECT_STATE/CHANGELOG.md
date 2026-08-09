@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## 2026-08-09 — CONSUMER-COMMERCIAL-HOME-V1 storefront header layout
+
+- Reworked only the storefront introduction/header layout without changing its color system: LBS location is on the upper left and a non-interactive future “business circle / OEM recommendation” placeholder is on the upper right.
+- Retained the store title, business status, sharing action, banner and all lower storefront sections unchanged. Status remains `AWAITING_PRODUCT_OWNER_UI_ACCEPTANCE`.
+
 ## 2026-08-08 — CONSUMER-COMMERCIAL-HOME-V1 follow-up
 
 - Added migration 047 and local TEST ONLY package/platform prices so the storefront directly displays Meituan, Douyin and partner group-buy prices for the same recommended package.
