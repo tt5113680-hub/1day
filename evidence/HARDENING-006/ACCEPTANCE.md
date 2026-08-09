@@ -13,9 +13,11 @@ Repair the Docker workspace build ordering that prevented a clean `human-pilot` 
 - `git diff --check` passed.
 - `pnpm.cmd lint` passed.
 - `pnpm.cmd typecheck` passed: 18 packages.
-- An initial local image artifact check completed, but the subsequent clean Tencent Cloud build revealed that Session Client and UI need to be compiled before the Employee, Management and Platform applications; the database migration check also revealed a required Database build.
-- Fresh clean-image and migration verification is pending after adding these packages.
+- Clean Tencent Cloud build passed for image `oneday-v3-preview:b3af8e3` (`sha256:87393b77fc5d90fd4bd5effdbf5d69caff19febf890f0b3531fb57c5f6089609`).
+- Database migrations `001` through `047` passed against the isolated preview PostgreSQL database.
+- API health passed through both the local Nginx proxy and the public IP: `200 {"status":"ok","service":"oneday-api","database":"ready"}`.
+- The public Consumer home returned `200 text/html; charset=utf-8` at `http://49.232.124.130:18080/`.
 
 ## Result
 
-IN PROGRESS. No demo data or customer credentials were published.
+PASS. No demo data or customer credentials were published.

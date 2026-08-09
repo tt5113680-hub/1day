@@ -42,6 +42,6 @@ RUN pnpm --filter @oneday/auth build \
 
 随后在干净 Docker 环境完成镜像构建验证，再恢复部署。该修复需作为一个新的、可验证的任务处理。
 
-## Resolution follow-up（2026-08-09）
+## Resolution（2026-08-09）
 
-HARDENING-006 已恢复处理：服务器干净镜像构建还发现 Session Client、UI 与 Database 包也须先构建。Dockerfile 已补齐该依赖阶段，正在进行新的干净构建/迁移验证。证据见 `evidence/HARDENING-006/ACCEPTANCE.md`。
+HARDENING-006 已完成：Dockerfile 已在 API、Worker 与 HUMAN-PILOT 之前构建 Auth、Events、Database、Session Client 和 UI 工作区包。腾讯云干净镜像构建、001-047 迁移、代理健康检查和外部 IP 检查均已通过。证据见 `evidence/HARDENING-006/ACCEPTANCE.md`。

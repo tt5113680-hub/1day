@@ -1,9 +1,9 @@
 # LATEST_HANDOFF
 
-## HARDENING-006 - Docker deployment build repair in progress
+## HARDENING-006 - Docker deployment build repaired
 
-- Docker targets now compile Auth, Events, Database, Session Client and UI packages in a shared dependency stage before API, Worker or HUMAN-PILOT compilation. Fresh server image/migration verification is in progress; evidence is in `evidence/HARDENING-006/ACCEPTANCE.md`.
-- The Consumer visual-acceptance task remains `AWAITING_PRODUCT_OWNER_UI_ACCEPTANCE`. No demo or customer data has been seeded.
+- Docker targets now compile Auth, Events, Database, Session Client and UI packages in a shared dependency stage before API, Worker or HUMAN-PILOT compilation. A clean Tencent Cloud image build, migrations 001-047 and external IP health/home checks passed; evidence is in `evidence/HARDENING-006/ACCEPTANCE.md`.
+- Consumer preview is available at `http://49.232.124.130:18080/`. The Consumer visual-acceptance task remains `AWAITING_PRODUCT_OWNER_UI_ACCEPTANCE`; no demo or customer data has been seeded.
 
 ## CONSUMER-COMMERCIAL-HOME-V1 — 2026-08-09 store-information-card follow-up
 
