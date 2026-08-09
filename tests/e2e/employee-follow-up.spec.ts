@@ -6,6 +6,8 @@ const db = 'postgresql://oneday:oneday_local_only@localhost:5434/oneday_v3_test'
   api = 'http://127.0.0.1:3063';
 let client: Client,
   token = '',
+  refreshToken = '',
+  accessExpiresAt = '',
   task = '';
 test.beforeAll(async () => {
   client = new Client({ connectionString: db });
@@ -52,20 +54,29 @@ test.beforeAll(async () => {
     body: JSON.stringify({ email, password: 'ChangeMe123!', tenantId: tenant }),
   });
   expect(r.status).toBe(201);
-  token = (await r.json()).accessToken;
+  const login = await r.json();
+  token = login.accessToken;
+  refreshToken = login.refreshToken;
+  accessExpiresAt = login.expiresAt;
 });
 test.afterAll(async () => client.end());
 test('employee records a real follow-up at 390px', async ({ page }) => {
-  await page.addInitScript((v) => sessionStorage.setItem('oneday.accessToken', v), token);
+  await page.addInitScript(
+    ({ accessToken, refreshToken, accessExpiresAt }) => {
+      sessionStorage.setItem('oneday.accessToken', accessToken);
+      sessionStorage.setItem('oneday.refreshToken', refreshToken);
+      sessionStorage.setItem('oneday.accessExpiresAt', accessExpiresAt);
+    },
+    { accessToken: token, refreshToken, accessExpiresAt },
+  );
   await page.goto(`/e/tasks/${task}/follow-up`);
   await page.getByLabel('原始文字记录').fill('Customer confirmed Friday visit.');
   await page.getByLabel('语音转写').fill('Voice note transcription.');
   await page.getByLabel('跟进总结').fill('Prepare the Friday visit.');
   await page.getByLabel('下一任务标题').fill('Prepare Friday visit');
   await page.getByLabel('下一任务时间').fill('2026-08-10T10:00');
-  await page.screenshot({
-    path: 'evidence/PAGE-E-004/employee-follow-up-mobile.png',
-    fullPage: true,
+  await page.locator('main').screenshot({
+    path: 'evidence/PAGE-E-004/employee-follow-up-mobile-v4.png',
   });
   await page.getByRole('button', { name: '保存跟进' }).click();
   await expect(page.getByRole('status')).toContainText('跟进已保存');
@@ -73,9 +84,10 @@ test('employee records a real follow-up at 390px', async ({ page }) => {
 });
 test('employee follow-up shows recovery without session', async ({ page }) => {
   await page.goto(`/e/tasks/${task}/follow-up`);
-  await expect(page.getByRole('heading', { name: '无法记录跟进' })).toBeVisible();
+  await expect(page).toHaveURL(/\/login/);
+  await expect(page.getByRole('heading', { name: '员工登录' })).toBeVisible();
   await page.screenshot({
-    path: 'evidence/PAGE-E-004/employee-follow-up-forbidden.png',
+    path: 'evidence/PAGE-E-004/employee-follow-up-forbidden-v2.png',
     fullPage: true,
   });
 });

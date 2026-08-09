@@ -116,6 +116,13 @@ const labels: Record<string, string> = {
   'platform.read': '查看平台治理',
   'platform.manage': '管理平台治理',
   'circle.manage': '管理商圈',
+  phone: '手机',
+  referral: '转介绍',
+  store: '门店来源',
+  call: '电话跟进',
+  visit: '到店沟通',
+  message: '消息沟通',
+  other: '其他跟进',
 };
 
 /** Converts persisted operating enums into concise, stable commercial copy. */

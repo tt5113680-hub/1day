@@ -55,7 +55,7 @@ test.beforeAll(async () => {
   const login = await r.json();
   token = login.accessToken;
   refreshToken = login.refreshToken;
-  accessExpiresAt = login.accessExpiresAt;
+  accessExpiresAt = login.expiresAt;
 });
 test.afterAll(async () => client.end());
 test('employee views profile and changes own notification setting at 390px', async ({ page }) => {

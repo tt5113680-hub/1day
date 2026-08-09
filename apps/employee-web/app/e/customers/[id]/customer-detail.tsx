@@ -1,5 +1,6 @@
 'use client';
 import { SessionApiClient } from '@oneday/session-client';
+import { AppStatePanel, Button, StatusBadge, businessLabel } from '@oneday/ui';
 
 import { useParams } from 'next/navigation';
 import { useCallback, useEffect, useState } from 'react';
@@ -53,39 +54,54 @@ export function CustomerDetail() {
   useEffect(() => {
     void load();
   }, [load]);
-  if (state === 'loading') return <main className={styles.centered}>正在加载客户详情…</main>;
+  if (state === 'loading')
+    return (
+      <main className={styles.centered}>
+        <AppStatePanel
+          kind="loading"
+          title="正在加载客户详情"
+          description="正在核验你的客户关系与任务范围。"
+        />
+      </main>
+    );
   if (state === 'forbidden')
     return (
       <main className={styles.centered}>
-        <section>
-          <h1>无法查看此客户</h1>
-          <p>仅可查看与自己归属、任务或贡献有关的客户。</p>
-          <a href="/e/workbench">返回工作台</a>
-        </section>
+        <AppStatePanel
+          kind="forbidden"
+          title="无法查看此客户"
+          description="仅可查看与自己归属、任务或贡献有关的客户。"
+        />
       </main>
     );
   if (state === 'error')
     return (
       <main className={styles.centered}>
-        <section>
-          <h1>客户详情暂不可用</h1>
-          <p>网络或服务连接出现问题。</p>
-          <button onClick={() => void load()}>重新加载</button>
-        </section>
+        <AppStatePanel
+          kind="error"
+          title="客户详情暂不可用"
+          description="网络或服务连接出现问题。"
+          action={<Button onClick={() => void load()}>重新加载</Button>}
+        />
       </main>
     );
   if (!data) return null;
   return (
     <main className={styles.page}>
       <header className={styles.header}>
-        <button className={styles.back} onClick={() => history.back()} aria-label="返回">
+        <Button
+          className={styles.back}
+          tone="quiet"
+          onClick={() => history.back()}
+          aria-label="返回"
+        >
           ←
-        </button>
+        </Button>
         <div>
           <p>ONEDAY / 我的客户</p>
           <h1>{data.customer.displayName}</h1>
         </div>
-        <span className={styles.badge}>客户摘要</span>
+        <StatusBadge tone="info">客户摘要</StatusBadge>
       </header>
       <section className={styles.hero}>
         <span>客户关系</span>
@@ -100,7 +116,7 @@ export function CustomerDetail() {
           <strong>
             {data.customer.identities.length
               ? data.customer.identities
-                  .map((item) => `${item.type} · ${item.maskedValue}`)
+                  .map((item) => `${businessLabel(item.type)} · ${item.maskedValue}`)
                   .join(' / ')
               : '暂无已验证身份'}
           </strong>
@@ -111,13 +127,20 @@ export function CustomerDetail() {
         <h2>来源与归属</h2>
         <p className={styles.card}>
           {data.sources.length
-            ? data.sources.map((item) => `${item.source_role} · ${item.source_type}`).join(' / ')
+            ? data.sources
+                .map(
+                  (item) =>
+                    `${businessLabel(item.source_role)} · ${businessLabel(item.source_type)}`,
+                )
+                .join(' / ')
             : '暂未记录来源'}
           <br />
           {data.ownerships.length
             ? data.ownerships
                 .map((item) =>
-                  item.isCurrentEmployee ? `我 · ${item.ownershipRole}` : item.ownershipRole,
+                  item.isCurrentEmployee
+                    ? `我 · ${businessLabel(item.ownershipRole)}`
+                    : businessLabel(item.ownershipRole),
                 )
                 .join(' / ')
             : '暂未分配归属'}
@@ -140,7 +163,7 @@ export function CustomerDetail() {
               <span>
                 <strong>{item.title}</strong>
                 <small>
-                  {item.status} · {when(item.dueAt)}
+                  {businessLabel(item.status)} · {when(item.dueAt)}
                 </small>
               </span>
               <a href={`/e/tasks/${item.id}`}>查看</a>

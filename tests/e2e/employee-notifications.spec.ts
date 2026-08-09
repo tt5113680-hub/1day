@@ -63,7 +63,7 @@ test.beforeAll(async () => {
   const login = await response.json();
   token = login.accessToken;
   refreshToken = login.refreshToken;
-  accessExpiresAt = login.accessExpiresAt;
+  accessExpiresAt = login.expiresAt;
 });
 
 test.afterAll(async () => client.end());

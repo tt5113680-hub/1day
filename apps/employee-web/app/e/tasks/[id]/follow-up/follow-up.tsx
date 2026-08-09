@@ -1,5 +1,6 @@
 'use client';
 import { SessionApiClient } from '@oneday/session-client';
+import { AppStatePanel, Button, StatusBadge, businessLabel } from '@oneday/ui';
 import { useParams } from 'next/navigation';
 import { useCallback, useEffect, useState } from 'react';
 import styles from '../task-detail.module.css';
@@ -85,37 +86,48 @@ export function FollowUp() {
       setBusy(false);
     }
   };
-  if (state === 'loading') return <main className={styles.centered}>正在准备跟进记录…</main>;
+  if (state === 'loading')
+    return (
+      <main className={styles.centered}>
+        <AppStatePanel
+          kind="loading"
+          title="正在准备跟进记录"
+          description="正在同步任务上下文与历史跟进。"
+        />
+      </main>
+    );
   if (state === 'forbidden')
     return (
       <main className={styles.centered}>
-        <section>
-          <h1>无法记录跟进</h1>
-          <p>仅可为分配给自己的任务记录跟进。</p>
-          <a href="/e/workbench">返回工作台</a>
-        </section>
+        <AppStatePanel
+          kind="forbidden"
+          title="无法记录跟进"
+          description="仅可为分配给自己的任务记录跟进。"
+        />
       </main>
     );
   if (state === 'error')
     return (
       <main className={styles.centered}>
-        <section>
-          <h1>跟进记录暂不可用</h1>
-          <button onClick={() => void load()}>重新加载</button>
-        </section>
+        <AppStatePanel
+          kind="error"
+          title="跟进记录暂不可用"
+          description="任务跟进数据未能完成加载。"
+          action={<Button onClick={() => void load()}>重新加载</Button>}
+        />
       </main>
     );
   return (
     <main className={styles.page}>
       <header className={styles.header}>
-        <button className={styles.back} onClick={() => history.back()}>
+        <Button className={styles.back} tone="quiet" onClick={() => history.back()}>
           ←
-        </button>
+        </Button>
         <div>
           <p>ONEDAY / 任务跟进</p>
           <h1>记录本次进展</h1>
         </div>
-        <span className={styles.badge}>可编辑总结</span>
+        <StatusBadge tone="info">可编辑总结</StatusBadge>
       </header>
       {message && (
         <p className={styles.feedback} role="status">
@@ -131,9 +143,9 @@ export function FollowUp() {
         <h2>本次动作</h2>
         <div className={styles.card}>
           {['call', 'visit', 'message', 'other'].map((x) => (
-            <button
+            <Button
               key={x}
-              className={action === x ? styles.complete : styles.back}
+              tone={action === x ? 'primary' : 'secondary'}
               onClick={() => setAction(x)}
             >
               {
@@ -144,7 +156,7 @@ export function FollowUp() {
                   >
                 )[x]
               }
-            </button>
+            </Button>
           ))}
         </div>
       </section>
@@ -195,7 +207,7 @@ export function FollowUp() {
               <span>
                 <strong>{x.summary ?? x.raw_note ?? x.voice_transcript}</strong>
                 <small>
-                  {x.action_type}
+                  {businessLabel(x.action_type)}
                   {x.next_task_id ? ' · 已创建下一任务' : ''}
                 </small>
               </span>
@@ -207,9 +219,9 @@ export function FollowUp() {
         )}
       </section>
       <footer className={styles.footer}>
-        <button className={styles.complete} disabled={busy} onClick={() => void submit()}>
-          {busy ? '保存中…' : '保存跟进'}
-        </button>
+        <Button className={styles.complete} loading={busy} onClick={() => void submit()}>
+          保存跟进
+        </Button>
       </footer>
     </main>
   );

@@ -7,6 +7,8 @@ const tenant = '00000000-0000-4000-8000-000000000001';
 const api = 'http://127.0.0.1:3060';
 let client: Client;
 let token = '';
+let refreshToken = '';
+let accessExpiresAt = '';
 let customer = '';
 test.beforeAll(async () => {
   client = new Client({ connectionString: db });
@@ -69,19 +71,29 @@ test.beforeAll(async () => {
     body: JSON.stringify({ email, password: 'ChangeMe123!', tenantId: tenant }),
   });
   expect(login.status).toBe(201);
-  token = (await login.json()).accessToken;
+  const session = await login.json();
+  token = session.accessToken;
+  refreshToken = session.refreshToken;
+  accessExpiresAt = session.expiresAt;
 });
 test.afterAll(async () => client.end());
 test('employee views a related customer detail at 390px', async ({ page }) => {
-  await page.addInitScript((value) => sessionStorage.setItem('oneday.accessToken', value), token);
+  await page.addInitScript(
+    ({ accessToken, refreshToken, accessExpiresAt }) => {
+      sessionStorage.setItem('oneday.accessToken', accessToken);
+      sessionStorage.setItem('oneday.refreshToken', refreshToken);
+      sessionStorage.setItem('oneday.accessExpiresAt', accessExpiresAt);
+    },
+    { accessToken: token, refreshToken, accessExpiresAt },
+  );
   await page.goto(`/e/customers/${customer}`);
   await expect(page.getByRole('heading', { name: 'Browser Customer', exact: true })).toBeVisible();
   await expect(page.getByText('139****6789', { exact: false })).toBeVisible();
   await expect(page.getByText('# VIP', { exact: true })).toBeVisible();
   await expect(page.getByRole('link', { name: '查看' })).toBeVisible();
   await page.screenshot({
-    path: 'evidence/PAGE-E-003/employee-customer-detail-mobile.png',
-    fullPage: true,
+    path: 'evidence/PAGE-E-003/employee-customer-detail-mobile-v3.png',
+    fullPage: false,
   });
   await page.getByRole('link', { name: '查看' }).click();
   await expect(
@@ -92,9 +104,10 @@ test('employee customer detail has an access recovery state without a session', 
   page,
 }) => {
   await page.goto(`/e/customers/${customer}`);
-  await expect(page.getByRole('heading', { name: '无法查看此客户' })).toBeVisible();
+  await expect(page).toHaveURL(/\/login/);
+  await expect(page.getByRole('heading', { name: '员工登录' })).toBeVisible();
   await page.screenshot({
-    path: 'evidence/PAGE-E-003/employee-customer-detail-forbidden.png',
+    path: 'evidence/PAGE-E-003/employee-customer-detail-forbidden-v2.png',
     fullPage: true,
   });
 });
