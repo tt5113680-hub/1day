@@ -1,5 +1,13 @@
 'use client';
 import { SessionApiClient } from '@oneday/session-client';
+import {
+  AdminPageHeader,
+  AppStatePanel,
+  businessLabel,
+  Button,
+  Card,
+  StatusBadge,
+} from '@oneday/ui';
 
 import { useCallback, useEffect, useState } from 'react';
 import styles from './page.module.css';
@@ -23,16 +31,11 @@ type Suggestion = {
 const executionCopy = (item: Suggestion) => {
   const command = item.execution_result?.command;
   if (item.execution_status === 'executed' && command === 'create_task') {
-    const task = item.execution_result.task;
-    const receipt =
-      task && typeof task === 'object' && typeof (task as Record<string, unknown>).id === 'string'
-        ? `（任务回执：${(task as Record<string, unknown>).id}）`
-        : '';
-    return `已创建跟进任务${receipt}`;
+    return '已创建跟进任务，可在运营流程中继续查看。';
   }
   if (item.execution_status === 'manual_required')
     return '尚未执行，需要人工进入现有业务入口处理。';
-  return `执行状态：${item.execution_status}`;
+  return `执行状态：${businessLabel(item.execution_status)}`;
 };
 
 const api = process.env.NEXT_PUBLIC_API_BASE_URL ?? 'http://127.0.0.1:3001';
@@ -93,37 +96,51 @@ export default function AiSuggestions() {
     await load();
   };
 
-  if (state === 'loading') return <main className={styles.centered}>正在加载可执行建议…</main>;
+  if (state === 'loading')
+    return (
+      <main className={styles.centered}>
+        <AppStatePanel
+          kind="loading"
+          title="正在加载可执行建议"
+          description="正在校验建议来源、执行状态与经营权限。"
+        />
+      </main>
+    );
   if (state === 'forbidden') {
     return (
       <main className={styles.centered}>
-        <section>
-          <h1>无权查看 AI 建议</h1>
-          <p>请使用具备经营管理权限的账号。</p>
-        </section>
+        <AppStatePanel
+          kind="forbidden"
+          title="无权查看 AI 建议"
+          description="请使用具备经营管理权限的账号。"
+        />
       </main>
     );
   }
   if (state === 'error') {
     return (
       <main className={styles.centered}>
-        <section>
-          <h1>AI 建议暂不可用</h1>
-          <button onClick={() => void load()}>重新加载</button>
-        </section>
+        <AppStatePanel
+          kind="error"
+          title="AI 建议暂不可用"
+          description="建议数据未能完成加载，请重试。"
+          action={<Button onClick={() => void load()}>重新加载</Button>}
+        />
       </main>
     );
   }
   return (
     <main className={styles.page}>
-      <header>
-        <div>
-          <p>ONEDAY / AI 建议中心</p>
-          <h1>把经营判断变成可确认的下一步</h1>
-          <span>每条建议保留影响、动作类型、模型名称与版本；采纳不自动替代业务确认。</span>
-        </div>
-        <button onClick={() => void load()}>刷新</button>
-      </header>
+      <AdminPageHeader
+        eyebrow="ONEDAY / 商户经营智能建议"
+        title="把经营判断变成可确认的下一步"
+        description="每条建议保留影响、动作类型、模型名称与版本。只有白名单内的租户本地动作可以执行，其余仍需人工确认。"
+        actions={
+          <Button tone="secondary" onClick={() => void load()}>
+            刷新建议
+          </Button>
+        }
+      />
       {note && (
         <p className={styles.notice} role="status">
           {note}
@@ -133,63 +150,72 @@ export default function AiSuggestions() {
         {items.length ? (
           items.map((item) => (
             <article className={styles.card} key={item.id}>
-              <div className={styles.top}>
-                <span className={styles[item.status]}>{item.status}</span>
-                <small>
-                  {item.model_name} · {item.model_version}
-                </small>
-              </div>
-              <h2>{item.title}</h2>
-              <p>{item.reason}</p>
-              <dl>
-                <div>
-                  <dt>预期影响</dt>
-                  <dd>{item.impact}</dd>
+              <Card className={styles.cardBody}>
+                <div className={styles.top}>
+                  <StatusBadge tone={item.status === 'accepted' ? 'success' : 'info'}>
+                    {businessLabel(item.status)}
+                  </StatusBadge>
+                  <small>
+                    建议来源：{item.model_name} · {item.model_version}
+                  </small>
                 </div>
-                <div>
-                  <dt>建议动作</dt>
-                  <dd>{item.action_type}</dd>
-                </div>
-              </dl>
-              {item.status === 'accepted' && (
-                <p data-testid="ai-execution-status">{executionCopy(item)}</p>
-              )}
-              {item.feedback && <p className={styles.feedback}>反馈：{item.feedback}</p>}
-              <div className={styles.feedbackForm}>
-                <label htmlFor={`feedback-${item.id}`}>反馈</label>
-                <input
-                  id={`feedback-${item.id}`}
-                  aria-invalid={Boolean(fieldError[item.id])}
-                  aria-describedby={fieldError[item.id] ? `feedback-error-${item.id}` : undefined}
-                  value={feedback[item.id] ?? ''}
-                  maxLength={500}
-                  onChange={(event) =>
-                    setFeedback((values) => ({ ...values, [item.id]: event.target.value }))
-                  }
-                  placeholder="输入采纳后的观察或未采纳原因"
-                />
-                {fieldError[item.id] && (
-                  <p id={`feedback-error-${item.id}`} className={styles.fieldError}>
-                    {fieldError[item.id]}
-                  </p>
+                <h2>{item.title}</h2>
+                <p>{item.reason}</p>
+                <dl>
+                  <div>
+                    <dt>预期影响</dt>
+                    <dd>{item.impact}</dd>
+                  </div>
+                  <div>
+                    <dt>建议动作</dt>
+                    <dd>{businessLabel(item.action_type)}</dd>
+                  </div>
+                </dl>
+                {item.status === 'accepted' && (
+                  <p data-testid="ai-execution-status">{executionCopy(item)}</p>
                 )}
-              </div>
-              <footer>
-                <button
-                  disabled={item.status !== 'pending'}
-                  onClick={() => void update(item, 'accept')}
-                >
-                  采纳建议
-                </button>
-                <button onClick={() => void update(item, 'feedback')}>记录反馈</button>
-              </footer>
+                {item.feedback && <p className={styles.feedback}>反馈：{item.feedback}</p>}
+                <div className={styles.feedbackForm}>
+                  <label htmlFor={`feedback-${item.id}`}>反馈</label>
+                  <input
+                    id={`feedback-${item.id}`}
+                    aria-invalid={Boolean(fieldError[item.id])}
+                    aria-describedby={fieldError[item.id] ? `feedback-error-${item.id}` : undefined}
+                    value={feedback[item.id] ?? ''}
+                    maxLength={500}
+                    onChange={(event) =>
+                      setFeedback((values) => ({ ...values, [item.id]: event.target.value }))
+                    }
+                    placeholder="输入采纳后的观察或未采纳原因"
+                  />
+                  {fieldError[item.id] && (
+                    <p id={`feedback-error-${item.id}`} className={styles.fieldError}>
+                      {fieldError[item.id]}
+                    </p>
+                  )}
+                </div>
+                <footer>
+                  <Button
+                    disabled={item.status !== 'pending'}
+                    onClick={() => void update(item, 'accept')}
+                  >
+                    采纳建议
+                  </Button>
+                  <Button tone="secondary" onClick={() => void update(item, 'feedback')}>
+                    记录反馈
+                  </Button>
+                </footer>
+              </Card>
             </article>
           ))
         ) : (
-          <section className={styles.empty}>
-            <h2>暂无建议</h2>
-            <p>当经营异常或可优化信号进入系统后，建议会在此处出现。</p>
-          </section>
+          <div className={styles.empty}>
+            <AppStatePanel
+              kind="empty"
+              title="暂无建议"
+              description="当经营异常或可优化信号进入系统后，建议会在此处出现。"
+            />
+          </div>
         )}
       </section>
     </main>

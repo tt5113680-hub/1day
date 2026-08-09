@@ -44,10 +44,11 @@ test('manager confirms an AI suggestion and records traceable feedback', async (
   );
   const executedCard = page.locator('article', { hasText: executedTitle });
   await expect(executedCard.getByTestId('ai-execution-status')).toContainText('已创建跟进任务');
-  await expect(executedCard.getByTestId('ai-execution-status')).toContainText(executedTaskId);
+  await expect(executedCard.getByTestId('ai-execution-status')).not.toContainText(executedTaskId);
   await card.getByLabel('反馈').fill('Confirmed by management review.');
   await card.getByRole('button', { name: '记录反馈' }).click();
   await expect(page.getByRole('status')).toContainText('反馈已记录');
+  await expect(page.getByRole('heading', { name: '把经营判断变成可确认的下一步' })).toBeVisible();
   await page.screenshot({
     path: 'evidence/PAGE-M-006/management-ai-suggestions-desktop.png',
     fullPage: false,
@@ -59,7 +60,7 @@ test('AI suggestion center recovers without a session', async ({ page }) => {
   await expect(page).toHaveURL('/login');
   await expect(page.getByRole('heading', { name: '管理端登录' })).toBeVisible();
   await page.screenshot({
-    path: 'evidence/PAGE-M-006/management-ai-suggestions-forbidden.png',
+    path: 'evidence/PAGE-M-006/management-ai-suggestions-forbidden-v2.png',
     fullPage: true,
   });
 });
