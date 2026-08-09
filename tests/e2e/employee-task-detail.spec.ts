@@ -7,6 +7,7 @@ const tenant = '00000000-0000-4000-8000-000000000001';
 const api = 'http://127.0.0.1:3057';
 let client: Client;
 let token = '';
+let refreshToken = '';
 let task = '';
 
 test.beforeAll(async () => {
@@ -72,12 +73,22 @@ test.beforeAll(async () => {
     body: JSON.stringify({ email, password: 'ChangeMe123!', tenantId: tenant }),
   });
   expect(login.status).toBe(201);
-  token = (await login.json()).accessToken;
+  ({ accessToken: token, refreshToken } = (await login.json()) as {
+    accessToken: string;
+    refreshToken: string;
+  });
 });
 test.afterAll(async () => client.end());
 
 test('employee handles task evidence and completion at 390px', async ({ page }) => {
-  await page.addInitScript((value) => sessionStorage.setItem('oneday.accessToken', value), token);
+  await page.addInitScript(
+    ({ accessToken, refresh }) => {
+      sessionStorage.setItem('oneday.accessToken', accessToken);
+      sessionStorage.setItem('oneday.refreshToken', refresh);
+      sessionStorage.setItem('oneday.accessExpiresAt', String(Date.now() + 30 * 60 * 1000));
+    },
+    { accessToken: token, refresh: refreshToken },
+  );
   await page.goto(`/e/tasks/${task}`);
   await expect(
     page.getByRole('heading', { name: 'Confirm browser evidence', exact: true }),
@@ -99,11 +110,10 @@ test('employee handles task evidence and completion at 390px', async ({ page }) 
   await expect(page.getByText('已完成', { exact: true })).toBeVisible();
 });
 
-test('employee task detail shows a safe access recovery state without a session', async ({
-  page,
-}) => {
+test('employee task detail redirects to secure sign-in without a session', async ({ page }) => {
   await page.goto(`/e/tasks/${task}`);
-  await expect(page.getByRole('heading', { name: '无法查看此任务' })).toBeVisible();
+  await expect(page).toHaveURL(/\/e\/login$/);
+  await expect(page.getByRole('heading', { name: '员工登录' })).toBeVisible();
   await page.screenshot({
     path: 'evidence/PAGE-E-002/employee-task-detail-forbidden.png',
     fullPage: true,
