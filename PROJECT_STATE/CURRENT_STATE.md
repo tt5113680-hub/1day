@@ -9,7 +9,7 @@
 - status: MATRIX_GAP_WAVE_1_PASS; MATRIX_GAP_WAVE_2_PASS; MG_F_NEXT
 - branch: hardening/COMMERCIAL-COMPLETION
 - executor: Cursor Agent (2026-08-10; see PROJECT_STATE/EXECUTOR_HANDOFF.md)
-- last_safe_commit: pending Wave 1+2 commit
+- last_safe_commit: 29df5f9 (Matrix gap Wave 1+2 PASS)
 - verified_matrix_gap_wave_2: PASS. XT-01 route inventory, MS-01 two-store isolation, XL-01 link safety, XT-02 light. See PROJECT_STATE/MATRIX_GAP_WAVE_2_ACCEPTANCE.md and evidence/MATRIX-GAP-WAVE-2/.
 - verified_matrix_gap_wave_1: PASS. Sync gateway SY-01/02, concurrent TP-02/SF-01/MB-02, WO-02 DLQ/replay, RC-01 recovery counts. See PROJECT_STATE/MATRIX_GAP_WAVE_1_ACCEPTANCE.md and evidence/MATRIX-GAP-WAVE-1/.
 - verified_storefront_module_renderer: PASS at source commit ec28727.
