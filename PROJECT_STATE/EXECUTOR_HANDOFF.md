@@ -3,35 +3,37 @@
 - recorded_at: 2026-08-10 Asia/Shanghai
 - prior_executor: Codex (stopped writing to `D:\ONEDAY_V3`)
 - current_executor: Cursor Agent (sole write executor until further notice)
+- autonomous_authorization: A–H full grant at 2026-08-10 (see `DECISION_REQUIRED.md`)
 
 ## Product authorization (owner confirmed)
 
 1. Cursor Agent replaces Codex as the only code-writing executor.
-2. Build in batch gates Batch 3 → Batch 4; no page-level patch TASKs.
-3. TASK-scoped commits allowed; no push unless explicitly requested.
-4. Undocumented product decisions → `BLOCKED_REPORT.md`, no guessing.
+2. Build in batch gates; no page-level patch TASKs.
+3. Auto-commit after verified gates; push `hardening/COMMERCIAL-COMPLETION` to origin allowed (no force-push / no main rewrite).
+4. Undocumented product freeze / public commercial claims → `BLOCKED_REPORT.md`.
 5. Thousand-enterprise faces = industry template + module whitelist + brand config; no arbitrary low-code/HTML injection.
-6. Design bar: information architecture, design system, config-driven UI, closed-loop traceability, honest capability boundaries (Alipay/Meituan/WeChat Work/Feishu class professionalism).
-7. Consumer bottom navigation: **fixed five tabs for transition**; data-driven “home + up to three industry channels + profile” remains Batch 4+ follow-up, not a blocker for the current rehearsal.
+6. Design bar: information architecture, design system, config-driven UI, closed-loop traceability, honest capability boundaries.
+7. Consumer bottom navigation: **fixed five tabs for transition**.
+8. After Batch 4 PASS: automatically start Storefront module-renderer unification, then matrix gap close-out.
+9. Local Docker/API/web/Worker/migrate/seed/deps and full test/evidence gates authorized; no Tencent Cloud this phase.
 
 ## Codex read-only handoff (verified)
 
 | Item | Verified fact |
 | ---- | ------------- |
 | Branch | `hardening/COMMERCIAL-COMPLETION` |
-| HEAD | `9dc4df5` — `fix(provisioning): seed published content placements` |
-| Working tree | clean |
+| HEAD at handoff | `9dc4df5` — `fix(provisioning): seed published content placements` |
+| Working tree at handoff | clean |
 | Remote | `origin` → `https://github.com/tt5113680-hub/1day.git` |
-| Upstream | not configured; local commits through `9dc4df5` not confirmed pushed |
 | Batch 3 | `BATCH_3_PASS` at source `ead41e4`; see `BATCH_3_ACCEPTANCE.md` |
-| Batch 4 | `IN_PROGRESS`; provisioning content-placement fix at `9dc4df5`; full clean-tenant rehearsal not yet PASS |
+| Batch 4 | `IN_PROGRESS`; clean-tenant rehearsal not yet PASS |
 | `.env*` in repo | none |
 | Tencent Cloud docs in repo | none |
 | External checkpoint | `D:\ONEDAY_V3_SAFE_CHECKPOINT\20260809-202946` |
 
 ## Current engineering focus
 
-**Batch 4 — clean-tenant commercial rehearsal (G5 / COMMERCIAL_ACCEPTANCE_MATRIX):**
+**Batch 4 — clean-tenant commercial rehearsal (G5):**
 
 Provision a brand-new tenant from zero (not the shared H-002/commercial simulation fixture), then prove in one isolated run:
 
@@ -42,13 +44,12 @@ Provision a brand-new tenant from zero (not the shared H-002/commercial simulati
 - Platform channel/circle discovery where approved
 - Cross-tenant isolation and tenant suspend/resume recovery
 
-## Known follow-ups (not Batch 3 regressions)
+## Post–Batch 4 (authorized by A)
 
-- Consumer storefront still contains transitional hard-coded banner/shortcut blocks in `store.tsx`; module-driven DIY depth is tracked separately and must not be patched page-by-page during Batch 4.
-- `LATEST_HANDOFF.md` historical sections below the current Batch 4 block are archived snapshots only.
+Storefront module renderer unification: Consumer must render from `storefront.modules`; remove transitional hard-coded Banner/shortcut arrays; Management module order/visibility must affect Consumer.
 
 ## Secrets and cloud
 
 - Do not store passwords or tokens in chat or Git.
-- Batch 4 local rehearsal uses Docker PostgreSQL and localhost services per `LOCAL_HUMAN_PILOT_RUNBOOK.md`.
-- GitHub push and Tencent Cloud deployment are out of scope until explicitly authorized.
+- Batch 4 local rehearsal uses Docker PostgreSQL and localhost services.
+- Tencent Cloud / public HTTPS out of scope (authorization G).
