@@ -50,6 +50,7 @@
 - The API returns only active store-linked external actions and the persisted `store_service_platform_offers` records for the selected service. Each purchase click preserves the existing tenant-scoped service-intent record before any configured external target is opened.
 - Verified: API typecheck/build; Consumer typecheck/build; focused service-detail HTTP acceptance `1/1`; focused mobile Playwright `2/2`. Visual evidence: `service-detail-mobile.png` and `service-detail-forbidden.png`.
 - Status remains `AWAITING_PRODUCT_OWNER_UI_ACCEPTANCE`; the page is not represented as a live third-party offer and platform price, stock and promotions remain authoritative on the destination platform.
+- Public TEST ONLY release verification: deployment release `64ce975` rebuilt the isolated ONEDAY API/Worker/Consumer containers on the Tencent Cloud preview and passed API health. A browser check of the public Guomao service URL confirmed the rendered product card, Meituan `¥19.90`, Douyin `¥21.90`, partner `¥20.90`, product details, purchase notes, store hours, benefits and the Meituan purchase action.
 
 ## Follow-up — package/platform prices and Consumer visual alignment (2026-08-08)
 
