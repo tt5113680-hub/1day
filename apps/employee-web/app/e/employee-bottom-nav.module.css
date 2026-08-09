@@ -7,20 +7,26 @@
   display: flex;
   justify-content: center;
   gap: clamp(14px, 7vw, 42px);
-  border-top: 1px solid #dbe3ef;
+  border-top: 1px solid var(--od-border);
   padding: 12px 10px max(12px, env(safe-area-inset-bottom));
   background: rgba(255, 255, 255, 0.97);
-  box-shadow: 0 -8px 20px rgba(15, 23, 42, 0.06);
+  box-shadow: 0 -8px 20px rgb(24 37 31 / 6%);
   backdrop-filter: blur(12px);
 }
 .nav a {
-  color: #334155;
+  display: grid;
+  min-width: 42px;
+  min-height: 42px;
+  place-items: center;
+  border-radius: var(--od-radius-sm);
+  color: var(--od-text-muted);
   font-size: 13px;
   font-weight: 700;
   text-decoration: none;
 }
-.nav a:first-child {
-  color: #2563eb;
+.nav a.active {
+  color: var(--od-brand-700);
+  background: var(--od-brand-100);
 }
 @media (min-width: 700px) {
   .nav {

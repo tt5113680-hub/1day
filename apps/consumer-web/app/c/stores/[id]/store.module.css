@@ -982,3 +982,30 @@
     border-bottom: 0;
   }
 }
+
+@media (min-width: 1024px) {
+  .page {
+    padding: 32px 24px 112px;
+    background: linear-gradient(135deg, #eee8e2, #f8f4ee 48%, #e6efe7);
+  }
+  .shell {
+    width: min(100%, 1320px);
+    min-height: calc(100vh - 144px);
+    border-radius: 30px;
+  }
+  .topbar {
+    grid-template-columns: minmax(0, 1fr) minmax(420px, .9fr);
+    min-height: 208px;
+    padding: 20px 32px;
+  }
+  .topMeta { grid-column: 1 / -1; }
+  .banner { min-height: 300px; margin: 0 24px; border-radius: 24px; overflow: hidden; }
+  .shortcutGrid { grid-template-columns: repeat(10, 1fr); gap: 10px; margin: 0 24px; border-radius: 0 0 20px 20px; }
+  .memberCard { margin: 28px 32px 12px; }
+  .section { padding: 24px 32px; }
+  .offerList { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .comparisonPackage { max-width: none; }
+  .storyList, .benefitList { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .storeInfo { margin: 24px 32px; }
+  .floatingConsult { max-width: 420px; margin-left: auto; margin-right: 32px; }
+}

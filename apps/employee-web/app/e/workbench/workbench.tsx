@@ -1,5 +1,6 @@
 'use client';
 import { SessionApiClient } from '@oneday/session-client';
+import { AppStatePanel, Button, MetricCard } from '@oneday/ui';
 
 import { useCallback, useEffect, useState } from 'react';
 import styles from './workbench.module.css';
@@ -89,26 +90,24 @@ export function Workbench() {
   if (state === 'loading')
     return (
       <main className={styles.centered}>
-        <p>正在汇总今天的行动…</p>
+        <AppStatePanel kind="loading" title="正在汇总今天的行动" description="正在同步你的任务与客户提醒。" />
       </main>
     );
   if (state === 'forbidden')
     return (
       <main className={styles.centered}>
-        <section>
-          <h1>需要员工登录</h1>
-          <p>请使用已授权的员工账号登录后，再打开工作台。</p>
-        </section>
+        <AppStatePanel kind="forbidden" title="需要员工登录" description="请使用已授权的员工账号登录后，再打开工作台。" />
       </main>
     );
   if (state === 'error')
     return (
       <main className={styles.centered}>
-        <section>
-          <h1>工作台暂时不可用</h1>
-          <p>网络或服务连接出现问题。</p>
-          <button onClick={() => void load()}>重新加载</button>
-        </section>
+        <AppStatePanel
+          kind="error"
+          title="工作台暂时不可用"
+          description="网络或服务连接出现问题。"
+          action={<Button onClick={() => void load()}>重新加载</Button>}
+        />
       </main>
     );
   if (!data) return null;
@@ -120,9 +119,9 @@ export function Workbench() {
           <h1>你好，{data.employee.displayName}</h1>
           <span>{data.employee.title ?? '员工'} · 所有行动仅显示你的任务范围</span>
         </div>
-        <button className={styles.refresh} onClick={() => void load()}>
+        <Button className={styles.refresh} tone="quiet" onClick={() => void load()}>
           刷新
-        </button>
+        </Button>
       </header>
       {message && (
         <p className={styles.feedback} role="status">
@@ -130,11 +129,7 @@ export function Workbench() {
         </p>
       )}
       <section className={styles.hero} aria-labelledby="today-title">
-        <div>
-          <p>今日任务</p>
-          <strong>{data.tasks.length}</strong>
-          <span>项待推进</span>
-        </div>
+        <MetricCard hint="项待推进" label="今日任务" value={data.tasks.length} />
         <p>优先完成有时限的客户动作，完成后会自动保留执行记录。</p>
       </section>
       <section className={styles.section} aria-labelledby="today-title">

@@ -6,13 +6,20 @@ import styles from './employee-bottom-nav.module.css';
 export function EmployeeBottomNav() {
   const pathname = usePathname();
   if (pathname === '/e/login') return null;
+  const items = [
+    { href: '/e/workbench', label: '工作台', matches: (path: string) => path === '/e/workbench' },
+    { href: '/e/leads', label: '客户', matches: (path: string) => path.startsWith('/e/leads') || path.startsWith('/e/customers') },
+    { href: '/e/workbench#today-title', label: '任务', matches: (path: string) => path.startsWith('/e/tasks') },
+    { href: '/e/notifications', label: '提醒', matches: (path: string) => path.startsWith('/e/notifications') },
+    { href: '/e/profile', label: '我的', matches: (path: string) => path.startsWith('/e/profile') || path.startsWith('/e/share') },
+  ];
   return (
     <nav className={styles.nav} aria-label="员工工作导航">
-      <a href="/e/workbench">工作台</a>
-      <a href="/e/leads">客户</a>
-      <a href="/e/workbench#today-title">任务</a>
-      <a href="/e/notifications">提醒</a>
-      <a href="/e/profile">我的</a>
+      {items.map((item) => (
+        <a className={item.matches(pathname) ? styles.active : undefined} href={item.href} key={item.label}>
+          {item.label}
+        </a>
+      ))}
     </nav>
   );
 }
