@@ -91,6 +91,11 @@ export class PlatformTenantService implements OnModuleDestroy {
           [status, context.userId, id],
         )
       ).rows[0];
+      if (status === 'suspended')
+        await q.query(
+          "update auth_sessions set status='revoked',revoked_at=now(),updated_at=now(),updated_by=$1 where tenant_id=$2 and status='active' and revoked_at is null and deleted_at is null",
+          [context.userId, id],
+        );
       const response = {
         ...updated,
         plan: setting.plan,

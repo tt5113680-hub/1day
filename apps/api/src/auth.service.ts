@@ -41,8 +41,8 @@ export class AuthService implements OnModuleDestroy {
     }
     if (!tenantId) throw new UnauthorizedException('AUTH_REQUIRED');
     const membership = await this.pool.query(
-      'select id from memberships where user_id = $1 and tenant_id = $2 and status = $3 and deleted_at is null',
-      [user.rows[0].id, tenantId, 'active'],
+      "select m.id from memberships m join tenants t on t.id=m.tenant_id and t.status='active' and t.deleted_at is null where m.user_id=$1 and m.tenant_id=$2 and m.status='active' and m.deleted_at is null",
+      [user.rows[0].id, tenantId],
     );
     if (membership.rowCount !== 1) throw new UnauthorizedException('AUTH_REQUIRED');
     return this.createSession(user.rows[0].id, tenantId, deviceName ?? null);
@@ -50,8 +50,8 @@ export class AuthService implements OnModuleDestroy {
 
   async refresh(refreshToken: string) {
     const session = await this.pool.query(
-      'select id, user_id, tenant_id, expires_at from auth_sessions where refresh_token_hash = $1 and revoked_at is null and status = $2 and deleted_at is null',
-      [hashRefreshToken(refreshToken), 'active'],
+      "select s.id,s.user_id,s.tenant_id,s.expires_at from auth_sessions s join tenants t on t.id=s.tenant_id and t.status='active' and t.deleted_at is null where s.refresh_token_hash=$1 and s.revoked_at is null and s.status='active' and s.deleted_at is null",
+      [hashRefreshToken(refreshToken)],
     );
     if (session.rowCount !== 1 || new Date(session.rows[0].expires_at).getTime() <= Date.now())
       throw new UnauthorizedException('AUTH_REQUIRED');
@@ -76,7 +76,7 @@ export class AuthService implements OnModuleDestroy {
     const claims = verifyAccessToken(accessToken, this.secret);
     if (!claims) throw new UnauthorizedException('AUTH_REQUIRED');
     const session = await this.pool.query(
-      "select 1 from auth_sessions where id=$1 and user_id=$2 and tenant_id=$3 and status='active' and revoked_at is null and expires_at>now() and deleted_at is null",
+      "select 1 from auth_sessions s join tenants t on t.id=s.tenant_id and t.status='active' and t.deleted_at is null where s.id=$1 and s.user_id=$2 and s.tenant_id=$3 and s.status='active' and s.revoked_at is null and s.expires_at>now() and s.deleted_at is null",
       [claims.sessionId, claims.sub, claims.tenantId],
     );
     if (session.rowCount !== 1) throw new UnauthorizedException('AUTH_REQUIRED');
