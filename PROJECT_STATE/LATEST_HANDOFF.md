@@ -2,7 +2,7 @@
 
 ## Current Batch 1 continuation
 
-- Base HEAD: `0bc1a0c`; all Platform core governance pages, the migrated Management operating views and the Employee workbench/task/lead-pool/notifications/nurture/profile surfaces now use the tokenized product foundation. Onboarding, template publication and connector authorization explicitly avoid falsely claiming Batch 2 commercial READY, Consumer Storefront activation or external delivery.
+- Base HEAD: `8f9b626`; all Platform core governance pages, the migrated Management operating views and the Employee workbench/task/lead-pool/notifications/nurture/profile/share surfaces now use the tokenized product foundation. Onboarding, template publication and connector authorization explicitly avoid falsely claiming Batch 2 commercial READY, Consumer Storefront activation or external delivery.
 - Current verified scope: active Admin navigation; unified Consumer/Employee/Management/Platform root loading, empty, error and permission surfaces; E/M/P session recovery and login styling; non-blank Consumer/Employee critical nested loading routes; integrated shell session controls; repeatable Consumer/Employee/Management/Platform visual captures; and a single design-token CSS source with typed-projection coverage. Employee workbench/task-detail, Management performance/attribution/AI/workflows/content/templates/organization/permissions/settings/connectors and all focused Platform suites pass, and affected production builds pass.
 - Next: migrate remaining Employee/Management core-page legacy styling, audit Consumer responsive core routes, and complete Batch 1 repository and commercial-chain regression gates. Do not declare Batch 1 pass yet.
 

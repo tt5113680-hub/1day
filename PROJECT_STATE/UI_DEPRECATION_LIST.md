@@ -43,6 +43,7 @@
 - Employee Notifications page-local header, recovery/summary/filter/card/button/status styling is deprecated at `e4ee7a5`; safe task deep links and idempotent mark-read behavior remain tenant-scoped.
 - Employee Nurture page-local header, recovery/filter/card/button/status styling is deprecated at `9f7f74b`; profile versioning and idempotent touchpoint/task writes remain tenant-scoped.
 - Employee Profile page-local header, recovery/card/button/chip styling and raw permission-code presentation are deprecated at `0bc1a0c`; employee, organization and store context remain explicit.
+- Employee Share page-local purple header, recovery/form/card/button/status styling is deprecated at `8f9b626`; QR generation, attribution/open counts and versioned revocation remain real service behavior.
 
 1. 新页面或新交互不得再新增页面级颜色、圆角、阴影、按钮或状态体系；必须使用 token 与 primitive。
 2. 每次迁移保留现有 Session、RBAC、tenant scope、幂等和审计行为，并通过关联回归。

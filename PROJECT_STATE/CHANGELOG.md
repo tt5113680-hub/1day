@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## 2026-08-09 — ONEDAY-V3-COMMERCIAL-COMPLETION Batch 1 employee share-tools foundation
+
+- Migrated Employee tracked share-code creation, QR presentation, expiry, selection, revocation and recovery states to shared Card/Button/StatusBadge/AppStatePanel primitives and the canonical token contract.
+- Preserved real QR generation, attribution/open counts, versioned revocation and inactive-code service rejection; mobile evidence avoids fixed-navigation full-page stitching artifacts.
+- Format, workspace lint, UI/Employee typecheck/build and real 390px create/QR/revoke/session browser suite (2/2) pass with refreshed visual and trace evidence. Batch 1 remains in progress.
+
 ## 2026-08-09 — ONEDAY-V3-COMMERCIAL-COMPLETION Batch 1 employee profile foundation
 
 - Migrated Employee identity, organization/store context, permission summary, notification preference and common tools to shared Card/Button/StatusBadge/AppStatePanel primitives and the canonical token contract.
