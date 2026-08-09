@@ -1,5 +1,13 @@
 'use client';
 import { SessionApiClient } from '@oneday/session-client';
+import {
+  AdminPageHeader,
+  AppStatePanel,
+  Button,
+  Card,
+  StatusBadge,
+  businessLabel,
+} from '@oneday/ui';
 
 import { useCallback, useEffect, useState } from 'react';
 import styles from './page.module.css';
@@ -88,41 +96,52 @@ export default function ChannelsPage() {
       setSaving(false);
     }
   };
-  if (state === 'loading') return <main className={styles.centered}>正在加载渠道经营数据…</main>;
+  if (state === 'loading')
+    return (
+      <main className={styles.centered}>
+        <AppStatePanel
+          kind="loading"
+          title="正在加载渠道经营数据"
+          description="正在汇总一级渠道、商户池与服务状态。"
+        />
+      </main>
+    );
   if (state === 'forbidden')
     return (
       <main className={styles.centered}>
-        <section>
-          <h1>无权查看平台渠道管理</h1>
-        </section>
+        <AppStatePanel kind="forbidden" title="无权查看平台渠道管理" />
       </main>
     );
   if (state === 'error')
     return (
       <main className={styles.centered}>
-        <section>
-          <h1>渠道管理暂不可用</h1>
-          <button onClick={() => void load()}>重新加载</button>
-        </section>
+        <AppStatePanel
+          kind="error"
+          title="渠道管理暂不可用"
+          description="网络或服务连接出现问题。"
+          action={<Button onClick={() => void load()}>重新加载</Button>}
+        />
       </main>
     );
   return (
     <main className={styles.page}>
-      <header className={styles.header}>
-        <div>
-          <p>ONEDAY / 平台渠道管理</p>
-          <h1>一级渠道、商户池与服务状态</h1>
-          <span>只管理一级渠道；商户开通进度和服务状态均以持久化记录为准。</span>
-        </div>
-        <button onClick={() => void load()}>刷新</button>
-      </header>
+      <AdminPageHeader
+        eyebrow="ONEDAY / 平台渠道管理"
+        title="一级渠道、商户池与服务状态"
+        description="只管理一级渠道；商户开通进度和服务状态均以持久化记录为准。"
+        actions={
+          <Button tone="secondary" onClick={() => void load()}>
+            刷新
+          </Button>
+        }
+      />
       {note && (
         <p role="status" className={styles.note}>
           {note}
         </p>
       )}
       <section className={styles.grid}>
-        <section className={styles.panel}>
+        <Card className={styles.panel}>
           <h2>建立一级渠道</h2>
           <label>
             渠道编码
@@ -163,10 +182,10 @@ export default function ChannelsPage() {
               value={form.onboardingStatus}
               onChange={(event) => setForm({ ...form, onboardingStatus: event.target.value })}
             >
-              <option value="invited">invited</option>
-              <option value="onboarding">onboarding</option>
-              <option value="active">active</option>
-              <option value="paused">paused</option>
+              <option value="invited">已邀请</option>
+              <option value="onboarding">开通中</option>
+              <option value="active">有效</option>
+              <option value="paused">已暂停</option>
             </select>
           </label>
           <label>
@@ -176,32 +195,38 @@ export default function ChannelsPage() {
               value={form.serviceStatus}
               onChange={(event) => setForm({ ...form, serviceStatus: event.target.value })}
             >
-              <option value="pending">pending</option>
-              <option value="ready">ready</option>
-              <option value="degraded">degraded</option>
-              <option value="blocked">blocked</option>
+              <option value="pending">待确认</option>
+              <option value="ready">已就绪</option>
+              <option value="degraded">服务降级</option>
+              <option value="blocked">已阻断</option>
             </select>
           </label>
-          <button disabled={saving || !data.merchantPool.length} onClick={() => void create()}>
-            {saving ? '正在创建…' : '创建渠道并纳入商户'}
-          </button>
-        </section>
-        <section className={styles.panel}>
+          <Button
+            disabled={!data.merchantPool.length}
+            loading={saving}
+            onClick={() => void create()}
+          >
+            创建渠道并纳入商户
+          </Button>
+        </Card>
+        <Card className={styles.panel}>
           <h2>可开通商户池</h2>
           {data.merchantPool.length ? (
             data.merchantPool.map((merchant) => (
               <article className={styles.pool} key={merchant.tenantId}>
                 <strong>{merchant.name}</strong>
                 <span>{merchant.slug}</span>
-                <small>{merchant.status}</small>
+                <StatusBadge tone={merchant.status === 'active' ? 'success' : 'warning'}>
+                  {businessLabel(merchant.status)}
+                </StatusBadge>
               </article>
             ))
           ) : (
             <p>暂无可纳入渠道的已开通商户。</p>
           )}
-        </section>
+        </Card>
       </section>
-      <section className={styles.channels}>
+      <Card className={styles.channels}>
         <h2>已配置渠道</h2>
         {data.channels.length ? (
           data.channels.map((channel) => (
@@ -210,10 +235,12 @@ export default function ChannelsPage() {
                 <div>
                   <strong>{channel.name}</strong>
                   <span>
-                    {channel.code} · {channel.status}
+                    {channel.code} · {businessLabel(channel.status)}
                   </span>
                 </div>
-                <small>服务：{channel.serviceStatus}</small>
+                <StatusBadge tone={channel.serviceStatus === 'ready' ? 'success' : 'warning'}>
+                  服务：{businessLabel(channel.serviceStatus)}
+                </StatusBadge>
               </header>
               <div className={styles.merchants}>
                 {channel.merchants.map((merchant) => (
@@ -221,7 +248,8 @@ export default function ChannelsPage() {
                     <b>{merchant.name}</b>
                     <span>{merchant.slug}</span>
                     <small>
-                      开通 {merchant.onboardingStatus} · 服务 {merchant.serviceStatus}
+                      开通 {businessLabel(merchant.onboardingStatus ?? '')} · 服务{' '}
+                      {businessLabel(merchant.serviceStatus ?? '')}
                     </small>
                   </p>
                 ))}
@@ -231,7 +259,7 @@ export default function ChannelsPage() {
         ) : (
           <p className={styles.empty}>尚未建立一级渠道。创建后，渠道端可基于真实商户池开展运营。</p>
         )}
-      </section>
+      </Card>
     </main>
   );
 }
