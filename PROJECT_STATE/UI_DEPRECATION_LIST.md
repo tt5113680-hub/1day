@@ -25,6 +25,7 @@
 - Management employee-performance page-local header, recovery state, card and overdue-pill CSS are deprecated at `96300c9`; new Management operating views must use the Admin Shell primitives and the same refresh-session test contract.
 - Platform Channels page-local purple header, recovery state, form, merchant pool and lifecycle-pill CSS are deprecated at `077002d`; Platform governance screens must use Admin Shell primitives and commercial-language status mapping.
 - Platform Business Circles page-local purple header, recovery state, form and approval-button CSS are deprecated at `4ee4679`; circle acceptance must locate the fresh per-run business object rather than an accumulated historical record.
+- Platform Onboarding page-local purple header, form and completion message CSS are deprecated at `fc4d0bc`; the Batch 1 surface may claim only atomic basic initialization, not Batch 2 commercial READY.
 
 1. 新页面或新交互不得再新增页面级颜色、圆角、阴影、按钮或状态体系；必须使用 token 与 primitive。
 2. 每次迁移保留现有 Session、RBAC、tenant scope、幂等和审计行为，并通过关联回归。

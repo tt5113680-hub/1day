@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## 2026-08-09 — ONEDAY-V3-COMMERCIAL-COMPLETION Batch 1 platform onboarding foundation
+
+- Migrated the transaction-backed Platform tenant initializer to shared Admin Shell primitives and the canonical commercial token contract.
+- Kept tenant/organization/store/admin/template initialization unchanged and explicitly labels the result as basic initialization, reserving commercial READY for Batch 2 provisioning acceptance.
+- Format, workspace lint, Platform typecheck/build and real fresh-tenant 1440px browser suite (2/2) pass with refreshed visual and trace evidence. Batch 1 remains in progress.
+
 ## 2026-08-09 — ONEDAY-V3-COMMERCIAL-COMPLETION Batch 1 platform business-circle foundation
 
 - Migrated Platform business-circle recommendation, benefits and approval to shared Admin Shell primitives and the canonical commercial token contract.
