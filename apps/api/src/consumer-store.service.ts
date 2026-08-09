@@ -99,7 +99,7 @@ export class ConsumerStoreService implements OnModuleDestroy {
           [tenant.id, storeId],
         ),
         this.pool.query(
-          "select id,content_type,title,summary from store_content_items where tenant_id=$1 and store_id=$2 and status='active' and deleted_at is null order by rank desc,title",
+          "select i.id,i.kind as content_type,i.title,i.body as summary from content_store_placements p join content_items i on i.id=p.content_id and i.tenant_id=p.tenant_id and i.status='approved' and i.deleted_at is null where p.tenant_id=$1 and p.store_id=$2 and p.status='active' and p.deleted_at is null order by p.rank desc,i.title",
           [tenant.id, storeId],
         ),
         this.pool.query(
@@ -258,7 +258,7 @@ export class ConsumerStoreService implements OnModuleDestroy {
         [tenant.id, service.store_id],
       ),
       this.pool.query(
-        "select id,content_type,title,summary from store_content_items where tenant_id=$1 and store_id=$2 and status='active' and deleted_at is null order by rank desc,title",
+        "select i.id,i.kind as content_type,i.title,i.body as summary from content_store_placements p join content_items i on i.id=p.content_id and i.tenant_id=p.tenant_id and i.status='approved' and i.deleted_at is null where p.tenant_id=$1 and p.store_id=$2 and p.status='active' and p.deleted_at is null order by p.rank desc,i.title",
         [tenant.id, service.store_id],
       ),
       this.pool.query(

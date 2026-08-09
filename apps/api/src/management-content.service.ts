@@ -133,6 +133,45 @@ export class ManagementContentService implements OnModuleDestroy {
       q.release();
     }
   }
+  async place(c: OrganizationContext, id: string, b: Record<string, unknown>, r: string) {
+    if (!uuid.test(id) || !uuid.test(String(b.storeId)))
+      throw new BadRequestException('VALIDATION_ERROR');
+    const q = await this.pool.connect();
+    try {
+      await q.query('begin');
+      const item = (
+        await q.query(
+          "select id from content_items where id=$1 and tenant_id=$2 and status='approved' and deleted_at is null",
+          [id, c.tenantId],
+        )
+      ).rows[0];
+      const store = (
+        await q.query(
+          "select id from stores where id=$1 and tenant_id=$2 and status='active' and deleted_at is null",
+          [b.storeId, c.tenantId],
+        )
+      ).rows[0];
+      if (!item || !store) throw new BadRequestException('VALIDATION_ERROR');
+      const row = (
+        await q.query(
+          "insert into content_store_placements(id,tenant_id,content_id,store_id,rank,created_by,updated_by) values($1,$2,$3,$4,$5,$6,$6) on conflict(tenant_id,content_id,store_id) do update set status='active',rank=excluded.rank,deleted_at=null,updated_by=excluded.updated_by,updated_at=now(),version=content_store_placements.version+1 returning id,store_id,rank,status,version",
+          [randomUUID(), c.tenantId, id, store.id, Number.isInteger(b.rank) ? b.rank : 0, c.userId],
+        )
+      ).rows[0];
+      await this.audit(q, c, 'content.store_placed', id, r, row);
+      await q.query(
+        "insert into outbox_events(id,tenant_id,event_type,aggregate_type,aggregate_id,payload,correlation_id,trace_id,created_by,updated_by) values($1,$2,'content.store.placed.v1','content_item',$3,$4,$5,'batch-2-content',$6,$6)",
+        [randomUUID(), c.tenantId, id, row, uuid.test(r) ? r : randomUUID(), c.userId],
+      );
+      await q.query('commit');
+      return row;
+    } catch (e) {
+      await q.query('rollback');
+      throw e;
+    } finally {
+      q.release();
+    }
+  }
   private async audit(
     q: PoolClient,
     c: OrganizationContext,

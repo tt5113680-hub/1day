@@ -61,4 +61,17 @@ export class ManagementContentController {
       error: null,
     };
   }
+  @Post(':id/placements') async place(
+    @Param('id') id: string,
+    @Headers('authorization') a: string | undefined,
+    @Headers('x-tenant-context') t: string | undefined,
+    @Headers('x-request-id') r: string | undefined,
+    @Body() b: Record<string, unknown>,
+  ) {
+    return {
+      data: await this.content.place(await this.c(a, t, r), id, b, r!),
+      meta: { requestId: r },
+      error: null,
+    };
+  }
 }

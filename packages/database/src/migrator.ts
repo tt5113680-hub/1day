@@ -49,6 +49,7 @@ import * as commercialProvisioning from './migrations/048_commercial_provisionin
 import * as storefrontLifecycle from './migrations/049_storefront_lifecycle.js';
 import * as offerOperations from './migrations/050_offer_operations.js';
 import * as membershipCommercialLoop from './migrations/051_membership_commercial_loop.js';
+import * as contentStorePlacements from './migrations/052_content_store_placements.js';
 import * as storeServicePlatformOffers from './migrations/047_store_service_platform_offers.js';
 import type { Database } from './types.js';
 
@@ -106,6 +107,7 @@ const migrationProvider: MigrationProvider = {
       '049_storefront_lifecycle': storefrontLifecycle,
       '050_offer_operations': offerOperations,
       '051_membership_commercial_loop': membershipCommercialLoop,
+      '052_content_store_placements': contentStorePlacements,
     };
   },
 };

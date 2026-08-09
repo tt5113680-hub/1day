@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## 2026-08-10 - Batch 2 content placement truth source
+
+- Replaced Consumer's legacy `store_content_items` read path with approved `content_items` projected through tenant/store placements, with migration backfill for existing content.
+- Added a tenant-scoped Management placement command that accepts only approved content and active stores, retains audit/Outbox evidence and avoids a second editable content copy.
+
 ## 2026-08-10 - Batch 2 service/package/Offer operations
 
 - Added tenant-scoped Management catalog operations for services/packages and truthful platform Offers, including idempotency, optimistic versions, audit/Outbox receipts and a strict enabled HTTPS action boundary.
