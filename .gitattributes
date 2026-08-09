@@ -1,0 +1,22 @@
+# Deployment archive omits verification and planning artifacts. Runtime source remains unchanged.
+00_START export-ignore
+01_PRODUCT export-ignore
+02_ARCHITECTURE export-ignore
+03_DESIGN export-ignore
+04_DATA_API export-ignore
+05_AI_WORKFLOW export-ignore
+06_QUALITY_SECURITY export-ignore
+07_CODEX_RULES export-ignore
+08_TASKS export-ignore
+09_STATE_TEMPLATES export-ignore
+10_REFERENCE export-ignore
+PROJECT_STATE export-ignore
+docs export-ignore
+evidence export-ignore
+tests export-ignore
+FINAL_ACCEPTANCE_REPORT.md export-ignore
+MANIFEST.json export-ignore
+PRE_RELEASE_AUDIT_REPORT.md export-ignore
+AGENTS.md export-ignore
+playwright*.config.ts export-ignore
+vitest.config.mts export-ignore
