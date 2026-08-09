@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## 2026-08-09 — ONEDAY-V3-COMMERCIAL-COMPLETION Batch 1 platform security foundation
+
+- Migrated Platform risk signals, dispositions and security-event timeline to shared Admin Shell primitives and the canonical commercial token contract.
+- Converted internal severities, risk kinds, review notes, event actions and resource types to operator language while retaining complete request correlation identifiers and existing auditable disposition behavior.
+- Format, workspace lint, UI/Platform typecheck/build and real 1440px browser suite (2/2) pass with refreshed visual and trace evidence. All Platform core governance pages now share the product foundation; Batch 1 remains in progress.
+
 ## 2026-08-09 — ONEDAY-V3-COMMERCIAL-COMPLETION Batch 1 platform connector foundation
 
 - Migrated Platform connector definition, tenant authorization summary, health observation, limit and log views to shared Admin Shell primitives and the canonical commercial token contract.

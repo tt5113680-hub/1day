@@ -28,6 +28,7 @@
 - Platform Onboarding page-local purple header, form and completion message CSS are deprecated at `fc4d0bc`; the Batch 1 surface may claim only atomic basic initialization, not Batch 2 commercial READY.
 - Platform Templates page-local header, recovery panel, button, card and raw enum styling are deprecated at `96fbf4c`; fixed component values remain persisted API contracts while their UI labels use shared commercial-language mapping.
 - Platform Connectors page-local header, recovery panel, form/card/button and raw capability/status styling are deprecated at `e7e1d63`; connector definitions remain intent-only and may not imply external delivery.
+- Platform Security Audit page-local header, recovery panel, cards/buttons and raw audit-enum presentation are deprecated at `70e2b19`; operator-facing language must retain the full request correlation identifier.
 
 1. 新页面或新交互不得再新增页面级颜色、圆角、阴影、按钮或状态体系；必须使用 token 与 primitive。
 2. 每次迁移保留现有 Session、RBAC、tenant scope、幂等和审计行为，并通过关联回归。

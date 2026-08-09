@@ -2,9 +2,9 @@
 
 ## Current Batch 1 continuation
 
-- Base HEAD: `e7e1d63`; Platform onboarding, channel, business-circle, fixed-component template and capability-bounded connector governance are tokenized Admin Shell surfaces. Onboarding explicitly labels the current result as basic initialization rather than falsely claiming Batch 2 commercial READY.
-- Current verified scope: active Admin navigation; unified Consumer/Employee/Management/Platform root loading, empty, error and permission surfaces; E/M/P session recovery and login styling; non-blank Consumer/Employee critical nested loading routes; integrated shell session controls; repeatable Consumer/Employee/Management/Platform visual captures; and a single design-token CSS source with typed-projection coverage. Employee workbench/task-detail, Management performance and the five migrated Platform suites each pass 2/2, and affected production builds pass.
-- Next: migrate remaining Employee/Management/Platform core-page legacy styling and complete Batch 1 repository and commercial-chain regression gates. Do not declare Batch 1 pass yet.
+- Base HEAD: `70e2b19`; all Platform core governance pages now use the tokenized Admin Shell product foundation. Onboarding explicitly labels the current result as basic initialization rather than falsely claiming Batch 2 commercial READY.
+- Current verified scope: active Admin navigation; unified Consumer/Employee/Management/Platform root loading, empty, error and permission surfaces; E/M/P session recovery and login styling; non-blank Consumer/Employee critical nested loading routes; integrated shell session controls; repeatable Consumer/Employee/Management/Platform visual captures; and a single design-token CSS source with typed-projection coverage. Employee workbench/task-detail, Management performance and all focused Platform suites pass, and affected production builds pass.
+- Next: migrate remaining Employee/Management core-page legacy styling, audit Consumer responsive core routes, and complete Batch 1 repository and commercial-chain regression gates. Do not declare Batch 1 pass yet.
 
 - branch: `hardening/COMMERCIAL-COMPLETION`
 - HEAD: `42186a5e5d6b9aa8ac7edca4bc4636fe4d11fc18`
