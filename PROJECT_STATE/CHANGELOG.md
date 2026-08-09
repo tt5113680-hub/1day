@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## 2026-08-10 - ONEDAY-V3-COMMERCIAL-COMPLETION Batch 1 PASS
+
+- Accepted the unified Consumer, Employee, Management, Platform, Channel and Circle commercial UI foundation at source commit `1aecf81`.
+- Full format, lint, 18-workspace typecheck/build, 184 repository tests, 74 evidence checks, H-002 6/6, real commercial chain 2/2, platform governance chain 14/14 and four-terminal visual suite 3/3 pass.
+- Recorded the explicit Batch 2 boundary for Storefront template binding and continued automatically into one-click commercial tenant provisioning.
+
 ## 2026-08-10 — ONEDAY-V3-COMMERCIAL-COMPLETION Batch 1 Channel/Circle Admin modes
 
 - Added distinct restricted Admin Shell modes for Platform, Channel and Circle, each with explicit role context and navigation instead of exposing the platform-global menu to every route.

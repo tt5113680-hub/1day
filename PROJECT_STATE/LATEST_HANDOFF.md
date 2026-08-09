@@ -1,10 +1,10 @@
 # LATEST_HANDOFF
 
-## Current Batch 1 continuation
+## Current Batch 2 continuation
 
-- Base HEAD: `837c733`; all Consumer, Employee, Management, Platform, Channel and Circle core surfaces now use their role-appropriate tokenized product foundation. Browser fixtures use the real access/refresh/`expiresAt` session triple where authentication applies.
-- Current verified scope: Consumer is one responsive application at 390/768/1024/1440; Employee uses Mobile Shell; Management, Platform and restricted Channel/Circle modes use explicit Admin Shell identities and scoped navigation. The four-terminal visual suite is 3/3 PASS, Channel/Circle operating suites are 8/8 PASS, affected builds pass, and E/M/P page CSS has no hard-coded color literals.
-- Next: run the complete Batch 1 repository, H-002/session, tenant-isolation and four-role commercial-chain gates. Do not declare Batch 1 pass until every gate is recorded.
+- Batch 1: `BATCH_1_PASS` at source commit `1aecf81`; exact full-gate and visual evidence is recorded in `COMMERCIAL_UI_FOUNDATION_ACCEPTANCE.md`.
+- Verified foundation: Consumer is responsive at 390/768/1024/1440; Employee uses Mobile Shell; Management, Platform and restricted Channel/Circle modes use explicit Admin Shell identities and scoped navigation. Repository, session, tenant/RBAC isolation, commercial-chain and visual gates all pass.
+- Current: Batch 2 one-click tenant provisioning through verified commercial READY, with industry Storefront lifecycle, decoration, Offer operations, membership and ONE-CODE.
 
 - branch: `hardening/COMMERCIAL-COMPLETION`
 - HEAD: `42186a5e5d6b9aa8ac7edca4bc4636fe4d11fc18`
