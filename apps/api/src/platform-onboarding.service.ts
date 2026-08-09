@@ -321,6 +321,7 @@ export class PlatformOnboardingService implements OnModuleDestroy {
       actionId: randomUUID(),
       serviceId: randomUUID(),
       benefitId: randomUUID(),
+      contentId: randomUUID(),
     };
     await client.query(
       'insert into tenants(id,slug,name,created_by,updated_by) values($1,$2,$3,$4,$4)',
@@ -520,19 +521,17 @@ export class PlatformOnboardingService implements OnModuleDestroy {
       ],
     );
     await client.query(
-      "insert into store_content_items(id,tenant_id,store_id,content_type,title,summary,rank,created_by,updated_by) values($1,$2,$3,'story',$4,$5,100,$6,$6)",
-      [
-        randomUUID(),
-        ids.tenantId,
-        ids.storeId,
-        catalog.content.title,
-        catalog.content.summary,
-        context.userId,
-      ],
+      "insert into content_items(id,tenant_id,kind,title,body,status,created_by,updated_by) values($1,$2,'article',$3,$4,'approved',$5,$5)",
+      [ids.contentId, ids.tenantId, catalog.content.title, catalog.content.summary, context.userId],
+    );
+    await client.query(
+      'insert into content_store_placements(id,tenant_id,content_id,store_id,rank,created_by,updated_by) values($1,$2,$3,$4,100,$5,$5)',
+      [randomUUID(), ids.tenantId, ids.contentId, ids.storeId, context.userId],
     );
     await this.completeStep(client, runId, 'commercial_defaults', {
       serviceId: ids.serviceId,
       benefitId: ids.benefitId,
+      contentId: ids.contentId,
       memberPolicy: 'consent_required',
       employeeWorkspace: 'owner_store_manager',
     });
