@@ -36,6 +36,7 @@
 - Management Page Builder page-local header, recovery/card/button/canvas/status styling and raw target/module enums are deprecated at `c361021`; publication may not claim Consumer visibility before Storefront binding is implemented.
 - Management Organization/Employees page-local header, recovery/form/card/button/status styling and raw organization/status enums are deprecated at `55c0d05`; visual evidence must include both invitation and employee handoff sections.
 - Management Roles/Permissions page-local header, recovery/card/button/checkbox/risk styling and raw permission-code presentation are deprecated at `34d4090`; operator labels must not weaken server version-lock, confirmation or audit controls.
+- Management Settings page-local header, recovery/button/form-card styling and page-level colors are deprecated at `155c529`; native grouped inputs remain while save preserves version, idempotency, audit and event controls.
 
 1. 新页面或新交互不得再新增页面级颜色、圆角、阴影、按钮或状态体系；必须使用 token 与 primitive。
 2. 每次迁移保留现有 Session、RBAC、tenant scope、幂等和审计行为，并通过关联回归。

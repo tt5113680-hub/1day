@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## 2026-08-09 — ONEDAY-V3-COMMERCIAL-COMPLETION Batch 1 management settings foundation
+
+- Migrated Management reminder/escalation, approval, quiet-hours, tagging, allocation and brand rules to the shared Admin Shell foundation and canonical commercial token contract.
+- Retained accessible fieldset grouping and preserved the real permission, optimistic-version, idempotency, audit and event save boundary.
+- Format, workspace lint, Management typecheck/build and real 1440px persisted-save browser suite (2/2) pass with refreshed visual and trace evidence. Batch 1 remains in progress.
+
 ## 2026-08-09 — ONEDAY-V3-COMMERCIAL-COMPLETION Batch 1 management permission foundation
 
 - Migrated Management role templates, member impact, permission selection, high-risk confirmation and change-reason controls to shared Admin Shell primitives and the canonical commercial token contract.
