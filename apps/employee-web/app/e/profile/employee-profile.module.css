@@ -1,17 +1,21 @@
 :global(body) {
   margin: 0;
-  background: #f6f8fb;
-  color: #111827;
-  font-family: Arial, 'Microsoft YaHei', sans-serif;
+  background: var(--od-background);
+  color: var(--od-ink);
 }
 .page {
   max-width: 680px;
   margin: auto;
   padding: 28px 16px 48px;
 }
+.header {
+  display: flex;
+  justify-content: space-between;
+  gap: 18px;
+}
 .page header p {
   margin: 0;
-  color: #2563eb;
+  color: var(--od-brand-700);
   font-size: 13px;
   font-weight: 700;
 }
@@ -22,17 +26,17 @@
 .page header span,
 .card p,
 .card small {
-  color: #4b5563;
+  color: var(--od-text-muted);
   font-size: 14px;
   line-height: 1.5;
 }
 .card {
   margin-top: 14px;
   padding: 16px;
-  border: 1px solid #e5e7eb;
+  border: 1px solid var(--od-border);
   border-radius: 16px;
-  background: #fff;
-  box-shadow: 0 5px 16px #11182708;
+  background: var(--od-surface);
+  box-shadow: var(--od-shadow-low);
 }
 .card h2 {
   margin: 0 0 10px;
@@ -44,28 +48,10 @@
 .card small {
   display: block;
 }
-.card button {
-  min-height: 44px;
-  padding: 0 13px;
-  border: 0;
-  border-radius: 10px;
-  background: #2563eb;
-  color: #fff;
-  font: inherit;
-  font-weight: 700;
-}
 .chips {
   display: flex;
   flex-wrap: wrap;
   gap: 7px;
-}
-.chips span {
-  padding: 5px 8px;
-  border-radius: 999px;
-  background: #e0ecff;
-  color: #1d4ed8;
-  font-size: 12px;
-  font-weight: 700;
 }
 .tools {
   display: grid;
@@ -76,14 +62,14 @@
   justify-content: space-between;
   padding: 11px 0;
   border-bottom: 1px solid #eef2f7;
-  color: #2563eb;
+  color: var(--od-brand-700);
   font-weight: 700;
 }
 .feedback {
   padding: 12px;
   border-radius: 10px;
-  color: #166534;
-  background: #dcfce7;
+  color: var(--od-success);
+  background: var(--od-brand-100);
 }
 .centered {
   display: grid;
@@ -96,12 +82,12 @@
   max-width: 320px;
   padding: 28px;
   border-radius: 16px;
-  background: #fff;
-  box-shadow: 0 10px 30px #11182712;
+  background: var(--od-surface);
+  box-shadow: var(--od-shadow-mid);
 }
 .centered a,
 .centered button {
-  color: #2563eb;
+  color: var(--od-brand-700);
   font-weight: 700;
 }
 @media (max-width: 480px) {
@@ -110,5 +96,8 @@
   }
   .page h1 {
     font-size: 26px;
+  }
+  .header > button {
+    align-self: start;
   }
 }

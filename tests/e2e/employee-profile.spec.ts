@@ -5,7 +5,9 @@ const db = 'postgresql://oneday:oneday_local_only@localhost:5434/oneday_v3_test'
   tenant = '00000000-0000-4000-8000-000000000001',
   api = 'http://127.0.0.1:3079';
 let client: Client,
-  token = '';
+  token = '',
+  refreshToken = '',
+  accessExpiresAt = '';
 test.beforeAll(async () => {
   client = new Client({ connectionString: db });
   await client.connect();
@@ -50,26 +52,37 @@ test.beforeAll(async () => {
     body: JSON.stringify({ email, password: 'ChangeMe123!', tenantId: tenant }),
   });
   expect(r.status).toBe(201);
-  token = (await r.json()).accessToken;
+  const login = await r.json();
+  token = login.accessToken;
+  refreshToken = login.refreshToken;
+  accessExpiresAt = login.accessExpiresAt;
 });
 test.afterAll(async () => client.end());
 test('employee views profile and changes own notification setting at 390px', async ({ page }) => {
-  await page.addInitScript((v) => sessionStorage.setItem('oneday.accessToken', v), token);
+  await page.addInitScript(
+    ({ accessToken, refreshToken, accessExpiresAt }) => {
+      sessionStorage.setItem('oneday.accessToken', accessToken);
+      sessionStorage.setItem('oneday.refreshToken', refreshToken);
+      sessionStorage.setItem('oneday.accessExpiresAt', accessExpiresAt);
+    },
+    { accessToken: token, refreshToken, accessExpiresAt },
+  );
   await page.goto('/e/profile');
   await expect(page.getByRole('heading', { name: 'Mobile profile advisor' })).toBeVisible();
   await expect(page.getByText('Browser profile store')).toBeVisible();
   await page.getByRole('button', { name: '免打扰 8 小时' }).click();
   await expect(page.getByRole('status')).toHaveText('通知设置已更新。');
   await page.screenshot({
-    path: 'evidence/PAGE-E-009/employee-profile-mobile.png',
+    path: 'evidence/PAGE-E-009/employee-profile-mobile-v5.png',
     fullPage: false,
   });
 });
 test('employee profile has no-session recovery', async ({ page }) => {
   await page.goto('/e/profile');
-  await expect(page.getByRole('heading', { name: '无法查看个人空间' })).toBeVisible();
+  await expect(page).toHaveURL(/\/login/);
+  await expect(page.getByRole('heading', { name: '员工登录' })).toBeVisible();
   await page.screenshot({
-    path: 'evidence/PAGE-E-009/employee-profile-forbidden.png',
+    path: 'evidence/PAGE-E-009/employee-profile-forbidden-v2.png',
     fullPage: true,
   });
 });
