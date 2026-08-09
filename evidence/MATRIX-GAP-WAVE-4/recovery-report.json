@@ -1,0 +1,21 @@
+{
+  "recorded_at": "2026-08-09T21:39:35.103Z",
+  "result": "PASS",
+  "matrix_id": "RC-01",
+  "sourceDatabase": "oneday_v3_test",
+  "targetDatabase": "oneday_v3_test_rc01_1786311574927",
+  "tables": {
+    "tenants": 275,
+    "tenant_operating_settings": 175,
+    "connector_configs": 1,
+    "evidence_files": 22,
+    "tenant_provisioning_runs": 183,
+    "storefront_bindings": 174,
+    "member_benefit_ledger": 45,
+    "outbox_events": 1571,
+    "content_items": 202,
+    "content_store_placements": 196,
+    "membership_enrollments": 32,
+    "sync_notifications": 42
+  }
+}

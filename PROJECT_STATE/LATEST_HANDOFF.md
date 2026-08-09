@@ -5,14 +5,14 @@
 - Cursor Agent is the sole write executor as of 2026-08-10.
 - Owner rule: monitor usage; **warn before context fills**; front-load all owner cooperation; new window cold-starts from state files only.
 
-## Current task — matrix gap close-out (optional depth)
+## Current task — matrix gap close-out COMPLETE
 
 - branch: `hardening/COMMERCIAL-COMPLETION`
-- last_verified: MATRIX-GAP-WAVE-1/2/3 PASS
-- current_task: optional MG-G (M-02 / XT-02 depth / RC-01 rebuild) or stop with honest PARTIAL remainder
-- status: `MATRIX_GAP_WAVE_3_PASS`
+- last_verified: MATRIX-GAP-WAVE-1/2/3/4 PASS
+- current_task: matrix P0 close-out COMPLETE (26/26 COVERED)
+- status: `MATRIX_GAP_CLOSEOUT_COMPLETE`
 - blocker: null
-- progress: P0 COVERED 23/26 (~88%); waves 3/3 core (~90%); not 全部商用
+- progress: P0 COVERED 26/26; waves 4/4; not a public 全部商用 claim without human pilot
 
 ### Product anchors
 
@@ -25,6 +25,7 @@
 1. Wave 1 sync/DLQ/concurrency PASS.
 2. Wave 2 isolation XT/MS/XL PASS.
 3. Wave 3 MG-F MB/SE/P/CT/M/WO PASS.
+4. Wave 4 MG-G M-02/XT-02/RC-01 PASS — P0 matrix engineering close-out complete.
 
 ### New-window paste (if usage high)
 
@@ -36,13 +37,13 @@
 4. PROJECT_STATE/CURRENT_STATE.md
 5. git status
 
-唯一任务：ONEDAY-V3-COMMERCIAL-COMPLETION / matrix gap optional MG-G（Wave 1–3 已 PASS；剩余 PARTIAL：M-02、XT-02 depth、RC-01 rebuild）。
-已获 A–H 全自动授权：commit、push 分支、本地 Docker/测试；不做腾讯云。
-禁止页级补丁；对照 COMMERCIAL_ACCEPTANCE_MATRIX 与 MATRIX_GAP_INVENTORY。
-工作目录仅 D:\ONEDAY_V3。Usage 接近上限时提前通知换窗，并一次性前置需我配合的事项。
+状态：matrix gap Waves 1–4 PASS；P0 COVERED 26/26。
+下一人类事项：HUMAN-PILOT / product-owner UI / scoped P1（非工程矩阵缺口）。
+工作目录仅 D:\ONEDAY_V3。不做腾讯云。禁止页级补丁。
 ```
 
 ## Completed batches (reference)
 
-- Batch 1–4 PASS; Storefront module-renderer PASS
-- Matrix gap Wave 1–3 PASS — see acceptance docs under `PROJECT_STATE/`
+- Batch 1–4 PASS
+- Storefront module-renderer PASS
+- Matrix gap Waves 1–4 PASS — P0 26/26 COVERED

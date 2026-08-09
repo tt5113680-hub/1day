@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## 2026-08-10 - Matrix gap Wave 4 PASS
+
+- MG-G closes remaining P0 PARTIAL depth: M-02 Management→Consumer CRUD package, XT-02 share/sync/ETag tenant isolation, RC-01 live recovery clone with commercial object count report (content/membership/sync tables; terminate backends before template clone).
+- P0 minimum set COVERED 26/26. Not a 全部商用 claim. See `MATRIX_GAP_WAVE_4_ACCEPTANCE.md` and `evidence/MATRIX-GAP-WAVE-4/`.
+
 ## 2026-08-10 - Matrix gap Wave 3 PASS
 
 - MG-F closes remaining high-value PARTIAL P0: MB-01 enrollment/consent, SE-01 multi-device revoke, P-02 suspend session convergence, CT-01 no dual-write placements, M-01 store_manager API denials, WO-01 concurrent SKIP LOCKED consumption.

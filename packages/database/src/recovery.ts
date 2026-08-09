@@ -10,6 +10,10 @@ const SNAPSHOT_TABLES = [
   'storefront_bindings',
   'member_benefit_ledger',
   'outbox_events',
+  'content_items',
+  'content_store_placements',
+  'membership_enrollments',
+  'sync_notifications',
 ] as const;
 
 function databaseName(connectionString: string) {
@@ -57,6 +61,14 @@ export async function createRecoverySnapshot(
       targetDatabase,
     ]);
     if (existing.rowCount) throw new Error(`Recovery target already exists: ${targetDatabase}`);
+    // Template clone requires no other sessions on the source database.
+    await admin.query(
+      `select pg_terminate_backend(pid)
+         from pg_stat_activity
+        where datname = $1
+          and pid <> pg_backend_pid()`,
+      [sourceDatabase],
+    );
     await admin.query(
       `create database ${identifier(targetDatabase)} template ${identifier(sourceDatabase)}`,
     );

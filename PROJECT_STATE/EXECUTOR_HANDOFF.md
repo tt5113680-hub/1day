@@ -35,7 +35,7 @@
 
 **Matrix gap close-out (authorized by A):**
 
-Waves 1–3 PASS (sync, isolation, membership/session/content/RBAC/worker). Optional MG-G: M-02 packaging, XT-02 depth, RC-01 rebuild. Still no page-level patches. Not 全部商用. Tencent Cloud out of scope (G).
+Waves 1–4 PASS. P0 minimum set COVERED 26/26. Next human/pilot/P1 scope only — do not claim 全部商用. Tencent Cloud out of scope (G).
 
 ## Secrets and cloud
 
