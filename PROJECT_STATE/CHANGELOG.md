@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## 2026-08-09 — ONEDAY-V3-COMMERCIAL-COMPLETION Batch 1 platform template foundation
+
+- Migrated Platform fixed-component template draft, preview and controlled publish to shared Admin Shell primitives and the canonical commercial token contract.
+- Preserved target/module API values and versioned publication behavior while mapping persisted enums to stable commercial labels and making browser acceptance isolate its fresh per-run template.
+- Format, workspace lint, UI/Platform typecheck/build and real 1440px browser suite (2/2) pass with refreshed visual and trace evidence. Batch 1 remains in progress.
+
 ## 2026-08-09 — ONEDAY-V3-COMMERCIAL-COMPLETION Batch 1 platform onboarding foundation
 
 - Migrated the transaction-backed Platform tenant initializer to shared Admin Shell primitives and the canonical commercial token contract.
