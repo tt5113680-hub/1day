@@ -1,17 +1,22 @@
 :global(body) {
   margin: 0;
-  background: #f6f8fb;
-  color: #111827;
-  font-family: Arial, 'Microsoft YaHei', sans-serif;
+  background: var(--od-background);
+  color: var(--od-ink);
 }
 .page {
-  max-width: 680px;
+  width: min(100%, 760px);
   margin: auto;
   padding: 28px 16px 48px;
 }
+.header {
+  display: flex;
+  align-items: start;
+  justify-content: space-between;
+  gap: 18px;
+}
 .page header p {
   margin: 0;
-  color: #2563eb;
+  color: var(--od-brand-700);
   font-weight: 700;
   font-size: 13px;
 }
@@ -22,7 +27,7 @@
 }
 .page header span,
 .card p {
-  color: #4b5563;
+  color: var(--od-text-muted);
   font-size: 14px;
   line-height: 1.5;
 }
@@ -32,9 +37,6 @@
   justify-content: space-between;
   margin-top: 24px;
   padding: 14px 16px;
-  border: 1px solid #e5e7eb;
-  border-radius: 16px;
-  background: #fff;
 }
 .toolbar label {
   display: grid;
@@ -43,12 +45,13 @@
   font-weight: 700;
 }
 .toolbar select,
-.page button {
-  min-height: 44px;
+.assign select {
+  min-height: 40px;
   padding: 0 12px;
-  border: 1px solid #dbe4f0;
-  border-radius: 10px;
-  background: #fff;
+  border: 1px solid var(--od-border);
+  border-radius: var(--od-radius-sm);
+  background: var(--od-surface);
+  color: var(--od-ink);
   font: inherit;
 }
 .list {
@@ -61,10 +64,6 @@
   justify-content: space-between;
   gap: 12px;
   padding: 16px;
-  border: 1px solid #e5e7eb;
-  border-radius: 16px;
-  background: #fff;
-  box-shadow: 0 5px 16px #11182708;
 }
 .card h2 {
   margin: 8px 0 4px;
@@ -73,28 +72,6 @@
 .card p {
   margin: 0;
 }
-.high,
-.normal,
-.low,
-.state {
-  display: inline-block;
-  padding: 4px 8px;
-  border-radius: 999px;
-  font-size: 12px;
-  font-weight: 700;
-}
-.high {
-  color: #b45309;
-  background: #fef3c7;
-}
-.normal {
-  color: #1d4ed8;
-  background: #dbeafe;
-}
-.low {
-  color: #4b5563;
-  background: #e5e7eb;
-}
 .actions {
   display: flex;
   align-items: center;
@@ -102,49 +79,20 @@
   flex-wrap: wrap;
   justify-content: flex-end;
 }
-.actions button {
-  color: #2563eb;
-  font-weight: 700;
-  cursor: pointer;
-}
 .assign {
   display: grid;
   gap: 4px;
   min-width: 138px;
-  color: #4b5563;
+  color: var(--od-text-muted);
   font-size: 12px;
   font-weight: 700;
 }
-.assign select {
-  min-height: 40px;
-  border: 1px solid #dbe4f0;
-  border-radius: 10px;
-  padding: 0 8px;
-  background: #fff;
-  color: #1d4ed8;
-  font: inherit;
-}
-.actions .primary {
-  border: 0;
-  color: #fff;
-  background: #2563eb;
-}
-.state {
-  color: #4b5563;
-  background: #f3f4f6;
-}
 .feedback {
   padding: 12px;
-  border-radius: 10px;
-  color: #166534;
-  background: #dcfce7;
-}
-.empty {
-  padding: 28px;
-  text-align: center;
-  border: 1px dashed #cbd5e1;
-  border-radius: 16px;
-  color: #4b5563;
+  border: 1px solid color-mix(in srgb, var(--od-success) 24%, var(--od-border));
+  border-radius: var(--od-radius-sm);
+  color: var(--od-success);
+  background: var(--od-brand-100);
 }
 .centered {
   display: grid;
@@ -153,21 +101,15 @@
   padding: 24px;
   text-align: center;
 }
-.centered section {
-  max-width: 320px;
-  padding: 28px;
-  border-radius: 16px;
-  background: #fff;
-  box-shadow: 0 10px 30px #11182712;
-}
-.centered a,
-.centered button {
-  color: #2563eb;
-  font-weight: 700;
-}
 @media (max-width: 480px) {
   .page {
     padding: 24px 14px;
+  }
+  .header {
+    align-items: stretch;
+  }
+  .header > button {
+    align-self: start;
   }
   .card {
     flex-direction: column;
@@ -175,7 +117,7 @@
   .actions {
     justify-content: stretch;
   }
-  .actions button {
+  .actions > button {
     flex: 1;
   }
   .toolbar {

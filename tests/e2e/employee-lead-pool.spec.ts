@@ -7,6 +7,8 @@ const tenant = '00000000-0000-4000-8000-000000000001';
 const api = 'http://127.0.0.1:3069';
 let client: Client;
 let token = '';
+let refreshToken = '';
+let accessExpiresAt = '';
 let availableName = '';
 let assignedName = '';
 let ownerEmployee = '';
@@ -76,24 +78,35 @@ test.beforeAll(async () => {
     body: JSON.stringify({ email, password: 'ChangeMe123!', tenantId: tenant }),
   });
   expect(response.status).toBe(201);
-  token = (await response.json()).accessToken;
+  const login = await response.json();
+  token = login.accessToken;
+  refreshToken = login.refreshToken;
+  accessExpiresAt = login.accessExpiresAt;
 });
 
 test.afterAll(async () => client.end());
 
 test('employee can claim, allocate and convert live leads at 390px', async ({ page }) => {
-  await page.addInitScript((value) => sessionStorage.setItem('oneday.accessToken', value), token);
+  await page.addInitScript(
+    ({ accessToken, refreshToken, accessExpiresAt }) => {
+      sessionStorage.setItem('oneday.accessToken', accessToken);
+      sessionStorage.setItem('oneday.refreshToken', refreshToken);
+      sessionStorage.setItem('oneday.accessExpiresAt', accessExpiresAt);
+    },
+    { accessToken: token, refreshToken, accessExpiresAt },
+  );
   await page.goto('/e/leads');
   await expect(page.locator('main > header h1')).toBeVisible();
   await expect(page.getByText(availableName)).toBeVisible();
-  const availableCard = page.locator('article', { hasText: availableName });
+  const availableCard = page.locator('section.od-card', { hasText: availableName });
   await availableCard.locator('button').click();
   await expect(availableCard.locator('button')).toHaveCount(2);
-  const assignedCard = page.locator('article', { hasText: assignedName });
+  const assignedCard = page.locator('section.od-card', { hasText: assignedName });
   await assignedCard.locator('select').selectOption(ownerEmployee);
   await expect(assignedCard.locator('select')).toHaveCount(0);
+  await expect(page.getByText(assignedName)).toBeVisible();
   await page.screenshot({
-    path: 'evidence/PAGE-E-006/employee-lead-pool-mobile.png',
+    path: 'evidence/PAGE-E-006/employee-lead-pool-mobile-v3.png',
     fullPage: false,
   });
   await assignedCard.locator('button').first().click();
@@ -104,7 +117,7 @@ test('employee lead route renders login recovery without a session', async ({ pa
   await page.goto('/e/leads');
   await expect(page.locator('main h1')).toBeVisible();
   await page.screenshot({
-    path: 'evidence/PAGE-E-006/employee-lead-pool-forbidden.png',
+    path: 'evidence/PAGE-E-006/employee-lead-pool-forbidden-v2.png',
     fullPage: true,
   });
 });

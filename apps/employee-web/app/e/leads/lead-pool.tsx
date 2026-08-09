@@ -1,6 +1,6 @@
 'use client';
 import { SessionApiClient } from '@oneday/session-client';
-
+import { AppStatePanel, Button, Card, StatusBadge, businessLabel } from '@oneday/ui';
 import { useCallback, useEffect, useState } from 'react';
 import styles from './lead-pool.module.css';
 
@@ -25,9 +25,7 @@ export function LeadPool() {
   const [status, setStatus] = useState('');
   const [busy, setBusy] = useState<string | null>(null);
   const [message, setMessage] = useState('');
-  const headers = () => ({
-    'content-type': 'application/json',
-  });
+  const headers = () => ({ 'content-type': 'application/json' });
   const load = useCallback(async () => {
     if (!(await sessionApi.context())) return setState('forbidden');
     setState('loading');
@@ -85,39 +83,55 @@ export function LeadPool() {
       setBusy(null);
     }
   };
-  if (state === 'loading') return <main className={styles.centered}>正在加载获客池…</main>;
+  if (state === 'loading')
+    return (
+      <main className={styles.centered}>
+        <AppStatePanel
+          kind="loading"
+          title="正在加载获客池"
+          description="正在同步可领取客户与员工分配范围。"
+        />
+      </main>
+    );
   if (state === 'forbidden')
     return (
       <main className={styles.centered}>
-        <section>
-          <h1>无法访问获客池</h1>
-          <p>请使用具备客户权限的员工账号登录。</p>
-          <a href="/e/workbench">返回工作台</a>
-        </section>
+        <AppStatePanel
+          kind="forbidden"
+          title="无法访问获客池"
+          description="请使用具备客户权限的员工账号登录。"
+        />
       </main>
     );
   if (state === 'error')
     return (
       <main className={styles.centered}>
-        <section>
-          <h1>获客池暂不可用</h1>
-          <button onClick={() => void load()}>重新加载</button>
-        </section>
+        <AppStatePanel
+          kind="error"
+          title="获客池暂不可用"
+          description="客户分配数据未能完成加载。"
+          action={<Button onClick={() => void load()}>重新加载</Button>}
+        />
       </main>
     );
   return (
     <main className={styles.page}>
-      <header>
-        <p>ONEDAY / 获客池</p>
-        <h1>找到最值得立即跟进的客户</h1>
-        <span>领取后可转入跟进任务或养客队列，所有批量动作留存审计。</span>
+      <header className={styles.header}>
+        <div>
+          <p>ONEDAY / 员工获客</p>
+          <h1>找到最值得立即跟进的客户</h1>
+          <span>领取后可转入跟进任务或养客队列，所有批量动作留存审计。</span>
+        </div>
+        <Button tone="quiet" onClick={() => void load()}>
+          刷新
+        </Button>
       </header>
       {message && (
         <p className={styles.feedback} role="status">
           {message}
         </p>
       )}
-      <section className={styles.toolbar}>
+      <Card className={styles.toolbar}>
         <label>
           筛选状态
           <select aria-label="线索状态" value={status} onChange={(e) => setStatus(e.target.value)}>
@@ -129,39 +143,47 @@ export function LeadPool() {
           </select>
         </label>
         <strong>{leads.length} 条</strong>
-      </section>
+      </Card>
       <section className={styles.list}>
         {leads.length ? (
           leads.map((lead) => (
-            <article className={styles.card} key={lead.id}>
+            <Card className={styles.card} key={lead.id}>
               <div>
-                <span className={styles[lead.priority]}>
+                <StatusBadge
+                  tone={
+                    lead.priority === 'high'
+                      ? 'warning'
+                      : lead.priority === 'low'
+                        ? 'neutral'
+                        : 'info'
+                  }
+                >
                   {lead.priority === 'high'
                     ? '高优先级'
                     : lead.priority === 'low'
                       ? '低优先级'
                       : '常规'}
-                </span>
+                </StatusBadge>
                 <h2>{lead.customerName}</h2>
                 <p>
-                  来源：{lead.sourceType} ·{' '}
+                  来源：{businessLabel(lead.sourceType)} ·{' '}
                   {lead.openTasks ? `${lead.openTasks} 个待办` : '尚未创建任务'}
                 </p>
               </div>
               <div className={styles.actions}>
                 {lead.status === 'available' ? (
-                  <button disabled={busy === lead.id} onClick={() => void action(lead, 'claim')}>
-                    {busy === lead.id ? '处理中…' : '领取'}
-                  </button>
+                  <Button loading={busy === lead.id} onClick={() => void action(lead, 'claim')}>
+                    领取
+                  </Button>
                 ) : lead.isCurrentEmployee && lead.status === 'claimed' ? (
                   <>
-                    <button
+                    <Button
+                      tone="secondary"
                       onClick={() => void action(lead, 'convert', { destination: 'nurture' })}
                     >
                       转养客
-                    </button>
-                    <button
-                      className={styles.primary}
+                    </Button>
+                    <Button
                       onClick={() =>
                         void action(lead, 'convert', {
                           destination: 'follow_up',
@@ -171,7 +193,7 @@ export function LeadPool() {
                       }
                     >
                       转跟进
-                    </button>
+                    </Button>
                   </>
                 ) : lead.status === 'claimed' ? (
                   <label className={styles.assign}>
@@ -195,22 +217,23 @@ export function LeadPool() {
                     </select>
                   </label>
                 ) : (
-                  <span className={styles.state}>
+                  <StatusBadge tone="neutral">
                     {lead.status === 'follow_up'
                       ? '跟进中'
                       : lead.status === 'nurture'
                         ? '养客中'
                         : '已被领取'}
-                  </span>
+                  </StatusBadge>
                 )}
               </div>
-            </article>
+            </Card>
           ))
         ) : (
-          <div className={styles.empty}>
-            <strong>暂无符合条件的线索</strong>
-            <p>调整筛选条件，或等待新的客户来源进入获客池。</p>
-          </div>
+          <AppStatePanel
+            kind="empty"
+            title="暂无符合条件的线索"
+            description="调整筛选条件，或等待新的客户来源进入获客池。"
+          />
         )}
       </section>
     </main>
