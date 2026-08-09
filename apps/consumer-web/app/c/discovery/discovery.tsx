@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { AppStatePanel, Button } from '@oneday/ui';
 import styles from './discovery.module.css';
 
 export type Collection = {
@@ -23,16 +24,22 @@ export type Discovery = {
   locationRequired: boolean;
 };
 export function DiscoveryState({ kind }: { kind: 'forbidden' | 'error' }) {
-  const copy =
+  const copy: readonly [string, string] =
     kind === 'forbidden'
       ? ['发现入口暂不可用', '请确认链接或联系商家获取可访问的发现入口。']
       : ['发现内容加载失败', '网络连接不稳定，请稍后重新加载。'];
   return (
     <main className={styles.message}>
-      <section className={styles.messageCard}>
-        <h1>{copy[0]}</h1>
-        <p>{copy[1]}</p>
-      </section>
+      <AppStatePanel
+        kind={kind}
+        title={copy[0]}
+        description={copy[1]}
+        action={
+          kind === 'error' ? (
+            <Button onClick={() => window.location.reload()}>重新加载</Button>
+          ) : undefined
+        }
+      />
     </main>
   );
 }

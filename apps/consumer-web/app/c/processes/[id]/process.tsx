@@ -1,5 +1,6 @@
 'use client';
 
+import { AppStatePanel, Button } from '@oneday/ui';
 import styles from './process.module.css';
 
 export type ProcessData = {
@@ -23,17 +24,22 @@ const stamp = (value: string | null) =>
     : '待商家确认';
 
 export function ProcessState({ kind }: { kind: 'forbidden' | 'error' }) {
-  const copy =
+  const copy: readonly [string, string] =
     kind === 'forbidden'
       ? ['进度暂不可查看', '请使用商家发送的专属链接，或联系顾问重新获取。']
       : ['进度加载失败', '网络连接不稳定，请稍后重新打开该链接。'];
   return (
     <main className={styles.message}>
-      <section className={styles.messageCard}>
-        <h1>{copy[0]}</h1>
-        <p>{copy[1]}</p>
-        {kind === 'error' && <button onClick={() => window.location.reload()}>重新加载</button>}
-      </section>
+      <AppStatePanel
+        kind={kind}
+        title={copy[0]}
+        description={copy[1]}
+        action={
+          kind === 'error' ? (
+            <Button onClick={() => window.location.reload()}>重新加载</Button>
+          ) : undefined
+        }
+      />
     </main>
   );
 }

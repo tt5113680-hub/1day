@@ -43,21 +43,25 @@ export function ConsumerShell({
   active: ConsumerTab;
   children: ReactNode;
 }) {
+  const navigation = (className: string | undefined, label: string) => (
+    <nav className={className} aria-label={label}>
+      {tabs.map((tab) => (
+        <a
+          className={tab.key === active ? styles.active : undefined}
+          href={storeHref(context, tab.path, `tab_${tab.key}`)}
+          key={tab.key}
+        >
+          <i aria-hidden="true">{tab.icon}</i>
+          <span>{tab.label}</span>
+        </a>
+      ))}
+    </nav>
+  );
   return (
     <MobileShell>
+      {navigation(styles.desktopNav, '门店桌面主导航')}
       {children}
-      <nav className={styles.bottomNav} aria-label="门店主导航">
-        {tabs.map((tab) => (
-          <a
-            className={tab.key === active ? styles.active : undefined}
-            href={storeHref(context, tab.path, `tab_${tab.key}`)}
-            key={tab.key}
-          >
-            <i aria-hidden="true">{tab.icon}</i>
-            <span>{tab.label}</span>
-          </a>
-        ))}
-      </nav>
+      {navigation(styles.bottomNav, '门店主导航')}
     </MobileShell>
   );
 }

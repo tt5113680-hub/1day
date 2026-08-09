@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useMemo, useState, type ReactNode } from 'react';
+import { AppStatePanel, Button } from '@oneday/ui';
 import { ConsumerShell, storeHref } from '../../consumer-shell';
 import styles from './store.module.css';
 
@@ -71,20 +72,22 @@ export function StoreState({ kind }: { kind: 'error' | 'forbidden' }) {
   const forbidden = kind === 'forbidden';
   return (
     <main className={styles.message}>
-      <section className={styles.messageCard}>
-        <span className={styles.messageMark}>O</span>
-        <h1>{forbidden ? '门店暂不可访问' : '门店内容加载失败'}</h1>
-        <p>
-          {forbidden
+      <AppStatePanel
+        kind={forbidden ? 'forbidden' : 'error'}
+        title={forbidden ? '门店暂不可访问' : '门店内容加载失败'}
+        description={
+          forbidden
             ? '请确认链接有效，或返回附近页面选择其他门店。'
-            : '网络连接暂不可用，请稍后重新加载。'}
-        </p>
-        {!forbidden && (
-          <button type="button" onClick={() => window.location.reload()}>
-            重新加载
-          </button>
-        )}
-      </section>
+            : '网络连接暂不可用，请稍后重新加载。'
+        }
+        action={
+          forbidden ? undefined : (
+            <Button type="button" onClick={() => window.location.reload()}>
+              重新加载
+            </Button>
+          )
+        }
+      />
     </main>
   );
 }
@@ -401,172 +404,177 @@ export default function StorePage({
             )}
           </section>
 
-          <Section title="今日推荐" hint="门店精选 · 到店自取" anchor="offers">
-            <div className={styles.offerList}>
-              {data.services.length ? (
-                data.services.map((item, index) => (
-                  <a
-                    id={`offer-${item.id}`}
-                    href={`/c/services/${item.id}?${query(data, sourceValue, 'storefront_service', shareCode).toString()}&storeId=${encodeURIComponent(data.store.id)}`}
-                    className={styles.offer}
-                    key={item.id}
-                  >
-                    {data.store.imageUrl && (
-                      <img
-                        src={data.store.imageUrl}
-                        alt=""
-                        style={{ objectPosition: index % 2 ? '65% 50%' : '100% 50%' }}
-                      />
-                    )}
-                    <span className={styles.offerBody}>
-                      <em>{index === 0 ? '热销推荐' : '到店自取'}</em>
-                      <strong>{item.name}</strong>
-                      <p>{item.description ?? '门店已发布的到店服务'}</p>
-                      <small>
-                        {item.duration_minutes ? `${item.duration_minutes} 分钟` : '到店可用'} ·
-                        原价 {item.price_label ?? '以门店为准'}
-                      </small>
-                      <b>
-                        {item.price_label ?? '立即查看'} <i>›</i>
-                      </b>
-                    </span>
-                  </a>
-                ))
-              ) : (
-                <Empty>门店正在完善推荐内容。</Empty>
-              )}
-            </div>
-          </Section>
-
-          <Section title="全平台团购比价" hint="选好平台再前往下单" anchor="platforms">
-            {data.platformOffers.length || data.externalLinks.length ? (
-              <>
-                {groupedPlatformOffers.map((group) => {
-                  const lowest = Math.min(...group.offers.map((item) => item.offerPrice));
-                  return (
-                    <article className={styles.comparisonPackage} key={group.offers[0]?.serviceId}>
-                      <header>
-                        <span>门店推荐套餐</span>
-                        <strong>{group.serviceName}</strong>
-                        {group.servicePriceLabel && (
-                          <small>门店标价 {group.servicePriceLabel}</small>
-                        )}
-                      </header>
-                      <div className={styles.priceRows}>
-                        {group.offers.map((item) => (
-                          <a
-                            className={styles.priceRow}
-                            href={actionUrl(item.id, 'platform_compare_price')}
-                            key={item.offerId}
-                          >
-                            <span
-                              className={`${styles.platformMark} ${styles[`platform${item.platformType}`]}`}
-                            >
-                              {item.platformType === 'meituan'
-                                ? '团'
-                                : item.platformType === 'douyin'
-                                  ? '抖'
-                                  : '荐'}
-                            </span>
-                            <span className={styles.pricePlatform}>
-                              <strong>{item.title}</strong>
-                              <small>
-                                {item.marketPrice
-                                  ? `划线价 ${money(item.marketPrice)}`
-                                  : '平台推荐套餐'}
-                              </small>
-                            </span>
-                            <b className={styles.priceValue}>
-                              {item.offerPrice === lowest && <em>当前低价</em>}
-                              团购价 {money(item.offerPrice)}
-                            </b>
-                          </a>
-                        ))}
-                      </div>
-                    </article>
-                  );
-                })}
-                {!data.platformOffers.length && data.externalLinks.length ? (
-                  <div className={styles.platformList}>
-                    {data.externalLinks.map((item, index) => (
-                      <a
-                        className={styles.platform}
-                        href={actionUrl(item.id, 'platform_compare')}
-                        key={item.linkId}
-                      >
-                        <span
-                          className={`${styles.platformMark} ${styles[`platform${item.platformType}`]}`}
-                        >
-                          {item.platformType === 'meituan'
-                            ? '团'
-                            : item.platformType === 'douyin'
-                              ? '抖'
-                              : '荐'}
-                        </span>
-                        <span>
-                          <strong>{item.title}</strong>
-                          <p>{item.description ?? '前往对应平台查看'}</p>
-                        </span>
+          <div className={styles.desktopGrid}>
+            <Section title="今日推荐" hint="门店精选 · 到店自取" anchor="offers">
+              <div className={styles.offerList}>
+                {data.services.length ? (
+                  data.services.map((item, index) => (
+                    <a
+                      id={`offer-${item.id}`}
+                      href={`/c/services/${item.id}?${query(data, sourceValue, 'storefront_service', shareCode).toString()}&storeId=${encodeURIComponent(data.store.id)}`}
+                      className={styles.offer}
+                      key={item.id}
+                    >
+                      {data.store.imageUrl && (
+                        <img
+                          src={data.store.imageUrl}
+                          alt=""
+                          style={{ objectPosition: index % 2 ? '65% 50%' : '100% 50%' }}
+                        />
+                      )}
+                      <span className={styles.offerBody}>
+                        <em>{index === 0 ? '热销推荐' : '到店自取'}</em>
+                        <strong>{item.name}</strong>
+                        <p>{item.description ?? '门店已发布的到店服务'}</p>
+                        <small>
+                          {item.duration_minutes ? `${item.duration_minutes} 分钟` : '到店可用'} ·
+                          原价 {item.price_label ?? '以门店为准'}
+                        </small>
                         <b>
-                          {index === 0 ? '优先查看' : '去比价'} <i>›</i>
+                          {item.price_label ?? '立即查看'} <i>›</i>
                         </b>
-                      </a>
-                    ))}
-                  </div>
-                ) : null}
-              </>
-            ) : (
-              <Empty>门店暂未配置可跳转的平台入口。</Empty>
-            )}
-            <p className={styles.disclaimer}>价格、库存及最终优惠以第三方平台实际页面为准。</p>
-          </Section>
-
-          <Section title="门店活动" hint="只展示商家已发布内容" anchor="updates">
-            <div className={styles.storyList}>
-              {data.content.length ? (
-                data.content.map((item, index) => (
-                  <article className={styles.story} key={item.id}>
-                    {data.store.imageUrl && (
-                      <img
-                        src={data.store.imageUrl}
-                        alt=""
-                        style={{ objectPosition: index ? '40% 65%' : '75% 45%' }}
-                      />
-                    )}
-                    <span>
-                      <em>{item.content_type === 'story' ? '门店动态' : '今日推荐'}</em>
-                      <strong>{item.title}</strong>
-                      <p>{item.summary ?? '门店正在分享最新消息。'}</p>
-                      <small>LOCAL HUMAN PILOT · TEST ONLY</small>
-                    </span>
-                  </article>
-                ))
-              ) : (
-                <Empty>门店正在准备更多动态。</Empty>
-              )}
-            </div>
-          </Section>
-
-          <Section title="商圈权益" hint="国贸商圈的联合福利" anchor="benefits">
-            {data.benefits.length ? (
-              <div className={styles.benefitList}>
-                {data.benefits.map((item, index) => (
-                  <article className={styles.benefit} key={item.id}>
-                    <span>{index === 0 ? 'NEW' : 'PLUS'}</span>
-                    <strong>{item.title}</strong>
-                    <p>{item.description ?? '以门店实际配置为准'}</p>
-                    {consultHref ? (
-                      <a href={actionUrl(consultAction!.id, 'benefit_view')}>查看使用方式</a>
-                    ) : (
-                      <span>暂未开放</span>
-                    )}
-                  </article>
-                ))}
+                      </span>
+                    </a>
+                  ))
+                ) : (
+                  <Empty>门店正在完善推荐内容。</Empty>
+                )}
               </div>
-            ) : (
-              <Empty>当前暂无可领取的门店权益。</Empty>
-            )}
-          </Section>
+            </Section>
+
+            <Section title="全平台团购比价" hint="选好平台再前往下单" anchor="platforms">
+              {data.platformOffers.length || data.externalLinks.length ? (
+                <>
+                  {groupedPlatformOffers.map((group) => {
+                    const lowest = Math.min(...group.offers.map((item) => item.offerPrice));
+                    return (
+                      <article
+                        className={styles.comparisonPackage}
+                        key={group.offers[0]?.serviceId}
+                      >
+                        <header>
+                          <span>门店推荐套餐</span>
+                          <strong>{group.serviceName}</strong>
+                          {group.servicePriceLabel && (
+                            <small>门店标价 {group.servicePriceLabel}</small>
+                          )}
+                        </header>
+                        <div className={styles.priceRows}>
+                          {group.offers.map((item) => (
+                            <a
+                              className={styles.priceRow}
+                              href={actionUrl(item.id, 'platform_compare_price')}
+                              key={item.offerId}
+                            >
+                              <span
+                                className={`${styles.platformMark} ${styles[`platform${item.platformType}`]}`}
+                              >
+                                {item.platformType === 'meituan'
+                                  ? '团'
+                                  : item.platformType === 'douyin'
+                                    ? '抖'
+                                    : '荐'}
+                              </span>
+                              <span className={styles.pricePlatform}>
+                                <strong>{item.title}</strong>
+                                <small>
+                                  {item.marketPrice
+                                    ? `划线价 ${money(item.marketPrice)}`
+                                    : '平台推荐套餐'}
+                                </small>
+                              </span>
+                              <b className={styles.priceValue}>
+                                {item.offerPrice === lowest && <em>当前低价</em>}
+                                团购价 {money(item.offerPrice)}
+                              </b>
+                            </a>
+                          ))}
+                        </div>
+                      </article>
+                    );
+                  })}
+                  {!data.platformOffers.length && data.externalLinks.length ? (
+                    <div className={styles.platformList}>
+                      {data.externalLinks.map((item, index) => (
+                        <a
+                          className={styles.platform}
+                          href={actionUrl(item.id, 'platform_compare')}
+                          key={item.linkId}
+                        >
+                          <span
+                            className={`${styles.platformMark} ${styles[`platform${item.platformType}`]}`}
+                          >
+                            {item.platformType === 'meituan'
+                              ? '团'
+                              : item.platformType === 'douyin'
+                                ? '抖'
+                                : '荐'}
+                          </span>
+                          <span>
+                            <strong>{item.title}</strong>
+                            <p>{item.description ?? '前往对应平台查看'}</p>
+                          </span>
+                          <b>
+                            {index === 0 ? '优先查看' : '去比价'} <i>›</i>
+                          </b>
+                        </a>
+                      ))}
+                    </div>
+                  ) : null}
+                </>
+              ) : (
+                <Empty>门店暂未配置可跳转的平台入口。</Empty>
+              )}
+              <p className={styles.disclaimer}>价格、库存及最终优惠以第三方平台实际页面为准。</p>
+            </Section>
+
+            <Section title="门店活动" hint="只展示商家已发布内容" anchor="updates">
+              <div className={styles.storyList}>
+                {data.content.length ? (
+                  data.content.map((item, index) => (
+                    <article className={styles.story} key={item.id}>
+                      {data.store.imageUrl && (
+                        <img
+                          src={data.store.imageUrl}
+                          alt=""
+                          style={{ objectPosition: index ? '40% 65%' : '75% 45%' }}
+                        />
+                      )}
+                      <span>
+                        <em>{item.content_type === 'story' ? '门店动态' : '今日推荐'}</em>
+                        <strong>{item.title}</strong>
+                        <p>{item.summary ?? '门店正在分享最新消息。'}</p>
+                        <small>LOCAL HUMAN PILOT · TEST ONLY</small>
+                      </span>
+                    </article>
+                  ))
+                ) : (
+                  <Empty>门店正在准备更多动态。</Empty>
+                )}
+              </div>
+            </Section>
+
+            <Section title="商圈权益" hint="国贸商圈的联合福利" anchor="benefits">
+              {data.benefits.length ? (
+                <div className={styles.benefitList}>
+                  {data.benefits.map((item, index) => (
+                    <article className={styles.benefit} key={item.id}>
+                      <span>{index === 0 ? 'NEW' : 'PLUS'}</span>
+                      <strong>{item.title}</strong>
+                      <p>{item.description ?? '以门店实际配置为准'}</p>
+                      {consultHref ? (
+                        <a href={actionUrl(consultAction!.id, 'benefit_view')}>查看使用方式</a>
+                      ) : (
+                        <span>暂未开放</span>
+                      )}
+                    </article>
+                  ))}
+                </div>
+              ) : (
+                <Empty>当前暂无可领取的门店权益。</Empty>
+              )}
+            </Section>
+          </div>
 
           <section id="store-info" className={styles.storeInfo}>
             <p>门店位置</p>

@@ -1,4 +1,5 @@
 'use client';
+import { AppStatePanel, Button } from '@oneday/ui';
 import { useState } from 'react';
 import styles from './profile.module.css';
 export type ProfileData = {
@@ -13,17 +14,22 @@ export type ProfileData = {
 const date = (x: string) =>
   new Intl.DateTimeFormat('zh-CN', { dateStyle: 'medium' }).format(new Date(x));
 export function ProfileState({ kind }: { kind: 'forbidden' | 'error' }) {
-  const copy =
+  const copy: readonly [string, string] =
     kind === 'forbidden'
       ? ['资料暂不可访问', '请使用商家发送的专属资料链接。']
       : ['资料加载失败', '网络连接不稳定，请稍后重试。'];
   return (
     <main className={styles.message}>
-      <section>
-        <h1>{copy[0]}</h1>
-        <p>{copy[1]}</p>
-        {kind === 'error' && <button onClick={() => window.location.reload()}>重新加载</button>}
-      </section>
+      <AppStatePanel
+        kind={kind}
+        title={copy[0]}
+        description={copy[1]}
+        action={
+          kind === 'error' ? (
+            <Button onClick={() => window.location.reload()}>重新加载</Button>
+          ) : undefined
+        }
+      />
     </main>
   );
 }

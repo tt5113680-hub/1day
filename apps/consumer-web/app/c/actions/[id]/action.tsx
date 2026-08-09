@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { AppStatePanel, Button } from '@oneday/ui';
 import { ConsumerShell } from '../../consumer-shell';
 import styles from './action.module.css';
 
@@ -16,17 +17,22 @@ export type ConsumerAction = {
 };
 
 export function ActionState({ kind }: { kind: 'forbidden' | 'error' }) {
-  const copy =
+  const copy: readonly [string, string] =
     kind === 'forbidden'
       ? ['动作暂不可访问', '链接可能已失效，请返回商家页面选择其他服务。']
       : ['动作加载失败', '网络连接不稳定，请稍后重试或返回上一页。'];
   return (
     <main className={styles.message}>
-      <section className={styles.messageCard}>
-        <h1>{copy[0]}</h1>
-        <p>{copy[1]}</p>
-        {kind === 'error' && <button onClick={() => window.location.reload()}>重新加载</button>}
-      </section>
+      <AppStatePanel
+        kind={kind}
+        title={copy[0]}
+        description={copy[1]}
+        action={
+          kind === 'error' ? (
+            <Button onClick={() => window.location.reload()}>重新加载</Button>
+          ) : undefined
+        }
+      />
     </main>
   );
 }

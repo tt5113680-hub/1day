@@ -26,15 +26,32 @@ test('Batch 1 visual foundation captures Consumer phone and desktop storefronts'
   const consumerUrl = `${applications.consumer}/c/stores/${store}?tenant=${tenant}&source=foundation-visual&scene=batch_1`;
   for (const [name, viewport] of [
     ['consumer-phone-390', { width: 390, height: 844 }],
+    ['consumer-tablet-768', { width: 768, height: 1024 }],
+    ['consumer-desktop-1024', { width: 1024, height: 900 }],
     ['consumer-desktop-1440', { width: 1440, height: 1024 }],
   ] as const) {
     const page = await browser.newPage({ viewport });
     await page.goto(consumerUrl, { waitUntil: 'networkidle' });
     await expect(page.locator('main')).toBeVisible();
     await expect(page.locator('nav[aria-label="门店主导航"] a')).toHaveCount(5);
-    await expect(page.locator('body')).not.toHaveJSProperty('scrollWidth', viewport.width + 1);
+    const menuHref = await page
+      .locator('nav[aria-label="门店主导航"] a', { hasText: '菜单' })
+      .getAttribute('href');
+    expect(menuHref).toContain(`/c/stores/${store}/menu`);
+    expect(menuHref).toContain(`tenant=${tenant}`);
+    expect(menuHref).toContain('scene=tab_menu');
+    expect(
+      await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth),
+    ).toBe(true);
+    if (viewport.width >= 1024) {
+      await expect(page.locator('nav[aria-label="门店桌面主导航"]')).toBeVisible();
+      await expect(page.locator('nav[aria-label="门店主导航"]')).toBeHidden();
+    } else {
+      await expect(page.locator('nav[aria-label="门店主导航"]')).toBeVisible();
+      await expect(page.locator('nav[aria-label="门店桌面主导航"]')).toBeHidden();
+    }
     await page.screenshot({
-      path: `evidence/COMMERCIAL-UI-FOUNDATION/${name}.png`,
+      path: `evidence/COMMERCIAL-UI-FOUNDATION/${name}-v2.png`,
       fullPage: true,
     });
     await page.close();

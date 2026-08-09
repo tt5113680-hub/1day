@@ -1,6 +1,7 @@
 'use client';
 
 import { useMemo } from 'react';
+import { AppStatePanel } from '@oneday/ui';
 import { ConsumerShell, storeHref } from '../../consumer-shell';
 import styles from './service.module.css';
 
@@ -54,10 +55,13 @@ export function ServiceState({ kind }: { kind: 'error' | 'forbidden' }) {
   const forbidden = kind === 'forbidden';
   return (
     <main className={styles.message}>
-      <section className={styles.messageCard}>
-        <h1>{forbidden ? '商品暂不可访问' : '商品内容加载失败'}</h1>
-        <p>{forbidden ? '请返回门店详情选择其他商品。' : '网络连接不稳定，请稍后重新加载。'}</p>
-      </section>
+      <AppStatePanel
+        kind={kind}
+        title={forbidden ? '商品暂不可访问' : '商品内容加载失败'}
+        description={
+          forbidden ? '请返回门店详情选择其他商品。' : '网络连接不稳定，请稍后重新加载。'
+        }
+      />
     </main>
   );
 }

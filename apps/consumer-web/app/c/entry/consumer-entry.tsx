@@ -1,3 +1,4 @@
+import { AppStatePanel, Button } from '@oneday/ui';
 import styles from './consumer-entry.module.css';
 
 export type ConsumerAction = {
@@ -36,23 +37,23 @@ const cards = (value: unknown): Card[] =>
         .slice(0, 6)
     : [];
 export function EntryState({ kind }: { kind: 'empty' | 'forbidden' | 'error' }) {
-  const copy = {
+  const copy: readonly [string, string] = ({
     empty: ['暂未开放入口', '商家正在准备服务内容，请稍后再试。'],
     forbidden: ['此入口暂不可用', '请确认场景链接，或联系商家获取可访问入口。'],
     error: ['加载遇到问题', '网络连接暂不可用，请检查后重新加载。'],
-  }[kind];
+  } as const)[kind];
   return (
     <main className={styles.message}>
-      <section className={styles.messageCard}>
-        <div className={styles.emptyIcon}>O</div>
-        <h1>{copy[0]}</h1>
-        <p>{copy[1]}</p>
-        {kind === 'error' && (
-          <button className={styles.retry} onClick={() => window.location.reload()}>
-            重新加载
-          </button>
-        )}
-      </section>
+      <AppStatePanel
+        kind={kind}
+        title={copy[0]}
+        description={copy[1]}
+        action={
+          kind === 'error' ? (
+            <Button onClick={() => window.location.reload()}>重新加载</Button>
+          ) : undefined
+        }
+      />
     </main>
   );
 }

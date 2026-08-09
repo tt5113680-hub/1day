@@ -252,6 +252,11 @@ select:focus-visible {
   top: var(--od-space-3);
   right: var(--od-space-3);
 }
+@media (min-width: 1024px) {
+  .od-mobile-shell {
+    padding-bottom: 0;
+  }
+}
 .od-admin-shell {
   display: grid;
   min-height: 100dvh;

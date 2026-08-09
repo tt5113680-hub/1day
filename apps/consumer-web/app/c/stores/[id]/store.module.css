@@ -415,6 +415,9 @@
   background: #f7f4ef;
   scroll-margin-top: 12px;
 }
+.desktopGrid {
+  display: contents;
+}
 .sectionHead {
   display: flex;
   align-items: end;
@@ -1019,6 +1022,12 @@
   .section {
     padding: 24px 32px;
   }
+  .desktopGrid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    align-items: start;
+    padding: 0 8px;
+  }
   .offerList {
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
@@ -1028,6 +1037,11 @@
   .storyList,
   .benefitList {
     grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+  .desktopGrid .offerList,
+  .desktopGrid .storyList,
+  .desktopGrid .benefitList {
+    grid-template-columns: minmax(0, 1fr);
   }
   .storeInfo {
     margin: 24px 32px;
