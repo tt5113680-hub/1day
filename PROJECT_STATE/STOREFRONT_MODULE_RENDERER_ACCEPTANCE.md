@@ -2,7 +2,8 @@
 
 ## Result
 
-STOREFRONT_MODULE_RENDERER_PASS`n
+`STOREFRONT_MODULE_RENDERER_PASS`
+
 Source implementation commit: `ec28727`.
 
 ## Delivered boundary
@@ -11,13 +12,13 @@ Source implementation commit: `ec28727`.
 - Modules with `config.visible === false` are omitted from the Consumer DOM.
 - Transitional hard-coded Banner/shortcut arrays are removed from the store home; `banner_carousel` and `quick_actions` render from module config + domain data.
 - Fixed five-tab Consumer shell remains for the authorized transition; tabs are not driven by `operating_channels`.
-- Management draft reorder/hide â†?publish continues to use the same Consumer renderer (preview and published).
+- Management draft reorder/hide ? publish continues to use the same Consumer renderer (preview and published).
 
 ## Verified evidence
 
-- `tests/storefront-module-renderer.test.mjs`: 1/1 â€?published module order and visibility project into `storefront.modules`.
-- `playwright.storefront-module-renderer.config.ts`: 1/1 â€?Consumer DOM order matches visible modules; hidden `banner_carousel` absent; screenshot in `evidence/STOREFRONT-MODULE-RENDERER/`.
-- Workspace gates: `format:check`, `lint`, 18-workspace `typecheck`, 18-workspace `build`, repository `test`, and `evidence:check` verified before acceptance commit.
+- `tests/storefront-module-renderer.test.mjs`: 1/1 ? published module order and visibility project into `storefront.modules`.
+- `playwright.storefront-module-renderer.config.ts`: 1/1 ? Consumer DOM order matches visible modules; hidden `banner_carousel` absent; screenshot in `evidence/STOREFRONT-MODULE-RENDERER/`.
+- Workspace gates: `format:check`, `lint`, 18-workspace `typecheck`, 18-workspace `build`, repository `test` (190/190), and `evidence:check` (74/74) verified before acceptance commit.
 
 ## Authorized continuation
 

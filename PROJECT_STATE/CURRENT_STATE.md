@@ -10,7 +10,7 @@
 - branch: hardening/COMMERCIAL-COMPLETION
 - executor: Cursor Agent (2026-08-10; see PROJECT_STATE/EXECUTOR_HANDOFF.md)
 - last_safe_commit: ec28727 (Storefront module-renderer PASS)
-- verified_storefront_module_renderer: PASS â€?Consumer store home renders from storefront.modules order/visibility; hard-coded Banner/shortcut arrays removed; Management publish projects to Consumer DOM. See PROJECT_STATE/STOREFRONT_MODULE_RENDERER_ACCEPTANCE.md and evidence/STOREFRONT-MODULE-RENDERER/.
+- verified_storefront_module_renderer: PASS at source commit ec28727. Consumer store home renders from storefront.modules order/visibility; hard-coded Banner/shortcut arrays removed; Management publish projects to Consumer DOM. See PROJECT_STATE/STOREFRONT_MODULE_RENDERER_ACCEPTANCE.md and evidence/STOREFRONT-MODULE-RENDERER/.
 - verified_batch_4: PASS at source commit 04c863f. Clean-tenant commercial rehearsal without shared H-002/commercial-simulation fixture repair. See PROJECT_STATE/BATCH_4_ACCEPTANCE.md and evidence/BATCH-4/.
 - started_at: 2026-08-09T20:29:46+08:00
 - blocker: null
