@@ -1,5 +1,13 @@
 'use client';
 import { SessionApiClient } from '@oneday/session-client';
+import {
+  AdminPageHeader,
+  AppStatePanel,
+  businessLabel,
+  Button,
+  Card,
+  StatusBadge,
+} from '@oneday/ui';
 
 import { useCallback, useEffect, useState } from 'react';
 import styles from './page.module.css';
@@ -137,41 +145,56 @@ export default function PlatformTemplatesPage() {
       setSaving(false);
     }
   };
-  if (state === 'loading') return <main className={styles.centered}>正在加载平台模板…</main>;
+  if (state === 'loading')
+    return (
+      <main className={styles.centered}>
+        <AppStatePanel
+          kind="loading"
+          title="正在加载平台模板"
+          description="正在校验平台权限与模板发布状态。"
+        />
+      </main>
+    );
   if (state === 'forbidden')
     return (
       <main className={styles.centered}>
-        <section>
-          <h1>无权查看平台模板组件</h1>
-        </section>
+        <AppStatePanel
+          kind="forbidden"
+          title="无权查看平台模板组件"
+          description="该能力仅向具备平台模板治理权限的运营人员开放。"
+        />
       </main>
     );
   if (state === 'error')
     return (
       <main className={styles.centered}>
-        <section>
-          <h1>平台模板组件暂不可用</h1>
-          <button onClick={() => void load()}>重新加载</button>
-        </section>
+        <AppStatePanel
+          kind="error"
+          title="平台模板组件暂不可用"
+          description="模板数据未能完成加载，请重试。"
+          action={<Button onClick={() => void load()}>重新加载</Button>}
+        />
       </main>
     );
   return (
     <main className={styles.page}>
-      <header>
-        <div>
-          <p>ONEDAY / 平台模板组件</p>
-          <h1>固定组件、行业配置与受控发布</h1>
-          <span>模板仅使用经过验证的固定模块；不提供任意代码或低代码执行能力。</span>
-        </div>
-        <button onClick={() => void load()}>刷新</button>
-      </header>
+      <AdminPageHeader
+        eyebrow="ONEDAY / 平台模板治理"
+        title="固定组件、行业配置与受控发布"
+        description="平台模板只使用经过验证的固定模块，不提供任意代码或低代码执行能力。发布动作全程保留版本与审计记录。"
+        actions={
+          <Button tone="secondary" onClick={() => void load()}>
+            刷新目录
+          </Button>
+        }
+      />
       {note && (
         <p role="status" className={styles.notice}>
           {note}
         </p>
       )}
       <section className={styles.grid}>
-        <section className={styles.panel}>
+        <Card className={styles.panel}>
           <h2>新建平台模板</h2>
           <label>
             模板编码
@@ -197,9 +220,9 @@ export default function PlatformTemplatesPage() {
               value={form.target}
               onChange={(e) => setForm({ ...form, target: e.target.value })}
             >
-              <option value="consumer">consumer</option>
-              <option value="employee">employee</option>
-              <option value="management">management</option>
+              <option value="consumer">消费者数字门店</option>
+              <option value="employee">员工工作台</option>
+              <option value="management">商户经营后台</option>
             </select>
           </label>
           <label>
@@ -227,15 +250,15 @@ export default function PlatformTemplatesPage() {
               value={form.bundle}
               onChange={(e) => setForm({ ...form, bundle: e.target.value as keyof typeof bundles })}
             >
-              <option value="service">hero / action_grid / content</option>
-              <option value="conversion">hero / content / result_list</option>
+              <option value="service">服务承接：主视觉 / 快捷行动 / 内容</option>
+              <option value="conversion">转化结果：主视觉 / 内容 / 结果列表</option>
             </select>
           </label>
-          <button disabled={saving} onClick={() => void create()}>
-            {saving ? '正在保存…' : '保存平台模板草稿'}
-          </button>
-        </section>
-        <section className={styles.panel}>
+          <Button className={styles.submit} loading={saving} onClick={() => void create()}>
+            保存平台模板草稿
+          </Button>
+        </Card>
+        <Card className={styles.panel}>
           <h2>已持久化模板</h2>
           {templates.length ? (
             templates.map((template) => (
@@ -243,23 +266,33 @@ export default function PlatformTemplatesPage() {
                 <div>
                   <strong>{template.name}</strong>
                   <span>
-                    {template.code} · {template.target}
+                    {template.code} · {businessLabel(template.target)}
                   </span>
                   <small>
                     {template.industry_config?.industry || '未配置行业'} /{' '}
-                    {template.industry_config?.scenario || '未配置场景'} ·{' '}
-                    {template.published_version_id ? '已发布' : '草稿'}
+                    {template.industry_config?.scenario || '未配置场景'}
                   </small>
                 </div>
-                <button onClick={() => void preview(template.id)}>预览模块</button>
+                <div className={styles.templateActions}>
+                  <StatusBadge tone={template.published_version_id ? 'success' : 'warning'}>
+                    {businessLabel(template.published_version_id ? 'published' : 'draft')}
+                  </StatusBadge>
+                  <Button tone="secondary" onClick={() => void preview(template.id)}>
+                    预览模块
+                  </Button>
+                </div>
               </article>
             ))
           ) : (
-            <p>暂无平台模板。</p>
+            <AppStatePanel
+              kind="empty"
+              title="暂无平台模板"
+              description="在左侧创建第一个受控行业模板。"
+            />
           )}
-        </section>
+        </Card>
       </section>
-      <section className={styles.panel}>
+      <Card className={styles.panel}>
         <h2>实时预览与发布</h2>
         {selected ? (
           <>
@@ -267,27 +300,34 @@ export default function PlatformTemplatesPage() {
               {selected.template.name} ·{' '}
               {selected.template.industryConfig?.industry || '未配置行业'} /{' '}
               {selected.template.industryConfig?.scenario || '未配置场景'} · 版本{' '}
-              {selected.version?.sequence ?? '—'}（{selected.version?.status ?? '无可用版本'}）
+              {selected.version?.sequence ?? '—'}
+              {selected.version ? (
+                <StatusBadge tone={selected.version.status === 'published' ? 'success' : 'warning'}>
+                  {businessLabel(selected.version.status)}
+                </StatusBadge>
+              ) : (
+                '（无可用版本）'
+              )}
             </p>
             <div className={styles.canvas}>
               {selected.modules.map((module) => (
                 <article key={module.id}>
                   <span>{module.position}</span>
-                  <strong>{module.module_type}</strong>
+                  <strong>{businessLabel(module.module_type)}</strong>
                   <small>固定模块配置</small>
                 </article>
               ))}
             </div>
             {selected.version && (
-              <button className={styles.primary} disabled={saving} onClick={() => void publish()}>
+              <Button loading={saving} onClick={() => void publish()}>
                 发布当前版本
-              </button>
+              </Button>
             )}
           </>
         ) : (
           <p>选择模板后可查看其持久化模块和发布状态。</p>
         )}
-      </section>
+      </Card>
     </main>
   );
 }
