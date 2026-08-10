@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## 2026-08-10 - SYS-6 membership write-path scopes PASS
+
+- Assigned store managers (`tenant.read` + store scopes) may list enrollments/benefits and grant only on scoped stores via `/api/v1/management/memberships*`.
+- Management menu exposes 会员与权益 for `tenant.read` store-manager mode.
+- Evidence: `SYS_6_ACCEPTANCE.md`, `evidence/SYS-6/`. Tests: `sys-6-membership-scopes` 1/1, `menu-dto.vitest` 6/6, `sys-6-write-path-scopes` 1/1. Not 全部商用.
+
 ## 2026-08-10 - SYS-5 store_hero + floating consult paints extraction PASS
 
 - Extracted `StorefrontHero` + `StorefrontFloatingConsult` into `@oneday/storefront-renderer`.

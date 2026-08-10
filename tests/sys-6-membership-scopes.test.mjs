@@ -8,16 +8,16 @@ import { URL } from 'node:url';
 
 const { Client } = createRequire(new URL('../apps/api/package.json', import.meta.url))('pg');
 const databaseUrl = 'postgresql://oneday:oneday_local_only@localhost:5434/oneday_v3_test';
-const base = 'http://127.0.0.1:3271';
+const base = 'http://127.0.0.1:3272';
 const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
 const api = spawn(process.execPath, ['apps/api/dist/main.js'], {
   cwd: process.cwd(),
   env: {
     ...process.env,
-    PORT: '3271',
+    PORT: '3272',
     DATABASE_URL: databaseUrl,
-    AUTH_TOKEN_SECRET: 'sys-6-catalog-scopes',
+    AUTH_TOKEN_SECRET: 'sys-6-membership-scopes',
   },
   stdio: 'ignore',
 });
@@ -46,7 +46,7 @@ async function login(email, password, tenantId) {
 
 test.after(() => api.kill());
 
-test('SYS-6: store managers may write catalog only on scoped stores', async () => {
+test('SYS-6: store managers may grant memberships only on scoped stores', async () => {
   await ready();
   const stamp = `${Date.now()}${Math.floor(Math.random() * 1000)}`;
   const tenantId = randomUUID();
@@ -61,18 +61,22 @@ test('SYS-6: store managers may write catalog only on scoped stores', async () =
   const managerEmployeeId = randomUUID();
   const storeA = randomUUID();
   const storeB = randomUUID();
-  const serviceB = randomUUID();
-  const actionA = randomUUID();
+  const benefitA = randomUUID();
+  const benefitB = randomUUID();
+  const customerA = randomUUID();
+  const customerB = randomUUID();
+  const enrollmentA = randomUUID();
+  const enrollmentB = randomUUID();
   const client = new Client({ connectionString: databaseUrl });
   await client.connect();
   try {
     await client.query(
       "insert into tenants(id,slug,name,status,created_by,updated_by) values($1,$2,$3,'active',null,null)",
-      [tenantId, `sys6-catalog-${stamp}`, `SYS6 Catalog ${stamp}`],
+      [tenantId, `sys6-member-${stamp}`, `SYS6 Member ${stamp}`],
     );
     for (const [id, email, name] of [
-      [ownerId, `owner-catalog-${stamp}@example.local`, 'Owner'],
-      [managerId, `manager-catalog-${stamp}@example.local`, 'Manager'],
+      [ownerId, `owner-member-${stamp}@example.local`, 'Owner'],
+      [managerId, `manager-member-${stamp}@example.local`, 'Manager'],
     ]) {
       await client.query(
         "insert into users(id,email,display_name,password_hash,status,created_by,updated_by) select $1,$2,$3,password_hash,'active',null,null from users where email='admin@system.local'",
@@ -148,23 +152,41 @@ test('SYS-6: store managers may write catalog only on scoped stores', async () =
       [randomUUID(), tenantId, managerMembershipId, storeA],
     );
     await client.query(
-      "insert into store_services(id,tenant_id,store_id,code,name,rank,status,created_by,updated_by) values($1,$2,$3,$4,$5,1,'active',null,null)",
-      [serviceB, tenantId, storeB, `B-SVC-${stamp}`, `Service B ${stamp}`],
+      "insert into store_benefits(id,tenant_id,store_id,title,status,created_by,updated_by) values($1,$2,$3,$4,'active',null,null),($5,$2,$6,$7,'active',null,null)",
+      [
+        benefitA,
+        tenantId,
+        storeA,
+        `Benefit A ${stamp}`,
+        benefitB,
+        storeB,
+        `Benefit B ${stamp}`,
+      ],
     );
     await client.query(
-      "insert into external_actions(id,tenant_id,code,name,action_type,platform,target_url,status,created_by,updated_by) values($1,$2,$3,$4,'link','meituan',$5,'active',null,null)",
-      [actionA, tenantId, `A-LINK-${stamp}`, `Link A ${stamp}`, 'https://example.com/store-a'],
+      "insert into customers(id,tenant_id,display_name,created_by,updated_by) values($1,$2,$3,null,null),($4,$2,$5,null,null)",
+      [customerA, tenantId, 'Member A', customerB, 'Member B'],
     );
     await client.query(
-      "insert into store_external_actions(id,tenant_id,store_id,external_action_id,enabled,sort_order,created_by,updated_by) values($1,$2,$3,$4,true,1,null,null)",
-      [randomUUID(), tenantId, storeA, actionA],
+      "insert into membership_enrollments(id,tenant_id,customer_id,store_id,member_code,enrollment_status,source,joined_at,created_by,updated_by) values($1,$2,$3,$4,$5,'active','test',now(),null,null),($6,$2,$7,$8,$9,'active','test',now(),null,null)",
+      [
+        enrollmentA,
+        tenantId,
+        customerA,
+        storeA,
+        'AAAAAAAAAAAA',
+        enrollmentB,
+        customerB,
+        storeB,
+        'BBBBBBBBBBBB',
+      ],
     );
   } finally {
     await client.end();
   }
 
   const managerToken = await login(
-    `manager-catalog-${stamp}@example.local`,
+    `manager-member-${stamp}@example.local`,
     'ChangeMe123!',
     tenantId,
   );
@@ -176,69 +198,31 @@ test('SYS-6: store managers may write catalog only on scoped stores', async () =
     ...extra,
   });
 
-  const list = await fetch(`${base}/api/v1/management/catalog`, { headers: headers() });
+  const list = await fetch(`${base}/api/v1/management/memberships`, { headers: headers() });
   assert.equal(list.status, 200);
   const listed = (await list.json()).data;
   assert.deepEqual(
-    listed.map((row) => row.id),
-    [storeA],
+    listed.enrollments.map((row) => row.id),
+    [enrollmentA],
+  );
+  assert.deepEqual(
+    listed.benefits.map((row) => row.id),
+    [benefitA],
   );
 
-  const createOk = await fetch(`${base}/api/v1/management/catalog/stores/${storeA}/services`, {
+  const grantOk = await fetch(`${base}/api/v1/management/memberships/${enrollmentA}/grants`, {
     method: 'POST',
     headers: headers({ 'idempotency-key': randomUUID() }),
-    body: JSON.stringify({
-      code: `A-SVC-${stamp}`,
-      name: `Service A ${stamp}`,
-      description: 'Scoped create',
-      priceLabel: '¥99',
-      rank: 10,
-    }),
+    body: JSON.stringify({ benefitId: benefitA, quantity: 1 }),
   });
-  assert.equal(createOk.status, 201);
-  const serviceA = (await createOk.json()).data;
-  assert.equal(serviceA.store_id, storeA);
+  assert.equal(grantOk.status, 201);
 
-  const createDenied = await fetch(`${base}/api/v1/management/catalog/stores/${storeB}/services`, {
+  const grantDenied = await fetch(`${base}/api/v1/management/memberships/${enrollmentB}/grants`, {
     method: 'POST',
     headers: headers({ 'idempotency-key': randomUUID() }),
-    body: JSON.stringify({
-      code: `B-DENY-${stamp}`,
-      name: `Denied ${stamp}`,
-      rank: 1,
-    }),
+    body: JSON.stringify({ benefitId: benefitB, quantity: 1 }),
   });
-  assert.equal(createDenied.status, 403);
-
-  const updateDenied = await fetch(`${base}/api/v1/management/catalog/services/${serviceB}`, {
-    method: 'PUT',
-    headers: headers(),
-    body: JSON.stringify({
-      name: 'Nope',
-      status: 'inactive',
-      version: 1,
-    }),
-  });
-  assert.equal(updateDenied.status, 403);
-
-  const offerOk = await fetch(
-    `${base}/api/v1/management/catalog/services/${serviceA.id}/offers`,
-    {
-      method: 'POST',
-      headers: headers({ 'idempotency-key': randomUUID() }),
-      body: JSON.stringify({
-        externalActionId: actionA,
-        offerPrice: 88,
-        marketPrice: 99,
-        priceSource: '店长登记',
-        sourceUpdatedAt: new Date().toISOString(),
-        sortOrder: 0,
-      }),
-    },
-  );
-  assert.equal(offerOk.status, 201);
-  const offer = (await offerOk.json()).data;
-  assert.equal(offer.store_id, storeA);
+  assert.equal(grantDenied.status, 403);
 
   const menu = await fetch(`${base}/api/v1/me/menu?product=management`, {
     headers: headers(),

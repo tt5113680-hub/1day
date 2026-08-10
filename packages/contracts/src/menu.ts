@@ -73,7 +73,7 @@ export const MANAGEMENT_MENU_CATALOG: MenuCatalogItem[] = [
     key: 'memberships',
     href: '/m/memberships',
     label: '会员与权益',
-    requireAny: ['tenant.manage'],
+    requireAny: ['tenant.manage', 'tenant.read'],
   },
   {
     key: 'content',

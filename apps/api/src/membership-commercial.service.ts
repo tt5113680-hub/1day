@@ -165,18 +165,40 @@ export class MembershipCommercialService implements OnModuleDestroy {
     };
   }
 
-  async list(context: OrganizationContext) {
+  async list(context: OrganizationContext, storeIds: string[] | null = null) {
+    const scoped = storeIds !== null;
+    const params = scoped ? [context.tenantId, storeIds] : [context.tenantId];
+    const enrollmentFilter = scoped ? 'and e.store_id = any($2::uuid[])' : '';
+    const benefitFilter = scoped ? 'and store_id = any($2::uuid[])' : '';
     const [enrollments, benefits] = await Promise.all([
       this.pool.query(
-        'select e.id,e.member_code,e.enrollment_status,e.joined_at,c.display_name,s.name store_name from membership_enrollments e join customers c on c.id=e.customer_id and c.tenant_id=e.tenant_id left join stores s on s.id=e.store_id and s.tenant_id=e.tenant_id where e.tenant_id=$1 and e.deleted_at is null order by e.joined_at desc',
-        [context.tenantId],
+        `select e.id,e.member_code,e.enrollment_status,e.joined_at,c.display_name,s.name store_name
+         from membership_enrollments e
+         join customers c on c.id=e.customer_id and c.tenant_id=e.tenant_id
+         left join stores s on s.id=e.store_id and s.tenant_id=e.tenant_id
+         where e.tenant_id=$1 and e.deleted_at is null ${enrollmentFilter}
+         order by e.joined_at desc`,
+        params,
       ),
       this.pool.query(
-        "select id,store_id,title,description from store_benefits where tenant_id=$1 and status='active' and deleted_at is null order by title",
-        [context.tenantId],
+        `select id,store_id,title,description from store_benefits
+         where tenant_id=$1 and status='active' and deleted_at is null ${benefitFilter}
+         order by title`,
+        params,
       ),
     ]);
     return { enrollments: enrollments.rows, benefits: benefits.rows };
+  }
+
+  async enrollmentStoreId(tenantId: string, enrollmentId: string) {
+    if (!UUID.test(enrollmentId)) return null;
+    const row = (
+      await this.pool.query(
+        'select store_id from membership_enrollments where id=$1 and tenant_id=$2 and deleted_at is null',
+        [enrollmentId, tenantId],
+      )
+    ).rows[0];
+    return row?.store_id ? String(row.store_id) : null;
   }
   async benefits(context: OrganizationContext) {
     return (
