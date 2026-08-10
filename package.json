@@ -28,6 +28,8 @@
     "unattended:install:dedicated": "powershell -ExecutionPolicy Bypass -File scripts/install-dedicated-build-machine.ps1",
     "unattended:daemon": "powershell -ExecutionPolicy Bypass -File scripts/local-unattended-daemon.ps1",
     "unattended:status": "powershell -ExecutionPolicy Bypass -File scripts/unattended-status.ps1",
+    "unattended:dashboard": "powershell -ExecutionPolicy Bypass -File scripts/unattended-dashboard.ps1",
+    "unattended:progress": "powershell -ExecutionPolicy Bypass -File scripts/unattended-progress.ps1",
     "fixtures:generate": "node scripts/generate-commercial-fixtures.mjs",
     "test:unit": "vitest run",
     "test:e2e": "playwright test",

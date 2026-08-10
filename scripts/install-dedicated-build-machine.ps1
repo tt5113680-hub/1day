@@ -42,7 +42,8 @@ Set-Content -Path $envFile -Value ($out -join "`n") -Encoding utf8
 Write-Output ''
 Write-Output '=== Dedicated build machine ready ==='
 Write-Output 'Every 10 min: if previous task finished -> start next task'
-Write-Output 'Monitor: pnpm unattended:status'
+Write-Output 'Monitor:  pnpm unattended:dashboard   (live % + countdown)'
+Write-Output 'Snapshot: pnpm unattended:status'
 Write-Output 'Logs:    logs/unattended/daemon.log'
 if (-not $CursorApiKey) {
   Write-Output 'ACTION: set CURSOR_API_KEY in .env.local-unattended if not already set'

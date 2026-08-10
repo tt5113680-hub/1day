@@ -19,6 +19,31 @@
 - **不会**上一轮没跑完就叠任务
 - **会**在上一轮成功后约 10 分钟接下一任务（`UNATTENDED_CHAIN_MODE=1`）
 
+## 进度看板（别盲目等）
+
+**实时大屏（30 秒刷新，含倒计时 + 百分比 + 预计完成时间）：**
+
+```powershell
+pnpm unattended:dashboard
+```
+
+**快照：**
+
+```powershell
+pnpm unattended:status
+```
+
+进度来源：`PROJECT_STATE/PHASE1_PROGRESS.json`（每轮施工后 agent 更新 milestone）。
+
+示例：
+
+```text
+总进度  [################--------------------]  58.0%
+已完成 58%  |  剩余 42%  |  剩余切片 6 项
+距下次检查  00:07:32
+预计 G1 就绪: ~18h
+```
+
 ## 专用机 / 24h 开机 — 一条命令
 
 ```powershell

@@ -1,56 +1,52 @@
-# Human-readable unattended monitor (first run + last run + next eligible).
+# Human-readable unattended monitor + Phase-1 progress summary.
 param([switch]$Json)
 
 $ErrorActionPreference = 'Stop'
 . "$PSScriptRoot/unattended-scheduler.ps1"
+. "$PSScriptRoot/unattended-progress.ps1"
 
 $status = Get-UnattendedStatus
+$progress = Get-Phase1ProgressReport
 
 if ($Json) {
-  $status | ConvertTo-Json -Depth 6
+  @{ unattended = $status; phase1 = $progress } | ConvertTo-Json -Depth 8
   exit 0
 }
 
-Write-Output '=== ONEDAY V3 Unattended Status ==='
-Write-Output ("Lock active:     {0}" -f $status.lockActive)
-Write-Output ("G1 ready:        {0}" -f $status.g1Ready)
-Write-Output ("Total runs:      {0}" -f $status.runNumber)
+Write-Output ''
+Write-Output '============================================================'
+Write-Output '  ONEDAY V3 construction status'
+Write-Output '============================================================'
+Write-Output ''
+Write-Output ('  Progress  ' + $progress.progressBar)
+Write-Output ("  Done {0}%  |  Remain {1}%  |  Slices left {2}" -f $progress.percentDone, $progress.percentRemain, $progress.pendingCount)
+Write-Output ("  Step >> {0}" -f $progress.currentStep)
+Write-Output ("  ETA G1 ready: ~{0}h ({1})" -f $progress.eta.etaHours, $progress.eta.etaAt)
+Write-Output ''
+
+$cd = $progress.countdown
+Write-Output '--- Countdown ---'
+switch ($cd.mode) {
+  'running' {
+    Write-Output ("  BUILDING  elapsed {0}" -f (Format-Countdown $cd.elapsed))
+    Write-Output ("  turn left ~{0}" -f (Format-Countdown $cd.remaining))
+  }
+  'ready' { Write-Output '  READY — next turn starting' }
+  default {
+    Write-Output ("  {0}" -f $cd.label)
+    Write-Output ("  next check in {0}" -f (Format-Countdown $cd.remaining))
+  }
+}
+
+Write-Output ''
+Write-Output '--- Unattended ---'
+Write-Output ("  runs {0}  |  lock {1}  |  G1 {2}" -f $status.runNumber, $status.lockActive, $status.g1Ready)
 
 if ($status.lastRun) {
   $l = $status.lastRun
-  Write-Output ''
-  Write-Output '--- Last run ---'
-  Write-Output ("  #              {0}" -f $l.runNumber)
-  Write-Output ("  Result         {0} (exit {1})" -f $l.exitLabel, $l.exitCode)
-  Write-Output ("  Profile        {0}" -f $l.profile)
-  Write-Output ("  Duration       {0} min (max {1} min)" -f $l.durationMinutes, $l.maxMinutes)
-  Write-Output ("  Started        {0}" -f $l.startedAt)
-  Write-Output ("  Ended          {0}" -f $l.endedAt)
-  Write-Output ("  Commits        {0}" -f $l.commitsPushed)
-  Write-Output ("  Log            {0}" -f $l.runLog)
-  if ($l.firstRun -eq $true) {
-    Write-Output '  >> First run recorded — check log above for agent output'
-  }
-} else {
-  Write-Output ''
-  Write-Output '--- Last run ---'
-  Write-Output '  (none yet — waiting for first orchestrator run)'
+  Write-Output ("  last #{0} {1}  {2}min  commits={3}" -f $l.runNumber, $l.exitLabel, $l.durationMinutes, $l.commitsPushed)
 }
 
 Write-Output ''
-Write-Output '--- Next schedule ---'
-$s = $status.nextSchedule
-Write-Output ("  Profile        {0}" -f $s.profile)
-Write-Output ("  Max minutes    {0}" -f $s.maxMinutes)
-Write-Output ("  Wait after run {0} min" -f $s.waitMinutes)
-Write-Output ("  Reason         {0}" -f $s.reason)
-
+Write-Output 'Live board: pnpm unattended:dashboard'
 Write-Output ''
-Write-Output '--- Should run now? ---'
-Write-Output ("  {0}" -f $(if ($status.shouldRun.ok) { 'YES — ' + $status.shouldRun.reason } else { 'NO — ' + $status.shouldRun.reason }))
-if ($status.shouldRun.eligibleAt) {
-  Write-Output ("  Eligible at    {0}" -f $status.shouldRun.eligibleAt)
-}
-
-Write-Output ''
-Write-Output 'Tip: pnpm unattended:status  |  force one turn: pnpm unattended:once -- -Force'

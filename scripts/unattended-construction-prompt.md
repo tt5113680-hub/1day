@@ -28,7 +28,7 @@ You are the **sole write executor** for this repository turn (Headless CLI, auth
 2. Self-test
 3. `pnpm typecheck` and `pnpm build` (or scoped package builds if sufficient)
 4. Applicable tests for the slice
-5. Update `CURRENT_STATE.md`, `TASK_QUEUE.md`, `CHANGELOG.md`, `LATEST_HANDOFF.md`, acceptance doc if new slice
+5. Update `CURRENT_STATE.md`, `TASK_QUEUE.md`, `CHANGELOG.md`, `LATEST_HANDOFF.md`, **`PROJECT_STATE/PHASE1_PROGRESS.json`** (mark milestone in_progress→pass), acceptance doc if new slice
 6. Evidence under `evidence/<SLICE-ID>/`
 7. Git commit with conventional message; `git push origin HEAD` (authorization C)
 

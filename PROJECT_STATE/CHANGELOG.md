@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## 2026-08-10 - Phase-1 progress dashboard
+
+- `PHASE1_PROGRESS.json` milestone weights; `unattended-dashboard.ps1` live % + countdown + ETA.
+- Commands: `pnpm unattended:dashboard`, `pnpm unattended:status`.
+
 ## 2026-08-10 - Dedicated 10-minute chain polling
 
 - Default `UNATTENDED_POLL_MINUTES=10` + `UNATTENDED_CHAIN_MODE=1`: monitor every 10m, start next task when previous finished.
