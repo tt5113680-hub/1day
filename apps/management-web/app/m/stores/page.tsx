@@ -199,15 +199,33 @@ export default function StoresPage() {
   return (
     <main className={styles.page}>
       <AdminPageHeader
-        eyebrow="门店经营"
-        title="把每家门店的资料、入口和跟进责任放在一起管理"
-        description="第三方入口仅记录跳转行为，不代表 ONEDAY 代替平台完成下单、支付或核销。"
+        eyebrow="美团商家端 PC · 店铺"
+        title="门店管理"
+        description="对标美团商家端门店列表：营业状态、资料、入口与负责人。第三方入口仅记录跳转，不代替平台下单/支付。"
         actions={
           <Button tone="secondary" onClick={() => void load()}>
             刷新
           </Button>
         }
       />
+      <section className={styles.summaryStrip} aria-label="门店概况">
+        <div>
+          <span>门店数</span>
+          <strong>{stores.length}</strong>
+        </div>
+        <div>
+          <span>营业中</span>
+          <strong>{stores.filter((s) => s.status === 'active').length}</strong>
+        </div>
+        <div>
+          <span>待跟进任务</span>
+          <strong>{stores.reduce((n, s) => n + s.openTasks, 0)}</strong>
+        </div>
+        <div>
+          <span>近30日入口打开</span>
+          <strong>{stores.reduce((n, s) => n + s.entryOpens30d, 0)}</strong>
+        </div>
+      </section>
       {note && (
         <p className={styles.notice} role="status">
           {note}

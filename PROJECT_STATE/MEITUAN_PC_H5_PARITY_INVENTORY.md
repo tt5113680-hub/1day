@@ -1,4 +1,4 @@
-# 美团 PC / H5 复刻清单（施工权威）
+﻿# 美团 PC / H5 复刻清单（施工权威）
 
 - created_at: 2026-08-10 23:30 Asia/Shanghai
 - updated_at: 2026-08-10 23:53 Asia/Shanghai
@@ -124,7 +124,7 @@
 | **W0** | 本清单 + 主导航改挂规则 | **本文档 PASS** |
 | **W1** | MPC-01 工作台 + 主导航美团化（Management PC） | **PASS** `evidence/G1-MEITUAN-PARITY/W1/` |
 | **W2** | MH5-01 附近 + MH5-03 商家主页（Consumer H5） | **PASS** `evidence/G1-MEITUAN-PARITY/W2/` |
-| **W3** | MPC-02 门店 + MPC-03 商品 | PC 经营主链路 |
+| **W3** | MPC-02 门店 + MPC-03 商品 | **PASS** (首刀 IA) `evidence/G1-MEITUAN-PARITY/W3/` |
 | **W4** | ME-01～05 商家移动工作台 | 员工端美团化 |
 | **W5** | MPC-04/05/07 订单·评价·营销（可本地数据） | 补齐商家端骨架 |
 | **W6** | R5 省市区代理（MP-01～03） | 渠道不猜，跟美团代理 |
@@ -136,4 +136,4 @@
 
 ## 6. 当前下一刀
 
-**W1–W2 PASS.** 下一刀：**W3** — MPC-02 门店 + MPC-03 商品（Management PC 深页美团化）。
+**W1–W3 PASS（W3 首刀）.** 下一刀：**W4** — Employee 美团商家 App 工作台。

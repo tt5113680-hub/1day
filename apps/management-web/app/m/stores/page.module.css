@@ -40,6 +40,32 @@
   background: var(--od-brand-100);
   color: var(--od-brand-800);
 }
+.summaryStrip {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+  margin-top: 20px;
+  padding: 14px 16px;
+  border: 1px solid color-mix(in srgb, var(--od-brand-600) 25%, var(--od-border));
+  border-radius: 12px;
+  background: linear-gradient(
+    135deg,
+    var(--od-brand-100) 0%,
+    color-mix(in srgb, var(--od-brand-50) 65%, var(--od-surface)) 100%
+  );
+}
+.summaryStrip span {
+  display: block;
+  color: var(--od-brand-800);
+  font-size: 12px;
+  font-weight: 700;
+}
+.summaryStrip strong {
+  display: block;
+  margin-top: 6px;
+  font-size: 22px;
+  font-family: var(--od-font-display);
+}
 .list {
   display: grid;
   gap: 16px;

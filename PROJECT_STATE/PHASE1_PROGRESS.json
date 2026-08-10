@@ -1,26 +1,103 @@
-{
-  "recordedAt": "2026-08-10T15:50:00+08:00",
-  "phase": "Phase-1 commercial closed loop",
-  "goal": "G1 local human pilot ready (not public HTTPS, not full commercial)",
-  "currentStep": "P1-A/P1-B PASS complete (shells, ui-kit, sync-converge, content-chain). G1 packaging PASS (runbook + local HUMAN PILOT sandbox boot-verified at HEAD 6b2dad9; G1 READY declared for owner local full test). P1-C live remains blocked on G lift; P1-D owner sign-off waiting.",
-  "milestones": [
-    { "id": "p0-sys", "label": "P0 matrix + SYS-1..34", "weight": 35, "status": "pass", "evidence": "TASK_QUEUE SYS-34 PASS" },
-    { "id": "p1-a", "label": "P1-A commercial main loop", "weight": 10, "status": "pass", "evidence": "P1_A_COMMERCIAL_CLOSED_LOOP_ACCEPTANCE.md" },
-    { "id": "p1-b-login", "label": "P1-B session login visual baseline", "weight": 5, "status": "pass", "evidence": "P1_B_SESSION_LOGIN_ACCEPTANCE.md" },
-    { "id": "p1-b-ui-kit", "label": "P1-B @oneday/ui kit (Table/Skeleton/Modal...)", "weight": 8, "status": "pass", "evidence": "evidence/P1-B-UI-KIT/ACCEPTANCE.md" },
-    { "id": "p1-b-consumer-shell", "label": "P1-B Consumer shell + tokens", "weight": 7, "status": "pass", "evidence": "evidence/P1-B-CONSUMER-SHELL/ACCEPTANCE.md" },
-    { "id": "p1-b-employee-shell", "label": "P1-B Employee shell polish", "weight": 5, "status": "pass", "evidence": "evidence/P1-B-EMPLOYEE-SHELL/ACCEPTANCE.md" },
-    { "id": "p1-b-management-shell", "label": "P1-B Management shell polish", "weight": 5, "status": "pass", "evidence": "evidence/P1-B-MANAGEMENT-SHELL/ACCEPTANCE.md" },
-    { "id": "p1-b-platform-shell", "label": "P1-B Platform shell polish", "weight": 4, "status": "pass", "evidence": "evidence/P1-B-PLATFORM-SHELL/ACCEPTANCE.md" },
-    { "id": "p1-b-sync-converge", "label": "P1-B publish -> four-terminal sync", "weight": 8, "status": "pass", "evidence": "evidence/P1-B-SYNC-CONVERGE/ACCEPTANCE.md" },
-    { "id": "p1-b-content-chain", "label": "P1-B content approve->place chain", "weight": 3, "status": "pass", "evidence": "evidence/P1-B-SYNC-CONVERGE/ACCEPTANCE.md" },
-    { "id": "p1-c-deploy-templates", "label": "P1-C deploy templates (infra/deploy)", "weight": 5, "status": "pass", "evidence": "infra/deploy/" },
-    { "id": "p1-g1-packaging", "label": "G1 packaging (runbook + G1 READY)", "weight": 5, "status": "pass", "evidence": "evidence/G1-PACKAGING/ACCEPTANCE.md" }
-  ],
-  "ownerGates": [
-    { "id": "p1-d", "label": "P1-D owner local full test + sign-off", "status": "waiting" },
-    { "id": "p1-c-live", "label": "P1-C public HTTPS (needs G + domain/server)", "status": "blocked" },
-    { "id": "p1-e", "label": "P1-E external controlled trial claim", "status": "waiting" }
-  ],
-  "notes": "Agent must update milestone status each unattended turn. Must comply with COMMERCIAL_EXECUTION_CHARTER.md — no PRD deviation. G1 packaging PASS at HEAD 6b2dad9 (local HUMAN PILOT boot-verified + runbook in evidence/G1-PACKAGING). G1 is an owner gate; do not auto-sign PRODUCT_OWNER_UI_ACCEPTANCE.md. Next owner actions: G1 local full test, then (if G lifted + cloud inventory) P1-C live."
+﻿{
+    "recordedAt":  "2026-08-11T00:06:00+08:00",
+    "phase":  "Meituan PC/H5 parity (post G1 packaging)",
+    "goal":  "Four-surface Meituan copy; only /m/workflows custom; owner G1 sign later",
+    "currentStep":  "W1–W3 PASS. NEXT W4 Employee 美团商家 App. Owner hands-off.",
+    "milestones":  [
+                       {
+                           "id":  "p0-sys",
+                           "label":  "P0 matrix + SYS-1..34",
+                           "weight":  20,
+                           "status":  "pass",
+                           "evidence":  "TASK_QUEUE SYS-34 PASS"
+                       },
+                       {
+                           "id":  "p1-a",
+                           "label":  "P1-A commercial main loop",
+                           "weight":  5,
+                           "status":  "pass",
+                           "evidence":  "P1_A_COMMERCIAL_CLOSED_LOOP_ACCEPTANCE.md"
+                       },
+                       {
+                           "id":  "p1-b",
+                           "label":  "P1-B shells + ui-kit + sync",
+                           "weight":  10,
+                           "status":  "pass",
+                           "evidence":  "evidence/P1-B-*"
+                       },
+                       {
+                           "id":  "p1-g1-packaging",
+                           "label":  "G1 packaging (boot + runbook)",
+                           "weight":  5,
+                           "status":  "pass",
+                           "evidence":  "evidence/G1-PACKAGING/ACCEPTANCE.md"
+                       },
+                       {
+                           "id":  "g1-w0-inventory",
+                           "label":  "W0 Meituan PC/H5 inventory",
+                           "weight":  5,
+                           "status":  "pass",
+                           "evidence":  "MEITUAN_PC_H5_PARITY_INVENTORY.md"
+                       },
+                       {
+                           "id":  "g1-w1-pc-nav-home",
+                           "label":  "W1 Management PC nav + 商家中心",
+                           "weight":  10,
+                           "status":  "pass",
+                           "evidence":  "evidence/G1-MEITUAN-PARITY/W1/"
+                       },
+                       {
+                           "id":  "g1-w2-h5-nearby-store",
+                           "label":  "W2 Consumer H5 nearby + merchant",
+                           "weight":  10,
+                           "status":  "pass",
+                           "evidence":  "evidence/G1-MEITUAN-PARITY/W2/"
+                       },
+                       {
+                           "id":  "g1-w3-pc-store-goods",
+                           "label":  "W3 Management PC 门店+商品",
+                           "weight":  12,
+                           "status":  "pass",
+                           "evidence":  "evidence/G1-MEITUAN-PARITY/W3/"
+                       },
+                       {
+                           "id":  "g1-w4-emp-app",
+                           "label":  "W4 Employee 美团商家 App",
+                           "weight":  8,
+                           "status":  "pending",
+                           "evidence":  "pending"
+                       },
+                       {
+                           "id":  "g1-w5-orders-marketing",
+                           "label":  "W5 订单/评价/营销骨架",
+                           "weight":  8,
+                           "status":  "pending",
+                           "evidence":  "pending"
+                       },
+                       {
+                           "id":  "g1-w6-platform-agent",
+                           "label":  "W6 平台/代理省市区",
+                           "weight":  7,
+                           "status":  "pending",
+                           "evidence":  "pending"
+                       }
+                   ],
+    "ownerGates":  [
+                       {
+                           "id":  "p1-d",
+                           "label":  "P1-D owner local full test + sign-off",
+                           "status":  "waiting"
+                       },
+                       {
+                           "id":  "p1-c-live",
+                           "label":  "P1-C public HTTPS (needs G + domain/server)",
+                           "status":  "blocked"
+                       },
+                       {
+                           "id":  "p1-e",
+                           "label":  "P1-E external controlled trial claim",
+                           "status":  "waiting"
+                       }
+                   ],
+    "notes":  "Owner authorized 全自动施工 2026-08-10/11 — no babysitting. Do not auto-sign PRODUCT_OWNER_UI_ACCEPTANCE.md. Do not claim 已全量复刻美团. Update this file each wave."
 }

@@ -146,13 +146,13 @@ export default function OffersPage() {
   if (state === 'loading')
     return (
       <main className={styles.centered}>
-        <AppStatePanel kind="loading" title="正在加载套餐与 Offer" />
+        <AppStatePanel kind="loading" title="正在加载商品管理" />
       </main>
     );
   if (state === 'forbidden')
     return (
       <main className={styles.centered}>
-        <AppStatePanel kind="forbidden" title="无权经营套餐与 Offer" />
+        <AppStatePanel kind="forbidden" title="无权进入商品管理" />
       </main>
     );
   if (state === 'error')
@@ -169,9 +169,9 @@ export default function OffersPage() {
   return (
     <main className={styles.page}>
       <AdminPageHeader
-        eyebrow="ONEDAY / 套餐与 Offer 运营"
-        title="维护服务真源，再关联受控平台价格入口"
-        description="价格来自商户登记，不宣称第三方实时同步；停用 Offer 会立即从 Consumer 查询与跳转中移除。"
+        eyebrow="美团商家端 PC · 商品"
+        title="商品管理"
+        description="对标美团商家端商品库：维护服务/套餐真源与受控平台价格入口。价格来自商户登记，不宣称第三方实时同步。"
         actions={
           <Button tone="secondary" onClick={() => void load()}>
             刷新
@@ -184,7 +184,7 @@ export default function OffersPage() {
         </p>
       ) : null}
       <Card className={styles.create}>
-        <h2>新建服务/套餐</h2>
+        <h2>新建商品/套餐</h2>
         <label>
           门店
           <select
