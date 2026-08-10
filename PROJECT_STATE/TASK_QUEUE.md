@@ -79,7 +79,8 @@
 - [x] Phase-1 G1-PACKAGING PASS — G1 packaging milestone closed: local HUMAN PILOT sandbox boot-verified at HEAD `6b2dad9` (API health 200 database ready, worker 200, four webs 200, DB `oneday_human_pilot` migrated); typecheck 20/20, build 20/20, unit 12/12 (49). G1 READY declared for owner local full test. Runbook + checklist + deployment + limitations + recovery + walkthrough present. Maps to CHARTER §8 G1. Not a product-owner auto-sign. See `evidence/G1-PACKAGING/ACCEPTANCE.md`.
 - [x] G1 product bar locked — PC+H5 100% Meituan copy; only `/m/workflows` custom; inventory `MEITUAN_PC_H5_PARITY_INVENTORY.md` (W0).
 - [x] **G1-W1** `G1-R-MEITUAN-PC-NAV-HOME` PASS — Management PC 美团商家端导航分组 + 商家中心工作台; see `evidence/G1-MEITUAN-PARITY/W1/ACCEPTANCE.md`.
-- [ ] **NEXT:** G1-W2 Consumer H5（美团 App）附近 + 商家主页 1:1 densify — `MH5-01` / `MH5-03`.
+- [x] **G1-W2** `G1-R-MEITUAN-H5-NEARBY-STORE` PASS — Consumer H5 附近/商家页对标美团 App; see `evidence/G1-MEITUAN-PARITY/W2/ACCEPTANCE.md`.
+- [ ] **NEXT:** G1-W3 Management PC 门店+商品深页美团化 — `MPC-02` / `MPC-03`.
 - [ ] G1 OWNER GATE — owner signs only after Meituan PC/H5 parity waves pass re-test (`PRODUCT_OWNER_UI_ACCEPTANCE.md`). P1-C still blocked on lifting G + cloud inventory.
 - [ ] HUMAN-PILOT-HANDOFF / product-owner UI acceptance — local sandbox refreshed through migration `054` + consult CTA bindings + walkthrough shots (Playwright 4/4); **human sign-off still required**; not auto-claimed as 全部商用. Phase-1 P1-C blocked until owner lifts G (deploy templates in `infra/deploy/`).
 

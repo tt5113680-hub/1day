@@ -31,6 +31,56 @@
   overflow: hidden;
   background: var(--od-sf-canvas);
 }
+.merchantBar {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 14px 16px 12px;
+  border-bottom: 1px solid var(--od-sf-line, var(--od-border));
+  background: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--od-brand-100) 80%, var(--od-sf-canvas)) 0%,
+    var(--od-sf-canvas) 100%
+  );
+}
+.merchantEyebrow {
+  margin: 0;
+  color: var(--od-brand-800);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+}
+.merchantName {
+  display: block;
+  margin-top: 4px;
+  font-size: 20px;
+  letter-spacing: -0.03em;
+}
+.merchantMeta {
+  margin: 6px 0 0;
+  color: var(--od-sf-muted-soft, var(--od-text-muted));
+  font-size: 12px;
+  line-height: 1.45;
+}
+.merchantActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: flex-end;
+}
+.merchantActions button {
+  min-height: 32px;
+  border: 1px solid color-mix(in srgb, var(--od-brand-600) 40%, var(--od-border));
+  border-radius: 999px;
+  padding: 0 12px;
+  color: var(--od-brand-800);
+  background: var(--od-brand-50);
+  font: inherit;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+}
 .section {
   padding: 16px;
   margin-top: 8px;
