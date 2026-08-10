@@ -5,12 +5,12 @@
 
 ## Status
 
-SYS-1…SYS-13 PASS (through condition path preview + human-pilot walkthrough shots).
+SYS-1…SYS-14 PASS (through draft authoring preview on linear spine).
 
 ## Queue
 
 - Product-owner UI sign-off (human)
-- Optional full free-form drag graph editor (multi-week; SYS-12/13 are linear branch + path preview only)
+- Optional full free-form drag graph editor (multi-week; SYS-12..14 are linear branch/path/reorder only)
 
 ## Honest day boundary
 

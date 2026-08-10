@@ -173,4 +173,26 @@ export function previewConditionPath(
   return { appliedIndexes, skippedIndexes, mode: 'linear_condition_path_preview' };
 }
 
+/**
+ * Reorder steps on the linear spine (SYS-14).
+ * Not free-form drag: only index swap within a fixed ordered list.
+ */
+export function reorderSteps<T>(steps: T[], from: number, to: number): T[] {
+  if (
+    from === to ||
+    from < 0 ||
+    to < 0 ||
+    from >= steps.length ||
+    to >= steps.length ||
+    !Number.isInteger(from) ||
+    !Number.isInteger(to)
+  ) {
+    return steps;
+  }
+  const next = steps.slice();
+  const [item] = next.splice(from, 1);
+  next.splice(to, 0, item as T);
+  return next;
+}
+
 export const workflowsPackage = '@oneday/workflows';

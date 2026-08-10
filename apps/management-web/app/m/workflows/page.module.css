@@ -423,3 +423,39 @@
 .pathPreviewKey select {
   min-width: 88px;
 }
+
+.stepOrder {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+  justify-content: space-between;
+  grid-column: 1 / -1;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.stepOrderActions {
+  display: flex;
+  gap: 6px;
+}
+
+.draftPreview {
+  display: grid;
+  gap: 10px;
+  margin: 12px 0 0;
+  padding: 12px 14px;
+  border: 1px dashed var(--od-border);
+  border-radius: var(--od-radius-sm);
+  background: color-mix(in srgb, var(--od-brand-50) 40%, var(--od-surface));
+}
+
+.draftPreview strong {
+  font-size: 13px;
+}
+
+.draftPreview p {
+  margin: 0;
+  color: var(--od-text-muted);
+  font-size: 12px;
+}

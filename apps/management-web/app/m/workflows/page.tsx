@@ -13,6 +13,7 @@ import {
   buildConditionBranchFlow,
   collectConditionKeys,
   previewConditionPath,
+  reorderSteps,
   summarizeCondition,
 } from '@oneday/workflows';
 import { useCallback, useEffect, useMemo, useState } from 'react';
@@ -112,6 +113,7 @@ export default function WorkflowsPage() {
   const [steps, setSteps] = useState<StepDraft[]>([emptyStep()]);
   const [versionPanel, setVersionPanel] = useState<VersionPanel | null>(null);
   const [pathPreviewContext, setPathPreviewContext] = useState<Record<string, boolean>>({});
+  const [draftPathContext, setDraftPathContext] = useState<Record<string, boolean>>({});
   const pathPreview = useMemo(() => {
     if (!versionPanel?.steps.length) return null;
     const keys = collectConditionKeys(versionPanel.steps);
@@ -125,6 +127,30 @@ export default function WorkflowsPage() {
       path: previewConditionPath(versionPanel.steps, context),
     };
   }, [versionPanel?.steps, pathPreviewContext]);
+  const draftStepsForPreview = useMemo(
+    () =>
+      steps.map((step) => ({
+        name: step.name.trim() || '未命名步骤',
+        type: step.type,
+        timeoutMinutes: step.timeoutMinutes,
+        condition: draftCondition(step) ?? null,
+      })),
+    [steps],
+  );
+  const draftPreview = useMemo(() => {
+    if (!draftStepsForPreview.length) return null;
+    const keys = collectConditionKeys(draftStepsForPreview);
+    const context: Record<string, unknown> = {};
+    for (const key of keys) {
+      context[key] = draftPathContext[key] ?? true;
+    }
+    return {
+      keys,
+      context,
+      flow: buildConditionBranchFlow(draftStepsForPreview),
+      path: previewConditionPath(draftStepsForPreview, context),
+    };
+  }, [draftStepsForPreview, draftPathContext]);
   const load = useCallback(
     async (status = filter) => {
       if (!(await sessionApi.context())) return setState('forbidden');
@@ -540,6 +566,29 @@ export default function WorkflowsPage() {
         </div>
         {steps.map((step, index) => (
           <div className={styles.stepRow} key={`step-${index}`}>
+            <div className={styles.stepOrder}>
+              <span>步骤 {index + 1}</span>
+              <div className={styles.stepOrderActions}>
+                <Button
+                  tone="secondary"
+                  disabled={index === 0}
+                  aria-label={`上移步骤${index + 1}`}
+                  data-testid={`workflow-draft-move-up-${index}`}
+                  onClick={() => setSteps((value) => reorderSteps(value, index, index - 1))}
+                >
+                  上移
+                </Button>
+                <Button
+                  tone="secondary"
+                  disabled={index >= steps.length - 1}
+                  aria-label={`下移步骤${index + 1}`}
+                  data-testid={`workflow-draft-move-down-${index}`}
+                  onClick={() => setSteps((value) => reorderSteps(value, index, index + 1))}
+                >
+                  下移
+                </Button>
+              </div>
+            </div>
             <label>
               步骤名称
               <input
@@ -652,6 +701,79 @@ export default function WorkflowsPage() {
             </label>
           </div>
         ))}
+        {draftPreview ? (
+          <div
+            className={styles.draftPreview}
+            data-testid="workflow-draft-preview"
+            data-preview-mode="linear_draft_authoring_preview"
+          >
+            <strong>草稿预览（发布前）</strong>
+            <p>线性上移/下移 + 条件分支/路径预览；不是自由拖拽图编辑器。</p>
+            <ol className={styles.flow} aria-label="草稿线性步骤预览">
+              {draftPreview.flow.nodes.map((node, index) => {
+                const applies = draftPreview.path.appliedIndexes.includes(index);
+                const outgoing = draftPreview.flow.edges.filter((edge) => edge.from === index);
+                return (
+                  <li key={`draft-${node.index}`} className={styles.flowItem}>
+                    <div
+                      className={[
+                        node.hasCondition ? styles.flowNodeConditional : styles.flowNode,
+                        applies ? styles.flowNodeApplied : styles.flowNodeSkipped,
+                      ].join(' ')}
+                      data-testid={`workflow-draft-node-${node.index}`}
+                      data-path-state={applies ? 'applied' : 'skipped'}
+                    >
+                      <span>
+                        {index + 1}. {node.name}
+                      </span>
+                      <small>
+                        {businessLabel(node.type)}
+                        {applies ? ' · 将执行' : ' · 将跳过'}
+                      </small>
+                      <b>{node.conditionLabel}</b>
+                    </div>
+                    {outgoing.length ? (
+                      <div className={styles.flowBranches}>
+                        {outgoing.map((edge) => (
+                          <div
+                            key={`draft-${edge.kind}-${edge.from}-${edge.to ?? 'end'}`}
+                            className={edge.kind === 'skip' ? styles.flowEdgeSkip : styles.flowEdge}
+                            data-edge-kind={edge.kind}
+                          >
+                            {edge.label}
+                          </div>
+                        ))}
+                      </div>
+                    ) : null}
+                  </li>
+                );
+              })}
+            </ol>
+            {draftPreview.keys.length > 0 ? (
+              <div className={styles.pathPreviewKeys}>
+                {draftPreview.keys.map((key) => (
+                  <label key={key} className={styles.pathPreviewKey}>
+                    {key}
+                    <select
+                      aria-label={`草稿预览条件 ${key}`}
+                      data-testid={`workflow-draft-preview-${key}`}
+                      value={String(draftPreview.context[key] ?? true)}
+                      onChange={(event) =>
+                        setDraftPathContext((current) => ({
+                          ...current,
+                          [key]: event.target.value === 'true',
+                        }))
+                      }
+                    >
+                      <option value="true">true</option>
+                      <option value="false">false</option>
+                    </select>
+                  </label>
+                ))}
+              </div>
+            ) : null}
+          </div>
+        ) : null}
         <div className={styles.actions}>
           <Button
             tone="secondary"

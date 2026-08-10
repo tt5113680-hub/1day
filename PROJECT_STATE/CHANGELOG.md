@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## 2026-08-10 - SYS-14 Draft authoring preview PASS
+
+- Added `@oneday/workflows.reorderSteps`; Management create form supports 上移/下移 and live branch/path preview before publish.
+- Evidence: `SYS_14_DRAFT_AUTHORING_PREVIEW_ACCEPTANCE.md`, `evidence/SYS-14/`. Unit 1/1 + Playwright 1/1. Not free-form drag graph. Not 全部商用.
+
 ## 2026-08-10 - SYS-13 Condition path preview PASS + pilot walkthrough shots
 
 - Added `@oneday/workflows.previewConditionPath` / `collectConditionKeys`; Management version panel toggles sample context and highlights 将执行 / 将跳过.

@@ -47,6 +47,7 @@
 - [x] SYS-11 Platform provisioning failure trail PASS — honest failed/pending steps + fresh retry; see `SYS_11_PROVISIONING_FAILURE_TRAIL_ACCEPTANCE.md`.
 - [x] SYS-12 Condition branch flow PASS — linear take/skip preview (not free-form drag graph); see `SYS_12_CONDITION_BRANCH_FLOW_ACCEPTANCE.md`.
 - [x] SYS-13 Condition path preview PASS — sample-context apply/skip highlight (not free-form drag graph); see `SYS_13_CONDITION_PATH_PREVIEW_ACCEPTANCE.md`.
+- [x] SYS-14 Draft authoring preview PASS — linear 上移/下移 + create-form live path preview (not free-form drag graph); see `SYS_14_DRAFT_AUTHORING_PREVIEW_ACCEPTANCE.md`.
 - [ ] HUMAN-PILOT-HANDOFF / product-owner UI acceptance — local sandbox refreshed through migration `054` + consult CTA bindings + walkthrough shots (Playwright 4/4); **human sign-off still required**; not auto-claimed as 全部商用. Optional scoped P1 only after product-owner decision.
 
 ## Current product-owner acceptance
