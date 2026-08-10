@@ -9,7 +9,7 @@
 
 - branch: `hardening/COMMERCIAL-COMPLETION`
 - HEAD (pushed): tip after SYS-20 state record
-- last_safe_commit: PENDING_SYS20_COMMIT
+- last_safe_commit: e29caab
 - last_verified: SYS-20 STA list DnD reorder PASS
 - current_task: Human product-owner UI sign-off (engineering must not mark PASS)
 - status: `SYS_20_LIST_DND_REORDER_PASS`; STA eng SYS-17?20 complete; **not** claimed as full commercial
@@ -22,7 +22,7 @@
 1. SYS-17 STA insert rails (`2a913f8`)
 2. SYS-18 STA condition card IA (`d957edd`)
 3. SYS-19 STA start-context presets (`8627f2c`)
-4. SYS-20 STA list DnD reorder (this commit)
+4. SYS-20 STA list DnD reorder (`e29caab`)
 
 ### Next remainders (honest)
 
@@ -48,7 +48,7 @@
 6. PROJECT_STATE/WORKFLOW_AUTHORING_UX_RECOMMENDATION.md
 7. git status
 
-???SYS-20 PASS?safe ? LATEST_HANDOFF??STA eng SYS-17?20 ???P0 26/26???????
+???SYS-20 PASS?safe e29caab?tip ? LATEST_HANDOFF??STA eng SYS-17?20 ???P0 26/26???????
 ??????? free-form drag ???STA ???? list DnD?
 ??????? human pilot ??/??????? PRODUCT_OWNER_UI_ACCEPTANCE????? STA eng ?????????
 ???????????? D:\ONEDAY_V3????????????????
