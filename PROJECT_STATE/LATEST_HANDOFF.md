@@ -1,4 +1,4 @@
-ï»¿# LATEST_HANDOFF
+# LATEST_HANDOFF
 
 ## Executor
 
@@ -8,8 +8,8 @@
 ## Current task - Phase-1 commercial closed loop
 
 - branch: `hardening/COMMERCIAL-COMPLETION`
-- HEAD (pushed): PENDING
-- last_safe_commit: PENDING_SYS_34
+- HEAD (pushed): PENDING_TIP
+- last_safe_commit: 6e55247
 - last_verified: SYS-34 Membership ledger + revoke PASS
 - current_task: Phase-1 P1-A/P1-B continue; human UI sign-off do NOT auto-PASS; P1-C blocked on G
 - status: `SYS_34_MEMBERSHIP_LEDGER_PASS`; **not** claimed as full commercial
@@ -27,8 +27,8 @@
 
 1. Keep machine awake; Cursor Auto-run on.
 2. Sign `PROJECT_STATE/PRODUCT_OWNER_UI_ACCEPTANCE.md` when ready (P1-D).
-3. For public HTTPS (P1-C): reply **ã€Œæˆæƒå…¬ç½‘ HTTPS / è…¾è®¯äº‘è¯•ç‚¹ã€** + checklist in `PHASE1_COMMERCIAL_CLOSED_LOOP_PLAN.md` Â§2. Do **not** put secrets in Git.
-4. No full-commercial claim without P1-Aâ€¦D.
+3. For public HTTPS (P1-C): reply **¡¸ÊÚÈ¨¹«Íø HTTPS / ÌÚÑ¶ÔÆÊÔµã¡¹** + checklist in `PHASE1_COMMERCIAL_CLOSED_LOOP_PLAN.md` ¡ì2. Do **not** put secrets in Git.
+4. No full-commercial claim without P1-A¡­D.
 
 ### New-window paste
 
