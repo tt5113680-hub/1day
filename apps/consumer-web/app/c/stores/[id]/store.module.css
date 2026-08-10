@@ -250,55 +250,6 @@
   background: var(--od-sf-white);
   font-size: 20px;
 }
-.shortcutGrid {
-  display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  gap: 8px 2px;
-  padding: 19px 12px 5px;
-  background: var(--od-sf-white);
-}
-.shortcut {
-  display: grid;
-  min-height: 65px;
-  place-items: center;
-  border: 0;
-  color: var(--od-sf-shortcut-ink);
-  background: transparent;
-  font: inherit;
-  text-decoration: none;
-  font-size: 12px;
-  cursor: pointer;
-}
-.shortcut:disabled {
-  opacity: 0.35;
-}
-.shortcut i {
-  display: grid;
-  width: 35px;
-  height: 35px;
-  place-items: center;
-  margin-bottom: 6px;
-  border-radius: 13px;
-  color: var(--od-sf-accent-deep);
-  background: var(--od-sf-soft);
-  font-style: normal;
-  font-size: 18px;
-}
-.shortcut:nth-child(2) i,
-.shortcut:nth-child(7) i {
-  color: var(--od-sf-shortcut-2-color);
-  background: var(--od-sf-shortcut-2-bg);
-}
-.shortcut:nth-child(3) i,
-.shortcut:nth-child(8) i {
-  color: var(--od-sf-shortcut-3-color);
-  background: var(--od-sf-shortcut-3-bg);
-}
-.shortcut:nth-child(4) i,
-.shortcut:nth-child(9) i {
-  color: var(--od-sf-shortcut-4-color);
-  background: var(--od-sf-shortcut-4-bg);
-}
 .memberCard {
   display: flex;
   gap: 15px;
@@ -891,7 +842,6 @@
 .floatingConsult button:disabled {
   opacity: 0.6;
 }
-.shortcut:focus-visible,
 .memberCard button:focus-visible,
 .storeInfo button:focus-visible,
 .shareButton:focus-visible,
@@ -942,12 +892,6 @@
   }
   .topMeta {
     grid-column: 1 / -1;
-  }
-  .shortcutGrid {
-    grid-template-columns: repeat(10, 1fr);
-    gap: 10px;
-    margin: 0 24px;
-    border-radius: 0 0 20px 20px;
   }
   .memberCard {
     margin: 28px 32px 12px;

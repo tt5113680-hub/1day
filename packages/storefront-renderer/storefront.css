@@ -251,3 +251,74 @@
     overflow: hidden;
   }
 }
+
+.od-sf-shortcuts {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 8px 2px;
+  padding: 19px 12px 5px;
+  background: var(--od-sf-white);
+}
+
+.od-sf-shortcut {
+  display: grid;
+  min-height: 65px;
+  place-items: center;
+  border: 0;
+  color: var(--od-sf-shortcut-ink);
+  background: transparent;
+  font: inherit;
+  text-decoration: none;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.od-sf-shortcut:disabled {
+  opacity: 0.35;
+}
+
+.od-sf-shortcut i {
+  display: grid;
+  width: 35px;
+  height: 35px;
+  place-items: center;
+  margin-bottom: 6px;
+  border-radius: 13px;
+  color: var(--od-sf-accent-deep);
+  background: var(--od-sf-soft);
+  font-style: normal;
+  font-size: 18px;
+}
+
+.od-sf-shortcut:nth-child(2) i,
+.od-sf-shortcut:nth-child(7) i {
+  color: var(--od-sf-shortcut-2-color);
+  background: var(--od-sf-shortcut-2-bg);
+}
+
+.od-sf-shortcut:nth-child(3) i,
+.od-sf-shortcut:nth-child(8) i {
+  color: var(--od-sf-shortcut-3-color);
+  background: var(--od-sf-shortcut-3-bg);
+}
+
+.od-sf-shortcut:nth-child(4) i,
+.od-sf-shortcut:nth-child(9) i {
+  color: var(--od-sf-shortcut-4-color);
+  background: var(--od-sf-shortcut-4-bg);
+}
+
+.od-sf-shortcut:focus-visible {
+  outline: 3px solid var(--od-sf-accent-deep);
+  outline-offset: 2px;
+}
+
+@media (min-width: 700px) {
+  .od-sf-shortcuts {
+    grid-template-columns: repeat(10, 1fr);
+    gap: 10px;
+    margin: 0 24px;
+    padding-inline: 0;
+    border-radius: 20px;
+  }
+}

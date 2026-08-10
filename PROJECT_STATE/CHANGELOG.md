@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## 2026-08-10 - SYS-5 quick-actions paint extraction PASS
+
+- Extracted `StorefrontQuickActions` + `.od-sf-shortcut*` into `@oneday/storefront-renderer`; Consumer keeps capability catalog wiring only.
+- Evidence: `SYS_5_ACCEPTANCE.md`. Tests: `storefront-renderer.vitest` 7/7. Remaining module paints stay in Consumer. Not 全部商用.
+
 ## 2026-08-10 - SYS-6 store-manager content placements PASS
 
 - Assigned store managers (`tenant.read` + store scopes) may list approved content and place it on scoped stores only; create/approve/distribute remain owner-only.

@@ -76,5 +76,6 @@ describe('storefront visual tokens', () => {
     expect(theme).toContain('--od-sf-accent:');
     expect(theme).toContain(".od-sf-theme[data-industry='beauty']");
     expect(theme).toContain('.od-sf-banner');
+    expect(theme).toContain('.od-sf-shortcuts');
   });
 });

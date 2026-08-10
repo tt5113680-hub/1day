@@ -4,31 +4,32 @@
 - completed_tasks: 69/69
 - foundation_final_state_commit: 239114e
 - core_final_state_commit: df5ef65
-- last_completed_task: SYS-6 store-manager content placements PASS
-- current_task: ONEDAY-V3-COMMERCIAL-COMPLETION / systemic waves (SYS-6 remainder: more write controllers; optional storefront paint)
-- status: SYS_1_PASS; SYS_2_PASS; SYS_3_PASS; SYS_4_PASS; SYS_5_SCAFFOLD_PASS; SYS_5_VISUAL_PASS; SYS_6_SCAFFOLD_PASS; SYS_6_MULTI_PRODUCT_PASS; SYS_6_DATA_SCOPES_PASS; SYS_6_WRITE_PATH_SCOPES_PASS; SYS_6_NETWORK_PACKS_PASS; SYS_6_CONTENT_PLACEMENTS_PASS; MATRIX_GAP_CLOSEOUT_COMPLETE; HUMAN_PILOT_SANDBOX_REFRESHED; COMMERCIAL_FIXTURES_GENERATOR_PASS
+- last_completed_task: SYS-5 quick-actions paint extraction PASS
+- current_task: ONEDAY-V3-COMMERCIAL-COMPLETION / systemic waves (SYS-6 remainder: more write controllers; optional remaining storefront paints)
+- status: SYS_1_PASS; SYS_2_PASS; SYS_3_PASS; SYS_4_PASS; SYS_5_SCAFFOLD_PASS; SYS_5_VISUAL_PASS; SYS_5_QUICK_ACTIONS_PAINT_PASS; SYS_6_SCAFFOLD_PASS; SYS_6_MULTI_PRODUCT_PASS; SYS_6_DATA_SCOPES_PASS; SYS_6_WRITE_PATH_SCOPES_PASS; SYS_6_NETWORK_PACKS_PASS; SYS_6_CONTENT_PLACEMENTS_PASS; MATRIX_GAP_CLOSEOUT_COMPLETE; HUMAN_PILOT_SANDBOX_REFRESHED; COMMERCIAL_FIXTURES_GENERATOR_PASS
 - branch: hardening/COMMERCIAL-COMPLETION
 - executor: Cursor Agent (2026-08-10; see PROJECT_STATE/EXECUTOR_HANDOFF.md)
-- last_safe_commit: ab09042
-- verified_sys_6_content_placements: PASS ? store managers list approved content + place on scoped stores; create/approve owner-only. See PROJECT_STATE/SYS_6_ACCEPTANCE.md and evidence/SYS-6/.
-- verified_sys_6_network_packs: PASS ? channel/circle list+write gated by data_scopes; platform.manage unrestricted. See PROJECT_STATE/SYS_6_ACCEPTANCE.md and evidence/SYS-6/.
-- verified_sys_6_write_path_scopes: PASS ? redeem store write-scope; assigned managers list/update commercial+links. See PROJECT_STATE/SYS_6_ACCEPTANCE.md and evidence/SYS-6/.
-- verified_sys_6_data_scopes: PASS ? DataScopeService; managed-stores API; assign/onboarding sync. See PROJECT_STATE/SYS_6_ACCEPTANCE.md and evidence/SYS-6/.
-- verified_sys_6_multi_product: PASS ? Platform/Channel/Circle/Employee menu catalogs + shells; Store Manager `/e/store`; homeHref/scopes/availableProducts.
-- verified_sys_6_scaffold: PASS ? `GET /api/v1/me/menu` + Management AdminShell DTO.
-- verified_sys_5_visual: PASS ? Consumer store CSS hex retired to `--od-sf-*`.
-- verified_sys_5_scaffold: PASS ? `@oneday/storefront-renderer` package.
-- verified_sys_4: PASS ? Platform `/p/outbox` DLQ list + replay.
-- verified_sys_3: PASS ? `@oneday/sync-client` wired.
-- verified_sys_1_2: PASS ? store-scoped outbound; operating_channels; member_wallet; Page Builder whitelist.
-- verified_matrix_gap_wave_4: PASS ? M-02, XT-02, RC-01.
-- verified_human_pilot_sandbox_refresh: PASS ? Playwright 4/4.
+- last_safe_commit: pending (this gate)
+- verified_sys_5_quick_actions_paint: PASS - StorefrontQuickActions + .od-sf-shortcut* extracted. See PROJECT_STATE/SYS_5_ACCEPTANCE.md and evidence/SYS-5/.
+- verified_sys_6_content_placements: PASS - store managers list approved content + place on scoped stores; create/approve owner-only. See PROJECT_STATE/SYS_6_ACCEPTANCE.md and evidence/SYS-6/.
+- verified_sys_6_network_packs: PASS - channel/circle list+write gated by data_scopes; platform.manage unrestricted. See PROJECT_STATE/SYS_6_ACCEPTANCE.md and evidence/SYS-6/.
+- verified_sys_6_write_path_scopes: PASS - redeem store write-scope; assigned managers list/update commercial+links. See PROJECT_STATE/SYS_6_ACCEPTANCE.md and evidence/SYS-6/.
+- verified_sys_6_data_scopes: PASS - DataScopeService; managed-stores API; assign/onboarding sync. See PROJECT_STATE/SYS_6_ACCEPTANCE.md and evidence/SYS-6/.
+- verified_sys_6_multi_product: PASS - Platform/Channel/Circle/Employee menu catalogs + shells; Store Manager `/e/store`; homeHref/scopes/availableProducts.
+- verified_sys_6_scaffold: PASS - `GET /api/v1/me/menu` + Management AdminShell DTO.
+- verified_sys_5_visual: PASS - Consumer store CSS hex retired to `--od-sf-*`.
+- verified_sys_5_scaffold: PASS - `@oneday/storefront-renderer` package.
+- verified_sys_4: PASS - Platform `/p/outbox` DLQ list + replay.
+- verified_sys_3: PASS - `@oneday/sync-client` wired.
+- verified_sys_1_2: PASS - store-scoped outbound; operating_channels; member_wallet; Page Builder whitelist.
+- verified_matrix_gap_wave_4: PASS - M-02, XT-02, RC-01.
+- verified_human_pilot_sandbox_refresh: PASS - Playwright 4/4.
 - verified_commercial_fixtures_generator: PASS.
 - started_at: 2026-08-09T20:29:46+08:00
 - blocker: null
-- next_scope: SYS-6 remainder (more Management/Employee write controllers) or optional storefront paint. Not ????. Tencent Cloud out of scope (G). Usage warn ?90% only.
+- next_scope: SYS-6 remainder (more Management/Employee write controllers) or remaining storefront paints (Member/Offers). Not claimed as full commercial. Tencent Cloud out of scope (G). Usage warn >=90% only.
 - progress_p0_covered: 26/26 (100%)
 - progress_matrix_waves: 4/4 close-out complete
-- progress_sys_waves: 6/6 scaffolded; SYS-6 content placements landed; remainders multi-week
+- progress_sys_waves: 6/6 scaffolded; SYS-6 content placements + SYS-5 quick-actions paint landed; remainders multi-week
 - verified_pre_pilot_polish: PASS at 268464d.
 - remediation_stage: A-G PASS. See PROJECT_STATE/AUDIT_REMEDIATION_CLOSEOUT.md.

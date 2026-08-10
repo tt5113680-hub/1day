@@ -11,6 +11,7 @@
 | Shared theme  | `@oneday/storefront-renderer/storefront.css` + `storefrontTokens` (`--od-sf-*`) |
 | Consumer CSS  | `store.module.css` has **zero** raw hex; colors via `--od-sf-*`                 |
 | Shared chrome | `StorefrontSection`, `StorefrontEmpty`, `storefrontActionIcon`                  |
+| Shared paint  | `StorefrontBannerCarousel` + `StorefrontQuickActions` + `.od-sf-banner*` / `.od-sf-shortcut*` |
 | Host wiring   | Consumer store root uses `od-sf-theme`; Management imports storefront.css       |
 
 ## Evidence
@@ -22,6 +23,6 @@
 
 ## Honest remainder
 
-- Banner carousel paint extracted to `@oneday/storefront-renderer` (`StorefrontBannerCarousel` + `.od-sf-banner*`).
-- Remaining module paint (QuickActions / Member / Offers / …) still largely lives in Consumer.
+- Banner + QuickActions paints extracted to `@oneday/storefront-renderer`.
+- Remaining module paint (Member / Offers / …) still largely lives in Consumer.
 - Product-owner UI sign-off remains human.

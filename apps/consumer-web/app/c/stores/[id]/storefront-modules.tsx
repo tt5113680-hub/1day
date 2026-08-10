@@ -6,8 +6,8 @@ import {
   SECTION_MODULE_TYPES,
   StorefrontBannerCarousel,
   StorefrontEmpty,
+  StorefrontQuickActions,
   StorefrontSection,
-  storefrontActionIcon,
   visibleStorefrontModules,
 } from '@oneday/storefront-renderer';
 import '@oneday/storefront-renderer/storefront.css';
@@ -417,27 +417,15 @@ function QuickActions({
   const shortcuts = capabilities.map((code) => catalog[code]).filter(Boolean);
   if (!shortcuts.length) return null;
   return (
-    <section className={styles.shortcutGrid} aria-label="门店快捷入口" data-module="quick_actions">
-      {shortcuts.map((item, index) =>
-        item!.href ? (
-          <a className={styles.shortcut} href={item!.href} key={`${item!.label}-${index}`}>
-            <i>{item!.icon ?? storefrontActionIcon(index)}</i>
-            <span>{item!.label}</span>
-          </a>
-        ) : (
-          <button
-            className={styles.shortcut}
-            type="button"
-            onClick={item!.onClick}
-            disabled={item!.disabled}
-            key={`${item!.label}-${index}`}
-          >
-            <i>{item!.icon ?? storefrontActionIcon(index)}</i>
-            <span>{item!.label}</span>
-          </button>
-        ),
-      )}
-    </section>
+    <StorefrontQuickActions
+      items={shortcuts.map((item) => ({
+        label: item!.label,
+        icon: item!.icon,
+        href: item!.href,
+        onClick: item!.onClick,
+        disabled: item!.disabled,
+      }))}
+    />
   );
 }
 

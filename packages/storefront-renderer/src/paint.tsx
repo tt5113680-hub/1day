@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { storefrontActionIcon } from './chrome.js';
 
 export type StorefrontBannerSlide = {
   eyebrow: string;
@@ -56,6 +57,41 @@ export function StorefrontBannerCarousel({
           ))}
         </div>
       ) : null}
+    </section>
+  );
+}
+
+export type StorefrontQuickActionItem = {
+  label: string;
+  icon?: string;
+  href?: string;
+  onClick?: () => void | Promise<void>;
+  disabled?: boolean;
+};
+
+export function StorefrontQuickActions({ items }: { items: StorefrontQuickActionItem[] }) {
+  if (!items.length) return null;
+  return (
+    <section className="od-sf-shortcuts" aria-label="门店快捷入口" data-module="quick_actions">
+      {items.map((item, index) =>
+        item.href ? (
+          <a className="od-sf-shortcut" href={item.href} key={`${item.label}-${index}`}>
+            <i>{item.icon ?? storefrontActionIcon(index)}</i>
+            <span>{item.label}</span>
+          </a>
+        ) : (
+          <button
+            className="od-sf-shortcut"
+            type="button"
+            onClick={item.onClick}
+            disabled={item.disabled}
+            key={`${item.label}-${index}`}
+          >
+            <i>{item.icon ?? storefrontActionIcon(index)}</i>
+            <span>{item.label}</span>
+          </button>
+        ),
+      )}
     </section>
   );
 }

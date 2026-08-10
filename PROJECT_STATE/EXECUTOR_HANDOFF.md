@@ -33,9 +33,9 @@
 
 ## Current engineering focus
 
-**Systemic waves (D3) — SYS-6 remainder:**
+**Systemic waves (D3) — SYS-6 / SYS-5 remainders:**
 
-SYS-6 multi-product + data_scopes + write-path scopes + channel/circle network packs + store-manager content placements PASS. Continue: more write controllers; or optional storefront paint. No page-level patches. Not 全部商用. Tencent Cloud out of scope (G). Usage warn only at **≥90%**.
+SYS-6 network packs + content placements PASS; SYS-5 banner + quick-actions paints extracted. Continue: more write controllers; or Member/Offers storefront paints. No page-level patches. Not 全部商用. Tencent Cloud out of scope (G). Usage warn only at **≥90%**.
 
 ## Secrets and cloud
 
