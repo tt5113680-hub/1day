@@ -9,8 +9,8 @@
 - status: SYS_1_PASS; SYS_2_PASS; SYS_3_PASS; SYS_4_PASS; SYS_5_SCAFFOLD_PASS; SYS_5_VISUAL_PASS; SYS_5_QUICK_ACTIONS_PAINT_PASS; SYS_5_MEMBER_OFFER_PAINT_PASS; SYS_5_COMPARE_STORY_PAINT_PASS; SYS_5_BENEFIT_STORE_INFO_PAINT_PASS; SYS_5_HERO_FLOATING_CONSULT_PAINT_PASS; SYS_6_SCAFFOLD_PASS; SYS_6_MULTI_PRODUCT_PASS; SYS_6_DATA_SCOPES_PASS; SYS_6_WRITE_PATH_SCOPES_PASS; SYS_6_NETWORK_PACKS_PASS; SYS_6_CONTENT_PLACEMENTS_PASS; SYS_6_CATALOG_SCOPES_PASS; SYS_6_MEMBERSHIP_SCOPES_PASS; MATRIX_GAP_CLOSEOUT_COMPLETE; HUMAN_PILOT_SANDBOX_REFRESHED; COMMERCIAL_FIXTURES_GENERATOR_PASS
 - branch: hardening/COMMERCIAL-COMPLETION
 - executor: Cursor Agent (2026-08-10; see PROJECT_STATE/EXECUTOR_HANDOFF.md)
-- last_safe_commit: pending membership scopes commit
-- verified_sys_6_membership_scopes: PASS - store managers list/grant memberships on scoped stores only; menu memberships for tenant.read. See PROJECT_STATE/SYS_6_ACCEPTANCE.md and evidence/SYS-6/.
+- last_safe_commit: 2d4fe10
+- verified_sys_6_membership_scopes: PASS - store managers list/grant memberships on scoped stores only; menu memberships for tenant.read. See PROJECT_STATE/SYS_6_ACCEPTANCE.md and evidence/SYS-6/. Commit 2d4fe10.
 - verified_sys_5_hero_floating_consult_paint: PASS - StorefrontHero + StorefrontFloatingConsult extracted. See PROJECT_STATE/SYS_5_ACCEPTANCE.md and evidence/SYS-5/. Commit 85f7a46.
 - verified_sys_6_catalog_scopes: PASS - store managers list/write catalog services+offers on scoped stores only; menu offers for tenant.read. See PROJECT_STATE/SYS_6_ACCEPTANCE.md and evidence/SYS-6/. Commit 6ec80e1.
 - verified_sys_5_benefit_store_info_paint: PASS - StorefrontBenefitList + StorefrontStoreInfo extracted. See PROJECT_STATE/SYS_5_ACCEPTANCE.md and evidence/SYS-5/.
