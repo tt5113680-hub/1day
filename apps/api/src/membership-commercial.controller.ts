@@ -72,6 +72,19 @@ export class MembershipCommercialController {
     };
   }
 
+  @Post('consumer/memberships/resume')
+  async resume(
+    @Query('tenant') tenant: string | undefined,
+    @Headers('idempotency-key') key: string | undefined,
+    @Body() body: Record<string, unknown>,
+  ) {
+    return {
+      data: await this.memberships.resume(tenant ?? '', body, key ?? ''),
+      meta: { public: true },
+      error: null,
+    };
+  }
+
   @Get('consumer/memberships/wallet')
   async wallet(
     @Query('tenant') tenant: string | undefined,

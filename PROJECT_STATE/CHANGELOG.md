@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## 2026-08-10 - SYS-8 Cross-device Member resume PASS
+
+- Added `POST /api/v1/consumer/memberships/resume` (phone + memberCode + consent; revokes prior accesses; idempotent).
+- Consumer 「我的」anonymous/forbidden surfaces a resume form that restores member proof without SMS OTP this phase.
+- Evidence: `SYS_8_MEMBER_RESUME_ACCEPTANCE.md`, `evidence/SYS-8/`. Tests: API 1/1 + Playwright 1/1. Not 全部商用.
+
 ## 2026-08-10 - SYS-7 Workflow versioning PASS
 
 - Added `GET /workflows/:id/versions/:versionId` and clone-from-published on `POST /versions` (`sourceVersionId`).

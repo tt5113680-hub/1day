@@ -8,34 +8,24 @@
 ## Current task - systemic commercial productization (D3)
 
 - branch: `hardening/COMMERCIAL-COMPLETION`
-- HEAD (pushed): `d5ec123`
-- last_verified: SYS-7 Workflow versioning PASS (+ Management clone-publish UI)
-- current_task: **SYS-8 Cross-device Member resume** (in progress, incomplete)
-- status: `SYS_7_WORKFLOW_VERSIONING_PASS`; **not** claimed as full commercial
+- last_verified: SYS-8 Cross-device Member resume PASS
+- current_task: systemic remainders after SYS-8 (optional visual workflow editor / product-owner UI sign-off)
+- status: `SYS_8_MEMBER_RESUME_PASS`; **not** claimed as full commercial
 - blocker: null
 - progress: P0 26/26
 
-### Completed (verified + pushed)
+### Completed (verified)
 
-1. SYS-6 Role matrix: Store Manager, Tenant Owner/Manager, Channel/Circle/Platform, Member store「我的」
-2. SYS-7 Workflow versioning API + `/m/workflows`「克隆发布新版本」
-3. Evidence under `evidence/SYS-6/`, `evidence/SYS-7/`
+1. SYS-6 Role matrix packages (Store/Tenant/Network/Member)
+2. SYS-7 Workflow versioning API + Management clone-publish UI
+3. SYS-8 Cross-device Member resume (API + 「我的」resume form; no SMS OTP)
+4. Evidence under `evidence/SYS-6/`, `evidence/SYS-7/`, `evidence/SYS-8/`
 
-### WIP — do not mark PASS (uncommitted)
+### Next remainders (honest)
 
-Cross-device Member resume started, **not finished**:
-
-| Item | State |
-| ---- | ----- |
-| `apps/api/src/membership-commercial.controller.ts` | `POST /api/v1/consumer/memberships/resume` added (dirty) |
-| `apps/api/src/membership-commercial.service.ts` | `resume()` phone+memberCode+consent; revokes prior accesses (dirty) |
-| Consumer UI (membership /「我的」恢复表单) | **not started** |
-| Tests / evidence / PROJECT_STATE PASS | **not started** |
-| Intent | Resume requires existing enrollment + phone + 12-hex memberCode + consent; no SMS OTP this phase |
-
-**New window must:** finish UI + tests + evidence + state + commit, **or** `git restore` the two API files and pick another remainder. Do not leave half-landed resume as PASS.
-
-Ignore untracked `evidence/SYS-6/playwright-member-output/` (Playwright junk; already gitignored pattern-ish — do not commit).
+- Optional: Management visual condition / version panel (no page hex patches)
+- Product-owner UI sign-off (human; blocks external pilot claim only)
+- No Tencent Cloud (G). No full-commercial claim.
 
 ### Owner cooperation (front-loaded)
 
@@ -54,7 +44,7 @@ Ignore untracked `evidence/SYS-6/playwright-member-output/` (Playwright junk; al
 5. PROJECT_STATE/SYSTEMIC_CONSTRUCTION_PLAN.md
 6. git status
 
-状态：SYS-7 PASS（HEAD d5ec123）；P0 26/26。工作区有未提交 WIP：Member resume API（controller+service），缺 UI/测试/证据。优先完成 SYS-8 cross-device Member resume 闭环，或 restore 两文件后改做其他 remainder。
+状态：SYS-8 PASS；P0 26/26。下一项：可选 Management visual workflow editor，或停在 human product-owner UI sign-off。
 工作目录仅 D:\ONEDAY_V3。禁止页级补丁。不得宣称全部商用。不做腾讯云。
 已获 A–H。继续施工；用量达到 90%–95% 再换新窗口，中途不要停。
 ```

@@ -136,6 +136,108 @@ export class MembershipCommercialService implements OnModuleDestroy {
     }
   }
 
+  /**
+   * Cross-device Member resume: existing enrollment + phone + memberCode + consent
+   * issues a new profile access and retires prior granted tokens for that customer.
+   * No SMS OTP in this phase (honest local proof).
+   */
+  async resume(slug: string, body: Record<string, unknown>, key: string) {
+    if (
+      !SLUG.test(slug) ||
+      !UUID.test(String(body.storeId)) ||
+      body.consent !== true ||
+      !key.trim()
+    )
+      throw new BadRequestException('VALIDATION_ERROR');
+    const phone = mobile(body.phone);
+    const code = String(body.memberCode ?? '')
+      .trim()
+      .toUpperCase();
+    if (!/^[A-F0-9]{12}$/.test(code)) throw new BadRequestException('VALIDATION_ERROR');
+    const client = await this.pool.connect();
+    try {
+      await client.query('begin');
+      const tenant = (
+        await client.query(
+          "select id from tenants where slug=$1 and status='active' and deleted_at is null",
+          [slug],
+        )
+      ).rows[0];
+      if (!tenant) throw new NotFoundException('NOT_FOUND');
+      const replay = await client.query(
+        "select response from idempotency_keys where tenant_id=$1 and resource_type='membership_resume' and idempotency_key=$2 and deleted_at is null",
+        [tenant.id, key],
+      );
+      if (replay.rowCount) {
+        await client.query('commit');
+        return replay.rows[0].response;
+      }
+      const store = (
+        await client.query(
+          "select id from stores where id=$1 and tenant_id=$2 and status='active' and deleted_at is null",
+          [body.storeId, tenant.id],
+        )
+      ).rows[0];
+      if (!store) throw new NotFoundException('NOT_FOUND');
+      const identityHash = digest(`${tenant.id}:${phone}`);
+      const identity = (
+        await client.query(
+          "select customer_id from customer_identities where tenant_id=$1 and identity_type='phone' and identity_value_hash=$2 and status='active' and deleted_at is null",
+          [tenant.id, identityHash],
+        )
+      ).rows[0];
+      if (!identity) throw new NotFoundException('NOT_FOUND');
+      const enrollment = (
+        await client.query(
+          "select id,member_code from membership_enrollments where tenant_id=$1 and customer_id=$2 and member_code=$3 and enrollment_status='active' and deleted_at is null for update",
+          [tenant.id, identity.customer_id, code],
+        )
+      ).rows[0];
+      if (!enrollment) throw new NotFoundException('NOT_FOUND');
+      await client.query(
+        "update membership_enrollments set store_id=$1,updated_at=now(),version=version+1 where id=$2 and tenant_id=$3",
+        [store.id, enrollment.id, tenant.id],
+      );
+      await client.query(
+        "update consumer_profile_accesses set status='revoked',consent_status='revoked',revoked_at=now(),updated_at=now(),version=version+1 where tenant_id=$1 and customer_id=$2 and status='active' and deleted_at is null",
+        [tenant.id, identity.customer_id],
+      );
+      const token = randomBytes(24).toString('base64url'),
+        accessId = randomUUID();
+      await client.query(
+        "insert into consumer_profile_accesses(id,tenant_id,customer_id,access_token_hash,consent_status,consent_version,consented_at,expires_at,created_by,updated_by) values($1,$2,$3,$4,'granted','membership-v1',now(),now()+interval '180 days',null,null)",
+        [accessId, tenant.id, identity.customer_id, digest(token)],
+      );
+      const data = {
+        enrollmentId: enrollment.id,
+        memberCode: enrollment.member_code,
+        profileAccessId: accessId,
+        profileAccess: token,
+        resumed: true as const,
+      };
+      await this.receipt(
+        client,
+        tenant.id,
+        null,
+        'membership.resumed',
+        'membership.resumed.v1',
+        enrollment.id,
+        data,
+      );
+      await client.query(
+        "insert into idempotency_keys(id,tenant_id,resource_type,idempotency_key,response,created_by,updated_by) values($1,$2,'membership_resume',$3,$4,null,null)",
+        [randomUUID(), tenant.id, key, data],
+      );
+      await client.query('commit');
+      return data;
+    } catch (error) {
+      await client.query('rollback');
+      throw error;
+    } finally {
+      client.release();
+    }
+  }
+
   async wallet(slug: string, accessId: string, token: string) {
     if (!SLUG.test(slug) || !UUID.test(accessId) || !token)
       throw new BadRequestException('VALIDATION_ERROR');

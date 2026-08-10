@@ -23,4 +23,4 @@
 
 ## Honest remainder
 
-Cross-device Member login, dedicated `circle.read`/`provision.request` codes, and advanced workflow versioning remain multi-week. Not claimed as full commercial.
+Cross-device Member resume landed as SYS-8 (phone + memberCode + consent; no SMS OTP). Dedicated `circle.read`/`provision.request` codes and visual workflow editors remain multi-week. Not claimed as full commercial.

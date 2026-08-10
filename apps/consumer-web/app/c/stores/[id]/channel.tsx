@@ -125,7 +125,7 @@ export default function StoreChannel({
         ? '门店已发布的套餐与商品说明'
         : channel === 'membership'
           ? '完成本店入会后，可在「我的」查看会员证明与权益余额'
-          : '入会后展示会员码与授权资料；匿名时不暴露隐私';
+          : '入会或跨设备恢复后展示会员码与授权资料；匿名时不暴露隐私'
 
   return (
     <ConsumerShell context={context} active={channel} tabs={navTabs}>
@@ -333,6 +333,12 @@ function MemberProfileChannel({
   const [profile, setProfile] = useState<MemberProfilePayload | null>(null);
   const [accessId, setAccessId] = useState<string | null>(null);
   const [accessToken, setAccessToken] = useState<string | null>(null);
+  const [resumePhone, setResumePhone] = useState('');
+  const [resumeCode, setResumeCode] = useState('');
+  const [resumeConsent, setResumeConsent] = useState(false);
+  const [resuming, setResuming] = useState(false);
+  const [resumeNote, setResumeNote] = useState('');
+  const [sessionTick, setSessionTick] = useState(0);
 
   useEffect(() => {
     let cancelled = false;
@@ -368,7 +374,45 @@ function MemberProfileChannel({
     return () => {
       cancelled = true;
     };
-  }, [context.storeId, context.tenant]);
+  }, [context.storeId, context.tenant, sessionTick]);
+
+  const resume = async () => {
+    setResuming(true);
+    setResumeNote('');
+    try {
+      const response = await fetch(
+        `${apiBase}/api/v1/consumer/memberships/resume?tenant=${encodeURIComponent(context.tenant)}`,
+        {
+          method: 'POST',
+          headers: { 'content-type': 'application/json', 'idempotency-key': crypto.randomUUID() },
+          body: JSON.stringify({
+            storeId: context.storeId,
+            phone: resumePhone,
+            memberCode: resumeCode,
+            consent: resumeConsent,
+          }),
+        },
+      );
+      if (!response.ok) throw Error();
+      const payload = (await response.json()).data as {
+        memberCode: string;
+        profileAccessId: string;
+        profileAccess: string;
+      };
+      writeMemberAccess(context.tenant, context.storeId, {
+        accessId: payload.profileAccessId,
+        access: payload.profileAccess,
+        memberCode: payload.memberCode,
+      });
+      setResumeNote(`恢复成功。会员码 ${payload.memberCode} 已写入本机会话。`);
+      setState('loading');
+      setSessionTick((value) => value + 1);
+    } catch {
+      setResumeNote('无法恢复会员。请确认手机号、会员码与授权后重试（本阶段不支持短信验证码）。');
+    } finally {
+      setResuming(false);
+    }
+  };
 
   if (state === 'loading') {
     return (
@@ -398,9 +442,56 @@ function MemberProfileChannel({
           <h2>{state === 'forbidden' ? '会员授权已失效' : '尚未完成本店入会'}</h2>
           <p>
             {state === 'forbidden'
-              ? '当前会话无法证明会员身份；请重新入会后再查看会员码与权益余额。'
-              : '为保护隐私，未授权时不会在此展示手机号、会员码、订单或个人资料。'}
+              ? '当前会话无法证明会员身份；可用手机号与会员码在本设备恢复，或重新入会。'
+              : '为保护隐私，未授权时不会在此展示手机号、会员码、订单或个人资料。已在其他设备入会的会员可用会员码恢复。'}
           </p>
+        </article>
+        <article className={styles.resumeCard} data-testid="member-resume-card" aria-label="跨设备恢复会员">
+          <span>跨设备恢复</span>
+          <h2>用手机号与会员码恢复本店会员</h2>
+          <p>需已存在入会记录；本阶段不发送短信验证码，仅校验手机号、12 位会员码与授权同意。</p>
+          <label>
+            手机号
+            <input
+              aria-label="恢复会员手机号"
+              inputMode="tel"
+              value={resumePhone}
+              onChange={(event) => setResumePhone(event.target.value)}
+              placeholder="入会时使用的手机号"
+            />
+          </label>
+          <label>
+            会员码
+            <input
+              aria-label="恢复会员码"
+              value={resumeCode}
+              onChange={(event) => setResumeCode(event.target.value)}
+              placeholder="12 位会员码"
+              autoComplete="off"
+            />
+          </label>
+          <label>
+            <input
+              aria-label="同意恢复会员隐私授权"
+              type="checkbox"
+              checked={resumeConsent}
+              onChange={(event) => setResumeConsent(event.target.checked)}
+            />{' '}
+            我同意门店为恢复会员会话处理手机号。
+          </label>
+          <button
+            type="button"
+            data-testid="member-resume-submit"
+            disabled={resuming || !resumeConsent}
+            onClick={() => void resume()}
+          >
+            {resuming ? '正在恢复' : '恢复本店会员'}
+          </button>
+          {resumeNote ? (
+            <p role="status" data-testid="member-resume-status">
+              {resumeNote}
+            </p>
+          ) : null}
         </article>
         <a
           className={styles.profileLink}
