@@ -1,4 +1,4 @@
-# ONEDAY V3 — one unattended construction turn (Cursor Headless CLI).
+# ONEDAY V3 — one unattended construction turn (Cursor Headless or OpenCode + API).
 param(
   [int]$MaxMinutes = 0,
   [ValidateSet('small', 'medium', 'large', 'auto')]
@@ -21,18 +21,15 @@ function Write-Log([string]$Message) {
 }
 
 function Load-Secrets {
-  $envFile = Join-Path $root '.env.local-unattended'
-  if (Test-Path $envFile) {
-    Get-Content $envFile | ForEach-Object {
-      if ($_ -match '^\s*([A-Za-z_][A-Za-z0-9_]*)\s*=\s*(.*)\s*$') {
-        $name = $Matches[1]
-        $value = $Matches[2].Trim().Trim('"').Trim("'")
-        if (-not [string]::IsNullOrWhiteSpace($value)) {
-          Set-Item -Path "Env:$name" -Value $value
-        }
-      }
-    }
+  Load-UnattendedEnv
+}
+
+function Test-OpencodeCli {
+  $oc = Get-Command opencode -ErrorAction SilentlyContinue
+  if (-not $oc) {
+    throw 'OpenCode CLI not found. Install: npm install -g opencode-ai'
   }
+  return $oc.Source
 }
 
 function Test-AgentCli {
@@ -78,14 +75,18 @@ function Count-CommitsSince([string]$BeforeHead) {
 }
 
 Load-Secrets
-$agentPath = Test-AgentCli
+$executor = Get-UnattendedExecutor
 
 $resolvedProfile = if ($Profile -eq 'auto') { Get-TaskSizeProfile } else { $Profile }
 $limits = Get-ProfileLimits $resolvedProfile
 if ($MaxMinutes -le 0) { $MaxMinutes = $limits.MaxMinutes }
 
-if (-not $env:CURSOR_API_KEY) {
-  Write-Log 'FAIL: CURSOR_API_KEY missing. Copy .env.local-unattended.example to .env.local-unattended'
+if (-not (Test-ExecutorAuthenticated)) {
+  if ($executor -eq 'opencode') {
+    Write-Log 'FAIL: OpenCode not ready. Set DEEPSEEK_API_KEY and npm install -g opencode-ai'
+  } else {
+    Write-Log 'FAIL: not authenticated. Set CURSOR_API_KEY in .env.local-unattended or run: agent login'
+  }
   exit 2
 }
 
@@ -94,9 +95,8 @@ if (-not (Test-Path $promptFile)) {
   exit 2
 }
 
-$blocked = Join-Path $root 'PROJECT_STATE/BLOCKED_REPORT.md'
-if (Test-Path $blocked) {
-  Write-Log 'SKIP: BLOCKED_REPORT.md present — owner must clear before resuming'
+if (Test-ActiveBlockedReport) {
+  Write-Log 'SKIP: active BLOCKED_REPORT — owner must clear before resuming'
   exit 0
 }
 
@@ -115,30 +115,50 @@ $runLog = Join-Path $paths.LogDir "run-$stamp.log"
 $exitCode = 1
 
 try {
-  Write-Log "START run#$runNumber profile=$resolvedProfile max=${MaxMinutes}m log=$runLog"
+  Write-Log "START run#$runNumber executor=$executor profile=$resolvedProfile max=${MaxMinutes}m log=$runLog"
 
   if (-not $SkipPull) {
-    git fetch origin 2>&1 | Tee-Object -FilePath $runLog -Append | Out-Null
-    $branch = git rev-parse --abbrev-ref HEAD
-    if ($branch -eq 'hardening/COMMERCIAL-COMPLETION') {
-      git pull --ff-only origin $branch 2>&1 | Tee-Object -FilePath $runLog -Append | Out-Null
+    $prevEap = $ErrorActionPreference
+    $ErrorActionPreference = 'Continue'
+    try {
+      git fetch origin 2>&1 | Tee-Object -FilePath $runLog -Append | Out-Null
+      $branch = git rev-parse --abbrev-ref HEAD
+      if ($branch -eq 'hardening/COMMERCIAL-COMPLETION') {
+        git pull --ff-only origin $branch 2>&1 | Tee-Object -FilePath $runLog -Append | Out-Null
+      }
+    } finally {
+      $ErrorActionPreference = $prevEap
     }
   }
 
   $prompt = Get-Content $promptFile -Raw -Encoding utf8
-  $agentArgs = @(
-    '-p', '--force', '--trust', '--yolo',
-    '--workspace', $root,
-    '--output-format', 'text',
-    $prompt
-  )
 
-  $job = Start-Job -ScriptBlock {
-    param($Agent, $Args, $Root, $Key)
-    Set-Location $Root
-    $env:CURSOR_API_KEY = $Key
-    & $Agent @Args 2>&1
-  } -ArgumentList $agentPath, $agentArgs, $root, $env:CURSOR_API_KEY
+  if ($executor -eq 'opencode') {
+    $ocPath = Test-OpencodeCli
+    $model = Get-OpenCodeModel
+    $dsKey = $env:DEEPSEEK_API_KEY
+    $job = Start-Job -ScriptBlock {
+      param($Oc, $Model, $Root, $Prompt, $Key)
+      Set-Location $Root
+      $env:DEEPSEEK_API_KEY = $Key
+      & $Oc run -m $Model --dir $Root $Prompt 2>&1
+    } -ArgumentList $ocPath, $model, $root, $prompt, $dsKey
+  } else {
+    $agentPath = Test-AgentCli
+    $agentArgs = @(
+      '-p', '--force', '--trust', '--yolo',
+      '--workspace', $root,
+      '--output-format', 'text',
+      $prompt
+    )
+    $apiKey = Get-CursorApiKeyForAgent
+    $job = Start-Job -ScriptBlock {
+      param($Agent, $AgentArgList, $Root, $Key)
+      Set-Location $Root
+      if ($Key) { $env:CURSOR_API_KEY = $Key }
+      & $Agent @AgentArgList 2>&1
+    } -ArgumentList $agentPath, $agentArgs, $root, $apiKey
+  }
 
   $deadline = $startedAt.AddMinutes($MaxMinutes)
   do {
@@ -154,7 +174,14 @@ try {
   } else {
     $output = Receive-Job $job
     $output | Out-File $runLog -Encoding utf8
-    if ($job.State -eq 'Failed') {
+    $outputText = ($output | Out-String)
+    if ($outputText -match 'usage limit|ActionRequiredError') {
+      Write-Log 'SKIP: Cursor Agent usage limit — wait for quota reset'
+      $exitCode = 4
+    } elseif ($outputText -match 'Insufficient Balance|insufficient_quota|invalid_api_key|Authentication Fails|401 Unauthorized') {
+      Write-Log 'SKIP: API billing/auth issue — check DEEPSEEK balance and key'
+      $exitCode = 4
+    } elseif ($job.State -eq 'Failed') {
       Write-Log 'FAIL: agent job failed — see run log'
       $exitCode = 1
     } else {

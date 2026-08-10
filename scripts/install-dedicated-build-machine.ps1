@@ -13,8 +13,9 @@ if (-not (Test-Path $envFile)) { Copy-Item $example $envFile }
 
 $map = [ordered]@{
   UNATTENDED_CHAIN_MODE       = '1'
-  UNATTENDED_POLL_MINUTES     = '10'
+  UNATTENDED_POLL_MINUTES     = '20'
   UNATTENDED_MIN_INTERVAL_MIN = '10'
+  UNATTENDED_USAGE_LIMIT_WAIT_MIN = '360'
 }
 if ($CursorApiKey) { $map['CURSOR_API_KEY'] = $CursorApiKey }
 
@@ -37,14 +38,13 @@ foreach ($key in $map.Keys) {
 }
 Set-Content -Path $envFile -Value ($out -join "`n") -Encoding utf8
 
-& "$PSScriptRoot/install-local-unattended-task.ps1" -PollMinutes 10
+& "$PSScriptRoot/install-local-unattended-task.ps1" -PollMinutes 20
+& "$PSScriptRoot/install-logon-daemon.ps1"
 
-Write-Output ''
-Write-Output '=== Dedicated build machine ready ==='
-Write-Output 'Every 10 min: if previous task finished -> start next task'
-Write-Output 'Monitor:  pnpm unattended:dashboard   (live % + countdown)'
-Write-Output 'Snapshot: pnpm unattended:status'
-Write-Output 'Logs:    logs/unattended/daemon.log'
+Write-Output '=== Dedicated build machine — FULL AUTO (no watching) ==='
+Write-Output 'Every 20 min + logon daemon: auto chain tasks until G1 READY'
+Write-Output 'At usage limit: auto wait 6h then retry — no owner action'
+Write-Output 'Optional: pnpm unattended:status   Logs: logs/unattended/daemon.log'
 if (-not $CursorApiKey) {
   Write-Output 'ACTION: set CURSOR_API_KEY in .env.local-unattended if not already set'
 }

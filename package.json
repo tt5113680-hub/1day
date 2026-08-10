@@ -26,6 +26,7 @@
     "unattended:once": "powershell -ExecutionPolicy Bypass -File scripts/local-unattended-orchestrator.ps1",
     "unattended:install": "powershell -ExecutionPolicy Bypass -File scripts/install-local-unattended-task.ps1",
     "unattended:install:dedicated": "powershell -ExecutionPolicy Bypass -File scripts/install-dedicated-build-machine.ps1",
+    "unattended:resume": "powershell -ExecutionPolicy Bypass -File scripts/unattended-resume-auto.ps1",
     "unattended:daemon": "powershell -ExecutionPolicy Bypass -File scripts/local-unattended-daemon.ps1",
     "unattended:status": "powershell -ExecutionPolicy Bypass -File scripts/unattended-status.ps1",
     "unattended:dashboard": "powershell -ExecutionPolicy Bypass -File scripts/unattended-dashboard.ps1",

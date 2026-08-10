@@ -1,4 +1,4 @@
-# Register Windows Scheduled Task with adaptive orchestrator (poll every N minutes).
+# Register Windows Scheduled Task (schtasks — broad Windows compatibility).
 param(
   [int]$PollMinutes = 0
 )
@@ -6,6 +6,7 @@ param(
 $ErrorActionPreference = 'Stop'
 . "$PSScriptRoot/unattended-scheduler.ps1"
 if ($PollMinutes -le 0) { $PollMinutes = Get-PollMinutes }
+
 $root = Split-Path -Parent $PSScriptRoot
 $orchestrator = Join-Path $root 'scripts/local-unattended-orchestrator.ps1'
 $taskName = 'ONEDAY-V3-Unattended-Construction'
@@ -14,34 +15,17 @@ if (-not (Test-Path $orchestrator)) {
   throw "Missing orchestrator: $orchestrator"
 }
 
-$action = New-ScheduledTaskAction `
-  -Execute 'powershell.exe' `
-  -Argument "-NoProfile -ExecutionPolicy Bypass -File `"$orchestrator`"" `
-  -WorkingDirectory $root
+$tr = "powershell.exe -NoProfile -ExecutionPolicy Bypass -File `"$orchestrator`""
+$prev = $ErrorActionPreference
+$ErrorActionPreference = 'Continue'
+cmd /c "schtasks /Delete /TN `"$taskName`" /F" 2>$null | Out-Null
+$create = cmd /c "schtasks /Create /TN `"$taskName`" /TR `"$tr`" /SC MINUTE /MO $PollMinutes /F" 2>&1
+$ErrorActionPreference = $prev
+if ($LASTEXITCODE -ne 0) {
+  throw "schtasks create failed: $create"
+}
 
-$triggerBoot = New-ScheduledTaskTrigger -AtStartup
-$triggerRepeat = New-ScheduledTaskTrigger -Once -At (Get-Date).AddMinutes(2)
-$triggerRepeat.Repetition = New-ScheduledTaskRepetition `
-  -Interval (New-TimeSpan -Minutes $PollMinutes) `
-  -Duration ([TimeSpan]::MaxValue)
-
-$settings = New-ScheduledTaskSettingsSet `
-  -AllowStartIfOnBatteries `
-  -DontStopIfGoingOnBatteries `
-  -StartWhenAvailable `
-  -MultipleInstances IgnoreNew `
-  -ExecutionTimeLimit (New-TimeSpan -Hours 4)
-
-Register-ScheduledTask `
-  -TaskName $taskName `
-  -Action $action `
-  -Trigger @($triggerBoot, $triggerRepeat) `
-  -Settings $settings `
-  -Description 'ONEDAY V3 adaptive local headless construction (orchestrator gates cooldown + task size)' `
-  -Force | Out-Null
-
-Write-Output "Registered: $taskName"
-Write-Output "Poll every ${PollMinutes}m — orchestrator skips if previous run still active or in cooldown"
-Write-Output 'Monitor: pnpm unattended:status'
+Write-Output "Registered: $taskName (every ${PollMinutes} minutes via schtasks)"
+Write-Output 'Monitor: pnpm unattended:status  |  Live: pnpm unattended:dashboard'
 Write-Output 'Force one turn: powershell -File scripts/local-unattended-orchestrator.ps1 -Force'
-Write-Output "Remove: Unregister-ScheduledTask -TaskName '$taskName' -Confirm:`$false"
+Write-Output "Remove: schtasks /Delete /TN `"$taskName`" /F"

@@ -71,6 +71,16 @@ function Get-EnvInt([string]$Name, [int]$Default) {
   return $Default
 }
 
+function Test-ValidCursorApiKey([string]$Key) {
+  if ([string]::IsNullOrWhiteSpace($Key)) { return $false }
+  return $Key -notmatch 'your_cursor_api_key|changeme|placeholder|^xxx$'
+}
+
+function Get-CursorApiKeyForAgent {
+  if (Test-ValidCursorApiKey $env:CURSOR_API_KEY) { return $env:CURSOR_API_KEY }
+  return $null
+}
+
 function Load-UnattendedEnv {
   $paths = Get-UnattendedPaths
   $envFile = Join-Path $paths.Root '.env.local-unattended'
@@ -79,11 +89,53 @@ function Load-UnattendedEnv {
     if ($_ -match '^\s*([A-Za-z_][A-Za-z0-9_]*)\s*=\s*(.*)\s*$') {
       $name = $Matches[1]
       $value = $Matches[2].Trim().Trim('"').Trim("'")
+      if ($name -eq 'CURSOR_API_KEY' -and -not (Test-ValidCursorApiKey $value)) {
+        Remove-Item Env:CURSOR_API_KEY -ErrorAction SilentlyContinue
+        return
+      }
       if (-not [string]::IsNullOrWhiteSpace($value)) {
         Set-Item -Path "Env:$name" -Value $value
       }
     }
   }
+}
+
+function Get-UnattendedExecutor {
+  Load-UnattendedEnv
+  $v = [Environment]::GetEnvironmentVariable('UNATTENDED_EXECUTOR')
+  if ($v -eq 'opencode') { return 'opencode' }
+  return 'cursor'
+}
+
+function Test-ValidApiKey([string]$Key) {
+  if ([string]::IsNullOrWhiteSpace($Key)) { return $false }
+  return $Key -notmatch 'your_cursor_api_key|your_|changeme|placeholder|^xxx$'
+}
+
+function Test-DeepSeekApiKey {
+  return Test-ValidApiKey $env:DEEPSEEK_API_KEY
+}
+
+function Get-OpenCodeModel {
+  Load-UnattendedEnv
+  $m = [Environment]::GetEnvironmentVariable('UNATTENDED_OPENCODE_MODEL')
+  if ($m -and $m -match '/') { return $m }
+  if ($m) { return "deepseek/$m" }
+  return 'deepseek/deepseek-chat'
+}
+
+function Test-ExecutorAuthenticated {
+  if ((Get-UnattendedExecutor) -eq 'opencode') {
+    return (Test-DeepSeekApiKey -and (Get-Command opencode -ErrorAction SilentlyContinue))
+  }
+  return Test-AgentAuthenticated
+}
+
+function Test-AgentAuthenticated {
+  if (Test-ValidCursorApiKey $env:CURSOR_API_KEY) { return $true }
+  if (-not (Get-Command agent -ErrorAction SilentlyContinue)) { return $false }
+  $status = (& agent status 2>&1 | Out-String)
+  return $status -match 'Logged in|Login successful'
 }
 
 function Test-ChainMode {
@@ -153,6 +205,7 @@ function Get-AdaptiveSchedule {
   $maxMinutes = $limits.MaxMinutes
   $reason = "profile=$Profile base"
 
+  $usageLimitWait = $false
   if ($LastRun) {
     $exitCode = if ($null -ne $LastRun.exitCode) { [int]$LastRun.exitCode } else { 0 }
     $duration = if ($null -ne $LastRun.durationMinutes) { [double]$LastRun.durationMinutes } else { 0 }
@@ -166,6 +219,12 @@ function Get-AdaptiveSchedule {
       1 {
         $wait = [Math]::Min($maxWait, 20)
         $reason = 'last=FAIL retry sooner'
+      }
+      4 {
+        Load-UnattendedEnv
+        $wait = Get-EnvInt 'UNATTENDED_USAGE_LIMIT_WAIT_MIN' 360
+        $usageLimitWait = $true
+        $reason = 'last=USAGE_LIMIT — wait for free quota reset (no Pro required)'
       }
       0 {
         if (Test-ChainMode) {
@@ -188,7 +247,11 @@ function Get-AdaptiveSchedule {
     }
   }
 
-  $wait = [Math]::Max($minWait, [Math]::Min($maxWait, $wait))
+  if ($usageLimitWait) {
+    $wait = [Math]::Max($minWait, $wait)
+  } else {
+    $wait = [Math]::Max($minWait, [Math]::Min($maxWait, $wait))
+  }
   $schedule = [ordered]@{
     profile           = $Profile
     maxMinutes        = $maxMinutes
@@ -202,6 +265,15 @@ function Get-AdaptiveSchedule {
   return $schedule
 }
 
+function Test-ActiveBlockedReport {
+  $paths = Get-UnattendedPaths
+  $p = Join-Path $paths.Root 'PROJECT_STATE/BLOCKED_REPORT.md'
+  if (-not (Test-Path $p)) { return $false }
+  $text = Get-Content $p -Raw -Encoding utf8
+  if ($text -match 'RESOLVED|no active blocker|Current blockers\s*\n\s*None') { return $false }
+  return $true
+}
+
 function Test-ShouldRunNow {
   param([switch]$Force)
 
@@ -212,8 +284,8 @@ function Test-ShouldRunNow {
     return @{ ok = $false; reason = 'previous task still running (lock)' }
   }
 
-  if (Test-Path (Join-Path $paths.Root 'PROJECT_STATE/BLOCKED_REPORT.md')) {
-    return @{ ok = $false; reason = 'BLOCKED_REPORT present' }
+  if (Test-ActiveBlockedReport) {
+    return @{ ok = $false; reason = 'BLOCKED_REPORT active — owner action required' }
   }
 
   if ((Test-G1Ready) -and -not $Force) {
@@ -267,6 +339,7 @@ function Write-LastRunRecord {
       1 { 'FAIL' }
       2 { 'CONFIG' }
       3 { 'TIMEOUT' }
+      4 { 'USAGE_LIMIT' }
       default { "EXIT_$ExitCode" }
     }
     profile         = $Profile
