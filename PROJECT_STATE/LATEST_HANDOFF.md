@@ -8,8 +8,8 @@
 ## Current task - systemic commercial productization (D3)
 
 - branch: `hardening/COMMERCIAL-COMPLETION`
-- HEAD (pushed): tip PENDING_SYS25_STATE_PIN
-- last_safe_commit: 67a888e14aa64ace97dfc04767d0deb89c31717e
+- HEAD (pushed): tip `896f191`; safe feature `67a888e`
+- last_safe_commit: 67a888e
 - last_verified: SYS-25 Generic external-actions catalog PASS
 - current_task: human product-owner UI sign-off (do NOT auto-PASS) **or** scoped P1 after owner decision
 - status: `SYS_25_EXTERNAL_ACTIONS_PASS`; S1 islands closed; **not** claimed as full commercial
@@ -21,7 +21,7 @@
 
 1. SYS-23 attribution menu discoverability (`d09bcc4`)
 2. SYS-24 customer merge/transfer UX (`1c95b93`)
-3. SYS-25 external-actions catalog (`67a888e14aa64ace97dfc04767d0deb89c31717e`)
+3. SYS-25 external-actions catalog (`67a888e`)
 
 ### Next remainders (honest)
 
@@ -48,7 +48,7 @@ Read and execute:
 6. PROJECT_STATE/SYSTEMIC_COMMERCIAL_GAP_ANALYSIS.md
 7. git status
 
-Status: SYS-25 PASS (safe 67a888e14aa64ace97dfc04767d0deb89c31717e); S1 islands closed; P0 26/26; clean tree.
+Status: SYS-25 PASS (safe 67a888e; tip 896f191); S1 islands closed; P0 26/26; clean tree.
 Next: human PRODUCT_OWNER_UI_ACCEPTANCE (do NOT auto-sign). Eng may assist pilot sandbox only.
 No page-level patches. Writable root only D:\ONEDAY_V3. Do not claim full commercial. No Tencent Cloud.
 A-H granted. Continue until 90%-95% usage, then new window; do not stop mid-run.
