@@ -20,7 +20,9 @@
 2. Multi-product menus + role homes
 3. DataScopeService + managed-stores
 4. Write-path scopes: redeem + store commercial/list for assigned managers
-5. Evidence + tests green
+5. Store-manager Management nav (`/m/stores`)
+6. SYS-5 banner paint → `@oneday/storefront-renderer`
+7. Evidence + tests green
 
 ### Usage note
 
