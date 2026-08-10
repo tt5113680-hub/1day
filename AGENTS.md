@@ -14,6 +14,7 @@
 
 1. 每次只处理一个 `TASK`；不得跨任务扩展或重复开发状态已为 `PASS` 的任务。
 2. 开始开发前必须读取：
+   - `PROJECT_STATE/COMMERCIAL_EXECUTION_CHARTER.md`（**不可偏离总纲**）
    - `PROJECT_STATE/CURRENT_STATE.md`
    - `PROJECT_STATE/TASK_QUEUE.md`
    - `PROJECT_STATE/LATEST_HANDOFF.md`

@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## 2026-08-10 - Commercial Execution Charter (non-deviation constitution)
+
+- `COMMERCIAL_EXECUTION_CHARTER.md`: PRD hierarchy, big-tech practical bar, merchant habits/metrics, Cursor anthropomorphic testing, plugin maximization, multi-role openness, commercial gates.
+- Wired into AGENTS.md, EXECUTOR_HANDOFF, unattended construction prompt.
+
 ## 2026-08-10 - Phase-1 progress dashboard
 
 - `PHASE1_PROGRESS.json` milestone weights; `unattended-dashboard.ps1` live % + countdown + ETA.

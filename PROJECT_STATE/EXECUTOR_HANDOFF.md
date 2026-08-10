@@ -35,8 +35,9 @@
 
 **Phase-1 — local unattended (authorization I):**
 
-- Primary: Headless CLI + scheduled task / daemon — `PROJECT_STATE/LOCAL_UNATTENDED_SETUP.md`
-- P1-A/P1-B largely PASS; continue remainders via unattended turns
+- **Constitution (must not deviate):** `PROJECT_STATE/COMMERCIAL_EXECUTION_CHARTER.md`
+- Primary: Headless CLI + 10min chain — `PROJECT_STATE/LOCAL_UNATTENDED_SETUP.md`
+- Progress: `pnpm unattended:dashboard`
 - P1-C prep in `infra/deploy/`; live deploy blocked until G lifted
 - Human UI sign-off must not auto-PASS
 

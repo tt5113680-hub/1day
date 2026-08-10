@@ -22,5 +22,5 @@
     { "id": "p1-c-live", "label": "P1-C public HTTPS (needs G + domain/server)", "status": "blocked" },
     { "id": "p1-e", "label": "P1-E external controlled trial claim", "status": "waiting" }
   ],
-  "notes": "Agent must update milestone status each unattended turn."
+  "notes": "Agent must update milestone status each unattended turn. Must comply with COMMERCIAL_EXECUTION_CHARTER.md — no PRD deviation."
 }
