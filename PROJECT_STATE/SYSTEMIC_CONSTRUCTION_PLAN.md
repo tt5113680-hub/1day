@@ -7,21 +7,18 @@
 
 ## Active wave
 
-**SYS remainders — deeper multi-week items**
+**SYS remainders**
 
-| Deliverable                                        | Status                                      |
-| -------------------------------------------------- | ------------------------------------------- |
-| SYS-1…SYS-5 / SYS-4 ops UIs / SYS-6 write scopes   | PASS                                        |
-| SYS-6 Role matrix packages (Store/Tenant/Network/Member) | PASS                                 |
-| SYS-7 Workflow versioning (API clone/publish v2)   | PASS                                        |
-| SYS-8 Cross-device Member resume                   | PASS                                        |
-| SYS-9 Management workflow version panel            | PASS                                        |
+| Deliverable | Status |
+| --- | --- |
+| SYS-1…SYS-9 | PASS |
+| SYS-10 Workflow linear visual flow (`@oneday/workflows`) | PASS |
 
 ## Queue
 
-- Optional deeper graph / visual condition editor (multi-week; no page hex patches)
 - Product-owner UI sign-off (human)
+- Optional free-form graph editor (multi-week; not claimed done)
 
 ## Honest day boundary
 
-Role matrix, workflow versioning, Member resume, and Management version panel (list/inspect/edit equals + clone-publish) landed. Full graph editor and external commercial claims remain out of auto scope - not claimed as full commercial.
+Linear step visualization + condition helpers landed. Free-form drag graph and external commercial claims remain out of auto scope.

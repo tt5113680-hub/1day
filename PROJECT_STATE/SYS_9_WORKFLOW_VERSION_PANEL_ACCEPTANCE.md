@@ -22,4 +22,4 @@
 
 ## Honest remainder
 
-Full visual condition/graph editor and product-owner UI sign-off remain multi-week / human. Not claimed as full commercial.
+Linear visual flow landed as SYS-10. Free-form graph editor and product-owner UI sign-off remain multi-week / human. Not claimed as full commercial.

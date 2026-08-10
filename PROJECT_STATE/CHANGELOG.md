@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## 2026-08-10 - SYS-10 Workflow linear visual flow PASS
+
+- Seeded `@oneday/workflows` with `buildLinearFlow` / `summarizeCondition` / `previewStepApplies`.
+- Management version panel renders linear step nodes + condition edges; create form accepts optional equals conditions.
+- Evidence: `SYS_10_WORKFLOW_LINEAR_FLOW_ACCEPTANCE.md`, `evidence/SYS-10/`. Unit 1/1 + Playwright 1/1. Not a free-form graph editor. Not 全部商用.
+
 ## 2026-08-10 - SYS-9 Management workflow version panel PASS
 
 - `/m/workflows` adds「查看版本」panel: list versions, inspect steps/conditions, edit equals, clone-publish via existing APIs.

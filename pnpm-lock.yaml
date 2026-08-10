@@ -173,6 +173,9 @@ importers:
       '@oneday/ui':
         specifier: workspace:*
         version: link:../../packages/ui
+      '@oneday/workflows':
+        specifier: workspace:*
+        version: link:../../packages/workflows
       next:
         specifier: 16.3.0
         version: 16.3.0(@playwright/test@1.55.0)(@types/node@24.10.1)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)

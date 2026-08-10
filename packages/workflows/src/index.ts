@@ -1,1 +1,89 @@
+export type WorkflowCondition = {
+  key: string;
+  equals: string | number | boolean;
+};
+
+export type WorkflowStepLike = {
+  name: string;
+  type: string;
+  assigneeEmployeeId?: string;
+  timeoutMinutes?: number;
+  condition?: Record<string, unknown> | null;
+};
+
+export type LinearFlowNode = {
+  index: number;
+  name: string;
+  type: string;
+  timeoutMinutes: number | null;
+  conditionLabel: string;
+  hasCondition: boolean;
+};
+
+export type LinearFlowEdge = {
+  from: number;
+  to: number;
+  label: string;
+};
+
+export type LinearFlow = {
+  nodes: LinearFlowNode[];
+  edges: LinearFlowEdge[];
+};
+
+export function isWorkflowCondition(
+  value: Record<string, unknown> | null | undefined,
+): value is WorkflowCondition {
+  if (!value) return false;
+  return (
+    typeof value.key === 'string' &&
+    value.key.length > 0 &&
+    ['string', 'number', 'boolean'].includes(typeof value.equals)
+  );
+}
+
+/** Human-readable condition for Management / Employee chrome. */
+export function summarizeCondition(
+  condition?: Record<string, unknown> | null,
+): string {
+  if (!condition || !Object.keys(condition).length) return '始终执行';
+  if (isWorkflowCondition(condition)) return `${condition.key} = ${String(condition.equals)}`;
+  return JSON.stringify(condition);
+}
+
+/** Linear (not free-form graph) flow model for version visualization. */
+export function buildLinearFlow(steps: WorkflowStepLike[]): LinearFlow {
+  const nodes: LinearFlowNode[] = steps.map((step, index) => ({
+    index,
+    name: step.name || `步骤 ${index + 1}`,
+    type: step.type || 'task',
+    timeoutMinutes:
+      typeof step.timeoutMinutes === 'number' && Number.isFinite(step.timeoutMinutes)
+        ? step.timeoutMinutes
+        : null,
+    conditionLabel: summarizeCondition(step.condition),
+    hasCondition: Boolean(step.condition && Object.keys(step.condition).length),
+  }));
+  const edges: LinearFlowEdge[] = [];
+  for (let i = 0; i < nodes.length - 1; i += 1) {
+    const next = nodes[i + 1]!;
+    edges.push({
+      from: i,
+      to: i + 1,
+      label: next.hasCondition ? `若 ${next.conditionLabel}` : '下一步',
+    });
+  }
+  return { nodes, edges };
+}
+
+/** Same semantics as API `applies` for local preview only. */
+export function previewStepApplies(
+  condition: Record<string, unknown> | null | undefined,
+  context: Record<string, unknown>,
+): boolean {
+  if (!condition || !Object.keys(condition).length) return true;
+  if (!isWorkflowCondition(condition)) return false;
+  return context[condition.key] === condition.equals;
+}
+
 export const workflowsPackage = '@oneday/workflows';

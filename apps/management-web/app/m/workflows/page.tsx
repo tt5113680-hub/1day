@@ -9,6 +9,7 @@ import {
   MetricCard,
   StatusBadge,
 } from '@oneday/ui';
+import { buildLinearFlow, summarizeCondition } from '@oneday/workflows';
 import { useCallback, useEffect, useState } from 'react';
 import styles from './page.module.css';
 
@@ -18,6 +19,8 @@ type StepDraft = {
   type: 'task' | 'approval';
   assigneeEmployeeId: string;
   timeoutMinutes: number;
+  conditionKey: string;
+  conditionEquals: '' | 'true' | 'false';
 };
 type VersionRow = { id: string; sequence: number; status: string; version: number };
 type VersionStep = {
@@ -66,12 +69,6 @@ type Data = {
     instance_version: number;
   }[];
 };
-const conditionSummary = (condition?: Record<string, unknown> | null) => {
-  if (!condition || !Object.keys(condition).length) return '无条件';
-  if (typeof condition.key === 'string' && 'equals' in condition)
-    return `${condition.key} = ${String(condition.equals)}`;
-  return JSON.stringify(condition);
-};
 const conditionKeyOf = (condition?: Record<string, unknown> | null) =>
   typeof condition?.key === 'string' ? condition.key : '';
 const conditionEqualsOf = (condition?: Record<string, unknown> | null) => {
@@ -80,6 +77,13 @@ const conditionEqualsOf = (condition?: Record<string, unknown> | null) => {
   if (condition.equals === false) return 'false';
   return String(condition.equals ?? '');
 };
+const draftCondition = (step: StepDraft) => {
+  if (!step.conditionKey.trim() || !step.conditionEquals) return undefined;
+  return {
+    key: step.conditionKey.trim(),
+    equals: step.conditionEquals === 'true',
+  };
+};
 const api = process.env.NEXT_PUBLIC_API_BASE_URL ?? 'http://127.0.0.1:3001';
 const sessionApi = new SessionApiClient(api);
 const emptyStep = (assigneeEmployeeId = ''): StepDraft => ({
@@ -87,6 +91,8 @@ const emptyStep = (assigneeEmployeeId = ''): StepDraft => ({
   type: 'approval',
   assigneeEmployeeId,
   timeoutMinutes: 60,
+  conditionKey: '',
+  conditionEquals: '',
 });
 
 export default function WorkflowsPage() {
@@ -157,7 +163,17 @@ export default function WorkflowsPage() {
           'content-type': 'application/json',
           'idempotency-key': crypto.randomUUID(),
         },
-        body: JSON.stringify({ code, name, steps }),
+        body: JSON.stringify({
+          code,
+          name,
+          steps: steps.map((step) => ({
+            name: step.name,
+            type: step.type,
+            assigneeEmployeeId: step.assigneeEmployeeId,
+            timeoutMinutes: step.timeoutMinutes,
+            ...(draftCondition(step) ? { condition: draftCondition(step) } : {}),
+          })),
+        }),
       });
       if (!create.ok) throw new Error('CREATE');
       const definition = (await create.json()).data as {
@@ -577,6 +593,44 @@ export default function WorkflowsPage() {
                 }
               />
             </label>
+            <label>
+              条件键
+              <input
+                aria-label={`步骤${index + 1}条件键`}
+                value={step.conditionKey}
+                onChange={(event) =>
+                  setSteps((value) =>
+                    value.map((item, i) =>
+                      i === index ? { ...item, conditionKey: event.target.value } : item,
+                    ),
+                  )
+                }
+                placeholder="可选，如 upsell"
+              />
+            </label>
+            <label>
+              equals
+              <select
+                aria-label={`步骤${index + 1}条件值`}
+                value={step.conditionEquals}
+                onChange={(event) =>
+                  setSteps((value) =>
+                    value.map((item, i) =>
+                      i === index
+                        ? {
+                            ...item,
+                            conditionEquals: event.target.value as StepDraft['conditionEquals'],
+                          }
+                        : item,
+                    ),
+                  )
+                }
+              >
+                <option value="">始终执行</option>
+                <option value="true">true</option>
+                <option value="false">false</option>
+              </select>
+            </label>
           </div>
         ))}
         <div className={styles.actions}>
@@ -692,12 +746,43 @@ export default function WorkflowsPage() {
           <div className={styles.versionHeader}>
             <div>
               <h2>版本面板 · {versionPanel.templateName}</h2>
-              <p>复用已有 GET 版本接口；可查看步骤条件，并按面板条件克隆发布（非图形编辑器）。</p>
+              <p>
+                线性步骤可视化 + 条件编辑，复用既有版本 API；不是自由拖拽图编辑器。
+              </p>
             </div>
             <Button tone="secondary" onClick={() => setVersionPanel(null)}>
               关闭
             </Button>
           </div>
+          {!versionPanel.loading && versionPanel.steps.length > 0 && (
+            <ol className={styles.flow} data-testid="workflow-linear-flow" aria-label="线性步骤流">
+              {(() => {
+                const flow = buildLinearFlow(versionPanel.steps);
+                return flow.nodes.map((node, index) => (
+                  <li key={`${node.name}-${node.index}`} className={styles.flowItem}>
+                    <div
+                      className={node.hasCondition ? styles.flowNodeConditional : styles.flowNode}
+                      data-testid={`workflow-flow-node-${node.index}`}
+                    >
+                      <span>
+                        {index + 1}. {node.name}
+                      </span>
+                      <small>
+                        {businessLabel(node.type)}
+                        {node.timeoutMinutes ? ` · ${node.timeoutMinutes} 分` : ''}
+                      </small>
+                      <b>{node.conditionLabel}</b>
+                    </div>
+                    {index < flow.nodes.length - 1 ? (
+                      <div className={styles.flowEdge} aria-hidden="true">
+                        {flow.edges[index]?.label ?? '下一步'}
+                      </div>
+                    ) : null}
+                  </li>
+                ));
+              })()}
+            </ol>
+          )}
           <div className={styles.versionLayout}>
             <div className={styles.versionList} aria-label="版本列表">
               {versionPanel.versions.map((version) => (
@@ -728,7 +813,7 @@ export default function WorkflowsPage() {
                     </strong>
                     <small>
                       {businessLabel(step.type)} · 超时 {step.timeoutMinutes} 分钟 ·{' '}
-                      {conditionSummary(step.condition)}
+                      {summarizeCondition(step.condition)}
                     </small>
                     <div className={styles.conditionRow}>
                       <label>

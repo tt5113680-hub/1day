@@ -35,7 +35,7 @@
 
 **Systemic waves (D3) - remainders:**
 
-SYS-6…SYS-9 PASS (role matrix, workflow versioning, Member resume, Management version panel). Next: product-owner UI sign-off / optional deeper graph editor. Not claimed as full commercial. Tencent Cloud out of scope (G).
+SYS-6…SYS-10 PASS. Next: product-owner UI sign-off / optional free-form graph (multi-week). Not claimed as full commercial. Tencent Cloud out of scope (G).
 
 **Usage:** keep constructing until **90%-95%**, then new window. Do not stop early.
 

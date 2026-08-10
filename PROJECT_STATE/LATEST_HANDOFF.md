@@ -8,26 +8,23 @@
 ## Current task - systemic commercial productization (D3)
 
 - branch: `hardening/COMMERCIAL-COMPLETION`
-- HEAD (pushed): `e24f9ee`
-- last_verified: SYS-9 Management workflow version panel PASS
-- current_task: human product-owner UI sign-off (optional deeper graph editor)
-- status: `SYS_9_WORKFLOW_VERSION_PANEL_PASS`; **not** claimed as full commercial
+- HEAD (pushed): pending SYS-10 push
+- last_verified: SYS-10 Workflow linear visual flow PASS
+- current_task: human product-owner UI sign-off (optional free-form graph editor)
+- status: `SYS_10_WORKFLOW_LINEAR_FLOW_PASS`; **not** claimed as full commercial
 - blocker: null
 - progress: P0 26/26
-- last_safe_commit: `78dbf2b`
 
 ### Completed (verified)
 
-1. SYS-6 Role matrix packages
-2. SYS-7 Workflow versioning API + Management clone-publish
-3. SYS-8 Cross-device Member resume
-4. SYS-9 Management workflow version panel (list/inspect/edit equals + clone-publish)
-5. Evidence under `evidence/SYS-6/` … `evidence/SYS-9/`
+1. SYS-6…SYS-9 (role matrix, versioning, Member resume, version panel)
+2. SYS-10 `@oneday/workflows` linear flow + Management visualization
+3. Evidence under `evidence/SYS-6/` … `evidence/SYS-10/`
 
 ### Next remainders (honest)
 
-- Product-owner UI sign-off (human; blocks external pilot claim only)
-- Optional deeper graph/visual condition editor (multi-week)
+- Product-owner UI sign-off (human)
+- Optional free-form graph editor (multi-week)
 - No Tencent Cloud (G). No full-commercial claim.
 
 ### Owner cooperation (front-loaded)
@@ -47,7 +44,7 @@
 5. PROJECT_STATE/SYSTEMIC_CONSTRUCTION_PLAN.md
 6. git status
 
-状态：SYS-9 PASS；P0 26/26。下一项：human product-owner UI sign-off（或可选更深 graph editor）。
+状态：SYS-10 PASS；P0 26/26。下一项：human product-owner UI sign-off（可选 free-form graph 为多周项）。
 工作目录仅 D:\ONEDAY_V3。禁止页级补丁。不得宣称全部商用。不做腾讯云。
 已获 A–H。继续施工；用量达到 90%–95% 再换新窗口，中途不要停。
 ```
