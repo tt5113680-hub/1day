@@ -121,19 +121,24 @@ export function Workbench() {
       </main>
     );
   if (!data) return null;
-  const shortcuts = [
-    { href: '/e/tasks', label: '任务', desc: '今日待办' },
-    { href: '/e/customers', label: '客户', desc: 'CRM 客户' },
-    { href: '/e/leads', label: '线索', desc: '线索池' },
-    { href: '/e/share', label: '获客', desc: '分享码' },
-    { href: '/e/memberships', label: '核销', desc: '会员权益' },
-    { href: '/e/profile', label: '我的', desc: '个人工具' },
+  const overview = [
+    { label: '今日任务', value: data.tasks.length, hint: '项待推进' },
+    { label: '客户提醒', value: data.customerReminders.length, hint: '与你有关' },
+    { label: '行动机会', value: data.opportunities.length, hint: '时限信号' },
+  ] as const;
+  const functions = [
+    { href: '/e/tasks', label: '订单待办', desc: '今日任务' },
+    { href: '/e/customers', label: '顾客', desc: '客户档案' },
+    { href: '/e/memberships', label: '会员核销', desc: '权益核销' },
+    { href: '/e/leads', label: '获客线索', desc: '线索池' },
+    { href: '/e/store', label: '门店', desc: '店长工作台' },
+    { href: '/e/notifications', label: '消息', desc: '通知提醒' },
   ] as const;
   return (
     <main className={styles.page}>
       <header className={styles.header}>
         <div>
-          <p>员工工作台</p>
+          <p>美团商家 · 工作台</p>
           <h1>你好，{data.employee.displayName}</h1>
           <span>{data.employee.title ?? '员工'} · 仅显示你的任务与客户范围</span>
         </div>
@@ -147,39 +152,30 @@ export function Workbench() {
         </p>
       )}
 
-      <section className={styles.section} aria-label="工作快捷入口">
-        <div className={styles.sectionHead}>
-          <h2>常用功能</h2>
-          <span>一点直达</span>
+      <section className={styles.business} aria-labelledby="overview-title">
+        <div className={styles.businessHead}>
+          <span id="overview-title">今日经营概览</span>
+          <span className={styles.businessDate}>{time(data.generatedAt)}</span>
         </div>
-        <div className={styles.shortcuts}>
-          {shortcuts.map((item) => (
-            <a className={styles.shortcut} href={item.href} key={item.href}>
-              <strong>{item.label}</strong>
-              <span>{item.desc}</span>
-            </a>
+        <div className={styles.metrics}>
+          {overview.map((item) => (
+            <MetricCard key={item.label} hint={item.hint} label={item.label} value={item.value} />
           ))}
         </div>
       </section>
 
-      <section className={styles.hero} aria-labelledby="today-title">
-        <MetricCard hint="项待推进" label="今日任务" value={data.tasks.length} />
-        <div className={styles.heroCopy}>
-          <strong>今日工作</strong>
-          <p>优先完成有时限的客户动作；完成后自动保留执行记录。</p>
-        </div>
-      </section>
-
-      <section className={styles.section} aria-labelledby="crm-title">
+      <section className={styles.section} aria-label="经营功能网格">
         <div className={styles.sectionHead}>
-          <h2 id="crm-title">客户 CRM</h2>
-          <a className={styles.link} href="/e/customers">
-            客户目录 →
-          </a>
+          <h2>常用功能</h2>
+          <span>商家工作台</span>
         </div>
-        <div className={styles.crmRow}>
-          <MetricCard hint="客户提醒" label="客户提醒" value={data.customerReminders.length} />
-          <MetricCard hint="智能机会" label="行动机会" value={data.opportunities.length} />
+        <div className={styles.functions}>
+          {functions.map((item) => (
+            <a className={styles.function} href={item.href} key={item.href}>
+              <strong>{item.label}</strong>
+              <span>{item.desc}</span>
+            </a>
+          ))}
         </div>
       </section>
 

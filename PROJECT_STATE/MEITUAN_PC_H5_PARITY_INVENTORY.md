@@ -125,7 +125,7 @@
 | **W1** | MPC-01 工作台 + 主导航美团化（Management PC） | **PASS** `evidence/G1-MEITUAN-PARITY/W1/` |
 | **W2** | MH5-01 附近 + MH5-03 商家主页（Consumer H5） | **PASS** `evidence/G1-MEITUAN-PARITY/W2/` |
 | **W3** | MPC-02 门店 + MPC-03 商品 | **PASS** (首刀 IA) `evidence/G1-MEITUAN-PARITY/W3/` |
-| **W4** | ME-01～05 商家移动工作台 | 员工端美团化 |
+| **W4** | ME-01～05 商家移动工作台 | **PASS** (首刀) `evidence/G1-MEITUAN-PARITY/W4/` |
 | **W5** | MPC-04/05/07 订单·评价·营销（可本地数据） | 补齐商家端骨架 |
 | **W6** | R5 省市区代理（MP-01～03） | 渠道不猜，跟美团代理 |
 | **W∞** | 其余 GAP 逐页 | 直到主人签 G1 |
@@ -136,4 +136,4 @@
 
 ## 6. 当前下一刀
 
-**W1–W3 PASS（W3 首刀）.** 下一刀：**W4** — Employee 美团商家 App 工作台。
+**W1–W4 PASS（W4 首刀）. 下一刀：** **W5** — Management 订单·评价·营销骨架（MPC-04/05/07，本地数据）。
