@@ -250,50 +250,6 @@
   background: var(--od-sf-white);
   font-size: 20px;
 }
-.memberCard {
-  display: flex;
-  gap: 15px;
-  align-items: center;
-  justify-content: space-between;
-  margin: 16px;
-  padding: 18px;
-  border-radius: 20px;
-  color: var(--od-sf-white);
-  background: linear-gradient(118deg, var(--od-sf-member-from), var(--od-sf-member-to));
-  box-shadow: var(--od-sf-shadow-member);
-}
-.memberCard span {
-  color: var(--od-sf-member-eyebrow);
-  font-size: 11px;
-  font-weight: 800;
-  letter-spacing: 0.09em;
-}
-.memberCard h2 {
-  margin: 7px 0 0;
-  font-size: 17px;
-  letter-spacing: -0.03em;
-}
-.memberCard p {
-  margin: 6px 0 0;
-  color: var(--od-sf-member-copy);
-  font-size: 11px;
-  line-height: 1.45;
-}
-.memberCard button,
-.memberCard a,
-.memberCard > span {
-  flex: 0 0 auto;
-  border: 0;
-  border-radius: 999px;
-  padding: 10px 12px;
-  color: var(--od-sf-member-cta);
-  background: var(--od-sf-surface-chip);
-  font: inherit;
-  font-size: 12px;
-  font-weight: 800;
-  cursor: pointer;
-  text-decoration: none;
-}
 .section {
   padding: 16px;
   margin-top: 8px;
@@ -325,68 +281,11 @@
   font-size: 12px;
   font-weight: 700;
 }
-.offerList {
-  display: grid;
-  gap: 11px;
-}
-.offer {
-  display: grid;
-  grid-template-columns: 112px minmax(0, 1fr);
-  min-height: 142px;
-  overflow: hidden;
-  border-radius: 19px;
-  color: inherit;
-  background: var(--od-sf-white);
-  box-shadow: var(--od-sf-shadow-card);
-  text-decoration: none;
-}
-.offer > img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-.offerBody {
-  position: relative;
-  padding: 14px;
-}
-.offer em,
 .story em {
   font-style: normal;
   color: var(--od-sf-accent);
   font-size: 10px;
   font-weight: 800;
-}
-.offer strong {
-  display: block;
-  margin-top: 5px;
-  font-size: 16px;
-}
-.offer p {
-  display: -webkit-box;
-  overflow: hidden;
-  margin: 5px 0;
-  color: var(--od-sf-muted-copy);
-  font-size: 12px;
-  line-height: 1.45;
-  -webkit-line-clamp: 1;
-  -webkit-box-orient: vertical;
-}
-.offer small {
-  color: var(--od-sf-muted-hint);
-  font-size: 10px;
-}
-.offerBody > b {
-  position: absolute;
-  right: 14px;
-  bottom: 13px;
-  color: var(--od-sf-accent);
-  font-size: 14px;
-}
-.offerBody > b i,
-.platform b i {
-  font-style: normal;
-  font-size: 20px;
-  line-height: 0;
 }
 .platformList {
   display: grid;
@@ -504,6 +403,11 @@
 .platform b {
   color: var(--od-sf-accent-alt);
   font-size: 11px;
+}
+.platform b i {
+  font-style: normal;
+  font-size: 20px;
+  line-height: 0;
 }
 .disclaimer {
   margin: 9px 2px 0;
@@ -842,12 +746,10 @@
 .floatingConsult button:disabled {
   opacity: 0.6;
 }
-.memberCard button:focus-visible,
 .storeInfo button:focus-visible,
 .shareButton:focus-visible,
 .storeButton:focus-visible,
-.platform:focus-visible,
-.offer:focus-visible {
+.platform:focus-visible {
   outline: 3px solid var(--od-sf-accent-deep);
   outline-offset: 2px;
 }
@@ -893,9 +795,6 @@
   .topMeta {
     grid-column: 1 / -1;
   }
-  .memberCard {
-    margin: 28px 32px 12px;
-  }
   .section {
     padding: 24px 32px;
   }
@@ -905,9 +804,6 @@
     align-items: start;
     padding: 0 8px;
   }
-  .offerList {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-  }
   .comparisonPackage {
     max-width: none;
   }
@@ -915,9 +811,11 @@
   .benefitList {
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
-  .desktopGrid .offerList,
   .desktopGrid .storyList,
   .desktopGrid .benefitList {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .desktopGrid :global(.od-sf-offers) {
     grid-template-columns: minmax(0, 1fr);
   }
   .storeInfo {

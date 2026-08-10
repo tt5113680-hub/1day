@@ -6,6 +6,8 @@ import {
   SECTION_MODULE_TYPES,
   StorefrontBannerCarousel,
   StorefrontEmpty,
+  StorefrontMemberCard,
+  StorefrontOfferList,
   StorefrontQuickActions,
   StorefrontSection,
   visibleStorefrontModules,
@@ -442,18 +444,11 @@ function MemberEntry({
 }) {
   return (
     <div data-module="member_entry">
-      <section id="membership" className={styles.memberCard}>
-        <div>
-          <span>ONEDAY 会员</span>
-          <h2>加入会员，领取门店专属权益</h2>
-          <p>匿名浏览不受影响；加入意向会由门店同事跟进确认。</p>
-        </div>
-        <a
-          href={`/c/stores/${data.store.id}/membership?tenant=${encodeURIComponent(data.tenant.slug)}&source=consumer:storefront&scene=membership_join`}
-        >
-          立即加入
-        </a>
-      </section>
+      <StorefrontMemberCard
+        title="加入会员，领取门店专属权益"
+        copy="匿名浏览不受影响；加入意向会由门店同事跟进确认。"
+        ctaHref={`/c/stores/${data.store.id}/membership?tenant=${encodeURIComponent(data.tenant.slug)}&source=consumer:storefront&scene=membership_join`}
+      />
       {data.benefits.length ? (
         <StorefrontSection title="门店权益" hint="入会后按门店配置发放" anchor="benefits">
           <div className={styles.benefitList}>
@@ -600,40 +595,23 @@ function ServiceCatalog({
       anchor="offers"
       moduleType="service_catalog"
     >
-      <div className={styles.offerList}>
-        {data.services.length ? (
-          data.services.map((item, index) => (
-            <a
-              id={`offer-${item.id}`}
-              href={`/c/services/${item.id}?${params.toString()}&storeId=${encodeURIComponent(data.store.id)}`}
-              className={styles.offer}
-              key={item.id}
-            >
-              {data.store.imageUrl && (
-                <img
-                  src={data.store.imageUrl}
-                  alt=""
-                  style={{ objectPosition: index % 2 ? '65% 50%' : '100% 50%' }}
-                />
-              )}
-              <span className={styles.offerBody}>
-                <em>{index === 0 ? '热销推荐' : '到店自取'}</em>
-                <strong>{item.name}</strong>
-                <p>{item.description ?? '门店已发布的到店服务'}</p>
-                <small>
-                  {item.duration_minutes ? `${item.duration_minutes} 分钟` : '到店可用'} · 原价{' '}
-                  {item.price_label ?? '以门店为准'}
-                </small>
-                <b>
-                  {item.price_label ?? '立即查看'} <i>›</i>
-                </b>
-              </span>
-            </a>
-          ))
-        ) : (
-          <StorefrontEmpty>门店正在完善推荐内容。</StorefrontEmpty>
-        )}
-      </div>
+      {data.services.length ? (
+        <StorefrontOfferList
+          items={data.services.map((item, index) => ({
+            id: item.id,
+            href: `/c/services/${item.id}?${params.toString()}&storeId=${encodeURIComponent(data.store.id)}`,
+            title: item.name,
+            description: item.description ?? '门店已发布的到店服务',
+            meta: `${item.duration_minutes ? `${item.duration_minutes} 分钟` : '到店可用'} · 原价 ${item.price_label ?? '以门店为准'}`,
+            cta: item.price_label ?? '立即查看',
+            eyebrow: index === 0 ? '热销推荐' : '到店自取',
+            imageUrl: data.store.imageUrl,
+            imagePosition: index % 2 ? '65% 50%' : '100% 50%',
+          }))}
+        />
+      ) : (
+        <StorefrontEmpty>门店正在完善推荐内容。</StorefrontEmpty>
+      )}
     </StorefrontSection>
   );
 }

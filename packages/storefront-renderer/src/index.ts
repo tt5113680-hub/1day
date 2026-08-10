@@ -16,8 +16,12 @@ export {
 } from './chrome.js';
 export {
   StorefrontBannerCarousel,
+  StorefrontMemberCard,
+  StorefrontOfferList,
   StorefrontQuickActions,
   type StorefrontBannerSlide,
+  type StorefrontMemberCardProps,
+  type StorefrontOfferItem,
   type StorefrontQuickActionItem,
 } from './paint.js';
 export { storefrontTokens, type StorefrontTokens } from './tokens.js';

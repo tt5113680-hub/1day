@@ -95,3 +95,70 @@ export function StorefrontQuickActions({ items }: { items: StorefrontQuickAction
     </section>
   );
 }
+
+export type StorefrontMemberCardProps = {
+  eyebrow?: string;
+  title: string;
+  copy: string;
+  ctaHref: string;
+  ctaLabel?: string;
+};
+
+export function StorefrontMemberCard({
+  eyebrow = 'ONEDAY 会员',
+  title,
+  copy,
+  ctaHref,
+  ctaLabel = '立即加入',
+}: StorefrontMemberCardProps) {
+  return (
+    <section id="membership" className="od-sf-member">
+      <div>
+        <span>{eyebrow}</span>
+        <h2>{title}</h2>
+        <p>{copy}</p>
+      </div>
+      <a href={ctaHref}>{ctaLabel}</a>
+    </section>
+  );
+}
+
+export type StorefrontOfferItem = {
+  id: string;
+  href: string;
+  title: string;
+  description: string;
+  meta: string;
+  cta: string;
+  eyebrow?: string;
+  imageUrl?: string | null;
+  imagePosition?: string;
+};
+
+export function StorefrontOfferList({ items }: { items: StorefrontOfferItem[] }) {
+  if (!items.length) return null;
+  return (
+    <div className="od-sf-offers">
+      {items.map((item) => (
+        <a id={`offer-${item.id}`} href={item.href} className="od-sf-offer" key={item.id}>
+          {item.imageUrl ? (
+            <img
+              src={item.imageUrl}
+              alt=""
+              style={item.imagePosition ? { objectPosition: item.imagePosition } : undefined}
+            />
+          ) : null}
+          <span className="od-sf-offer__body">
+            {item.eyebrow ? <em>{item.eyebrow}</em> : null}
+            <strong>{item.title}</strong>
+            <p>{item.description}</p>
+            <small>{item.meta}</small>
+            <b>
+              {item.cta} <i>›</i>
+            </b>
+          </span>
+        </a>
+      ))}
+    </div>
+  );
+}

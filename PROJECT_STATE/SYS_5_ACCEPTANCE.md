@@ -2,7 +2,7 @@
 
 ## Result
 
-`SYS_5_VISUAL_PASS` (local engineering, after scaffold). Not 全部商用. Not Tencent Cloud.
+`SYS_5_VISUAL_PASS` (local engineering, after scaffold). Not claimed as full commercial. Not Tencent Cloud.
 
 ## Delivered
 
@@ -11,18 +11,18 @@
 | Shared theme  | `@oneday/storefront-renderer/storefront.css` + `storefrontTokens` (`--od-sf-*`) |
 | Consumer CSS  | `store.module.css` has **zero** raw hex; colors via `--od-sf-*`                 |
 | Shared chrome | `StorefrontSection`, `StorefrontEmpty`, `storefrontActionIcon`                  |
-| Shared paint  | `StorefrontBannerCarousel` + `StorefrontQuickActions` + `.od-sf-banner*` / `.od-sf-shortcut*` |
+| Shared paint  | Banner, QuickActions, MemberCard, OfferList + matching `.od-sf-*` classes       |
 | Host wiring   | Consumer store root uses `od-sf-theme`; Management imports storefront.css       |
 
 ## Evidence
 
 - `tests/storefront-renderer.vitest.ts` 7/7
 - `tests/sys-5-storefront-renderer.test.mjs` 2/2
-- Workspace: format:check, lint, typecheck 20/20, build 20/20
+- Consumer typecheck/build PASS
 - `evidence/SYS-5/`
 
 ## Honest remainder
 
-- Banner + QuickActions paints extracted to `@oneday/storefront-renderer`.
-- Remaining module paint (Member / Offers / …) still largely lives in Consumer.
+- Banner / QuickActions / Member card / Offer list paints extracted.
+- Remaining paints (OfferCompare / platform rows / story / wallet cards / …) still largely live in Consumer.
 - Product-owner UI sign-off remains human.

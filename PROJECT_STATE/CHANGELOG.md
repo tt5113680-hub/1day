@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## 2026-08-10 - SYS-5 member + offer paints extraction PASS
+
+- Extracted `StorefrontMemberCard` + `StorefrontOfferList` (+ `.od-sf-member*` / `.od-sf-offer*`) into `@oneday/storefront-renderer`.
+- Consumer keeps membership URL wiring and service catalog data mapping only.
+- Evidence: `SYS_5_ACCEPTANCE.md`. Tests: `storefront-renderer.vitest` 7/7. Remaining paints stay in Consumer. Not claimed as full commercial.
+
 ## 2026-08-10 - SYS-5 quick-actions paint extraction PASS
 
 - Extracted `StorefrontQuickActions` + `.od-sf-shortcut*` into `@oneday/storefront-renderer`; Consumer keeps capability catalog wiring only.

@@ -19,12 +19,13 @@
 | SYS-6 channel/circle network packs                 | PASS                                        |
 | SYS-6 store-manager content placements             | PASS                                        |
 | SYS-5 quick-actions paint extraction               | PASS                                        |
+| SYS-5 member + offer paints extraction             | PASS                                        |
 
 ## Queue
 
 - SYS-6 remainder: more Management/Employee write controllers
-- Optional: Member/Offers storefront paints; Content distributions UI; Workflow write
+- Optional: OfferCompare/platform/story storefront paints; Content distributions UI; Workflow write
 
 ## Honest day boundary
 
-Menus + data_scopes + store write-path + channel/circle network packs + store-manager content placements + banner/quick-actions paints landed. Full ROLE_PRODUCT_MATRIX E2E and 一线大厂 remain multi-week — not 全部商用.
+Menus + data_scopes + store write-path + channel/circle network packs + store-manager content placements + banner/quick-actions/member/offer paints landed. Full ROLE_PRODUCT_MATRIX E2E remains multi-week - not claimed as full commercial.
