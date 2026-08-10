@@ -35,7 +35,7 @@
 
 **Systemic waves (D3) - remainders:**
 
-SYS-6…SYS-20 PASS. STA eng slices complete (through list DnD). Next: human product-owner UI sign-off (must not auto-PASS). Free-form drag canvas deferred. Not claimed as full commercial. Tencent Cloud out of scope (G).
+SYS-6…SYS-21 PASS. STA eng slices complete (through closed-loop package). Next: human product-owner UI sign-off (must not auto-PASS). Free-form drag canvas deferred. Not claimed as full commercial. Tencent Cloud out of scope (G).
 
 **Usage:** keep constructing until **90%-95%**, then new window. Do not stop early.
 

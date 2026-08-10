@@ -1,6 +1,7 @@
 # HUMAN-PILOT walkthrough screenshots (engineering only)
 
 - recorded_at: 2026-08-10 Asia/Shanghai
+- refreshed_at: 2026-08-10 (post SYS-21)
 - claim: **LOCAL TEST ONLY**. Engineering screenshots for product-owner review.
 - **Does not** mark `PRODUCT_OWNER_UI_ACCEPTANCE.md` PASS.
 - sandbox: ports 3200–3205, DB `oneday_human_pilot` through `054_channel_permissions`

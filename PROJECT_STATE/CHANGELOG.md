@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## 2026-08-10 - SYS-21 STA closed-loop package PASS + pilot walkthrough refresh
+
+- Proved STA closed-loop 3-step conditional authoring (insert/condition card/presets/list DnD/export/publish) without free-form canvas.
+- Refreshed human-pilot walkthrough screenshots (engineering only; did not sign product-owner UI).
+- Evidence: `SYS_21_STA_CLOSED_LOOP_ACCEPTANCE.md`, `evidence/SYS-21/`, `evidence/HUMAN-PILOT-HANDOFF/walkthrough/`. Not 全部商用.
+
 ## 2026-08-10 - SYS-20 STA list DnD reorder PASS
 
 - Added `@oneday/workflows.reorderStepsByListDrop` and Management spine drag handles (list-native only).

@@ -1105,7 +1105,11 @@ export default function WorkflowsPage() {
               移除末步
             </Button>
           )}
-          <Button disabled={busy === 'create' || !employees.length} onClick={() => void createAndPublish()}>
+          <Button
+            disabled={busy === 'create' || !employees.length}
+            data-testid="workflow-draft-create-publish"
+            onClick={() => void createAndPublish()}
+          >
             创建并发布
           </Button>
         </div>

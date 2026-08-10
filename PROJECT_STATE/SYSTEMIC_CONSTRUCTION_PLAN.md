@@ -5,7 +5,7 @@
 
 ## Status
 
-SYS-1…SYS-20 PASS (STA through list-native DnD reorder).
+SYS-1…SYS-21 PASS (STA closed-loop package proven).
 
 ## Recommended authoring direction (owner 2026-08-10)
 
@@ -17,7 +17,8 @@ SYS-1…SYS-20 PASS (STA through list-native DnD reorder).
 
 - Product-owner UI sign-off (human) — required for external pilot claim
 - Free-form DAG canvas — deferred; needs PRODUCT_FREEZE + engine capability
+- Scoped P1 only after product-owner decision
 
 ## Honest day boundary
 
-External commercial claims blocked without human sign-off. STA eng SYS-17…20 complete on the honest linear model (SYS-10…20).
+External commercial claims blocked without human sign-off. STA eng SYS-17…21 complete on the honest linear model (SYS-10…21).

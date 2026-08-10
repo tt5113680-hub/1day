@@ -8,27 +8,26 @@
 ## Current task - systemic commercial productization (D3)
 
 - branch: `hardening/COMMERCIAL-COMPLETION`
-- HEAD (pushed): tip `4e7133c`; safe feature `e29caab`
-- last_safe_commit: e29caab
-- last_verified: SYS-20 STA list DnD reorder PASS; human-pilot Playwright 4/4 recheck
+- HEAD (pushed): tip after SYS-21 state record
+- last_safe_commit: PENDING_SYS21_COMMIT
+- last_verified: SYS-21 STA closed-loop PASS; walkthrough shots refreshed
 - current_task: Human product-owner UI sign-off (engineering must not mark PASS)
-- status: `SYS_20_LIST_DND_REORDER_PASS`; STA eng SYS-17..20 complete; **not** claimed as full commercial
+- status: `SYS_21_STA_CLOSED_LOOP_PASS`; STA eng SYS-17..21 complete; **not** claimed as full commercial
 - blocker: null
 - progress: P0 26/26
 - working_tree: clean after commit
 
 ### Completed prior window (verified + pushed)
 
-1. SYS-17 STA insert rails (`2a913f8`)
-2. SYS-18 STA condition card IA (`d957edd`)
-3. SYS-19 STA start-context presets (`8627f2c`)
-4. SYS-20 STA list DnD reorder (`e29caab`)
-5. Human-pilot sandbox recheck Playwright 4/4 (engineering only; no UI sign-off)
+1. SYS-20 STA list DnD reorder (`e29caab`)
+2. SYS-21 STA closed-loop package (this commit)
+3. Human-pilot walkthrough screenshots refreshed (engineering only)
 
 ### Next remainders (honest)
 
 - **Product-owner UI sign-off (human)** - `PRODUCT_OWNER_UI_ACCEPTANCE.md` (engineering must not mark PASS)
 - Free-form DAG canvas - **deferred**
+- Scoped P1 only after product-owner decision
 - No Tencent Cloud (G). No full-commercial claim.
 
 ### Owner cooperation (front-loaded)
@@ -49,9 +48,9 @@ Read and execute:
 6. PROJECT_STATE/WORKFLOW_AUTHORING_UX_RECOMMENDATION.md
 7. git status
 
-Status: SYS-20 PASS (safe e29caab; tip in LATEST_HANDOFF); STA eng SYS-17..20 done; P0 26/26; clean tree.
-Design: no free-form drag canvas; STA landed through list DnD.
-Next: assist human pilot sandbox/walkthrough (do NOT sign PRODUCT_OWNER_UI_ACCEPTANCE); no more STA eng slices unless product opens new ones.
+Status: SYS-21 PASS (safe in LATEST_HANDOFF); STA eng SYS-17..21 done; P0 26/26; clean tree.
+Design: no free-form drag canvas; STA closed-loop proven.
+Next: product-owner signs PRODUCT_OWNER_UI_ACCEPTANCE (engineering must NOT mark PASS). No more STA eng unless product opens new slices. Scoped P1 only after owner decision.
 No page-level patches. Writable root only D:\ONEDAY_V3. Do not claim full commercial. No Tencent Cloud.
 A-H granted. Continue until 90%-95% usage, then new window; do not stop mid-run.
 ```
