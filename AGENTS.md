@@ -1,6 +1,14 @@
 # ONEDAY V3 开发规则
 
-本仓库唯一写代码执行器为 **Cursor Agent**（2026-08-10 接替 Codex，见 `PROJECT_STATE/EXECUTOR_HANDOFF.md`）。禁止 Codex、Headless CLI、第二个写入代理及任何并行代理同时写入仓库。
+本仓库写代码执行器（2026-08-10 起）：
+
+| 模式 | 执行器 | 条件 |
+| ---- | ------ | ---- |
+| **本地无人值守施工** | **Cursor Headless CLI**（`scripts/local-unattended-construction.ps1`） | 主人授权 I；计划任务或 daemon 运行中 |
+| **人工窗口 / 验收** | Cursor IDE Agent | 与 Headless **不得并行写入**同一分支 |
+| **禁止** | Codex、Cloud 并行写入、第二个写入代理 | 始终 |
+
+见 `PROJECT_STATE/LOCAL_UNATTENDED_SETUP.md`、`PROJECT_STATE/EXECUTOR_HANDOFF.md`。
 
 ## 任务纪律
 

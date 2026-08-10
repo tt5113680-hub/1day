@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## 2026-08-10 - Local unattended construction (authorization I)
+
+- Headless CLI: `scripts/local-unattended-construction.ps1`, daemon, Windows scheduled task installer.
+- Setup doc: `PROJECT_STATE/LOCAL_UNATTENDED_SETUP.md`; secrets template `.env.local-unattended.example`.
+- AGENTS.md: Headless sole writer during unattended; IDE Agent must not parallel-write.
+
 ## 2026-08-10 - Phase-1 P1-A/P1-B PASS + P1-C deploy prep
 
 - **P1-A**: Extended Batch-4 clean-tenant rehearsal with membership ledger/revoke chain (enroll → grant → redeem → ledger → revoke → wallet). Evidence: `P1_A_COMMERCIAL_CLOSED_LOOP_ACCEPTANCE.md`, `evidence/P1-A/`.

@@ -22,6 +22,14 @@
 | F   | On undocumented product details: follow `COMMERCIAL_PRODUCT_BLUEPRINT`, `HIGH_FIDELITY_TEMPLATE_SYSTEM`, `COMMERCIAL_ACCEPTANCE_MATRIX`. BLOCKED only for external commercial claims, public production go-live, or product-freeze changes. |
 | G   | Tencent Cloud / public HTTPS / production secrets: **out of scope this phase**.                                                                                                                                                             |
 | H   | Operator keeps machine awake and Cursor open with Agent auto-run where possible; agent does not wait for interactive approval between authorized gates.                                                                                     |
+| I   | **Local unattended construction (2026-08-10 — owner: 本地跑，不要人工):** Cursor Headless CLI via `scripts/local-unattended-construction.ps1` + scheduled task or daemon is the sole write executor during unattended windows. IDE Agent must not write in parallel. Setup: `PROJECT_STATE/LOCAL_UNATTENDED_SETUP.md`. |
+
+## Resolved (2026-08-10 — local unattended)
+
+| Decision              | Resolution                                                                 |
+| --------------------- | -------------------------------------------------------------------------- |
+| Local unattended mode | Headless CLI + Windows Task Scheduler / daemon; no IDE window chaining     |
+| Human gates           | G1 local full test + G2 cloud inventory only; not per construction turn    |
 
 ## Open (will BLOCKED)
 

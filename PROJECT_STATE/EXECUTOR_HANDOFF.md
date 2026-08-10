@@ -2,12 +2,12 @@
 
 - recorded_at: 2026-08-10 Asia/Shanghai
 - prior_executor: Codex (stopped writing to `D:\ONEDAY_V3`)
-- current_executor: Cursor Agent (sole write executor until further notice)
-- autonomous_authorization: A–H full grant at 2026-08-10 (see `DECISION_REQUIRED.md`)
+- current_executor: Cursor Headless CLI (unattended) + IDE Agent (manual/review only)
+- autonomous_authorization: A–I at 2026-08-10 (see `DECISION_REQUIRED.md`)
 
 ## Product authorization (owner confirmed)
 
-1. Cursor Agent replaces Codex as the only code-writing executor.
+1. **Local unattended:** Cursor Headless CLI via `scripts/local-unattended-construction.ps1` (authorization I). IDE Agent for human test only — no parallel writes.
 2. Build in batch gates; no page-level patch TASKs.
 3. Auto-commit after verified gates; push `hardening/COMMERCIAL-COMPLETION` to origin allowed (no force-push / no main rewrite).
 4. Undocumented product freeze / public commercial claims → `BLOCKED_REPORT.md`.
@@ -33,14 +33,14 @@
 
 ## Current engineering focus
 
-**Phase-1 (P1-A/P1-B local; P1-C blocked on G):**
+**Phase-1 — local unattended (authorization I):**
 
-- P1-A PASS — Batch-4 rehearsal extended with membership ledger/revoke chain
-- P1-B PASS — `@oneday/session-client` promotion-grade login via `@oneday/ui`
-- P1-C prep — `infra/deploy/` templates (no live deploy until G lifted)
-- Human UI sign-off must not auto-PASS. Not claimed as full commercial.
+- Primary: Headless CLI + scheduled task / daemon — `PROJECT_STATE/LOCAL_UNATTENDED_SETUP.md`
+- P1-A/P1-B largely PASS; continue remainders via unattended turns
+- P1-C prep in `infra/deploy/`; live deploy blocked until G lifted
+- Human UI sign-off must not auto-PASS
 
-**Usage:** keep constructing until **90%-95%**, then new window. Do not stop early.
+**IDE sessions:** 90–95% then new window. Headless turns are independent sessions.
 
 ## Secrets and cloud
 

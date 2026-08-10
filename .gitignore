@@ -14,4 +14,6 @@ evidence/COMMERCIAL-FIXTURES/test-runs/
 .env
 .env.*
 !.env.example
+!.env.local-unattended.example
+logs/unattended/
 .local-human-pilot/
