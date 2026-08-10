@@ -43,7 +43,7 @@ Backend controllers exist and are matrix/API-proven; operators cannot operate th
 | Membership wallet                    | `GET consumer/memberships/wallet`        | **CLOSED (SYS-2)** Consumer member session wallet call                            |
 | Generic external-actions CRUD        | `/external-actions`                      | **STILL OPEN** FE uses store external-links only                                  |
 | RBAC role create / role packs        | RBAC API                                 | **CLOSED (SYS-4)** `/m/roles-permissions` role create                             |
-| Management attribution IA            | Attribution APIs + `/m/attribution` page | **STILL OPEN** page not in `MANAGEMENT_MENU_CATALOG`                              |
+| Management attribution IA            | Attribution APIs + `/m/attribution` page | **CLOSED (SYS-23)** `MANAGEMENT_MENU_CATALOG.attribution` for `tenant.manage`     |
 
 ### S2 — Dual truths / FE–BE contract drift (P0)
 
@@ -89,7 +89,7 @@ Thin design system: Button/Card/Metric/AdminShell/MobileShell/AppStatePanel exis
 
 Incomplete as **systems** (not missing a button):
 
-1. Configured外链 → Consumer card → confirm → attribution **discoverable in Management IA**
+1. Configured外链 → Consumer card → confirm → attribution **discoverable in Management IA (SYS-23)**
 2. Member enroll → wallet → Employee redeem → Management grant/revoke timeline
 3. Publish → four-terminal auto-converge without refresh
 4. Platform Run failure → visible steps → retry

@@ -52,6 +52,13 @@ export const MANAGEMENT_MENU_CATALOG: MenuCatalogItem[] = [
     requireAny: ['tenant.manage', 'customer.manage'],
   },
   {
+    key: 'attribution',
+    href: '/m/attribution',
+    label: '来源归因',
+    // Matches ManagementAttributionController (`tenant.manage`).
+    requireAny: ['tenant.manage'],
+  },
+  {
     key: 'workflows',
     href: '/m/workflows',
     label: '运营流程',

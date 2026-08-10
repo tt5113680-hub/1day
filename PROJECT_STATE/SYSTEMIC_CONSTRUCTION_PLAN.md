@@ -5,12 +5,12 @@
 
 ## Status
 
-SYS-1…SYS-22 PASS (STA closed-loop + ONE-CODE consumer landing).
+SYS-1…SYS-23 PASS (STA closed-loop + ONE-CODE landing + attribution menu IA).
 
 ## Queue
 
 - Product-owner UI sign-off (human) — required for external pilot claim
-- Remaining S1 islands (systemic, not page patches): customer merge/transfer UX; generic external-actions CRUD; Management attribution menu discoverability
+- Remaining S1 islands (systemic, not page patches): customer merge/transfer UX; generic external-actions CRUD
 - Free-form DAG canvas — deferred
 - Scoped P1 only after product-owner decision
 

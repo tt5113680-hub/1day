@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## 2026-08-10 - SYS-23 Management attribution menu discoverability PASS
+
+- Added `attribution` to `MANAGEMENT_MENU_CATALOG` (`/m/attribution`, `来源归因`, `tenant.manage`) so AdminShell/menu DTO can surface the existing PAGE-M-012 page.
+- Evidence: `SYS_23_ATTRIBUTION_MENU_ACCEPTANCE.md`, `evidence/SYS-23/`. Unit 1/1 + menu-dto 9/9 + Playwright 1/1. Not 全部商用.
+
 ## 2026-08-10 - SYS-22 ONE-CODE consumer landing PASS
 
 - Added Consumer `/c/one-code/[code]` landing that resolves the public ONE-CODE API into entry with source continuity; onboarding delivery now includes `landingPath`.

@@ -25,6 +25,7 @@ describe('menu DTO catalog filter', () => {
     expect(items.map((item) => item.key)).toEqual([
       'overview',
       'customers',
+      'attribution',
       'workflows',
       'stores',
       'offers',
@@ -33,6 +34,18 @@ describe('menu DTO catalog filter', () => {
       'page-builder',
       'organization',
     ]);
+  });
+
+  it('exposes attribution for tenant.manage and hides it from tenant.read store-manager chrome', () => {
+    expect(
+      filterMenuCatalog(MANAGEMENT_MENU_CATALOG, ['tenant.manage']).map((item) => item.key),
+    ).toContain('attribution');
+    expect(
+      filterMenuCatalog(MANAGEMENT_MENU_CATALOG, ['tenant.read']).map((item) => item.key),
+    ).not.toContain('attribution');
+    const attribution = MANAGEMENT_MENU_CATALOG.find((item) => item.key === 'attribution');
+    expect(attribution?.href).toBe('/m/attribution');
+    expect(attribution?.label).toBe('来源归因');
   });
 
   it('exposes overview for customer.read without Management CRM entry', () => {

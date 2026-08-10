@@ -56,6 +56,7 @@
 - [x] SYS-20 Structured Timeline Authoring — list DnD reorder PASS — spine list-native DnD (not free-form drag); see `SYS_20_LIST_DND_REORDER_ACCEPTANCE.md`.
 - [x] SYS-21 Structured Timeline Authoring — closed-loop package PASS — 3-step conditional authoring on STA timeline (not free-form drag); see `SYS_21_STA_CLOSED_LOOP_ACCEPTANCE.md`.
 - [x] SYS-22 ONE-CODE consumer landing PASS — `/c/one-code/[code]` resolve + delivery `landingPath`; see `SYS_22_ONE_CODE_LANDING_ACCEPTANCE.md`.
+- [x] SYS-23 Management attribution menu discoverability PASS — `MANAGEMENT_MENU_CATALOG.attribution` → `/m/attribution`; see `SYS_23_ATTRIBUTION_MENU_ACCEPTANCE.md`.
 - [ ] HUMAN-PILOT-HANDOFF / product-owner UI acceptance — local sandbox refreshed through migration `054` + consult CTA bindings + walkthrough shots (Playwright 4/4); **human sign-off still required**; not auto-claimed as 全部商用. Optional scoped P1 only after product-owner decision.
 
 ## Current product-owner acceptance
