@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## 2026-08-10 - Phase-1 commercial closed-loop plan
+
+- Added `PHASE1_COMMERCIAL_CLOSED_LOOP_PLAN.md`: P1-A local loop → P1-B promo visual floor → P1-C public HTTPS → P1-D owner sign-off.
+- Public deploy still blocked until owner explicitly lifts authorization G and supplies cloud inventory.
+
 ## 2026-08-10 - SYS-33 Employee membership redeem PASS
 
 - Added Employee `/e/memberships` first-class redeem surface using existing benefits/redeem APIs.

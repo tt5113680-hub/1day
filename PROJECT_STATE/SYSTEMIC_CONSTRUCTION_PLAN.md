@@ -9,12 +9,12 @@ SYS-1…SYS-33 PASS (Employee membership redeem first-class surface landed).
 
 ## Queue
 
+- Phase-1: `PHASE1_COMMERCIAL_CLOSED_LOOP_PLAN.md` (P1-A→D)
+- Continue P1-A/P1-B AI slices; P1-C only after owner lifts G
 - Product-owner UI sign-off (human) — required for external pilot claim
-- Full nine-role ROLE_PRODUCT_MATRIX packages — multi-week remainder
-- Free-form DAG canvas — deferred
+- Full nine-role ROLE_PRODUCT_MATRIX / free-form DAG — deferred to v2
 - Management membership grant/revoke timeline depth remains P1
-- Scoped P1 only after product-owner decision
 
 ## Honest day boundary
 
-External commercial claims blocked without human sign-off. Not claimed as full commercial. Tencent Cloud out of scope (G).
+External commercial claims blocked without human sign-off. Not claimed as full commercial. Tencent Cloud out of scope until G lifted.
