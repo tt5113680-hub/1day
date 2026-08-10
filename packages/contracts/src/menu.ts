@@ -171,13 +171,13 @@ export const CHANNEL_MENU_CATALOG: MenuCatalogItem[] = [
     key: 'channel-dashboard',
     href: '/ch/dashboard',
     label: '渠道经营总览',
-    requireAny: ['platform.read', 'platform.manage'],
+    requireAny: ['channel.read', 'channel.manage', 'platform.read', 'platform.manage'],
   },
   {
     key: 'channel-onboarding',
     href: '/ch/merchants/new',
     label: '商户开通交付',
-    requireAny: ['platform.read', 'platform.manage'],
+    requireAny: ['channel.read', 'channel.manage', 'platform.read', 'platform.manage'],
   },
 ];
 
@@ -294,11 +294,16 @@ export function resolveAvailableProducts(permissionCodes: string[]): MenuProduct
   if (perms.has('tenant.manage') || perms.has('tenant.read') || perms.has('customer.read')) {
     links.push({ product: 'management', label: '商户经营', homeHref: '/' });
   }
-  if (perms.has('platform.read') || perms.has('platform.manage')) {
+  const hasPlatform = perms.has('platform.read') || perms.has('platform.manage');
+  const hasChannel = perms.has('channel.read') || perms.has('channel.manage');
+  const hasCircle = perms.has('circle.manage');
+  if (hasPlatform) {
     links.push({ product: 'platform', label: '平台运营', homeHref: '/p/dashboard' });
+  }
+  if (hasPlatform || hasChannel) {
     links.push({ product: 'channel', label: '渠道经营', homeHref: '/ch/dashboard' });
   }
-  if (perms.has('platform.read') || perms.has('platform.manage') || perms.has('circle.manage')) {
+  if (hasPlatform || hasCircle) {
     links.push({ product: 'circle', label: '商圈经营', homeHref: '/bc/dashboard' });
   }
   if (

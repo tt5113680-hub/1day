@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## 2026-08-10 - SYS-6 Role matrix Channel/Circle/Platform packages PASS
+
+- Added `channel.read`/`channel.manage` (migration `054`), separated Channel/Circle product chrome from Platform, and gated Channel APIs on the new codes + scopes.
+- Channel/Circle-only operators are denied platform tenant list/suspend; Platform Admin retains unrestricted network packs.
+- Evidence: `SYS_6_ROLE_MATRIX_NETWORK_ACCEPTANCE.md`, `evidence/SYS-6/`. Tests: `sys-6-role-matrix-network` 1/1, `sys-6-network-packs` 1/1, `menu-dto.vitest` 8/8. Not 全部商用.
+
 ## 2026-08-10 - SYS-6 Role matrix Tenant Manager vs Owner chrome PASS
 
 - Owner-only Management chrome (`roles`/`settings`) and RBAC/settings APIs now require `tenant.manage` + `organization.manage`.

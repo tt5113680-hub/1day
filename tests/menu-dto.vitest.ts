@@ -63,6 +63,19 @@ describe('menu DTO catalog filter', () => {
     );
   });
 
+  it('separates channel-only and circle-only products from platform chrome', () => {
+    expect(resolveAvailableProducts(['channel.read', 'channel.manage']).map((item) => item.product)).toEqual([
+      'channel',
+    ]);
+    expect(resolveAvailableProducts(['circle.manage']).map((item) => item.product)).toEqual(['circle']);
+    expect(
+      filterMenuCatalog(menuCatalogFor('channel'), ['channel.read']).map((item) => item.key),
+    ).toEqual(['channel-dashboard', 'channel-onboarding']);
+    expect(filterMenuCatalog(menuCatalogFor('platform'), ['channel.read']).map((item) => item.key)).toEqual(
+      [],
+    );
+  });
+
   it('defaults employee home and store-manager item href', () => {
     expect(
       defaultHomeHref('employee', filterMenuCatalog(EMPLOYEE_MENU_CATALOG, ['task.read'])),

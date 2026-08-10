@@ -150,9 +150,15 @@ const permissionScope = {
   ]),
   employee: new Set(['task.read', 'task.manage']),
   followup: new Set(['task.read', 'task.manage', 'evidence.read', 'evidence.manage']),
-  channel: new Set(['platform.read']),
-  circle: new Set(['platform.read', 'circle.manage']),
-  platform: new Set(['platform.read', 'platform.manage', 'circle.manage']),
+  channel: new Set(['channel.read', 'channel.manage']),
+  circle: new Set(['circle.manage']),
+  platform: new Set([
+    'platform.read',
+    'platform.manage',
+    'channel.read',
+    'channel.manage',
+    'circle.manage',
+  ]),
 };
 
 const employeeAccounts = [

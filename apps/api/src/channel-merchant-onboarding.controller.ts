@@ -11,17 +11,27 @@ export class ChannelMerchantOnboardingController {
     private readonly dataScopes: DataScopeService,
   ) {}
 
+  private async channelOperator(authorization: string | undefined, write: boolean) {
+    const context = await this.authorization.requirePlatformAny(
+      authorization,
+      write
+        ? ['channel.manage', 'platform.manage']
+        : ['channel.read', 'channel.manage', 'platform.read', 'platform.manage'],
+    );
+    const permissionCodes = await this.dataScopes.permissionCodes(
+      context.tenantId,
+      context.userId,
+    );
+    return { context, permissionCodes };
+  }
+
   @Get()
   async list(
     @Headers('authorization') authorization: string | undefined,
     @Headers('x-request-id') requestId: string | undefined,
   ) {
     if (!requestId?.trim()) throw new BadRequestException('VALIDATION_ERROR');
-    const context = await this.authorization.requirePlatform(authorization, 'platform.read');
-    const permissionCodes = await this.dataScopes.permissionCodes(
-      context.tenantId,
-      context.userId,
-    );
+    const { context, permissionCodes } = await this.channelOperator(authorization, false);
     const channelIds = await this.dataScopes.networkListIds(
       context.tenantId,
       context.userId,
@@ -43,11 +53,7 @@ export class ChannelMerchantOnboardingController {
     @Body() body: Record<string, unknown>,
   ) {
     if (!requestId?.trim()) throw new BadRequestException('VALIDATION_ERROR');
-    const context = await this.authorization.requirePlatform(authorization, 'platform.manage');
-    const permissionCodes = await this.dataScopes.permissionCodes(
-      context.tenantId,
-      context.userId,
-    );
+    const { context, permissionCodes } = await this.channelOperator(authorization, true);
     const channelId = typeof body.channelId === 'string' ? body.channelId : '';
     await this.dataScopes.requireNetworkWriteScope(
       context.tenantId,
@@ -72,11 +78,7 @@ export class ChannelMerchantOnboardingController {
     @Body() body: Record<string, unknown>,
   ) {
     if (!requestId?.trim()) throw new BadRequestException('VALIDATION_ERROR');
-    const context = await this.authorization.requirePlatform(authorization, 'platform.manage');
-    const permissionCodes = await this.dataScopes.permissionCodes(
-      context.tenantId,
-      context.userId,
-    );
+    const { context, permissionCodes } = await this.channelOperator(authorization, true);
     const channelId = await this.dataScopes.channelIdForOnboarding(context.tenantId, id);
     if (!channelId) throw new BadRequestException('VALIDATION_ERROR');
     await this.dataScopes.requireNetworkWriteScope(

@@ -94,7 +94,19 @@ export class MenuService implements OnModuleDestroy {
       const perms = new Set(permissionCodes);
       if (perms.has('platform.read') || perms.has('platform.manage')) return '/p/dashboard';
       if (perms.has('circle.manage')) return '/bc/dashboard';
-      return '/ch/dashboard';
+      if (perms.has('channel.read') || perms.has('channel.manage')) return '/ch/dashboard';
+      return '/p/dashboard';
+    }
+    if (product === 'channel') {
+      const perms = new Set(permissionCodes);
+      if (
+        perms.has('channel.read') ||
+        perms.has('channel.manage') ||
+        perms.has('platform.read') ||
+        perms.has('platform.manage')
+      ) {
+        return '/ch/dashboard';
+      }
     }
     return defaultHomeHref(product, items);
   }

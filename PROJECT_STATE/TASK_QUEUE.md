@@ -37,7 +37,8 @@
 - [x] SYS-4 workflow authoring UI PASS — Management `/m/workflows` create+publish via existing workflow APIs; see `SYS_4_ACCEPTANCE.md`.
 - [x] SYS-4 RBAC role create UI PASS — Management `/m/roles-permissions` creates roles via existing RBAC API; see `SYS_4_ACCEPTANCE.md`.
 - [x] SYS-6 Role matrix E2E Store Manager package PASS — menu+scope+scoped writes+owner denials closed loop; Management CRM gated off bare `customer.read`; see `SYS_6_ROLE_MATRIX_STORE_MANAGER_ACCEPTANCE.md`.
-- [x] SYS-6 Role matrix Tenant Manager vs Owner chrome PASS — roles/settings + RBAC/settings APIs require `organization.manage` with `tenant.manage`; see `SYS_6_ROLE_MATRIX_TENANT_OWNER_ACCEPTANCE.md`. More roles remain.
+- [x] SYS-6 Role matrix Tenant Manager vs Owner chrome PASS — roles/settings + RBAC/settings APIs require `organization.manage` with `tenant.manage`; see `SYS_6_ROLE_MATRIX_TENANT_OWNER_ACCEPTANCE.md`.
+- [x] SYS-6 Role matrix Channel/Circle/Platform packages PASS — `channel.read`/`channel.manage`, product isolation, scoped dashboards, platform tenant/suspend denials; see `SYS_6_ROLE_MATRIX_NETWORK_ACCEPTANCE.md`. Member journey remains.
 - [ ] HUMAN-PILOT-HANDOFF / product-owner UI acceptance — local sandbox refreshed through migration `053` + storefront bindings (Playwright 4/4); **human sign-off still required**; not auto-claimed as 全部商用. Optional scoped P1 only after product-owner decision.
 
 ## Current product-owner acceptance

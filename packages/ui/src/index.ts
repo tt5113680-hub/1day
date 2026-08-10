@@ -131,6 +131,8 @@ const labels: Record<string, string> = {
   'workflow.manage': '管理运营流程',
   'platform.read': '查看平台治理',
   'platform.manage': '管理平台治理',
+  'channel.read': '查看渠道经营',
+  'channel.manage': '管理渠道交付',
   'circle.manage': '管理商圈',
   phone: '手机',
   referral: '转介绍',

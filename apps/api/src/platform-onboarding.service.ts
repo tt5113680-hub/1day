@@ -680,9 +680,11 @@ export class PlatformOnboardingService implements OnModuleDestroy {
       )
     ).rows as { id: string; code: string }[];
     const permissionSets: Record<string, (code: string) => boolean> = {
-      [roles.owner]: (code) => !code.startsWith('platform.') && code !== 'circle.manage',
+      [roles.owner]: (code) =>
+        !code.startsWith('platform.') && !code.startsWith('channel.') && code !== 'circle.manage',
       [roles.storeManager]: (code) =>
         !code.startsWith('platform.') &&
+        !code.startsWith('channel.') &&
         !['tenant.manage', 'organization.manage', 'employee.manage', 'circle.manage'].includes(
           code,
         ),

@@ -43,6 +43,6 @@
 
 ## Honest remainder
 
-- Dedicated `channel.read/manage` permission codes still deferred (packs reuse platform/circle.manage + scopes).
-- Full ROLE_PRODUCT_MATRIX E2E (Tenant Manager/Owner, Channel, Circle, Platform, Member) remains multi-week.
+- Full ROLE_PRODUCT_MATRIX E2E Member Consumer journey remains multi-week.
+- Dedicated `circle.read` / `circle.display` / `provision.request` permission codes remain deferred (Circle uses `circle.manage`; Channel uses `channel.read`/`channel.manage`).
 - Advanced workflow versioning (new draft versions / condition editors) remains deeper multi-week work; create+publish + start/decide + org create are wired.

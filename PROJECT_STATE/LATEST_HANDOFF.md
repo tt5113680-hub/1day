@@ -8,17 +8,16 @@
 ## Current task - systemic commercial productization (D3)
 
 - branch: `hardening/COMMERCIAL-COMPLETION`
-- last_verified: SYS-6 Role matrix Tenant Manager vs Owner chrome PASS
-- current_task: Role matrix remainders (Channel/Circle/Platform/Member) or advanced workflow versioning
-- status: `SYS_6_ROLE_MATRIX_TENANT_OWNER_PASS`; **not** claimed as full commercial
+- last_verified: SYS-6 Role matrix Channel/Circle/Platform packages PASS
+- current_task: Role matrix Member Consumer journey or advanced workflow versioning
+- status: `SYS_6_ROLE_MATRIX_NETWORK_PASS`; **not** claimed as full commercial
 - blocker: null
-- progress: P0 26/26; Store Manager + Tenant Owner/Manager slices landed
+- progress: P0 26/26; Store Manager + Tenant Owner/Manager + Channel/Circle/Platform slices landed
 
 ### Completed this session
 
-1. SYS-6 Store Manager role matrix E2E
-2. SYS-6 Tenant Manager vs Owner chrome
-3. Evidence + tests green; pushed to origin
+1. SYS-6 Channel/Circle/Platform role matrix E2E (`channel.read`/`channel.manage`, product isolation, denials)
+2. Migration `054_channel_permissions` + evidence/tests green
 
 ### Usage note
 
@@ -41,7 +40,7 @@
 5. PROJECT_STATE/SYSTEMIC_CONSTRUCTION_PLAN.md
 6. git status
 
-状态：SYS-6 Tenant Owner/Manager chrome PASS；Store Manager matrix PASS；P0 26/26；下一任务 Channel/Circle/Platform Role matrix 或 Member journey。
+状态：SYS-6 Channel/Circle/Platform Role matrix PASS；Tenant Owner/Manager + Store Manager PASS；P0 26/26；下一任务 Member journey 或 advanced workflow versioning。
 工作目录仅 D:\ONEDAY_V3。禁止页级补丁。不得宣称全部商用。不做腾讯云。
 已获 A–H。继续施工；用量达到 90%–95% 再换新窗口，中途不要停。
 ```

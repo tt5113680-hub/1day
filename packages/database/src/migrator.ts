@@ -52,6 +52,7 @@ import * as membershipCommercialLoop from './migrations/051_membership_commercia
 import * as contentStorePlacements from './migrations/052_content_store_placements.js';
 import * as storeServicePlatformOffers from './migrations/047_store_service_platform_offers.js';
 import * as syncGateway from './migrations/053_sync_gateway.js';
+import * as channelPermissions from './migrations/054_channel_permissions.js';
 import type { Database } from './types.js';
 
 const migrationProvider: MigrationProvider = {
@@ -110,6 +111,7 @@ const migrationProvider: MigrationProvider = {
       '051_membership_commercial_loop': membershipCommercialLoop,
       '052_content_store_placements': contentStorePlacements,
       '053_sync_gateway': syncGateway,
+      '054_channel_permissions': channelPermissions,
     };
   },
 };

@@ -17,7 +17,12 @@ export class ChannelDashboardController {
     @Headers('x-request-id') requestId: string | undefined,
   ) {
     if (!requestId?.trim()) throw new BadRequestException('VALIDATION_ERROR');
-    const context = await this.authorization.requirePlatform(authorization, 'platform.read');
+    const context = await this.authorization.requirePlatformAny(authorization, [
+      'channel.read',
+      'channel.manage',
+      'platform.read',
+      'platform.manage',
+    ]);
     const permissionCodes = await this.dataScopes.permissionCodes(
       context.tenantId,
       context.userId,

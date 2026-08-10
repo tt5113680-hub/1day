@@ -102,15 +102,15 @@ test('SYS-6: channel/circle network packs scope list and writes', async () => {
         circleRoleId,
       ],
     );
-    const platformRead = (
-      await client.query("select id from permissions where code='platform.read' limit 1")
+    const channelRead = (
+      await client.query("select id from permissions where code='channel.read' limit 1")
     ).rows[0].id;
     const circleManage = (
       await client.query("select id from permissions where code='circle.manage' limit 1")
     ).rows[0].id;
     await client.query(
       "insert into role_permissions(id,tenant_id,role_id,permission_id,status,created_by,updated_by) values($1,$2,$3,$4,'active',null,null)",
-      [randomUUID(), systemTenantId, channelRoleId, platformRead],
+      [randomUUID(), systemTenantId, channelRoleId, channelRead],
     );
     await client.query(
       "insert into role_permissions(id,tenant_id,role_id,permission_id,status,created_by,updated_by) values($1,$2,$3,$4,'active',null,null)",
