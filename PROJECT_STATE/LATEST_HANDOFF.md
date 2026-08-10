@@ -3,14 +3,14 @@
 ## Executor
 
 - Cursor Agent is the sole write executor as of 2026-08-10.
-- Owner rule: **>=90% -> new window only**; below that keep constructing without usage prompts.
+- Owner rule (2026-08-10 refresh): keep constructing until usage is **90%-95%**, then open a new window. Do **not** stop early (~40%). Front-load owner cooperation; new window cold-starts from state files only.
 
 ## Current task - systemic commercial productization (D3)
 
 - branch: `hardening/COMMERCIAL-COMPLETION`
-- last_verified: SYS-5 compare + story paints PASS
-- current_task: SYS-6 remainder (more write controllers) **or** remaining storefront paints (benefit/wallet/store_info)
-- status: `SYS_5_COMPARE_STORY_PAINT_PASS`; **not** claimed as full commercial
+- last_verified: SYS-5 benefit + store_info paints PASS
+- current_task: SYS-6 remainder (more write controllers) **or** store_hero/floating-consult paint
+- status: `SYS_5_BENEFIT_STORE_INFO_PAINT_PASS`; **not** claimed as full commercial
 - blocker: null
 - progress: P0 26/26; SYS waves scaffolded 6/6 with multi-week remainders
 
@@ -18,12 +18,12 @@
 
 1. SYS-6 channel/circle network packs
 2. SYS-6 store-manager content placements
-3. SYS-5 quick-actions / member / offer / compare / story paints
+3. SYS-5 paints: quick-actions, member, offer, compare, story, benefit, store_info
 4. Evidence + tests green
 
 ### Usage note
 
-Keep building until **>=90%**. Do not prompt earlier.
+**Construct continuously until 90%-95% usage, then switch window.** No early stop.
 
 ### Owner cooperation (front-loaded)
 
@@ -42,7 +42,7 @@ Keep building until **>=90%**. Do not prompt earlier.
 5. PROJECT_STATE/SYSTEMIC_CONSTRUCTION_PLAN.md
 6. git status
 
-状态：SYS-5 compare/story paints PASS；P0 26/26；下一任务 SYS-6 余量（更多写路径）或 storefront benefit/wallet/store_info paint。
+状态：SYS-5 benefit/store_info paints PASS；P0 26/26；下一任务 SYS-6 余量（更多写路径）或 store_hero paint。
 工作目录仅 D:\ONEDAY_V3。禁止页级补丁。不得宣称全部商用。不做腾讯云。
-已获 A–H。继续施工；用量>=90%再换新窗口。
+已获 A–H。继续施工；用量达到 90%–95% 再换新窗口，中途不要停。
 ```

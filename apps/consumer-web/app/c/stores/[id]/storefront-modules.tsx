@@ -5,12 +5,14 @@ import {
   normalizeModuleType,
   SECTION_MODULE_TYPES,
   StorefrontBannerCarousel,
+  StorefrontBenefitList,
   StorefrontEmpty,
   StorefrontMemberCard,
   StorefrontOfferCompare,
   StorefrontOfferList,
   StorefrontQuickActions,
   StorefrontSection,
+  StorefrontStoreInfo,
   StorefrontStoryList,
   visibleStorefrontModules,
 } from '@oneday/storefront-renderer';
@@ -453,20 +455,19 @@ function MemberEntry({
       />
       {data.benefits.length ? (
         <StorefrontSection title="门店权益" hint="入会后按门店配置发放" anchor="benefits">
-          <div className={styles.benefitList}>
-            {data.benefits.map((item, index) => (
-              <article className={styles.benefit} key={item.id}>
-                <span>{index === 0 ? 'NEW' : 'PLUS'}</span>
-                <strong>{item.title}</strong>
-                <p>{item.description ?? '以门店实际配置为准'}</p>
-                {consultHref && consultAction ? (
-                  <a href={actionUrl(consultAction.id, 'benefit_view')}>查看使用方式</a>
-                ) : (
-                  <span>暂未开放</span>
-                )}
-              </article>
-            ))}
-          </div>
+          <StorefrontBenefitList
+            items={data.benefits.map((item, index) => ({
+              key: item.id,
+              badge: index === 0 ? 'NEW' : 'PLUS',
+              title: item.title,
+              description: item.description ?? '以门店实际配置为准',
+              href:
+                consultHref && consultAction
+                  ? actionUrl(consultAction.id, 'benefit_view')
+                  : undefined,
+              ctaFallback: consultHref && consultAction ? undefined : '暂未开放',
+            }))}
+          />
         </StorefrontSection>
       ) : null}
     </div>
@@ -542,34 +543,40 @@ function MemberWallet({ context }: { context: ConsumerContext }) {
         <StorefrontEmpty>暂时无法读取会员钱包，请稍后重试。</StorefrontEmpty>
       ) : null}
       {state === 'anonymous' ? (
-        <div className={styles.benefitList}>
-          <article className={styles.benefit}>
-            <span>MEMBER</span>
-            <strong>入会后可查看权益余额</strong>
-            <p>匿名浏览不会暴露钱包；完成本店入会并授权后，此处显示可核销余额。</p>
-            <a href={storeHref(context, '/membership', 'wallet_enroll')}>前往入会</a>
-          </article>
-        </div>
+        <StorefrontBenefitList
+          items={[
+            {
+              key: 'anonymous',
+              badge: 'MEMBER',
+              title: '入会后可查看权益余额',
+              description:
+                '匿名浏览不会暴露钱包；完成本店入会并授权后，此处显示可核销余额。',
+              href: storeHref(context, '/membership', 'wallet_enroll'),
+              ctaLabel: '前往入会',
+            },
+          ]}
+        />
       ) : null}
       {state === 'ready' && wallet ? (
-        <div className={styles.benefitList}>
-          <article className={styles.benefit}>
-            <span>{wallet.tier || 'MEMBER'}</span>
-            <strong>会员码 {wallet.memberCode}</strong>
-            <p>余额来自门店已发放的权益账本，不以第三方平台库存为准。</p>
-          </article>
-          {wallet.benefits.length ? (
-            wallet.benefits.map((item) => (
-              <article className={styles.benefit} key={item.id}>
-                <span>余额 {item.balance}</span>
-                <strong>{item.title}</strong>
-                <p>{item.description ?? '到店核销时出示会员码'}</p>
-              </article>
-            ))
-          ) : (
-            <StorefrontEmpty>入会成功，门店尚未发放可核销权益。</StorefrontEmpty>
-          )}
-        </div>
+        <StorefrontBenefitList
+          items={[
+            {
+              key: 'wallet-code',
+              badge: wallet.tier || 'MEMBER',
+              title: `会员码 ${wallet.memberCode}`,
+              description: '余额来自门店已发放的权益账本，不以第三方平台库存为准。',
+            },
+            ...wallet.benefits.map((item) => ({
+              key: item.id,
+              badge: `余额 ${item.balance}`,
+              title: item.title,
+              description: item.description ?? '到店核销时出示会员码',
+            })),
+          ]}
+        />
+      ) : null}
+      {state === 'ready' && wallet && !wallet.benefits.length ? (
+        <StorefrontEmpty>入会成功，门店尚未发放可核销权益。</StorefrontEmpty>
       ) : null}
     </StorefrontSection>
   );
@@ -729,28 +736,27 @@ function StoreInfo({
   actionUrl: (actionId: string, scene: string) => string;
 }) {
   return (
-    <section id="store-info" className={styles.storeInfo} data-module="store_info">
-      <p>门店位置</p>
-      <h2>{data.store.address ?? '门店暂未提供有效地址'}</h2>
-      <span>{data.store.businessHours ?? '营业时间以门店为准'}</span>
-      <div>
-        {navigationUrl && (
-          <button type="button" onClick={openNavigation}>
-            ⌖ 导航
-          </button>
-        )}
-        {data.store.phone && (
-          <button type="button" onClick={call}>
-            ⌁ {data.store.phone}
-          </button>
-        )}
-        {consultHref && consultAction && (
-          <a href={actionUrl(consultAction.id, 'store_contact_consult')}>◈ 咨询</a>
-        )}
-        <button type="button" onClick={share}>
-          ↗ 分享
-        </button>
-      </div>
-    </section>
+    <StorefrontStoreInfo
+      address={data.store.address ?? '门店暂未提供有效地址'}
+      hours={data.store.businessHours ?? '营业时间以门店为准'}
+      actions={[
+        ...(navigationUrl
+          ? [{ key: 'nav', label: '⌖ 导航', onClick: openNavigation }]
+          : []),
+        ...(data.store.phone
+          ? [{ key: 'phone', label: `⌁ ${data.store.phone}`, onClick: call }]
+          : []),
+        ...(consultHref && consultAction
+          ? [
+              {
+                key: 'consult',
+                label: '◈ 咨询',
+                href: actionUrl(consultAction.id, 'store_contact_consult'),
+              },
+            ]
+          : []),
+        { key: 'share', label: '↗ 分享', onClick: share },
+      ]}
+    />
   );
 }

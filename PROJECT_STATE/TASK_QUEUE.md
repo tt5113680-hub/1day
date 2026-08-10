@@ -22,6 +22,7 @@
 - [x] SYS-5 quick-actions paint extraction PASS — `StorefrontQuickActions` + `.od-sf-shortcut*`; Consumer keeps capability catalog wiring; Member/Offers paints remain; see `SYS_5_ACCEPTANCE.md`.
 - [x] SYS-5 member + offer paints extraction PASS — `StorefrontMemberCard` + `StorefrontOfferList`; OfferCompare/platform/story remain in Consumer; see `SYS_5_ACCEPTANCE.md`.
 - [x] SYS-5 compare + story paints extraction PASS — `StorefrontOfferCompare` + `StorefrontStoryList`; benefit/wallet/store_info remain in Consumer; see `SYS_5_ACCEPTANCE.md`.
+- [x] SYS-5 benefit + store_info paints extraction PASS — `StorefrontBenefitList` + `StorefrontStoreInfo`; store_hero/floating consult remain; see `SYS_5_ACCEPTANCE.md`.
 - [x] SYS-6 Role IA / menu DTO **scaffold** PASS — `GET /api/v1/me/menu` + Management shell consumer; see `SYS_6_ACCEPTANCE.md` and `evidence/SYS-6/`.
 - [x] SYS-6 multi-product menus + role homes **scaffold** PASS — Platform/Channel/Circle/Employee catalogs + shells; Store Manager `/e/store`; `homeHref`/`scopes`/`availableProducts`; see `SYS_6_ACCEPTANCE.md`.
 - [x] SYS-6 data_scopes resolver PASS — `DataScopeService` merges `data_scopes` ∪ `store_managers`; manager assign/onboarding sync; `GET /api/v1/employee/managed-stores` + access gate; see `SYS_6_ACCEPTANCE.md`.

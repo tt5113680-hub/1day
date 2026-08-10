@@ -16,13 +16,16 @@ export {
 } from './chrome.js';
 export {
   StorefrontBannerCarousel,
+  StorefrontBenefitList,
   StorefrontMemberCard,
   StorefrontOfferCompare,
   StorefrontOfferList,
   StorefrontQuickActions,
+  StorefrontStoreInfo,
   StorefrontStoryList,
   storefrontPlatformGlyph,
   type StorefrontBannerSlide,
+  type StorefrontBenefitItem,
   type StorefrontComparePackage,
   type StorefrontComparePriceRow,
   type StorefrontMemberCardProps,
@@ -30,6 +33,7 @@ export {
   type StorefrontPlatformLinkItem,
   type StorefrontPlatformMark,
   type StorefrontQuickActionItem,
+  type StorefrontStoreInfoAction,
   type StorefrontStoryItem,
 } from './paint.js';
 export { storefrontTokens, type StorefrontTokens } from './tokens.js';

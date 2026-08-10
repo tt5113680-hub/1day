@@ -676,3 +676,121 @@
   font-size: 9px;
   font-weight: 800;
 }
+
+.od-sf-benefits {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.od-sf-benefit {
+  min-height: 160px;
+  border-radius: 18px;
+  padding: 14px;
+  color: var(--od-sf-benefit-new-ink);
+  background: linear-gradient(145deg, var(--od-sf-benefit-new-from), var(--od-sf-benefit-new-to));
+}
+
+.od-sf-benefit:nth-child(2n) {
+  color: var(--od-sf-benefit-plus-ink);
+  background: linear-gradient(145deg, var(--od-sf-benefit-plus-from), var(--od-sf-benefit-plus-to));
+}
+
+.od-sf-benefit > span:first-child {
+  font-size: 10px;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+}
+
+.od-sf-benefit strong {
+  display: block;
+  margin-top: 16px;
+  font-size: 15px;
+}
+
+.od-sf-benefit p {
+  min-height: 32px;
+  margin: 6px 0;
+  color: inherit;
+  font-size: 11px;
+  line-height: 1.4;
+  opacity: 0.78;
+}
+
+.od-sf-benefit a,
+.od-sf-benefit__cta {
+  border: 0;
+  padding: 0;
+  color: inherit;
+  background: transparent;
+  font: inherit;
+  font-size: 11px;
+  font-weight: 800;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.od-sf-store-info {
+  margin: 16px;
+  border-radius: 21px;
+  padding: 18px;
+  color: var(--od-sf-white);
+  background: var(--od-sf-info-bg);
+}
+
+.od-sf-store-info > p {
+  margin: 0;
+  color: var(--od-sf-info-muted);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+}
+
+.od-sf-store-info h2 {
+  margin: 8px 0 5px;
+  font-size: 17px;
+}
+
+.od-sf-store-info > span {
+  color: var(--od-sf-info-copy);
+  font-size: 12px;
+}
+
+.od-sf-store-info > div {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 6px;
+  margin-top: 18px;
+}
+
+.od-sf-store-info button,
+.od-sf-store-info a {
+  display: grid;
+  place-items: center;
+  min-height: 39px;
+  border: 1px solid color-mix(in srgb, var(--od-sf-white) 14%, transparent);
+  border-radius: 11px;
+  padding: 4px;
+  color: var(--od-sf-white);
+  background: color-mix(in srgb, var(--od-sf-white) 8%, transparent);
+  font: inherit;
+  font-size: 11px;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.od-sf-store-info button:focus-visible,
+.od-sf-store-info a:focus-visible {
+  outline: 3px solid var(--od-sf-accent-deep);
+  outline-offset: 2px;
+}
+
+@media (min-width: 700px) {
+  .od-sf-benefits {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .od-sf-store-info {
+    margin: 24px 32px;
+  }
+}

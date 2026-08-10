@@ -6,13 +6,12 @@
 
 ## Delivered
 
-| Surface       | Integration                                                                     |
-| ------------- | ------------------------------------------------------------------------------- |
-| Shared theme  | `@oneday/storefront-renderer/storefront.css` + `storefrontTokens` (`--od-sf-*`) |
-| Consumer CSS  | `store.module.css` has **zero** raw hex; colors via `--od-sf-*`                 |
-| Shared chrome | `StorefrontSection`, `StorefrontEmpty`, `storefrontActionIcon`                  |
-| Shared paint  | Banner, QuickActions, MemberCard, OfferList, OfferCompare, StoryList            |
-| Host wiring   | Consumer store root uses `od-sf-theme`; Management imports storefront.css       |
+| Surface       | Integration                                                                 |
+| ------------- | --------------------------------------------------------------------------- |
+| Shared theme  | `@oneday/storefront-renderer/storefront.css` + `storefrontTokens`           |
+| Shared chrome | `StorefrontSection`, `StorefrontEmpty`, `storefrontActionIcon`              |
+| Shared paint  | Banner, QuickActions, Member, Offer, Compare, Story, Benefit, StoreInfo     |
+| Host wiring   | Consumer `od-sf-theme`; Management imports storefront.css                   |
 
 ## Evidence
 
@@ -22,6 +21,6 @@
 
 ## Honest remainder
 
-- Major storefront module paints extracted (banner/shortcuts/member/offers/compare/stories).
-- Remaining Consumer-local paint: benefit cards, member wallet cards, store_info chrome, floating consult.
+- Major storefront module paints extracted.
+- Remaining Consumer-local chrome: store_hero topbar/facts, floating consult, channel-specific pages.
 - Product-owner UI sign-off remains human.

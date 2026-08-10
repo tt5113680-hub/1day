@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## 2026-08-10 - SYS-5 benefit + store_info paints extraction PASS
+
+- Extracted `StorefrontBenefitList` + `StorefrontStoreInfo` into `@oneday/storefront-renderer`.
+- Consumer keeps wallet fetch/session wiring and store action callbacks only.
+- Evidence: `SYS_5_ACCEPTANCE.md`. Tests: `storefront-renderer.vitest` 7/7. store_hero/floating consult remain. Not claimed as full commercial.
+
 ## 2026-08-10 - SYS-5 compare + story paints extraction PASS
 
 - Extracted `StorefrontOfferCompare` + `StorefrontStoryList` (+ platform mark/disclaimer styles) into `@oneday/storefront-renderer`.

@@ -297,3 +297,73 @@ export function StorefrontStoryList({ items }: { items: StorefrontStoryItem[] })
     </div>
   );
 }
+
+export type StorefrontBenefitItem = {
+  key: string;
+  badge: string;
+  title: string;
+  description: string;
+  href?: string;
+  ctaLabel?: string;
+  ctaFallback?: string;
+};
+
+export function StorefrontBenefitList({ items }: { items: StorefrontBenefitItem[] }) {
+  if (!items.length) return null;
+  return (
+    <div className="od-sf-benefits">
+      {items.map((item) => (
+        <article className="od-sf-benefit" key={item.key}>
+          <span>{item.badge}</span>
+          <strong>{item.title}</strong>
+          <p>{item.description}</p>
+          {item.href ? (
+            <a href={item.href}>{item.ctaLabel ?? '查看使用方式'}</a>
+          ) : item.ctaFallback ? (
+            <span className="od-sf-benefit__cta">{item.ctaFallback}</span>
+          ) : null}
+        </article>
+      ))}
+    </div>
+  );
+}
+
+export type StorefrontStoreInfoAction = {
+  key: string;
+  label: string;
+  href?: string;
+  onClick?: () => void | Promise<void>;
+};
+
+export function StorefrontStoreInfo({
+  address,
+  hours,
+  actions,
+}: {
+  address: string;
+  hours: string;
+  actions: StorefrontStoreInfoAction[];
+}) {
+  return (
+    <section id="store-info" className="od-sf-store-info" data-module="store_info">
+      <p>门店位置</p>
+      <h2>{address}</h2>
+      <span>{hours}</span>
+      {actions.length ? (
+        <div>
+          {actions.map((action) =>
+            action.href ? (
+              <a href={action.href} key={action.key}>
+                {action.label}
+              </a>
+            ) : (
+              <button type="button" onClick={action.onClick} key={action.key}>
+                {action.label}
+              </button>
+            ),
+          )}
+        </div>
+      ) : null}
+    </section>
+  );
+}
