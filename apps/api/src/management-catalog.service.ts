@@ -37,11 +37,16 @@ const money = (value: unknown, optional = false) => {
 export class ManagementCatalogService implements OnModuleDestroy {
   private readonly pool = createApiPool();
 
-  async list(context: OrganizationContext) {
+  async list(context: OrganizationContext, storeIds: string[] | null = null) {
+    const scoped = storeIds !== null;
+    const params = scoped ? [context.tenantId, storeIds] : [context.tenantId];
+    const storeFilter = scoped ? 'and id = any($2::uuid[])' : '';
+    const serviceFilter = scoped ? 'and ss.store_id = any($2::uuid[])' : '';
+    const linkFilter = scoped ? 'and sea.store_id = any($2::uuid[])' : '';
     const [stores, services, links] = await Promise.all([
       this.pool.query(
-        "select id,name,status from stores where tenant_id=$1 and deleted_at is null order by status='active' desc,name",
-        [context.tenantId],
+        `select id,name,status from stores where tenant_id=$1 and deleted_at is null ${storeFilter} order by status='active' desc,name`,
+        params,
       ),
       this.pool.query(
         `select ss.id,ss.store_id,ss.code,ss.name,ss.description,ss.duration_minutes,ss.price_label,ss.rank,ss.status,ss.version,
@@ -54,17 +59,17 @@ export class ManagementCatalogService implements OnModuleDestroy {
          from store_services ss
          left join store_service_platform_offers spo on spo.service_id=ss.id and spo.tenant_id=ss.tenant_id and spo.deleted_at is null
          left join external_actions a on a.id=spo.external_action_id and a.tenant_id=spo.tenant_id and a.deleted_at is null
-         where ss.tenant_id=$1 and ss.deleted_at is null
+         where ss.tenant_id=$1 and ss.deleted_at is null ${serviceFilter}
          group by ss.id order by ss.store_id,ss.rank desc,ss.name`,
-        [context.tenantId],
+        params,
       ),
       this.pool.query(
         `select sea.id as link_id,sea.store_id,a.id as action_id,a.name,a.platform,a.target_url
          from store_external_actions sea
          join external_actions a on a.id=sea.external_action_id and a.tenant_id=sea.tenant_id and a.status='active' and a.deleted_at is null
-         where sea.tenant_id=$1 and sea.enabled and sea.deleted_at is null and a.action_type='link'
+         where sea.tenant_id=$1 and sea.enabled and sea.deleted_at is null and a.action_type='link' ${linkFilter}
          order by sea.store_id,sea.sort_order,a.name`,
-        [context.tenantId],
+        params,
       ),
     ]);
     return stores.rows.map((store) => ({
@@ -82,6 +87,28 @@ export class ManagementCatalogService implements OnModuleDestroy {
           targetUrl: link.target_url,
         })),
     }));
+  }
+
+  async serviceStoreId(tenantId: string, serviceId: string) {
+    if (!UUID.test(serviceId)) return null;
+    const row = (
+      await this.pool.query(
+        'select store_id from store_services where id=$1 and tenant_id=$2 and deleted_at is null',
+        [serviceId, tenantId],
+      )
+    ).rows[0];
+    return row?.store_id ? String(row.store_id) : null;
+  }
+
+  async offerStoreId(tenantId: string, offerId: string) {
+    if (!UUID.test(offerId)) return null;
+    const row = (
+      await this.pool.query(
+        'select store_id from store_service_platform_offers where id=$1 and tenant_id=$2 and deleted_at is null',
+        [offerId, tenantId],
+      )
+    ).rows[0];
+    return row?.store_id ? String(row.store_id) : null;
   }
 
   async createService(

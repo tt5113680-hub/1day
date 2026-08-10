@@ -24,7 +24,7 @@ describe('menu DTO catalog filter', () => {
 
   it('exposes store nav for tenant.read store-manager mode', () => {
     expect(filterMenuCatalog(MANAGEMENT_MENU_CATALOG, ['tenant.read']).map((item) => item.key)).toEqual(
-      ['overview', 'stores', 'content'],
+      ['overview', 'stores', 'offers', 'content'],
     );
   });
 

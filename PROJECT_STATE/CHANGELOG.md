@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## 2026-08-10 - SYS-6 catalog write-path scopes PASS
+
+- Assigned store managers (`tenant.read` + store scopes) may list and write services/offers only on scoped stores via `/api/v1/management/catalog*`.
+- Management menu exposes 套餐与 Offer for `tenant.read` store-manager mode.
+- Evidence: `SYS_6_ACCEPTANCE.md`, `evidence/SYS-6/`. Tests: `sys-6-catalog-scopes` 1/1, `menu-dto.vitest` 6/6, `sys-6-write-path-scopes` 1/1, `batch-2-offer-operations` 1/1. Not 全部商用.
+
 ## 2026-08-10 - SYS-5 benefit + store_info paints extraction PASS
 
 - Extracted `StorefrontBenefitList` + `StorefrontStoreInfo` into `@oneday/storefront-renderer`.

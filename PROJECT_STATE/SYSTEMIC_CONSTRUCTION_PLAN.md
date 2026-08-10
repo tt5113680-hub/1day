@@ -7,7 +7,7 @@
 
 ## Active wave
 
-**SYS-6 remainder — more write controllers / storefront paint (multi-week)**
+**SYS-5 store_hero / SYS-6 remainder (multi-week)**
 
 | Deliverable                                        | Status                                      |
 | -------------------------------------------------- | ------------------------------------------- |
@@ -18,6 +18,7 @@
 | SYS-6 write-path scopes (redeem + store commercial)| PASS                                        |
 | SYS-6 channel/circle network packs                 | PASS                                        |
 | SYS-6 store-manager content placements             | PASS                                        |
+| SYS-6 store-manager catalog scopes                 | PASS                                        |
 | SYS-5 quick-actions paint extraction               | PASS                                        |
 | SYS-5 member + offer paints extraction             | PASS                                        |
 | SYS-5 compare + story paints extraction            | PASS                                        |
@@ -25,9 +26,10 @@
 
 ## Queue
 
-- SYS-6 remainder: more Management/Employee write controllers
-- Optional: store_hero/floating-consult paints; Content distributions UI; Workflow write
+- Optional: store_hero/floating-consult paints
+- SYS-6 remainder: memberships/workflows/org write controllers
+- Optional: Content distributions UI; Workflow write
 
 ## Honest day boundary
 
-Menus + data_scopes + write-path + network packs + content placements + major storefront paints (incl. benefit/store_info) landed. Full ROLE_PRODUCT_MATRIX E2E remains multi-week - not claimed as full commercial.
+Menus + data_scopes + write-path + network packs + content placements + catalog scopes + major storefront paints (incl. benefit/store_info) landed. Full ROLE_PRODUCT_MATRIX E2E remains multi-week - not claimed as full commercial.

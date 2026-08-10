@@ -28,7 +28,8 @@
 - [x] SYS-6 data_scopes resolver PASS — `DataScopeService` merges `data_scopes` ∪ `store_managers`; manager assign/onboarding sync; `GET /api/v1/employee/managed-stores` + access gate; see `SYS_6_ACCEPTANCE.md`.
 - [x] SYS-6 write-path scopes PASS — redeem gated by enrollment store scope; assigned store managers may list/update store commercial + external links; assign-manager remains owner-only; see `SYS_6_ACCEPTANCE.md`. More write controllers remain.
 - [x] SYS-6 channel/circle network packs PASS — channel/circle dashboards + merchant writes filter/deny by `data_scopes`; `platform.manage` unrestricted; circle dashboard accepts `circle.manage`; see `SYS_6_ACCEPTANCE.md`.
-- [x] SYS-6 store-manager content placements PASS — assigned managers list approved content + place on scoped stores; create/approve/distribute remain owner-only; Management menu 内容中心 for `tenant.read`; see `SYS_6_ACCEPTANCE.md`. More write controllers / storefront paint remain.
+- [x] SYS-6 store-manager content placements PASS — assigned managers list approved content + place on scoped stores; create/approve/distribute remain owner-only; Management menu 内容中心 for `tenant.read`; see `SYS_6_ACCEPTANCE.md`.
+- [x] SYS-6 store-manager catalog scopes PASS — assigned managers list/create/update services + offers on scoped stores only; Management menu 套餐与 Offer for `tenant.read`; see `SYS_6_ACCEPTANCE.md`. More write controllers / storefront paint remain.
 - [ ] HUMAN-PILOT-HANDOFF / product-owner UI acceptance — local sandbox refreshed through migration `053` + storefront bindings (Playwright 4/4); **human sign-off still required**; not auto-claimed as 全部商用. Optional scoped P1 only after product-owner decision.
 
 ## Current product-owner acceptance
