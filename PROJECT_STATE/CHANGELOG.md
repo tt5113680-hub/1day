@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## 2026-08-10 - SYS-20 STA list DnD reorder PASS
+
+- Added `@oneday/workflows.reorderStepsByListDrop` and Management spine drag handles (list-native only).
+- Evidence: `SYS_20_LIST_DND_REORDER_ACCEPTANCE.md`, `evidence/SYS-20/`. Unit 1/1 + Playwright 1/1. Not free-form drag graph. Not 全部商用.
+
 ## 2026-08-10 - SYS-19 STA start-context presets PASS
 
 - Added `@oneday/workflows` builtin/local start-context presets + Management path-simulator preset bar (localStorage).

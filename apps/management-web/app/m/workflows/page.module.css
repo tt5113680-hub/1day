@@ -506,6 +506,35 @@
   gap: 6px;
 }
 
+.stepOrderLabel {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.dragHandle {
+  cursor: grab;
+  min-width: 28px;
+  min-height: 28px;
+  padding: 0 4px;
+  border: 1px dashed var(--od-border);
+  border-radius: var(--od-radius-sm);
+  background: var(--od-surface);
+  color: var(--od-text-muted);
+  font: inherit;
+  font-weight: 800;
+  letter-spacing: -2px;
+}
+
+.dragHandle:active {
+  cursor: grabbing;
+}
+
+.stepDropTarget {
+  outline: 2px solid color-mix(in srgb, var(--od-brand-600) 45%, transparent);
+  outline-offset: 2px;
+}
+
 .timeline {
   display: grid;
   gap: 0;

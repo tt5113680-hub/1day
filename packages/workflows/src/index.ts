@@ -309,6 +309,16 @@ export function reorderSteps<T>(steps: T[], from: number, to: number): T[] {
 }
 
 /**
+ * List-native DnD drop on the ordered spine (SYS-20).
+ * Same semantics as reorderSteps — not a free-form canvas placement.
+ */
+export function reorderStepsByListDrop<T>(steps: T[], from: number, over: number): T[] {
+  return reorderSteps(steps, from, over);
+}
+
+export const listReorderEditor = 'list_native_dnd_not_free_form_canvas' as const;
+
+/**
  * Insert a step on the linear spine at `index` (0..length inclusive).
  * SYS-17 insert rails — not free-form drag placement.
  */

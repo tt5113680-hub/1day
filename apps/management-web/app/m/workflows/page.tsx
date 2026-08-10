@@ -18,8 +18,10 @@ import {
   createLocalStartContextPreset,
   duplicateStepAt,
   insertStepAt,
+  listReorderEditor,
   previewConditionPath,
   reorderSteps,
+  reorderStepsByListDrop,
   serializeConditionBranchFlow,
   summarizeCondition,
   type StartContextPreset,
@@ -156,6 +158,40 @@ export default function WorkflowsPage() {
   const [presetName, setPresetName] = useState('');
   const [selectedPanelPresetId, setSelectedPanelPresetId] = useState('');
   const [selectedDraftPresetId, setSelectedDraftPresetId] = useState('');
+  const [draftDragFrom, setDraftDragFrom] = useState<number | null>(null);
+  const [draftDragOver, setDraftDragOver] = useState<number | null>(null);
+  const [panelDragFrom, setPanelDragFrom] = useState<number | null>(null);
+  const [panelDragOver, setPanelDragOver] = useState<number | null>(null);
+  useEffect(() => {
+    const onListReorder = (event: Event) => {
+      const detail = (event as CustomEvent<{ surface: 'draft' | 'panel'; from: number; to: number }>)
+        .detail;
+      if (!detail || !Number.isInteger(detail.from) || !Number.isInteger(detail.to)) return;
+      if (detail.surface === 'draft') {
+        setSteps((value) => reorderStepsByListDrop(value, detail.from, detail.to));
+      }
+      if (detail.surface === 'panel') {
+        setVersionPanel((current) => {
+          if (!current) return current;
+          return {
+            ...current,
+            steps: reorderStepsByListDrop(current.steps, detail.from, detail.to),
+          };
+        });
+      }
+    };
+    window.addEventListener('oneday-sta-list-reorder', onListReorder as EventListener);
+    return () => window.removeEventListener('oneday-sta-list-reorder', onListReorder as EventListener);
+  }, []);
+  const applyDraftListDrop = (from: number, to: number) => {
+    setSteps((value) => reorderStepsByListDrop(value, from, to));
+  };
+  const applyPanelListDrop = (from: number, to: number) => {
+    setVersionPanel((current) => {
+      if (!current) return current;
+      return { ...current, steps: reorderStepsByListDrop(current.steps, from, to) };
+    });
+  };
   useEffect(() => {
     setLocalPresets(readLocalStartContextPresets());
   }, []);
@@ -661,7 +697,7 @@ export default function WorkflowsPage() {
           data-authoring-mode="structured_timeline"
         >
           <p className={styles.timelineHint}>
-            结构化时间线：步骤间「在此插入」/「复制」；不是自由拖拽图编辑器。
+            结构化时间线：插入轨 / 复制 / 列表拖拽重排；不是自由拖拽图编辑器。
           </p>
           {steps.map((step, index) => (
             <div key={`draft-block-${index}`}>
@@ -682,9 +718,53 @@ export default function WorkflowsPage() {
                   在此插入
                 </Button>
               </div>
-              <div className={styles.stepRow} data-testid={`workflow-draft-step-${index}`}>
+              <div
+                className={[
+                  styles.stepRow,
+                  draftDragOver === index ? styles.stepDropTarget : '',
+                ]
+                  .filter(Boolean)
+                  .join(' ')}
+                data-testid={`workflow-draft-step-${index}`}
+                data-list-reorder={listReorderEditor}
+                onDragOver={(event) => {
+                  event.preventDefault();
+                  if (draftDragOver !== index) setDraftDragOver(index);
+                }}
+                onDrop={(event) => {
+                  event.preventDefault();
+                  const raw = event.dataTransfer?.getData('text/plain') ?? '';
+                  const from =
+                    draftDragFrom ?? (raw === '' ? Number.NaN : Number(raw));
+                  if (!Number.isInteger(from)) return;
+                  applyDraftListDrop(from, index);
+                  setDraftDragFrom(null);
+                  setDraftDragOver(null);
+                }}
+              >
                 <div className={styles.stepOrder}>
-                  <span>步骤 {index + 1}</span>
+                  <span className={styles.stepOrderLabel}>
+                    <button
+                      type="button"
+                      className={styles.dragHandle}
+                      draggable
+                      aria-label={`拖拽重排步骤${index + 1}`}
+                      data-testid={`workflow-draft-drag-${index}`}
+                      onDragStart={(event) => {
+                        event.dataTransfer?.setData('text/plain', String(index));
+                        if (event.dataTransfer) event.dataTransfer.effectAllowed = 'move';
+                        setDraftDragFrom(index);
+                      }}
+                      onDragEnd={() => {
+                        setDraftDragFrom(null);
+                        setDraftDragOver(null);
+                      }}
+                    >
+                      ⋮⋮
+                    </button>
+                    步骤 {index + 1}
+                    {draftDragFrom === index ? ' · 拖动中' : ''}
+                  </span>
                   <div className={styles.stepOrderActions}>
                     <Button
                       tone="secondary"
@@ -1127,7 +1207,7 @@ export default function WorkflowsPage() {
             <div>
               <h2>版本面板 · {versionPanel.templateName}</h2>
               <p>
-                结构化时间线：插入轨 / 复制 / 上移下移后克隆发布；不是自由拖拽图编辑器。
+                结构化时间线：插入轨 / 复制 / 列表拖拽重排后克隆发布；不是自由拖拽图编辑器。
               </p>
             </div>
             <Button tone="secondary" onClick={() => setVersionPanel(null)}>
@@ -1363,12 +1443,52 @@ export default function WorkflowsPage() {
                         </Button>
                       </div>
                       <div
-                        className={styles.versionStep}
+                        className={[
+                          styles.versionStep,
+                          panelDragOver === index ? styles.stepDropTarget : '',
+                        ]
+                          .filter(Boolean)
+                          .join(' ')}
                         data-testid={`workflow-panel-step-${index}`}
+                        data-list-reorder={listReorderEditor}
+                        onDragOver={(event) => {
+                          event.preventDefault();
+                          if (panelDragOver !== index) setPanelDragOver(index);
+                        }}
+                        onDrop={(event) => {
+                          event.preventDefault();
+                          const raw = event.dataTransfer?.getData('text/plain') ?? '';
+                          const from =
+                            panelDragFrom ?? (raw === '' ? Number.NaN : Number(raw));
+                          if (!Number.isInteger(from)) return;
+                          applyPanelListDrop(from, index);
+                          setPanelDragFrom(null);
+                          setPanelDragOver(null);
+                        }}
                       >
                         <div className={styles.stepOrder}>
-                          <strong>
+                          <strong className={styles.stepOrderLabel}>
+                            <button
+                              type="button"
+                              className={styles.dragHandle}
+                              draggable
+                              disabled={versionPanel.loading}
+                              aria-label={`面板拖拽重排步骤${index + 1}`}
+                              data-testid={`workflow-panel-drag-${index}`}
+                              onDragStart={(event) => {
+                                event.dataTransfer?.setData('text/plain', String(index));
+                                if (event.dataTransfer) event.dataTransfer.effectAllowed = 'move';
+                                setPanelDragFrom(index);
+                              }}
+                              onDragEnd={() => {
+                                setPanelDragFrom(null);
+                                setPanelDragOver(null);
+                              }}
+                            >
+                              ⋮⋮
+                            </button>
                             {index + 1}. {step.name || '未命名步骤'}
+                            {panelDragFrom === index ? ' · 拖动中' : ''}
                           </strong>
                           <div className={styles.stepOrderActions}>
                             <Button

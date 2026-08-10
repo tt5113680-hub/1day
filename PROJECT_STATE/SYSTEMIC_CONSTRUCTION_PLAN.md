@@ -5,20 +5,19 @@
 
 ## Status
 
-SYS-1…SYS-19 PASS (STA insert rails + condition cards + start-context presets complete).
+SYS-1…SYS-20 PASS (STA through list-native DnD reorder).
 
 ## Recommended authoring direction (owner 2026-08-10)
 
-**Not** free-form drag canvas. See `WORKFLOW_AUTHORING_UX_RECOMMENDATION.md`:
+**Not** free-form drag canvas. See `WORKFLOW_AUTHORING_UX_RECOMMENDATION.md`.
 
-**Structured Timeline Authoring (STA)** — vertical spine + condition cards + path simulator + insert rails.
+**Structured Timeline Authoring (STA)** — vertical spine + condition cards + path simulator + insert rails + list DnD.
 
 ## Queue
 
 - Product-owner UI sign-off (human) — required for external pilot claim
-- Optional later: list DnD reorder only (still not graph canvas)
 - Free-form DAG canvas — deferred; needs PRODUCT_FREEZE + engine capability
 
 ## Honest day boundary
 
-External commercial claims blocked without human sign-off. STA eng SYS-17…19 complete on the honest linear model (SYS-10…19).
+External commercial claims blocked without human sign-off. STA eng SYS-17…20 complete on the honest linear model (SYS-10…20).

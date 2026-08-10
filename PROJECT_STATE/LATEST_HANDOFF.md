@@ -8,11 +8,11 @@
 ## Current task - systemic commercial productization (D3)
 
 - branch: `hardening/COMMERCIAL-COMPLETION`
-- HEAD (pushed): tip after SYS-19 state record
-- last_safe_commit: 8627f2c
-- last_verified: SYS-19 STA start-context presets PASS
+- HEAD (pushed): tip after SYS-20 state record
+- last_safe_commit: PENDING_SYS20_COMMIT
+- last_verified: SYS-20 STA list DnD reorder PASS
 - current_task: Human product-owner UI sign-off (engineering must not mark PASS)
-- status: `SYS_19_START_CONTEXT_PRESETS_PASS`; STA eng SYS-17?19 complete; **not** claimed as full commercial
+- status: `SYS_20_LIST_DND_REORDER_PASS`; STA eng SYS-17?20 complete; **not** claimed as full commercial
 - blocker: null
 - progress: P0 26/26
 - working_tree: clean after commit
@@ -22,11 +22,11 @@
 1. SYS-17 STA insert rails (`2a913f8`)
 2. SYS-18 STA condition card IA (`d957edd`)
 3. SYS-19 STA start-context presets (`8627f2c`)
+4. SYS-20 STA list DnD reorder (this commit)
 
 ### Next remainders (honest)
 
 - **Product-owner UI sign-off (human)** ? `PRODUCT_OWNER_UI_ACCEPTANCE.md` (engineering must not mark PASS)
-- Optional later: list DnD reorder only (still not graph canvas)
 - Free-form DAG canvas ? **deferred**
 - No Tencent Cloud (G). No full-commercial claim.
 
@@ -48,8 +48,8 @@
 6. PROJECT_STATE/WORKFLOW_AUTHORING_UX_RECOMMENDATION.md
 7. git status
 
-???SYS-19 PASS?safe 8627f2c?tip ? LATEST_HANDOFF??STA eng SYS-17?19 ???P0 26/26???????
-??????? free-form drag ???STA ??? insert rails / condition cards / start-context presets?
+???SYS-20 PASS?safe ? LATEST_HANDOFF??STA eng SYS-17?20 ???P0 26/26???????
+??????? free-form drag ???STA ???? list DnD?
 ??????? human pilot ??/??????? PRODUCT_OWNER_UI_ACCEPTANCE????? STA eng ?????????
 ???????????? D:\ONEDAY_V3????????????????
 ?? A?H?????????? 90%?95% ????????????
