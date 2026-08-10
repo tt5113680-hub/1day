@@ -87,6 +87,8 @@ import { PlatformDashboardController } from './platform-dashboard.controller';
 import { PlatformDashboardService } from './platform-dashboard.service';
 import { PlatformChannelController } from './platform-channel.controller';
 import { PlatformChannelService } from './platform-channel.service';
+import { PlatformAgentController } from './platform-agent.controller';
+import { PlatformAgentService } from './platform-agent.service';
 import { ChannelDashboardController } from './channel-dashboard.controller';
 import { ChannelDashboardService } from './channel-dashboard.service';
 import { ChannelMerchantOnboardingController } from './channel-merchant-onboarding.controller';
@@ -168,6 +170,7 @@ import { EmployeeManagedStoresController } from './employee-managed-stores.contr
     ManagementSettingsController,
     PlatformDashboardController,
     PlatformChannelController,
+    PlatformAgentController,
     ChannelDashboardController,
     ChannelMerchantOnboardingController,
     CircleDashboardController,
@@ -231,6 +234,7 @@ import { EmployeeManagedStoresController } from './employee-managed-stores.contr
     ManagementSettingsService,
     PlatformDashboardService,
     PlatformChannelService,
+    PlatformAgentService,
     ChannelDashboardService,
     ChannelMerchantOnboardingService,
     CircleDashboardService,

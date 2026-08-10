@@ -127,7 +127,7 @@
 | **W3** | MPC-02 门店 + MPC-03 商品 | **PASS** (首刀 IA) `evidence/G1-MEITUAN-PARITY/W3/` |
 | **W4** | ME-01～05 商家移动工作台 | **PASS** (首刀) `evidence/G1-MEITUAN-PARITY/W4/` |
 | **W5** | MPC-04/05/07 订单·评价·营销（可本地数据） | **PASS** (首刀) `evidence/G1-MEITUAN-PARITY/W5/` |
-| **W6** | R5 省市区代理（MP-01～03） | 渠道不猜，跟美团代理 |
+| **W6** | R5 省市区代理（MP-01～03） | **PASS** (首刀) `evidence/G1-MEITUAN-PARITY/W6/` |
 | **W∞** | 其余 GAP 逐页 | 直到主人签 G1 |
 
 每波只做一个可验收切片；证据进 `evidence/G1-MEITUAN-PARITY/`。
@@ -136,4 +136,4 @@
 
 ## 6. 当前下一刀
 
-**W1–W5 PASS（W5 订单·评价·营销骨架）. 下一刀：** **W6** — R5 省市区代理（MP-01~03，跟美团代理后台）。
+**W6 省市区代理（MP-01~03）PASS. 下一刀：** **W∞** — 其余 GAP 逐页（美团代理后台深层、Management PC 深页、Consumer H5 搜索/下单/订单、Meituan parity 细部），直到主人签 G1。

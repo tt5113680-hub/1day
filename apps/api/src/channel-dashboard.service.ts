@@ -24,11 +24,20 @@ export class ChannelDashboardService implements OnModuleDestroy {
       ),
       this.pool.query(
         `select c.id channel_id,c.code channel_code,c.name channel_name,m.id membership_id,m.merchant_tenant_id,t.slug,t.name,m.onboarding_status,m.service_status,coalesce(s.plan,'starter') plan,coalesce(s.risk_level,'low') risk_level,
+          coalesce(af.agent_name,'') agent_name,coalesce(af.region_name,'') region_name,
           (exists(select 1 from tasks x where x.tenant_id=m.merchant_tenant_id and x.updated_at>=now()-interval '30 days' and x.deleted_at is null) or exists(select 1 from customer_orders o where o.tenant_id=m.merchant_tenant_id and o.occurred_at>=now()-interval '30 days' and o.deleted_at is null)) active_in_30_days
          from platform_channels c
          join platform_channel_merchants m on m.channel_id=c.id and m.tenant_id=c.tenant_id and m.deleted_at is null
          join tenants t on t.id=m.merchant_tenant_id and t.deleted_at is null
          left join platform_tenant_settings s on s.tenant_id=t.id and s.deleted_at is null
+         left join lateral (
+           select a.name agent_name,r.name region_name
+           from agent_merchant_affiliations aff
+           join platform_agents a on a.id=aff.agent_id
+           join agent_regions r on r.id=a.region_id
+           where aff.merchant_tenant_id=t.id and aff.deleted_at is null and aff.affiliation_status<>'paused'
+           order by aff.created_at desc limit 1
+         ) af on true
          where c.tenant_id=$1 and c.deleted_at is null${channelFilterC}
          order by c.name,t.name`,
         params,
@@ -54,6 +63,8 @@ export class ChannelDashboardService implements OnModuleDestroy {
         serviceStatus: row.service_status,
         plan: row.plan,
         riskLevel: row.risk_level,
+        agentName: row.agent_name ?? '',
+        regionName: row.region_name ?? '',
         activeIn30Days: row.active_in_30_days,
         renewalSignal,
       };

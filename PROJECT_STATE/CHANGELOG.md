@@ -1,5 +1,16 @@
 # CHANGELOG
 
+## 2026-08-11 - G1-W6 省市区代理（MP-01~03, R5）PASS
+
+- Migration `056_geo_agent_tree.ts`（注册进 migrator 056）: `agent_regions`（province/city/district + parent 层级）、`platform_agents`（代理商绑定区域 + agent_level + parent_agent_id）、`agent_merchant_affiliations`（商户入驻归属）；seed 演示地理层级（广东省→广州市→天河区，TEST ONLY）。
+- `PlatformAgentService`/`Controller`: `GET /api/v1/platform/agents`（省市区代理树+代理商+归属+商户池）、`POST /api/v1/platform/agents/regions`、`POST /api/v1/platform/agents`、`POST /api/v1/platform/agents/:id/affiliate`；读需 `platform.read`/`manage`，写需 `platform.manage`。
+- Platform PC `/p/agents` 省市区代理页（建区域/绑代理/商户入驻归属 + 代理树/归属记录），全 `--od-*` token；菜单 Platform 新增 `agents`（network 分组）。
+- MP-03: `/ch/dashboard` 代理商后台商户队列新增「归属省市区代理（区域 · 代理商）」行（ChannelDashboardService 关联 affiliations）。
+- Gates: typecheck 20/20, build 20/20（platform-web 含 `/p/agents`）, `page-p-agents` 1/1（L2 隔离: 读树/建区域/建代理/归属/重复 409/DB 1-1-1/401/400）, menu-dto 17/17, sys-6-network-packs+sys-29+sys-28 7/7, page-p-004+channel-001 2/2, admin/platform-shell-tokens 4/4。
+- Pre-existing unrelated failures remain: `tokens.vitest.ts`、`storefront-renderer.vitest.ts`（design-token `brand-800` 投影，本切片未触碰）。
+- Not 全部商用 / 未接美团实时代理数据 / 未代签 owner UI。Next: 续 W∞ 逐页 per inventory.
+- Evidence: `evidence/G1-MEITUAN-PARITY/W6/ACCEPTANCE.md`.
+
 ## 2026-08-11 - G1-W5 Management PC 订单·评价·营销骨架 (MPC-04/05/07) PASS
 
 - Migration `055_merchant_commerce.ts`（注册 migrator 055）: extend `customer_orders`（store_id/source/amount_cents/currency/fulfillment_status/items/merchant_note）; new `store_reviews` + `marketing_campaigns`（本地试点数据）。

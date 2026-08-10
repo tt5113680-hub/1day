@@ -282,6 +282,13 @@ export const PLATFORM_MENU_CATALOG: MenuCatalogItem[] = [
     requireAny: ['platform.read', 'platform.manage'],
   },
   {
+    key: 'agents',
+    href: '/p/agents',
+    label: '省市区代理',
+    group: 'network',
+    requireAny: ['platform.read', 'platform.manage'],
+  },
+  {
     key: 'business-circles',
     href: '/p/business-circles',
     label: '商圈运营',

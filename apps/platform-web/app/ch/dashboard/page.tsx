@@ -16,6 +16,8 @@ type Merchant = {
   serviceStatus: string;
   plan: string;
   riskLevel: string;
+  agentName?: string;
+  regionName?: string;
   activeIn30Days: boolean;
   renewalSignal: 'inactive_30d' | 'high_risk' | null;
 };
@@ -124,7 +126,7 @@ export default function ChannelDashboardPage() {
                   <span>服务状态：{statusLabel(merchant.serviceStatus)}</span>
                 </div>
                 <div>
-                  <b>{merchant.activeIn30Days ? '近 30 天活跃' : '近 30 天无活跃'}</b>
+                  <strong>{merchant.regionName ? `${merchant.regionName} · ${merchant.agentName}` : '未归属省市区代理'}</strong>
                   <span>
                     套餐：{statusLabel(merchant.plan)}；风险：{statusLabel(merchant.riskLevel)}
                   </span>

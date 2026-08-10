@@ -83,7 +83,8 @@
 - [x] **G1-W3** `G1-R-MEITUAN-PC-STORE-GOODS` PASS (首刀) — Management 门店/商品美团文案+概况条; see `evidence/G1-MEITUAN-PARITY/W3/ACCEPTANCE.md`.
 - [x] **G1-W4** `G1-R-MEITUAN-EMPLOYEE-WORKBENCH` PASS (首刀) — Employee 美团商家 App 工作台（今日经营概览条 + 常用功能宫格 + 任务区），真实 workbench 数据 + 既有路由深链; see `evidence/G1-MEITUAN-PARITY/W4/ACCEPTANCE.md`.
 - [x] **G1-W5** `G1-R-MEITUAN-PC-COMMERCE-SKELETON` PASS (首刀) — Management PC 订单·评价·营销骨架（`/m/orders` `/m/reviews` `/m/marketing`，MPC-04/05/07）: migration 055 + `ManagementCommerce` 只读 API（tenant+store 隔离）+ 本地 seed；菜单新增 orders/reviews/marketing。typecheck 20/20、build 20/20、`page-m-commerce` L2 隔离 PASS、menu-dto 17/17、sys-29/sys-6 更新 8/8。见 `evidence/G1-MEITUAN-PARITY/W5/ACCEPTANCE.md`。
-- [ ] **NEXT:** G1-W6 省市区代理（MP-01~03, R5）沿美团代理后台。
+- [x] **G1-W6** `G1-R-CHANNEL-AGENT-GEO` PASS (首刀) — Platform PC 省市区代理（MP-01~03, R5）: migration 056 + `PlatformAgentService/Controller`（`/api/v1/platform/agents` 树/区域/代理归属 + `/p/agents` UI）; `/ch/dashboard` 代理商后台商户队列新增归属行。typecheck 20/20、build 20/20、`page-p-agents` L2 隔离 PASS、menu-dto 17/17、sys-6/sys-29/sys-28 7/7、page-p-004+channel-001 2/2。见 `evidence/G1-MEITUAN-PARITY/W6/ACCEPTANCE.md`。
+- [ ] **NEXT:** W∞ 其余 GAP 逐页（美团代理后台深层结算/配额/审批、Management PC 深页、Consumer H5 搜索/下单等）per inventory，直到 owner 签 G1。
 - [ ] G1 OWNER GATE — owner signs only after Meituan PC/H5 parity waves pass re-test (`PRODUCT_OWNER_UI_ACCEPTANCE.md`). P1-C still blocked on lifting G + cloud inventory.
 - [ ] HUMAN-PILOT-HANDOFF / product-owner UI acceptance — local sandbox refreshed through migration `054` + consult CTA bindings + walkthrough shots (Playwright 4/4); **human sign-off still required**; not auto-claimed as 全部商用. Phase-1 P1-C blocked until owner lifts G (deploy templates in `infra/deploy/`).
 

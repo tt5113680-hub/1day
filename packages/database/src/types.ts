@@ -1344,8 +1344,59 @@ export interface MarketingCampaignsTable {
   version: Generated<number>;
 }
 
+export interface AgentRegionsTable {
+  id: string;
+  tenant_id: string;
+  code: string;
+  name: string;
+  level: string;
+  parent_region_id: string | null;
+  status: string;
+  created_at: Timestamp;
+  created_by: string | null;
+  updated_at: Timestamp;
+  updated_by: string | null;
+  deleted_at: Timestamp | null;
+  version: Generated<number>;
+}
+
+export interface PlatformAgentsTable {
+  id: string;
+  tenant_id: string;
+  region_id: string;
+  agent_level: string;
+  code: string;
+  name: string;
+  parent_agent_id: string | null;
+  status: string;
+  created_at: Timestamp;
+  created_by: string | null;
+  updated_at: Timestamp;
+  updated_by: string | null;
+  deleted_at: Timestamp | null;
+  version: Generated<number>;
+}
+
+export interface AgentMerchantAffiliationsTable {
+  id: string;
+  tenant_id: string;
+  agent_id: string;
+  merchant_tenant_id: string;
+  affiliation_status: string;
+  status: string;
+  created_at: Timestamp;
+  created_by: string | null;
+  updated_at: Timestamp;
+  updated_by: string | null;
+  deleted_at: Timestamp | null;
+  version: Generated<number>;
+}
+
 export interface Database {
   tenants: TenantsTable;
+  agent_regions: AgentRegionsTable;
+  platform_agents: PlatformAgentsTable;
+  agent_merchant_affiliations: AgentMerchantAffiliationsTable;
   sync_notifications: SyncNotificationsTable;
   users: UsersTable;
   memberships: MembershipsTable;
