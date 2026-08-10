@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## 2026-08-10 - SYS-6 Role IA menu DTO scaffold PASS
+
+- Added `@oneday/contracts` MenuDto + Management catalog filter; API `GET /api/v1/me/menu?product=management`.
+- Management AdminShell loads permission-filtered nav with static fail-open fallback.
+- Evidence: `PROJECT_STATE/SYS_6_ACCEPTANCE.md`, `evidence/SYS-6/`. Tests: `menu-dto.vitest`, `sys-6-menu-dto`. Other shells/role homes remain. Not 全部商用.
+
 ## 2026-08-10 - SYS-5 visual tokens + Consumer hex retirement PASS
 
 - Added `@oneday/storefront-renderer/storefront.css` and `storefrontTokens` (`--od-sf-*` restaurant + industry accents).

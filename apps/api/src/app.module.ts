@@ -114,6 +114,8 @@ import { MembershipCommercialController } from './membership-commercial.controll
 import { MembershipCommercialService } from './membership-commercial.service';
 import { SyncGatewayController } from './sync-gateway.controller';
 import { SyncGatewayService } from './sync-gateway.service';
+import { MenuController } from './menu.controller';
+import { MenuService } from './menu.service';
 
 @Module({
   controllers: [
@@ -176,6 +178,7 @@ import { SyncGatewayService } from './sync-gateway.service';
     ManagementCatalogController,
     MembershipCommercialController,
     SyncGatewayController,
+    MenuController,
   ],
   providers: [
     AuthService,
@@ -235,6 +238,7 @@ import { SyncGatewayService } from './sync-gateway.service';
     ManagementCatalogService,
     MembershipCommercialService,
     SyncGatewayService,
+    MenuService,
   ],
 })
 export class AppModule {}
