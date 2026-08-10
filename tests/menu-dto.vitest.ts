@@ -145,7 +145,7 @@ describe('menu DTO catalog filter', () => {
     ]);
     expect(STORE_MANAGER_PACKAGE_ACTIONS.find((item) => item.key === 'tasks')?.href).toBe('/e/tasks');
     expect(STORE_MANAGER_PACKAGE_ACTIONS.find((item) => item.key === 'redeem')?.href).toBe(
-      '/e/workbench#membership-redeem',
+      '/e/memberships',
     );
     expect(PLATFORM_PRODUCT_HOMES.platform.homeHref).toBe('/p/dashboard');
     expect(PLATFORM_PRODUCT_HOMES.channel.homeHref).toBe('/ch/dashboard');
@@ -160,6 +160,12 @@ describe('menu DTO catalog filter', () => {
   it('routes Employee 客户 tab to customer directory (SYS-31)', () => {
     const customers = EMPLOYEE_MENU_CATALOG.find((item) => item.key === 'customers');
     expect(customers?.href).toBe('/e/customers');
+  });
+
+  it('routes Employee store-manager redeem to memberships page (SYS-33)', () => {
+    expect(STORE_MANAGER_PACKAGE_ACTIONS.find((item) => item.key === 'redeem')?.href).toBe(
+      '/e/memberships',
+    );
   });
 
   it('isolates channel-only and circle-only shell modes from platform (SYS-28)', () => {

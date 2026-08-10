@@ -5,50 +5,51 @@
 - Cursor Agent is the sole write executor as of 2026-08-10.
 - Owner rule: construct until **90%-95%** usage, then **new window**. Do not stop early (~40%).
 
-## Current task - systemic commercial productization (D3)
+## Current task — Phase-1 commercial closed loop
 
 - branch: `hardening/COMMERCIAL-COMPLETION`
 - HEAD (pushed): PENDING_PUSH
-- last_safe_commit: dca406b
-- last_verified: SYS-32 External-actions lifecycle PASS
-- current_task: human product-owner UI sign-off (do NOT auto-PASS) **or** continue scoped D3 P1 systems
-- status: `SYS_32_EXTERNAL_ACTIONS_LIFECYCLE_PASS`; **not** claimed as full commercial
-- blocker: null
-- progress: P0 26/26; External-actions update/archive lifecycle landed
+- last_safe_commit: PENDING_SYS_33
+- last_verified: SYS-33 Employee membership redeem PASS
+- plan: `PROJECT_STATE/PHASE1_COMMERCIAL_CLOSED_LOOP_PLAN.md`
+- status: `SYS_33_EMPLOYEE_MEMBERSHIP_REDEEM_PASS`; **not** claimed as full commercial
+- blocker: public HTTPS / Tencent Cloud still needs owner **explicit lift of G** + cloud inventory
+- progress: P0 26/26; membership redeem first-class surface landed (P1-A slice)
 - working_tree: clean after commit
 
 ### Completed this window (verified)
 
-1. SYS-32 External-actions lifecycle (`dca406b`)
+1. Phase-1 plan + cloud checklist (`14fffc0` + follow-up)
+2. SYS-33 Employee `/e/memberships` redeem
 
 ### Next remainders (honest)
 
-- **Product-owner UI sign-off (human)** - do not auto-PASS
-- Full nine-role ROLE_PRODUCT_MATRIX packages remain multi-week
-- Free-form DAG canvas - **deferred**
-- Continue D3 systemic slices (e.g. Employee membership redeem first-class surface)
-- No Tencent Cloud (G). No full-commercial claim.
+- Continue P1-A/P1-B AI slices (promo visual floor, journey depth) without waiting
+- **Public HTTPS (P1-C)** only after owner replies: 「授权公网 HTTPS / 腾讯云试点」+ checklist in Phase-1 plan §2
+- Human `PRODUCT_OWNER_UI_ACCEPTANCE` — do NOT auto-PASS
+- Full nine-role packages / free-form DAG — deferred to v2
 
 ### Owner cooperation (front-loaded)
 
 1. Keep machine awake; Cursor Auto-run on.
-2. Sign `PROJECT_STATE/PRODUCT_OWNER_UI_ACCEPTANCE.md` when ready.
-3. No Tencent Cloud (G). No full-commercial claim.
+2. Reply cloud checklist + explicit G lift when ready for public pilot (secrets out of Git).
+3. Sign `PRODUCT_OWNER_UI_ACCEPTANCE.md` only when you accept UI/pilot.
+4. Do not claim 全部商用 until P1-A…D green.
 
 ### New-window paste
 
 ```text
-Read and execute:
+继续施工。读并执行：
 1. PROJECT_STATE/EXECUTOR_HANDOFF.md
 2. PROJECT_STATE/LATEST_HANDOFF.md
-3. PROJECT_STATE/DECISION_REQUIRED.md
-4. PROJECT_STATE/CURRENT_STATE.md
-5. PROJECT_STATE/SYSTEMIC_CONSTRUCTION_PLAN.md
-6. PROJECT_STATE/SYSTEMIC_COMMERCIAL_GAP_ANALYSIS.md
+3. PROJECT_STATE/PHASE1_COMMERCIAL_CLOSED_LOOP_PLAN.md
+4. PROJECT_STATE/DECISION_REQUIRED.md
+5. PROJECT_STATE/CURRENT_STATE.md
+6. PROJECT_STATE/SYSTEMIC_CONSTRUCTION_PLAN.md
 7. git status
 
-Status: SYS-32 PASS (safe dca406b); P0 26/26; external-actions update/archive landed; clean tree.
-Next: human PRODUCT_OWNER_UI_ACCEPTANCE (do NOT auto-sign) or continue D3 systemic construction.
-No page-level patches. Writable root only D:\ONEDAY_V3. Do not claim full commercial. No Tencent Cloud.
-A-H granted. Continue until 90%-95% usage, then new window; do not stop mid-run.
+状态：SYS-33 PASS；P0 26/26；第一阶段目标=可商用闭环（本地→推广视觉→公网HTTPS→你签字）。
+公网/腾讯云：仅在主人明确「授权公网 HTTPS / 腾讯云试点」+ 补齐物料后做 P1-C。
+禁止页面级乱补丁；可写根仅 D:\ONEDAY_V3；不宣称全部商用。
+A–H 已授权（G 未放开则不上云）。连续做到 90%–95% 再换窗。
 ```

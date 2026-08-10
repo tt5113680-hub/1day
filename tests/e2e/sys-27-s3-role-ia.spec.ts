@@ -160,7 +160,7 @@ test('SYS-27 Platform product homes and Employee store-manager chrome', async ({
   await expect(employeePage.getByRole('heading', { name: '店长能力包' })).toBeVisible();
   await expect(employeePage.getByRole('link', { name: '会员核销' }).first()).toHaveAttribute(
     'href',
-    '/e/workbench#membership-redeem',
+    '/e/memberships',
   );
   const desktopNav = employeePage.getByRole('complementary', { name: '员工桌面导航' });
   await expect(desktopNav).toBeVisible();

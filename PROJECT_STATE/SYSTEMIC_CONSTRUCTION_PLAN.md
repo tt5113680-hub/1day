@@ -5,13 +5,14 @@
 
 ## Status
 
-SYS-1…SYS-32 PASS (external-actions update/archive lifecycle landed; closes SYS-25 honest remainder).
+SYS-1…SYS-33 PASS (Employee membership redeem first-class surface landed).
 
 ## Queue
 
 - Product-owner UI sign-off (human) — required for external pilot claim
 - Full nine-role ROLE_PRODUCT_MATRIX packages — multi-week remainder
 - Free-form DAG canvas — deferred
+- Management membership grant/revoke timeline depth remains P1
 - Scoped P1 only after product-owner decision
 
 ## Honest day boundary

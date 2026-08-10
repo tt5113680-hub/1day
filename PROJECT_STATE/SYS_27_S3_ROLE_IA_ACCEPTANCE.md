@@ -11,7 +11,7 @@
 | Contracts | `STORE_MANAGER_PACKAGE_ACTIONS` + `PLATFORM_PRODUCT_HOMES` |
 | Employee | Desktop side nav ≥700px from menu DTO; store-manager mode label |
 | Employee `/e/store` | Store Manager capability package deep-links (tasks/leads/redeem/share) |
-| Employee workbench | `#membership-redeem` anchor for package redeem link |
+| Employee workbench | Discoverability link to `/e/memberships` (SYS-33 first-class redeem) |
 | Platform shell | Product switcher chrome (platform/channel/circle) |
 | Platform dashboards | Role product home strip with scopes + CTAs on `/p` `/ch` `/bc` |
 

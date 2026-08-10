@@ -14,7 +14,7 @@ test('SYS-27: store-manager package deep-links existing Employee routes only', (
     [
       { key: 'tasks', href: '/e/tasks' },
       { key: 'leads', href: '/e/leads' },
-      { key: 'redeem', href: '/e/workbench#membership-redeem' },
+      { key: 'redeem', href: '/e/memberships' },
       { key: 'share', href: '/e/share' },
     ],
   );

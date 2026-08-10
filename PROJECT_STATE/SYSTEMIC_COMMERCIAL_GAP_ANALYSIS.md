@@ -90,7 +90,7 @@ Thin design system: Button/Card/Metric/AdminShell/MobileShell/AppStatePanel exis
 Incomplete as **systems** (not missing a button):
 
 1. Configured外链 → Consumer card → confirm → attribution **discoverable in Management IA (SYS-23)**
-2. Member enroll → wallet → Employee redeem → Management grant/revoke timeline
+2. Member enroll → wallet → Employee redeem (**SYS-33** `/e/memberships`) → Management grant/revoke timeline (grant UX exists; revoke timeline depth remains P1)
 3. Publish → four-terminal auto-converge without refresh
 4. Platform Run failure → visible steps → retry
 5. Content approve → place → (honest) distribution intent — not fake delivery

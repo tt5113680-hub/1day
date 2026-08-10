@@ -23,7 +23,6 @@ type Data = {
   generatedAt: string;
 };
 type State = 'loading' | 'ready' | 'forbidden' | 'error';
-type Benefit = { id: string; title: string };
 
 const api = process.env.NEXT_PUBLIC_API_BASE_URL ?? 'http://127.0.0.1:3001';
 const sessionApi = new SessionApiClient(api);
@@ -35,9 +34,6 @@ export function Workbench() {
   const [data, setData] = useState<Data | null>(null);
   const [message, setMessage] = useState('');
   const [busy, setBusy] = useState<string | null>(null);
-  const [memberCode, setMemberCode] = useState('');
-  const [benefitId, setBenefitId] = useState('');
-  const [benefits, setBenefits] = useState<Benefit[]>([]);
   const headers = () => ({
     'content-type': 'application/json',
   });
@@ -58,11 +54,6 @@ export function Workbench() {
       }
       if (!response.ok) throw Error('LOAD_FAILED');
       setData((await response.json()).data as Data);
-      const membershipBenefits = await sessionApi.request(
-        `${api}/api/v1/employee/memberships/benefits`,
-        { headers: headers() },
-      );
-      if (membershipBenefits.ok) setBenefits((await membershipBenefits.json()).data as Benefit[]);
       setState('ready');
     } catch {
       if (mode === 'full') setState('error');
@@ -93,21 +84,6 @@ export function Workbench() {
         error instanceof Error && error.message === 'CONFLICT'
           ? '任务已被更新，请刷新后重试。'
           : '操作未完成，请检查网络后重试。',
-      );
-    } finally {
-      setBusy(null);
-    }
-  };
-  const redeem = async () => {
-    setBusy('membership');
-    try {
-      const response = await sessionApi.request(`${api}/api/v1/employee/memberships/redeem`, {
-        method: 'POST',
-        headers: { ...headers(), 'idempotency-key': crypto.randomUUID() },
-        body: JSON.stringify({ memberCode, benefitId }),
-      });
-      setMessage(
-        response.ok ? '会员权益已核销，余额已实时更新。' : '核销未完成，请核对会员码与权益编号。',
       );
     } finally {
       setBusy(null);
@@ -246,42 +222,14 @@ export function Workbench() {
       <section className={styles.section} aria-label="会员权益核销" id="membership-redeem">
         <div className={styles.sectionHead}>
           <h2>会员权益核销</h2>
-          <span>仅核销门店已发放权益</span>
+          <span>一等入口</span>
         </div>
         <div className={styles.task}>
           <div>
-            <label>
-              会员码
-              <input
-                aria-label="会员码"
-                value={memberCode}
-                onChange={(event) => setMemberCode(event.target.value.toUpperCase())}
-                placeholder="12 位会员码"
-              />
-            </label>
-            <label>
-              权益
-              <select
-                aria-label="核销权益"
-                value={benefitId}
-                onChange={(event) => setBenefitId(event.target.value)}
-              >
-                <option value="">选择已发放权益</option>
-                {benefits.map((benefit) => (
-                  <option key={benefit.id} value={benefit.id}>
-                    {benefit.title}
-                  </option>
-                ))}
-              </select>
-            </label>
+            <strong>前往会员核销页</strong>
+            <p>核销表单已迁至 `/e/memberships`，与店长能力包共用同一路由。</p>
           </div>
-          <Button
-            loading={busy === 'membership'}
-            disabled={!memberCode || !benefitId}
-            onClick={() => void redeem()}
-          >
-            确认核销
-          </Button>
+          <a href="/e/memberships">打开核销</a>
         </div>
       </section>
     </main>

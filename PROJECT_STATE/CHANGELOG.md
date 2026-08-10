@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## 2026-08-10 - SYS-33 Employee membership redeem PASS
+
+- Added Employee `/e/memberships` first-class redeem surface using existing benefits/redeem APIs.
+- Store-manager package「会员核销」now deep-links `/e/memberships`; workbench keeps a discoverability link (no duplicate form).
+- Evidence: `SYS_33_EMPLOYEE_MEMBERSHIP_REDEEM_ACCEPTANCE.md`, `evidence/SYS-33/`. Unit + menu-dto + Playwright PASS. Not 全部商用.
+
 ## 2026-08-10 - SYS-32 External-actions lifecycle PASS
 
 - Added `PUT /api/v1/external-actions/:id` (optimistic version update) and `DELETE` soft-archive (frees code for recreate).

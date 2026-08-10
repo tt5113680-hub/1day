@@ -1,0 +1,80 @@
+.page {
+  display: grid;
+  gap: 20px;
+  max-width: 920px;
+  margin: 0 auto;
+  padding: 24px 16px 96px;
+}
+
+.centered {
+  display: grid;
+  min-height: 70vh;
+  place-items: center;
+  text-align: center;
+  padding: 24px 16px;
+}
+
+.header {
+  display: grid;
+  gap: 8px;
+}
+
+.eyebrow {
+  margin: 0;
+  color: var(--od-text-muted);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.header h1 {
+  margin: 0;
+  font-size: clamp(1.5rem, 4vw, 2rem);
+}
+
+.header p,
+.note {
+  margin: 0;
+  color: var(--od-text-muted);
+  line-height: 1.5;
+  font-size: 13px;
+}
+
+.feedback {
+  margin: 0;
+  padding: 10px 12px;
+  border-radius: var(--od-radius-sm);
+  background: var(--od-brand-100);
+  color: var(--od-brand-800, #1f4d2e);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.panel {
+  display: grid;
+  gap: 14px;
+  padding: 18px;
+  border: 1px solid var(--od-border);
+  border-radius: var(--od-radius-md, 12px);
+  background: var(--od-surface);
+}
+
+.panel label {
+  display: grid;
+  gap: 6px;
+  color: var(--od-text-muted);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.panel input,
+.panel select {
+  min-height: 42px;
+  border: 1px solid var(--od-border);
+  border-radius: var(--od-radius-sm);
+  padding: 10px 14px;
+  color: var(--od-ink);
+  background: var(--od-surface);
+  font: inherit;
+}

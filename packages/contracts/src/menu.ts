@@ -348,7 +348,7 @@ export const STORE_MANAGER_PACKAGE_ACTIONS: MenuItemDto[] = [
   { key: 'leads', href: '/e/leads', label: '线索客户', group: 'store_manager' },
   {
     key: 'redeem',
-    href: '/e/workbench#membership-redeem',
+    href: '/e/memberships',
     label: '会员核销',
     group: 'store_manager',
   },
