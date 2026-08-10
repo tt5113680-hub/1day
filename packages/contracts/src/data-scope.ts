@@ -35,6 +35,21 @@ export function storeScopeAllows(
   return storeScopes.some((scope) => scope.id === storeId);
 }
 
+/**
+ * Write-path: tenant owners unrestricted; unscoped employees unrestricted;
+ * scoped operators must match the target store.
+ */
+export function storeWriteAllows(
+  scopes: Array<Pick<DataScopeRecord, 'type' | 'id'>>,
+  storeId: string,
+  hasTenantManage: boolean,
+): boolean {
+  if (hasTenantManage) return true;
+  const storeScopes = scopes.filter((scope) => scope.type === 'store');
+  if (storeScopes.length === 0) return true;
+  return storeScopes.some((scope) => scope.id === storeId);
+}
+
 export function mergeStoreScopes(
   primary: MenuScopeDto[],
   secondary: MenuScopeDto[],

@@ -21,6 +21,7 @@ export {
 export {
   mergeStoreScopes,
   storeScopeAllows,
+  storeWriteAllows,
   toMenuScope,
   type DataScopeRecord,
   type DataScopeType,

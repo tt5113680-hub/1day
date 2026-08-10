@@ -35,7 +35,7 @@
 
 **Systemic waves (D3) — SYS-6 remainder:**
 
-SYS-1…SYS-6 multi-product + data_scopes resolver PASS. Continue SYS-6 remainder: deeper role packages; apply scopes on more write controllers; Store Manager write surfaces. Optional: storefront module paint extraction. No page-level patches. Product-owner UI acceptance remains a human gate. Do not claim 全部商用. Tencent Cloud out of scope (G). Usage warn threshold: **≥90%**.
+SYS-6 multi-product + data_scopes + write-path scopes PASS (redeem + assigned store commercial/list). Continue: more write controllers; channel/circle packs; Store Manager content writes; or optional storefront paint. No page-level patches. Not 全部商用. Tencent Cloud out of scope (G). Usage warn only at **≥90%**.
 
 ## Secrets and cloud
 

@@ -7,25 +7,21 @@
 
 ## Active wave
 
-**SYS-6 remainder — deeper role packages / write-path scopes (multi-week)**
+**SYS-6 remainder — more write controllers / role packs (multi-week)**
 
 | Deliverable                                        | Status                                      |
 | -------------------------------------------------- | ------------------------------------------- |
-| SYS-1 Contract Unity                               | PASS                                        |
-| SYS-2 Config Shell + Wallet                        | PASS                                        |
-| SYS-3 FE Sync Clients                              | PASS                                        |
-| SYS-4 Ops vertical (Platform Outbox DLQ/replay)    | PASS — `/p/outbox`                          |
-| SYS-5 Shared UI kit + storefront-renderer scaffold | PASS                                        |
-| SYS-5 visual tokens / Consumer hex retirement      | PASS — `--od-sf-*`                          |
-| SYS-6 menu DTO scaffold (Management)               | PASS — `/api/v1/me/menu`                    |
-| SYS-6 multi-product menus + role homes scaffold    | PASS — P/E/Ch/Bc shells + `/e/store`        |
-| SYS-6 data_scopes resolver + managed-stores gate   | PASS — assign/onboarding sync               |
+| SYS-1…SYS-5                                        | PASS                                        |
+| SYS-6 menu DTO scaffold (Management)               | PASS                                        |
+| SYS-6 multi-product menus + role homes scaffold    | PASS                                        |
+| SYS-6 data_scopes resolver + managed-stores gate   | PASS                                        |
+| SYS-6 write-path scopes (redeem + store commercial)| PASS                                        |
 
 ## Queue
 
-- SYS-6 remainder: apply data_scopes on more write controllers; dedicated channel/circle permission packs; Store Manager write surfaces
+- SYS-6 remainder: more write controllers; dedicated channel/circle packs; Store Manager content writes
 - Optional: full storefront module paint extraction; Content distributions UI; Workflow write
 
 ## Honest day boundary
 
-SYS-1…SYS-6 menus + data_scopes resolver landed. Full ROLE_PRODUCT_MATRIX E2E, every-controller scope IA, and 一线大厂 remain multi-week — not 全部商用.
+Menus + data_scopes resolver + first write-path scopes landed. Full ROLE_PRODUCT_MATRIX E2E and 一线大厂 remain multi-week — not 全部商用.

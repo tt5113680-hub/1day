@@ -1,5 +1,5 @@
 import { ForbiddenException, Injectable, OnModuleDestroy } from '@nestjs/common';
-import { mergeStoreScopes, type MenuScopeDto } from '@oneday/contracts';
+import { mergeStoreScopes, storeWriteAllows, type MenuScopeDto } from '@oneday/contracts';
 import { randomUUID } from 'node:crypto';
 import type { PoolClient } from 'pg';
 import { createApiPool } from './database-pool';
@@ -110,6 +110,16 @@ export class DataScopeService implements OnModuleDestroy {
     return scopes.some((scope) => scope.id === storeId);
   }
 
+  async canWriteStore(
+    tenantId: string,
+    userId: string,
+    storeId: string,
+    permissionCodes: string[],
+  ): Promise<boolean> {
+    const scopes = await this.resolveStoreScopes(tenantId, userId);
+    return storeWriteAllows(scopes, storeId, permissionCodes.includes('tenant.manage'));
+  }
+
   async requireStoreAccess(
     tenantId: string,
     userId: string,
@@ -119,6 +129,30 @@ export class DataScopeService implements OnModuleDestroy {
     if (!(await this.canAccessStore(tenantId, userId, storeId, permissionCodes))) {
       throw new ForbiddenException('FORBIDDEN');
     }
+  }
+
+  async requireStoreWriteScope(
+    tenantId: string,
+    userId: string,
+    storeId: string,
+    permissionCodes: string[],
+  ) {
+    if (!(await this.canWriteStore(tenantId, userId, storeId, permissionCodes))) {
+      throw new ForbiddenException('FORBIDDEN');
+    }
+  }
+
+  async permissionCodes(tenantId: string, userId: string): Promise<string[]> {
+    const result = await this.pool.query<{ code: string }>(
+      `select distinct p.code
+       from memberships m
+       join membership_roles mr on mr.membership_id = m.id and mr.tenant_id = m.tenant_id
+       join role_permissions rp on rp.role_id = mr.role_id and rp.tenant_id = m.tenant_id and rp.status = 'active'
+       join permissions p on p.id = rp.permission_id and p.status = 'active'
+       where m.user_id = $1 and m.tenant_id = $2 and m.status = 'active'`,
+      [userId, tenantId],
+    );
+    return result.rows.map((row) => row.code).sort();
   }
 
   async syncStoreAssignment(

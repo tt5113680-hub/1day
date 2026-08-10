@@ -40,7 +40,8 @@ const coordinate = (value: unknown) => {
 export class ManagementStoreService implements OnModuleDestroy {
   private readonly pool = createApiPool();
   constructor(private readonly dataScopes: DataScopeService) {}
-  async list(context: OrganizationContext) {
+  async list(context: OrganizationContext, storeIds: string[] | null = null) {
+    if (storeIds && storeIds.length === 0) return [];
     const result = await this.pool.query(
       `select s.id,s.code,s.name,s.address,s.phone,s.business_hours,s.image_url,s.latitude,s.longitude,s.status,s.version,m.name merchant_name,
        coalesce(json_agg(distinct jsonb_build_object('id',e.id,'name',u.display_name)) filter(where e.id is not null),'[]'::json) managers,
@@ -58,15 +59,18 @@ export class ManagementStoreService implements OnModuleDestroy {
        left join memberships ms on ms.id=e.membership_id and ms.tenant_id=e.tenant_id and ms.status='active'
        left join users u on u.id=ms.user_id and u.status='active'
        where s.tenant_id=$1 and s.deleted_at is null
+         and ($2::uuid[] is null or s.id = any($2::uuid[]))
        group by s.id,m.name order by s.status='active' desc,s.code`,
-      [context.tenantId],
+      [context.tenantId, storeIds],
     );
     const links = await this.pool.query(
       `select sea.id,sea.store_id,sea.description,sea.sort_order,sea.enabled,sea.version,
        a.name,a.target_url,a.platform from store_external_actions sea
        join external_actions a on a.id=sea.external_action_id and a.tenant_id=sea.tenant_id and a.deleted_at is null
-       where sea.tenant_id=$1 and sea.deleted_at is null order by sea.sort_order,sea.created_at`,
-      [context.tenantId],
+       where sea.tenant_id=$1 and sea.deleted_at is null
+         and ($2::uuid[] is null or sea.store_id = any($2::uuid[]))
+       order by sea.sort_order,sea.created_at`,
+      [context.tenantId, storeIds],
     );
     const linksByStore = new Map<string, Record<string, unknown>[]>();
     for (const link of links.rows) {

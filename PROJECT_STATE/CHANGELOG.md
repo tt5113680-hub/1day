@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## 2026-08-10 - SYS-6 write-path scopes PASS
+
+- Membership redeem now enforces store write-scope against enrollment.store_id.
+- Assigned store managers can list/update their stores' commercial fields and external links; manager assignment stays owner-only.
+- Evidence: `SYS_6_ACCEPTANCE.md`, `evidence/SYS-6/`. Tests: `data-scope.vitest` 4/4, `sys-6-write-path-scopes` 1/1. Not 全部商用.
+
 ## 2026-08-10 - SYS-6 data_scopes resolver PASS
 
 - Added `DataScopeService` merging `data_scopes` ∪ `store_managers`; manager assign + platform onboarding sync store scopes.

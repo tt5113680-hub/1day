@@ -1,10 +1,9 @@
 # evidence/SYS-6
 
-- result: SYS_6_MULTI_PRODUCT_PASS + SYS_6_DATA_SCOPES_PASS
-- endpoint: `GET /api/v1/me/menu?product=*`; `GET /api/v1/employee/managed-stores`; access gate
-- unit: `tests/menu-dto.vitest.ts` 5/5; `tests/data-scope.vitest.ts` 3/3
-- contract: `tests/sys-6-menu-dto.test.mjs` 2/2; `tests/sys-6-data-scopes.test.mjs` 1/1
-- surfaces: Platform/Employee shells + Store Manager `/e/store` + data_scopes sync on manager assign/onboarding
+- result: SYS_6_MULTI_PRODUCT_PASS + SYS_6_DATA_SCOPES_PASS + SYS_6_WRITE_PATH_SCOPES_PASS
+- endpoints: `/api/v1/me/menu`; `/api/v1/employee/managed-stores`; scoped redeem; scoped management store commercial/list
+- unit: `menu-dto.vitest` 5/5; `data-scope.vitest` 4/4
+- contract: `sys-6-menu-dto` 2/2; `sys-6-data-scopes` 1/1; `sys-6-write-path-scopes` 1/1
 - acceptance: `PROJECT_STATE/SYS_6_ACCEPTANCE.md`
-- usage_warn_threshold: ≥90% (owner 2026-08-10)
+- usage_warn_threshold: ≥90%
 - note: Not full cross-controller scope E2E. Not 全部商用.

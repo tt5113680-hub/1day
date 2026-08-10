@@ -8,6 +8,7 @@ import {
 import { createHash, randomBytes, randomUUID } from 'node:crypto';
 import type { PoolClient } from 'pg';
 import { createApiPool } from './database-pool';
+import { DataScopeService } from './data-scope.service';
 import type { OrganizationContext } from './organization.service';
 
 const UUID = /^[0-9a-f-]{36}$/i;
@@ -23,6 +24,7 @@ const mobile = (value: unknown) => {
 @Injectable()
 export class MembershipCommercialService implements OnModuleDestroy {
   private readonly pool = createApiPool();
+  constructor(private readonly dataScopes: DataScopeService) {}
 
   async enroll(slug: string, body: Record<string, unknown>, key: string) {
     if (
@@ -206,11 +208,21 @@ export class MembershipCommercialService implements OnModuleDestroy {
       throw new BadRequestException('VALIDATION_ERROR');
     const enrollment = (
       await this.pool.query(
-        "select id from membership_enrollments where tenant_id=$1 and member_code=$2 and enrollment_status='active' and deleted_at is null",
+        "select id, store_id from membership_enrollments where tenant_id=$1 and member_code=$2 and enrollment_status='active' and deleted_at is null",
         [context.tenantId, code],
       )
     ).rows[0];
     if (!enrollment) throw new NotFoundException('NOT_FOUND');
+    const permissionCodes = await this.dataScopes.permissionCodes(
+      context.tenantId,
+      context.userId,
+    );
+    await this.dataScopes.requireStoreWriteScope(
+      context.tenantId,
+      context.userId,
+      enrollment.store_id,
+      permissionCodes,
+    );
     return this.change(context, enrollment.id, String(body.benefitId), -1, `redeem:${key}`);
   }
   private async change(
