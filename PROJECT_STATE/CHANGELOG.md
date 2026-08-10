@@ -1,5 +1,13 @@
 # CHANGELOG
 
+## 2026-08-10 - P1-B Management/Platform shell: shared token-driven AdminShell chrome PASS
+
+- `packages/design-tokens/foundation.css`: remapped the shared `.od-admin-shell*` chrome block from raw hex/rgb literals to `var(--od-*)` foundation tokens + `color-mix()` (sidebar text, brand mark, product label, nav-group label, nav link/hover/active, context, topbar). **No raw hex remains in the admin-shell chrome.** Both Management (`management-shell.tsx` → `AdminShell`) and Platform (`platform-shell.tsx` → `AdminShell`, incl. channel/circle product modes) shells inherit the cleaned shared shell (CHARTER §1.2 no page-level hex stacking; BLUEPRINT Admin Shell §4.2).
+- Tests: `tests/admin-shell-tokens.vitest.ts` (admin-shell projection + no-hex assertion), `tests/e2e/p1-b-management-shell.spec.ts` (Management 390/768/1440 + Platform 1440).
+- Gates: `pnpm typecheck` 20/20, `pnpm build` 20/20, `pnpm test:unit` 11 files/47, Playwright `p1-b-management-shell` 2/2 + `sys-29` 1/1 + `sys-28` 1/1 + `sys-27` 1/1 + `page-m-010` 2/2 regressions.
+- Maps to matrix UI-01/UI-02/M-01. Marks `p1-b-management-shell` milestone PASS in `PHASE1_PROGRESS.json`. Evidence: `evidence/P1-B-MANAGEMENT-SHELL/ACCEPTANCE.md` + 4 screenshots.
+- Not 全部商用. No product-owner UI auto-sign.
+
 ## 2026-08-10 - P1-B Employee shell: shared token-driven work-nav chrome PASS
 
 - `@oneday/ui`: added shared `EmployeeWorkNav` component + `EmployeeNavItem` type (mobile-bottom + desktop-sidebar nav driven by menu-DTO `items` + `activeKey` + `context` + `mode` + `storeManagerMode`); exported from `@oneday/ui`.

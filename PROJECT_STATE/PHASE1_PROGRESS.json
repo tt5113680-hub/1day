@@ -2,7 +2,7 @@
   "recordedAt": "2026-08-10T15:50:00+08:00",
   "phase": "Phase-1 commercial closed loop",
   "goal": "G1 local human pilot ready (not public HTTPS, not full commercial)",
-  "currentStep": "P1-B visual depth (four shells + UI kit; ui-kit Table/Modal PASS, consumer-shell PASS, employee-shell PASS; management/platform polish next)",
+  "currentStep": "P1-B visual depth (four shells + UI kit; ui-kit Table/Modal PASS, consumer-shell PASS, employee-shell PASS, management-shell PASS; platform-shell polish next)",
   "milestones": [
     { "id": "p0-sys", "label": "P0 matrix + SYS-1..34", "weight": 35, "status": "pass", "evidence": "TASK_QUEUE SYS-34 PASS" },
     { "id": "p1-a", "label": "P1-A commercial main loop", "weight": 10, "status": "pass", "evidence": "P1_A_COMMERCIAL_CLOSED_LOOP_ACCEPTANCE.md" },
@@ -10,7 +10,7 @@
     { "id": "p1-b-ui-kit", "label": "P1-B @oneday/ui kit (Table/Skeleton/Modal...)", "weight": 8, "status": "pass", "evidence": "evidence/P1-B-UI-KIT/ACCEPTANCE.md" },
     { "id": "p1-b-consumer-shell", "label": "P1-B Consumer shell + tokens", "weight": 7, "status": "pass", "evidence": "evidence/P1-B-CONSUMER-SHELL/ACCEPTANCE.md" },
     { "id": "p1-b-employee-shell", "label": "P1-B Employee shell polish", "weight": 5, "status": "pass", "evidence": "evidence/P1-B-EMPLOYEE-SHELL/ACCEPTANCE.md" },
-    { "id": "p1-b-management-shell", "label": "P1-B Management shell polish", "weight": 5, "status": "pending" },
+    { "id": "p1-b-management-shell", "label": "P1-B Management shell polish", "weight": 5, "status": "pass", "evidence": "evidence/P1-B-MANAGEMENT-SHELL/ACCEPTANCE.md" },
     { "id": "p1-b-platform-shell", "label": "P1-B Platform shell polish", "weight": 4, "status": "pending" },
     { "id": "p1-b-sync-converge", "label": "P1-B publish -> four-terminal sync", "weight": 8, "status": "pending" },
     { "id": "p1-b-content-chain", "label": "P1-B content approve->place chain", "weight": 3, "status": "pending" },

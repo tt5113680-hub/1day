@@ -374,7 +374,7 @@ select:focus-visible {
   flex-direction: column;
   gap: var(--od-space-3);
   padding: var(--od-space-5) var(--od-space-3);
-  color: #e8f1ea;
+  color: color-mix(in srgb, var(--od-background) 92%, var(--od-surface));
   background: var(--od-brand-950);
 }
 .od-admin-shell__brand {
@@ -393,12 +393,12 @@ select:focus-visible {
   place-items: center;
   border-radius: 10px;
   color: var(--od-brand-950);
-  background: #c6ee9b;
+  background: var(--od-accent-lime);
   font-weight: 900;
 }
 .od-admin-shell__product {
   margin: var(--od-space-2) var(--od-space-2) var(--od-space-1);
-  color: #a9c5af;
+  color: color-mix(in srgb, var(--od-background) 82%, var(--od-surface));
   font-size: 12px;
   font-weight: 700;
   letter-spacing: 0.08em;
@@ -415,7 +415,7 @@ select:focus-visible {
 .od-admin-shell__nav-group-label {
   margin: 0;
   padding: 8px 12px 4px;
-  color: #8eab96;
+  color: color-mix(in srgb, var(--od-background) 72%, var(--od-surface));
   font-size: 11px;
   font-weight: 700;
   letter-spacing: 0.08em;
@@ -424,22 +424,22 @@ select:focus-visible {
 .od-admin-shell__sidebar nav a {
   padding: 10px 12px;
   border-radius: var(--od-radius-sm);
-  color: #dce8df;
+  color: color-mix(in srgb, var(--od-background) 88%, var(--od-surface));
   text-decoration: none;
   font-size: 14px;
 }
 .od-admin-shell__sidebar nav a:hover {
-  color: #fff;
-  background: rgb(255 255 255 / 10%);
+  color: var(--od-surface);
+  background: color-mix(in srgb, var(--od-surface) 10%, transparent);
 }
 .od-admin-shell__sidebar nav a.od-admin-shell__nav-link--active {
-  color: #fff;
-  background: rgb(198 238 155 / 20%);
-  box-shadow: inset 3px 0 #c6ee9b;
+  color: var(--od-surface);
+  background: color-mix(in srgb, var(--od-accent-lime) 20%, transparent);
+  box-shadow: inset 3px 0 var(--od-accent-lime);
 }
 .od-admin-shell__context {
   margin: auto var(--od-space-2) var(--od-space-2);
-  color: #a9c5af;
+  color: color-mix(in srgb, var(--od-background) 82%, var(--od-surface));
   font-size: 12px;
   line-height: 1.5;
 }
@@ -457,7 +457,7 @@ select:focus-visible {
   padding: 0 clamp(var(--od-space-4), 3vw, var(--od-space-8));
   border-bottom: 1px solid var(--od-border);
   color: var(--od-text-muted);
-  background: rgb(245 248 245 / 92%);
+  background: color-mix(in srgb, var(--od-surface-subtle) 92%, transparent);
   backdrop-filter: blur(14px);
   font-size: 13px;
 }
