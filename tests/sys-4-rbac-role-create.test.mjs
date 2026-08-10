@@ -98,9 +98,19 @@ test('SYS-4: RBAC role create reuses existing /api/v1/rbac/roles', async () => {
     const tenantRead = (
       await client.query("select id from permissions where code='tenant.read' limit 1")
     ).rows[0].id;
+    const organizationManage = (
+      await client.query("select id from permissions where code='organization.manage' limit 1")
+    ).rows[0].id;
     await client.query(
       "insert into role_permissions(id,tenant_id,role_id,permission_id,status,created_by,updated_by) values($1,$2,$3,$4,'active',null,null),($5,$2,$3,$6,'active',null,null)",
-      [randomUUID(), tenantId, ownerRoleId, tenantManage, randomUUID(), tenantRead],
+      [
+        randomUUID(),
+        tenantId,
+        ownerRoleId,
+        tenantManage,
+        randomUUID(),
+        organizationManage,
+      ],
     );
     await client.query(
       "insert into role_permissions(id,tenant_id,role_id,permission_id,status,created_by,updated_by) values($1,$2,$3,$4,'active',null,null)",

@@ -144,6 +144,7 @@ test('SYS-6: /me/menu filters Management items by permission set', async () => {
     ownerData.items.map((item) => item.key),
     filterMenuCatalog(MANAGEMENT_MENU_CATALOG, ['tenant.manage']).map((item) => item.key),
   );
+  assert.ok(!ownerData.items.some((item) => item.key === 'roles' || item.key === 'settings'));
 
   const readerMenu = await fetch(`${base}/api/v1/me/menu?product=management`, {
     headers: {

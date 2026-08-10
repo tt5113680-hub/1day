@@ -8,17 +8,17 @@
 ## Current task - systemic commercial productization (D3)
 
 - branch: `hardening/COMMERCIAL-COMPLETION`
-- last_verified: SYS-6 Role matrix Store Manager package PASS
-- current_task: Role matrix remainders (Tenant Manager/Owner; Channel/Circle/Platform; Member) or advanced workflow versioning
-- status: `SYS_6_ROLE_MATRIX_STORE_MANAGER_PASS`; **not** claimed as full commercial
+- last_verified: SYS-6 Role matrix Tenant Manager vs Owner chrome PASS
+- current_task: Role matrix remainders (Channel/Circle/Platform/Member) or advanced workflow versioning
+- status: `SYS_6_ROLE_MATRIX_TENANT_OWNER_PASS`; **not** claimed as full commercial
 - blocker: null
-- progress: P0 26/26; Store Manager matrix slice landed; other roles multi-week
+- progress: P0 26/26; Store Manager + Tenant Owner/Manager slices landed
 
 ### Completed this session
 
-1. SYS-6 Store Manager role matrix E2E slice
-2. Management CRM menu gated off bare `customer.read`
-3. Evidence + tests green
+1. SYS-6 Store Manager role matrix E2E
+2. SYS-6 Tenant Manager vs Owner chrome
+3. Evidence + tests green; pushed to origin
 
 ### Usage note
 
@@ -41,7 +41,7 @@
 5. PROJECT_STATE/SYSTEMIC_CONSTRUCTION_PLAN.md
 6. git status
 
-状态：SYS-6 Store Manager role matrix PASS；SYS-4 RBAC/workflow/distributions PASS；P0 26/26；下一任务 Tenant Manager/Owner 或 Channel/Circle Role matrix。
+状态：SYS-6 Tenant Owner/Manager chrome PASS；Store Manager matrix PASS；P0 26/26；下一任务 Channel/Circle/Platform Role matrix 或 Member journey。
 工作目录仅 D:\ONEDAY_V3。禁止页级补丁。不得宣称全部商用。不做腾讯云。
 已获 A–H。继续施工；用量达到 90%–95% 再换新窗口，中途不要停。
 ```

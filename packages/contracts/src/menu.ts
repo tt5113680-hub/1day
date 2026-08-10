@@ -97,13 +97,13 @@ export const MANAGEMENT_MENU_CATALOG: MenuCatalogItem[] = [
     key: 'roles',
     href: '/m/roles-permissions',
     label: '角色与权限',
-    requireAll: ['tenant.manage'],
+    requireAll: ['tenant.manage', 'organization.manage'],
   },
   {
     key: 'settings',
     href: '/m/settings',
     label: '经营设置',
-    requireAll: ['tenant.manage'],
+    requireAll: ['tenant.manage', 'organization.manage'],
   },
 ];
 

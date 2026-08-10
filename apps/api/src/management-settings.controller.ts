@@ -15,7 +15,7 @@ export class ManagementSettingsController {
     requestId: string | undefined,
   ) {
     if (!requestId?.trim()) throw new BadRequestException('VALIDATION_ERROR');
-    return this.auth.require(authorization, 'tenant.manage', tenant);
+    return this.auth.requireAll(authorization, ['tenant.manage', 'organization.manage'], tenant);
   }
 
   @Get()

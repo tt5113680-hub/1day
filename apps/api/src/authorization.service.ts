@@ -10,6 +10,28 @@ export class AuthorizationService implements OnModuleDestroy {
     return this.requireAny(authorization, [permission], requestedTenant);
   }
 
+  async requireAll(
+    authorization: string | undefined,
+    permissions: string[],
+    requestedTenant?: string,
+  ) {
+    if (!permissions.length) throw new ForbiddenException('FORBIDDEN');
+    const context = await this.tenantContext.fromAuthorization(authorization, requestedTenant);
+    const result = await this.pool.query(
+      `select count(distinct p.code)::int as matched
+       from memberships m
+       join membership_roles mr on mr.membership_id=m.id and mr.tenant_id=m.tenant_id
+       join role_permissions rp on rp.role_id=mr.role_id and rp.tenant_id=m.tenant_id and rp.status='active'
+       join permissions p on p.id=rp.permission_id and p.status='active'
+       where m.user_id=$1 and m.tenant_id=$2 and m.status='active' and p.code = any($3::varchar[])`,
+      [context.userId, context.tenantId, permissions],
+    );
+    if (Number(result.rows[0]?.matched ?? 0) !== permissions.length) {
+      throw new ForbiddenException('FORBIDDEN');
+    }
+    return context;
+  }
+
   async requireAny(
     authorization: string | undefined,
     permissions: string[],

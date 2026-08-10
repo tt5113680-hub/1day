@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## 2026-08-10 - SYS-6 Role matrix Tenant Manager vs Owner chrome PASS
+
+- Owner-only Management chrome (`roles`/`settings`) and RBAC/settings APIs now require `tenant.manage` + `organization.manage`.
+- Tenant Manager keeps operating menus without Owner chrome; denials covered by HTTP harness.
+- Evidence: `SYS_6_ROLE_MATRIX_TENANT_OWNER_ACCEPTANCE.md`, `evidence/SYS-6/`. Tests: `sys-6-role-matrix-tenant-owner` 1/1, `menu-dto.vitest` 7/7. Not 全部商用.
+
 ## 2026-08-10 - SYS-6 Role matrix E2E Store Manager package PASS
 
 - Closed-loop Store Manager harness: server menus, store scopes, scoped catalog/membership/content writes, and owner-only denials.

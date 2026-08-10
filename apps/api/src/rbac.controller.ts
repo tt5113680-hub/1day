@@ -16,7 +16,11 @@ export class RbacController {
     @Headers('x-tenant-context') t: string | undefined,
     @Headers('x-request-id') r: string | undefined,
   ) {
-    const c = await this.auth.requireAny(a, ['tenant.read', 'tenant.manage'], t);
+    const c = await this.auth.requireAny(
+      a,
+      ['tenant.read', 'tenant.manage', 'organization.manage'],
+      t,
+    );
     return { data: await this.rbac.list(c), meta: meta(r), error: null };
   }
   @Post('roles') async create(
@@ -26,7 +30,7 @@ export class RbacController {
     @Headers('idempotency-key') k: string | undefined,
     @Body() b: Record<string, unknown>,
   ) {
-    const c = await this.auth.require(a, 'tenant.manage', t);
+    const c = await this.auth.requireAll(a, ['tenant.manage', 'organization.manage'], t);
     const m = meta(r);
     return { data: await this.rbac.create(c, b, k ?? '', m.requestId), meta: m, error: null };
   }
@@ -37,7 +41,7 @@ export class RbacController {
     @Param('id') id: string,
     @Body() b: Record<string, unknown>,
   ) {
-    const c = await this.auth.require(a, 'tenant.manage', t);
+    const c = await this.auth.requireAll(a, ['tenant.manage', 'organization.manage'], t);
     const m = meta(r);
     return { data: await this.rbac.change(c, id, b, m.requestId), meta: m, error: null };
   }

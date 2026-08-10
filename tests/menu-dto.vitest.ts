@@ -12,9 +12,27 @@ import {
 } from '../packages/contracts/src/menu';
 
 describe('menu DTO catalog filter', () => {
-  it('returns full management catalog for tenant.manage', () => {
-    const items = filterMenuCatalog(MANAGEMENT_MENU_CATALOG, ['tenant.manage']);
+  it('returns owner management catalog when tenant.manage and organization.manage', () => {
+    const items = filterMenuCatalog(MANAGEMENT_MENU_CATALOG, [
+      'tenant.manage',
+      'organization.manage',
+    ]);
     expect(items.map((item) => item.key)).toEqual(MANAGEMENT_MENU_CATALOG.map((item) => item.key));
+  });
+
+  it('hides Owner-only roles/settings for Tenant Manager tenant.manage without organization.manage', () => {
+    const items = filterMenuCatalog(MANAGEMENT_MENU_CATALOG, ['tenant.manage']);
+    expect(items.map((item) => item.key)).toEqual([
+      'overview',
+      'customers',
+      'workflows',
+      'stores',
+      'offers',
+      'memberships',
+      'content',
+      'page-builder',
+      'organization',
+    ]);
   });
 
   it('exposes overview for customer.read without Management CRM entry', () => {

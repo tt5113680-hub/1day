@@ -35,7 +35,7 @@
 
 **Systemic waves (D3) - Role matrix remainders:**
 
-SYS-6 Store Manager role matrix slice PASS. Continue: Tenant Manager/Owner chrome, Channel/Circle/Platform packages, or Member journey. No page-level patches. Not claimed as full commercial. Tencent Cloud out of scope (G).
+SYS-6 Store Manager + Tenant Manager/Owner matrix slices PASS. Continue: Channel/Circle/Platform packages or Member journey. No page-level patches. Not claimed as full commercial. Tencent Cloud out of scope (G).
 
 **Usage:** keep constructing until **90%-95%**, then new window. Do not stop early.
 

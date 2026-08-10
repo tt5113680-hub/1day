@@ -15,7 +15,7 @@ export class ManagementRolePermissionController {
     if (!requestId?.trim()) throw new BadRequestException('VALIDATION_ERROR');
     return {
       data: await this.roles.overview(
-        await this.auth.require(authorization, 'tenant.manage', tenant),
+        await this.auth.requireAll(authorization, ['tenant.manage', 'organization.manage'], tenant),
       ),
       meta: { requestId },
       error: null,

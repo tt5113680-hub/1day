@@ -11,19 +11,16 @@
 
 | Deliverable                                        | Status                                      |
 | -------------------------------------------------- | ------------------------------------------- |
-| SYS-1…SYS-5                                        | PASS                                        |
-| SYS-6 write paths / scopes / packs                 | PASS                                        |
-| SYS-4 content / workflow / RBAC ops UIs            | PASS                                        |
+| SYS-1…SYS-5 / SYS-4 ops UIs / SYS-6 write scopes   | PASS                                        |
 | SYS-6 Role matrix — Store Manager package          | PASS                                        |
-| SYS-5 storefront paints                            | PASS                                        |
+| SYS-6 Role matrix — Tenant Manager vs Owner chrome | PASS                                        |
 
 ## Queue
 
-- Role matrix: Tenant Manager vs Owner chrome
 - Role matrix: Channel / Circle / Platform packages
 - Role matrix: Member Consumer journey
 - Advanced workflow versioning
 
 ## Honest day boundary
 
-Store Manager package closed-loop landed. Full nine-role ROLE_PRODUCT_MATRIX remains multi-week - not claimed as full commercial.
+Store Manager + Tenant Manager/Owner chrome slices landed. Full nine-role ROLE_PRODUCT_MATRIX remains multi-week - not claimed as full commercial.
