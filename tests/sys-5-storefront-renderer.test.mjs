@@ -5,6 +5,8 @@ import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
 import {
   buildStorefrontRenderPlan,
+  storefrontActionIcon,
+  storefrontTokens,
   visibleStorefrontModules,
 } from '../packages/storefront-renderer/dist/index.js';
 
@@ -33,6 +35,7 @@ test('SYS-5 scaffold: shared package wired into Consumer and Management', () => 
   assert.match(foundation, /--od-brand-50:\s*#f3f8f4/);
   assert.match(consumerSource, /@oneday\/storefront-renderer/);
   assert.match(consumerSource, /visibleStorefrontModules/);
+  assert.match(consumerSource, /StorefrontSection/);
   assert.match(managementSource, /StorefrontModuleOutline/);
   assert.match(managementSource, /@oneday\/storefront-renderer/);
   assert.match(uiIndex, /designTokens/);
@@ -50,4 +53,29 @@ test('SYS-5 scaffold: shared package wired into Consumer and Management', () => 
   const plan = buildStorefrontRenderPlan(modules);
   assert.equal(plan.length, 1);
   assert.equal(plan[0]?.kind, 'section-batch');
+});
+
+test('SYS-5 visual: Consumer store CSS uses shared --od-sf tokens only', () => {
+  const storeCss = readFileSync(
+    join(root, 'apps/consumer-web/app/c/stores/[id]/store.module.css'),
+    'utf8',
+  );
+  const themeCss = readFileSync(join(root, 'packages/storefront-renderer/storefront.css'), 'utf8');
+  const storePage = readFileSync(
+    join(root, 'apps/consumer-web/app/c/stores/[id]/store.tsx'),
+    'utf8',
+  );
+  const consumerSource = readFileSync(
+    join(root, 'apps/consumer-web/app/c/stores/[id]/storefront-modules.tsx'),
+    'utf8',
+  );
+
+  assert.equal([...storeCss.matchAll(/#[0-9a-fA-F]{3,8}\b/g)].length, 0);
+  assert.match(storeCss, /var\(--od-sf-ink\)/);
+  assert.match(themeCss, /--od-sf-accent:\s*#b54935/);
+  assert.match(storePage, /od-sf-theme/);
+  assert.match(consumerSource, /StorefrontEmpty/);
+  assert.match(consumerSource, /storefrontActionIcon/);
+  assert.equal(storefrontTokens.canvas, '#f7f4ef');
+  assert.equal(storefrontActionIcon(2), '✦');
 });

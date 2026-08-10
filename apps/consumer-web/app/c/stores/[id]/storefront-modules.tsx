@@ -4,8 +4,12 @@ import {
   effectiveStorefrontModules,
   normalizeModuleType,
   SECTION_MODULE_TYPES,
+  StorefrontEmpty,
+  StorefrontSection,
+  storefrontActionIcon,
   visibleStorefrontModules,
 } from '@oneday/storefront-renderer';
+import '@oneday/storefront-renderer/storefront.css';
 import { useEffect, useMemo, useState, type ReactNode } from 'react';
 import { storeHref, type ConsumerContext } from '../../consumer-shell';
 import { memberAccessStorageKey } from '../../resolve-consumer-tabs';
@@ -15,8 +19,6 @@ import type { StoreDetail } from './store';
 const apiBase = process.env.NEXT_PUBLIC_API_BASE_URL ?? 'http://127.0.0.1:3001';
 
 type Module = NonNullable<StoreDetail['storefront']>['modules'][number];
-
-const visual = (index: number) => ['◌', '▦', '✦', '♧', '◈', '⌁', '◍', '⌖', '↗', '⋯'][index] ?? '•';
 
 export { visibleStorefrontModules };
 
@@ -456,7 +458,7 @@ function QuickActions({
       {shortcuts.map((item, index) =>
         item!.href ? (
           <a className={styles.shortcut} href={item!.href} key={`${item!.label}-${index}`}>
-            <i>{item!.icon ?? visual(index)}</i>
+            <i>{item!.icon ?? storefrontActionIcon(index)}</i>
             <span>{item!.label}</span>
           </a>
         ) : (
@@ -467,7 +469,7 @@ function QuickActions({
             disabled={item!.disabled}
             key={`${item!.label}-${index}`}
           >
-            <i>{item!.icon ?? visual(index)}</i>
+            <i>{item!.icon ?? storefrontActionIcon(index)}</i>
             <span>{item!.label}</span>
           </button>
         ),
@@ -502,7 +504,7 @@ function MemberEntry({
         </a>
       </section>
       {data.benefits.length ? (
-        <Section title="门店权益" hint="入会后按门店配置发放" anchor="benefits">
+        <StorefrontSection title="门店权益" hint="入会后按门店配置发放" anchor="benefits">
           <div className={styles.benefitList}>
             {data.benefits.map((item, index) => (
               <article className={styles.benefit} key={item.id}>
@@ -517,7 +519,7 @@ function MemberEntry({
               </article>
             ))}
           </div>
-        </Section>
+        </StorefrontSection>
       ) : null}
     </div>
   );
@@ -579,14 +581,18 @@ function MemberWallet({ context }: { context: ConsumerContext }) {
   }, [context.storeId, context.tenant]);
 
   return (
-    <Section
+    <StorefrontSection
       title="会员钱包"
       hint="仅展示本机会话已授权的权益余额"
       anchor="wallet"
       moduleType="member_wallet"
     >
-      {state === 'loading' || state === 'idle' ? <Empty>正在读取会员钱包…</Empty> : null}
-      {state === 'error' ? <Empty>暂时无法读取会员钱包，请稍后重试。</Empty> : null}
+      {state === 'loading' || state === 'idle' ? (
+        <StorefrontEmpty>正在读取会员钱包…</StorefrontEmpty>
+      ) : null}
+      {state === 'error' ? (
+        <StorefrontEmpty>暂时无法读取会员钱包，请稍后重试。</StorefrontEmpty>
+      ) : null}
       {state === 'anonymous' ? (
         <div className={styles.benefitList}>
           <article className={styles.benefit}>
@@ -613,11 +619,11 @@ function MemberWallet({ context }: { context: ConsumerContext }) {
               </article>
             ))
           ) : (
-            <Empty>入会成功，门店尚未发放可核销权益。</Empty>
+            <StorefrontEmpty>入会成功，门店尚未发放可核销权益。</StorefrontEmpty>
           )}
         </div>
       ) : null}
-    </Section>
+    </StorefrontSection>
   );
 }
 
@@ -637,7 +643,7 @@ function ServiceCatalog({
   });
   if (shareCode) params.set('shareCode', shareCode);
   return (
-    <Section
+    <StorefrontSection
       title="今日推荐"
       hint="门店精选 · 到店自取"
       anchor="offers"
@@ -674,10 +680,10 @@ function ServiceCatalog({
             </a>
           ))
         ) : (
-          <Empty>门店正在完善推荐内容。</Empty>
+          <StorefrontEmpty>门店正在完善推荐内容。</StorefrontEmpty>
         )}
       </div>
-    </Section>
+    </StorefrontSection>
   );
 }
 
@@ -697,7 +703,7 @@ function OfferCompare({
   }[];
 }) {
   return (
-    <Section
+    <StorefrontSection
       title="全平台团购比价"
       hint="选好平台再前往下单"
       anchor="platforms"
@@ -778,16 +784,16 @@ function OfferCompare({
           ) : null}
         </>
       ) : (
-        <Empty>门店暂未配置可跳转的平台入口。</Empty>
+        <StorefrontEmpty>门店暂未配置可跳转的平台入口。</StorefrontEmpty>
       )}
       <p className={styles.disclaimer}>价格、库存及最终优惠以第三方平台实际页面为准。</p>
-    </Section>
+    </StorefrontSection>
   );
 }
 
 function ContentFeed({ data }: { data: StoreDetail }) {
   return (
-    <Section
+    <StorefrontSection
       title="门店活动"
       hint="只展示商家已发布内容"
       anchor="updates"
@@ -813,10 +819,10 @@ function ContentFeed({ data }: { data: StoreDetail }) {
             </article>
           ))
         ) : (
-          <Empty>门店正在准备更多动态。</Empty>
+          <StorefrontEmpty>门店正在准备更多动态。</StorefrontEmpty>
         )}
       </div>
-    </Section>
+    </StorefrontSection>
   );
 }
 
@@ -864,35 +870,4 @@ function StoreInfo({
       </div>
     </section>
   );
-}
-
-function Section({
-  title,
-  hint,
-  anchor,
-  children,
-  moduleType,
-}: {
-  title: string;
-  hint: string;
-  anchor: string;
-  children: ReactNode;
-  moduleType?: string;
-}) {
-  return (
-    <section id={anchor} className={styles.section} data-module={moduleType}>
-      <div className={styles.sectionHead}>
-        <div>
-          <h2>{title}</h2>
-          <p>{hint}</p>
-        </div>
-        <a href="#top">更多 ›</a>
-      </div>
-      {children}
-    </section>
-  );
-}
-
-function Empty({ children }: { children: ReactNode }) {
-  return <div className={styles.empty}>{children}</div>;
 }

@@ -235,7 +235,7 @@ export default function StorePage({
           装修预览 · 当前内容尚未发布，消费者不会看到此版本
         </aside>
       ) : null}
-      <main id="top" className={styles.page} data-industry={industry}>
+      <main id="top" className={`${styles.page} od-sf-theme`} data-industry={industry}>
         <div className={styles.shell}>
           <h1 className={styles.visuallyHidden}>{data.store.name}</h1>
           <StorefrontModules

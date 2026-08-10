@@ -3,6 +3,7 @@
 import { SessionApiClient } from '@oneday/session-client';
 import { StorefrontModuleOutline } from '@oneday/storefront-renderer';
 import '@oneday/storefront-renderer/outline.css';
+import '@oneday/storefront-renderer/storefront.css';
 import {
   AdminPageHeader,
   AppStatePanel,

@@ -1,0 +1,141 @@
+/* Shared storefront theme tokens. Import once from Consumer/Management hosts. */
+:root,
+.od-sf-theme {
+  --od-sf-ink: #271a17;
+  --od-sf-canvas: #f7f4ef;
+  --od-sf-canvas-desktop: #eee8e2;
+  --od-sf-canvas-desktop-mid: #f8f4ee;
+  --od-sf-canvas-desktop-end: #e6efe7;
+  --od-sf-muted: #9a6757;
+  --od-sf-muted-strong: #8f5d36;
+  --od-sf-muted-soft: #9a8176;
+  --od-sf-muted-nav: #8f7d75;
+  --od-sf-muted-copy: #826c64;
+  --od-sf-muted-hint: #ad958b;
+  --od-sf-muted-empty: #967f75;
+  --od-sf-muted-meta: #a28d83;
+  --od-sf-muted-switcher: #927e75;
+  --od-sf-muted-label: #b09689;
+  --od-sf-border: #ece1da;
+  --od-sf-border-soft: #f0dfd7;
+  --od-sf-border-faint: #f2e5de;
+  --od-sf-border-row: #f4e9e4;
+  --od-sf-border-desktop-nav: #eaded6;
+  --od-sf-surface: #ffffff;
+  --od-sf-surface-warm: #fffaf7;
+  --od-sf-surface-chip: #fff5ef;
+  --od-sf-surface-close: #f2e8e2;
+  --od-sf-soft: #fff3ee;
+  --od-sf-accent: #b54935;
+  --od-sf-accent-deep: #9b4937;
+  --od-sf-accent-alt: #a84c36;
+  --od-sf-accent-mark: #a04b36;
+  --od-sf-accent-warm: #aa6a50;
+  --od-sf-hero: #33201b;
+  --od-sf-hero-shade: #190c08;
+  --od-sf-banner-eyebrow: #f6c4a8;
+  --od-sf-banner-copy: #f9eee8;
+  --od-sf-banner-cta-ink: #462116;
+  --od-sf-shortcut-ink: #412d26;
+  --od-sf-shortcut-1-color: #9b4937;
+  --od-sf-shortcut-1-bg: #fff3ee;
+  --od-sf-shortcut-2-color: #496952;
+  --od-sf-shortcut-2-bg: #eff7f0;
+  --od-sf-shortcut-3-color: #ac6b15;
+  --od-sf-shortcut-3-bg: #fff7e8;
+  --od-sf-shortcut-4-color: #705ab6;
+  --od-sf-shortcut-4-bg: #f4f1ff;
+  --od-sf-member-from: #3c2824;
+  --od-sf-member-to: #8d5035;
+  --od-sf-member-eyebrow: #f3c2a4;
+  --od-sf-member-copy: #f3dfd1;
+  --od-sf-member-cta: #643a2a;
+  --od-sf-offer-ink: #392119;
+  --od-sf-offer-muted: #987c70;
+  --od-sf-offer-soft: #947b70;
+  --od-sf-story-muted: #8b756c;
+  --od-sf-info-bg: #2e2421;
+  --od-sf-info-muted: #dea78e;
+  --od-sf-info-copy: #d9c7be;
+  --od-sf-platform-meituan: #ff8c30;
+  --od-sf-platform-douyin: #171717;
+  --od-sf-platform-external: #866cbe;
+  --od-sf-benefit-new-from: #fff5d9;
+  --od-sf-benefit-new-to: #f4dec0;
+  --od-sf-benefit-new-ink: #5d3d23;
+  --od-sf-benefit-plus-from: #f7e9e4;
+  --od-sf-benefit-plus-to: #eacbc0;
+  --od-sf-benefit-plus-ink: #4e4040;
+  --od-sf-focus: #9b4937;
+  --od-sf-overlay: rgb(34 22 18 / 42%);
+  --od-sf-topbar-glass: rgb(247 244 239 / 96%);
+  --od-sf-bottom-nav-glass: rgb(255 253 250 / 96%);
+  --od-sf-thumb-placeholder: #eeeeee;
+  --od-sf-white: #ffffff;
+  --od-sf-shadow-shell: 0 24px 70px rgb(53 33 24 / 16%);
+  --od-sf-shadow-member: 0 12px 28px rgb(76 40 26 / 20%);
+  --od-sf-shadow-card: 0 7px 18px rgb(58 33 25 / 6%);
+  --od-sf-shadow-offer: 0 8px 20px rgb(92 52 38 / 6%);
+  --od-sf-shadow-platform: 0 6px 16px rgb(58 33 25 / 5%);
+  --od-sf-shadow-consult: 0 10px 22px rgb(133 59 41 / 28%);
+  --od-sf-industry-accent: var(--od-sf-accent);
+  --od-sf-industry-soft: var(--od-sf-soft);
+}
+
+.od-sf-theme[data-industry='beauty'] {
+  --od-sf-industry-accent: #7d405f;
+  --od-sf-industry-soft: #f9e9ef;
+}
+
+.od-sf-theme[data-industry='education'] {
+  --od-sf-industry-accent: #295b91;
+  --od-sf-industry-soft: #e8f1fc;
+}
+
+.od-sf-theme[data-industry='retail'] {
+  --od-sf-industry-accent: #8a4a1e;
+  --od-sf-industry-soft: #fff0dd;
+}
+
+.od-sf-section {
+  padding: var(--od-space-4);
+  margin-top: var(--od-space-2);
+  background: var(--od-sf-canvas);
+}
+
+.od-sf-section__head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--od-space-3);
+  margin-bottom: var(--od-space-3);
+}
+
+.od-sf-section__head h2 {
+  margin: 0;
+  color: var(--od-sf-industry-accent, var(--od-sf-ink));
+  font: 700 18px/1.25 var(--od-font-display);
+}
+
+.od-sf-section__head p {
+  margin: var(--od-space-1) 0 0;
+  color: var(--od-sf-muted-soft);
+  font-size: 12px;
+}
+
+.od-sf-section__head a {
+  color: var(--od-sf-muted);
+  text-decoration: none;
+  font-size: 12px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.od-sf-empty {
+  border-radius: var(--od-radius-lg);
+  padding: 19px;
+  color: var(--od-sf-muted-empty);
+  background: var(--od-sf-surface);
+  font-size: 13px;
+  text-align: center;
+}

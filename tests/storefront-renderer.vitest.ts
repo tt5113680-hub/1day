@@ -1,10 +1,13 @@
 import { describe, expect, it } from 'vitest';
+import { readFileSync } from 'node:fs';
 import {
   buildStorefrontRenderPlan,
   effectiveStorefrontModules,
   normalizeModuleType,
+  storefrontActionIcon,
+  storefrontTokens,
   visibleStorefrontModules,
-} from '../packages/storefront-renderer/src/modules';
+} from '../packages/storefront-renderer/src/index';
 import { designTokenCssVars, designTokens } from '../packages/design-tokens/src/index';
 
 describe('storefront-renderer module contract', () => {
@@ -49,5 +52,28 @@ describe('design token completeness', () => {
     expect(designTokens.color.brand50).toBe('#f3f8f4');
     expect(designTokenCssVars.brand50).toBe('--od-brand-50');
     expect(designTokens.font.display).toContain('Avenir Next');
+  });
+});
+
+describe('storefront visual tokens', () => {
+  it('publishes restaurant palette and industry accents', () => {
+    expect(storefrontTokens.accent).toBe('#b54935');
+    expect(storefrontTokens.industries.beauty.accent).toBe('#7d405f');
+    expect(storefrontActionIcon(0)).toBe('◌');
+  });
+
+  it('keeps Consumer store module CSS free of raw hex', () => {
+    const css = readFileSync(
+      new URL('../apps/consumer-web/app/c/stores/[id]/store.module.css', import.meta.url),
+      'utf8',
+    );
+    expect(css).not.toMatch(/#[0-9a-fA-F]{3,8}\b/);
+    expect(css).toContain('var(--od-sf-ink)');
+    const theme = readFileSync(
+      new URL('../packages/storefront-renderer/storefront.css', import.meta.url),
+      'utf8',
+    );
+    expect(theme).toContain('--od-sf-accent:');
+    expect(theme).toContain(".od-sf-theme[data-industry='beauty']");
   });
 });

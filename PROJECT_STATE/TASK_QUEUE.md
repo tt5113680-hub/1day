@@ -17,7 +17,7 @@
 - [x] SYS-2 Config Shell + Wallet PASS - operating_channels shell, member_wallet render, Page Builder whitelist editors; see `SYS_1_2_ACCEPTANCE.md` and `evidence/SYS-2/`.
 - [x] SYS-3 FE Sync Clients PASS — `@oneday/sync-client` ETag poll wired to Management dashboard, Employee workbench, Consumer storefront; see `SYS_3_ACCEPTANCE.md` and `evidence/SYS-3/`.
 - [x] SYS-4 Ops vertical PASS — Platform Outbox DLQ/replay UI at `/p/outbox`; see `SYS_4_ACCEPTANCE.md` and `evidence/SYS-4/`.
-- [x] SYS-5 Shared UI kit + storefront-renderer **scaffold** PASS — `@oneday/storefront-renderer` extracted; tokens + Management outline import shared package; see `SYS_5_ACCEPTANCE.md` and `evidence/SYS-5/`. Visual hex retirement / full module paint extraction remains multi-week continuation before SYS-6.
+- [x] SYS-5 Shared UI kit + storefront-renderer **scaffold + visual token** PASS — `@oneday/storefront-renderer` extracted; `--od-sf-*` theme; Consumer store CSS hex retired; Management outline + storefront.css; see `SYS_5_ACCEPTANCE.md` and `evidence/SYS-5/`. Full module paint extraction into the package remains multi-week optional continuation before/with SYS-6.
 - [ ] SYS-6 Role IA / server menu DTO.
 - [ ] HUMAN-PILOT-HANDOFF / product-owner UI acceptance — local sandbox refreshed through migration `053` + storefront bindings (Playwright 4/4); **human sign-off still required**; not auto-claimed as 全部商用. Optional scoped P1 only after product-owner decision.
 

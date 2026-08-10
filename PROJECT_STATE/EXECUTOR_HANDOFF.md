@@ -33,9 +33,9 @@
 
 ## Current engineering focus
 
-**Systemic waves (D3) — SYS-5 scaffold PASS; next SYS-5 visual continuation or SYS-6:**
+**Systemic waves (D3) — next SYS-6:**
 
-SYS-1…SYS-4 PASS. SYS-5 scaffold landed (`@oneday/storefront-renderer` + token completion + Management outline import). Remaining multi-week: Consumer hex retirement and full module paint extraction, then SYS-6 Role IA. No page-level patches. Product-owner UI acceptance remains a human gate. Do not claim 全部商用. Tencent Cloud out of scope (G).
+SYS-1…SYS-5 (scaffold + visual token) PASS. Continue SYS-6 Role IA / server menu DTO. Optional later: full storefront module paint extraction. No page-level patches. Product-owner UI acceptance remains a human gate. Do not claim 全部商用. Tencent Cloud out of scope (G).
 
 ## Secrets and cloud
 

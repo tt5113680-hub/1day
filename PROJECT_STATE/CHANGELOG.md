@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## 2026-08-10 - SYS-5 visual tokens + Consumer hex retirement PASS
+
+- Added `@oneday/storefront-renderer/storefront.css` and `storefrontTokens` (`--od-sf-*` restaurant + industry accents).
+- Consumer `store.module.css` now uses shared vars only (zero raw hex); store root applies `od-sf-theme`.
+- Extracted shared chrome: `StorefrontSection`, `StorefrontEmpty`, `storefrontActionIcon`.
+- Evidence: `PROJECT_STATE/SYS_5_ACCEPTANCE.md`, `evidence/SYS-5/`. Tests: `storefront-renderer.vitest` 7/7, `sys-5-storefront-renderer` 2/2. Full module paint extraction remains. Not 全部商用.
+
 ## 2026-08-10 - SYS-5 Shared UI kit + storefront-renderer scaffold PASS
 
 - Added `@oneday/storefront-renderer` with shared module normalize/visibility/sort, render-plan builder, and `StorefrontModuleOutline`.
