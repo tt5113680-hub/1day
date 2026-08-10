@@ -1,80 +1,56 @@
 # 本地无人值守施工 — 一次性配置
 
 - recorded_at: 2026-08-10 Asia/Shanghai
-- executor: **Cursor Headless CLI** (`agent -p --force`) via scheduled task or daemon
-- owner rule: **本地跑，不要人工** — 配置一次后无需开 Cursor 窗口、无需发「继续」
+- executor: **Cursor Headless CLI** + **自适应调度器**
+- owner rule: **本地跑，不要人工**
 
-## 原理
+## 自适应调度（新）
 
-| 问题 | 解法 |
+每轮结束后写入 `logs/unattended/last-run.json`，调度器根据**任务大小 + 上一轮结果**决定：
+
+| 因素 | 行为 |
 | ---- | ---- |
-| IDE Agent 上下文满要换窗 | 每轮 Headless CLI 是**新会话**，无 90% 换窗 |
-| 人要盯着 | Windows **计划任务**或**守护进程**每 30 分钟自动跑一轮 |
-| 并行写冲突 | 施工期**禁止** IDE Agent 与 Headless 同时写（见 `AGENTS.md` authorization I） |
+| **任务大小** | 读 `PROJECT_STATE`：P1-B/视觉/Playwright → **large 180min**；小 chore → **small 60min**；默认 **medium 120min** |
+| **上一轮 OK 且跑得久 (>90min)** | 冷却 **~55min** 再跑 |
+| **上一轮 OK 且很快 (<20min)** | **~12min** 后继续 |
+| **上一轮 TIMEOUT** | 下一轮 **加长 max**、**15min** 后重试 |
+| **上一轮 FAIL** | **20min** 后重试 |
+| **仍在跑 / 冷却中** | orchestrator **SKIP**（计划任务每 15min 唤醒但不一定开工） |
+| **G1 READY** | 自动停，等你人工测 |
 
-## 一次性配置（约 5 分钟）
-
-### 1. 确认 CLI 已安装
+**监控第一轮 / 任意一轮：**
 
 ```powershell
-agent --version
+pnpm unattended:status
 ```
 
-若无：`irm 'https://cursor.com/install?win32=true' | iex`
-
-### 2. API Key
+## 一次性配置
 
 ```powershell
 cd D:\ONEDAY_V3
 Copy-Item .env.local-unattended.example .env.local-unattended
-# 编辑 .env.local-unattended，填入 CURSOR_API_KEY（勿提交 Git）
+# 填 CURSOR_API_KEY；可选改 UNATTENDED_* 间隔
+
+pnpm unattended:install    # 计划任务：每 15min 检查，满足条件才开工
+# 或
+pnpm unattended:daemon     # 自适应守护进程（推荐 24h）
 ```
 
-### 3. 电源
+## 状态文件
 
-Windows 设置 → 电源 → 插电时 **从不休眠**（机器需常开；Cursor IDE **不必**打开）。
-
-### 4. 选一种启动方式
-
-**A. 计划任务（推荐，零窗口）**
-
-```powershell
-cd D:\ONEDAY_V3
-powershell -ExecutionPolicy Bypass -File scripts/install-local-unattended-task.ps1 -IntervalMinutes 30
-```
-
-开机自动跑，每 30 分钟一轮。
-
-**B. 守护进程（一条命令后台循环）**
-
-```powershell
-cd D:\ONEDAY_V3
-Start-Process powershell -ArgumentList '-NoProfile -ExecutionPolicy Bypass -File scripts/local-unattended-daemon.ps1' -WindowStyle Hidden
-```
-
-### 5. 停止
-
-```powershell
-Unregister-ScheduledTask -TaskName 'ONEDAY-V3-Unattended-Construction' -Confirm:$false
-# 或结束 local-unattended-daemon.ps1 对应进程
-```
-
-## 日志与状态
-
-| 路径 | 内容 |
+| 文件 | 含义 |
 | ---- | ---- |
-| `logs/unattended/daemon.log` | 调度摘要 |
-| `logs/unattended/run-*.log` | 每轮 agent 输出 |
-| `PROJECT_STATE/BLOCKED_REPORT.md` | 真阻塞时 agent 写入；存在则自动跳过施工 |
-| `PROJECT_STATE/LATEST_HANDOFF.md` | G1 READY 时你来人工测 |
+| `logs/unattended/last-run.json` | 上一轮：时长、exit、profile、是否首轮 |
+| `logs/unattended/schedule.json` | 下一轮建议 max 分钟 + 冷却分钟 |
+| `logs/unattended/daemon.log` | 人类可读摘要 |
+
+## 手动强制跑一轮（忽略冷却）
+
+```powershell
+powershell -ExecutionPolicy Bypass -File scripts/local-unattended-orchestrator.ps1 -Force
+```
 
 ## 你仍只需出现两次
 
-1. **G1**：`LATEST_HANDOFF` 标记 G1 READY → 本地 `pnpm human-pilot:start` + 完整人工测
-2. **G2**：PASS 后给域名/服务器 → P1-C 绑域
-
-## 故障
-
-- `CURSOR_API_KEY missing` → 检查 `.env.local-unattended`
-- `SKIP: another run active` → 正常，防重入
-- `BLOCKED_REPORT present` → 看报告，清阻塞后删除或更新报告再跑
+1. **G1**：`pnpm unattended:status` 显示 G1 ready → 人工完整测
+2. **G2**：PASS 后给域名/服务器

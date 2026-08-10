@@ -1,21 +1,23 @@
 # ONEDAY V3 — one unattended construction turn (Cursor Headless CLI).
-# Requires: agent CLI on PATH, CURSOR_API_KEY (env or .env.local-unattended).
 param(
-  [int]$MaxMinutes = 120,
+  [int]$MaxMinutes = 0,
+  [ValidateSet('small', 'medium', 'large', 'auto')]
+  [string]$Profile = 'auto',
   [switch]$SkipPull
 )
 
 $ErrorActionPreference = 'Stop'
-$root = Split-Path -Parent $PSScriptRoot
-$logDir = Join-Path $root 'logs/unattended'
-$lockFile = Join-Path $logDir '.construction.lock'
+. "$PSScriptRoot/unattended-scheduler.ps1"
+
+$paths = Ensure-UnattendedLogDir
+$root = $paths.Root
+$lockFile = $paths.LockFile
 $promptFile = Join-Path $root 'scripts/unattended-construction-prompt.md'
 
 function Write-Log([string]$Message) {
-  New-Item -ItemType Directory -Force -Path $logDir | Out-Null
   $line = "[{0}] {1}" -f (Get-Date -Format 'yyyy-MM-dd HH:mm:ss'), $Message
   Write-Output $line
-  Add-Content -Path (Join-Path $logDir 'daemon.log') -Value $line -Encoding utf8
+  Add-Content -Path (Join-Path $paths.LogDir 'daemon.log') -Value $line -Encoding utf8
 }
 
 function Load-Secrets {
@@ -42,7 +44,6 @@ function Test-AgentCli {
 }
 
 function Acquire-Lock {
-  New-Item -ItemType Directory -Force -Path $logDir | Out-Null
   if (Test-Path $lockFile) {
     $existing = Get-Content $lockFile -Raw -ErrorAction SilentlyContinue
     if ($existing -match 'pid=(\d+)') {
@@ -61,8 +62,27 @@ function Release-Lock {
   if (Test-Path $lockFile) { Remove-Item $lockFile -Force -ErrorAction SilentlyContinue }
 }
 
+function Get-HeadBefore {
+  Push-Location $root
+  try { return (git rev-parse HEAD 2>$null) } finally { Pop-Location }
+}
+
+function Count-CommitsSince([string]$BeforeHead) {
+  Push-Location $root
+  try {
+    if (-not $BeforeHead) { return 0 }
+    $after = git rev-parse HEAD 2>$null
+    if ($after -eq $BeforeHead) { return 0 }
+    return ((git rev-list --count "$BeforeHead..HEAD" 2>$null) -as [int])
+  } finally { Pop-Location }
+}
+
 Load-Secrets
 $agentPath = Test-AgentCli
+
+$resolvedProfile = if ($Profile -eq 'auto') { Get-TaskSizeProfile } else { $Profile }
+$limits = Get-ProfileLimits $resolvedProfile
+if ($MaxMinutes -le 0) { $MaxMinutes = $limits.MaxMinutes }
 
 if (-not $env:CURSOR_API_KEY) {
   Write-Log 'FAIL: CURSOR_API_KEY missing. Copy .env.local-unattended.example to .env.local-unattended'
@@ -80,13 +100,22 @@ if (Test-Path $blocked) {
   exit 0
 }
 
+if ((Test-G1Ready)) {
+  Write-Log 'SKIP: G1 READY — waiting for owner manual test'
+  exit 0
+}
+
+$runNumber = Get-RunNumber + 1
+$startedAt = Get-Date
+$headBefore = Get-HeadBefore
 Acquire-Lock
 Push-Location $root
 $stamp = Get-Date -Format 'yyyyMMdd-HHmmss'
-$runLog = Join-Path $logDir "run-$stamp.log"
+$runLog = Join-Path $paths.LogDir "run-$stamp.log"
+$exitCode = 1
 
 try {
-  Write-Log "START turn log=$runLog"
+  Write-Log "START run#$runNumber profile=$resolvedProfile max=${MaxMinutes}m log=$runLog"
 
   if (-not $SkipPull) {
     git fetch origin 2>&1 | Tee-Object -FilePath $runLog -Append | Out-Null
@@ -111,7 +140,7 @@ try {
     & $Agent @Args 2>&1
   } -ArgumentList $agentPath, $agentArgs, $root, $env:CURSOR_API_KEY
 
-  $deadline = (Get-Date).AddMinutes($MaxMinutes)
+  $deadline = $startedAt.AddMinutes($MaxMinutes)
   do {
     if ($job.State -eq 'Completed' -or $job.State -eq 'Failed' -or $job.State -eq 'Stopped') { break }
     Start-Sleep -Seconds 15
@@ -119,27 +148,34 @@ try {
 
   if ($job.State -eq 'Running') {
     Stop-Job $job -Force
-    Write-Log "TIMEOUT after ${MaxMinutes}m — next scheduled turn will continue"
     Receive-Job $job | Out-File $runLog -Append -Encoding utf8
-    exit 3
+    Write-Log "TIMEOUT after ${MaxMinutes}m — next turn will adapt (shorter wait, longer max)"
+    $exitCode = 3
+  } else {
+    $output = Receive-Job $job
+    $output | Out-File $runLog -Encoding utf8
+    if ($job.State -eq 'Failed') {
+      Write-Log 'FAIL: agent job failed — see run log'
+      $exitCode = 1
+    } else {
+      Write-Log 'END turn OK'
+      $exitCode = 0
+    }
   }
-
-  $output = Receive-Job $job
-  $output | Out-File $runLog -Encoding utf8
-  Remove-Job $job -Force
-
-  if ($job.State -eq 'Failed') {
-    Write-Log 'FAIL: agent job failed — see run log'
-    exit 1
-  }
-
-  Write-Log 'END turn OK'
-  exit 0
+  Remove-Job $job -Force -ErrorAction SilentlyContinue
 } catch {
   $_ | Out-File $runLog -Append -Encoding utf8
   Write-Log "FAIL: $($_.Exception.Message)"
-  exit 1
+  $exitCode = 1
 } finally {
   Pop-Location
   Release-Lock
+  $endedAt = Get-Date
+  $commits = Count-CommitsSince $headBefore
+  Write-LastRunRecord -RunNumber $runNumber -ExitCode $exitCode -StartedAt $startedAt -EndedAt $endedAt `
+    -Profile $resolvedProfile -MaxMinutes $MaxMinutes -RunLog $runLog -CommitsPushed $commits | Out-Null
+  Set-RunNumber $runNumber
+  $sched = Get-AdaptiveSchedule -LastRun (Read-JsonFile $paths.LastRun) -Profile $resolvedProfile
+  Write-Log "RECORD run#$runNumber exit=$exitCode duration=$([Math]::Round(($endedAt-$startedAt).TotalMinutes,1))m commits=$commits nextWait=$($sched.waitMinutes)m nextMax=$($sched.maxMinutes)m"
+  exit $exitCode
 }

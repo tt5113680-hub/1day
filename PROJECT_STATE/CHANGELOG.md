@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## 2026-08-10 - Adaptive unattended scheduler
+
+- `unattended-scheduler.ps1`: task-size profiles (small/medium/large), cooldown from last run, G1 stop.
+- `local-unattended-orchestrator.ps1` gates each turn; `unattended-status.ps1` monitors first/last run.
+- `last-run.json` + `schedule.json` under `logs/unattended/`.
+
 ## 2026-08-10 - Local unattended construction (authorization I)
 
 - Headless CLI: `scripts/local-unattended-construction.ps1`, daemon, Windows scheduled task installer.

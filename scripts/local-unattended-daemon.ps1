@@ -1,26 +1,39 @@
-# ONEDAY V3 — local unattended daemon (loops construction turns; no IDE windows).
+# Adaptive daemon: waits for cooldown, adjusts sleep from last run outcome.
 param(
-  [int]$IntervalMinutes = 30,
-  [int]$MaxMinutesPerTurn = 120
+  [int]$PollMinutes = 5
 )
 
 $ErrorActionPreference = 'Stop'
-$root = Split-Path -Parent $PSScriptRoot
-$logDir = Join-Path $root 'logs/unattended'
-New-Item -ItemType Directory -Force -Path $logDir | Out-Null
+. "$PSScriptRoot/unattended-scheduler.ps1"
 
 function Write-Log([string]$Message) {
+  $paths = Ensure-UnattendedLogDir
   $line = "[{0}] {1}" -f (Get-Date -Format 'yyyy-MM-dd HH:mm:ss'), $Message
   Write-Output $line
-  Add-Content -Path (Join-Path $logDir 'daemon.log') -Value $line -Encoding utf8
+  Add-Content -Path (Join-Path $paths.LogDir 'daemon.log') -Value $line -Encoding utf8
 }
 
-Write-Log "DAEMON start interval=${IntervalMinutes}m maxTurn=${MaxMinutesPerTurn}m"
+Write-Log "DAEMON adaptive start poll=${PollMinutes}m (orchestrator gates each turn)"
 
 while ($true) {
-  $runner = Join-Path $root 'scripts/local-unattended-construction.ps1'
-  & powershell.exe -NoProfile -ExecutionPolicy Bypass -File $runner -MaxMinutes $MaxMinutesPerTurn
-  $code = $LASTEXITCODE
-  Write-Log "DAEMON turn exit=$code sleeping ${IntervalMinutes}m"
-  Start-Sleep -Seconds ($IntervalMinutes * 60)
+  if (Test-G1Ready) {
+    Write-Log 'DAEMON stop: G1 READY — owner manual test pending'
+    break
+  }
+
+  $gate = Test-ShouldRunNow
+  if ($gate.ok) {
+    $orchestrator = Join-Path $PSScriptRoot 'local-unattended-orchestrator.ps1'
+    & powershell.exe -NoProfile -ExecutionPolicy Bypass -File $orchestrator
+    $code = $LASTEXITCODE
+    Write-Log "DAEMON turn finished exit=$code"
+  } else {
+    Write-Log "DAEMON idle: $($gate.reason)"
+  }
+
+  $schedule = Read-JsonFile (Join-Path (Get-UnattendedPaths).LogDir 'schedule.json')
+  $sleepMin = if ($schedule -and $schedule.waitMinutes) { [int]$schedule.waitMinutes } else { 25 }
+  $sleepMin = [Math]::Max($PollMinutes, [Math]::Min(90, $sleepMin))
+  Write-Log "DAEMON sleep ${sleepMin}m"
+  Start-Sleep -Seconds ($sleepMin * 60)
 }
