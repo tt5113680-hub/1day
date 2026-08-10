@@ -1,7 +1,7 @@
 .page {
   min-height: 100svh;
-  background: #f6f8fb;
-  color: #111827;
+  background: var(--od-background);
+  color: var(--od-ink);
   padding: 22px 16px 96px;
 }
 .shell {
@@ -10,7 +10,7 @@
 }
 .eyebrow {
   margin: 0;
-  color: #2563eb;
+  color: var(--od-brand-800);
   font-size: 13px;
   font-weight: 700;
   letter-spacing: 0.04em;
@@ -19,10 +19,11 @@
   margin: 7px 0 4px;
   font-size: 30px;
   letter-spacing: -0.04em;
+  font-family: var(--od-font-display);
 }
 .intro {
   margin: 0;
-  color: #4b5563;
+  color: var(--od-text-muted);
   font-size: 14px;
   line-height: 1.55;
 }
@@ -36,19 +37,20 @@
 .tab {
   flex: 0 0 auto;
   min-height: 40px;
-  border: 1px solid #e5e7eb;
+  border: 1px solid var(--od-border);
   border-radius: 999px;
   padding: 0 14px;
-  color: #4b5563;
-  background: #fff;
+  color: var(--od-text-muted);
+  background: var(--od-surface);
   font: inherit;
   font-size: 13px;
   cursor: pointer;
 }
 .tabActive {
-  color: #fff;
-  border-color: #2563eb;
-  background: #2563eb;
+  color: var(--od-on-brand);
+  border-color: var(--od-brand-700);
+  background: var(--od-brand-700);
+  font-weight: 700;
 }
 .section {
   margin-top: 26px;
@@ -68,7 +70,7 @@
 }
 .section p {
   margin: 4px 0 0;
-  color: #4b5563;
+  color: var(--od-text-muted);
   font-size: 13px;
   line-height: 1.5;
 }
@@ -76,8 +78,8 @@
   flex: 0 0 auto;
   border-radius: 999px;
   padding: 5px 8px;
-  color: #6d28d9;
-  background: #f3e8ff;
+  color: var(--od-brand-800);
+  background: var(--od-brand-100);
   font-size: 11px;
   font-weight: 700;
 }
@@ -87,11 +89,11 @@
 }
 .collectionCard,
 .nearbyCard {
-  border: 1px solid #e5e7eb;
-  border-radius: 16px;
+  border: 1px solid var(--od-border);
+  border-radius: var(--od-radius-lg);
   padding: 15px;
-  background: #fff;
-  box-shadow: 0 5px 16px rgba(15, 23, 42, 0.05);
+  background: var(--od-surface);
+  box-shadow: var(--od-shadow-low);
 }
 .collectionCard strong,
 .nearbyCard strong {
@@ -107,8 +109,8 @@
 .merchantLink {
   border-radius: 999px;
   padding: 6px 9px;
-  color: #1d4ed8;
-  background: #eff6ff;
+  color: var(--od-brand-800);
+  background: var(--od-brand-100);
   font-size: 12px;
 }
 .merchantLink {
@@ -129,13 +131,13 @@
   grid-template-columns: 44px minmax(0, 1fr) auto;
   gap: 12px;
   align-items: center;
-  border: 1px solid #e5e7eb;
-  border-radius: 16px;
+  border: 1px solid var(--od-border);
+  border-radius: var(--od-radius-lg);
   padding: 15px;
   color: inherit;
   text-decoration: none;
-  background: #fff;
-  box-shadow: 0 5px 16px rgba(15, 23, 42, 0.05);
+  background: var(--od-surface);
+  box-shadow: var(--od-shadow-low);
 }
 .pin {
   display: grid;
@@ -143,12 +145,12 @@
   height: 44px;
   place-items: center;
   border-radius: 14px;
-  color: #2563eb;
-  background: #eff6ff;
+  color: var(--od-on-brand);
+  background: var(--od-brand-700);
   font-size: 20px;
 }
 .distance {
-  color: #2563eb;
+  color: var(--od-brand-800);
   font-size: 13px;
   font-weight: 700;
 }
@@ -156,8 +158,8 @@
   border: 0;
   border-radius: 14px;
   padding: 14px 16px;
-  color: #fff;
-  background: #2563eb;
+  color: var(--od-on-brand);
+  background: var(--od-brand-700);
   font: inherit;
   font-weight: 700;
   cursor: pointer;
@@ -166,22 +168,22 @@
 .tab:focus-visible,
 .merchantLink:focus-visible,
 .nearbyLink:focus-visible {
-  outline: 3px solid #7c3aed;
+  outline: 3px solid color-mix(in srgb, var(--od-brand-600) 45%, transparent);
   outline-offset: 3px;
 }
 .empty {
-  border: 1px dashed #cbd5e1;
-  border-radius: 16px;
+  border: 1px dashed var(--od-border);
+  border-radius: var(--od-radius-lg);
   padding: 22px 16px;
-  color: #4b5563;
+  color: var(--od-text-muted);
   text-align: center;
-  background: #fff;
+  background: var(--od-surface);
   font-size: 14px;
   line-height: 1.55;
 }
 .notice {
   margin-top: 10px;
-  color: #b45309;
+  color: var(--od-warning);
   font-size: 13px;
 }
 .message {
@@ -189,80 +191,23 @@
   min-height: 100svh;
   place-items: center;
   padding: 24px;
-  background: #f6f8fb;
-}
-.messageCard {
-  width: min(100%, 410px);
-  border: 1px solid #e5e7eb;
-  border-radius: 20px;
-  padding: 28px;
-  text-align: center;
-  background: #fff;
-  box-shadow: 0 14px 40px rgba(15, 23, 42, 0.08);
-}
-.messageCard h1 {
-  margin: 0;
-  font-size: 22px;
-}
-.messageCard p {
-  margin: 10px 0 0;
-  color: #4b5563;
-  line-height: 1.6;
-}
-.bottomNav {
-  position: fixed;
-  z-index: 10;
-  right: 0;
-  bottom: 0;
-  left: 0;
-  display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  padding: 8px max(10px, env(safe-area-inset-right)) calc(8px + env(safe-area-inset-bottom))
-    max(10px, env(safe-area-inset-left));
-  border-top: 1px solid #e5e7eb;
-  background: rgba(255, 255, 255, 0.96);
-  backdrop-filter: blur(16px);
-}
-.bottomNav a {
-  display: grid;
-  gap: 3px;
-  place-items: center;
-  min-height: 46px;
-  color: #6b7280;
-  text-decoration: none;
-  font-size: 10px;
-}
-.bottomNav i {
-  font-style: normal;
-  font-size: 18px;
-}
-.navActive {
-  color: #2563eb !important;
-  font-weight: 800;
+  background: var(--od-background);
 }
 @media (min-width: 700px) {
   .page {
     padding-top: 36px;
   }
   .shell {
-    border: 1px solid #e5e7eb;
+    border: 1px solid var(--od-border);
     border-radius: 24px;
     padding: 28px;
-    background: #fff;
-    box-shadow: 0 20px 56px rgba(15, 23, 42, 0.1);
+    background: var(--od-surface);
+    box-shadow: var(--od-shadow-mid);
   }
   .tabs {
     margin-right: -28px;
     margin-left: -28px;
     padding-right: 28px;
     padding-left: 28px;
-  }
-  .bottomNav {
-    left: 50%;
-    width: 520px;
-    transform: translateX(-50%);
-    border: 1px solid #e5e7eb;
-    border-bottom: 0;
-    border-radius: 18px 18px 0 0;
   }
 }

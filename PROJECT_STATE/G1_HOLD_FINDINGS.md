@@ -16,5 +16,5 @@
 | R1 | `G1-R-MEITUAN-THEME` | **PASS** |
 | R2 | `G1-R-BOSS-HOME` | **PASS** (landing) |
 | R3 | `G1-R-EMP-HOME` | **PASS** (landing) |
-| R4 | 发现=门店同壳 | pending |
+| R4 | `G1-R-CONSUMER-SHELL` | **PASS** (landing) |
 | R5 | 渠道/平台省市区代理 | pending |
