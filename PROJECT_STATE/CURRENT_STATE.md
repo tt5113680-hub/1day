@@ -9,7 +9,7 @@
 - status: SYS_1_PASS; SYS_2_PASS; SYS_3_PASS; SYS_4_PASS; SYS_5_SCAFFOLD_PASS; SYS_5_VISUAL_PASS; SYS_5_QUICK_ACTIONS_PAINT_PASS; SYS_5_MEMBER_OFFER_PAINT_PASS; SYS_5_COMPARE_STORY_PAINT_PASS; SYS_6_SCAFFOLD_PASS; SYS_6_MULTI_PRODUCT_PASS; SYS_6_DATA_SCOPES_PASS; SYS_6_WRITE_PATH_SCOPES_PASS; SYS_6_NETWORK_PACKS_PASS; SYS_6_CONTENT_PLACEMENTS_PASS; MATRIX_GAP_CLOSEOUT_COMPLETE; HUMAN_PILOT_SANDBOX_REFRESHED; COMMERCIAL_FIXTURES_GENERATOR_PASS
 - branch: hardening/COMMERCIAL-COMPLETION
 - executor: Cursor Agent (2026-08-10; see PROJECT_STATE/EXECUTOR_HANDOFF.md)
-- last_safe_commit: pending (this gate)
+- last_safe_commit: 185c3e6
 - verified_sys_5_compare_story_paint: PASS - StorefrontOfferCompare + StorefrontStoryList extracted. See PROJECT_STATE/SYS_5_ACCEPTANCE.md and evidence/SYS-5/.
 - verified_sys_5_member_offer_paint: PASS - StorefrontMemberCard + StorefrontOfferList extracted. See PROJECT_STATE/SYS_5_ACCEPTANCE.md and evidence/SYS-5/.
 - verified_sys_5_quick_actions_paint: PASS - StorefrontQuickActions + .od-sf-shortcut* extracted. See PROJECT_STATE/SYS_5_ACCEPTANCE.md and evidence/SYS-5/.
