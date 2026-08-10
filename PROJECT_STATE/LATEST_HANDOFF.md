@@ -9,9 +9,9 @@
 
 - branch: `hardening/COMMERCIAL-COMPLETION`
 - HEAD (pushed): tip after SYS-22 state record
-- last_safe_commit: PENDING_SYS22_COMMIT
+- last_safe_commit: d5ac530
 - last_verified: SYS-22 ONE-CODE consumer landing PASS
-- current_task: Human product-owner UI sign-off (preferred) **or** remaining S1 islands
+- current_task: SYS-23 attribution menu discoverability (preferred) **or** human product-owner UI sign-off
 - status: `SYS_22_ONE_CODE_LANDING_PASS`; **not** claimed as full commercial
 - blocker: null
 - progress: P0 26/26
@@ -20,19 +20,20 @@
 ### Completed prior window (verified + pushed)
 
 1. SYS-21 STA closed-loop (`0e3cfed`)
-2. SYS-22 ONE-CODE consumer landing (this commit)
+2. SYS-22 ONE-CODE consumer landing (`d5ac530`)
 
 ### Next remainders (honest)
 
-- **Product-owner UI sign-off (human)** - `PRODUCT_OWNER_UI_ACCEPTANCE.md`
-- Remaining S1 islands: customer merge/transfer UX; generic external-actions CRUD; Management attribution menu discoverability
+- **SYS-23** Management attribution menu discoverability (S1)
+- Customer merge/transfer UX; generic external-actions CRUD
+- **Product-owner UI sign-off (human)** - do not auto-PASS
 - Free-form DAG canvas - **deferred**
 - No Tencent Cloud (G). No full-commercial claim.
 
 ### Owner cooperation (front-loaded)
 
 1. Keep machine awake; Cursor Auto-run on.
-2. Sign `PROJECT_STATE/PRODUCT_OWNER_UI_ACCEPTANCE.md` when ready (only product owner may mark PASS).
+2. Sign `PROJECT_STATE/PRODUCT_OWNER_UI_ACCEPTANCE.md` when ready.
 3. No Tencent Cloud (G). No full-commercial claim.
 
 ### New-window paste
@@ -47,8 +48,8 @@ Read and execute:
 6. PROJECT_STATE/SYSTEMIC_COMMERCIAL_GAP_ANALYSIS.md
 7. git status
 
-Status: SYS-22 PASS (safe in LATEST_HANDOFF); P0 26/26; clean tree.
-Next eng: SYS-23 attribution menu discoverability OR customer merge/transfer OR external-actions CRUD (S1 remainders). Parallel: human PRODUCT_OWNER_UI_ACCEPTANCE (do NOT auto-sign).
+Status: SYS-22 PASS (safe d5ac530; tip in LATEST_HANDOFF); P0 26/26; clean tree.
+Next eng: SYS-23 attribution menu discoverability (S1). Parallel human PRODUCT_OWNER_UI_ACCEPTANCE (do NOT auto-sign).
 No page-level patches. Writable root only D:\ONEDAY_V3. Do not claim full commercial. No Tencent Cloud.
 A-H granted. Continue until 90%-95% usage, then new window; do not stop mid-run.
 ```
