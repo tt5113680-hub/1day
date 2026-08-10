@@ -8,8 +8,8 @@
 ## Current task - systemic commercial productization (D3)
 
 - branch: `hardening/COMMERCIAL-COMPLETION`
-- HEAD (pushed): tip TBD after SYS-27 commit
-- last_safe_commit: TBD (SYS-27 feature commit)
+- HEAD (pushed): tip TBD after pin commit
+- last_safe_commit: 538acb5
 - last_verified: SYS-27 S3 Role×IA Employee store-manager chrome + Platform product homes PASS
 - current_task: human product-owner UI sign-off (do NOT auto-PASS) **or** scoped P1 after owner decision
 - status: `SYS_27_S3_ROLE_IA_PASS`; **not** claimed as full commercial
@@ -17,9 +17,9 @@
 - progress: P0 26/26; S3 Employee/Platform chrome depth landed (SYS-27)
 - working_tree: clean after commit
 
-### Completed this window (verified)
+### Completed this window (verified + pushed)
 
-1. SYS-27 Employee store-manager chrome package + Platform product homes
+1. SYS-27 Employee store-manager chrome package + Platform product homes (`538acb5`)
 
 ### Next remainders (honest)
 
@@ -47,7 +47,7 @@ Read and execute:
 6. PROJECT_STATE/SYSTEMIC_COMMERCIAL_GAP_ANALYSIS.md
 7. git status
 
-Status: SYS-27 PASS (safe COMMIT); P0 26/26; S3 Employee/Platform chrome depth landed; clean tree.
+Status: SYS-27 PASS (safe 538acb5); P0 26/26; S3 Employee/Platform chrome depth landed; clean tree.
 Next: human PRODUCT_OWNER_UI_ACCEPTANCE (do NOT auto-sign) or scoped P1 after owner decision.
 No page-level patches. Writable root only D:\ONEDAY_V3. Do not claim full commercial. No Tencent Cloud.
 A-H granted. Continue until 90%-95% usage, then new window; do not stop mid-run.
