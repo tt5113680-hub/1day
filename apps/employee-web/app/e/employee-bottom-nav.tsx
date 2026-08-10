@@ -4,33 +4,45 @@ import { useEffect, useState } from 'react';
 import { usePathname } from 'next/navigation';
 import { EMPLOYEE_MENU_CATALOG, type MenuItemDto } from '@oneday/contracts';
 import { SessionApiClient } from '@oneday/session-client';
-import styles from './employee-bottom-nav.module.css';
+import { EmployeeWorkNav, type EmployeeNavItem } from '@oneday/ui';
 
 const api = process.env.NEXT_PUBLIC_API_BASE_URL ?? 'http://127.0.0.1:3001';
 const sessionApi = new SessionApiClient(api);
 
-const fallbackNavigation: MenuItemDto[] = EMPLOYEE_MENU_CATALOG.map(
-  ({ key, href, label, group }) => ({ key, href, label, group }),
-);
+const fallbackNavigation: EmployeeNavItem[] = EMPLOYEE_MENU_CATALOG.map(({ key, href, label, group }) => ({
+  key,
+  href,
+  label,
+  group,
+}));
 
-function matchesItem(pathname: string, item: MenuItemDto) {
-  const path = item.href.split('#')[0] ?? item.href;
-  if (item.key === 'customers') {
-    return pathname.startsWith('/e/leads') || pathname.startsWith('/e/customers');
+function activeKeyFor(pathname: string, items: EmployeeNavItem[]) {
+  if (items.some((item) => item.key === 'customers' && (pathname.startsWith('/e/leads') || pathname.startsWith('/e/customers')))) {
+    return 'customers';
   }
-  if (item.key === 'tasks') return pathname.startsWith('/e/tasks');
-  if (item.key === 'notifications') return pathname.startsWith('/e/notifications');
-  if (item.key === 'profile') {
-    return pathname.startsWith('/e/profile') || pathname.startsWith('/e/share');
+  if (items.some((item) => item.key === 'tasks' && pathname.startsWith('/e/tasks'))) return 'tasks';
+  if (items.some((item) => item.key === 'notifications' && pathname.startsWith('/e/notifications'))) {
+    return 'notifications';
   }
-  if (item.key === 'store') return pathname.startsWith('/e/store');
-  if (item.key === 'workbench') return pathname === '/e/workbench';
-  return pathname === path || pathname.startsWith(`${path}/`);
+  if (
+    items.some(
+      (item) => item.key === 'profile' && (pathname.startsWith('/e/profile') || pathname.startsWith('/e/share')),
+    )
+  ) {
+    return 'profile';
+  }
+  if (items.some((item) => item.key === 'store' && pathname.startsWith('/e/store'))) return 'store';
+  if (items.some((item) => item.key === 'workbench' && pathname === '/e/workbench')) return 'workbench';
+  const direct = items.find((item) => {
+    const path = item.href.split('#')[0] ?? item.href;
+    return pathname === path || pathname.startsWith(`${path}/`);
+  });
+  return direct?.key;
 }
 
 export function EmployeeBottomNav() {
   const pathname = usePathname();
-  const [items, setItems] = useState(fallbackNavigation);
+  const [items, setItems] = useState<EmployeeNavItem[]>(fallbackNavigation);
   const [context, setContext] = useState('员工工作台');
   const [storeManagerMode, setStoreManagerMode] = useState(false);
 
@@ -47,7 +59,9 @@ export function EmployeeBottomNav() {
           scopes?: { type: string }[];
         };
         if (cancelled) return;
-        if (payload.items?.length) setItems(payload.items);
+        if (payload.items?.length) {
+          setItems(payload.items.map(({ key, href, label, group }) => ({ key, href, label, group })));
+        }
         if (payload.context) setContext(payload.context);
         setStoreManagerMode(
           Boolean(
@@ -67,28 +81,12 @@ export function EmployeeBottomNav() {
 
   if (pathname === '/e/login') return null;
 
-  const renderLinks = (className?: string) =>
-    items.map((item) => (
-      <a
-        className={matchesItem(pathname, item) ? styles.active : undefined}
-        href={item.href}
-        key={`${className ?? 'nav'}-${item.key}`}
-      >
-        {item.label}
-      </a>
-    ));
-
   return (
-    <>
-      <nav className={styles.nav} aria-label="员工工作导航">
-        {renderLinks('mobile')}
-      </nav>
-      <aside className={styles.desktop} aria-label="员工桌面导航">
-        <p className={styles.brand}>ONEDAY 员工</p>
-        <p className={styles.mode}>{storeManagerMode ? '店长模式' : '员工工作台'}</p>
-        <nav className={styles.desktopNav}>{renderLinks('desktop')}</nav>
-        <p className={styles.context}>{context}</p>
-      </aside>
-    </>
+    <EmployeeWorkNav
+      activeKey={activeKeyFor(pathname, items)}
+      context={context}
+      items={items}
+      storeManagerMode={storeManagerMode}
+    />
   );
 }

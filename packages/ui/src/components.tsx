@@ -63,6 +63,70 @@ export function Table<T>({ columns, rows, rowKey, empty, ...rest }: TableProps<T
   );
 }
 
+/** A single Employee menu link consumed by the shared work-nav chrome (menu DTO driven, CHARTER §7.1). */
+export type EmployeeNavItem = {
+  key: string;
+  href: string;
+  label: string;
+  group?: string;
+};
+
+/**
+ * Shared Employee navigation chrome (mobile bottom tabs + desktop sidebar).
+ * Driven entirely by `var(--od-*)` foundation tokens via `.od-employee-nav*`
+ * primitives so the Employee Work shell draws from ONE design-token palette and
+ * does not carry per-page raw hex (CHARTER §1.2 no page-level hex patches, §6 tokens + shared kit).
+ */
+export function EmployeeWorkNav({
+  items,
+  activeKey,
+  context,
+  mode = '员工工作台',
+  storeManagerMode = false,
+  ariaLabelMobile = '员工工作导航',
+  ariaLabelDesktop = '员工桌面导航',
+}: {
+  items: EmployeeNavItem[];
+  activeKey?: string;
+  context?: string;
+  mode?: string;
+  storeManagerMode?: boolean;
+  ariaLabelMobile?: string;
+  ariaLabelDesktop?: string;
+}) {
+  const renderLinks = (surface: 'mobile' | 'desktop') =>
+    items.map((item) => (
+      <a
+        aria-current={item.key === activeKey ? 'page' : undefined}
+        className={
+          item.key === activeKey
+            ? `od-employee-nav__link od-employee-nav__link--active od-employee-nav__link--${surface}`
+            : `od-employee-nav__link od-employee-nav__link--${surface}`
+        }
+        href={item.href}
+        key={`${surface}-${item.key}`}
+      >
+        {item.label}
+      </a>
+    ));
+
+  return (
+    <>
+      <nav className="od-employee-nav od-employee-nav--bottom" aria-label={ariaLabelMobile}>
+        {renderLinks('mobile')}
+      </nav>
+      <aside className="od-employee-nav od-employee-nav--desktop" aria-label={ariaLabelDesktop}>
+        <p className="od-employee-nav__brand">ONEDAY 员工</p>
+        <p className="od-employee-nav__mode">
+          {storeManagerMode ? '店长模式' : mode}
+        </p>
+        <nav className="od-employee-nav__list">{renderLinks('desktop')}</nav>
+        {context ? <p className="od-employee-nav__context">{context}</p> : null}
+      </aside>
+    </>
+  );
+}
+
 export type ModalProps = {
   open: boolean;
   title: string;

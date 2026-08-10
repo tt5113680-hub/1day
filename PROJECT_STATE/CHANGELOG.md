@@ -1,5 +1,15 @@
 # CHANGELOG
 
+## 2026-08-10 - P1-B Employee shell: shared token-driven work-nav chrome PASS
+
+- `@oneday/ui`: added shared `EmployeeWorkNav` component + `EmployeeNavItem` type (mobile-bottom + desktop-sidebar nav driven by menu-DTO `items` + `activeKey` + `context` + `mode` + `storeManagerMode`); exported from `@oneday/ui`.
+- `packages/design-tokens/foundation.css`: new `.od-employee-nav--bottom` / `--desktop` / `__link` / `__link--active` / `__brand` / `__mode` / `__list` / `__context` primitives — all colour derives from `var(--od-*)` foundation tokens / `color-mix` (**no raw hex**).
+- `apps/employee-web/app/e/employee-bottom-nav.tsx`: now renders the shared `EmployeeWorkNav`, computes the active key from the pathname, still loads `/api/v1/me/menu?product=employee`; **deleted the per-page `employee-bottom-nav.module.css`** whose 10 raw hex/rgb values duplicated the brand palette (CHARTER §1.2 no page-level hex stacking). All Employee routes inherit the shared shell.
+- Tests: `tests/employee-shell-tokens.vitest.ts` (token palette + no-hex projection), `tests/e2e/p1-b-employee-shell.spec.ts` (390/768/1440).
+- Gates: `pnpm typecheck` 20/20, `pnpm build` 20/20, `pnpm test:unit` 10 files/45, Playwright `p1-b-employee-shell` 1/1 + `page-e-001` workbench 2/2 + `sys-33` membership-redeem 1/1 + `p1-b-consumer-shell` 1/1 regressions.
+- Maps to matrix UI-01/UI-02/E-02. Evidence: `evidence/P1-B-EMPLOYEE-SHELL/ACCEPTANCE.md` + 3 viewport screenshots.
+- Not 全部商用. No product-owner UI auto-sign.
+
 ## 2026-08-10 - P1-B Consumer shell: shared token-driven nav chrome PASS
 
 - `@oneday/storefront-renderer`: added shared `ConsumerStorefrontNav` (bottom + desktop chrome from the same tab list + active key) and a `nav` token group in `storefrontTokens`; new `.od-consumer-nav*` primitives in `storefront.css` drive all nav colour via `--od-sf-nav-*` / `--od-*` vars (**no raw hex**).

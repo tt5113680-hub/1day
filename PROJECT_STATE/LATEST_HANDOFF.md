@@ -9,10 +9,10 @@
 ## Current task ? Phase-1 commercial closed loop
 
 - branch: `hardening/COMMERCIAL-COMPLETION`
-- last_verified: P1-B consumer-shell slice PASS (shared token-driven nav chrome)
+- last_verified: P1-B employee-shell slice PASS (shared @oneday/ui EmployeeWorkNav token-driven work chrome; per-page employee nav hex retired)
 - status: P1-A/P1-B continue via **local unattended** Headless turns
 - blocker: null (P1-C waits on G lift + cloud inventory)
-- progress: P0 26/26; membership closed-loop landed; P1-B ui-kit Table/Modal landed; P1-B consumer-shell shared nav landed; remaining P1-B employee/management/platform shell polish + sync-converge + content-chain
+- progress: P0 26/26; membership closed-loop landed; P1-B ui-kit Table/Modal landed; P1-B consumer-shell shared nav landed; P1-B employee-shell shared work-nav landed; remaining P1-B management/platform shell polish + sync-converge + content-chain
 
 ### Owner ? one-time only
 
