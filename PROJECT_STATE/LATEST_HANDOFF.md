@@ -1,4 +1,4 @@
-﻿# LATEST_HANDOFF
+# LATEST_HANDOFF
 
 ## Executor
 
@@ -7,7 +7,7 @@
 ## Current task
 
 - branch: `hardening/COMMERCIAL-COMPLETION`
-- HEAD (pushed): pending SYS-11 push
+- HEAD (pushed): `d579d1a`
 - last_verified: SYS-11 Platform provisioning failure trail PASS
 - current_task: human product-owner UI sign-off
 - status: `SYS_11_PROVISIONING_FAILURE_TRAIL_PASS`; **not** claimed as full commercial
