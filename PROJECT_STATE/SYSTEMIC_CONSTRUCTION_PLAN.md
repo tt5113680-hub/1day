@@ -7,7 +7,7 @@
 
 ## Active wave
 
-**SYS-6 remainder — workflows/org write controllers (multi-week)**
+**SYS remainders — workflow definition authoring / Role matrix E2E (multi-week)**
 
 | Deliverable                                        | Status                                      |
 | -------------------------------------------------- | ------------------------------------------- |
@@ -20,6 +20,8 @@
 | SYS-6 store-manager content placements             | PASS                                        |
 | SYS-6 store-manager catalog scopes                 | PASS                                        |
 | SYS-6 store-manager membership scopes              | PASS                                        |
+| SYS-6 workflow/org write paths                     | PASS                                        |
+| SYS-4 content distributions UI                     | PASS                                        |
 | SYS-5 quick-actions paint extraction               | PASS                                        |
 | SYS-5 member + offer paints extraction             | PASS                                        |
 | SYS-5 compare + story paints extraction            | PASS                                        |
@@ -28,9 +30,9 @@
 
 ## Queue
 
-- SYS-6 remainder: workflows/org write controllers
-- Optional: Content distributions UI; Workflow write
+- Workflow definition authoring UI (create template/steps from Management)
+- Full ROLE_PRODUCT_MATRIX E2E
 
 ## Honest day boundary
 
-Menus + data_scopes + write-path + network packs + content/catalog/membership scopes + major storefront paints (incl. hero/floating consult) landed. Full ROLE_PRODUCT_MATRIX E2E remains multi-week - not claimed as full commercial.
+Menus + data_scopes + write-path + network packs + content/catalog/membership scopes + workflow/org write + content distributions + major storefront paints landed. Full ROLE_PRODUCT_MATRIX E2E and workflow template authoring remain multi-week - not claimed as full commercial.

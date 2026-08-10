@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## 2026-08-10 - SYS-6 workflow/org write paths + SYS-4 content distributions UI PASS
+
+- Management workflow/org overviews accept `workflow.read` / `organization.read` (not only `tenant.manage`); AuthorizationService gains `requireAny`.
+- Management UI wires workflow start/approve/reject and org/merchant/store create to existing APIs; `workflow.manage`/`tenant.manage` may decide without being assignee.
+- Content center registers pending-authorization channel distributions from `/m/content`.
+- Evidence: `SYS_6_ACCEPTANCE.md`, `SYS_4_ACCEPTANCE.md`, `evidence/SYS-6/`, `evidence/SYS-4/`. Tests: `sys-6-workflow-org-write` 1/1, `menu-dto.vitest` 6/6, `page-m-005-api` 1/1, `page-m-013-api` 1/1. Not 全部商用.
+
 ## 2026-08-10 - SYS-6 membership write-path scopes PASS
 
 - Assigned store managers (`tenant.read` + store scopes) may list enrollments/benefits and grant only on scoped stores via `/api/v1/management/memberships*`.

@@ -34,6 +34,7 @@ export default function ContentPage() {
     [stores, setStores] = useState<Store[]>([]),
     [title, setTitle] = useState(''),
     [placement, setPlacement] = useState<Record<string, { storeId: string; rank: number }>>({}),
+    [channelDraft, setChannelDraft] = useState<Record<string, string>>({}),
     [busy, setBusy] = useState<string | null>(null),
     [note, setNote] = useState('');
   const load = useCallback(async () => {
@@ -114,6 +115,30 @@ export default function ContentPage() {
       await load();
     } catch {
       setNote('内容投放未完成，请检查门店状态后重试。');
+    } finally {
+      setBusy(null);
+    }
+  };
+  const distribute = async (item: Item) => {
+    const channel = channelDraft[item.id];
+    if (!channel) return setNote('请选择要登记的外部渠道。');
+    setBusy(`distribute-${item.id}`);
+    setNote('');
+    try {
+      const response = await sessionApi.request(
+        `${api}/api/v1/management/content/${item.id}/distributions`,
+        {
+          method: 'POST',
+          headers: { 'content-type': 'application/json' },
+          body: JSON.stringify({ version: item.version, channel }),
+        },
+      );
+      if (!response.ok) throw new Error('DISTRIBUTE');
+      setNote('已登记渠道待授权分发；未获第三方授权前不会伪造发送结果。');
+      setChannelDraft((value) => ({ ...value, [item.id]: '' }));
+      await load();
+    } catch {
+      setNote('渠道分发登记未完成，请确认内容已审批且具备内容管理权限。');
     } finally {
       setBusy(null);
     }
@@ -206,6 +231,32 @@ export default function ContentPage() {
                   </Button>
                 ) : (
                   <div className={styles.placement}>
+                    <label>
+                      外部渠道待授权分发
+                      <select
+                        aria-label={`${x.title} 分发渠道`}
+                        value={channelDraft[x.id] ?? ''}
+                        onChange={(event) =>
+                          setChannelDraft((value) => ({
+                            ...value,
+                            [x.id]: event.target.value,
+                          }))
+                        }
+                      >
+                        <option value="">选择渠道</option>
+                        <option value="wechat">微信</option>
+                        <option value="douyin">抖音</option>
+                        <option value="meituan">美团</option>
+                        <option value="internal">内部渠道</option>
+                      </select>
+                    </label>
+                    <Button
+                      tone="secondary"
+                      disabled={busy === `distribute-${x.id}`}
+                      onClick={() => void distribute(x)}
+                    >
+                      登记待授权分发
+                    </Button>
                     <label>
                       消费者展示门店
                       <select

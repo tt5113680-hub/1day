@@ -4,12 +4,14 @@
 - completed_tasks: 69/69
 - foundation_final_state_commit: 239114e
 - core_final_state_commit: df5ef65
-- last_completed_task: SYS-6 membership write-path scopes PASS
-- current_task: ONEDAY-V3-COMMERCIAL-COMPLETION / systemic waves (SYS-6 remainder: workflows/org write controllers or Content distributions UI)
-- status: SYS_1_PASS; SYS_2_PASS; SYS_3_PASS; SYS_4_PASS; SYS_5_SCAFFOLD_PASS; SYS_5_VISUAL_PASS; SYS_5_QUICK_ACTIONS_PAINT_PASS; SYS_5_MEMBER_OFFER_PAINT_PASS; SYS_5_COMPARE_STORY_PAINT_PASS; SYS_5_BENEFIT_STORE_INFO_PAINT_PASS; SYS_5_HERO_FLOATING_CONSULT_PAINT_PASS; SYS_6_SCAFFOLD_PASS; SYS_6_MULTI_PRODUCT_PASS; SYS_6_DATA_SCOPES_PASS; SYS_6_WRITE_PATH_SCOPES_PASS; SYS_6_NETWORK_PACKS_PASS; SYS_6_CONTENT_PLACEMENTS_PASS; SYS_6_CATALOG_SCOPES_PASS; SYS_6_MEMBERSHIP_SCOPES_PASS; MATRIX_GAP_CLOSEOUT_COMPLETE; HUMAN_PILOT_SANDBOX_REFRESHED; COMMERCIAL_FIXTURES_GENERATOR_PASS
+- last_completed_task: SYS-6 workflow/org write paths + SYS-4 content distributions UI PASS
+- current_task: ONEDAY-V3-COMMERCIAL-COMPLETION / systemic waves (SYS remainders: workflow definition authoring UI; Role matrix E2E; optional deeper ops)
+- status: SYS_1_PASS; SYS_2_PASS; SYS_3_PASS; SYS_4_PASS; SYS_4_CONTENT_DISTRIBUTIONS_PASS; SYS_5_SCAFFOLD_PASS; SYS_5_VISUAL_PASS; SYS_5_QUICK_ACTIONS_PAINT_PASS; SYS_5_MEMBER_OFFER_PAINT_PASS; SYS_5_COMPARE_STORY_PAINT_PASS; SYS_5_BENEFIT_STORE_INFO_PAINT_PASS; SYS_5_HERO_FLOATING_CONSULT_PAINT_PASS; SYS_6_SCAFFOLD_PASS; SYS_6_MULTI_PRODUCT_PASS; SYS_6_DATA_SCOPES_PASS; SYS_6_WRITE_PATH_SCOPES_PASS; SYS_6_NETWORK_PACKS_PASS; SYS_6_CONTENT_PLACEMENTS_PASS; SYS_6_CATALOG_SCOPES_PASS; SYS_6_MEMBERSHIP_SCOPES_PASS; SYS_6_WORKFLOW_ORG_WRITE_PASS; MATRIX_GAP_CLOSEOUT_COMPLETE; HUMAN_PILOT_SANDBOX_REFRESHED; COMMERCIAL_FIXTURES_GENERATOR_PASS
 - branch: hardening/COMMERCIAL-COMPLETION
 - executor: Cursor Agent (2026-08-10; see PROJECT_STATE/EXECUTOR_HANDOFF.md)
-- last_safe_commit: 2d4fe10
+- last_safe_commit: pending SYS-6 workflow/org write commit
+- verified_sys_6_workflow_org_write: PASS - Management workflows/org overviews open beyond tenant.manage; start/decide + org/merchant/store create reuse existing APIs. See PROJECT_STATE/SYS_6_ACCEPTANCE.md and evidence/SYS-6/.
+- verified_sys_4_content_distributions: PASS - Management content UI registers pending-authorization distributions. See PROJECT_STATE/SYS_4_ACCEPTANCE.md and evidence/SYS-4/.
 - verified_sys_6_membership_scopes: PASS - store managers list/grant memberships on scoped stores only; menu memberships for tenant.read. See PROJECT_STATE/SYS_6_ACCEPTANCE.md and evidence/SYS-6/. Commit 2d4fe10.
 - verified_sys_5_hero_floating_consult_paint: PASS - StorefrontHero + StorefrontFloatingConsult extracted. See PROJECT_STATE/SYS_5_ACCEPTANCE.md and evidence/SYS-5/. Commit 85f7a46.
 - verified_sys_6_catalog_scopes: PASS - store managers list/write catalog services+offers on scoped stores only; menu offers for tenant.read. See PROJECT_STATE/SYS_6_ACCEPTANCE.md and evidence/SYS-6/. Commit 6ec80e1.
@@ -33,9 +35,9 @@
 - verified_commercial_fixtures_generator: PASS.
 - started_at: 2026-08-09T20:29:46+08:00
 - blocker: null
-- next_scope: SYS-6 remainder (workflows/org write controllers) or Content distributions UI. Not claimed as full commercial. Tencent Cloud out of scope (G). Usage: keep constructing until 90%-95%, then new window.
+- next_scope: SYS remainders (workflow definition authoring UI; full Role matrix E2E). Not claimed as full commercial. Tencent Cloud out of scope (G). Usage: keep constructing until 90%-95%, then new window.
 - progress_p0_covered: 26/26 (100%)
 - progress_matrix_waves: 4/4 close-out complete
-- progress_sys_waves: 6/6 scaffolded; SYS-6 membership scopes landed; remainders multi-week
+- progress_sys_waves: 6/6 scaffolded; SYS-6 workflow/org write + SYS-4 content distributions landed; remainders multi-week
 - verified_pre_pilot_polish: PASS at 268464d.
 - remediation_stage: A-G PASS. See PROJECT_STATE/AUDIT_REMEDIATION_CLOSEOUT.md.

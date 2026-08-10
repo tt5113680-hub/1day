@@ -20,6 +20,13 @@ type Organization = {
   status: string;
   active_employee_count: number;
 };
+type Merchant = {
+  id: string;
+  organization_id: string;
+  code: string;
+  name: string;
+  status: string;
+};
 type Employee = {
   id: string;
   organization_id: string;
@@ -40,7 +47,12 @@ type Invitation = {
   title: string | null;
   expires_at: string;
 };
-type Data = { organizations: Organization[]; employees: Employee[]; invitations: Invitation[] };
+type Data = {
+  organizations: Organization[];
+  merchants: Merchant[];
+  employees: Employee[];
+  invitations: Invitation[];
+};
 const api = process.env.NEXT_PUBLIC_API_BASE_URL ?? 'http://127.0.0.1:3001';
 const sessionApi = new SessionApiClient(api);
 
@@ -48,8 +60,22 @@ export default function OrganizationEmployeesPage() {
   const [state, setState] = useState<'loading' | 'ready' | 'forbidden' | 'error'>('loading');
   const [data, setData] = useState<Data | null>(null);
   const [form, setForm] = useState({ email: '', employeeCode: '', organizationId: '', title: '' });
+  const [orgForm, setOrgForm] = useState({ code: '', name: '', organizationType: 'merchant' });
+  const [merchantForm, setMerchantForm] = useState({
+    code: '',
+    name: '',
+    organizationId: '',
+  });
+  const [storeForm, setStoreForm] = useState({
+    code: '',
+    name: '',
+    organizationId: '',
+    merchantId: '',
+    address: '',
+  });
   const [note, setNote] = useState('');
   const [fieldError, setFieldError] = useState('');
+  const [busy, setBusy] = useState<string | null>(null);
   const load = useCallback(async () => {
     if (!(await sessionApi.context())) return setState('forbidden');
     setState('loading');
@@ -61,9 +87,20 @@ export default function OrganizationEmployeesPage() {
       if (!response.ok) throw new Error('LOAD');
       const next = (await response.json()).data as Data;
       setData(next);
+      const firstOrg = next.organizations[0]?.id || '';
+      const firstMerchant = next.merchants[0]?.id || '';
       setForm((value) => ({
         ...value,
-        organizationId: value.organizationId || next.organizations[0]?.id || '',
+        organizationId: value.organizationId || firstOrg,
+      }));
+      setMerchantForm((value) => ({
+        ...value,
+        organizationId: value.organizationId || firstOrg,
+      }));
+      setStoreForm((value) => ({
+        ...value,
+        organizationId: value.organizationId || firstOrg,
+        merchantId: value.merchantId || firstMerchant,
       }));
       setState('ready');
     } catch {
@@ -74,6 +111,83 @@ export default function OrganizationEmployeesPage() {
   const headers = () => ({
     'content-type': 'application/json',
   });
+  const createOrganization = async () => {
+    if (!orgForm.code.trim() || !orgForm.name.trim()) {
+      setFieldError('组织编码与名称不能为空。');
+      return;
+    }
+    setFieldError('');
+    setBusy('org');
+    setNote('');
+    try {
+      const response = await sessionApi.request(`${api}/api/v1/organizations`, {
+        method: 'POST',
+        headers: { ...headers(), 'idempotency-key': crypto.randomUUID() },
+        body: JSON.stringify(orgForm),
+      });
+      if (!response.ok) throw new Error('ORG');
+      setOrgForm({ code: '', name: '', organizationType: 'merchant' });
+      setNote('组织已创建。');
+      await load();
+    } catch {
+      setNote('组织未创建，请确认具备组织管理权限。');
+    } finally {
+      setBusy(null);
+    }
+  };
+  const createMerchant = async () => {
+    if (!merchantForm.code.trim() || !merchantForm.name.trim() || !merchantForm.organizationId) {
+      setFieldError('商户编码、名称与所属组织不能为空。');
+      return;
+    }
+    setFieldError('');
+    setBusy('merchant');
+    setNote('');
+    try {
+      const response = await sessionApi.request(`${api}/api/v1/merchants`, {
+        method: 'POST',
+        headers: { ...headers(), 'idempotency-key': crypto.randomUUID() },
+        body: JSON.stringify(merchantForm),
+      });
+      if (!response.ok) throw new Error('MERCHANT');
+      setMerchantForm((value) => ({ ...value, code: '', name: '' }));
+      setNote('商户已创建。');
+      await load();
+    } catch {
+      setNote('商户未创建，请确认组织存在且具备组织管理权限。');
+    } finally {
+      setBusy(null);
+    }
+  };
+  const createStore = async () => {
+    if (
+      !storeForm.code.trim() ||
+      !storeForm.name.trim() ||
+      !storeForm.organizationId ||
+      !storeForm.merchantId
+    ) {
+      setFieldError('门店编码、名称、组织与商户不能为空。');
+      return;
+    }
+    setFieldError('');
+    setBusy('store');
+    setNote('');
+    try {
+      const response = await sessionApi.request(`${api}/api/v1/stores`, {
+        method: 'POST',
+        headers: { ...headers(), 'idempotency-key': crypto.randomUUID() },
+        body: JSON.stringify(storeForm),
+      });
+      if (!response.ok) throw new Error('STORE');
+      setStoreForm((value) => ({ ...value, code: '', name: '', address: '' }));
+      setNote('门店已创建。');
+      await load();
+    } catch {
+      setNote('门店未创建，请确认商户归属正确且具备组织管理权限。');
+    } finally {
+      setBusy(null);
+    }
+  };
   const invite = async () => {
     if (!form.email || !form.employeeCode || !form.organizationId) {
       setFieldError('邮箱、员工编号和组织不能为空。');
@@ -144,12 +258,15 @@ export default function OrganizationEmployeesPage() {
       </main>
     );
   if (!data) return null;
+  const merchantsForStore = data.merchants.filter(
+    (merchant) => !storeForm.organizationId || merchant.organization_id === storeForm.organizationId,
+  );
   return (
     <main className={styles.page}>
       <AdminPageHeader
         eyebrow="ONEDAY / 商户组织与员工"
         title="让每位员工的归属、待办与离职交接可见"
-        description="组织、邀请、员工和交接风险均从当前租户的隔离业务数据读取。"
+        description="组织、商户、门店创建与员工邀请均复用既有组织写接口；不另造第二套 API。"
         actions={
           <Button tone="secondary" onClick={() => void load()}>
             刷新组织
@@ -161,6 +278,153 @@ export default function OrganizationEmployeesPage() {
           {note}
         </p>
       )}
+      <section className={styles.createGrid}>
+        <Card className={styles.panel}>
+          <h2>创建组织</h2>
+          <div className={styles.form}>
+            <label>
+              编码
+              <input
+                aria-label="组织编码"
+                value={orgForm.code}
+                onChange={(event) => setOrgForm({ ...orgForm, code: event.target.value })}
+              />
+            </label>
+            <label>
+              名称
+              <input
+                aria-label="组织名称"
+                value={orgForm.name}
+                onChange={(event) => setOrgForm({ ...orgForm, name: event.target.value })}
+              />
+            </label>
+            <label>
+              类型
+              <select
+                aria-label="组织类型"
+                value={orgForm.organizationType}
+                onChange={(event) =>
+                  setOrgForm({ ...orgForm, organizationType: event.target.value })
+                }
+              >
+                <option value="merchant">merchant</option>
+                <option value="enterprise">enterprise</option>
+                <option value="team">team</option>
+              </select>
+            </label>
+            <Button disabled={busy === 'org'} onClick={() => void createOrganization()}>
+              创建组织
+            </Button>
+          </div>
+        </Card>
+        <Card className={styles.panel}>
+          <h2>创建商户</h2>
+          <div className={styles.form}>
+            <label>
+              所属组织
+              <select
+                aria-label="商户所属组织"
+                value={merchantForm.organizationId}
+                onChange={(event) =>
+                  setMerchantForm({ ...merchantForm, organizationId: event.target.value })
+                }
+              >
+                {data.organizations.map((organization) => (
+                  <option value={organization.id} key={organization.id}>
+                    {organization.name}
+                  </option>
+                ))}
+              </select>
+            </label>
+            <label>
+              编码
+              <input
+                aria-label="商户编码"
+                value={merchantForm.code}
+                onChange={(event) => setMerchantForm({ ...merchantForm, code: event.target.value })}
+              />
+            </label>
+            <label>
+              名称
+              <input
+                aria-label="商户名称"
+                value={merchantForm.name}
+                onChange={(event) => setMerchantForm({ ...merchantForm, name: event.target.value })}
+              />
+            </label>
+            <Button disabled={busy === 'merchant'} onClick={() => void createMerchant()}>
+              创建商户
+            </Button>
+          </div>
+        </Card>
+        <Card className={styles.panel}>
+          <h2>创建门店</h2>
+          <div className={styles.form}>
+            <label>
+              所属组织
+              <select
+                aria-label="门店所属组织"
+                value={storeForm.organizationId}
+                onChange={(event) => {
+                  const organizationId = event.target.value;
+                  const merchantId =
+                    data.merchants.find((merchant) => merchant.organization_id === organizationId)
+                      ?.id ?? '';
+                  setStoreForm({ ...storeForm, organizationId, merchantId });
+                }}
+              >
+                {data.organizations.map((organization) => (
+                  <option value={organization.id} key={organization.id}>
+                    {organization.name}
+                  </option>
+                ))}
+              </select>
+            </label>
+            <label>
+              所属商户
+              <select
+                aria-label="门店所属商户"
+                value={storeForm.merchantId}
+                onChange={(event) => setStoreForm({ ...storeForm, merchantId: event.target.value })}
+              >
+                {merchantsForStore.map((merchant) => (
+                  <option value={merchant.id} key={merchant.id}>
+                    {merchant.name}
+                  </option>
+                ))}
+              </select>
+            </label>
+            <label>
+              编码
+              <input
+                aria-label="门店编码"
+                value={storeForm.code}
+                onChange={(event) => setStoreForm({ ...storeForm, code: event.target.value })}
+              />
+            </label>
+            <label>
+              名称
+              <input
+                aria-label="门店名称"
+                value={storeForm.name}
+                onChange={(event) => setStoreForm({ ...storeForm, name: event.target.value })}
+              />
+            </label>
+            <label>
+              地址
+              <input
+                aria-label="门店地址"
+                value={storeForm.address}
+                onChange={(event) => setStoreForm({ ...storeForm, address: event.target.value })}
+              />
+            </label>
+            <Button disabled={busy === 'store'} onClick={() => void createStore()}>
+              创建门店
+            </Button>
+          </div>
+        </Card>
+      </section>
+      {fieldError && <p className={styles.fieldError}>{fieldError}</p>}
       <section className={styles.grid}>
         <aside>
           <Card className={styles.panel}>
@@ -177,6 +441,17 @@ export default function OrganizationEmployeesPage() {
               ))
             ) : (
               <AppStatePanel kind="empty" title="暂无组织" />
+            )}
+            <h3>商户</h3>
+            {data.merchants.length ? (
+              data.merchants.map((merchant) => (
+                <article className={styles.org} key={merchant.id}>
+                  <strong>{merchant.name}</strong>
+                  <span>{merchant.code}</span>
+                </article>
+              ))
+            ) : (
+              <p>暂无商户。</p>
             )}
           </Card>
         </aside>
@@ -217,7 +492,6 @@ export default function OrganizationEmployeesPage() {
                 onChange={(event) => setForm({ ...form, title: event.target.value })}
               />
             </label>
-            {fieldError && <p className={styles.fieldError}>{fieldError}</p>}
             <Button onClick={() => void invite()}>创建邀请</Button>
           </div>
           <h3>待接受邀请</h3>

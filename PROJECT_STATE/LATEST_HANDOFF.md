@@ -8,18 +8,17 @@
 ## Current task - systemic commercial productization (D3)
 
 - branch: `hardening/COMMERCIAL-COMPLETION`
-- last_verified: SYS-6 membership write-path scopes PASS
-- current_task: SYS-6 remainder (workflows/org write controllers) **or** Content distributions UI
-- status: `SYS_6_MEMBERSHIP_SCOPES_PASS`; **not** claimed as full commercial
+- last_verified: SYS-6 workflow/org write + SYS-4 content distributions PASS
+- current_task: SYS remainders (workflow definition authoring UI; Role matrix E2E)
+- status: `SYS_6_WORKFLOW_ORG_WRITE_PASS`; `SYS_4_CONTENT_DISTRIBUTIONS_PASS`; **not** claimed as full commercial
 - blocker: null
 - progress: P0 26/26; SYS waves scaffolded 6/6 with multi-week remainders
 
 ### Completed this session
 
-1. SYS-6 catalog scopes
-2. SYS-5 store_hero + floating consult paints
-3. SYS-6 membership scopes
-4. Evidence + tests green
+1. SYS-6 workflow/org write paths (overview permission align + Management write UI)
+2. SYS-4 content distributions UI
+3. Evidence + tests green
 
 ### Usage note
 
@@ -42,7 +41,7 @@
 5. PROJECT_STATE/SYSTEMIC_CONSTRUCTION_PLAN.md
 6. git status
 
-状态：SYS-6 membership scopes PASS；SYS-5 hero/floating-consult PASS；catalog scopes PASS；P0 26/26；下一任务 workflows/org 写路径或 Content distributions UI。
+状态：SYS-6 workflow/org write PASS；SYS-4 content distributions PASS；membership/catalog/hero PASS；P0 26/26；下一任务 workflow definition authoring UI 或 Role matrix E2E。
 工作目录仅 D:\ONEDAY_V3。禁止页级补丁。不得宣称全部商用。不做腾讯云。
 已获 A–H。继续施工；用量达到 90%–95% 再换新窗口，中途不要停。
 ```

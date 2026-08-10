@@ -32,10 +32,12 @@ type Data = {
   }[];
   approvals: {
     id: string;
+    workflow_instance_id: string;
     name: string;
     definition_name: string;
     assignee_name: string;
     due_at: string;
+    instance_version: number;
   }[];
 };
 const api = process.env.NEXT_PUBLIC_API_BASE_URL ?? 'http://127.0.0.1:3001';
@@ -44,6 +46,8 @@ export default function WorkflowsPage() {
   const [state, setState] = useState<'loading' | 'ready' | 'forbidden' | 'error'>('loading');
   const [data, setData] = useState<Data | null>(null);
   const [filter, setFilter] = useState('');
+  const [busy, setBusy] = useState<string | null>(null);
+  const [note, setNote] = useState('');
   const load = useCallback(
     async (status = filter) => {
       if (!(await sessionApi.context())) return setState('forbidden');
@@ -64,6 +68,55 @@ export default function WorkflowsPage() {
     [filter],
   );
   useEffect(() => void load(), [load]);
+  const startInstance = async (template: Data['templates'][number]) => {
+    if (!template.published_version_id) {
+      setNote('该模板尚未发布，无法启动实例。');
+      return;
+    }
+    setBusy(`start-${template.id}`);
+    setNote('');
+    try {
+      const response = await sessionApi.request(
+        `${api}/api/v1/workflows/${template.id}/instances`,
+        {
+          method: 'POST',
+          headers: {
+            'content-type': 'application/json',
+            'idempotency-key': crypto.randomUUID(),
+          },
+          body: JSON.stringify({ context: {} }),
+        },
+      );
+      if (!response.ok) throw new Error('START');
+      setNote(`已启动流程「${template.name}」。`);
+      await load();
+    } catch {
+      setNote('流程实例未启动，请确认具备流程管理权限且模板已发布。');
+    } finally {
+      setBusy(null);
+    }
+  };
+  const decide = async (approval: Data['approvals'][number], action: 'approve' | 'reject') => {
+    setBusy(`${action}-${approval.id}`);
+    setNote('');
+    try {
+      const response = await sessionApi.request(
+        `${api}/api/v1/workflows/instances/${approval.workflow_instance_id}/steps/${approval.id}/${action}`,
+        {
+          method: 'POST',
+          headers: { 'content-type': 'application/json' },
+          body: JSON.stringify({ instanceVersion: approval.instance_version }),
+        },
+      );
+      if (!response.ok) throw new Error('DECIDE');
+      setNote(action === 'approve' ? '审批已通过，流程继续推进。' : '审批已拒绝，流程已结束。');
+      await load();
+    } catch {
+      setNote('审批操作未完成，请刷新后确认版本与权限。');
+    } finally {
+      setBusy(null);
+    }
+  };
   if (state === 'loading')
     return (
       <main className={styles.centered}>
@@ -101,7 +154,7 @@ export default function WorkflowsPage() {
       <AdminPageHeader
         eyebrow="ONEDAY / 商户运营流程"
         title="让每个流程实例都可定位、可推进"
-        description="模板、运行实例、责任人、超时与待审批均从已发布流程和实例步骤中实时聚合。"
+        description="模板、运行实例、责任人、超时与待审批均从已发布流程和实例步骤中实时聚合；审批与启动复用既有流程写接口。"
         actions={
           <label className={styles.filter}>
             实例状态
@@ -122,6 +175,11 @@ export default function WorkflowsPage() {
           </label>
         }
       />
+      {note && (
+        <p className={styles.notice} role="status">
+          {note}
+        </p>
+      )}
       <section className={styles.metrics}>
         <MetricCard label="流程模板" value={data.templates.length} hint="已配置流程" />
         <MetricCard
@@ -140,14 +198,31 @@ export default function WorkflowsPage() {
         <Panel title="待处理审批">
           {data.approvals.length ? (
             data.approvals.map((x) => (
-              <p key={x.id}>
-                <strong>{x.definition_name}</strong> · {x.name}
-                <br />
-                <small>
-                  {x.assignee_name} · 截止{' '}
-                  {new Date(x.due_at).toLocaleString('zh-CN', { hour12: false })}
-                </small>
-              </p>
+              <div key={x.id} className={styles.approvalRow}>
+                <p>
+                  <strong>{x.definition_name}</strong> · {x.name}
+                  <br />
+                  <small>
+                    {x.assignee_name} · 截止{' '}
+                    {new Date(x.due_at).toLocaleString('zh-CN', { hour12: false })}
+                  </small>
+                </p>
+                <div className={styles.actions}>
+                  <Button
+                    disabled={busy === `approve-${x.id}` || busy === `reject-${x.id}`}
+                    onClick={() => void decide(x, 'approve')}
+                  >
+                    通过
+                  </Button>
+                  <Button
+                    tone="secondary"
+                    disabled={busy === `approve-${x.id}` || busy === `reject-${x.id}`}
+                    onClick={() => void decide(x, 'reject')}
+                  >
+                    拒绝
+                  </Button>
+                </div>
+              </div>
             ))
           ) : (
             <AppStatePanel kind="empty" title="当前没有待审批步骤" />
@@ -155,16 +230,25 @@ export default function WorkflowsPage() {
         </Panel>
         <Panel title="流程模板">
           {data.templates.map((x) => (
-            <p key={x.id}>
-              <strong>{x.name}</strong> · {x.code}
-              <br />
-              <small>
-                <StatusBadge tone={x.published_version_id ? 'success' : 'warning'}>
-                  {businessLabel(x.published_version_id ? 'published' : 'unpublished')}
-                </StatusBadge>{' '}
-                · 运行 {x.active_instances} · 超时 {x.timed_out_instances}
-              </small>
-            </p>
+            <div key={x.id} className={styles.templateRow}>
+              <p>
+                <strong>{x.name}</strong> · {x.code}
+                <br />
+                <small>
+                  <StatusBadge tone={x.published_version_id ? 'success' : 'warning'}>
+                    {businessLabel(x.published_version_id ? 'published' : 'unpublished')}
+                  </StatusBadge>{' '}
+                  · 运行 {x.active_instances} · 超时 {x.timed_out_instances}
+                </small>
+              </p>
+              <Button
+                tone="secondary"
+                disabled={!x.published_version_id || busy === `start-${x.id}`}
+                onClick={() => void startInstance(x)}
+              >
+                启动实例
+              </Button>
+            </div>
           ))}
         </Panel>
       </section>

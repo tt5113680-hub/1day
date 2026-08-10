@@ -81,7 +81,8 @@ export class WorkflowService implements OnModuleDestroy {
         [c.tenantId, status],
       ),
       this.pool.query(
-        `select s.id,s.workflow_instance_id,s.name,s.due_at,s.version,coalesce(u.display_name,'Unassigned') assignee_name,d.name definition_name
+        `select s.id,s.workflow_instance_id,s.name,s.due_at,s.version,i.version instance_version,
+          coalesce(u.display_name,'Unassigned') assignee_name,d.name definition_name
          from workflow_instance_steps s join workflow_instances i on i.id=s.workflow_instance_id and i.tenant_id=s.tenant_id
          join workflow_definitions d on d.id=i.definition_id and d.tenant_id=i.tenant_id
          left join employees e on e.id=s.assignee_employee_id and e.tenant_id=s.tenant_id
@@ -560,7 +561,18 @@ export class WorkflowService implements OnModuleDestroy {
       "select 1 from employees e join memberships m on m.id=e.membership_id and m.tenant_id=e.tenant_id where e.id=$1 and e.tenant_id=$2 and e.status='active' and m.user_id=$3 and m.status='active'",
       [employeeId, c.tenantId, c.userId],
     );
-    if (!found.rowCount) throw new ForbiddenException('FORBIDDEN');
+    if (found.rowCount) return;
+    const elevated = await q.query(
+      `select 1 from memberships m
+       join membership_roles mr on mr.membership_id=m.id and mr.tenant_id=m.tenant_id
+       join role_permissions rp on rp.role_id=mr.role_id and rp.tenant_id=m.tenant_id and rp.status='active'
+       join permissions p on p.id=rp.permission_id and p.status='active'
+       where m.user_id=$1 and m.tenant_id=$2 and m.status='active'
+         and p.code = any($3::varchar[])
+       limit 1`,
+      [c.userId, c.tenantId, ['workflow.manage', 'tenant.manage']],
+    );
+    if (!elevated.rowCount) throw new ForbiddenException('FORBIDDEN');
   }
 
   private async idempotent(

@@ -17,7 +17,11 @@ export class ManagementWorkflowController {
     @Query() query: Record<string, unknown>,
   ) {
     if (!requestId?.trim()) throw new BadRequestException('VALIDATION_ERROR');
-    const context = await this.auth.require(authorization, 'tenant.manage', tenantId);
+    const context = await this.auth.requireAny(
+      authorization,
+      ['tenant.manage', 'workflow.read', 'workflow.manage'],
+      tenantId,
+    );
     return {
       data: await this.workflows.managementOverview(context, query),
       meta: { requestId },

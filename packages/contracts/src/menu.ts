@@ -55,7 +55,7 @@ export const MANAGEMENT_MENU_CATALOG: MenuCatalogItem[] = [
     key: 'workflows',
     href: '/m/workflows',
     label: '运营流程',
-    requireAny: ['tenant.manage', 'workflow.read'],
+    requireAny: ['tenant.manage', 'workflow.read', 'workflow.manage'],
   },
   {
     key: 'stores',
@@ -91,7 +91,7 @@ export const MANAGEMENT_MENU_CATALOG: MenuCatalogItem[] = [
     key: 'organization',
     href: '/m/organization-employees',
     label: '组织与员工',
-    requireAny: ['tenant.manage', 'employee.manage'],
+    requireAny: ['tenant.manage', 'employee.manage', 'organization.read', 'organization.manage'],
   },
   {
     key: 'roles',

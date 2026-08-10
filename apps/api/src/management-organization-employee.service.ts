@@ -7,11 +7,16 @@ export class ManagementOrganizationEmployeeService implements OnModuleDestroy {
   private readonly pool = createApiPool();
 
   async overview(context: OrganizationContext) {
-    const [organizations, employees, invitations] = await Promise.all([
+    const [organizations, merchants, employees, invitations] = await Promise.all([
       this.pool.query(
         `select o.id,o.code,o.name,o.organization_type,o.status,o.version,
           coalesce((select count(*)::int from employees e where e.tenant_id=o.tenant_id and e.organization_id=o.id and e.status='active' and e.deleted_at is null),0) active_employee_count
          from organizations o where o.tenant_id=$1 and o.deleted_at is null order by o.code`,
+        [context.tenantId],
+      ),
+      this.pool.query(
+        `select m.id,m.organization_id,m.code,m.name,m.status,m.version
+         from merchants m where m.tenant_id=$1 and m.deleted_at is null order by m.code`,
         [context.tenantId],
       ),
       this.pool.query(
@@ -29,6 +34,7 @@ export class ManagementOrganizationEmployeeService implements OnModuleDestroy {
     ]);
     return {
       organizations: organizations.rows,
+      merchants: merchants.rows,
       employees: employees.rows,
       invitations: invitations.rows,
     };

@@ -9,6 +9,38 @@
   color: var(--od-text-muted);
 }
 
+.notice {
+  margin: 24px 0 0;
+  padding: 12px 14px;
+  border: 1px solid color-mix(in srgb, var(--od-brand-600) 25%, var(--od-border));
+  border-radius: var(--od-radius-sm);
+  color: var(--od-brand-800);
+  background: var(--od-brand-50);
+  font-weight: 700;
+}
+
+.approvalRow,
+.templateRow {
+  display: grid;
+  gap: 10px;
+  border-top: 1px solid var(--od-border);
+  padding: 11px 0;
+}
+
+.approvalRow p,
+.templateRow p {
+  border-top: 0;
+  padding: 0;
+  margin: 0;
+  line-height: 1.5;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
 .filter {
   display: grid;
   gap: 6px;

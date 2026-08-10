@@ -17,7 +17,11 @@ export class ManagementOrganizationEmployeeController {
     if (!requestId?.trim()) throw new BadRequestException('VALIDATION_ERROR');
     return {
       data: await this.overview.overview(
-        await this.auth.require(authorization, 'tenant.manage', tenant),
+        await this.auth.requireAny(
+          authorization,
+          ['tenant.manage', 'employee.manage', 'organization.read', 'organization.manage'],
+          tenant,
+        ),
       ),
       meta: { requestId },
       error: null,

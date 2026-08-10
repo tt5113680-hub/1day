@@ -33,9 +33,9 @@
 
 ## Current engineering focus
 
-**Systemic waves (D3) - SYS-6 / SYS-5 remainders:**
+**Systemic waves (D3) - SYS remainders:**
 
-SYS-6 membership + catalog scopes PASS; SYS-5 store_hero + floating consult paints PASS. Continue: workflows/org write controllers; or Content distributions UI. No page-level patches. Not claimed as full commercial. Tencent Cloud out of scope (G).
+SYS-6 workflow/org write + SYS-4 content distributions PASS. Continue: workflow definition authoring UI or Role matrix E2E. No page-level patches. Not claimed as full commercial. Tencent Cloud out of scope (G).
 
 **Usage:** keep constructing until **90%-95%**, then new window. Do not stop early.
 
