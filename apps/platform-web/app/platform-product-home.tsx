@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import {
   PLATFORM_PRODUCT_HOMES,
+  resolvePlatformShellAccess,
   type MenuItemDto,
   type MenuProductLink,
   type MenuScopeDto,
@@ -21,6 +22,7 @@ export function PlatformProductHome({ mode }: { mode: Mode }) {
   const [scopes, setScopes] = useState<MenuScopeDto[]>([]);
   const [items, setItems] = useState<MenuItemDto[]>([]);
   const [availableProducts, setAvailableProducts] = useState<MenuProductLink[]>([]);
+  const [boundary, setBoundary] = useState<string | null>(null);
 
   useEffect(() => {
     let cancelled = false;
@@ -34,12 +36,27 @@ export function PlatformProductHome({ mode }: { mode: Mode }) {
           scopes?: MenuScopeDto[];
           items?: MenuItemDto[];
           availableProducts?: MenuProductLink[];
+          permissionCodes?: string[];
         };
         if (cancelled) return;
         if (payload.context) setContext(payload.context);
         if (payload.scopes?.length) setScopes(payload.scopes);
         if (payload.items?.length) setItems(payload.items);
         if (payload.availableProducts?.length) setAvailableProducts(payload.availableProducts);
+        if (payload.permissionCodes?.length) {
+          const access = resolvePlatformShellAccess(payload.permissionCodes);
+          if (!access.allowed.includes('platform')) {
+            setBoundary(
+              mode === 'channel'
+                ? '当前账号为渠道经营范围，不含平台租户开通/冻结治理。'
+                : mode === 'circle'
+                  ? '当前账号为商圈经营范围，不含平台租户生命周期治理。'
+                  : null,
+            );
+          } else {
+            setBoundary(null);
+          }
+        }
       } catch {
         // Role home remains readable from static product meta.
       }
@@ -60,6 +77,7 @@ export function PlatformProductHome({ mode }: { mode: Mode }) {
         <p className={styles.eyebrow}>角色工作区 · {meta.label}</p>
         <h2>{meta.label}首页</h2>
         <p>{context}</p>
+        {boundary ? <p className={styles.boundary}>{boundary}</p> : null}
       </div>
       {shellModes.length > 1 ? (
         <nav className={styles.switcher} aria-label="产品工作区切换">

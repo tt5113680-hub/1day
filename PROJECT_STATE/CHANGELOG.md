@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## 2026-08-10 - SYS-28 Platform shell product isolation PASS
+
+- Channel/circle-only operators are redirected away from `/p/*` to their preferred shell home; product homes show honest no-platform-governance boundary copy.
+- Contracts: `resolvePlatformShellAccess` + `shellModeAllows`.
+- Evidence: `SYS_28_PLATFORM_SHELL_ISOLATION_ACCEPTANCE.md`, `evidence/SYS-28/`. Unit 3/3 + menu-dto 13/13 + Playwright 1/1. Not 全部商用.
+
 ## 2026-08-10 - SYS-27 S3 Role×IA Employee/Platform chrome depth PASS
 
 - Employee: desktop side nav ≥700px from menu DTO + store-manager mode; `/e/store` capability package deep-links existing Employee routes; workbench `#membership-redeem` anchor.

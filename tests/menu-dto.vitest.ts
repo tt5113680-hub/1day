@@ -11,6 +11,8 @@ import {
   menuCatalogFor,
   resolveAvailableProducts,
   resolveMenuProduct,
+  resolvePlatformShellAccess,
+  shellModeAllows,
 } from '../packages/contracts/src/menu';
 
 describe('menu DTO catalog filter', () => {
@@ -145,5 +147,23 @@ describe('menu DTO catalog filter', () => {
     expect(PLATFORM_PRODUCT_HOMES.platform.homeHref).toBe('/p/dashboard');
     expect(PLATFORM_PRODUCT_HOMES.channel.homeHref).toBe('/ch/dashboard');
     expect(PLATFORM_PRODUCT_HOMES.circle.homeHref).toBe('/bc/dashboard');
+  });
+
+  it('isolates channel-only and circle-only shell modes from platform (SYS-28)', () => {
+    const channelOnly = resolvePlatformShellAccess(['channel.read', 'channel.manage']);
+    expect(channelOnly.allowed).toEqual(['channel']);
+    expect(channelOnly.preferred).toBe('channel');
+    expect(channelOnly.homeHref).toBe('/ch/dashboard');
+    expect(shellModeAllows('platform', ['channel.read'])).toBe(false);
+    expect(shellModeAllows('channel', ['channel.read'])).toBe(true);
+
+    const circleOnly = resolvePlatformShellAccess(['circle.manage']);
+    expect(circleOnly.allowed).toEqual(['circle']);
+    expect(circleOnly.homeHref).toBe('/bc/dashboard');
+    expect(shellModeAllows('platform', ['circle.manage'])).toBe(false);
+
+    const platformAdmin = resolvePlatformShellAccess(['platform.read', 'platform.manage']);
+    expect(platformAdmin.allowed).toEqual(['platform', 'channel', 'circle']);
+    expect(platformAdmin.preferred).toBe('platform');
   });
 });

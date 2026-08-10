@@ -28,6 +28,16 @@
   color: var(--od-text-muted);
   line-height: 1.5;
 }
+.boundary {
+  margin: 0;
+  padding: 8px 10px;
+  border-radius: var(--od-radius-sm);
+  color: var(--od-brand-800, #1f4d2e);
+  background: color-mix(in srgb, var(--od-brand-100) 70%, #fff);
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.45;
+}
 .switcher {
   display: flex;
   flex-wrap: wrap;

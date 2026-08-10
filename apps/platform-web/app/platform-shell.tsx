@@ -2,15 +2,17 @@
 
 import type { ReactNode } from 'react';
 import { useEffect, useMemo, useState } from 'react';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import {
   CHANNEL_MENU_CATALOG,
   CIRCLE_MENU_CATALOG,
   PLATFORM_MENU_CATALOG,
   PLATFORM_PRODUCT_HOMES,
+  resolvePlatformShellAccess,
   type MenuItemDto,
   type MenuProduct,
   type MenuProductLink,
+  type PlatformShellMode,
 } from '@oneday/contracts';
 import { SessionApiClient } from '@oneday/session-client';
 import { AdminShell } from '@oneday/ui';
@@ -19,7 +21,7 @@ import styles from './platform-shell.module.css';
 const api = process.env.NEXT_PUBLIC_API_BASE_URL ?? 'http://127.0.0.1:3001';
 const sessionApi = new SessionApiClient(api);
 
-const fallbackByProduct: Record<'platform' | 'channel' | 'circle', MenuItemDto[]> = {
+const fallbackByProduct: Record<PlatformShellMode, MenuItemDto[]> = {
   platform: PLATFORM_MENU_CATALOG.map(({ key, href, label, group }) => ({
     key,
     href,
@@ -41,7 +43,7 @@ const fallbackByProduct: Record<'platform' | 'channel' | 'circle', MenuItemDto[]
 };
 
 const productMeta: Record<
-  'platform' | 'channel' | 'circle',
+  PlatformShellMode,
   { product: string; context: string; query: MenuProduct }
 > = {
   platform: { product: '平台运营', context: '系统租户 · 治理控制台', query: 'platform' },
@@ -49,7 +51,7 @@ const productMeta: Record<
   circle: { product: '商圈经营', context: '商圈负责人 · 授权商圈范围', query: 'circle' },
 };
 
-function modeFromPath(pathname: string): 'platform' | 'channel' | 'circle' {
+function modeFromPath(pathname: string): PlatformShellMode {
   if (pathname.startsWith('/ch/')) return 'channel';
   if (pathname.startsWith('/bc/')) return 'circle';
   return 'platform';
@@ -63,11 +65,13 @@ export function PlatformShell({
   controls?: ReactNode;
 }) {
   const pathname = usePathname();
+  const router = useRouter();
   const mode = modeFromPath(pathname);
   const meta = productMeta[mode];
   const [navigation, setNavigation] = useState(fallbackByProduct[mode]);
   const [contextLabel, setContextLabel] = useState(meta.context);
   const [availableProducts, setAvailableProducts] = useState<MenuProductLink[]>([]);
+  const [permissionCodes, setPermissionCodes] = useState<string[]>([]);
 
   useEffect(() => {
     setNavigation(fallbackByProduct[mode]);
@@ -84,11 +88,19 @@ export function PlatformShell({
           context?: string;
           items?: MenuItemDto[];
           availableProducts?: MenuProductLink[];
+          permissionCodes?: string[];
         };
         if (cancelled) return;
         if (payload.context) setContextLabel(payload.context);
         if (payload.items?.length) setNavigation(payload.items);
         if (payload.availableProducts?.length) setAvailableProducts(payload.availableProducts);
+        if (payload.permissionCodes?.length) {
+          setPermissionCodes(payload.permissionCodes);
+          const access = resolvePlatformShellAccess(payload.permissionCodes);
+          if (access.allowed.length && !access.allowed.includes(mode)) {
+            router.replace(access.homeHref);
+          }
+        }
       } catch {
         // Keep static catalog fail-open so offline/login still render.
       }
@@ -97,7 +109,7 @@ export function PlatformShell({
     return () => {
       cancelled = true;
     };
-  }, [mode]);
+  }, [mode, router]);
 
   const modeSwitcher = useMemo(() => {
     const shellModes = availableProducts.filter((link) =>
@@ -107,7 +119,7 @@ export function PlatformShell({
     return (
       <nav aria-label="角色工作区" className={styles.switcher}>
         {shellModes.map((link) => {
-          const home = PLATFORM_PRODUCT_HOMES[link.product as keyof typeof PLATFORM_PRODUCT_HOMES];
+          const home = PLATFORM_PRODUCT_HOMES[link.product as PlatformShellMode];
           return (
             <a
               aria-current={link.product === mode ? 'page' : undefined}
@@ -128,7 +140,11 @@ export function PlatformShell({
     <AdminShell
       activeHref={pathname}
       product={meta.product}
-      context={contextLabel}
+      context={
+        permissionCodes.length && !resolvePlatformShellAccess(permissionCodes).allowed.includes('platform')
+          ? `${contextLabel} · 无平台租户治理`
+          : contextLabel
+      }
       controls={
         <>
           {modeSwitcher}

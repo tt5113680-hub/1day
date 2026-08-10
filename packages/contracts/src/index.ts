@@ -13,12 +13,15 @@ export {
   menuCatalogFor,
   resolveAvailableProducts,
   resolveMenuProduct,
+  resolvePlatformShellAccess,
+  shellModeAllows,
   type MenuCatalogItem,
   type MenuDto,
   type MenuItemDto,
   type MenuProduct,
   type MenuProductLink,
   type MenuScopeDto,
+  type PlatformShellMode,
 } from './menu';
 export {
   mergeNetworkScopes,

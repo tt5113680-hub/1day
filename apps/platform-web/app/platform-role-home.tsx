@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { resolvePlatformShellAccess } from '@oneday/contracts';
 import { SessionApiClient } from '@oneday/session-client';
 import { AppStatePanel } from '@oneday/ui';
 
@@ -22,9 +23,15 @@ export function PlatformRoleHome() {
         }
         const response = await sessionApi.request(`${api}/api/v1/me/menu?product=platform`);
         if (!response.ok) throw new Error('MENU');
-        const payload = (await response.json()).data as { homeHref?: string };
+        const payload = (await response.json()).data as {
+          homeHref?: string;
+          permissionCodes?: string[];
+        };
         if (cancelled) return;
-        router.replace(payload.homeHref || '/p/dashboard');
+        const access = payload.permissionCodes?.length
+          ? resolvePlatformShellAccess(payload.permissionCodes)
+          : null;
+        router.replace(access?.homeHref || payload.homeHref || '/p/dashboard');
       } catch {
         if (!cancelled) {
           setState('error');

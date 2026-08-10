@@ -1,0 +1,39 @@
+import { defineConfig } from '@playwright/test';
+
+const db = 'postgresql://oneday:oneday_local_only@localhost:5434/oneday_v3_test';
+
+export default defineConfig({
+  testDir: './tests/e2e',
+  testMatch: 'sys-28-platform-shell-isolation.spec.ts',
+  workers: 1,
+  timeout: 120000,
+  outputDir: 'evidence/SYS-28/playwright-shell-isolation-output',
+  use: {
+    viewport: { width: 1440, height: 1000 },
+    trace: 'on',
+  },
+  webServer: [
+    {
+      command: 'node apps/api/dist/main.js',
+      url: 'http://127.0.0.1:3344/api/v1/health',
+      reuseExistingServer: false,
+      env: {
+        ...process.env,
+        PORT: '3344',
+        DATABASE_URL: db,
+        AUTH_TOKEN_SECRET: 'sys-28-platform-shell-isolation',
+        CORS_ORIGINS: 'http://localhost:3345',
+      },
+    },
+    {
+      command: 'pnpm.cmd --filter @oneday/platform-web exec next dev --port 3345',
+      url: 'http://localhost:3345',
+      reuseExistingServer: false,
+      env: {
+        ...process.env,
+        API_BASE_URL: 'http://127.0.0.1:3344',
+        NEXT_PUBLIC_API_BASE_URL: 'http://127.0.0.1:3344',
+      },
+    },
+  ],
+});

@@ -61,6 +61,7 @@
 - [x] SYS-25 Generic external-actions catalog PASS — `/m/external-actions` list/create + menu IA; see `SYS_25_EXTERNAL_ACTIONS_ACCEPTANCE.md`.
 - [x] SYS-26 Management orphan IA PASS — employee-process / AI / connectors / permission-audit in menu catalog; see `SYS_26_MANAGEMENT_ORPHAN_IA_ACCEPTANCE.md`.
 - [x] SYS-27 S3 Role×IA depth PASS — Employee store-manager chrome package + desktop nav ≥700px; Platform product homes/switcher on `/p` `/ch` `/bc`; see `SYS_27_S3_ROLE_IA_ACCEPTANCE.md`.
+- [x] SYS-28 Platform shell isolation PASS — channel/circle-only redirected off `/p/*`; honest no-platform-governance boundary; see `SYS_28_PLATFORM_SHELL_ISOLATION_ACCEPTANCE.md`.
 - [ ] HUMAN-PILOT-HANDOFF / product-owner UI acceptance — local sandbox refreshed through migration `054` + consult CTA bindings + walkthrough shots (Playwright 4/4); **human sign-off still required**; not auto-claimed as 全部商用. Optional scoped P1 only after product-owner decision.
 
 ## Current product-owner acceptance

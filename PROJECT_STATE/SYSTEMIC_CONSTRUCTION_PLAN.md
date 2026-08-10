@@ -5,7 +5,7 @@
 
 ## Status
 
-SYS-1…SYS-27 PASS (S3 Employee store-manager chrome + Platform product homes landed).
+SYS-1…SYS-28 PASS (S3 Employee/Platform chrome depth + channel/circle shell isolation landed).
 
 ## Queue
 

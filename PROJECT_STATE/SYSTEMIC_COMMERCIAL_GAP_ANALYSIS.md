@@ -63,7 +63,7 @@ Backend controllers exist and are matrix/API-proven; operators cannot operate th
 - Consumer anonymous shell
 - Employee menu DTO + **SYS-27** desktop nav ≥700px + store-manager mode/package on `/e/store` (full nine-role packages still multi-week)
 - Management flat `tenant.manage` nav (**SYS-26** closed connectors/AI/audit/employee-process orphans; deeper role packages remain)
-- Platform path-mode (`/p` `/ch` `/bc`) with **SYS-27** product switcher + role home strips (deeper Channel/Circle scope UX remains)
+- Platform path-mode (`/p` `/ch` `/bc`) with **SYS-27** product switcher + role home strips and **SYS-28** channel/circle-only path isolation (deeper Channel/Circle commercial ops remain)
 
 ### S4 — Config-driven Storefront incomplete vs HIGH_FIDELITY (P1)
 

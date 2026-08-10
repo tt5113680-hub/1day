@@ -391,3 +391,34 @@ export function resolveAvailableProducts(permissionCodes: string[]): MenuProduct
   }
   return links;
 }
+
+export type PlatformShellMode = 'platform' | 'channel' | 'circle';
+
+/** SYS-28: which AdminShell modes a permission set may enter. */
+export function resolvePlatformShellAccess(permissionCodes: string[]): {
+  allowed: PlatformShellMode[];
+  preferred: PlatformShellMode;
+  homeHref: string;
+} {
+  const shellLinks = resolveAvailableProducts(permissionCodes).filter((link) =>
+    ['platform', 'channel', 'circle'].includes(link.product),
+  ) as Array<MenuProductLink & { product: PlatformShellMode }>;
+  const allowed = shellLinks.map((link) => link.product);
+  if (allowed.includes('platform')) {
+    return { allowed, preferred: 'platform', homeHref: PLATFORM_PRODUCT_HOMES.platform.homeHref };
+  }
+  if (allowed.includes('channel')) {
+    return { allowed, preferred: 'channel', homeHref: PLATFORM_PRODUCT_HOMES.channel.homeHref };
+  }
+  if (allowed.includes('circle')) {
+    return { allowed, preferred: 'circle', homeHref: PLATFORM_PRODUCT_HOMES.circle.homeHref };
+  }
+  return { allowed: [], preferred: 'platform', homeHref: PLATFORM_PRODUCT_HOMES.platform.homeHref };
+}
+
+export function shellModeAllows(
+  mode: PlatformShellMode,
+  permissionCodes: string[],
+): boolean {
+  return resolvePlatformShellAccess(permissionCodes).allowed.includes(mode);
+}
