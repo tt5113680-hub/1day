@@ -33,9 +33,9 @@
 
 ## Current engineering focus
 
-**HUMAN-PILOT-HANDOFF + commercial fixtures:**
+**Systemic waves (D3) — next SYS-3:**
 
-Local sandbox refreshed through migration `053`. Use `pnpm fixtures:generate` for 1–3 READY tenants with products/materials (LOCAL TEST ONLY). Product-owner UI acceptance remains the human gate. Optional scoped P1 only after that decision. Do not claim 全部商用. Tencent Cloud out of scope (G).
+SYS-1 Contract Unity and SYS-2 Config Shell/Wallet are PASS. Continue SYS-3 FE Sync Clients (shared ETag/SSE), then SYS-4 ops vertical. No page-level patches. Product-owner UI acceptance remains a human gate and does not block SYS engineering. Do not claim 全部商用. Tencent Cloud out of scope (G).
 
 ## Secrets and cloud
 

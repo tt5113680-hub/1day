@@ -99,6 +99,39 @@
   grid-column: 2;
 }
 
+.configFieldset {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 14px;
+  margin: 4px 0 0;
+  padding: 12px;
+  border: 1px solid var(--od-border);
+  border-radius: var(--od-radius-sm);
+  background: var(--od-surface);
+}
+
+.configFieldset legend {
+  padding: 0 6px;
+  color: var(--od-text);
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.configFieldset label {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--od-text);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.configFieldset select {
+  margin-left: 8px;
+  min-width: 140px;
+}
+
 .actions {
   margin-top: 16px;
 }

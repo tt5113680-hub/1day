@@ -522,16 +522,16 @@ try {
         ids.action,
       ],
     );
+    // SYS-1: new seed content uses placements only (no dual-write to store_content_items).
     await upsert(
-      `insert into store_content_items(id,tenant_id,store_id,content_type,title,summary,rank,status) values($1,$2,$3,'story',$4,$5,1,'active')
-       on conflict (id) do update set title=excluded.title,summary=excluded.summary,status='active',deleted_at=null`,
-      [
-        id(890 + index),
-        humanPilot.tenantA.id,
-        storeId,
-        detail.story[0],
-        `${detail.story[1]} · TEST ONLY`,
-      ],
+      `insert into content_items(id,tenant_id,kind,title,body,status,created_by,updated_by) values($1,$2,'article',$3,$4,'approved',null,null)
+       on conflict (id) do update set title=excluded.title,body=excluded.body,status='approved',deleted_at=null`,
+      [id(890 + index), humanPilot.tenantA.id, detail.story[0], `${detail.story[1]} · TEST ONLY`],
+    );
+    await upsert(
+      `insert into content_store_placements(id,tenant_id,content_id,store_id,rank,status,created_by,updated_by) values($1,$2,$3,$4,1,'active',null,null)
+       on conflict (tenant_id,content_id,store_id) do update set rank=excluded.rank,status='active',deleted_at=null`,
+      [id(1890 + index), humanPilot.tenantA.id, id(890 + index), storeId],
     );
   }
   await upsert(

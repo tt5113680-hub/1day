@@ -73,11 +73,22 @@ const industryCatalog: Record<
     channels: ['menu', 'group-buy', 'membership'],
     modules: [
       { type: 'store_hero', config: { emphasis: 'nearby_visit' } },
+      {
+        type: 'operating_channels',
+        config: {
+          channels: [
+            { code: 'group-buy', label: '团购' },
+            { code: 'menu', label: '菜单' },
+            { code: 'membership', label: '会员' },
+          ],
+        },
+      },
       { type: 'banner_carousel', config: { limit: 3 } },
       { type: 'quick_actions', config: { capabilities: ['consult', 'phone', 'navigation'] } },
       { type: 'offer_compare', config: { source: 'store_service_platform_offers' } },
       { type: 'service_catalog', config: { presentation: 'menu' } },
       { type: 'member_entry', config: { mode: 'enrollment' } },
+      { type: 'member_wallet', config: { mode: 'balances' } },
       { type: 'content_feed', config: { kind: 'store_story' } },
       { type: 'store_info', config: {} },
     ],
@@ -90,10 +101,21 @@ const industryCatalog: Record<
     channels: ['services', 'cases', 'membership'],
     modules: [
       { type: 'store_hero', config: { emphasis: 'trust' } },
+      {
+        type: 'operating_channels',
+        config: {
+          channels: [
+            { code: 'services', label: '服务' },
+            { code: 'cases', label: '案例' },
+            { code: 'membership', label: '会员' },
+          ],
+        },
+      },
       { type: 'quick_actions', config: { capabilities: ['consult', 'appointment'] } },
       { type: 'service_catalog', config: { presentation: 'service_cards' } },
       { type: 'content_feed', config: { kind: 'cases' } },
       { type: 'member_entry', config: { mode: 'enrollment' } },
+      { type: 'member_wallet', config: { mode: 'balances' } },
       { type: 'store_info', config: {} },
     ],
     service: { name: '专业服务咨询', description: '服务时长与预约档期以门店确认结果为准。' },
@@ -105,11 +127,22 @@ const industryCatalog: Record<
     channels: ['courses', 'events', 'membership'],
     modules: [
       { type: 'store_hero', config: { emphasis: 'campus_trust' } },
+      {
+        type: 'operating_channels',
+        config: {
+          channels: [
+            { code: 'courses', label: '课程' },
+            { code: 'events', label: '活动' },
+            { code: 'membership', label: '会员' },
+          ],
+        },
+      },
       { type: 'quick_actions', config: { capabilities: ['consult', 'trial'] } },
       { type: 'service_catalog', config: { presentation: 'courses' } },
       { type: 'content_feed', config: { kind: 'events' } },
       { type: 'store_info', config: { label: '校区信息' } },
       { type: 'member_entry', config: { mode: 'enrollment' } },
+      { type: 'member_wallet', config: { mode: 'balances' } },
     ],
     service: { name: '课程与试听咨询', description: '课程安排和适龄信息由校区顾问确认。' },
     benefit: { title: '会员活动权益', description: '完成入会后可查看校区确认的活动权益。' },
@@ -120,10 +153,21 @@ const industryCatalog: Record<
     channels: ['catalog', 'events', 'membership'],
     modules: [
       { type: 'store_hero', config: { emphasis: 'catalog' } },
+      {
+        type: 'operating_channels',
+        config: {
+          channels: [
+            { code: 'catalog', label: '选品' },
+            { code: 'events', label: '活动' },
+            { code: 'membership', label: '会员' },
+          ],
+        },
+      },
       { type: 'quick_actions', config: { capabilities: ['consult', 'phone', 'navigation'] } },
       { type: 'service_catalog', config: { presentation: 'catalog' } },
       { type: 'banner_carousel', config: { limit: 3 } },
       { type: 'member_entry', config: { mode: 'enrollment' } },
+      { type: 'member_wallet', config: { mode: 'balances' } },
       { type: 'store_info', config: { deliveryClaim: 'merchant_confirmed_only' } },
     ],
     service: { name: '商品目录咨询', description: '库存、价格和配送范围以商家最终确认为准。' },

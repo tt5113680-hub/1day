@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from 'react';
 import { AppStatePanel, Button } from '@oneday/ui';
-import { ConsumerShell } from '../../consumer-shell';
+import { ConsumerShell, resolveConsumerTabs } from '../../consumer-shell';
 import { StorefrontModules } from './storefront-modules';
 import styles from './store.module.css';
 
@@ -53,6 +53,7 @@ export type StoreDetail = {
   benefits: { id: string; title: string; description: string | null }[];
   content: { id: string; content_type: string; title: string; summary: string | null }[];
   actions: { id: string; name: string; actionType: string; targetUrl: string | null }[];
+  outboundPolicy?: 'store_scoped_links_and_offers';
   externalLinks: {
     id: string;
     linkId: string;
@@ -122,7 +123,10 @@ export default function StorePage({
 }) {
   const [notice, setNotice] = useState('');
   const [switcher, setSwitcher] = useState(false);
-  const consultAction = data.actions.find((item) => item.actionType !== 'link') ?? data.actions[0];
+  const consultAction =
+    data.actions.find((item) => item.actionType === 'consultation') ??
+    data.actions.find((item) => item.actionType === 'platform_entry') ??
+    data.actions[0];
   const sourceValue = source ?? 'consumer:storefront';
   const context = {
     tenant: data.tenant.slug,
@@ -131,6 +135,10 @@ export default function StorePage({
     scene: scene ?? 'storefront',
     shareCode,
   };
+  const navTabs = resolveConsumerTabs(
+    data.storefront?.modules,
+    data.storefront?.industry?.channels,
+  );
   const industry = data.storefront?.industry.family ?? 'restaurant';
   const returnTo = `/c/stores/${data.store.id}?${query(data, sourceValue, 'storefront', shareCode).toString()}`;
   const actionUrl = (actionId: string, sceneName: string) =>
@@ -214,7 +222,7 @@ export default function StorePage({
   };
 
   return (
-    <ConsumerShell context={context} active="home">
+    <ConsumerShell context={context} active="home" tabs={navTabs}>
       {data.storefront?.mode === 'preview' ? (
         <aside className={styles.previewBanner} role="status">
           装修预览 · 当前内容尚未发布，消费者不会看到此版本

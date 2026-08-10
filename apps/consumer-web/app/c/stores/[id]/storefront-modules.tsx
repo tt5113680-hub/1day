@@ -2,8 +2,11 @@
 
 import { useEffect, useMemo, useState, type ReactNode } from 'react';
 import { storeHref, type ConsumerContext } from '../../consumer-shell';
+import { memberAccessStorageKey } from '../../resolve-consumer-tabs';
 import styles from './store.module.css';
 import type { StoreDetail } from './store';
+
+const apiBase = process.env.NEXT_PUBLIC_API_BASE_URL ?? 'http://127.0.0.1:3001';
 
 type Module = NonNullable<StoreDetail['storefront']>['modules'][number];
 
@@ -71,6 +74,7 @@ export function StorefrontModules({
     'offer_compare',
     'content_feed',
     'member_entry',
+    'member_wallet',
   ]);
   const renderModule = (module: Module) => {
     const type = normalizeType(module.module_type);
@@ -97,6 +101,9 @@ export function StorefrontModules({
             limit={typeof module.config.limit === 'number' ? module.config.limit : 3}
           />
         );
+      case 'operating_channels':
+        // Shell tabs consume this module; no in-page section.
+        return null;
       case 'quick_actions':
         return (
           <QuickActions
@@ -128,6 +135,8 @@ export function StorefrontModules({
             actionUrl={actionUrl}
           />
         );
+      case 'member_wallet':
+        return <MemberWallet key={module.id} data={data} context={context} />;
       case 'service_catalog':
         return (
           <ServiceCatalog
@@ -530,6 +539,104 @@ function MemberEntry({
         </Section>
       ) : null}
     </div>
+  );
+}
+
+function MemberWallet({ data, context }: { data: StoreDetail; context: ConsumerContext }) {
+  const [state, setState] = useState<'idle' | 'loading' | 'ready' | 'anonymous' | 'error'>('idle');
+  const [wallet, setWallet] = useState<{
+    memberCode: string;
+    tier: string;
+    benefits: { id: string; title: string; description: string | null; balance: number }[];
+  } | null>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    const load = async () => {
+      const raw =
+        typeof sessionStorage === 'undefined'
+          ? null
+          : sessionStorage.getItem(memberAccessStorageKey(context.tenant, context.storeId));
+      if (!raw) {
+        if (!cancelled) setState('anonymous');
+        return;
+      }
+      let access: { accessId?: string; access?: string } | null = null;
+      try {
+        access = JSON.parse(raw) as { accessId?: string; access?: string };
+      } catch {
+        if (!cancelled) setState('anonymous');
+        return;
+      }
+      if (!access?.accessId || !access.access) {
+        if (!cancelled) setState('anonymous');
+        return;
+      }
+      if (!cancelled) setState('loading');
+      try {
+        const response = await fetch(
+          `${apiBase}/api/v1/consumer/memberships/wallet?tenant=${encodeURIComponent(context.tenant)}&accessId=${encodeURIComponent(access.accessId)}&access=${encodeURIComponent(access.access)}`,
+        );
+        if (response.status === 404) {
+          if (!cancelled) setState('anonymous');
+          return;
+        }
+        if (!response.ok) throw Error();
+        const payload = (await response.json()).data as typeof wallet;
+        if (!cancelled) {
+          setWallet(payload);
+          setState('ready');
+        }
+      } catch {
+        if (!cancelled) setState('error');
+      }
+    };
+    void load();
+    return () => {
+      cancelled = true;
+    };
+  }, [context.storeId, context.tenant]);
+
+  return (
+    <Section
+      title="会员钱包"
+      hint="仅展示本机会话已授权的权益余额"
+      anchor="wallet"
+      moduleType="member_wallet"
+    >
+      {state === 'loading' || state === 'idle' ? <Empty>正在读取会员钱包…</Empty> : null}
+      {state === 'error' ? <Empty>暂时无法读取会员钱包，请稍后重试。</Empty> : null}
+      {state === 'anonymous' ? (
+        <div className={styles.benefitList}>
+          <article className={styles.benefit}>
+            <span>MEMBER</span>
+            <strong>入会后可查看权益余额</strong>
+            <p>匿名浏览不会暴露钱包；完成本店入会并授权后，此处显示可核销余额。</p>
+            <a href={storeHref(context, '/membership', 'wallet_enroll')}>前往入会</a>
+          </article>
+        </div>
+      ) : null}
+      {state === 'ready' && wallet ? (
+        <div className={styles.benefitList}>
+          <article className={styles.benefit}>
+            <span>{wallet.tier || 'MEMBER'}</span>
+            <strong>会员码 {wallet.memberCode}</strong>
+            <p>余额来自门店已发放的权益账本，不以第三方平台库存为准。</p>
+          </article>
+          {wallet.benefits.length ? (
+            wallet.benefits.map((item) => (
+              <article className={styles.benefit} key={item.id}>
+                <span>余额 {item.balance}</span>
+                <strong>{item.title}</strong>
+                <p>{item.description ?? '到店核销时出示会员码'}</p>
+              </article>
+            ))
+          ) : (
+            <Empty>入会成功，门店尚未发放可核销权益。</Empty>
+          )}
+        </div>
+      ) : null}
+    </Section>
   );
 }
 

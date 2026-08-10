@@ -1,6 +1,11 @@
 import type { ReactNode } from 'react';
 import { MobileShell } from '@oneday/ui';
 import styles from './consumer-shell.module.css';
+import {
+  FALLBACK_CONSUMER_TABS,
+  resolveConsumerTabs,
+  type ConsumerNavTab,
+} from './resolve-consumer-tabs';
 
 export type ConsumerContext = {
   tenant: string;
@@ -10,15 +15,9 @@ export type ConsumerContext = {
   shareCode?: string | null;
 };
 
-export type ConsumerTab = 'home' | 'group-buy' | 'menu' | 'membership' | 'profile';
-
-const tabs: { key: ConsumerTab; label: string; icon: string; path: string }[] = [
-  { key: 'home', label: '首页', icon: '⌂', path: '' },
-  { key: 'group-buy', label: '团购', icon: '券', path: '/group-buy' },
-  { key: 'menu', label: '菜单', icon: '单', path: '/menu' },
-  { key: 'membership', label: '会员', icon: '会', path: '/membership' },
-  { key: 'profile', label: '我的', icon: '我', path: '/profile' },
-];
+export type ConsumerTab = 'home' | 'group-buy' | 'menu' | 'membership' | 'profile' | string;
+export type { ConsumerNavTab };
+export { resolveConsumerTabs, FALLBACK_CONSUMER_TABS };
 
 export function consumerQuery(context: ConsumerContext, scene?: string) {
   const params = new URLSearchParams({
@@ -38,18 +37,21 @@ export function ConsumerShell({
   context,
   active,
   children,
+  tabs,
 }: {
   context: ConsumerContext;
   active: ConsumerTab;
   children: ReactNode;
+  tabs?: ConsumerNavTab[];
 }) {
+  const navTabs = tabs?.length ? tabs : FALLBACK_CONSUMER_TABS;
   const navigation = (className: string | undefined, label: string) => (
     <nav className={className} aria-label={label}>
-      {tabs.map((tab) => (
+      {navTabs.map((tab) => (
         <a
           className={tab.key === active ? styles.active : undefined}
           href={storeHref(context, tab.path, `tab_${tab.key}`)}
-          key={tab.key}
+          key={`${tab.key}:${tab.path}`}
         >
           <i aria-hidden="true">{tab.icon}</i>
           <span>{tab.label}</span>

@@ -60,6 +60,48 @@ const api = process.env.NEXT_PUBLIC_API_BASE_URL ?? 'http://127.0.0.1:3001';
 const consumer = process.env.NEXT_PUBLIC_CONSUMER_BASE_URL ?? 'http://localhost:3002';
 const sessionApi = new SessionApiClient(api);
 
+const CHANNEL_OPTIONS = [
+  { code: 'group-buy', label: '团购' },
+  { code: 'menu', label: '菜单' },
+  { code: 'membership', label: '会员' },
+  { code: 'services', label: '服务' },
+  { code: 'cases', label: '案例' },
+  { code: 'courses', label: '课程' },
+  { code: 'events', label: '活动' },
+  { code: 'catalog', label: '选品' },
+] as const;
+
+const CAPABILITY_OPTIONS = [
+  { code: 'consult', label: '咨询' },
+  { code: 'phone', label: '电话' },
+  { code: 'navigation', label: '导航' },
+  { code: 'appointment', label: '预约' },
+  { code: 'trial', label: '试听/体验' },
+  { code: 'share', label: '分享' },
+] as const;
+
+function readChannelCodes(config: Record<string, unknown>): string[] {
+  const raw = config.channels;
+  if (!Array.isArray(raw)) return [];
+  const codes: string[] = [];
+  for (const item of raw) {
+    if (typeof item === 'string') codes.push(item);
+    else if (
+      item &&
+      typeof item === 'object' &&
+      typeof (item as { code?: string }).code === 'string'
+    )
+      codes.push((item as { code: string }).code);
+  }
+  return codes.slice(0, 3);
+}
+
+function readCapabilities(config: Record<string, unknown>): string[] {
+  const raw = config.capabilities;
+  if (!Array.isArray(raw)) return [];
+  return raw.filter((item): item is string => typeof item === 'string');
+}
+
 export default function PageBuilder() {
   const [state, setState] = useState<'loading' | 'ready' | 'forbidden' | 'error'>('loading'),
     [templates, setTemplates] = useState<Template[]>([]),
@@ -138,6 +180,35 @@ export default function PageBuilder() {
           : module,
       ),
     );
+  const patchConfig = (index: number, patch: Record<string, unknown>) =>
+    setModules((current) =>
+      current.map((module, position) =>
+        position === index ? { ...module, config: { ...module.config, ...patch } } : module,
+      ),
+    );
+  const toggleChannel = (index: number, code: string) => {
+    const module = modules[index];
+    if (!module) return;
+    const current = readChannelCodes(module.config);
+    const next = current.includes(code)
+      ? current.filter((item) => item !== code)
+      : [...current, code].slice(0, 3);
+    patchConfig(index, {
+      channels: next.map((item) => {
+        const option = CHANNEL_OPTIONS.find((entry) => entry.code === item);
+        return { code: item, label: option?.label ?? item };
+      }),
+    });
+  };
+  const toggleCapability = (index: number, code: string) => {
+    const module = modules[index];
+    if (!module) return;
+    const current = readCapabilities(module.config);
+    const next = current.includes(code)
+      ? current.filter((item) => item !== code)
+      : [...current, code];
+    patchConfig(index, { capabilities: next });
+  };
   const saveDraft = async () => {
     if (!selected?.version || selected.version.status !== 'draft') return;
     setSaving(true);
@@ -338,6 +409,62 @@ export default function PageBuilder() {
                           {module.config.visible === false ? '显示' : '隐藏'}
                         </Button>
                       </div>
+                    ) : null}
+                    {module.module_type === 'operating_channels' &&
+                    selected.version?.status === 'draft' ? (
+                      <fieldset className={styles.configFieldset}>
+                        <legend>经营频道（最多 3 个）</legend>
+                        {CHANNEL_OPTIONS.map((option) => {
+                          const selectedCodes = readChannelCodes(module.config);
+                          const checked = selectedCodes.includes(option.code);
+                          return (
+                            <label key={option.code}>
+                              <input
+                                type="checkbox"
+                                checked={checked}
+                                disabled={!checked && selectedCodes.length >= 3}
+                                onChange={() => toggleChannel(index, option.code)}
+                              />
+                              {option.label}
+                            </label>
+                          );
+                        })}
+                      </fieldset>
+                    ) : null}
+                    {module.module_type === 'quick_actions' &&
+                    selected.version?.status === 'draft' ? (
+                      <fieldset className={styles.configFieldset}>
+                        <legend>快捷能力（白名单）</legend>
+                        {CAPABILITY_OPTIONS.map((option) => (
+                          <label key={option.code}>
+                            <input
+                              type="checkbox"
+                              checked={readCapabilities(module.config).includes(option.code)}
+                              onChange={() => toggleCapability(index, option.code)}
+                            />
+                            {option.label}
+                          </label>
+                        ))}
+                      </fieldset>
+                    ) : null}
+                    {module.module_type === 'member_wallet' &&
+                    selected.version?.status === 'draft' ? (
+                      <fieldset className={styles.configFieldset}>
+                        <legend>会员钱包</legend>
+                        <label>
+                          展示模式
+                          <select
+                            value={
+                              typeof module.config.mode === 'string'
+                                ? module.config.mode
+                                : 'balances'
+                            }
+                            onChange={(event) => patchConfig(index, { mode: event.target.value })}
+                          >
+                            <option value="balances">权益余额</option>
+                          </select>
+                        </label>
+                      </fieldset>
                     ) : null}
                   </article>
                 ))}

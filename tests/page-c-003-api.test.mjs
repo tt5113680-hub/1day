@@ -63,8 +63,12 @@ test('consumer store detail is tenant-scoped and consultation traces are idempot
       ],
     );
     await client.query(
-      "insert into external_actions(id,tenant_id,code,name,action_type,target_url,platform,status,created_by,updated_by) values($1,$2,$3,$4,'link',$5,'web','active',null,null)",
+      "insert into external_actions(id,tenant_id,code,name,action_type,target_url,platform,status,created_by,updated_by) values($1,$2,$3,$4,'consultation',$5,'web','active',null,null)",
       [action, tenant, `detail-action-${stamp}`, '预约咨询', 'https://example.com/consult'],
+    );
+    await client.query(
+      'insert into store_external_actions(id,tenant_id,store_id,external_action_id,description,sort_order,enabled,created_by,updated_by) values($1,$2,$3,$4,$5,0,true,null,null)',
+      [randomUUID(), tenant, store, action, '门店咨询承接'],
     );
     await client.query(
       "insert into store_services(id,tenant_id,store_id,code,name,description,duration_minutes,price_label,rank,status,created_by,updated_by) values($1,$2,$3,$4,$5,$6,60,$7,1,'active',null,null)",

@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## 2026-08-10 - SYS-1 Contract Unity + SYS-2 Config Shell/Wallet PASS
+
+- Consumer store `actions` are store-scoped consultation/platform_entry; platform cards use store links/offers with `outboundPolicy: store_scoped_links_and_offers`. Connectors documented as not outbound.
+- Onboarding industry templates emit `operating_channels` + `member_wallet`; Consumer shell resolves tabs from published channels (five-tab fallback); wallet module reads membership wallet when session access exists.
+- Management Page Builder adds whitelist editors for channels, quick-action capabilities, and wallet mode. Human-pilot seed content uses placements only.
+- Evidence: `PROJECT_STATE/SYS_1_2_ACCEPTANCE.md`, `evidence/SYS-1/`, `evidence/SYS-2/`. Tests: `sys-1-2-contract`, `resolve-consumer-tabs.vitest`. Not 全部商用.
+
 ## 2026-08-10 - Commercial fixture generator PASS
 
 - Added `scripts/generate-commercial-fixtures.mjs` to provision 1–3 READY tenants via Platform onboarding and enrich them with real Management products, platform offers, content placements, and local `/fixtures` materials.

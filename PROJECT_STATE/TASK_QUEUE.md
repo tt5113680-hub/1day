@@ -13,6 +13,12 @@
 - [x] ONEDAY-V3-COMMERCIAL-COMPLETION / matrix gap Wave 3 PASS - MG-F PARTIAL P0 (MB-01, SE-01, P-02, CT-01, M-01, WO-01); see `MATRIX_GAP_WAVE_3_ACCEPTANCE.md`.
 - [x] ONEDAY-V3-COMMERCIAL-COMPLETION / matrix gap Wave 4 PASS - MG-G depth (M-02, XT-02, RC-01); P0 minimum COVERED 26/26; see `MATRIX_GAP_WAVE_4_ACCEPTANCE.md`.
 - [x] COMMERCIAL-FIXTURES generator PASS - unified 1–3 READY tenants with products/offers/content/materials for local/test; see `COMMERCIAL_FIXTURE_GENERATOR.md` and `evidence/COMMERCIAL-FIXTURES/`.
+- [x] SYS-1 Contract Unity PASS - store-scoped consult/outbound; placements-first seeds; connectors ≠ outbound; see `SYS_1_2_ACCEPTANCE.md` and `evidence/SYS-1/`.
+- [x] SYS-2 Config Shell + Wallet PASS - operating_channels shell, member_wallet render, Page Builder whitelist editors; see `SYS_1_2_ACCEPTANCE.md` and `evidence/SYS-2/`.
+- [ ] SYS-3 FE Sync Clients — shared ETag/SSE client for Management dashboard, Employee workbench, Consumer storefront (no hard-refresh-only closed loop).
+- [ ] SYS-4 Ops vertical — Platform DLQ/replay **or** Content distributions UI **or** Workflow write (one full vertical).
+- [ ] SYS-5 Shared UI kit + storefront-renderer package.
+- [ ] SYS-6 Role IA / server menu DTO.
 - [ ] HUMAN-PILOT-HANDOFF / product-owner UI acceptance — local sandbox refreshed through migration `053` + storefront bindings (Playwright 4/4); **human sign-off still required**; not auto-claimed as 全部商用. Optional scoped P1 only after product-owner decision.
 
 ## Current product-owner acceptance

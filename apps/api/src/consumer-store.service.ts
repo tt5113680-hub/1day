@@ -107,13 +107,21 @@ export class ConsumerStoreService implements OnModuleDestroy {
           [tenant.id, store.merchant_id],
         ),
         this.pool.query(
-          "select id,name,action_type,target_url,mini_program_app_id,mini_program_path,platform from external_actions where tenant_id=$1 and status='active' and deleted_at is null order by case when action_type='platform_entry' then 0 else 1 end,created_at desc",
-          [tenant.id],
+          `select a.id,a.name,a.action_type,a.target_url,a.mini_program_app_id,a.mini_program_path,a.platform
+           from store_external_actions sea
+           join external_actions a on a.id=sea.external_action_id and a.tenant_id=sea.tenant_id
+           where sea.tenant_id=$1 and sea.store_id=$2 and sea.enabled and sea.deleted_at is null
+             and a.status='active' and a.deleted_at is null
+             and a.action_type in ('consultation','platform_entry')
+           order by case when a.action_type='consultation' then 0 else 1 end,sea.sort_order,sea.created_at`,
+          [tenant.id, storeId],
         ),
         this.pool.query(
           `select sea.id as link_id,sea.description,sea.sort_order,a.id,a.name,a.action_type,a.target_url,a.platform
          from store_external_actions sea join external_actions a on a.id=sea.external_action_id and a.tenant_id=sea.tenant_id
-         where sea.tenant_id=$1 and sea.store_id=$2 and sea.enabled and sea.deleted_at is null and a.status='active' and a.deleted_at is null
+         where sea.tenant_id=$1 and sea.store_id=$2 and sea.enabled and sea.deleted_at is null
+           and a.status='active' and a.deleted_at is null
+           and a.action_type in ('link','platform_entry')
          order by sea.sort_order,sea.created_at`,
           [tenant.id, storeId],
         ),
@@ -165,6 +173,8 @@ export class ConsumerStoreService implements OnModuleDestroy {
         miniProgramPath: row.mini_program_path,
         platform: row.platform,
       })),
+      // SYS-1: platform hand-off cards use store-scoped externalLinks + platformOffers only.
+      outboundPolicy: 'store_scoped_links_and_offers',
       externalLinks: externalLinks.rows.map((row) => ({
         id: row.id,
         linkId: row.link_id,
@@ -267,7 +277,8 @@ export class ConsumerStoreService implements OnModuleDestroy {
          join external_actions a on a.id=sea.external_action_id and a.tenant_id=sea.tenant_id
          where sea.tenant_id=$1 and sea.store_id=$2 and sea.enabled and sea.deleted_at is null
            and a.status='active' and a.deleted_at is null
-         order by case when a.action_type='platform_entry' then 0 else 1 end,sea.sort_order,sea.created_at`,
+           and a.action_type in ('consultation','platform_entry')
+         order by case when a.action_type='consultation' then 0 else 1 end,sea.sort_order,sea.created_at`,
         [tenant.id, service.store_id],
       ),
       this.pool.query(

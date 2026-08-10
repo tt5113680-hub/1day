@@ -3,10 +3,12 @@
 import { useMemo, useState } from 'react';
 import {
   ConsumerShell,
+  resolveConsumerTabs,
   storeHref,
   type ConsumerContext,
   type ConsumerTab,
 } from '../../consumer-shell';
+import { memberAccessStorageKey } from '../../resolve-consumer-tabs';
 import type { StoreDetail } from './store';
 import styles from './channel.module.css';
 
@@ -34,7 +36,14 @@ export default function StoreChannel({
     } | null>(null),
     [membershipNote, setMembershipNote] = useState(''),
     [joining, setJoining] = useState(false);
-  const consultAction = data.actions.find((item) => item.actionType !== 'link') ?? data.actions[0];
+  const consultAction =
+    data.actions.find((item) => item.actionType === 'consultation') ??
+    data.actions.find((item) => item.actionType === 'platform_entry') ??
+    data.actions[0];
+  const navTabs = resolveConsumerTabs(
+    data.storefront?.modules,
+    data.storefront?.industry?.channels,
+  );
   const groups = useMemo(() => {
     const result = new Map<
       string,
@@ -77,6 +86,18 @@ export default function StoreChannel({
       if (!response.ok) throw Error();
       const data = (await response.json()).data;
       setMember(data);
+      try {
+        sessionStorage.setItem(
+          memberAccessStorageKey(context.tenant, context.storeId),
+          JSON.stringify({
+            accessId: data.profileAccessId,
+            access: data.profileAccess,
+            memberCode: data.memberCode,
+          }),
+        );
+      } catch {
+        /* sessionStorage unavailable */
+      }
       setMembershipNote(`入会成功。请保存会员码 ${data.memberCode}，到店核销时出示。`);
     } catch {
       setMembershipNote('暂时无法完成入会，请确认手机号、授权与门店状态后重试。');
@@ -103,7 +124,7 @@ export default function StoreChannel({
           : '查看本店的服务入口与隐私说明';
 
   return (
-    <ConsumerShell context={context} active={channel}>
+    <ConsumerShell context={context} active={channel} tabs={navTabs}>
       <main className={styles.page}>
         <div className={styles.shell}>
           <header className={styles.header}>

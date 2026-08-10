@@ -4,19 +4,21 @@
 - completed_tasks: 69/69
 - foundation_final_state_commit: 239114e
 - core_final_state_commit: df5ef65
-- last_completed_task: COMMERCIAL-FIXTURES generator PASS (1-3 READY tenants with products/materials)
-- current_task: ONEDAY-V3-COMMERCIAL-COMPLETION / HUMAN-PILOT-HANDOFF + commercial fixture generator READY
-- status: MATRIX_GAP_CLOSEOUT_COMPLETE; HUMAN_PILOT_SANDBOX_REFRESHED; COMMERCIAL_FIXTURES_GENERATOR_PASS
+- last_completed_task: SYS-1 Contract Unity + SYS-2 Config Shell/Wallet PASS
+- current_task: ONEDAY-V3-COMMERCIAL-COMPLETION / systemic waves (next SYS-3 FE Sync Clients)
+- status: SYS_1_PASS; SYS_2_PASS; MATRIX_GAP_CLOSEOUT_COMPLETE; HUMAN_PILOT_SANDBOX_REFRESHED; COMMERCIAL_FIXTURES_GENERATOR_PASS
 - branch: hardening/COMMERCIAL-COMPLETION
 - executor: Cursor Agent (2026-08-10; see PROJECT_STATE/EXECUTOR_HANDOFF.md)
-- last_safe_commit: c365280
-- verified_matrix_gap_wave_4: PASS ? M-02 packaging, XT-02 depth, RC-01 rebuild report. See PROJECT_STATE/MATRIX_GAP_WAVE_4_ACCEPTANCE.md and evidence/MATRIX-GAP-WAVE-4/.
-- verified_human_pilot_sandbox_refresh: PASS ? oneday_human_pilot through 053; storefront bindings; Playwright 4/4.
-- verified_commercial_fixtures_generator: PASS ? scripts/generate-commercial-fixtures.mjs; evidence/COMMERCIAL-FIXTURES/; tests/commercial-fixture-generator.test.mjs 1/1.
+- last_safe_commit: ef5a46f
+- verified_sys_1_2: PASS — store-scoped outbound; operating_channels shell; member_wallet module; Page Builder whitelist editors. See PROJECT_STATE/SYS_1_2_ACCEPTANCE.md and evidence/SYS-1/ + evidence/SYS-2/.
+- verified_matrix_gap_wave_4: PASS — M-02 packaging, XT-02 depth, RC-01 rebuild report. See PROJECT_STATE/MATRIX_GAP_WAVE_4_ACCEPTANCE.md and evidence/MATRIX-GAP-WAVE-4/.
+- verified_human_pilot_sandbox_refresh: PASS — oneday_human_pilot through 053; storefront bindings; Playwright 4/4.
+- verified_commercial_fixtures_generator: PASS — scripts/generate-commercial-fixtures.mjs; evidence/COMMERCIAL-FIXTURES/; tests/commercial-fixture-generator.test.mjs 1/1.
 - started_at: 2026-08-09T20:29:46+08:00
 - blocker: null
-- next_scope: Product-owner UI sign-off on localhost HUMAN-PILOT; optional scoped matrix P1 after human decision. Still no page-level patches. Not a public ???? claim without human pilot. Tencent Cloud out of scope (G).
+- next_scope: SYS-3 FE Sync Clients (shared ETag/SSE). Then SYS-4 ops vertical. Product-owner UI sign-off remains human. Still no page-level patches. Not a public 全部商用 claim. Tencent Cloud out of scope (G).
 - progress_p0_covered: 26/26 (100%)
 - progress_matrix_waves: 4/4 close-out complete
+- progress_sys_waves: 2/6 (SYS-1, SYS-2)
 - verified_pre_pilot_polish: PASS at 268464d.
 - remediation_stage: A-G PASS. See PROJECT_STATE/AUDIT_REMEDIATION_CLOSEOUT.md.
