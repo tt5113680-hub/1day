@@ -8,25 +8,25 @@
 ## Current task - systemic commercial productization (D3)
 
 - branch: `hardening/COMMERCIAL-COMPLETION`
-- HEAD (pushed): PENDING_SYS_32
-- last_safe_commit: PENDING_SYS_32
+- HEAD (pushed): PENDING_PUSH
+- last_safe_commit: dca406b
 - last_verified: SYS-32 External-actions lifecycle PASS
-- current_task: human product-owner UI sign-off (do NOT auto-PASS) **or** scoped P1 after owner decision
+- current_task: human product-owner UI sign-off (do NOT auto-PASS) **or** continue scoped D3 P1 systems
 - status: `SYS_32_EXTERNAL_ACTIONS_LIFECYCLE_PASS`; **not** claimed as full commercial
 - blocker: null
 - progress: P0 26/26; External-actions update/archive lifecycle landed
-- working_tree: dirty until commit
+- working_tree: clean after commit
 
 ### Completed this window (verified)
 
-1. SYS-32 External-actions lifecycle (update + soft-archive)
+1. SYS-32 External-actions lifecycle (`dca406b`)
 
 ### Next remainders (honest)
 
 - **Product-owner UI sign-off (human)** - do not auto-PASS
 - Full nine-role ROLE_PRODUCT_MATRIX packages remain multi-week
 - Free-form DAG canvas - **deferred**
-- Scoped P1 only after product-owner decision
+- Continue D3 systemic slices (e.g. Employee membership redeem first-class surface)
 - No Tencent Cloud (G). No full-commercial claim.
 
 ### Owner cooperation (front-loaded)
@@ -47,8 +47,8 @@ Read and execute:
 6. PROJECT_STATE/SYSTEMIC_COMMERCIAL_GAP_ANALYSIS.md
 7. git status
 
-Status: SYS-32 PASS; P0 26/26; external-actions update/archive landed.
-Next: human PRODUCT_OWNER_UI_ACCEPTANCE (do NOT auto-sign) or scoped P1 after owner decision.
+Status: SYS-32 PASS (safe dca406b); P0 26/26; external-actions update/archive landed; clean tree.
+Next: human PRODUCT_OWNER_UI_ACCEPTANCE (do NOT auto-sign) or continue D3 systemic construction.
 No page-level patches. Writable root only D:\ONEDAY_V3. Do not claim full commercial. No Tencent Cloud.
 A-H granted. Continue until 90%-95% usage, then new window; do not stop mid-run.
 ```
