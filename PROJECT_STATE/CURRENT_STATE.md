@@ -9,7 +9,7 @@
 - status: SYS_1_PASS; SYS_2_PASS; SYS_3_PASS; SYS_4_PASS; SYS_5_SCAFFOLD_PASS; MATRIX_GAP_CLOSEOUT_COMPLETE; HUMAN_PILOT_SANDBOX_REFRESHED; COMMERCIAL_FIXTURES_GENERATOR_PASS
 - branch: hardening/COMMERCIAL-COMPLETION
 - executor: Cursor Agent (2026-08-10; see PROJECT_STATE/EXECUTOR_HANDOFF.md)
-- last_safe_commit: pending SYS-5 scaffold commit
+- last_safe_commit: 2efa6b3
 - verified_sys_5_scaffold: PASS — `@oneday/storefront-renderer` package; token hole `--od-brand-50` closed; Management Page Builder imports shared outline. See PROJECT_STATE/SYS_5_ACCEPTANCE.md and evidence/SYS-5/.
 - verified_sys_4: PASS — Platform `/p/outbox` DLQ list + replay via existing Outbox APIs. See PROJECT_STATE/SYS_4_ACCEPTANCE.md and evidence/SYS-4/.
 - verified_sys_3: PASS — `@oneday/sync-client` wired into Management dashboard, Employee workbench, Consumer storefront. See PROJECT_STATE/SYS_3_ACCEPTANCE.md and evidence/SYS-3/.
