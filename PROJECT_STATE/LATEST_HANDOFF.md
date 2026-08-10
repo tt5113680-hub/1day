@@ -8,8 +8,8 @@
 ## Current task - systemic commercial productization (D3)
 
 - branch: `hardening/COMMERCIAL-COMPLETION`
-- HEAD (pushed): tip after state commit; safe feature PENDING_SYS13
-- last_safe_commit: PENDING_SYS13_COMMIT
+- HEAD (pushed): tip after state commit; safe feature `6aaee91`
+- last_safe_commit: 6aaee91
 - last_verified: SYS-13 condition path preview + pilot walkthrough shots PASS
 - current_task: human product-owner UI sign-off (full free-form graph editor = multi-week)
 - status: `SYS_13_CONDITION_PATH_PREVIEW_PASS`; **not** claimed as full commercial
@@ -17,9 +17,9 @@
 - progress: P0 26/26
 - working_tree: clean after commit
 
-### Completed this window (verified)
+### Completed this window (verified + pushed)
 
-1. SYS-13 Condition path preview — sample-context apply/skip highlight on linear spine
+1. SYS-13 Condition path preview (`6aaee91`) — sample-context apply/skip highlight on linear spine
 2. Human-pilot walkthrough screenshots (`evidence/HUMAN-PILOT-HANDOFF/walkthrough/`) — engineering only; no product-owner sign-off
 3. Evidence: `evidence/SYS-13/`, walkthrough README
 
@@ -47,7 +47,7 @@
 5. PROJECT_STATE/SYSTEMIC_CONSTRUCTION_PLAN.md
 6. git status
 
-状态：SYS-13 PASS + human-pilot walkthrough shots；P0 26/26；工作区干净。
+状态：SYS-13 PASS（safe 6aaee91）+ human-pilot walkthrough shots；P0 26/26；工作区干净。
 自动 SYS 余项已基本收口。优先：协助 human pilot 签核（不得代签 PRODUCT_OWNER_UI_ACCEPTANCE）；或可选 full free-form drag graph 的后续切片。禁止页级补丁。
 工作目录仅 D:\ONEDAY_V3。不得宣称全部商用。不做腾讯云。
 已获 A–H。继续施工；用量达到 90%–95% 再换新窗口，中途不要停。
