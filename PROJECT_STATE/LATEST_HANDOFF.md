@@ -8,26 +8,25 @@
 ## Current task - systemic commercial productization (D3)
 
 - branch: `hardening/COMMERCIAL-COMPLETION`
-- HEAD (pushed): tip after SYS-21 state record
-- last_safe_commit: 0e3cfed
-- last_verified: SYS-21 STA closed-loop PASS; walkthrough shots refreshed
-- current_task: Human product-owner UI sign-off (engineering must not mark PASS)
-- status: `SYS_21_STA_CLOSED_LOOP_PASS`; STA eng SYS-17..21 complete; **not** claimed as full commercial
+- HEAD (pushed): tip after SYS-22 state record
+- last_safe_commit: PENDING_SYS22_COMMIT
+- last_verified: SYS-22 ONE-CODE consumer landing PASS
+- current_task: Human product-owner UI sign-off (preferred) **or** remaining S1 islands
+- status: `SYS_22_ONE_CODE_LANDING_PASS`; **not** claimed as full commercial
 - blocker: null
 - progress: P0 26/26
 - working_tree: clean after commit
 
 ### Completed prior window (verified + pushed)
 
-1. SYS-20 STA list DnD reorder (`e29caab`)
-2. SYS-21 STA closed-loop package (`0e3cfed`)
-3. Human-pilot walkthrough screenshots refreshed (engineering only)
+1. SYS-21 STA closed-loop (`0e3cfed`)
+2. SYS-22 ONE-CODE consumer landing (this commit)
 
 ### Next remainders (honest)
 
-- **Product-owner UI sign-off (human)** - `PRODUCT_OWNER_UI_ACCEPTANCE.md` (engineering must not mark PASS)
+- **Product-owner UI sign-off (human)** - `PRODUCT_OWNER_UI_ACCEPTANCE.md`
+- Remaining S1 islands: customer merge/transfer UX; generic external-actions CRUD; Management attribution menu discoverability
 - Free-form DAG canvas - **deferred**
-- Scoped P1 only after product-owner decision
 - No Tencent Cloud (G). No full-commercial claim.
 
 ### Owner cooperation (front-loaded)
@@ -45,12 +44,11 @@ Read and execute:
 3. PROJECT_STATE/DECISION_REQUIRED.md
 4. PROJECT_STATE/CURRENT_STATE.md
 5. PROJECT_STATE/SYSTEMIC_CONSTRUCTION_PLAN.md
-6. PROJECT_STATE/WORKFLOW_AUTHORING_UX_RECOMMENDATION.md
+6. PROJECT_STATE/SYSTEMIC_COMMERCIAL_GAP_ANALYSIS.md
 7. git status
 
-Status: SYS-21 PASS (safe 0e3cfed; tip in LATEST_HANDOFF); STA eng SYS-17..21 done; P0 26/26; clean tree.
-Design: no free-form drag canvas; STA closed-loop proven.
-Next: product-owner signs PRODUCT_OWNER_UI_ACCEPTANCE (engineering must NOT mark PASS). No more STA eng unless product opens new slices. Scoped P1 only after owner decision.
+Status: SYS-22 PASS (safe in LATEST_HANDOFF); P0 26/26; clean tree.
+Next eng: SYS-23 attribution menu discoverability OR customer merge/transfer OR external-actions CRUD (S1 remainders). Parallel: human PRODUCT_OWNER_UI_ACCEPTANCE (do NOT auto-sign).
 No page-level patches. Writable root only D:\ONEDAY_V3. Do not claim full commercial. No Tencent Cloud.
 A-H granted. Continue until 90%-95% usage, then new window; do not stop mid-run.
 ```

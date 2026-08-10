@@ -654,6 +654,7 @@ export class PlatformOnboardingService implements OnModuleDestroy {
     const delivery = {
       oneCode: code,
       resolvePath: `/api/v1/one-code/${code}`,
+      landingPath: `/c/one-code/${code}`,
       consumerPath,
       ownerEmail: input.adminEmail,
       managementPath: '/m',

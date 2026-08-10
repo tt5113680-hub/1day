@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## 2026-08-10 - SYS-22 ONE-CODE consumer landing PASS
+
+- Added Consumer `/c/one-code/[code]` landing that resolves the public ONE-CODE API into entry with source continuity; onboarding delivery now includes `landingPath`.
+- Evidence: `SYS_22_ONE_CODE_LANDING_ACCEPTANCE.md`, `evidence/SYS-22/`. API 1/1 + Playwright 2/2. Not 全部商用.
+
 ## 2026-08-10 - SYS-21 STA closed-loop package PASS + pilot walkthrough refresh
 
 - Proved STA closed-loop 3-step conditional authoring (insert/condition card/presets/list DnD/export/publish) without free-form canvas.

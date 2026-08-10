@@ -29,20 +29,21 @@ Previous statements that “施工接近尾声” referred only to **authorized 
 
 Backend controllers exist and are matrix/API-proven; operators cannot operate them from product UIs.
 
-| Domain                               | Backend exists                           | Frontend reality                                  |
-| ------------------------------------ | ---------------------------------------- | ------------------------------------------------- |
-| Sync gateway SSE/ETag                | `/api/v1/sync/*`, public storefront sync | **No** `apps/*-web` client                        |
-| Outbox DLQ + replay                  | Platform API                             | **No** Platform console                           |
-| Provisioning Run detail / retry      | `GET onboarding/:runId`                  | Create-only wizard; no Run workspace              |
-| ONE-CODE resolve                     | `GET /api/v1/one-code/:code`             | **No** landing UX                                 |
-| Workflow write machine               | Full CRUD/publish/decide                 | Management **read-only** overview                 |
-| Content distributions (intent)       | `POST .../distributions`                 | Placements only                                   |
-| Org/merchant/store create            | Organization APIs                        | List-only org UI                                  |
-| Customer merge / identity / transfer | Customer + attribution APIs              | Management uses narrowed customer APIs            |
-| Result/order/evidence/verification   | Result-evidence APIs                     | Employee task path only; no order/verification UX |
-| Membership wallet                    | `GET consumer/memberships/wallet`        | **Never called** from Consumer FE                 |
-| Generic external-actions CRUD        | `/external-actions`                      | FE only uses store external-links                 |
-| RBAC role create / role packs        | RBAC API                                 | Roles list + permission change only               |
+| Domain                               | Backend exists                           | Frontend reality                                                                  |
+| ------------------------------------ | ---------------------------------------- | --------------------------------------------------------------------------------- |
+| Sync gateway SSE/ETag                | `/api/v1/sync/*`, public storefront sync | **CLOSED (SYS-3)** `@oneday/sync-client` on M/E/C                                 |
+| Outbox DLQ + replay                  | Platform API                             | **CLOSED (SYS-4)** `/p/outbox`                                                    |
+| Provisioning Run detail / retry      | `GET onboarding/:runId`                  | **CLOSED (SYS-11)** failure trail + fresh retry on `/p/tenants/new`               |
+| ONE-CODE resolve                     | `GET /api/v1/one-code/:code`             | **CLOSED (SYS-22)** Consumer `/c/one-code/[code]` + delivery `landingPath`        |
+| Workflow write machine               | Full CRUD/publish/decide                 | **CLOSED (SYS-4/7/9…21)** Management `/m/workflows` STA authoring                 |
+| Content distributions (intent)       | `POST .../distributions`                 | **CLOSED (SYS-4)** Management `/m/content` distributions                          |
+| Org/merchant/store create            | Organization APIs                        | **CLOSED (SYS-6)** Management organization-employees creates                      |
+| Customer merge / identity / transfer | Customer + attribution APIs              | **STILL OPEN** customer detail mostly read-only; no merge/transfer write UX       |
+| Result/order/evidence/verification   | Result-evidence APIs                     | **MOSTLY CLOSED** Consumer process + Mgmt customer read; deep order UX remains P1 |
+| Membership wallet                    | `GET consumer/memberships/wallet`        | **CLOSED (SYS-2)** Consumer member session wallet call                            |
+| Generic external-actions CRUD        | `/external-actions`                      | **STILL OPEN** FE uses store external-links only                                  |
+| RBAC role create / role packs        | RBAC API                                 | **CLOSED (SYS-4)** `/m/roles-permissions` role create                             |
+| Management attribution IA            | Attribution APIs + `/m/attribution` page | **STILL OPEN** page not in `MANAGEMENT_MENU_CATALOG`                              |
 
 ### S2 — Dual truths / FE–BE contract drift (P0)
 

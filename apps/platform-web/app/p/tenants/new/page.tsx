@@ -26,6 +26,8 @@ type ProvisioningRun = {
   errorDetail?: string | null;
   delivery?: {
     oneCode?: string;
+    resolvePath?: string;
+    landingPath?: string;
     consumerPath?: string;
     managementPath?: string;
     employeePath?: string;
@@ -289,7 +291,22 @@ export default function Onboarding() {
                 </div>
                 <div>
                   <dt>ONE-CODE</dt>
-                  <dd>{run.delivery?.oneCode ?? '—'}</dd>
+                  <dd data-testid="provisioning-one-code">{run.delivery?.oneCode ?? '—'}</dd>
+                </div>
+                <div>
+                  <dt>消费者落地页</dt>
+                  <dd>
+                    {run.delivery?.oneCode ? (
+                      <>
+                        <code data-testid="provisioning-one-code-landing">
+                          {run.delivery.landingPath ?? `/c/one-code/${run.delivery.oneCode}`}
+                        </code>
+                        <small> 在 Consumer 打开；本地交付入口，不是第三方平台跳转。</small>
+                      </>
+                    ) : (
+                      '—'
+                    )}
+                  </dd>
                 </div>
                 <div>
                   <dt>行业 / 套餐</dt>

@@ -5,20 +5,15 @@
 
 ## Status
 
-SYS-1…SYS-21 PASS (STA closed-loop package proven).
-
-## Recommended authoring direction (owner 2026-08-10)
-
-**Not** free-form drag canvas. See `WORKFLOW_AUTHORING_UX_RECOMMENDATION.md`.
-
-**Structured Timeline Authoring (STA)** — vertical spine + condition cards + path simulator + insert rails + list DnD.
+SYS-1…SYS-22 PASS (STA closed-loop + ONE-CODE consumer landing).
 
 ## Queue
 
 - Product-owner UI sign-off (human) — required for external pilot claim
-- Free-form DAG canvas — deferred; needs PRODUCT_FREEZE + engine capability
+- Remaining S1 islands (systemic, not page patches): customer merge/transfer UX; generic external-actions CRUD; Management attribution menu discoverability
+- Free-form DAG canvas — deferred
 - Scoped P1 only after product-owner decision
 
 ## Honest day boundary
 
-External commercial claims blocked without human sign-off. STA eng SYS-17…21 complete on the honest linear model (SYS-10…21).
+External commercial claims blocked without human sign-off. Not claimed as full commercial. Tencent Cloud out of scope (G).
