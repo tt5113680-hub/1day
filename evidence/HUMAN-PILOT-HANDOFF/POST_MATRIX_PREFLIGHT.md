@@ -39,3 +39,14 @@ Accounts: `PROJECT_STATE/LOCAL_HUMAN_PILOT_ACCOUNTS.md`
 - Matrix P0 COVERED 26/26 remains an engineering fact only.
 - Free-form drag graph editor remains multi-week; SYS-12 is condition branch preview only.
 - Controlled pilot checklist `docs/PILOT_ACCEPTANCE_CHECKLIST.md` still requires a named operator for any non-local claim.
+
+## Engineering recheck (post SYS-20)
+
+- recorded_at: 2026-08-10 Asia/Shanghai
+- HEAD tip: after SYS-20 list DnD (e29caab safe / tip see LATEST_HANDOFF)
+- API health: PASS on :3200
+- Playwright commercial-ui-alignment: PASS 2/2
+- Playwright consumer-commercial-home: PASS 2/2
+- Total: 4/4
+- Product-owner UI acceptance: still human-only; engineering did **not** mark PASS
+- Not 全部商用; Tencent Cloud out of scope (G)
