@@ -23,8 +23,9 @@ test('manager sees real dashboard signals at desktop width', async ({ page }) =>
   await page.addInitScript((value) => sessionStorage.setItem('oneday.accessToken', value), token);
   await page.goto('/m/dashboard');
 
-  await expect(page.locator('h1')).toBeVisible();
-  await expect(page.locator('main')).toContainText('AI');
+  await expect(page.locator('h1')).toHaveText('工作台');
+  await expect(page.locator('main')).toContainText('常用功能');
+  await expect(page.locator('main')).toContainText('客户');
   await page.screenshot({
     path: 'evidence/PAGE-M-001/management-dashboard-desktop.png',
     fullPage: false,

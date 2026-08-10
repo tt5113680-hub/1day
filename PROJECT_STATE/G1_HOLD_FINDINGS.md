@@ -13,8 +13,8 @@
 
 | 序 | ID | 状态 |
 | -- | -- | ---- |
-| R1 | `G1-R-MEITUAN-THEME` | **in progress / landing** |
-| R2 | 老板首页美团同构 | pending |
+| R1 | `G1-R-MEITUAN-THEME` | **PASS** |
+| R2 | `G1-R-BOSS-HOME` | **PASS** (landing) |
 | R3 | 员工首页美团同构 | pending |
 | R4 | 发现=门店同壳 | pending |
 | R5 | 渠道/平台省市区代理 | pending |

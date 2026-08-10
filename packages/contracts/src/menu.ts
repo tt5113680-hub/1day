@@ -77,7 +77,7 @@ export const MANAGEMENT_MENU_CATALOG: MenuCatalogItem[] = [
   {
     key: 'overview',
     href: '/',
-    label: '经营总览',
+    label: '工作台',
     group: 'operate',
     requireAny: ['tenant.manage', 'tenant.read', 'customer.read'],
   },
