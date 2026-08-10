@@ -1,5 +1,14 @@
 # CHANGELOG
 
+## 2026-08-10 - P1-B Consumer shell: shared token-driven nav chrome PASS
+
+- `@oneday/storefront-renderer`: added shared `ConsumerStorefrontNav` (bottom + desktop chrome from the same tab list + active key) and a `nav` token group in `storefrontTokens`; new `.od-consumer-nav*` primitives in `storefront.css` drive all nav colour via `--od-sf-nav-*` / `--od-*` vars (**no raw hex**).
+- `apps/consumer-web/app/c/consumer-shell.tsx`: `ConsumerShell` now renders the shared nav and imports the shared `storefront.css`; **deleted the per-page `consumer-shell.module.css`** whose raw hex duplicated the storefront palette (CHARTER §1.2 no page-level hex stacking). `service`/`action`/`channel` routes inherit it.
+- Tests: `tests/storefront-shell-tokens.vitest.ts` (token palette + no-hex projection), `tests/e2e/p1-b-consumer-shell.spec.ts` (390/768/1440).
+- Gates: `pnpm typecheck` 20/20, `pnpm build` 20/20, `pnpm test:unit` 9 files/43, Playwright `p1-b-consumer-shell` 1/1 + `storefront-module-renderer` 1/1 regression.
+- Maps to matrix UI-01/UI-02/C-02. Evidence: `evidence/P1-B-CONSUMER-SHELL/ACCEPTANCE.md` + 3 viewport screenshots.
+- Not 全部商用. No product-owner UI auto-sign.
+
 ## 2026-08-10 - P1-B shared UI kit: Table + Modal PASS
 
 - `@oneday/ui`: added generic dense `Table<T>` (columns/rows/rowKey/empty) and accessible `Modal` (backdrop + dialog + close + footer); exported `TableColumn`/`TableProps`/`ModalProps`.

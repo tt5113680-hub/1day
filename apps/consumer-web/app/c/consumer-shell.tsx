@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react';
+import { ConsumerStorefrontNav } from '@oneday/storefront-renderer';
+import '@oneday/storefront-renderer/storefront.css';
 import { MobileShell } from '@oneday/ui';
-import styles from './consumer-shell.module.css';
 import {
   FALLBACK_CONSUMER_TABS,
   resolveConsumerTabs,
@@ -45,25 +46,14 @@ export function ConsumerShell({
   tabs?: ConsumerNavTab[];
 }) {
   const navTabs = tabs?.length ? tabs : FALLBACK_CONSUMER_TABS;
-  const navigation = (className: string | undefined, label: string) => (
-    <nav className={className} aria-label={label}>
-      {navTabs.map((tab) => (
-        <a
-          className={tab.key === active ? styles.active : undefined}
-          href={storeHref(context, tab.path, `tab_${tab.key}`)}
-          key={`${tab.key}:${tab.path}`}
-        >
-          <i aria-hidden="true">{tab.icon}</i>
-          <span>{tab.label}</span>
-        </a>
-      ))}
-    </nav>
-  );
   return (
     <MobileShell>
-      {navigation(styles.desktopNav, '门店桌面主导航')}
+      <ConsumerStorefrontNav
+        tabs={navTabs}
+        active={active}
+        hrefOf={(tab) => storeHref(context, tab.path, `tab_${tab.key}`)}
+      />
       {children}
-      {navigation(styles.bottomNav, '门店主导航')}
     </MobileShell>
   );
 }

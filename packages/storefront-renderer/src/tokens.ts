@@ -65,6 +65,15 @@ export const storefrontTokens = {
   overlay: 'rgb(34 22 18 / 42%)',
   topbarGlass: 'rgb(247 244 239 / 96%)',
   bottomNavGlass: 'rgb(255 253 250 / 96%)',
+  nav: {
+    inactive: '#8f7d75',
+    accent: '#b54935',
+    activeInk: '#b54935',
+    activeIconBg: '#b54935',
+    glass: 'rgb(255 253 250 / 97%)',
+    desktopBorder: '#eaded6',
+    invertText: '#ffffff',
+  },
   industries: {
     beauty: { accent: '#7d405f', soft: '#f9e9ef' },
     education: { accent: '#295b91', soft: '#e8f1fc' },

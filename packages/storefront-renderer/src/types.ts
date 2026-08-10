@@ -38,3 +38,10 @@ export type ResolvedStorefrontModule = StorefrontModule & {
   normalizedType: NormalizedModuleType | string;
   visible: boolean;
 };
+
+export type ConsumerNavTab = {
+  key: string;
+  label: string;
+  icon: string;
+  path: string;
+};

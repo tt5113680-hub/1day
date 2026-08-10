@@ -41,10 +41,12 @@ export {
   type StorefrontStoryItem,
 } from './paint.js';
 export { storefrontTokens, type StorefrontTokens } from './tokens.js';
+export { ConsumerStorefrontNav } from './nav.js';
 export {
   NORMALIZED_MODULE_TYPES,
   SECTION_MODULE_TYPES,
   SHELL_ONLY_MODULE_TYPES,
+  type ConsumerNavTab,
   type NormalizedModuleType,
   type ResolvedStorefrontModule,
   type StorefrontModule,
