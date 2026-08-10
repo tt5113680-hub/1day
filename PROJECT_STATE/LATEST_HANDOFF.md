@@ -1,4 +1,4 @@
-# LATEST_HANDOFF
+﻿# LATEST_HANDOFF
 
 ## Executor
 
@@ -8,19 +8,18 @@
 ## Current task - systemic commercial productization (D3)
 
 - branch: `hardening/COMMERCIAL-COMPLETION`
-- HEAD (pushed): tip 27d1ea8
-- last_safe_commit: 6d32d6e
-- last_verified: SYS-30 Employee task inbox PASS
+- HEAD (pushed): tip TBD
+- last_safe_commit: 06fbba0
+- last_verified: SYS-31 Employee customer directory PASS
 - current_task: human product-owner UI sign-off (do NOT auto-PASS) **or** scoped P1 after owner decision
-- status: `SYS_30_EMPLOYEE_TASK_INBOX_PASS`; **not** claimed as full commercial
+- status: `SYS_31_EMPLOYEE_CUSTOMER_DIRECTORY_PASS`; **not** claimed as full commercial
 - blocker: null
-- progress: P0 26/26; Employee task inbox landed
+- progress: P0 26/26; Employee customer directory landed
 - working_tree: clean after commit
 
 ### Completed this window (verified + pushed)
 
-1. SYS-29 AdminShell nav groups (`a2b240d`)
-2. SYS-30 Employee task inbox (`6d32d6e`)
+1. SYS-31 Employee customer directory (`06fbba0`)
 
 ### Next remainders (honest)
 
@@ -48,7 +47,7 @@ Read and execute:
 6. PROJECT_STATE/SYSTEMIC_COMMERCIAL_GAP_ANALYSIS.md
 7. git status
 
-Status: SYS-30 PASS (safe 6d32d6e); P0 26/26; Employee task inbox landed; clean tree.
+Status: SYS-31 PASS (safe 06fbba0); P0 26/26; Employee customer directory landed; clean tree.
 Next: human PRODUCT_OWNER_UI_ACCEPTANCE (do NOT auto-sign) or scoped P1 after owner decision.
 No page-level patches. Writable root only D:\ONEDAY_V3. Do not claim full commercial. No Tencent Cloud.
 A-H granted. Continue until 90%-95% usage, then new window; do not stop mid-run.
