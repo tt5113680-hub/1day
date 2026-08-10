@@ -83,6 +83,13 @@ export class MenuService implements OnModuleDestroy {
     if (product === 'employee' && scopes.some((scope) => scope.type === 'store')) {
       return STORE_MANAGER_MENU_ITEM.href;
     }
+    if (
+      product === 'management' &&
+      !permissionCodes.includes('tenant.manage') &&
+      scopes.some((scope) => scope.type === 'store')
+    ) {
+      return '/m/stores';
+    }
     if (product === 'platform') {
       const perms = new Set(permissionCodes);
       if (perms.has('platform.read') || perms.has('platform.manage')) return '/p/dashboard';

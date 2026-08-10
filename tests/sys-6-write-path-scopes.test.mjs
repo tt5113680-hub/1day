@@ -362,4 +362,19 @@ test('SYS-6: write-path scopes for redeem + store commercial', async () => {
     body: JSON.stringify({ memberCode: memberCodeB, benefitId: benefitB }),
   });
   assert.equal(employeeRedeem.status, 201);
+
+  const managementMenu = await fetch(`${base}/api/v1/me/menu?product=management`, {
+    headers: {
+      authorization: `Bearer ${managerToken}`,
+      'x-tenant-context': tenantId,
+      'x-request-id': randomUUID(),
+    },
+  });
+  assert.equal(managementMenu.status, 200);
+  const managementData = (await managementMenu.json()).data;
+  assert.equal(managementData.homeHref, '/m/stores');
+  assert.deepEqual(
+    managementData.items.map((item) => item.key),
+    ['overview', 'stores'],
+  );
 });

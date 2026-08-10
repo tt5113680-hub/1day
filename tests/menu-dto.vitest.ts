@@ -22,6 +22,12 @@ describe('menu DTO catalog filter', () => {
     expect(items.map((item) => item.key)).toEqual(['overview', 'customers']);
   });
 
+  it('exposes store nav for tenant.read store-manager mode', () => {
+    expect(filterMenuCatalog(MANAGEMENT_MENU_CATALOG, ['tenant.read']).map((item) => item.key)).toEqual(
+      ['overview', 'stores'],
+    );
+  });
+
   it('defaults unknown product to management and resolves known products', () => {
     expect(resolveMenuProduct(undefined)).toBe('management');
     expect(resolveMenuProduct('channel')).toBe('channel');

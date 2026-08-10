@@ -43,7 +43,7 @@ export const MANAGEMENT_MENU_CATALOG: MenuCatalogItem[] = [
     key: 'overview',
     href: '/',
     label: '经营总览',
-    requireAny: ['tenant.manage', 'customer.read'],
+    requireAny: ['tenant.manage', 'tenant.read', 'customer.read'],
   },
   {
     key: 'customers',
@@ -61,7 +61,7 @@ export const MANAGEMENT_MENU_CATALOG: MenuCatalogItem[] = [
     key: 'stores',
     href: '/m/stores',
     label: '门店与外链',
-    requireAny: ['tenant.manage'],
+    requireAny: ['tenant.manage', 'tenant.read'],
   },
   {
     key: 'offers',
