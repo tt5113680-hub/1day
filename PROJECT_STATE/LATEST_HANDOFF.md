@@ -12,7 +12,8 @@
 - last_verified: **2026-08-11** — W0–W6 PASS（W6 省市区代理 MP-01~03, R5：Platform PC `/p/agents` 省市区代理树 + 商户入驻归属 + `/ch/dashboard` 归属行）。**W∞-1 PASS** — 省市区代理深层运营（结算/配额/审批, MP-03 深层）：migration 057 + PlatformAgent quota/settlement/approval endpoints + `/p/agents` 深层运营区。Next W∞-2 其余 GAP 逐页 per inventory. Unattended daemon restarted.
 - status: Auto construction active. Owner 不用管. Machine stay awake.
 - blocker: none for engineering.
-- progress: W0–W1–W2–W3–W4–W5–W6 PASS; W∞-1 PASS; W∞-2 next.
+- **push-pending**: W∞-1 commit `bf1fc25` created locally (working tree clean) but GitHub network (port 443) is temporarily unreachable — `git push origin HEAD` failed 5x (connection reset / connect timeout). **Daemon/next turn must retry `git push origin HEAD` when connectivity returns.** This is external transient network, not a code/auth blocker.
+- progress: W0–W1–W2–W3–W4–W5–W6 PASS; W∞-1 PASS (commit local); push-pending; W∞-2 next.
 - note: Hub http://127.0.0.1:3299/
 
 ### Owner ? next actions
