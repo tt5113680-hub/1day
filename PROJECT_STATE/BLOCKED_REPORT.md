@@ -1,7 +1,7 @@
 # BLOCKED_REPORT
 
 - updated_at: 2026-08-11 Asia/Shanghai
-- status: **CLEARED for Meituan parity construction**
+- status: **RESOLVED** — no active blocker for Meituan parity construction
 
 ## Prior gate (cleared)
 
@@ -18,4 +18,4 @@ Owner previously HOLDed G1 on IA. Owner then authorized:
 
 ## Active queue
 
-See `MEITUAN_PC_H5_PARITY_INVENTORY.md` — W1 PASS; next W2.
+See `MEITUAN_PC_H5_PARITY_INVENTORY.md` — W1–W2 PASS; next W3.
