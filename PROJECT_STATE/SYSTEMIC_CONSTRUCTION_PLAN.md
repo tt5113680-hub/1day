@@ -15,12 +15,13 @@
 | SYS-6 Role matrix packages (Store/Tenant/Network/Member) | PASS                                 |
 | SYS-7 Workflow versioning (API clone/publish v2)   | PASS                                        |
 | SYS-8 Cross-device Member resume                   | PASS                                        |
+| SYS-9 Management workflow version panel            | PASS                                        |
 
 ## Queue
 
-- Management workflow version panel / visual condition editor (optional, no page hex patches)
+- Optional deeper graph / visual condition editor (multi-week; no page hex patches)
 - Product-owner UI sign-off (human)
 
 ## Honest day boundary
 
-Role matrix, API workflow versioning, and cross-device Member resume (phone+memberCode+consent; no SMS OTP) landed. Visual editors and external commercial claims remain out of auto scope - not claimed as full commercial.
+Role matrix, workflow versioning, Member resume, and Management version panel (list/inspect/edit equals + clone-publish) landed. Full graph editor and external commercial claims remain out of auto scope - not claimed as full commercial.

@@ -22,4 +22,4 @@
 
 ## Honest remainder
 
-Visual condition editor / Management version panel, graph transitions, and `@oneday/workflows` package remain multi-week. Not claimed as full commercial.
+Management version panel landed as SYS-9 (list/inspect/edit equals + clone-publish). Full graph/visual editor and `@oneday/workflows` package remain multi-week. Not claimed as full commercial.

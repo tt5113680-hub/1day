@@ -19,6 +19,25 @@ type StepDraft = {
   assigneeEmployeeId: string;
   timeoutMinutes: number;
 };
+type VersionRow = { id: string; sequence: number; status: string; version: number };
+type VersionStep = {
+  id?: string;
+  name: string;
+  type: string;
+  assigneeEmployeeId: string;
+  timeoutMinutes: number;
+  condition?: Record<string, unknown> | null;
+};
+type VersionPanel = {
+  templateId: string;
+  templateName: string;
+  definitionVersion: number;
+  publishedVersionId: string | null;
+  versions: VersionRow[];
+  selectedVersionId: string | null;
+  steps: VersionStep[];
+  loading: boolean;
+};
 type Data = {
   templates: {
     id: string;
@@ -47,6 +66,20 @@ type Data = {
     instance_version: number;
   }[];
 };
+const conditionSummary = (condition?: Record<string, unknown> | null) => {
+  if (!condition || !Object.keys(condition).length) return '无条件';
+  if (typeof condition.key === 'string' && 'equals' in condition)
+    return `${condition.key} = ${String(condition.equals)}`;
+  return JSON.stringify(condition);
+};
+const conditionKeyOf = (condition?: Record<string, unknown> | null) =>
+  typeof condition?.key === 'string' ? condition.key : '';
+const conditionEqualsOf = (condition?: Record<string, unknown> | null) => {
+  if (!condition || !('equals' in condition)) return '';
+  if (condition.equals === true) return 'true';
+  if (condition.equals === false) return 'false';
+  return String(condition.equals ?? '');
+};
 const api = process.env.NEXT_PUBLIC_API_BASE_URL ?? 'http://127.0.0.1:3001';
 const sessionApi = new SessionApiClient(api);
 const emptyStep = (assigneeEmployeeId = ''): StepDraft => ({
@@ -66,6 +99,7 @@ export default function WorkflowsPage() {
   const [code, setCode] = useState('');
   const [name, setName] = useState('');
   const [steps, setSteps] = useState<StepDraft[]>([emptyStep()]);
+  const [versionPanel, setVersionPanel] = useState<VersionPanel | null>(null);
   const load = useCallback(
     async (status = filter) => {
       if (!(await sessionApi.context())) return setState('forbidden');
@@ -179,8 +213,111 @@ export default function WorkflowsPage() {
       setBusy(null);
     }
   };
-  const publishClonedVersion = async (template: Data['templates'][number]) => {
-    if (!template.published_version_id) {
+  const loadVersionSteps = async (templateId: string, versionId: string) => {
+    const versionResponse = await sessionApi.request(
+      `${api}/api/v1/workflows/${templateId}/versions/${versionId}`,
+      { headers: {} },
+    );
+    if (!versionResponse.ok) throw new Error('VERSION');
+    const versionDetail = (await versionResponse.json()).data as {
+      steps: VersionStep[];
+      definitionVersion: number;
+      publishedVersionId: string | null;
+    };
+    return versionDetail;
+  };
+  const openVersionPanel = async (
+    template: Data['templates'][number],
+    options?: { preserveNote?: boolean },
+  ) => {
+    setBusy(`panel-${template.id}`);
+    if (!options?.preserveNote) setNote('');
+    try {
+      const detailResponse = await sessionApi.request(`${api}/api/v1/workflows/${template.id}`, {
+        headers: {},
+      });
+      if (!detailResponse.ok) throw new Error('DETAIL');
+      const detail = (await detailResponse.json()).data as {
+        definition: { version: number; published_version_id: string | null };
+        versions: VersionRow[];
+      };
+      const selectedVersionId =
+        detail.definition.published_version_id ?? detail.versions.at(-1)?.id ?? null;
+      let steps: VersionStep[] = [];
+      let definitionVersion = detail.definition.version;
+      let publishedVersionId = detail.definition.published_version_id;
+      if (selectedVersionId) {
+        const versionDetail = await loadVersionSteps(template.id, selectedVersionId);
+        steps = versionDetail.steps;
+        definitionVersion = versionDetail.definitionVersion;
+        publishedVersionId = versionDetail.publishedVersionId;
+      }
+      setVersionPanel({
+        templateId: template.id,
+        templateName: template.name,
+        definitionVersion,
+        publishedVersionId,
+        versions: detail.versions,
+        selectedVersionId,
+        steps,
+        loading: false,
+      });
+    } catch {
+      setNote('无法加载版本面板，请确认流程管理权限。');
+      setVersionPanel(null);
+    } finally {
+      setBusy(null);
+    }
+  };
+  const selectVersion = async (versionId: string) => {
+    if (!versionPanel) return;
+    const templateId = versionPanel.templateId;
+    setVersionPanel((current) =>
+      current ? { ...current, loading: true, selectedVersionId: versionId } : current,
+    );
+    try {
+      const versionDetail = await loadVersionSteps(templateId, versionId);
+      setVersionPanel((current) =>
+        current
+          ? {
+              ...current,
+              selectedVersionId: versionId,
+              steps: versionDetail.steps,
+              definitionVersion: versionDetail.definitionVersion,
+              publishedVersionId: versionDetail.publishedVersionId,
+              loading: false,
+            }
+          : current,
+      );
+    } catch {
+      setNote('无法读取该版本步骤。');
+      setVersionPanel((current) => (current ? { ...current, loading: false } : current));
+    }
+  };
+  const updatePanelStepCondition = (
+    index: number,
+    patch: { key?: string; equals?: string },
+  ) => {
+    setVersionPanel((current) => {
+      if (!current) return current;
+      const steps = current.steps.map((step, i) => {
+        if (i !== index) return step;
+        const key = patch.key ?? conditionKeyOf(step.condition);
+        const equalsRaw = patch.equals ?? conditionEqualsOf(step.condition);
+        if (!key.trim() || !equalsRaw) {
+          return { ...step, condition: null };
+        }
+        const equals = equalsRaw === 'true' ? true : equalsRaw === 'false' ? false : equalsRaw;
+        return { ...step, condition: { key: key.trim(), equals } };
+      });
+      return { ...current, steps };
+    });
+  };
+  const publishClonedVersion = async (
+    template: Data['templates'][number],
+    options?: { fromPanel?: boolean },
+  ) => {
+    if (!template.published_version_id && !options?.fromPanel) {
       setNote('该模板尚未发布，无法克隆新版本。');
       return;
     }
@@ -194,23 +331,24 @@ export default function WorkflowsPage() {
       const detail = (await detailResponse.json()).data as {
         definition: { version: number; published_version_id: string | null };
       };
-      const publishedId = detail.definition.published_version_id ?? template.published_version_id;
-      const versionResponse = await sessionApi.request(
-        `${api}/api/v1/workflows/${template.id}/versions/${publishedId}`,
-        { headers: {} },
-      );
-      if (!versionResponse.ok) throw new Error('VERSION');
-      const versionDetail = (await versionResponse.json()).data as {
-        steps: {
-          name: string;
-          type: string;
-          assigneeEmployeeId: string;
-          timeoutMinutes: number;
-          condition?: Record<string, unknown>;
-        }[];
-      };
+      const publishedId =
+        (options?.fromPanel ? versionPanel?.publishedVersionId : null) ??
+        detail.definition.published_version_id ??
+        template.published_version_id;
+      if (!publishedId) throw new Error('NO_PUBLISHED');
+      const sourceId =
+        (options?.fromPanel ? versionPanel?.selectedVersionId : null) ?? publishedId;
+      const versionDetail =
+        options?.fromPanel && versionPanel?.selectedVersionId === sourceId
+          ? { steps: versionPanel.steps }
+          : await loadVersionSteps(template.id, sourceId);
       const nextSteps = versionDetail.steps.map((step, index) => ({
-        name: index === versionDetail.steps.length - 1 ? `${step.name} · 修订` : step.name,
+        name:
+          options?.fromPanel && step.condition
+            ? step.name
+            : index === versionDetail.steps.length - 1
+              ? `${step.name} · 修订`
+              : step.name,
         type: step.type,
         assigneeEmployeeId: step.assigneeEmployeeId,
         timeoutMinutes: step.timeoutMinutes,
@@ -247,6 +385,12 @@ export default function WorkflowsPage() {
       if (!publish.ok) throw new Error('PUBLISH_VERSION');
       setNote(`流程「${template.name}」已发布第 ${draft.sequence} 版，新实例将使用该版本。`);
       await load();
+      if (options?.fromPanel) {
+        await openVersionPanel(
+          { ...template, published_version_id: draft.id },
+          { preserveNote: true },
+        );
+      }
     } catch {
       setNote('新版本未发布，请确认流程管理权限与已发布版本仍有效。');
     } finally {
@@ -517,6 +661,14 @@ export default function WorkflowsPage() {
               <div className={styles.actions}>
                 <Button
                   tone="secondary"
+                  disabled={busy === `panel-${x.id}`}
+                  onClick={() => void openVersionPanel(x)}
+                  data-testid={`workflow-version-open-${x.id}`}
+                >
+                  查看版本
+                </Button>
+                <Button
+                  tone="secondary"
                   disabled={!x.published_version_id || busy === `start-${x.id}`}
                   onClick={() => void startInstance(x)}
                 >
@@ -534,6 +686,103 @@ export default function WorkflowsPage() {
           ))}
         </Panel>
       </section>
+      {versionPanel && (
+        <div data-testid="workflow-version-panel">
+          <Card className={styles.versionPanel}>
+          <div className={styles.versionHeader}>
+            <div>
+              <h2>版本面板 · {versionPanel.templateName}</h2>
+              <p>复用已有 GET 版本接口；可查看步骤条件，并按面板条件克隆发布（非图形编辑器）。</p>
+            </div>
+            <Button tone="secondary" onClick={() => setVersionPanel(null)}>
+              关闭
+            </Button>
+          </div>
+          <div className={styles.versionLayout}>
+            <div className={styles.versionList} aria-label="版本列表">
+              {versionPanel.versions.map((version) => (
+                <button
+                  type="button"
+                  key={version.id}
+                  className={
+                    version.id === versionPanel.selectedVersionId
+                      ? styles.versionActive
+                      : styles.versionItem
+                  }
+                  data-testid={`workflow-version-${version.sequence}`}
+                  onClick={() => void selectVersion(version.id)}
+                >
+                  v{version.sequence} · {businessLabel(version.status)}
+                </button>
+              ))}
+              {!versionPanel.versions.length && <p className={styles.hint}>暂无版本。</p>}
+            </div>
+            <div className={styles.versionSteps} aria-label="版本步骤">
+              {versionPanel.loading ? (
+                <p className={styles.hint}>正在读取步骤…</p>
+              ) : versionPanel.steps.length ? (
+                versionPanel.steps.map((step, index) => (
+                  <div className={styles.versionStep} key={`${step.name}-${index}`}>
+                    <strong>
+                      {index + 1}. {step.name}
+                    </strong>
+                    <small>
+                      {businessLabel(step.type)} · 超时 {step.timeoutMinutes} 分钟 ·{' '}
+                      {conditionSummary(step.condition)}
+                    </small>
+                    <div className={styles.conditionRow}>
+                      <label>
+                        条件键
+                        <input
+                          aria-label={`步骤${index + 1}条件键`}
+                          value={conditionKeyOf(step.condition)}
+                          onChange={(event) =>
+                            updatePanelStepCondition(index, { key: event.target.value })
+                          }
+                          placeholder="例如 upsell"
+                        />
+                      </label>
+                      <label>
+                        equals
+                        <select
+                          aria-label={`步骤${index + 1}条件值`}
+                          value={conditionEqualsOf(step.condition)}
+                          onChange={(event) =>
+                            updatePanelStepCondition(index, { equals: event.target.value })
+                          }
+                        >
+                          <option value="">无</option>
+                          <option value="true">true</option>
+                          <option value="false">false</option>
+                        </select>
+                      </label>
+                    </div>
+                  </div>
+                ))
+              ) : (
+                <p className={styles.hint}>该版本没有步骤。</p>
+              )}
+              <div className={styles.actions}>
+                <Button
+                  disabled={
+                    !versionPanel.publishedVersionId ||
+                    busy === `version-${versionPanel.templateId}` ||
+                    versionPanel.loading
+                  }
+                  data-testid="workflow-version-clone-publish"
+                  onClick={() => {
+                    const template = data.templates.find((item) => item.id === versionPanel.templateId);
+                    if (template) void publishClonedVersion(template, { fromPanel: true });
+                  }}
+                >
+                  按面板条件克隆发布
+                </Button>
+              </div>
+            </div>
+          </div>
+          </Card>
+        </div>
+      )}
       <Card className={styles.table}>
         <h2>实例与责任人</h2>
         {data.instances.length ? (

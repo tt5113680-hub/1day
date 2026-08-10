@@ -4,12 +4,13 @@
 - completed_tasks: 69/69
 - foundation_final_state_commit: 239114e
 - core_final_state_commit: df5ef65
-- last_completed_task: SYS-8 Cross-device Member resume PASS
-- current_task: ONEDAY-V3-COMMERCIAL-COMPLETION / systemic remainders (optional visual workflow editor; human pilot sign-off)
-- status: SYS_1_PASS; SYS_2_PASS; SYS_3_PASS; SYS_4_PASS; SYS_4_CONTENT_DISTRIBUTIONS_PASS; SYS_4_WORKFLOW_AUTHORING_PASS; SYS_4_RBAC_ROLE_CREATE_PASS; SYS_5_SCAFFOLD_PASS; SYS_5_VISUAL_PASS; SYS_5_QUICK_ACTIONS_PAINT_PASS; SYS_5_MEMBER_OFFER_PAINT_PASS; SYS_5_COMPARE_STORY_PAINT_PASS; SYS_5_BENEFIT_STORE_INFO_PAINT_PASS; SYS_5_HERO_FLOATING_CONSULT_PAINT_PASS; SYS_6_SCAFFOLD_PASS; SYS_6_MULTI_PRODUCT_PASS; SYS_6_DATA_SCOPES_PASS; SYS_6_WRITE_PATH_SCOPES_PASS; SYS_6_NETWORK_PACKS_PASS; SYS_6_CONTENT_PLACEMENTS_PASS; SYS_6_CATALOG_SCOPES_PASS; SYS_6_MEMBERSHIP_SCOPES_PASS; SYS_6_WORKFLOW_ORG_WRITE_PASS; SYS_6_ROLE_MATRIX_STORE_MANAGER_PASS; SYS_6_ROLE_MATRIX_TENANT_OWNER_PASS; SYS_6_ROLE_MATRIX_NETWORK_PASS; SYS_6_ROLE_MATRIX_MEMBER_PASS; SYS_7_WORKFLOW_VERSIONING_PASS; SYS_8_MEMBER_RESUME_PASS; MATRIX_GAP_CLOSEOUT_COMPLETE; HUMAN_PILOT_SANDBOX_REFRESHED; COMMERCIAL_FIXTURES_GENERATOR_PASS
+- last_completed_task: SYS-9 Management workflow version panel PASS
+- current_task: ONEDAY-V3-COMMERCIAL-COMPLETION / systemic remainders (human pilot sign-off; optional deeper graph editor)
+- status: SYS_1_PASS; SYS_2_PASS; SYS_3_PASS; SYS_4_PASS; SYS_4_CONTENT_DISTRIBUTIONS_PASS; SYS_4_WORKFLOW_AUTHORING_PASS; SYS_4_RBAC_ROLE_CREATE_PASS; SYS_5_SCAFFOLD_PASS; SYS_5_VISUAL_PASS; SYS_5_QUICK_ACTIONS_PAINT_PASS; SYS_5_MEMBER_OFFER_PAINT_PASS; SYS_5_COMPARE_STORY_PAINT_PASS; SYS_5_BENEFIT_STORE_INFO_PAINT_PASS; SYS_5_HERO_FLOATING_CONSULT_PAINT_PASS; SYS_6_SCAFFOLD_PASS; SYS_6_MULTI_PRODUCT_PASS; SYS_6_DATA_SCOPES_PASS; SYS_6_WRITE_PATH_SCOPES_PASS; SYS_6_NETWORK_PACKS_PASS; SYS_6_CONTENT_PLACEMENTS_PASS; SYS_6_CATALOG_SCOPES_PASS; SYS_6_MEMBERSHIP_SCOPES_PASS; SYS_6_WORKFLOW_ORG_WRITE_PASS; SYS_6_ROLE_MATRIX_STORE_MANAGER_PASS; SYS_6_ROLE_MATRIX_TENANT_OWNER_PASS; SYS_6_ROLE_MATRIX_NETWORK_PASS; SYS_6_ROLE_MATRIX_MEMBER_PASS; SYS_7_WORKFLOW_VERSIONING_PASS; SYS_8_MEMBER_RESUME_PASS; SYS_9_WORKFLOW_VERSION_PANEL_PASS; MATRIX_GAP_CLOSEOUT_COMPLETE; HUMAN_PILOT_SANDBOX_REFRESHED; COMMERCIAL_FIXTURES_GENERATOR_PASS
 - branch: hardening/COMMERCIAL-COMPLETION
 - executor: Cursor Agent (2026-08-10; see PROJECT_STATE/EXECUTOR_HANDOFF.md)
-- last_safe_commit: 69f87d8
+- last_safe_commit: pending SYS-9 commit
+- verified_sys_9_workflow_version_panel: PASS - Management version panel lists steps/conditions and clone-publishes via existing APIs. See PROJECT_STATE/SYS_9_WORKFLOW_VERSION_PANEL_ACCEPTANCE.md.
 - verified_sys_8_member_resume: PASS - resume API revokes prior access + Consumer profile resume form proves membership. See PROJECT_STATE/SYS_8_MEMBER_RESUME_ACCEPTANCE.md. Commit 69f87d8.
 - verified_sys_7_workflow_versioning: PASS - GET version steps + clone-from-published + publish v2 + start with condition skip. See PROJECT_STATE/SYS_7_WORKFLOW_VERSIONING_ACCEPTANCE.md. Commit 46aa591.
 - verified_sys_6_role_matrix_member: PASS - Store profile anonymous denial + enroll to memberCode/wallet proof. Commit f24591c.
@@ -43,9 +44,9 @@
 - verified_commercial_fixtures_generator: PASS.
 - started_at: 2026-08-09T20:29:46+08:00
 - blocker: null
-- next_scope: Optional Management visual workflow editor / product-owner UI sign-off. Not claimed as full commercial. Tencent Cloud out of scope (G).
+- next_scope: Product-owner UI sign-off (human). Optional deeper graph/visual condition editor remains multi-week. Not claimed as full commercial. Tencent Cloud out of scope (G).
 - progress_p0_covered: 26/26 (100%)
 - progress_matrix_waves: 4/4 close-out complete
-- progress_sys_waves: 6/6 scaffolded + role matrix packages + SYS-7 API versioning + SYS-8 Member resume landed
+- progress_sys_waves: 6/6 scaffolded + role matrix + SYS-7 versioning + SYS-8 Member resume + SYS-9 version panel landed
 - verified_pre_pilot_polish: PASS at 268464d.
 - remediation_stage: A-G PASS. See PROJECT_STATE/AUDIT_REMEDIATION_CLOSEOUT.md.

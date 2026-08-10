@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## 2026-08-10 - SYS-9 Management workflow version panel PASS
+
+- `/m/workflows` adds「查看版本」panel: list versions, inspect steps/conditions, edit equals, clone-publish via existing APIs.
+- Evidence: `SYS_9_WORKFLOW_VERSION_PANEL_ACCEPTANCE.md`, `evidence/SYS-9/`. Playwright 1/1. Not a graph editor. Not 全部商用.
+
 ## 2026-08-10 - SYS-8 Cross-device Member resume PASS
 
 - Added `POST /api/v1/consumer/memberships/resume` (phone + memberCode + consent; revokes prior accesses; idempotent).
