@@ -8,7 +8,7 @@
 ## Current task - systemic commercial productization (D3)
 
 - branch: `hardening/COMMERCIAL-COMPLETION`
-- HEAD (pushed): tip TBD after pin commit
+- HEAD (pushed): tip 46cb98a
 - last_safe_commit: 538acb5
 - last_verified: SYS-27 S3 Role×IA Employee store-manager chrome + Platform product homes PASS
 - current_task: human product-owner UI sign-off (do NOT auto-PASS) **or** scoped P1 after owner decision
