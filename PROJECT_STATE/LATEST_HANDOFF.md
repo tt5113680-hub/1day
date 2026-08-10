@@ -8,8 +8,8 @@
 ## Current task - systemic commercial productization (D3)
 
 - branch: `hardening/COMMERCIAL-COMPLETION`
-- HEAD (pushed): tip PENDING_SYS26_PUSH
-- last_safe_commit: PENDING_SYS26_COMMIT
+- HEAD (pushed): tip PENDING_SYS26_STATE_PIN
+- last_safe_commit: 60e8029
 - last_verified: SYS-26 Management orphan IA discoverability PASS
 - current_task: human product-owner UI sign-off (do NOT auto-PASS) **or** S3 Employee/Platform IA depth
 - status: `SYS_26_MANAGEMENT_ORPHAN_IA_PASS`; **not** claimed as full commercial
@@ -17,10 +17,10 @@
 - progress: P0 26/26
 - working_tree: clean after commit
 
-### Completed this window (verified)
+### Completed this window (verified + pushed)
 
 1. SYS-25 external-actions catalog (`67a888e`)
-2. SYS-26 Management orphan IA (this commit)
+2. SYS-26 Management orphan IA (`60e8029`)
 
 ### Next remainders (honest)
 
@@ -47,7 +47,7 @@ Read and execute:
 6. PROJECT_STATE/SYSTEMIC_COMMERCIAL_GAP_ANALYSIS.md
 7. git status
 
-Status: SYS-26 PASS; P0 26/26; clean tree.
+Status: SYS-26 PASS (safe 60e8029); P0 26/26; clean tree.
 Next: human PRODUCT_OWNER_UI_ACCEPTANCE (do NOT auto-sign) or S3 Employee/Platform IA depth.
 No page-level patches. Writable root only D:\ONEDAY_V3. Do not claim full commercial. No Tencent Cloud.
 A-H granted. Continue until 90%-95% usage, then new window; do not stop mid-run.
