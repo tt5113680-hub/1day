@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## 2026-08-10 - SYS-4 Platform Outbox DLQ/replay PASS
+
+- Added Platform console `/p/outbox` to list `needs_attention` Outbox dead letters and replay via existing `platform/outbox` APIs (no second API).
+- Shell nav includes「Outbox 死信」. Evidence: `PROJECT_STATE/SYS_4_ACCEPTANCE.md`, `evidence/SYS-4/`. Test: `sys-4-platform-outbox`. Not 全部商用.
+
 ## 2026-08-10 - SYS-3 FE Sync Clients PASS
 
 - Added `@oneday/sync-client` with authenticated ETag poll (`TenantSyncClient`) and public storefront version poll (`StorefrontSyncClient`), plus React hooks.

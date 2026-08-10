@@ -16,7 +16,7 @@
 - [x] SYS-1 Contract Unity PASS - store-scoped consult/outbound; placements-first seeds; connectors ≠ outbound; see `SYS_1_2_ACCEPTANCE.md` and `evidence/SYS-1/`.
 - [x] SYS-2 Config Shell + Wallet PASS - operating_channels shell, member_wallet render, Page Builder whitelist editors; see `SYS_1_2_ACCEPTANCE.md` and `evidence/SYS-2/`.
 - [x] SYS-3 FE Sync Clients PASS — `@oneday/sync-client` ETag poll wired to Management dashboard, Employee workbench, Consumer storefront; see `SYS_3_ACCEPTANCE.md` and `evidence/SYS-3/`.
-- [ ] SYS-4 Ops vertical — Platform DLQ/replay **or** Content distributions UI **or** Workflow write (one full vertical).
+- [x] SYS-4 Ops vertical PASS — Platform Outbox DLQ/replay UI at `/p/outbox`; see `SYS_4_ACCEPTANCE.md` and `evidence/SYS-4/`.
 - [ ] SYS-5 Shared UI kit + storefront-renderer package.
 - [ ] SYS-6 Role IA / server menu DTO.
 - [ ] HUMAN-PILOT-HANDOFF / product-owner UI acceptance — local sandbox refreshed through migration `053` + storefront bindings (Playwright 4/4); **human sign-off still required**; not auto-claimed as 全部商用. Optional scoped P1 only after product-owner decision.

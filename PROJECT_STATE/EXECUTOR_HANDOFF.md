@@ -33,9 +33,9 @@
 
 ## Current engineering focus
 
-**Systemic waves (D3) — next SYS-4:**
+**Systemic waves (D3) — next SYS-5:**
 
-SYS-1…SYS-3 are PASS. Continue SYS-4 Ops vertical (one full vertical: Platform DLQ/replay, Content distributions UI, or Workflow write). No page-level patches. Product-owner UI acceptance remains a human gate and does not block SYS engineering. Do not claim 全部商用. Tencent Cloud out of scope (G).
+SYS-1…SYS-4 are PASS. Continue SYS-5 Shared UI kit + storefront-renderer package (multi-week; start with package extraction). Prefer a fresh Agent window after this handoff. No page-level patches. Product-owner UI acceptance remains a human gate. Do not claim 全部商用. Tencent Cloud out of scope (G).
 
 ## Secrets and cloud
 

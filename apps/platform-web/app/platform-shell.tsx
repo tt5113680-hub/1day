@@ -12,6 +12,7 @@ const platformNavigation = [
   { href: '/p/channels', label: '渠道运营' },
   { href: '/p/business-circles', label: '商圈运营' },
   { href: '/p/connectors', label: '连接器' },
+  { href: '/p/outbox', label: 'Outbox 死信' },
   { href: '/p/security-audit', label: '安全审计' },
 ];
 
