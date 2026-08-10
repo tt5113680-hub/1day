@@ -1,4 +1,9 @@
-import type { ButtonHTMLAttributes, ReactNode } from 'react';
+import type {
+  ButtonHTMLAttributes,
+  InputHTMLAttributes,
+  ReactNode,
+  SelectHTMLAttributes,
+} from 'react';
 
 export type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
   tone?: 'primary' | 'secondary' | 'danger' | 'quiet';
@@ -118,6 +123,63 @@ export function MobileShell({
       {controls ? <div className="od-mobile-shell__controls">{controls}</div> : null}
       {children}
     </div>
+  );
+}
+
+export function FormField({
+  label,
+  hint,
+  error,
+  children,
+  htmlFor,
+}: {
+  label: string;
+  hint?: string;
+  error?: string;
+  children: ReactNode;
+  htmlFor?: string;
+}) {
+  return (
+    <label className="od-field" htmlFor={htmlFor}>
+      <span className="od-field__label">{label}</span>
+      {children}
+      {hint && !error ? <small className="od-field__hint">{hint}</small> : null}
+      {error ? (
+        <small className="od-field__error" role="alert">
+          {error}
+        </small>
+      ) : null}
+    </label>
+  );
+}
+
+export function Input({ className, ...props }: InputHTMLAttributes<HTMLInputElement>) {
+  return <input {...props} className={['od-input', className].filter(Boolean).join(' ')} />;
+}
+
+export function Select({ className, children, ...props }: SelectHTMLAttributes<HTMLSelectElement>) {
+  return (
+    <select {...props} className={['od-select', className].filter(Boolean).join(' ')}>
+      {children}
+    </select>
+  );
+}
+
+export function Skeleton({
+  width = '100%',
+  height = 16,
+  className,
+}: {
+  width?: number | string;
+  height?: number | string;
+  className?: string;
+}) {
+  return (
+    <span
+      className={['od-skeleton', className].filter(Boolean).join(' ')}
+      style={{ width, height }}
+      aria-hidden="true"
+    />
   );
 }
 

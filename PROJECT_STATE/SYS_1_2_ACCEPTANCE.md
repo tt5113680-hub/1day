@@ -6,21 +6,21 @@
 
 ## SYS-1 Contract Unity
 
-| Deliverable | Evidence |
-| --- | --- |
-| Consumer consult prefers store-scoped `consultation` | `apps/api/src/consumer-store.service.ts`; Consumer store/channel CTA |
-| Platform cards = store `externalLinks` (`link`/`platform_entry`) + `platformOffers` | `outboundPolicy: store_scoped_links_and_offers` |
-| New seeds/fixtures content via placements | fixture generator unchanged (placements); human-pilot seed switched off dual-write |
-| Connectors ≠ outbound | `PROJECT_STATE/SYS_1_CONTRACT_UNITY.md` |
+| Deliverable                                                                         | Evidence                                                                           |
+| ----------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------- |
+| Consumer consult prefers store-scoped `consultation`                                | `apps/api/src/consumer-store.service.ts`; Consumer store/channel CTA               |
+| Platform cards = store `externalLinks` (`link`/`platform_entry`) + `platformOffers` | `outboundPolicy: store_scoped_links_and_offers`                                    |
+| New seeds/fixtures content via placements                                           | fixture generator unchanged (placements); human-pilot seed switched off dual-write |
+| Connectors ≠ outbound                                                               | `PROJECT_STATE/SYS_1_CONTRACT_UNITY.md`                                            |
 
 ## SYS-2 Config Shell + Wallet
 
-| Deliverable | Evidence |
-| --- | --- |
-| Onboarding emits `operating_channels` + `member_wallet` per industry | `platform-onboarding.service.ts` |
-| Consumer shell tabs from `operating_channels` (fallback five tabs) | `resolve-consumer-tabs.ts` + store/channel shells |
-| `member_wallet` renders wallet API when session access present | `storefront-modules.tsx` MemberWallet |
-| Page Builder whitelist editors for channels / capabilities / wallet mode | `management-web/.../page-builder` |
+| Deliverable                                                              | Evidence                                          |
+| ------------------------------------------------------------------------ | ------------------------------------------------- |
+| Onboarding emits `operating_channels` + `member_wallet` per industry     | `platform-onboarding.service.ts`                  |
+| Consumer shell tabs from `operating_channels` (fallback five tabs)       | `resolve-consumer-tabs.ts` + store/channel shells |
+| `member_wallet` renders wallet API when session access present           | `storefront-modules.tsx` MemberWallet             |
+| Page Builder whitelist editors for channels / capabilities / wallet mode | `management-web/.../page-builder`                 |
 
 ## Verify
 

@@ -46,14 +46,14 @@ Backend controllers exist and are matrix/API-proven; operators cannot operate th
 
 ### S2 — Dual truths / FE–BE contract drift (P0)
 
-| Dual surface                                                                              | Risk                                                                                      |
-| ----------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------- |
-| ~~Consumer shell tabs hard-coded~~ (SYS-2)                                                | Shell resolves published `operating_channels` with five-tab fallback                      |
-| Content: `content_items`+placements **union** legacy `store_content_items`                | New seeds/fixtures placements-only; dual-read remains for old rows                        |
-| ~~Outbound tenant-wide actions~~ (SYS-1)                                                  | Consult = store-scoped consultation; platform cards = store links/offers                  |
-| Connectors (intent) vs Consumer outbound (HTTPS hand-off)                                 | Easy to over-claim “已对接美团/抖音”; SYS-1 documents connectors ≠ outbound               |
-| Membership benefits vs wallet (partial SYS-2)                                             | `member_wallet` calls wallet API when session access present; else enroll CTA             |
-| Sync covered in tests, UIs still hard-refresh                                             | Closed-loop in DB, not in continuous product                                              |
+| Dual surface                                                               | Risk                                                                          |
+| -------------------------------------------------------------------------- | ----------------------------------------------------------------------------- |
+| ~~Consumer shell tabs hard-coded~~ (SYS-2)                                 | Shell resolves published `operating_channels` with five-tab fallback          |
+| Content: `content_items`+placements **union** legacy `store_content_items` | New seeds/fixtures placements-only; dual-read remains for old rows            |
+| ~~Outbound tenant-wide actions~~ (SYS-1)                                   | Consult = store-scoped consultation; platform cards = store links/offers      |
+| Connectors (intent) vs Consumer outbound (HTTPS hand-off)                  | Easy to over-claim “已对接美团/抖音”; SYS-1 documents connectors ≠ outbound   |
+| Membership benefits vs wallet (partial SYS-2)                              | `member_wallet` calls wallet API when session access present; else enroll CTA |
+| Sync covered in tests, UIs still hard-refresh                              | Closed-loop in DB, not in continuous product                                  |
 
 ### S3 — Role × IA incomplete (P0)
 

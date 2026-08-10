@@ -8,12 +8,12 @@
 
 ## Verified
 
-| Check | Result |
-| --- | --- |
-| Generator on HUMAN-PILOT (`3200`) count=3 | PASS — restaurant / beauty / education READY + enrichment |
-| Contract test on `oneday_v3_test` count=2 | PASS — `tests/commercial-fixture-generator.test.mjs` 1/1 |
-| Consumer public read | PASS — services ≥2, platformOffers ≥2, storefront modules present |
-| Materials | PASS — `apps/consumer-web/public/fixtures/{stores,materials}/` |
+| Check                                     | Result                                                            |
+| ----------------------------------------- | ----------------------------------------------------------------- |
+| Generator on HUMAN-PILOT (`3200`) count=3 | PASS — restaurant / beauty / education READY + enrichment         |
+| Contract test on `oneday_v3_test` count=2 | PASS — `tests/commercial-fixture-generator.test.mjs` 1/1          |
+| Consumer public read                      | PASS — services ≥2, platformOffers ≥2, storefront modules present |
+| Materials                                 | PASS — `apps/consumer-web/public/fixtures/{stores,materials}/`    |
 
 ## Evidence files
 

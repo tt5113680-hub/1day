@@ -15,6 +15,34 @@ export default tseslint.config(
     ],
   },
   { languageOptions: { globals: { process: 'readonly' } } },
+  {
+    files: ['scripts/**/*.{js,mjs,cjs}'],
+    languageOptions: {
+      globals: {
+        Buffer: 'readonly',
+        URL: 'readonly',
+        fetch: 'readonly',
+        Headers: 'readonly',
+        Response: 'readonly',
+        Request: 'readonly',
+        console: 'readonly',
+        setTimeout: 'readonly',
+        clearTimeout: 'readonly',
+        setInterval: 'readonly',
+        clearInterval: 'readonly',
+      },
+    },
+  },
+  {
+    files: ['tests/**/*.{js,mjs,cjs}'],
+    languageOptions: {
+      globals: {
+        Headers: 'readonly',
+        Response: 'readonly',
+        Request: 'readonly',
+      },
+    },
+  },
   js.configs.recommended,
   ...tseslint.configs.recommended,
   prettier,

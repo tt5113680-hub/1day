@@ -20,14 +20,14 @@ Defaults assume HUMAN-PILOT platform identity `pilot.platform@oneday.local` / sy
 
 ## What each tenant receives
 
-| Layer | Source of truth |
-| --- | --- |
-| Tenant / store / roles / published storefront modules | Platform onboarding READY run |
-| External links (Meituan / Douyin / partner HTTPS) | Management external-links API |
-| Products (services) + platform offers | Management catalog API |
-| Stories / materials metadata | Management content create → approve → place |
-| Store cover image path | Local SQL set to `/fixtures/stores/*` (Management API is HTTPS-only) |
-| PNG materials | `apps/consumer-web/public/fixtures/{stores,materials}/` |
+| Layer                                                 | Source of truth                                                      |
+| ----------------------------------------------------- | -------------------------------------------------------------------- |
+| Tenant / store / roles / published storefront modules | Platform onboarding READY run                                        |
+| External links (Meituan / Douyin / partner HTTPS)     | Management external-links API                                        |
+| Products (services) + platform offers                 | Management catalog API                                               |
+| Stories / materials metadata                          | Management content create → approve → place                          |
+| Store cover image path                                | Local SQL set to `/fixtures/stores/*` (Management API is HTTPS-only) |
+| PNG materials                                         | `apps/consumer-web/public/fixtures/{stores,materials}/`              |
 
 Industries for count 1–3: `restaurant`, `beauty`, `education`.
 

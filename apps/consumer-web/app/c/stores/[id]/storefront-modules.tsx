@@ -1,5 +1,11 @@
 'use client';
 
+import {
+  effectiveStorefrontModules,
+  normalizeModuleType,
+  SECTION_MODULE_TYPES,
+  visibleStorefrontModules,
+} from '@oneday/storefront-renderer';
 import { useEffect, useMemo, useState, type ReactNode } from 'react';
 import { storeHref, type ConsumerContext } from '../../consumer-shell';
 import { memberAccessStorageKey } from '../../resolve-consumer-tabs';
@@ -12,20 +18,7 @@ type Module = NonNullable<StoreDetail['storefront']>['modules'][number];
 
 const visual = (index: number) => ['◌', '▦', '✦', '♧', '◈', '⌁', '◍', '⌖', '↗', '⋯'][index] ?? '•';
 
-const isVisible = (config: Record<string, unknown>) => config.visible !== false;
-
-const normalizeType = (moduleType: string) => {
-  if (moduleType === 'hero') return 'store_hero';
-  if (moduleType === 'action_grid') return 'quick_actions';
-  if (moduleType === 'content') return 'content_feed';
-  return moduleType;
-};
-
-export function visibleStorefrontModules(modules: Module[] | undefined): Module[] {
-  return [...(modules ?? [])]
-    .filter((item) => isVisible(item.config ?? {}))
-    .sort((a, b) => a.position - b.position);
-}
+export { visibleStorefrontModules };
 
 export function StorefrontModules({
   data,
@@ -62,22 +55,10 @@ export function StorefrontModules({
     offers: StoreDetail['platformOffers'];
   }[];
 }) {
-  const modules = visibleStorefrontModules(data.storefront?.modules);
-  const effectiveModules = modules.length
-    ? modules
-    : ([
-        { id: 'fallback-hero', module_type: 'store_hero', position: 1, config: {} },
-        { id: 'fallback-info', module_type: 'store_info', position: 2, config: {} },
-      ] satisfies Module[]);
-  const sectionTypes = new Set([
-    'service_catalog',
-    'offer_compare',
-    'content_feed',
-    'member_entry',
-    'member_wallet',
-  ]);
+  const effectiveModules = effectiveStorefrontModules(data.storefront?.modules);
+  const sectionTypes = SECTION_MODULE_TYPES;
   const renderModule = (module: Module) => {
-    const type = normalizeType(module.module_type);
+    const type = normalizeModuleType(module.module_type);
     switch (type) {
       case 'store_hero':
         return (
@@ -136,7 +117,7 @@ export function StorefrontModules({
           />
         );
       case 'member_wallet':
-        return <MemberWallet key={module.id} data={data} context={context} />;
+        return <MemberWallet key={module.id} context={context} />;
       case 'service_catalog':
         return (
           <ServiceCatalog
@@ -188,10 +169,10 @@ export function StorefrontModules({
     sectionBatch = [];
   };
   for (const module of effectiveModules) {
-    const type = normalizeType(module.module_type);
+    const type = normalizeModuleType(module.module_type);
     const node = renderModule(module);
     if (!node) continue;
-    if (sectionTypes.has(type)) sectionBatch.push(node);
+    if (sectionTypes.has(type as never)) sectionBatch.push(node);
     else {
       flushSections(`sections-before-${module.id}`);
       nodes.push(node);
@@ -542,7 +523,7 @@ function MemberEntry({
   );
 }
 
-function MemberWallet({ data, context }: { data: StoreDetail; context: ConsumerContext }) {
+function MemberWallet({ context }: { context: ConsumerContext }) {
   const [state, setState] = useState<'idle' | 'loading' | 'ready' | 'anonymous' | 'error'>('idle');
   const [wallet, setWallet] = useState<{
     memberCode: string;

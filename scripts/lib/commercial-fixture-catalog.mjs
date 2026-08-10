@@ -29,9 +29,19 @@ export const industryPacks = {
         priceLabel: '¥18.80',
         rank: 300,
         offers: [
-          { platform: 'meituan', title: '美团团购（TEST ONLY）', offerPrice: 19.9, marketPrice: 38 },
+          {
+            platform: 'meituan',
+            title: '美团团购（TEST ONLY）',
+            offerPrice: 19.9,
+            marketPrice: 38,
+          },
           { platform: 'douyin', title: '抖音团购（TEST ONLY）', offerPrice: 21.9, marketPrice: 38 },
-          { platform: 'external', title: '合作伙伴套餐（TEST ONLY）', offerPrice: 20.9, marketPrice: 38 },
+          {
+            platform: 'external',
+            title: '合作伙伴套餐（TEST ONLY）',
+            offerPrice: 20.9,
+            marketPrice: 38,
+          },
         ],
       },
       {
@@ -41,7 +51,12 @@ export const industryPacks = {
         priceLabel: '¥22.00',
         rank: 200,
         offers: [
-          { platform: 'meituan', title: '美团团购（TEST ONLY）', offerPrice: 23.9, marketPrice: 42 },
+          {
+            platform: 'meituan',
+            title: '美团团购（TEST ONLY）',
+            offerPrice: 23.9,
+            marketPrice: 42,
+          },
           { platform: 'douyin', title: '抖音团购（TEST ONLY）', offerPrice: 24.9, marketPrice: 42 },
         ],
       },
@@ -106,7 +121,12 @@ export const industryPacks = {
         priceLabel: '¥199 起',
         rank: 300,
         offers: [
-          { platform: 'meituan', title: '美团服务（TEST ONLY）', offerPrice: 169, marketPrice: 299 },
+          {
+            platform: 'meituan',
+            title: '美团服务（TEST ONLY）',
+            offerPrice: 169,
+            marketPrice: 299,
+          },
           { platform: 'douyin', title: '抖音服务（TEST ONLY）', offerPrice: 179, marketPrice: 299 },
         ],
       },
@@ -118,7 +138,12 @@ export const industryPacks = {
         rank: 200,
         offers: [
           { platform: 'meituan', title: '美团服务（TEST ONLY）', offerPrice: 98, marketPrice: 168 },
-          { platform: 'external', title: '合作预约（TEST ONLY）', offerPrice: 108, marketPrice: 168 },
+          {
+            platform: 'external',
+            title: '合作预约（TEST ONLY）',
+            offerPrice: 108,
+            marketPrice: 168,
+          },
         ],
       },
     ],
@@ -188,7 +213,12 @@ export const industryPacks = {
         priceLabel: '¥299 起',
         rank: 200,
         offers: [
-          { platform: 'meituan', title: '美团课程（TEST ONLY）', offerPrice: 259, marketPrice: 399 },
+          {
+            platform: 'meituan',
+            title: '美团课程（TEST ONLY）',
+            offerPrice: 259,
+            marketPrice: 399,
+          },
           { platform: 'douyin', title: '抖音课程（TEST ONLY）', offerPrice: 269, marketPrice: 399 },
         ],
       },

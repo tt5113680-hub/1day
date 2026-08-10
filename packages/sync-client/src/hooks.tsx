@@ -25,7 +25,6 @@ export function useTenantSync(
     const sub = client.startPolling([...topics], (changes) => callback.current(changes));
     return () => sub.stop();
     // topics identity is represented by topicKey
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [apiBase, enabled, session, topicKey]);
 }
 

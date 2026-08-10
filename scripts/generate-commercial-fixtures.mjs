@@ -172,7 +172,8 @@ async function provisionTenant(systemToken, industry, index) {
       themeVariant: pack.themeVariant,
     },
   });
-  if (status !== 201) throw new Error(`provision ${slug} failed: ${status} ${JSON.stringify(json)}`);
+  if (status !== 201)
+    throw new Error(`provision ${slug} failed: ${status} ${JSON.stringify(json)}`);
   const run = json.data;
   if (run.state !== 'ready') throw new Error(`provision ${slug} not ready: ${run.state}`);
   const storeId = run.steps.find((step) => step.code === 'organization_store')?.output?.storeId;

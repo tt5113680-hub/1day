@@ -85,8 +85,12 @@ test('commercial fixture generator provisions 1-3 READY tenants with products an
     assert.ok(body.data.platformOffers.length >= 2);
     assert.ok(body.data.storefront?.modules?.length >= 1);
   }
-  assert.ok(existsSync(join(process.cwd(), 'apps/consumer-web/public/fixtures/stores/restaurant-a.png')));
   assert.ok(
-    existsSync(join(process.cwd(), 'apps/consumer-web/public/fixtures/materials/restaurant-story-a.png')),
+    existsSync(join(process.cwd(), 'apps/consumer-web/public/fixtures/stores/restaurant-a.png')),
+  );
+  assert.ok(
+    existsSync(
+      join(process.cwd(), 'apps/consumer-web/public/fixtures/materials/restaurant-story-a.png'),
+    ),
   );
 });

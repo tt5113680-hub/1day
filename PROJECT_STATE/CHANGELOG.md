@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## 2026-08-10 - SYS-5 Shared UI kit + storefront-renderer scaffold PASS
+
+- Added `@oneday/storefront-renderer` with shared module normalize/visibility/sort, render-plan builder, and `StorefrontModuleOutline`.
+- Closed design-token hole `--od-brand-50`; `@oneday/ui` re-exports `designTokens` and adds FormField/Input/Select/Skeleton.
+- Consumer store imports the shared module contract; Management Page Builder canvas imports the same outline renderer.
+- Evidence: `PROJECT_STATE/SYS_5_ACCEPTANCE.md`, `evidence/SYS-5/`. Tests: `storefront-renderer.vitest`, `sys-5-storefront-renderer`. Visual hex retirement remains multi-week. Not 全部商用.
+
 ## 2026-08-10 - SYS-4 Platform Outbox DLQ/replay PASS
 
 - Added Platform console `/p/outbox` to list `needs_attention` Outbox dead letters and replay via existing `platform/outbox` APIs (no second API).

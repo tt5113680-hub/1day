@@ -1,6 +1,8 @@
 'use client';
 
 import { SessionApiClient } from '@oneday/session-client';
+import { StorefrontModuleOutline } from '@oneday/storefront-renderer';
+import '@oneday/storefront-renderer/outline.css';
 import {
   AdminPageHeader,
   AppStatePanel,
@@ -387,87 +389,104 @@ export default function PageBuilder() {
                 )}
               </div>
               <div className={styles.canvas}>
-                {modules.map((module, index) => (
-                  <article
-                    key={module.id}
-                    className={module.config.visible === false ? styles.hiddenModule : undefined}
-                  >
-                    <span>{index + 1}</span>
-                    <strong>{businessLabel(module.module_type)}</strong>
-                    <small>
-                      {module.config.visible === false ? '当前草稿隐藏' : '消费者可见模块'}
-                    </small>
-                    {selected.version?.status === 'draft' ? (
-                      <div className={styles.moduleActions}>
-                        <Button tone="quiet" onClick={() => move(index, -1)}>
-                          上移
-                        </Button>
-                        <Button tone="quiet" onClick={() => move(index, 1)}>
-                          下移
-                        </Button>
-                        <Button tone="quiet" onClick={() => toggle(index)}>
-                          {module.config.visible === false ? '显示' : '隐藏'}
-                        </Button>
-                      </div>
-                    ) : null}
-                    {module.module_type === 'operating_channels' &&
-                    selected.version?.status === 'draft' ? (
-                      <fieldset className={styles.configFieldset}>
-                        <legend>经营频道（最多 3 个）</legend>
-                        {CHANNEL_OPTIONS.map((option) => {
-                          const selectedCodes = readChannelCodes(module.config);
-                          const checked = selectedCodes.includes(option.code);
+                <StorefrontModuleOutline
+                  modules={modules}
+                  includeHidden
+                  title="装修模块（共享渲染契约）"
+                  renderActions={
+                    selected.version?.status === 'draft'
+                      ? (module) => {
+                          const index = modules.findIndex((item) => item.id === module.id);
+                          if (index < 0) return null;
                           return (
-                            <label key={option.code}>
-                              <input
-                                type="checkbox"
-                                checked={checked}
-                                disabled={!checked && selectedCodes.length >= 3}
-                                onChange={() => toggleChannel(index, option.code)}
-                              />
-                              {option.label}
-                            </label>
+                            <div className={styles.moduleActions}>
+                              <Button tone="quiet" onClick={() => move(index, -1)}>
+                                上移
+                              </Button>
+                              <Button tone="quiet" onClick={() => move(index, 1)}>
+                                下移
+                              </Button>
+                              <Button tone="quiet" onClick={() => toggle(index)}>
+                                {module.config.visible === false ? '显示' : '隐藏'}
+                              </Button>
+                            </div>
                           );
-                        })}
-                      </fieldset>
-                    ) : null}
-                    {module.module_type === 'quick_actions' &&
-                    selected.version?.status === 'draft' ? (
-                      <fieldset className={styles.configFieldset}>
-                        <legend>快捷能力（白名单）</legend>
-                        {CAPABILITY_OPTIONS.map((option) => (
-                          <label key={option.code}>
-                            <input
-                              type="checkbox"
-                              checked={readCapabilities(module.config).includes(option.code)}
-                              onChange={() => toggleCapability(index, option.code)}
-                            />
-                            {option.label}
-                          </label>
-                        ))}
-                      </fieldset>
-                    ) : null}
-                    {module.module_type === 'member_wallet' &&
-                    selected.version?.status === 'draft' ? (
-                      <fieldset className={styles.configFieldset}>
-                        <legend>会员钱包</legend>
-                        <label>
-                          展示模式
-                          <select
-                            value={
-                              typeof module.config.mode === 'string'
-                                ? module.config.mode
-                                : 'balances'
-                            }
-                            onChange={(event) => patchConfig(index, { mode: event.target.value })}
-                          >
-                            <option value="balances">权益余额</option>
-                          </select>
-                        </label>
-                      </fieldset>
-                    ) : null}
-                  </article>
-                ))}
+                        }
+                      : undefined
+                  }
+                  renderExtras={
+                    selected.version?.status === 'draft'
+                      ? (module) => {
+                          const index = modules.findIndex((item) => item.id === module.id);
+                          if (index < 0) return null;
+                          if (module.module_type === 'operating_channels') {
+                            return (
+                              <fieldset className={styles.configFieldset}>
+                                <legend>经营频道（最多 3 个）</legend>
+                                {CHANNEL_OPTIONS.map((option) => {
+                                  const selectedCodes = readChannelCodes(module.config);
+                                  const checked = selectedCodes.includes(option.code);
+                                  return (
+                                    <label key={option.code}>
+                                      <input
+                                        type="checkbox"
+                                        checked={checked}
+                                        disabled={!checked && selectedCodes.length >= 3}
+                                        onChange={() => toggleChannel(index, option.code)}
+                                      />
+                                      {option.label}
+                                    </label>
+                                  );
+                                })}
+                              </fieldset>
+                            );
+                          }
+                          if (module.module_type === 'quick_actions') {
+                            return (
+                              <fieldset className={styles.configFieldset}>
+                                <legend>快捷能力（白名单）</legend>
+                                {CAPABILITY_OPTIONS.map((option) => (
+                                  <label key={option.code}>
+                                    <input
+                                      type="checkbox"
+                                      checked={readCapabilities(module.config).includes(
+                                        option.code,
+                                      )}
+                                      onChange={() => toggleCapability(index, option.code)}
+                                    />
+                                    {option.label}
+                                  </label>
+                                ))}
+                              </fieldset>
+                            );
+                          }
+                          if (module.module_type === 'member_wallet') {
+                            return (
+                              <fieldset className={styles.configFieldset}>
+                                <legend>会员钱包</legend>
+                                <label>
+                                  展示模式
+                                  <select
+                                    value={
+                                      typeof module.config.mode === 'string'
+                                        ? module.config.mode
+                                        : 'balances'
+                                    }
+                                    onChange={(event) =>
+                                      patchConfig(index, { mode: event.target.value })
+                                    }
+                                  >
+                                    <option value="balances">权益余额</option>
+                                  </select>
+                                </label>
+                              </fieldset>
+                            );
+                          }
+                          return null;
+                        }
+                      : undefined
+                  }
+                />
               </div>
               <div className={styles.actions}>
                 {selected.binding && selected.version?.status !== 'draft' ? (

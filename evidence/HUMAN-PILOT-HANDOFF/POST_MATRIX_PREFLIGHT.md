@@ -10,15 +10,15 @@
 
 ## Engineering checks
 
-| Check | Result |
-| --- | --- |
-| API health | PASS — `{"status":"ok","database":"ready"}` on `:3200` |
-| Worker health | PASS — `:3205/health` HTTP 200 |
-| Four terminals | PASS — Consumer/Employee/Management/Platform HTTP 200 |
-| Storefront binding | PASS — 3 `storefront_bindings` with live restaurant modules (8 types) |
-| Pilot seed | PASS — `scripts/local-human-pilot-seed.mjs` reports migration `053_sync_gateway` |
-| Playwright commercial-ui-alignment | PASS — 2/2 |
-| Playwright consumer-commercial-home | PASS — 2/2 |
+| Check                               | Result                                                                           |
+| ----------------------------------- | -------------------------------------------------------------------------------- |
+| API health                          | PASS — `{"status":"ok","database":"ready"}` on `:3200`                           |
+| Worker health                       | PASS — `:3205/health` HTTP 200                                                   |
+| Four terminals                      | PASS — Consumer/Employee/Management/Platform HTTP 200                            |
+| Storefront binding                  | PASS — 3 `storefront_bindings` with live restaurant modules (8 types)            |
+| Pilot seed                          | PASS — `scripts/local-human-pilot-seed.mjs` reports migration `053_sync_gateway` |
+| Playwright commercial-ui-alignment  | PASS — 2/2                                                                       |
+| Playwright consumer-commercial-home | PASS — 2/2                                                                       |
 
 ## Product-owner gate (human)
 

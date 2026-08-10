@@ -4,12 +4,13 @@
 - completed_tasks: 69/69
 - foundation_final_state_commit: 239114e
 - core_final_state_commit: df5ef65
-- last_completed_task: SYS-4 Platform Outbox DLQ/replay PASS
-- current_task: ONEDAY-V3-COMMERCIAL-COMPLETION / systemic waves (next SYS-5 Shared UI kit + storefront-renderer)
-- status: SYS_1_PASS; SYS_2_PASS; SYS_3_PASS; SYS_4_PASS; MATRIX_GAP_CLOSEOUT_COMPLETE; HUMAN_PILOT_SANDBOX_REFRESHED; COMMERCIAL_FIXTURES_GENERATOR_PASS
+- last_completed_task: SYS-5 Shared UI kit + storefront-renderer scaffold PASS
+- current_task: ONEDAY-V3-COMMERCIAL-COMPLETION / systemic waves (SYS-5 visual continuation or SYS-6 Role IA)
+- status: SYS_1_PASS; SYS_2_PASS; SYS_3_PASS; SYS_4_PASS; SYS_5_SCAFFOLD_PASS; MATRIX_GAP_CLOSEOUT_COMPLETE; HUMAN_PILOT_SANDBOX_REFRESHED; COMMERCIAL_FIXTURES_GENERATOR_PASS
 - branch: hardening/COMMERCIAL-COMPLETION
 - executor: Cursor Agent (2026-08-10; see PROJECT_STATE/EXECUTOR_HANDOFF.md)
-- last_safe_commit: 86fb48d
+- last_safe_commit: pending SYS-5 scaffold commit
+- verified_sys_5_scaffold: PASS — `@oneday/storefront-renderer` package; token hole `--od-brand-50` closed; Management Page Builder imports shared outline. See PROJECT_STATE/SYS_5_ACCEPTANCE.md and evidence/SYS-5/.
 - verified_sys_4: PASS — Platform `/p/outbox` DLQ list + replay via existing Outbox APIs. See PROJECT_STATE/SYS_4_ACCEPTANCE.md and evidence/SYS-4/.
 - verified_sys_3: PASS — `@oneday/sync-client` wired into Management dashboard, Employee workbench, Consumer storefront. See PROJECT_STATE/SYS_3_ACCEPTANCE.md and evidence/SYS-3/.
 - verified_sys_1_2: PASS — store-scoped outbound; operating_channels shell; member_wallet module; Page Builder whitelist editors. See PROJECT_STATE/SYS_1_2_ACCEPTANCE.md and evidence/SYS-1/ + evidence/SYS-2/.
@@ -18,9 +19,9 @@
 - verified_commercial_fixtures_generator: PASS — scripts/generate-commercial-fixtures.mjs; evidence/COMMERCIAL-FIXTURES/; tests/commercial-fixture-generator.test.mjs 1/1.
 - started_at: 2026-08-09T20:29:46+08:00
 - blocker: null
-- next_scope: SYS-5 Shared UI kit + `@oneday/storefront-renderer` package (multi-week program — start with package extraction scaffold). Product-owner UI sign-off remains human. Still no page-level patches. Not a public 全部商用 claim. Tencent Cloud out of scope (G).
+- next_scope: SYS-5 continuation (retire Consumer store hex palette; move module paint into package) or SYS-6 Role IA / menu DTO. Product-owner UI sign-off remains human. Still no page-level patches. Not a public 全部商用 claim. Tencent Cloud out of scope (G).
 - progress_p0_covered: 26/26 (100%)
 - progress_matrix_waves: 4/4 close-out complete
-- progress_sys_waves: 4/6 (SYS-1…SYS-4)
+- progress_sys_waves: 5/6 scaffold on SYS-5 (visual remainder multi-week)
 - verified_pre_pilot_polish: PASS at 268464d.
 - remediation_stage: A-G PASS. See PROJECT_STATE/AUDIT_REMEDIATION_CLOSEOUT.md.
