@@ -359,9 +359,21 @@
   color: var(--od-brand-800);
 }
 
-.flowEdge {
+.flowBranches {
+  display: grid;
+  gap: 4px;
+  min-width: 140px;
+}
+
+.flowEdge,
+.flowEdgeSkip {
   color: var(--od-brand-700);
   font-size: 11px;
   font-weight: 800;
   white-space: nowrap;
+}
+
+.flowEdgeSkip {
+  color: var(--od-text-muted);
+  font-weight: 700;
 }

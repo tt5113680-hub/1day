@@ -9,7 +9,7 @@ import {
   MetricCard,
   StatusBadge,
 } from '@oneday/ui';
-import { buildLinearFlow, summarizeCondition } from '@oneday/workflows';
+import { buildConditionBranchFlow, summarizeCondition } from '@oneday/workflows';
 import { useCallback, useEffect, useState } from 'react';
 import styles from './page.module.css';
 
@@ -747,7 +747,7 @@ export default function WorkflowsPage() {
             <div>
               <h2>版本面板 · {versionPanel.templateName}</h2>
               <p>
-                线性步骤可视化 + 条件编辑，复用既有版本 API；不是自由拖拽图编辑器。
+                线性步骤 + 条件满足/跳过分支预览，复用既有版本 API；不是自由拖拽图编辑器。
               </p>
             </div>
             <Button tone="secondary" onClick={() => setVersionPanel(null)}>
@@ -755,31 +755,52 @@ export default function WorkflowsPage() {
             </Button>
           </div>
           {!versionPanel.loading && versionPanel.steps.length > 0 && (
-            <ol className={styles.flow} data-testid="workflow-linear-flow" aria-label="线性步骤流">
+            <ol
+              className={styles.flow}
+              data-testid="workflow-linear-flow"
+              data-flow-mode="linear_with_condition_branches"
+              aria-label="线性步骤与条件分支预览"
+            >
               {(() => {
-                const flow = buildLinearFlow(versionPanel.steps);
-                return flow.nodes.map((node, index) => (
-                  <li key={`${node.name}-${node.index}`} className={styles.flowItem}>
-                    <div
-                      className={node.hasCondition ? styles.flowNodeConditional : styles.flowNode}
-                      data-testid={`workflow-flow-node-${node.index}`}
-                    >
-                      <span>
-                        {index + 1}. {node.name}
-                      </span>
-                      <small>
-                        {businessLabel(node.type)}
-                        {node.timeoutMinutes ? ` · ${node.timeoutMinutes} 分` : ''}
-                      </small>
-                      <b>{node.conditionLabel}</b>
-                    </div>
-                    {index < flow.nodes.length - 1 ? (
-                      <div className={styles.flowEdge} aria-hidden="true">
-                        {flow.edges[index]?.label ?? '下一步'}
+                const flow = buildConditionBranchFlow(versionPanel.steps);
+                return flow.nodes.map((node, index) => {
+                  const outgoing = flow.edges.filter((edge) => edge.from === index);
+                  return (
+                    <li key={`${node.name}-${node.index}`} className={styles.flowItem}>
+                      <div
+                        className={node.hasCondition ? styles.flowNodeConditional : styles.flowNode}
+                        data-testid={`workflow-flow-node-${node.index}`}
+                      >
+                        <span>
+                          {index + 1}. {node.name}
+                        </span>
+                        <small>
+                          {businessLabel(node.type)}
+                          {node.timeoutMinutes ? ` · ${node.timeoutMinutes} 分` : ''}
+                        </small>
+                        <b>{node.conditionLabel}</b>
                       </div>
-                    ) : null}
-                  </li>
-                ));
+                      {outgoing.length ? (
+                        <div
+                          className={styles.flowBranches}
+                          data-testid={`workflow-flow-branches-${index}`}
+                        >
+                          {outgoing.map((edge) => (
+                            <div
+                              key={`${edge.kind}-${edge.from}-${edge.to ?? 'end'}`}
+                              className={
+                                edge.kind === 'skip' ? styles.flowEdgeSkip : styles.flowEdge
+                              }
+                              data-edge-kind={edge.kind}
+                            >
+                              {edge.label}
+                            </div>
+                          ))}
+                        </div>
+                      ) : null}
+                    </li>
+                  );
+                });
               })()}
             </ol>
           )}

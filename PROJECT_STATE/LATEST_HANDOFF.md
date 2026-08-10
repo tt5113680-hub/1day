@@ -8,27 +8,25 @@
 ## Current task - systemic commercial productization (D3)
 
 - branch: `hardening/COMMERCIAL-COMPLETION`
-- HEAD (pushed): `effabd8`
-- last_safe_commit: `d579d1a` (SYS-11 feature); tip includes state commit `effabd8`
-- last_verified: SYS-11 Platform provisioning failure trail PASS
-- current_task: human product-owner UI sign-off (optional free-form graph editor = multi-week)
-- status: `SYS_11_PROVISIONING_FAILURE_TRAIL_PASS`; **not** claimed as full commercial
+- HEAD (pushed): PENDING_AFTER_COMMIT
+- last_safe_commit: PENDING_SYS12_COMMIT
+- last_verified: SYS-12 condition branch flow + human-pilot sandbox refresh PASS
+- current_task: human product-owner UI sign-off (full free-form graph editor = multi-week)
+- status: `SYS_12_CONDITION_BRANCH_FLOW_PASS`; **not** claimed as full commercial
 - blocker: null
 - progress: P0 26/26
-- working_tree: clean (verified at handoff)
+- working_tree: clean after commit
 
-### Completed this window (verified + pushed)
+### Completed this window (verified)
 
-1. SYS-8 Cross-device Member resume (`69f87d8`) — API + Consumer「我的」resume；no SMS OTP
-2. SYS-9 Management workflow version panel (`78dbf2b`)
-3. SYS-10 `@oneday/workflows` linear visual flow (`9624487`)
-4. SYS-11 Platform provisioning failure trail (`d579d1a`) — honest failed/pending + fresh retry
-5. Evidence: `evidence/SYS-8/` … `evidence/SYS-11/`
+1. Human-pilot sandbox refresh — migrate `054`, seed role_permissions + `PILOT-CONSULT` store links, Docker 3200–3205, Playwright 4/4
+2. SYS-12 Condition branch flow — `@oneday/workflows.buildConditionBranchFlow` + Management take/skip preview
+3. Evidence: `evidence/HUMAN-PILOT-HANDOFF/`, `evidence/SYS-12/`
 
 ### Next remainders (honest)
 
 - **Product-owner UI sign-off (human)** — `PROJECT_STATE/PRODUCT_OWNER_UI_ACCEPTANCE.md` + `docs/PILOT_ACCEPTANCE_CHECKLIST.md`
-- Optional free-form graph/visual condition editor (multi-week; not claimed done)
+- Full free-form drag graph editor (multi-week; SYS-12 is linear take/skip only)
 - Auto SYS remainders for this phase are largely closed
 - No Tencent Cloud (G). No full-commercial claim.
 
@@ -49,8 +47,8 @@
 5. PROJECT_STATE/SYSTEMIC_CONSTRUCTION_PLAN.md
 6. git status
 
-状态：SYS-11 PASS（HEAD tip effabd8；safe d579d1a）；P0 26/26；工作区干净。
-自动 SYS 余项已基本收口。优先：协助 human pilot 沙箱可操作/证据刷新（不得代签 PRODUCT_OWNER_UI_ACCEPTANCE）；或可选 multi-week free-form graph 的最小诚实切片。禁止页级补丁。
+状态：SYS-12 PASS + human-pilot sandbox refreshed（migration 054；Playwright 4/4）；P0 26/26；工作区干净。
+自动 SYS 余项已基本收口。优先：协助 human pilot 签核（不得代签 PRODUCT_OWNER_UI_ACCEPTANCE）；或可选 full free-form drag graph 的后续切片。禁止页级补丁。
 工作目录仅 D:\ONEDAY_V3。不得宣称全部商用。不做腾讯云。
 已获 A–H。继续施工；用量达到 90%–95% 再换新窗口，中途不要停。
 ```

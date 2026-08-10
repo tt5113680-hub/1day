@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## 2026-08-10 - SYS-12 Condition branch flow PASS + human-pilot sandbox refresh
+
+- Seeded `@oneday/workflows.buildConditionBranchFlow` (take/skip on linear spine); Management version panel shows 满足则进入 / 否则跳过.
+- Human-pilot sandbox: migrate through `054_channel_permissions`, fix role_permissions re-seed, bind `PILOT-CONSULT` on three stores; Playwright 4/4.
+- Evidence: `SYS_12_CONDITION_BRANCH_FLOW_ACCEPTANCE.md`, `evidence/SYS-12/`, `evidence/HUMAN-PILOT-HANDOFF/`. Not free-form drag graph. Not 全部商用.
+
 ## 2026-08-10 - SYS-11 Platform provisioning failure trail PASS
 
 - Recoverable onboarding failures return step trail; Platform UI shows failed/pending honestly and offers fresh retry (new idempotency key).

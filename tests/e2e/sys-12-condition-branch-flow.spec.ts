@@ -1,10 +1,12 @@
 import { expect, test } from '@playwright/test';
+import { mkdirSync } from 'node:fs';
 
 const api = 'http://127.0.0.1:3297';
 const management = 'http://localhost:3298';
 const system = '00000000-0000-4000-8000-000000000001';
 
-test('linear visual flow shows step nodes and condition edges', async ({ page }) => {
+test('condition branch preview shows take and skip on linear spine', async ({ page }) => {
+  mkdirSync('evidence/SYS-12', { recursive: true });
   const stamp = `${Date.now()}`;
   const login = await fetch(`${api}/api/v1/auth/login`, {
     method: 'POST',
@@ -41,8 +43,8 @@ test('linear visual flow shows step nodes and condition edges', async ({ page })
     method: 'POST',
     headers: { ...headers, 'idempotency-key': crypto.randomUUID() },
     body: JSON.stringify({
-      code: `sys10_flow_${stamp}`,
-      name: `SYS10 Flow ${stamp}`,
+      code: `sys12_branch_${stamp}`,
+      name: `SYS12 Branch ${stamp}`,
       steps: [
         {
           name: 'Contact',
@@ -56,6 +58,12 @@ test('linear visual flow shows step nodes and condition edges', async ({ page })
           assigneeEmployeeId: employeeId,
           timeoutMinutes: 60,
           condition: { key: 'upsell', equals: true },
+        },
+        {
+          name: 'Close',
+          type: 'task',
+          assigneeEmployeeId: employeeId,
+          timeoutMinutes: 30,
         },
       ],
     }),
@@ -88,19 +96,17 @@ test('linear visual flow shows step nodes and condition edges', async ({ page })
     [accessToken, refreshToken],
   );
   await page.goto(`${management}/m/workflows`);
-  await expect(page.getByText(`SYS10 Flow ${stamp}`)).toBeVisible();
+  await expect(page.getByText(`SYS12 Branch ${stamp}`)).toBeVisible();
   await page.getByTestId(`workflow-version-open-${definition.id}`).click();
-  await expect(page.getByTestId('workflow-linear-flow')).toBeVisible();
   await expect(page.getByTestId('workflow-linear-flow')).toHaveAttribute(
     'data-flow-mode',
     'linear_with_condition_branches',
   );
-  await expect(page.getByTestId('workflow-flow-node-0')).toContainText('Contact');
-  await expect(page.getByTestId('workflow-flow-node-1')).toContainText('upsell = true');
-  await expect(page.getByText('满足则进入 · upsell = true')).toBeVisible();
-  await expect(page.getByText('否则跳过（无后续步骤）')).toBeVisible();
+  await expect(page.getByTestId('workflow-flow-branches-0')).toContainText('满足则进入 · upsell = true');
+  await expect(page.getByTestId('workflow-flow-branches-0')).toContainText('否则跳过至步骤 3');
+  await expect(page.getByText('不是自由拖拽图编辑器')).toBeVisible();
   await page.screenshot({
-    path: 'evidence/SYS-10/workflow-linear-flow.png',
+    path: 'evidence/SYS-12/condition-branch-flow.png',
     fullPage: true,
   });
 });

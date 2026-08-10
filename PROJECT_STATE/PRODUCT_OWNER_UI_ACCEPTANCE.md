@@ -10,7 +10,7 @@
 | ---------------------- | ---------------------------------------------------------------------------------------------------- |
 | Branch                 | `hardening/COMMERCIAL-COMPLETION`                                                                    |
 | Required HEAD baseline | see `evidence/HUMAN-PILOT-HANDOFF/POST_MATRIX_PREFLIGHT.md`                                          |
-| Database               | `oneday_human_pilot` migrated through `053_sync_gateway`                                             |
+| Database               | `oneday_human_pilot` migrated through `054_channel_permissions`                                      |
 | Ports                  | API `3200` / Consumer `3201` / Employee `3202` / Management `3203` / Platform `3204` / Worker `3205` |
 | Accounts               | `PROJECT_STATE/LOCAL_HUMAN_PILOT_ACCOUNTS.md`                                                        |
 | Runbook                | `PROJECT_STATE/LOCAL_HUMAN_PILOT_RUNBOOK.md`                                                         |

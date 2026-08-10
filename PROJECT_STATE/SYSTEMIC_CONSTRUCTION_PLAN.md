@@ -5,12 +5,12 @@
 
 ## Status
 
-SYS-1…SYS-11 PASS (through provisioning failure trail).
+SYS-1…SYS-12 PASS (through condition branch preview + human-pilot sandbox refresh).
 
 ## Queue
 
 - Product-owner UI sign-off (human)
-- Optional free-form graph editor (multi-week)
+- Optional full free-form drag graph editor (multi-week; SYS-12 is take/skip preview only)
 
 ## Honest day boundary
 

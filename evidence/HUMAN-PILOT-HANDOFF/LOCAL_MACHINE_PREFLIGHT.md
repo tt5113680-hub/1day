@@ -2,15 +2,16 @@
 
 - Date: 2026-08-10 Asia/Shanghai
 - Database: `oneday_human_pilot` (separate from `oneday_v3_test`)
-- Migration: through `053_sync_gateway`
+- Migration: through `054_channel_permissions`
 - Containers: rebuilt on 2026-08-10 against `hardening/COMMERCIAL-COMPLETION`
-- Business-code scope this refresh: pilot seed storefront bindings + restaurant module catalog alignment; Playwright locator contracts updated for module-renderer DOM
+- Seed: role_permissions re-seed after 054; `PILOT-CONSULT` store bindings restored
 
 | Check                               | Result                                                                                 |
 | ----------------------------------- | -------------------------------------------------------------------------------------- |
-| PostgreSQL / migration              | PASS — ledger includes 048–053; seed requires `053_sync_gateway`                       |
+| PostgreSQL / migration              | PASS — ledger includes through `054_channel_permissions`                               |
 | Storefront bindings                 | PASS — three Luckin pilot stores have live `storefront_bindings` + restaurant modules  |
-| API health                          | PASS — `200 { status: ok, database: ready }` on `3200`                                 |
+| Consult CTA                         | PASS — floating 「到店咨询（本地模拟）」 restored via `store_external_actions`          |
+| API health                          | PASS — `200 { status: ok, database: ready }` on `3200/api/v1/health`                   |
 | Worker health                       | PASS — Worker `ok` on `3205`                                                           |
 | Four browser terminals              | PASS — Consumer `3201`, Employee `3202`, Management `3203`, Platform `3204` HTTP `200` |
 | Playwright commercial-ui-alignment  | PASS — 2/2                                                                             |

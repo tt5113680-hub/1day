@@ -51,9 +51,8 @@ export function summarizeCondition(
   return JSON.stringify(condition);
 }
 
-/** Linear (not free-form graph) flow model for version visualization. */
-export function buildLinearFlow(steps: WorkflowStepLike[]): LinearFlow {
-  const nodes: LinearFlowNode[] = steps.map((step, index) => ({
+function toLinearNodes(steps: WorkflowStepLike[]): LinearFlowNode[] {
+  return steps.map((step, index) => ({
     index,
     name: step.name || `步骤 ${index + 1}`,
     type: step.type || 'task',
@@ -64,6 +63,11 @@ export function buildLinearFlow(steps: WorkflowStepLike[]): LinearFlow {
     conditionLabel: summarizeCondition(step.condition),
     hasCondition: Boolean(step.condition && Object.keys(step.condition).length),
   }));
+}
+
+/** Linear (not free-form graph) flow model for version visualization. */
+export function buildLinearFlow(steps: WorkflowStepLike[]): LinearFlow {
+  const nodes = toLinearNodes(steps);
   const edges: LinearFlowEdge[] = [];
   for (let i = 0; i < nodes.length - 1; i += 1) {
     const next = nodes[i + 1]!;
@@ -74,6 +78,52 @@ export function buildLinearFlow(steps: WorkflowStepLike[]): LinearFlow {
     });
   }
   return { nodes, edges };
+}
+
+export type BranchFlowEdgeKind = 'sequence' | 'take' | 'skip';
+
+export type BranchFlowEdge = {
+  from: number;
+  to: number | null;
+  kind: BranchFlowEdgeKind;
+  label: string;
+};
+
+/**
+ * Linear steps with honest condition take/skip branches.
+ * Not a free-form drag graph: fixed left-to-right order, no arbitrary nodes/edges.
+ */
+export type ConditionBranchFlow = {
+  nodes: LinearFlowNode[];
+  edges: BranchFlowEdge[];
+  mode: 'linear_with_condition_branches';
+};
+
+/** Condition branch preview on the linear spine (SYS-12 minimum honest slice). */
+export function buildConditionBranchFlow(steps: WorkflowStepLike[]): ConditionBranchFlow {
+  const nodes = toLinearNodes(steps);
+  const edges: BranchFlowEdge[] = [];
+  for (let i = 0; i < nodes.length - 1; i += 1) {
+    const next = nodes[i + 1]!;
+    if (!next.hasCondition) {
+      edges.push({ from: i, to: i + 1, kind: 'sequence', label: '下一步' });
+      continue;
+    }
+    edges.push({
+      from: i,
+      to: i + 1,
+      kind: 'take',
+      label: `满足则进入 · ${next.conditionLabel}`,
+    });
+    const skipTo = i + 2 < nodes.length ? i + 2 : null;
+    edges.push({
+      from: i,
+      to: skipTo,
+      kind: 'skip',
+      label: skipTo === null ? '否则跳过（无后续步骤）' : `否则跳过至步骤 ${skipTo + 1}`,
+    });
+  }
+  return { nodes, edges, mode: 'linear_with_condition_branches' };
 }
 
 /** Same semantics as API `applies` for local preview only. */

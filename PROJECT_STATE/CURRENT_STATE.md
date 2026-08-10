@@ -4,12 +4,14 @@
 - completed_tasks: 69/69
 - foundation_final_state_commit: 239114e
 - core_final_state_commit: df5ef65
-- last_completed_task: SYS-11 Platform provisioning failure trail PASS
+- last_completed_task: SYS-12 Condition branch flow PASS + human-pilot sandbox refresh
 - current_task: ONEDAY-V3-COMMERCIAL-COMPLETION / human pilot sign-off
-- status: SYS_1_PASS; SYS_2_PASS; SYS_3_PASS; SYS_4_PASS; SYS_4_CONTENT_DISTRIBUTIONS_PASS; SYS_4_WORKFLOW_AUTHORING_PASS; SYS_4_RBAC_ROLE_CREATE_PASS; SYS_5_SCAFFOLD_PASS; SYS_5_VISUAL_PASS; SYS_5_QUICK_ACTIONS_PAINT_PASS; SYS_5_MEMBER_OFFER_PAINT_PASS; SYS_5_COMPARE_STORY_PAINT_PASS; SYS_5_BENEFIT_STORE_INFO_PAINT_PASS; SYS_5_HERO_FLOATING_CONSULT_PAINT_PASS; SYS_6_SCAFFOLD_PASS; SYS_6_MULTI_PRODUCT_PASS; SYS_6_DATA_SCOPES_PASS; SYS_6_WRITE_PATH_SCOPES_PASS; SYS_6_NETWORK_PACKS_PASS; SYS_6_CONTENT_PLACEMENTS_PASS; SYS_6_CATALOG_SCOPES_PASS; SYS_6_MEMBERSHIP_SCOPES_PASS; SYS_6_WORKFLOW_ORG_WRITE_PASS; SYS_6_ROLE_MATRIX_STORE_MANAGER_PASS; SYS_6_ROLE_MATRIX_TENANT_OWNER_PASS; SYS_6_ROLE_MATRIX_NETWORK_PASS; SYS_6_ROLE_MATRIX_MEMBER_PASS; SYS_7_WORKFLOW_VERSIONING_PASS; SYS_8_MEMBER_RESUME_PASS; SYS_9_WORKFLOW_VERSION_PANEL_PASS; SYS_10_WORKFLOW_LINEAR_FLOW_PASS; SYS_11_PROVISIONING_FAILURE_TRAIL_PASS; MATRIX_GAP_CLOSEOUT_COMPLETE; HUMAN_PILOT_SANDBOX_REFRESHED; COMMERCIAL_FIXTURES_GENERATOR_PASS
+- status: SYS_1_PASS; SYS_2_PASS; SYS_3_PASS; SYS_4_PASS; SYS_4_CONTENT_DISTRIBUTIONS_PASS; SYS_4_WORKFLOW_AUTHORING_PASS; SYS_4_RBAC_ROLE_CREATE_PASS; SYS_5_SCAFFOLD_PASS; SYS_5_VISUAL_PASS; SYS_5_QUICK_ACTIONS_PAINT_PASS; SYS_5_MEMBER_OFFER_PAINT_PASS; SYS_5_COMPARE_STORY_PAINT_PASS; SYS_5_BENEFIT_STORE_INFO_PAINT_PASS; SYS_5_HERO_FLOATING_CONSULT_PAINT_PASS; SYS_6_SCAFFOLD_PASS; SYS_6_MULTI_PRODUCT_PASS; SYS_6_DATA_SCOPES_PASS; SYS_6_WRITE_PATH_SCOPES_PASS; SYS_6_NETWORK_PACKS_PASS; SYS_6_CONTENT_PLACEMENTS_PASS; SYS_6_CATALOG_SCOPES_PASS; SYS_6_MEMBERSHIP_SCOPES_PASS; SYS_6_WORKFLOW_ORG_WRITE_PASS; SYS_6_ROLE_MATRIX_STORE_MANAGER_PASS; SYS_6_ROLE_MATRIX_TENANT_OWNER_PASS; SYS_6_ROLE_MATRIX_NETWORK_PASS; SYS_6_ROLE_MATRIX_MEMBER_PASS; SYS_7_WORKFLOW_VERSIONING_PASS; SYS_8_MEMBER_RESUME_PASS; SYS_9_WORKFLOW_VERSION_PANEL_PASS; SYS_10_WORKFLOW_LINEAR_FLOW_PASS; SYS_11_PROVISIONING_FAILURE_TRAIL_PASS; SYS_12_CONDITION_BRANCH_FLOW_PASS; MATRIX_GAP_CLOSEOUT_COMPLETE; HUMAN_PILOT_SANDBOX_REFRESHED; COMMERCIAL_FIXTURES_GENERATOR_PASS
 - branch: hardening/COMMERCIAL-COMPLETION
 - executor: Cursor Agent (2026-08-10; see PROJECT_STATE/EXECUTOR_HANDOFF.md)
-- last_safe_commit: d579d1a
+- last_safe_commit: PENDING_SYS12_COMMIT
+- verified_sys_12_condition_branch_flow: PASS - linear take/skip branch preview (not free-form graph). See PROJECT_STATE/SYS_12_CONDITION_BRANCH_FLOW_ACCEPTANCE.md.
+- verified_human_pilot_sandbox_refresh: PASS - migrated through 054; PILOT-CONSULT store bindings restored; Playwright 4/4. See evidence/HUMAN-PILOT-HANDOFF/.
 - verified_sys_11_provisioning_failure_trail: PASS - honest failure trail + fresh retry. See PROJECT_STATE/SYS_11_PROVISIONING_FAILURE_TRAIL_ACCEPTANCE.md. Commit d579d1a.
 - verified_sys_10_workflow_linear_flow: PASS - @oneday/workflows linear flow + Management visualization. See PROJECT_STATE/SYS_10_WORKFLOW_LINEAR_FLOW_ACCEPTANCE.md. Commit 9624487.
 - verified_sys_9_workflow_version_panel: PASS - Management version panel lists steps/conditions and clone-publishes via existing APIs. See PROJECT_STATE/SYS_9_WORKFLOW_VERSION_PANEL_ACCEPTANCE.md. Commit 78dbf2b.
@@ -42,13 +44,12 @@
 - verified_sys_3: PASS.
 - verified_sys_1_2: PASS.
 - verified_matrix_gap_wave_4: PASS.
-- verified_human_pilot_sandbox_refresh: PASS.
 - verified_commercial_fixtures_generator: PASS.
 - started_at: 2026-08-09T20:29:46+08:00
 - blocker: null
-- next_scope: Product-owner UI sign-off (human). Not claimed as full commercial. Tencent Cloud out of scope (G).
+- next_scope: Product-owner UI sign-off (human). Free-form drag graph remains multi-week. Not claimed as full commercial. Tencent Cloud out of scope (G).
 - progress_p0_covered: 26/26 (100%)
 - progress_matrix_waves: 4/4 close-out complete
-- progress_sys_waves: 6/6 scaffolded + SYS-7..SYS-10 workflow/member remainders landed
+- progress_sys_waves: 6/6 scaffolded + SYS-7..SYS-12 workflow/member/pilot remainders landed
 - verified_pre_pilot_polish: PASS at 268464d.
 - remediation_stage: A-G PASS. See PROJECT_STATE/AUDIT_REMEDIATION_CLOSEOUT.md.

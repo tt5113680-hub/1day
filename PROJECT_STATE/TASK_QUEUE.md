@@ -45,7 +45,8 @@
 - [x] SYS-9 Management workflow version panel PASS — version list + step conditions + panel clone-publish; see `SYS_9_WORKFLOW_VERSION_PANEL_ACCEPTANCE.md`.
 - [x] SYS-10 Workflow linear visual flow PASS — `@oneday/workflows` linear flow + Management visualization; see `SYS_10_WORKFLOW_LINEAR_FLOW_ACCEPTANCE.md`.
 - [x] SYS-11 Platform provisioning failure trail PASS — honest failed/pending steps + fresh retry; see `SYS_11_PROVISIONING_FAILURE_TRAIL_ACCEPTANCE.md`.
-- [ ] HUMAN-PILOT-HANDOFF / product-owner UI acceptance — local sandbox refreshed through migration `053` + storefront bindings (Playwright 4/4); **human sign-off still required**; not auto-claimed as 全部商用. Optional scoped P1 only after product-owner decision.
+- [x] SYS-12 Condition branch flow PASS — linear take/skip preview (not free-form drag graph); see `SYS_12_CONDITION_BRANCH_FLOW_ACCEPTANCE.md`.
+- [ ] HUMAN-PILOT-HANDOFF / product-owner UI acceptance — local sandbox refreshed through migration `054` + consult CTA bindings (Playwright 4/4); **human sign-off still required**; not auto-claimed as 全部商用. Optional scoped P1 only after product-owner decision.
 
 ## Current product-owner acceptance
 
@@ -64,7 +65,7 @@
 - [x] AUDIT REMEDIATION STAGE PASS - A through G are complete; see `PROJECT_STATE/AUDIT_REMEDIATION_CLOSEOUT.md`.
 - [x] PRE-PILOT-POLISH PASS (`268464d`) - completed only the eight approved pilot-experience/deterministic-defect items; acceptance is recorded in `PROJECT_STATE/PRE_PILOT_POLISH_ACCEPTANCE.md` and no Hardening expansion occurred.
 - [ ] HUMAN-PILOT-HANDOFF ACCEPTANCE REQUIRED - an operator must complete `PROJECT_STATE/PRODUCT_OWNER_UI_ACCEPTANCE.md` and `docs/PILOT_ACCEPTANCE_CHECKLIST.md` before any external pilot claim; no public commercial claim without that sign-off.
-- [x] LOCAL HUMAN-PILOT-SANDBOX READY - isolated `oneday_human_pilot` database migrated through `053_sync_gateway`, published restaurant storefront bindings, non-seed local accounts, six localhost services, machine preflight evidence and human runbook are ready. This is not public HTTPS, production acceptance or an external authorization.
+- [x] LOCAL HUMAN-PILOT-SANDBOX READY - isolated `oneday_human_pilot` database migrated through `054_channel_permissions`, published restaurant storefront bindings, `PILOT-CONSULT` store links, non-seed local accounts, six localhost services, machine preflight evidence and human runbook are ready. This is not public HTTPS, production acceptance or an external authorization.
 
 ## Final commercial acceptance status (final)
 

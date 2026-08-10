@@ -193,8 +193,8 @@ try {
   );
   assert.equal(
     latestMigration.rows[0]?.name,
-    '053_sync_gateway',
-    'Human-pilot DB must be migrated through 053_sync_gateway before provisioning',
+    '054_channel_permissions',
+    'Human-pilot DB must be migrated through 054_channel_permissions before provisioning',
   );
   const passwordHash = `scrypt$oneday-human-pilot$${scryptSync(humanPilot.password, 'oneday-human-pilot', 64).toString('base64url')}`;
 
@@ -227,15 +227,22 @@ try {
   const permissions = await pool.query(
     "select id,code from permissions where status='active' and deleted_at is null order by code",
   );
-  for (const [roleIndex, entry] of roles.entries()) {
+  // Re-seed role_permissions from scratch so new permission rows (e.g. 054 channel.*)
+  // do not collide with prior index-derived primary keys.
+  await pool.query(`delete from role_permissions where role_id = any($1::uuid[])`, [
+    roles.map((entry) => entry.id),
+  ]);
+  let rolePermissionSeq = 0;
+  for (const entry of roles) {
     const allowed = permissionScope[entry.scope];
-    for (const [permissionIndex, permission] of permissions.rows.entries()) {
+    for (const permission of permissions.rows) {
       if (allowed && !allowed.has(permission.code)) continue;
       await upsert(
         `insert into role_permissions(id,tenant_id,role_id,permission_id,status) values($1,$2,$3,$4,'active')
          on conflict (role_id,permission_id) do update set status='active',deleted_at=null`,
-        [id(1000 + roleIndex * 100 + permissionIndex), entry.tenantId, entry.id, permission.id],
+        [id(1000 + rolePermissionSeq), entry.tenantId, entry.id, permission.id],
       );
+      rolePermissionSeq += 1;
     }
   }
   const roleForAccount = {
@@ -342,6 +349,20 @@ try {
      on conflict (id) do update set name=excluded.name,status='active',deleted_at=null`,
     [ids.action, humanPilot.tenantA.id],
   );
+  for (const [storeIndex, storeId] of ids.stores.entries()) {
+    await upsert(
+      `insert into store_external_actions(id,tenant_id,store_id,external_action_id,description,sort_order,enabled) values($1,$2,$3,$4,$5,$6,true)
+       on conflict (store_id,external_action_id) do update set description=excluded.description,sort_order=excluded.sort_order,enabled=true,deleted_at=null`,
+      [
+        id(870 + storeIndex),
+        humanPilot.tenantA.id,
+        storeId,
+        ids.action,
+        '到店咨询（本地模拟），写入本地客户/任务/审计，不连接外部平台。',
+        1,
+      ],
+    );
+  }
   for (const [actionId, code, name, platform, targetUrl, rank] of [
     [
       ids.meituanAction,
