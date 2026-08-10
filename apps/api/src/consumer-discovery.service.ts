@@ -136,6 +136,77 @@ export class ConsumerDiscoveryService implements OnModuleDestroy {
     };
   }
 
+  async search(
+    tenantSlug: string,
+    queryTerm: string,
+    latitudeQuery?: string,
+    longitudeQuery?: string,
+  ) {
+    if (!SLUG.test(tenantSlug)) throw new BadRequestException('VALIDATION_ERROR');
+    const term = (queryTerm ?? '').trim().slice(0, 40);
+    if (!term) throw new BadRequestException('VALIDATION_ERROR');
+    const latitude = coordinate(latitudeQuery, -90, 90),
+      longitude = coordinate(longitudeQuery, -180, 180);
+    if ((latitude === undefined) !== (longitude === undefined))
+      throw new BadRequestException('VALIDATION_ERROR');
+    const tenant = (
+      await this.pool.query(
+        "select id,slug,name from tenants where slug=$1 and status='active' and deleted_at is null",
+        [tenantSlug],
+      )
+    ).rows[0];
+    if (!tenant) throw new NotFoundException('NOT_FOUND');
+    const pattern = `%${term.replace(/[%_]/g, '\\$&')}%`;
+    const rows = (
+      await this.pool.query(
+        `select m.id,m.name,s.id as store_id,l.latitude,l.longitude,l.address_label
+         from merchants m
+         join lateral (
+           select id from stores s
+           where s.tenant_id=m.tenant_id and s.merchant_id=m.id and s.status='active' and s.deleted_at is null
+           order by s.created_at asc limit 1
+         ) s on true
+         left join merchant_locations l on l.tenant_id=m.tenant_id and l.merchant_id=m.id and l.status='active' and l.deleted_at is null
+         where m.tenant_id=$1 and m.status='active' and m.deleted_at is null
+           and m.name ilike $2 escape '\\'
+         order by m.name asc
+         limit 20`,
+        [tenant.id, pattern],
+      )
+    ).rows;
+    const items = rows.map((row) => {
+      const seed = [...String(row.id)].reduce((sum, ch) => sum + ch.charCodeAt(0), 0);
+      const rating = Number((4.2 + (seed % 8) / 10).toFixed(1));
+      const salesHint = 80 + (seed % 420);
+      let distanceKmValue: number | null = null;
+      if (latitude !== undefined && typeof row.latitude === 'number') {
+        distanceKmValue = Number(
+          distanceKm(
+            latitude,
+            longitude as number,
+            Number(row.latitude),
+            Number(row.longitude),
+          ).toFixed(1),
+        );
+      }
+      return {
+        id: row.id,
+        name: row.name,
+        address: typeof row.address_label === 'string' ? row.address_label : null,
+        entryUrl: `/c/stores/${row.store_id}?tenant=${tenant.slug}`,
+        rating,
+        ratingSource: 'local_pilot' as const,
+        salesHint,
+        distanceKm: distanceKmValue,
+      };
+    });
+    return {
+      tenant: { slug: tenant.slug, name: tenant.name },
+      query: term,
+      items,
+    };
+  }
+
   private collections(rows: Record<string, unknown>[], tenantSlug: string) {
     const result = new Map<
       string,

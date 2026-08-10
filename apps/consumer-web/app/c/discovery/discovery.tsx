@@ -56,6 +56,7 @@ export default function DiscoveryPage({ data }: { data: Discovery }) {
   const tenantQ = encodeURIComponent(data.tenant.slug);
   const discoveryHref = `/c/discovery?tenant=${tenantQ}`;
   const entryHref = `/c/entry?tenant=${tenantQ}`;
+  const searchHref = `/c/search?tenant=${tenantQ}`;
   const locate = () => {
     if (!navigator.geolocation)
       return setNotice('当前设备不支持定位，请使用渠道推荐或固定商圈发现。');
@@ -100,15 +101,10 @@ export default function DiscoveryPage({ data }: { data: Discovery }) {
             <button className={styles.locateChip} type="button" onClick={locate}>
               {data.locationRequired ? '开启定位' : '当前位置附近'}
             </button>
-            <label className={styles.search}>
+            <a className={styles.search} href={searchHref} aria-label="搜索商家（美团 App 同构入口）">
               <span className={styles.srOnly}>搜索商家</span>
-              <input
-                type="search"
-                placeholder="搜索商家 / 品类（美团 App 同构入口）"
-                disabled
-                aria-disabled="true"
-              />
-            </label>
+              <span className={styles.searchBox}>搜索商家 / 品类</span>
+            </a>
           </header>
           <p className={styles.eyebrow}>{data.tenant.name} · 美团 App 发现面</p>
           <h1 className={styles.title}>附近</h1>

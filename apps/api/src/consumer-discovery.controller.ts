@@ -16,4 +16,17 @@ export class ConsumerDiscoveryController {
       error: null,
     };
   }
+  @Get('search')
+  async search(
+    @Query('tenant') tenant: string | undefined,
+    @Query('q') q: string | undefined,
+    @Query('latitude') latitude: string | undefined,
+    @Query('longitude') longitude: string | undefined,
+  ) {
+    return {
+      data: await this.discovery.search(tenant ?? '', q ?? '', latitude, longitude),
+      meta: { public: true },
+      error: null,
+    };
+  }
 }

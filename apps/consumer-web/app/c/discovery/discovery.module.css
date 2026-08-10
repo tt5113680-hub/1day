@@ -33,9 +33,11 @@
   display: block;
   min-width: 0;
 }
-.search input {
+.searchBox {
+  display: flex;
   width: 100%;
   min-height: 40px;
+  align-items: center;
   border: 1px solid var(--od-border);
   border-radius: 999px;
   padding: 0 14px;
@@ -43,6 +45,15 @@
   color: var(--od-text-muted);
   font: inherit;
   font-size: 13px;
+  text-decoration: none;
+  cursor: text;
+}
+.searchBox:hover {
+  border-color: var(--od-brand-600);
+}
+.searchBox:focus-visible {
+  outline: 3px solid color-mix(in srgb, var(--od-brand-600) 45%, transparent);
+  outline-offset: 3px;
 }
 .srOnly {
   position: absolute;

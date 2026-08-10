@@ -74,7 +74,7 @@
 | ID | 美团对标（H5） | ONEDAY 现路由 | 状态 | 备注 |
 | -- | -------------- | ------------- | ---- | ---- |
 | MH5-01 | 首页 / 附近 | `/c/discovery` | PARTIAL | 已有附近/好评/人气；须继续美团附近页同构 |
-| MH5-02 | 搜索 | — | GAP | |
+| MH5-02 | 搜索 | `/c/search` | PARITY (首刀) | `/api/v1/consumer/search` 租户隔离检索；壳与结果链路美团 App 同构 |
 | MH5-03 | 商家页 / 到店主页 | `/c/stores/[id]` | PARTIAL | |
 | MH5-04 | 团购 / 套餐 | `/c/stores/[id]/group-buy` | PARTIAL | |
 | MH5-05 | 菜单 / 点单 | `/c/stores/[id]/menu` | PARTIAL | |
@@ -136,4 +136,4 @@
 
 ## 6. 当前下一刀
 
-**W6 省市区代理（MP-01~03）PASS. W∞-1（省市区代理深层运营：结算/配额/审批, MP-03 深层）PASS** `evidence/G1-MEITUAN-PARITY/WINF/ACCEPTANCE.md`. **下一刀：** **W∞-2** — 其余 GAP 逐页（Consumer H5 搜索/下单/订单、Management PC 深页、美团代理后台更深/Meituan parity 细部），直到主人签 G1。
+**W6 省市区代理（MP-01~03）PASS. W∞-1（省市区代理深层运营：结算/配额/审批, MP-03 深层）PASS** `evidence/G1-MEITUAN-PARITY/WINF/ACCEPTANCE.md`. **W∞-2（Consumer H5 搜索, MH5-02）PASS** `evidence/G1-MEITUAN-PARITY/WINF2/ACCEPTANCE.md`. **下一刀：** **W∞-3** — 其余 GAP 逐页（Consumer H5 下单/订单、Management PC 深页、美团代理后台更深/Meituan parity 细部），直到主人签 G1。
