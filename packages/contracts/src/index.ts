@@ -1,10 +1,20 @@
 export const contractsPackage = '@oneday/contracts';
 export {
-  filterMenuCatalog,
+  CHANNEL_MENU_CATALOG,
+  CIRCLE_MENU_CATALOG,
+  EMPLOYEE_MENU_CATALOG,
   MANAGEMENT_MENU_CATALOG,
+  PLATFORM_MENU_CATALOG,
+  STORE_MANAGER_MENU_ITEM,
+  defaultHomeHref,
+  filterMenuCatalog,
+  menuCatalogFor,
+  resolveAvailableProducts,
   resolveMenuProduct,
   type MenuCatalogItem,
   type MenuDto,
   type MenuItemDto,
   type MenuProduct,
+  type MenuProductLink,
+  type MenuScopeDto,
 } from './menu';

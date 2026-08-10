@@ -109,7 +109,7 @@ test('Batch 1 visual foundation captures Management and Platform administration 
     'system',
   );
   await expect(platform.locator('.od-admin-shell')).toBeVisible();
-  await expect(platform.locator('.od-admin-shell__sidebar nav a')).toHaveCount(8);
+  await expect(platform.locator('.od-admin-shell__sidebar nav a')).toHaveCount(9);
   await platform.screenshot({
     path: 'evidence/COMMERCIAL-UI-FOUNDATION/platform-desktop-1440.png',
     fullPage: true,

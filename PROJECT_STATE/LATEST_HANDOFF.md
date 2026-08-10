@@ -8,21 +8,22 @@
 ## Current task — systemic commercial productization (D3)
 
 - branch: `hardening/COMMERCIAL-COMPLETION`
-- last_verified: SYS-1…SYS-6 scaffold PASS (SYS-5 includes visual)
-- current_task: SYS-6 continuation (other shells / role homes) **or** optional storefront paint extraction
-- status: `SYS_1_PASS` … `SYS_6_SCAFFOLD_PASS`; **not** 全部商用
+- last_verified: SYS-6 multi-product menus + role homes scaffold PASS
+- current_task: SYS-6 remainder (data_scopes / deeper role packages) **or** optional storefront paint extraction
+- status: `SYS_1_PASS` … `SYS_6_MULTI_PRODUCT_PASS`; **not** 全部商用
 - blocker: null
 - progress: P0 26/26; SYS waves scaffolded 6/6 with multi-week remainders
 
 ### Completed this session
 
-1. SYS-5 scaffold + visual (`--od-sf-*`, Consumer hex retirement, shared chrome)
-2. SYS-6 scaffold: `GET /api/v1/me/menu` + Management shell DTO consumer
-3. Evidence `evidence/SYS-5/`, `evidence/SYS-6/`
+1. Platform/Channel/Circle/Employee menu catalogs + API filtering
+2. Platform shell DTO + mode switcher; Employee bottom nav DTO
+3. Store Manager home `/e/store` + role-home redirects (`homeHref` / scopes)
+4. Evidence `evidence/SYS-6/`; tests menu-dto 5/5, sys-6-menu-dto 2/2
 
 ### Usage note
 
-This window completed SYS-5 visual + SYS-6 scaffold. Prefer a **new Agent window** before long SYS-6 role-homes work (approaching high usage).
+Continue in this window if usage allows; prefer new window before long data_scopes / paint extraction work if ≥95%.
 
 ### Owner cooperation (front-loaded)
 
@@ -41,7 +42,7 @@ This window completed SYS-5 visual + SYS-6 scaffold. Prefer a **new Agent window
 5. PROJECT_STATE/SYSTEMIC_CONSTRUCTION_PLAN.md
 6. git status
 
-状态：SYS-1…6 scaffold PASS（SYS-5含 visual）；P0 26/26；下一任务 SYS-6 续作（Platform/Employee/Channel/Circle menu + role homes）或可选 storefront paint 提取。
+状态：SYS-1…6 PASS（含 SYS-6 multi-product）；P0 26/26；下一任务 SYS-6 余量（data_scopes / 更深角色包）或可选 storefront paint 提取。
 工作目录仅 D:\ONEDAY_V3。按 SYSTEMIC 波次施工。禁止页级补丁。不得宣称全部商用。不做腾讯云。
 已获 A–H：commit、push 分支、本地 Docker/测试。继续施工；用量≥95%再换新窗口。
 ```

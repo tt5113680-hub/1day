@@ -35,6 +35,7 @@ export function ManagementShell({
         const payload = (await response.json()).data as {
           context?: string;
           items?: MenuItemDto[];
+          homeHref?: string;
         };
         if (cancelled) return;
         if (payload.context) setContextLabel(payload.context);

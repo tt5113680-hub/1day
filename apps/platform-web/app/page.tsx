@@ -1,5 +1,5 @@
-import { redirect } from 'next/navigation';
+import { PlatformRoleHome } from './platform-role-home';
 
 export default function PlatformHome() {
-  redirect('/p/dashboard');
+  return <PlatformRoleHome />;
 }

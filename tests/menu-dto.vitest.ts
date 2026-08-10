@@ -1,7 +1,13 @@
 import { describe, expect, it } from 'vitest';
 import {
-  filterMenuCatalog,
+  EMPLOYEE_MENU_CATALOG,
   MANAGEMENT_MENU_CATALOG,
+  PLATFORM_MENU_CATALOG,
+  STORE_MANAGER_MENU_ITEM,
+  defaultHomeHref,
+  filterMenuCatalog,
+  menuCatalogFor,
+  resolveAvailableProducts,
   resolveMenuProduct,
 } from '../packages/contracts/src/menu';
 
@@ -16,8 +22,27 @@ describe('menu DTO catalog filter', () => {
     expect(items.map((item) => item.key)).toEqual(['overview', 'customers']);
   });
 
-  it('defaults unknown product to management', () => {
+  it('defaults unknown product to management and resolves known products', () => {
     expect(resolveMenuProduct(undefined)).toBe('management');
     expect(resolveMenuProduct('channel')).toBe('channel');
+    expect(menuCatalogFor('platform')).toBe(PLATFORM_MENU_CATALOG);
+    expect(menuCatalogFor('employee')).toBe(EMPLOYEE_MENU_CATALOG);
+  });
+
+  it('filters platform outbox for platform.read and exposes available products', () => {
+    const items = filterMenuCatalog(PLATFORM_MENU_CATALOG, ['platform.read']);
+    expect(items.map((item) => item.key)).toContain('outbox');
+    expect(items.map((item) => item.key)).not.toContain('onboarding');
+    const available = resolveAvailableProducts(['platform.read', 'task.read']);
+    expect(available.map((item) => item.product)).toEqual(
+      expect.arrayContaining(['platform', 'channel', 'circle', 'employee']),
+    );
+  });
+
+  it('defaults employee home and store-manager item href', () => {
+    expect(
+      defaultHomeHref('employee', filterMenuCatalog(EMPLOYEE_MENU_CATALOG, ['task.read'])),
+    ).toBe('/e/workbench');
+    expect(STORE_MANAGER_MENU_ITEM.href).toBe('/e/store');
   });
 });

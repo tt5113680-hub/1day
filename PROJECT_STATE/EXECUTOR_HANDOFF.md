@@ -33,9 +33,9 @@
 
 ## Current engineering focus
 
-**Systemic waves (D3) — SYS-6 continuation:**
+**Systemic waves (D3) — SYS-6 remainder:**
 
-SYS-1…SYS-6 scaffolds PASS (SYS-5 includes visual tokens). Continue SYS-6: Platform/Employee/Channel/Circle menu products, Store Manager / role homes, scopes. Optional: storefront module paint extraction. No page-level patches. Product-owner UI acceptance remains a human gate. Do not claim 全部商用. Tencent Cloud out of scope (G).
+SYS-1…SYS-6 multi-product menus PASS (SYS-5 includes visual tokens; SYS-6 includes Platform/Employee/Channel/Circle shells + Store Manager home). Continue SYS-6 remainder: data_scopes, deeper role packages, Store Manager write surfaces. Optional: storefront module paint extraction. No page-level patches. Product-owner UI acceptance remains a human gate. Do not claim 全部商用. Tencent Cloud out of scope (G).
 
 ## Secrets and cloud
 

@@ -118,6 +118,9 @@ importers:
 
   apps/employee-web:
     dependencies:
+      '@oneday/contracts':
+        specifier: workspace:*
+        version: link:../../packages/contracts
       '@oneday/session-client':
         specifier: workspace:*
         version: link:../../packages/session-client
@@ -192,6 +195,9 @@ importers:
 
   apps/platform-web:
     dependencies:
+      '@oneday/contracts':
+        specifier: workspace:*
+        version: link:../../packages/contracts
       '@oneday/session-client':
         specifier: workspace:*
         version: link:../../packages/session-client

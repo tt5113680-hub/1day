@@ -5,7 +5,14 @@ import { randomUUID } from 'node:crypto';
 import { createRequire } from 'node:module';
 import test from 'node:test';
 import { URL } from 'node:url';
-import { filterMenuCatalog, MANAGEMENT_MENU_CATALOG } from '../packages/contracts/dist/index.js';
+import {
+  CHANNEL_MENU_CATALOG,
+  CIRCLE_MENU_CATALOG,
+  EMPLOYEE_MENU_CATALOG,
+  MANAGEMENT_MENU_CATALOG,
+  PLATFORM_MENU_CATALOG,
+  filterMenuCatalog,
+} from '../packages/contracts/dist/index.js';
 
 const { Client } = createRequire(new URL('../apps/api/package.json', import.meta.url))('pg');
 const databaseUrl = 'postgresql://oneday:oneday_local_only@localhost:5434/oneday_v3_test';
@@ -130,6 +137,9 @@ test('SYS-6: /me/menu filters Management items by permission set', async () => {
   const ownerData = (await ownerMenu.json()).data;
   assert.equal(ownerData.product, 'management');
   assert.ok(ownerData.roleCodes.includes('owner'));
+  assert.equal(ownerData.homeHref, '/');
+  assert.ok(Array.isArray(ownerData.scopes));
+  assert.ok(Array.isArray(ownerData.availableProducts));
   assert.deepEqual(
     ownerData.items.map((item) => item.key),
     filterMenuCatalog(MANAGEMENT_MENU_CATALOG, ['tenant.manage']).map((item) => item.key),
@@ -149,4 +159,172 @@ test('SYS-6: /me/menu filters Management items by permission set', async () => {
     ['overview', 'customers'],
   );
   assert.ok(!readerData.items.some((item) => item.key === 'roles'));
+});
+
+test('SYS-6: platform/channel/circle/employee menus + store-manager home', async () => {
+  await ready();
+  const stamp = `${Date.now()}${Math.floor(Math.random() * 1000)}`;
+  const tenantId = randomUUID();
+  const systemTenant = '00000000-0000-4000-8000-000000000001';
+  const platformUserId = randomUUID();
+  const managerUserId = randomUUID();
+  const platformRoleId = randomUUID();
+  const managerRoleId = randomUUID();
+  const platformMembershipId = randomUUID();
+  const managerMembershipId = randomUUID();
+  const orgId = randomUUID();
+  const merchantId = randomUUID();
+  const employeeId = randomUUID();
+  const storeId = randomUUID();
+  const client = new Client({ connectionString: databaseUrl });
+  await client.connect();
+  try {
+    await client.query(
+      "insert into tenants(id,slug,name,status,created_by,updated_by) values($1,$2,$3,'active',null,null)",
+      [tenantId, `sys6-roles-${stamp}`, `SYS6 Roles ${stamp}`],
+    );
+    await client.query(
+      "insert into users(id,email,display_name,password_hash,status,created_by,updated_by) select $1,$2,$3,password_hash,'active',null,null from users where email='admin@system.local'",
+      [platformUserId, `platform-sys6-${stamp}@example.local`, 'SYS6 Platform'],
+    );
+    await client.query(
+      "insert into users(id,email,display_name,password_hash,status,created_by,updated_by) select $1,$2,$3,password_hash,'active',null,null from users where email='admin@system.local'",
+      [managerUserId, `manager-sys6-${stamp}@example.local`, 'SYS6 Manager'],
+    );
+    await client.query(
+      "insert into memberships(id,tenant_id,user_id,status,created_by,updated_by) values($1,$2,$3,'active',null,null)",
+      [platformMembershipId, systemTenant, platformUserId],
+    );
+    await client.query(
+      "insert into memberships(id,tenant_id,user_id,status,created_by,updated_by) values($1,$2,$3,'active',null,null)",
+      [managerMembershipId, tenantId, managerUserId],
+    );
+    await client.query(
+      "insert into roles(id,tenant_id,code,name,status,created_by,updated_by) values($1,$2,'platform_admin','Platform Admin','active',null,null)",
+      [platformRoleId, systemTenant],
+    );
+    await client.query(
+      "insert into roles(id,tenant_id,code,name,status,created_by,updated_by) values($1,$2,'store_manager','Store Manager','active',null,null)",
+      [managerRoleId, tenantId],
+    );
+    await client.query(
+      'insert into membership_roles(id,tenant_id,membership_id,role_id) values($1,$2,$3,$4)',
+      [randomUUID(), systemTenant, platformMembershipId, platformRoleId],
+    );
+    await client.query(
+      'insert into membership_roles(id,tenant_id,membership_id,role_id) values($1,$2,$3,$4)',
+      [randomUUID(), tenantId, managerMembershipId, managerRoleId],
+    );
+    const platformRead = await client.query(
+      "select id from permissions where code='platform.read' limit 1",
+    );
+    const platformManage = await client.query(
+      "select id from permissions where code='platform.manage' limit 1",
+    );
+    const circleManage = await client.query(
+      "select id from permissions where code='circle.manage' limit 1",
+    );
+    const taskRead = await client.query(
+      "select id from permissions where code='task.read' limit 1",
+    );
+    const customerRead = await client.query(
+      "select id from permissions where code='customer.read' limit 1",
+    );
+    assert.ok(platformRead.rows[0]?.id);
+    assert.ok(platformManage.rows[0]?.id);
+    assert.ok(circleManage.rows[0]?.id);
+    assert.ok(taskRead.rows[0]?.id);
+    assert.ok(customerRead.rows[0]?.id);
+    for (const permissionId of [
+      platformRead.rows[0].id,
+      platformManage.rows[0].id,
+      circleManage.rows[0].id,
+    ]) {
+      await client.query(
+        "insert into role_permissions(id,tenant_id,role_id,permission_id,status,created_by,updated_by) values($1,$2,$3,$4,'active',null,null)",
+        [randomUUID(), systemTenant, platformRoleId, permissionId],
+      );
+    }
+    for (const permissionId of [taskRead.rows[0].id, customerRead.rows[0].id]) {
+      await client.query(
+        "insert into role_permissions(id,tenant_id,role_id,permission_id,status,created_by,updated_by) values($1,$2,$3,$4,'active',null,null)",
+        [randomUUID(), tenantId, managerRoleId, permissionId],
+      );
+    }
+    await client.query(
+      "insert into organizations(id,tenant_id,code,name,organization_type,status,created_by,updated_by) values($1,$2,$3,$4,'merchant','active',null,null)",
+      [orgId, tenantId, `ORG-${stamp}`, `Org ${stamp}`],
+    );
+    await client.query(
+      "insert into merchants(id,tenant_id,organization_id,code,name,status,created_by,updated_by) values($1,$2,$3,$4,$5,'active',null,null)",
+      [merchantId, tenantId, orgId, `M-${stamp}`, `Merchant ${stamp}`],
+    );
+    await client.query(
+      "insert into employees(id,tenant_id,membership_id,organization_id,employee_code,title,status,created_by,updated_by) values($1,$2,$3,$4,$5,'Store Manager','active',null,null)",
+      [employeeId, tenantId, managerMembershipId, orgId, `E-${stamp}`],
+    );
+    await client.query(
+      "insert into stores(id,tenant_id,organization_id,merchant_id,code,name,status,created_by,updated_by) values($1,$2,$3,$4,$5,$6,'active',null,null)",
+      [storeId, tenantId, orgId, merchantId, `S-${stamp}`, `Store ${stamp}`],
+    );
+    await client.query(
+      "insert into store_managers(id,tenant_id,store_id,employee_id,status,created_by,updated_by) values($1,$2,$3,$4,'active',null,null)",
+      [randomUUID(), tenantId, storeId, employeeId],
+    );
+  } finally {
+    await client.end();
+  }
+
+  const platformToken = await login(
+    `platform-sys6-${stamp}@example.local`,
+    'ChangeMe123!',
+    systemTenant,
+  );
+  const managerToken = await login(`manager-sys6-${stamp}@example.local`, 'ChangeMe123!', tenantId);
+
+  for (const [product, catalog, permissions] of [
+    ['platform', PLATFORM_MENU_CATALOG, ['platform.read', 'platform.manage', 'circle.manage']],
+    ['channel', CHANNEL_MENU_CATALOG, ['platform.read', 'platform.manage', 'circle.manage']],
+    ['circle', CIRCLE_MENU_CATALOG, ['platform.read', 'platform.manage', 'circle.manage']],
+  ]) {
+    const response = await fetch(`${base}/api/v1/me/menu?product=${product}`, {
+      headers: {
+        authorization: `Bearer ${platformToken}`,
+        'x-tenant-context': systemTenant,
+        'x-request-id': randomUUID(),
+      },
+    });
+    assert.equal(response.status, 200);
+    const data = (await response.json()).data;
+    assert.equal(data.product, product);
+    assert.deepEqual(
+      data.items.map((item) => item.key),
+      filterMenuCatalog(catalog, permissions).map((item) => item.key),
+    );
+    assert.ok(data.homeHref);
+    assert.ok(data.availableProducts.some((item) => item.product === 'platform'));
+    assert.ok(data.availableProducts.some((item) => item.product === 'channel'));
+    assert.ok(data.availableProducts.some((item) => item.product === 'circle'));
+  }
+
+  const employeeMenu = await fetch(`${base}/api/v1/me/menu?product=employee`, {
+    headers: {
+      authorization: `Bearer ${managerToken}`,
+      'x-tenant-context': tenantId,
+      'x-request-id': randomUUID(),
+    },
+  });
+  assert.equal(employeeMenu.status, 200);
+  const employeeData = (await employeeMenu.json()).data;
+  assert.equal(employeeData.product, 'employee');
+  assert.equal(employeeData.homeHref, '/e/store');
+  assert.ok(employeeData.roleCodes.includes('store_manager'));
+  assert.ok(employeeData.items.some((item) => item.key === 'store'));
+  assert.ok(employeeData.scopes.some((scope) => scope.type === 'store' && scope.id === storeId));
+  assert.deepEqual(
+    employeeData.items.filter((item) => item.key !== 'store').map((item) => item.key),
+    filterMenuCatalog(EMPLOYEE_MENU_CATALOG, ['task.read', 'customer.read']).map(
+      (item) => item.key,
+    ),
+  );
 });

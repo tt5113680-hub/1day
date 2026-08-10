@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## 2026-08-10 - SYS-6 multi-product menus + role homes scaffold PASS
+
+- Extended `@oneday/contracts` with Platform/Channel/Circle/Employee catalogs plus `homeHref` / `scopes` / `availableProducts`.
+- API `GET /api/v1/me/menu` filters all products; Store Manager gets 门店 tab + store scopes from `store_managers`.
+- Platform shell DTO + mode switcher; Employee bottom nav DTO; `/e/store` role home; Platform/Employee root redirects via `homeHref`.
+- Evidence: `PROJECT_STATE/SYS_6_ACCEPTANCE.md`, `evidence/SYS-6/`. Tests: `menu-dto.vitest` 5/5, `sys-6-menu-dto` 2/2. data_scopes E2E remain. Not 全部商用.
+
 ## 2026-08-10 - SYS-6 Role IA menu DTO scaffold PASS
 
 - Added `@oneday/contracts` MenuDto + Management catalog filter; API `GET /api/v1/me/menu?product=management`.
