@@ -8,7 +8,7 @@
 ## Current task - systemic commercial productization (D3)
 
 - branch: `hardening/COMMERCIAL-COMPLETION`
-- HEAD (pushed): tip `896f191`; safe feature `67a888e`
+- HEAD (pushed): tip `06d06ec`; safe feature `67a888e`
 - last_safe_commit: 67a888e
 - last_verified: SYS-25 Generic external-actions catalog PASS
 - current_task: human product-owner UI sign-off (do NOT auto-PASS) **or** scoped P1 after owner decision
