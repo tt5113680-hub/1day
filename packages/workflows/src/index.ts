@@ -126,6 +126,56 @@ export function buildConditionBranchFlow(steps: WorkflowStepLike[]): ConditionBr
   return { nodes, edges, mode: 'linear_with_condition_branches' };
 }
 
+/**
+ * Dedicated condition card IA for STA (SYS-18).
+ * Bound to existing equals-only API; not a free-form branch editor.
+ */
+export type ConditionCard = {
+  stepIndex: number;
+  stepName: string;
+  key: string;
+  equals: string | number | boolean;
+  whenTrueLabel: string;
+  whenFalseLabel: string;
+  apiLimit: 'key_equals_only';
+  editor: 'not_free_form_drag';
+};
+
+export function buildConditionCard(
+  steps: WorkflowStepLike[],
+  stepIndex: number,
+): ConditionCard | null {
+  if (!Number.isInteger(stepIndex) || stepIndex < 0 || stepIndex >= steps.length) {
+    return null;
+  }
+  const step = steps[stepIndex]!;
+  if (!isWorkflowCondition(step.condition)) return null;
+  const skipTo = stepIndex + 1 < steps.length ? stepIndex + 1 : null;
+  return {
+    stepIndex,
+    stepName: step.name || `步骤 ${stepIndex + 1}`,
+    key: step.condition.key,
+    equals: step.condition.equals,
+    whenTrueLabel: `满足则执行本步骤（继续时间线）`,
+    whenFalseLabel:
+      skipTo === null
+        ? '不满足则跳过本步骤（无后续步骤）'
+        : `不满足则跳过本步骤，进入步骤 ${skipTo + 1}`,
+    apiLimit: 'key_equals_only',
+    editor: 'not_free_form_drag',
+  };
+}
+
+/** All condition cards on the linear spine (steps without equals gates omitted). */
+export function buildConditionCards(steps: WorkflowStepLike[]): ConditionCard[] {
+  const cards: ConditionCard[] = [];
+  for (let i = 0; i < steps.length; i += 1) {
+    const card = buildConditionCard(steps, i);
+    if (card) cards.push(card);
+  }
+  return cards;
+}
+
 /** Same semantics as API `applies` for local preview only. */
 export function previewStepApplies(
   condition: Record<string, unknown> | null | undefined,

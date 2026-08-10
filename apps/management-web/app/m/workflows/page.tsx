@@ -11,6 +11,7 @@ import {
 } from '@oneday/ui';
 import {
   buildConditionBranchFlow,
+  buildConditionCard,
   collectConditionKeys,
   duplicateStepAt,
   insertStepAt,
@@ -780,6 +781,31 @@ export default function WorkflowsPage() {
                     <option value="false">false</option>
                   </select>
                 </label>
+                {(() => {
+                  const card = buildConditionCard(draftStepsForPreview, index);
+                  if (!card) return null;
+                  return (
+                    <div
+                      className={styles.conditionCard}
+                      data-testid={`workflow-draft-condition-card-${index}`}
+                      data-api-limit={card.apiLimit}
+                      data-editor={card.editor}
+                    >
+                      <strong>条件卡片</strong>
+                      <p>
+                        {card.key} = {String(card.equals)} · API 仅支持 key/equals，不是自由拖拽图编辑器。
+                      </p>
+                      <ul>
+                        <li data-testid={`workflow-draft-condition-when-true-${index}`}>
+                          When true：{card.whenTrueLabel}
+                        </li>
+                        <li data-testid={`workflow-draft-condition-when-false-${index}`}>
+                          When false：{card.whenFalseLabel}
+                        </li>
+                      </ul>
+                    </div>
+                  );
+                })()}
               </div>
             </div>
           ))}
@@ -1231,6 +1257,31 @@ export default function WorkflowsPage() {
                             </select>
                           </label>
                         </div>
+                        {(() => {
+                          const card = buildConditionCard(versionPanel.steps, index);
+                          if (!card) return null;
+                          return (
+                            <div
+                              className={styles.conditionCard}
+                              data-testid={`workflow-panel-condition-card-${index}`}
+                              data-api-limit={card.apiLimit}
+                              data-editor={card.editor}
+                            >
+                              <strong>条件卡片</strong>
+                              <p>
+                                {card.key} = {String(card.equals)} · API 仅支持 key/equals，不是自由拖拽图编辑器。
+                              </p>
+                              <ul>
+                                <li data-testid={`workflow-panel-condition-when-true-${index}`}>
+                                  When true：{card.whenTrueLabel}
+                                </li>
+                                <li data-testid={`workflow-panel-condition-when-false-${index}`}>
+                                  When false：{card.whenFalseLabel}
+                                </li>
+                              </ul>
+                            </div>
+                          );
+                        })()}
                       </div>
                     </div>
                   ))}

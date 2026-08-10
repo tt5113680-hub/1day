@@ -5,7 +5,7 @@
 
 ## Status
 
-SYS-1…SYS-17 PASS (through STA insert rails).
+SYS-1…SYS-18 PASS (through STA condition card IA).
 
 ## Recommended authoring direction (owner 2026-08-10)
 
@@ -15,15 +15,14 @@ SYS-1…SYS-17 PASS (through STA insert rails).
 
 Next engineering slices if continuing auto-construction:
 
-1. **SYS-18** — condition card IA（when-true / when-false readout bound to existing equals API）
-2. **SYS-19** — start-context presets for path simulator
+1. **SYS-19** — start-context presets for path simulator
 
 ## Queue
 
 - Product-owner UI sign-off (human) — parallel gate
-- SYS-18…19 STA slices (preferred over free-form drag)
+- SYS-19 STA slice (preferred over free-form drag)
 - Free-form DAG canvas — deferred; needs PRODUCT_FREEZE + engine capability
 
 ## Honest day boundary
 
-External commercial claims blocked without human sign-off. STA continues the honest linear model already proven in SYS-10…17.
+External commercial claims blocked without human sign-off. STA continues the honest linear model already proven in SYS-10…18.

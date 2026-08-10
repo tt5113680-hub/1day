@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## 2026-08-10 - SYS-18 STA condition card IA PASS
+
+- Added `@oneday/workflows.buildConditionCard(s)` with when-true / when-false readout and `apiLimit: key_equals_only`; Management create + version panel show condition cards.
+- Evidence: `SYS_18_CONDITION_CARD_ACCEPTANCE.md`, `evidence/SYS-18/`. Unit 1/1 + Playwright 1/1. Not free-form drag graph. Not 全部商用.
+
 ## 2026-08-10 - SYS-17 STA insert rails PASS
 
 - Added `@oneday/workflows.insertStepAt` / `duplicateStepAt`; Management create form + version panel expose between-step「在此插入」and「复制」on the linear spine.
