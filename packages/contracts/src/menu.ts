@@ -49,7 +49,7 @@ export const MANAGEMENT_MENU_CATALOG: MenuCatalogItem[] = [
     key: 'customers',
     href: '/m/customers',
     label: '客户资产',
-    requireAny: ['tenant.manage', 'customer.read'],
+    requireAny: ['tenant.manage', 'customer.manage'],
   },
   {
     key: 'workflows',

@@ -8,19 +8,17 @@
 ## Current task - systemic commercial productization (D3)
 
 - branch: `hardening/COMMERCIAL-COMPLETION`
-- last_verified: SYS-4 RBAC role create UI PASS
-- current_task: SYS remainders (Role matrix E2E; advanced workflow versioning)
-- status: `SYS_4_RBAC_ROLE_CREATE_PASS`; **not** claimed as full commercial
+- last_verified: SYS-6 Role matrix Store Manager package PASS
+- current_task: Role matrix remainders (Tenant Manager/Owner; Channel/Circle/Platform; Member) or advanced workflow versioning
+- status: `SYS_6_ROLE_MATRIX_STORE_MANAGER_PASS`; **not** claimed as full commercial
 - blocker: null
-- progress: P0 26/26; SYS waves scaffolded 6/6 with multi-week remainders
+- progress: P0 26/26; Store Manager matrix slice landed; other roles multi-week
 
 ### Completed this session
 
-1. SYS-6 workflow/org write paths
-2. SYS-4 content distributions UI
-3. SYS-4 workflow authoring UI
-4. SYS-4 RBAC role create UI
-5. Evidence + tests green; pushed to origin
+1. SYS-6 Store Manager role matrix E2E slice
+2. Management CRM menu gated off bare `customer.read`
+3. Evidence + tests green
 
 ### Usage note
 
@@ -43,7 +41,7 @@
 5. PROJECT_STATE/SYSTEMIC_CONSTRUCTION_PLAN.md
 6. git status
 
-状态：SYS-4 RBAC role create PASS；workflow authoring PASS；workflow/org write PASS；content distributions PASS；P0 26/26；下一任务 Role matrix E2E。
+状态：SYS-6 Store Manager role matrix PASS；SYS-4 RBAC/workflow/distributions PASS；P0 26/26；下一任务 Tenant Manager/Owner 或 Channel/Circle Role matrix。
 工作目录仅 D:\ONEDAY_V3。禁止页级补丁。不得宣称全部商用。不做腾讯云。
 已获 A–H。继续施工；用量达到 90%–95% 再换新窗口，中途不要停。
 ```

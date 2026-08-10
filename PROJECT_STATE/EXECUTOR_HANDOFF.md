@@ -33,9 +33,9 @@
 
 ## Current engineering focus
 
-**Systemic waves (D3) - SYS remainders:**
+**Systemic waves (D3) - Role matrix remainders:**
 
-SYS-4 RBAC role create + workflow authoring + content distributions PASS; SYS-6 workflow/org write PASS. Continue: Role matrix E2E. No page-level patches. Not claimed as full commercial. Tencent Cloud out of scope (G).
+SYS-6 Store Manager role matrix slice PASS. Continue: Tenant Manager/Owner chrome, Channel/Circle/Platform packages, or Member journey. No page-level patches. Not claimed as full commercial. Tencent Cloud out of scope (G).
 
 **Usage:** keep constructing until **90%-95%**, then new window. Do not stop early.
 

@@ -17,9 +17,9 @@ describe('menu DTO catalog filter', () => {
     expect(items.map((item) => item.key)).toEqual(MANAGEMENT_MENU_CATALOG.map((item) => item.key));
   });
 
-  it('hides owner-only settings when caller only has customer.read', () => {
+  it('exposes overview for customer.read without Management CRM entry', () => {
     const items = filterMenuCatalog(MANAGEMENT_MENU_CATALOG, ['customer.read']);
-    expect(items.map((item) => item.key)).toEqual(['overview', 'customers']);
+    expect(items.map((item) => item.key)).toEqual(['overview']);
   });
 
   it('exposes store nav for tenant.read store-manager mode', () => {

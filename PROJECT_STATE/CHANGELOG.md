@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## 2026-08-10 - SYS-6 Role matrix E2E Store Manager package PASS
+
+- Closed-loop Store Manager harness: server menus, store scopes, scoped catalog/membership/content writes, and owner-only denials.
+- Management 客户资产 no longer opens on bare `customer.read` (requires `tenant.manage`/`customer.manage`) so Employee read does not leak CRM chrome.
+- Evidence: `SYS_6_ROLE_MATRIX_STORE_MANAGER_ACCEPTANCE.md`, `evidence/SYS-6/`. Tests: `sys-6-role-matrix-store-manager` 1/1, `menu-dto.vitest` 6/6, `sys-6-menu-dto` 2/2. Not 全部商用.
+
 ## 2026-08-10 - SYS-4 RBAC role create UI PASS
 
 - Management `/m/roles-permissions` creates roles via existing `POST /api/v1/rbac/roles`; role list accepts `tenant.manage` as well as `tenant.read`.

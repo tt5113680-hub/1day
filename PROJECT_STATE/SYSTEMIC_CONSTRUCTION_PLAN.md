@@ -12,17 +12,18 @@
 | Deliverable                                        | Status                                      |
 | -------------------------------------------------- | ------------------------------------------- |
 | SYS-1…SYS-5                                        | PASS                                        |
-| SYS-6 write paths / scopes / packs                 | PASS (membership/catalog/content/network/workflow/org) |
-| SYS-4 content distributions UI                     | PASS                                        |
-| SYS-4 workflow authoring UI (create+publish)       | PASS                                        |
-| SYS-4 RBAC role create UI                          | PASS                                        |
-| SYS-5 storefront paint extractions                   | PASS                                        |
+| SYS-6 write paths / scopes / packs                 | PASS                                        |
+| SYS-4 content / workflow / RBAC ops UIs            | PASS                                        |
+| SYS-6 Role matrix — Store Manager package          | PASS                                        |
+| SYS-5 storefront paints                            | PASS                                        |
 
 ## Queue
 
-- Full ROLE_PRODUCT_MATRIX E2E
-- Advanced workflow versioning (new draft versions / condition editors)
+- Role matrix: Tenant Manager vs Owner chrome
+- Role matrix: Channel / Circle / Platform packages
+- Role matrix: Member Consumer journey
+- Advanced workflow versioning
 
 ## Honest day boundary
 
-SYS-4 ops verticals (outbox, distributions, workflow authoring, role create) and SYS-6 write/scopes landed. Full ROLE_PRODUCT_MATRIX E2E remains multi-week - not claimed as full commercial.
+Store Manager package closed-loop landed. Full nine-role ROLE_PRODUCT_MATRIX remains multi-week - not claimed as full commercial.

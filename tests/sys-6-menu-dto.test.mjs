@@ -156,7 +156,7 @@ test('SYS-6: /me/menu filters Management items by permission set', async () => {
   const readerData = (await readerMenu.json()).data;
   assert.deepEqual(
     readerData.items.map((item) => item.key),
-    ['overview', 'customers'],
+    ['overview'],
   );
   assert.ok(!readerData.items.some((item) => item.key === 'roles'));
 });

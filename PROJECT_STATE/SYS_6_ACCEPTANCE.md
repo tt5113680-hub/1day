@@ -1,8 +1,8 @@
-# SYS-6 Role IA / multi-product + data_scopes + write-path + network packs + content placements + catalog + membership + workflow/org write
+# SYS-6 Role IA / multi-product + data_scopes + write-path + network packs + content placements + catalog + membership + workflow/org write + Store Manager matrix slice
 
 ## Result
 
-`SYS_6_MULTI_PRODUCT_PASS` + `SYS_6_DATA_SCOPES_PASS` + `SYS_6_WRITE_PATH_SCOPES_PASS` + `SYS_6_NETWORK_PACKS_PASS` + `SYS_6_CONTENT_PLACEMENTS_PASS` + `SYS_6_CATALOG_SCOPES_PASS` + `SYS_6_MEMBERSHIP_SCOPES_PASS` + `SYS_6_WORKFLOW_ORG_WRITE_PASS` (local engineering). Not full Role matrix E2E across every controller. Not 全部商用. Not Tencent Cloud.
+`SYS_6_MULTI_PRODUCT_PASS` + `SYS_6_DATA_SCOPES_PASS` + `SYS_6_WRITE_PATH_SCOPES_PASS` + `SYS_6_NETWORK_PACKS_PASS` + `SYS_6_CONTENT_PLACEMENTS_PASS` + `SYS_6_CATALOG_SCOPES_PASS` + `SYS_6_MEMBERSHIP_SCOPES_PASS` + `SYS_6_WORKFLOW_ORG_WRITE_PASS` + `SYS_6_ROLE_MATRIX_STORE_MANAGER_PASS` (local engineering). Not full nine-role Role matrix E2E. Not 全部商用. Not Tencent Cloud.
 
 ## Delivered
 
@@ -18,6 +18,7 @@
 | Catalog scopes     | Store managers list/create/update services + offers only on scoped stores |
 | Membership scopes  | Store managers list enrollments/benefits and grant only on scoped stores |
 | Workflow/org write | Management overview accepts `workflow.read` / `organization.read` (not only `tenant.manage`); UI starts instances + decides approvals; org/merchant/store create; `workflow.manage`/`tenant.manage` may decide without being assignee |
+| Store Manager matrix | Closed-loop menu+scope+writes+denials; Management customers requires `customer.manage`/`tenant.manage` |
 | Shells             | Platform/Employee DTO nav + role homes                                                               |
 
 ## Evidence
@@ -32,14 +33,16 @@
 - `tests/sys-6-catalog-scopes.test.mjs` 1/1
 - `tests/sys-6-membership-scopes.test.mjs` 1/1
 - `tests/sys-6-workflow-org-write.test.mjs` 1/1
+- `tests/sys-6-role-matrix-store-manager.test.mjs` 1/1
 - `tests/batch-2-offer-operations.test.mjs` 1/1
 - `tests/circle-002-api.test.mjs` 1/1
 - `tests/page-m-013-api.test.mjs` 1/1
 - `tests/page-m-005-api.test.mjs` 1/1
 - `evidence/SYS-6/`
+- Store Manager slice: `PROJECT_STATE/SYS_6_ROLE_MATRIX_STORE_MANAGER_ACCEPTANCE.md`
 
 ## Honest remainder
 
 - Dedicated `channel.read/manage` permission codes still deferred (packs reuse platform/circle.manage + scopes).
-- Full ROLE_PRODUCT_MATRIX E2E and Store Manager draft content authoring / scheduling remain multi-week.
-- Workflow definition authoring UI (create template/steps from Management) remains deeper multi-week work for advanced versioning/condition editors; create+publish + start/decide + org create are wired.
+- Full ROLE_PRODUCT_MATRIX E2E (Tenant Manager/Owner, Channel, Circle, Platform, Member) remains multi-week.
+- Advanced workflow versioning (new draft versions / condition editors) remains deeper multi-week work; create+publish + start/decide + org create are wired.
