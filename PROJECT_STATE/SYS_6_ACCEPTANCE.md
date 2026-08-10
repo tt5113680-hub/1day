@@ -42,4 +42,4 @@
 
 - Dedicated `channel.read/manage` permission codes still deferred (packs reuse platform/circle.manage + scopes).
 - Full ROLE_PRODUCT_MATRIX E2E and Store Manager draft content authoring / scheduling remain multi-week.
-- Workflow definition authoring UI (create template/steps from Management) remains deeper multi-week work; this gate wires start/decide + org create to existing APIs.
+- Workflow definition authoring UI (create template/steps from Management) remains deeper multi-week work for advanced versioning/condition editors; create+publish + start/decide + org create are wired.

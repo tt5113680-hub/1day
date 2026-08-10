@@ -34,6 +34,7 @@
 - [x] SYS-6 store-manager membership scopes PASS — assigned managers list enrollments/benefits and grant on scoped stores only; Management menu 会员与权益 for `tenant.read`; see `SYS_6_ACCEPTANCE.md`.
 - [x] SYS-6 workflow/org write paths PASS — Management overview accepts `workflow.read`/`organization.read`; UI starts instances + decides approvals; org/merchant/store create via existing APIs; see `SYS_6_ACCEPTANCE.md`.
 - [x] SYS-4 content distributions UI PASS — Management `/m/content` registers pending-authorization channel distributions via existing API; see `SYS_4_ACCEPTANCE.md`.
+- [x] SYS-4 workflow authoring UI PASS — Management `/m/workflows` create+publish via existing workflow APIs; see `SYS_4_ACCEPTANCE.md`.
 - [ ] HUMAN-PILOT-HANDOFF / product-owner UI acceptance — local sandbox refreshed through migration `053` + storefront bindings (Playwright 4/4); **human sign-off still required**; not auto-claimed as 全部商用. Optional scoped P1 only after product-owner decision.
 
 ## Current product-owner acceptance

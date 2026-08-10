@@ -12,6 +12,13 @@ import {
 import { useCallback, useEffect, useState } from 'react';
 import styles from './page.module.css';
 
+type Employee = { id: string; display_name: string; employee_code: string; status: string };
+type StepDraft = {
+  name: string;
+  type: 'task' | 'approval';
+  assigneeEmployeeId: string;
+  timeoutMinutes: number;
+};
 type Data = {
   templates: {
     id: string;
@@ -42,24 +49,50 @@ type Data = {
 };
 const api = process.env.NEXT_PUBLIC_API_BASE_URL ?? 'http://127.0.0.1:3001';
 const sessionApi = new SessionApiClient(api);
+const emptyStep = (assigneeEmployeeId = ''): StepDraft => ({
+  name: '',
+  type: 'approval',
+  assigneeEmployeeId,
+  timeoutMinutes: 60,
+});
+
 export default function WorkflowsPage() {
   const [state, setState] = useState<'loading' | 'ready' | 'forbidden' | 'error'>('loading');
   const [data, setData] = useState<Data | null>(null);
+  const [employees, setEmployees] = useState<Employee[]>([]);
   const [filter, setFilter] = useState('');
   const [busy, setBusy] = useState<string | null>(null);
   const [note, setNote] = useState('');
+  const [code, setCode] = useState('');
+  const [name, setName] = useState('');
+  const [steps, setSteps] = useState<StepDraft[]>([emptyStep()]);
   const load = useCallback(
     async (status = filter) => {
       if (!(await sessionApi.context())) return setState('forbidden');
       setState('loading');
       try {
-        const response = await sessionApi.request(
-          `${api}/api/v1/management/workflows${status ? `?status=${status}` : ''}`,
-          { headers: {} },
-        );
+        const [response, orgResponse] = await Promise.all([
+          sessionApi.request(
+            `${api}/api/v1/management/workflows${status ? `?status=${status}` : ''}`,
+            { headers: {} },
+          ),
+          sessionApi.request(`${api}/api/v1/management/organization-employees`, { headers: {} }),
+        ]);
         if ([401, 403].includes(response.status)) return setState('forbidden');
         if (!response.ok) throw Error('LOAD');
         setData((await response.json()).data);
+        if (orgResponse.ok) {
+          const orgData = (await orgResponse.json()).data as { employees: Employee[] };
+          const active = orgData.employees.filter((employee) => employee.status === 'active');
+          setEmployees(active);
+          setSteps((current) =>
+            current.map((step) =>
+              step.assigneeEmployeeId
+                ? step
+                : { ...step, assigneeEmployeeId: active[0]?.id ?? '' },
+            ),
+          );
+        }
         setState('ready');
       } catch {
         setState('error');
@@ -68,6 +101,56 @@ export default function WorkflowsPage() {
     [filter],
   );
   useEffect(() => void load(), [load]);
+  const createAndPublish = async () => {
+    if (!code.trim() || !name.trim()) {
+      setNote('请填写流程编码与名称。');
+      return;
+    }
+    if (
+      steps.some(
+        (step) => !step.name.trim() || !step.assigneeEmployeeId || step.timeoutMinutes < 1,
+      )
+    ) {
+      setNote('每个步骤都需要名称、责任人和超时分钟数。');
+      return;
+    }
+    setBusy('create');
+    setNote('');
+    try {
+      const create = await sessionApi.request(`${api}/api/v1/workflows`, {
+        method: 'POST',
+        headers: {
+          'content-type': 'application/json',
+          'idempotency-key': crypto.randomUUID(),
+        },
+        body: JSON.stringify({ code, name, steps }),
+      });
+      if (!create.ok) throw new Error('CREATE');
+      const definition = (await create.json()).data as {
+        id: string;
+        draftVersionId: string;
+        version: number;
+      };
+      const publish = await sessionApi.request(`${api}/api/v1/workflows/${definition.id}/publish`, {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({
+          versionId: definition.draftVersionId,
+          definitionVersion: definition.version,
+        }),
+      });
+      if (!publish.ok) throw new Error('PUBLISH');
+      setCode('');
+      setName('');
+      setSteps([emptyStep(employees[0]?.id ?? '')]);
+      setNote(`流程「${name}」已创建并发布，可启动实例。`);
+      await load();
+    } catch {
+      setNote('流程未创建或未发布，请确认具备流程管理权限与步骤责任人。');
+    } finally {
+      setBusy(null);
+    }
+  };
   const startInstance = async (template: Data['templates'][number]) => {
     if (!template.published_version_id) {
       setNote('该模板尚未发布，无法启动实例。');
@@ -154,7 +237,7 @@ export default function WorkflowsPage() {
       <AdminPageHeader
         eyebrow="ONEDAY / 商户运营流程"
         title="让每个流程实例都可定位、可推进"
-        description="模板、运行实例、责任人、超时与待审批均从已发布流程和实例步骤中实时聚合；审批与启动复用既有流程写接口。"
+        description="创建并发布模板、启动实例与审批推进均复用既有流程写接口；不另造第二套 API。"
         actions={
           <label className={styles.filter}>
             实例状态
@@ -180,6 +263,122 @@ export default function WorkflowsPage() {
           {note}
         </p>
       )}
+      <Card className={styles.author}>
+        <h2>创建并发布流程模板</h2>
+        <div className={styles.form}>
+          <label>
+            编码
+            <input
+              aria-label="流程编码"
+              value={code}
+              onChange={(event) => setCode(event.target.value)}
+              maxLength={80}
+            />
+          </label>
+          <label>
+            名称
+            <input
+              aria-label="流程名称"
+              value={name}
+              onChange={(event) => setName(event.target.value)}
+              maxLength={160}
+            />
+          </label>
+        </div>
+        {steps.map((step, index) => (
+          <div className={styles.stepRow} key={`step-${index}`}>
+            <label>
+              步骤名称
+              <input
+                aria-label={`步骤${index + 1}名称`}
+                value={step.name}
+                onChange={(event) =>
+                  setSteps((value) =>
+                    value.map((item, i) =>
+                      i === index ? { ...item, name: event.target.value } : item,
+                    ),
+                  )
+                }
+              />
+            </label>
+            <label>
+              类型
+              <select
+                aria-label={`步骤${index + 1}类型`}
+                value={step.type}
+                onChange={(event) =>
+                  setSteps((value) =>
+                    value.map((item, i) =>
+                      i === index
+                        ? { ...item, type: event.target.value as StepDraft['type'] }
+                        : item,
+                    ),
+                  )
+                }
+              >
+                <option value="approval">审批</option>
+                <option value="task">任务</option>
+              </select>
+            </label>
+            <label>
+              责任人
+              <select
+                aria-label={`步骤${index + 1}责任人`}
+                value={step.assigneeEmployeeId}
+                onChange={(event) =>
+                  setSteps((value) =>
+                    value.map((item, i) =>
+                      i === index ? { ...item, assigneeEmployeeId: event.target.value } : item,
+                    ),
+                  )
+                }
+              >
+                <option value="">选择员工</option>
+                {employees.map((employee) => (
+                  <option key={employee.id} value={employee.id}>
+                    {employee.display_name} · {employee.employee_code}
+                  </option>
+                ))}
+              </select>
+            </label>
+            <label>
+              超时（分钟）
+              <input
+                aria-label={`步骤${index + 1}超时分钟`}
+                type="number"
+                min={1}
+                value={step.timeoutMinutes}
+                onChange={(event) =>
+                  setSteps((value) =>
+                    value.map((item, i) =>
+                      i === index
+                        ? { ...item, timeoutMinutes: Number(event.target.value) || 1 }
+                        : item,
+                    ),
+                  )
+                }
+              />
+            </label>
+          </div>
+        ))}
+        <div className={styles.actions}>
+          <Button
+            tone="secondary"
+            onClick={() => setSteps((value) => [...value, emptyStep(employees[0]?.id ?? '')])}
+          >
+            添加步骤
+          </Button>
+          {steps.length > 1 && (
+            <Button tone="secondary" onClick={() => setSteps((value) => value.slice(0, -1))}>
+              移除末步
+            </Button>
+          )}
+          <Button disabled={busy === 'create' || !employees.length} onClick={() => void createAndPublish()}>
+            创建并发布
+          </Button>
+        </div>
+        {!employees.length && <p className={styles.hint}>需要至少一名在岗员工作为步骤责任人。</p>}
+      </Card>
       <section className={styles.metrics}>
         <MetricCard label="流程模板" value={data.templates.length} hint="已配置流程" />
         <MetricCard

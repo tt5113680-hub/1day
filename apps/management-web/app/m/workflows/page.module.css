@@ -41,6 +41,54 @@
   gap: 8px;
 }
 
+.author {
+  margin-top: 24px;
+  padding: 22px;
+}
+
+.author h2 {
+  margin: 0 0 14px;
+  font-size: 18px;
+}
+
+.form,
+.stepRow {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.form {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.form label,
+.stepRow label {
+  display: grid;
+  gap: 5px;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.form input,
+.stepRow input,
+.stepRow select {
+  min-height: 42px;
+  padding: 10px;
+  border: 1px solid var(--od-border);
+  border-radius: var(--od-radius-sm);
+  color: var(--od-ink);
+  background: var(--od-surface);
+  font: inherit;
+}
+
+.hint {
+  margin: 8px 0 0;
+  color: var(--od-text-muted);
+  font-size: 13px;
+}
+
 .filter {
   display: grid;
   gap: 6px;
@@ -131,14 +179,18 @@
     padding: 28px 18px;
   }
   .metrics,
-  .grid {
+  .grid,
+  .form,
+  .stepRow {
     grid-template-columns: 1fr 1fr;
   }
 }
 
 @media (max-width: 520px) {
   .metrics,
-  .grid {
+  .grid,
+  .form,
+  .stepRow {
     grid-template-columns: 1fr;
   }
 }

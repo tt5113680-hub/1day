@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## 2026-08-10 - SYS-4 workflow authoring UI PASS
+
+- Management `/m/workflows` creates and publishes workflow templates via existing `POST /api/v1/workflows` + publish; assignee picker uses organization-employees.
+- Evidence: `SYS_4_ACCEPTANCE.md`, `evidence/SYS-4/`. Tests: `sys-4-workflow-authoring` 1/1, `core-010-e2e` 1/1. Not 全部商用.
+
 ## 2026-08-10 - SYS-6 workflow/org write paths + SYS-4 content distributions UI PASS
 
 - Management workflow/org overviews accept `workflow.read` / `organization.read` (not only `tenant.manage`); AuthorizationService gains `requireAny`.
