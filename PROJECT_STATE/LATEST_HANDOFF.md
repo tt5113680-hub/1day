@@ -8,9 +8,9 @@
 ## Current task - systemic commercial productization (D3)
 
 - branch: `hardening/COMMERCIAL-COMPLETION`
-- HEAD (pushed): tip after SYS-20 state record
+- HEAD (pushed): tip `4e7133c`; safe feature `e29caab`
 - last_safe_commit: e29caab
-- last_verified: SYS-20 STA list DnD reorder PASS
+- last_verified: SYS-20 STA list DnD reorder PASS; human-pilot Playwright 4/4 recheck
 - current_task: Human product-owner UI sign-off (engineering must not mark PASS)
 - status: `SYS_20_LIST_DND_REORDER_PASS`; STA eng SYS-17..20 complete; **not** claimed as full commercial
 - blocker: null
@@ -23,6 +23,7 @@
 2. SYS-18 STA condition card IA (`d957edd`)
 3. SYS-19 STA start-context presets (`8627f2c`)
 4. SYS-20 STA list DnD reorder (`e29caab`)
+5. Human-pilot sandbox recheck Playwright 4/4 (engineering only; no UI sign-off)
 
 ### Next remainders (honest)
 
@@ -39,7 +40,7 @@
 ### New-window paste
 
 ```text
-读并执行：
+Read and execute:
 1. PROJECT_STATE/EXECUTOR_HANDOFF.md
 2. PROJECT_STATE/LATEST_HANDOFF.md
 3. PROJECT_STATE/DECISION_REQUIRED.md
@@ -48,9 +49,9 @@
 6. PROJECT_STATE/WORKFLOW_AUTHORING_UX_RECOMMENDATION.md
 7. git status
 
-状态：SYS-20 PASS（safe e29caab；tip 见 LATEST_HANDOFF）；STA eng SYS-17..20 完成；P0 26/26；工作区干净。
-设计裁决：不做 free-form drag 画布；STA 已落地至 list DnD。
-下一工程：协助 human pilot 沙箱/走查（不得代签 PRODUCT_OWNER_UI_ACCEPTANCE）；无更多 STA eng 切片除非产品另开。
-禁止页级补丁。工作目录仅 D:\ONEDAY_V3。不得宣称全部商用。不做腾讯云。
-已获 A–H。继续施工；用量达到 90%–95% 再换新窗口，中途不要停。
+Status: SYS-20 PASS (safe e29caab; tip in LATEST_HANDOFF); STA eng SYS-17..20 done; P0 26/26; clean tree.
+Design: no free-form drag canvas; STA landed through list DnD.
+Next: assist human pilot sandbox/walkthrough (do NOT sign PRODUCT_OWNER_UI_ACCEPTANCE); no more STA eng slices unless product opens new ones.
+No page-level patches. Writable root only D:\ONEDAY_V3. Do not claim full commercial. No Tencent Cloud.
+A-H granted. Continue until 90%-95% usage, then new window; do not stop mid-run.
 ```
