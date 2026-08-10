@@ -9,7 +9,7 @@
 
 - branch: `hardening/COMMERCIAL-COMPLETION`
 - HEAD (pushed): tip after SYS-19 state record
-- last_safe_commit: PENDING_SYS19_COMMIT
+- last_safe_commit: 8627f2c
 - last_verified: SYS-19 STA start-context presets PASS
 - current_task: Human product-owner UI sign-off (engineering must not mark PASS)
 - status: `SYS_19_START_CONTEXT_PRESETS_PASS`; STA eng SYS-17?19 complete; **not** claimed as full commercial
@@ -21,7 +21,7 @@
 
 1. SYS-17 STA insert rails (`2a913f8`)
 2. SYS-18 STA condition card IA (`d957edd`)
-3. SYS-19 STA start-context presets (this commit)
+3. SYS-19 STA start-context presets (`8627f2c`)
 
 ### Next remainders (honest)
 
@@ -48,7 +48,7 @@
 6. PROJECT_STATE/WORKFLOW_AUTHORING_UX_RECOMMENDATION.md
 7. git status
 
-???SYS-19 PASS?safe ? LATEST_HANDOFF??STA eng SYS-17?19 ???P0 26/26???????
+???SYS-19 PASS?safe 8627f2c?tip ? LATEST_HANDOFF??STA eng SYS-17?19 ???P0 26/26???????
 ??????? free-form drag ???STA ??? insert rails / condition cards / start-context presets?
 ??????? human pilot ??/??????? PRODUCT_OWNER_UI_ACCEPTANCE????? STA eng ?????????
 ???????????? D:\ONEDAY_V3????????????????
