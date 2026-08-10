@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## 2026-08-10 - SYS-34 Membership ledger + revoke PASS
+
+- Added Management membership ledger (`GET .../ledger`) and revoke (`POST .../revokes`) on `member_benefit_ledger`.
+- `/m/memberships` shows balances + grant/redeem/revoke timeline; Employee redeem remains `/e/memberships`.
+- Evidence: `SYS_34_MEMBERSHIP_LEDGER_ACCEPTANCE.md`, `evidence/SYS-34/`. API 1/1 + Playwright 1/1. Not 全部商用.
+
 ## 2026-08-10 - Phase-1 commercial closed-loop plan
 
 - Added `PHASE1_COMMERCIAL_CLOSED_LOOP_PLAN.md`: P1-A local loop → P1-B promo visual floor → P1-C public HTTPS → P1-D owner sign-off.
