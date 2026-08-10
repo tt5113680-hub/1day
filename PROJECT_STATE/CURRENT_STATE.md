@@ -9,15 +9,15 @@
 - status: SYS_1_PASS; SYS_2_PASS; SYS_3_PASS; SYS_4_PASS; SYS_5_SCAFFOLD_PASS; SYS_5_VISUAL_PASS; MATRIX_GAP_CLOSEOUT_COMPLETE; HUMAN_PILOT_SANDBOX_REFRESHED; COMMERCIAL_FIXTURES_GENERATOR_PASS
 - branch: hardening/COMMERCIAL-COMPLETION
 - executor: Cursor Agent (2026-08-10; see PROJECT_STATE/EXECUTOR_HANDOFF.md)
-- last_safe_commit: pending SYS-5 visual commit
-- verified_sys_5_visual: PASS â€” Consumer store CSS hex retired to `--od-sf-*`; shared chrome Section/Empty/icons. See PROJECT_STATE/SYS_5_ACCEPTANCE.md and evidence/SYS-5/.
-- verified_sys_5_scaffold: PASS â€” `@oneday/storefront-renderer` package; token hole `--od-brand-50` closed; Management Page Builder imports shared outline.
-- verified_sys_4: PASS â€” Platform `/p/outbox` DLQ list + replay via existing Outbox APIs. See PROJECT_STATE/SYS_4_ACCEPTANCE.md and evidence/SYS-4/.
-- verified_sys_3: PASS â€” `@oneday/sync-client` wired into Management dashboard, Employee workbench, Consumer storefront. See PROJECT_STATE/SYS_3_ACCEPTANCE.md and evidence/SYS-3/.
-- verified_sys_1_2: PASS â€” store-scoped outbound; operating_channels shell; member_wallet module; Page Builder whitelist editors. See PROJECT_STATE/SYS_1_2_ACCEPTANCE.md and evidence/SYS-1/ + evidence/SYS-2/.
-- verified_matrix_gap_wave_4: PASS â€” M-02 packaging, XT-02 depth, RC-01 rebuild report. See PROJECT_STATE/MATRIX_GAP_WAVE_4_ACCEPTANCE.md and evidence/MATRIX-GAP-WAVE-4/.
-- verified_human_pilot_sandbox_refresh: PASS â€” oneday_human_pilot through 053; storefront bindings; Playwright 4/4.
-- verified_commercial_fixtures_generator: PASS â€” scripts/generate-commercial-fixtures.mjs; evidence/COMMERCIAL-FIXTURES/; tests/commercial-fixture-generator.test.mjs 1/1.
+- last_safe_commit: 8dac84f
+- verified_sys_5_visual: PASS â€?Consumer store CSS hex retired to `--od-sf-*`; shared chrome Section/Empty/icons. See PROJECT_STATE/SYS_5_ACCEPTANCE.md and evidence/SYS-5/.
+- verified_sys_5_scaffold: PASS â€?`@oneday/storefront-renderer` package; token hole `--od-brand-50` closed; Management Page Builder imports shared outline.
+- verified_sys_4: PASS â€?Platform `/p/outbox` DLQ list + replay via existing Outbox APIs. See PROJECT_STATE/SYS_4_ACCEPTANCE.md and evidence/SYS-4/.
+- verified_sys_3: PASS â€?`@oneday/sync-client` wired into Management dashboard, Employee workbench, Consumer storefront. See PROJECT_STATE/SYS_3_ACCEPTANCE.md and evidence/SYS-3/.
+- verified_sys_1_2: PASS â€?store-scoped outbound; operating_channels shell; member_wallet module; Page Builder whitelist editors. See PROJECT_STATE/SYS_1_2_ACCEPTANCE.md and evidence/SYS-1/ + evidence/SYS-2/.
+- verified_matrix_gap_wave_4: PASS â€?M-02 packaging, XT-02 depth, RC-01 rebuild report. See PROJECT_STATE/MATRIX_GAP_WAVE_4_ACCEPTANCE.md and evidence/MATRIX-GAP-WAVE-4/.
+- verified_human_pilot_sandbox_refresh: PASS â€?oneday_human_pilot through 053; storefront bindings; Playwright 4/4.
+- verified_commercial_fixtures_generator: PASS â€?scripts/generate-commercial-fixtures.mjs; evidence/COMMERCIAL-FIXTURES/; tests/commercial-fixture-generator.test.mjs 1/1.
 - started_at: 2026-08-09T20:29:46+08:00
 - blocker: null
 - next_scope: SYS-6 Role IA / server menu DTO (optional SYS-5 paint extraction can continue in parallel later). Product-owner UI sign-off remains human. Still no page-level patches. Not a public å…¨éƒ¨å•†ç”¨ claim. Tencent Cloud out of scope (G).
