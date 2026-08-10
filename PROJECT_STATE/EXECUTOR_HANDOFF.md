@@ -35,7 +35,7 @@
 
 **Systemic waves (D3) - remainders:**
 
-SYS-6 role matrix packages + SYS-7 workflow versioning API PASS. Continue: Management workflow version UI (no page hex patches) or cross-device Member login. Not claimed as full commercial. Tencent Cloud out of scope (G).
+SYS-6 role matrix + SYS-7 workflow versioning PASS at `d5ec123`. **WIP in working tree:** Member `resume` API only (no UI/tests) — finish as SYS-8 or restore. Not claimed as full commercial. Tencent Cloud out of scope (G).
 
 **Usage:** keep constructing until **90%-95%**, then new window. Do not stop early.
 
