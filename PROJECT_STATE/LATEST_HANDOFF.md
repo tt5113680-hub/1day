@@ -8,7 +8,7 @@
 ## Current task - Phase-1 commercial closed loop
 
 - branch: `hardening/COMMERCIAL-COMPLETION`
-- HEAD (pushed): PENDING_TIP
+- HEAD (pushed): b43738e
 - last_safe_commit: 6e55247
 - last_verified: SYS-34 Membership ledger + revoke PASS
 - current_task: Phase-1 P1-A/P1-B continue; human UI sign-off do NOT auto-PASS; P1-C blocked on G
