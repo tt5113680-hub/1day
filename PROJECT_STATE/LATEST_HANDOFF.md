@@ -8,8 +8,8 @@
 ## Current task - systemic commercial productization (D3)
 
 - branch: `hardening/COMMERCIAL-COMPLETION`
-- HEAD (pushed): tip PENDING_SYS23_PUSH
-- last_safe_commit: PENDING_SYS23_COMMIT
+- HEAD (pushed): tip PENDING_SYS23_STATE_PIN
+- last_safe_commit: d09bcc4
 - last_verified: SYS-23 Management attribution menu discoverability PASS
 - current_task: SYS-24 customer merge/transfer UX (preferred) **or** generic external-actions CRUD **or** human product-owner UI sign-off
 - status: `SYS_23_ATTRIBUTION_MENU_PASS`; **not** claimed as full commercial
@@ -17,10 +17,10 @@
 - progress: P0 26/26
 - working_tree: clean after commit
 
-### Completed prior window (verified)
+### Completed prior window (verified + pushed)
 
 1. SYS-22 ONE-CODE consumer landing (`d5ac530`)
-2. SYS-23 attribution menu discoverability (this commit)
+2. SYS-23 attribution menu discoverability (`d09bcc4`)
 
 ### Next remainders (honest)
 
@@ -48,7 +48,7 @@ Read and execute:
 6. PROJECT_STATE/SYSTEMIC_COMMERCIAL_GAP_ANALYSIS.md
 7. git status
 
-Status: SYS-23 PASS; P0 26/26; clean tree.
+Status: SYS-23 PASS (safe d09bcc4); P0 26/26; clean tree.
 Next eng: SYS-24 customer merge/transfer UX (S1). Parallel human PRODUCT_OWNER_UI_ACCEPTANCE (do NOT auto-sign).
 No page-level patches. Writable root only D:\ONEDAY_V3. Do not claim full commercial. No Tencent Cloud.
 A-H granted. Continue until 90%-95% usage, then new window; do not stop mid-run.
