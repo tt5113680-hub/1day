@@ -317,6 +317,11 @@ async function enrichTenant(tenant) {
       [imagePath, tenant.storeId, tenant.run.tenantId],
     );
     if (!updated.rowCount) throw new Error('store image_url update missed');
+
+    await seedMerchantCommerce(pool, tenant.storeId, tenant.run.tenantId, services, [
+      { title: '新客到店礼', type: 'coupon', desc: 'TEST ONLY 本地营销活动种子', channel: 'local' },
+      { title: '会员专享体验券', type: 'offer', desc: 'TEST ONLY 本地营销活动种子', channel: 'local' },
+    ]);
   } finally {
     await pool.end();
   }
@@ -349,6 +354,75 @@ async function enrichTenant(tenant) {
     platformOfferCount: publicData.platformOffers.length,
     moduleTypes: publicData.storefront.modules.map((item) => item.module_type),
   };
+}
+
+/**
+ * G1-W5: seed tenant-scoped, honest local commerce rows (orders/reviews/campaigns)
+ * so the Management PC Order/Review/Marketing skeletons render real data in the
+ * local HUMAN PILOT sandbox. All rows are marked source='local' / TEST ONLY; no
+ * fake Meituan sync.
+ */
+async function seedMerchantCommerce(pool, storeId, tenantId, services, campaigns) {
+  const now = new Date();
+  const orderId = randomUUID();
+  const customerId = randomUUID();
+  await pool.query(
+    `insert into customers(id,tenant_id,display_name,status,created_by,updated_by)
+     values($1,$2,'本地商单测试顾客 · TEST ONLY','active',null,null)
+     on conflict (id) do nothing`,
+    [customerId, tenantId],
+  );
+  await pool.query(
+    `insert into customer_orders(id,tenant_id,customer_id,store_id,order_number,occurred_at,status,
+        source,amount_cents,currency,fulfillment_status,items,created_by,updated_by)
+     values($1,$2,$3,$4,$5,$6,'active','local',12800,'CNY','paid',$7::jsonb,null,null)
+     on conflict (id) do nothing`,
+    [
+      orderId,
+      tenantId,
+      customerId,
+      storeId,
+      `FXO-${stamp}-${Math.floor(Math.random() * 90000 + 10000)}`,
+      now,
+      JSON.stringify([
+        { name: services[0]?.name ?? '到店服务', qty: 1, amountCents: 12800, source: 'local' },
+      ]),
+    ],
+  );
+
+  const review = ['体验很专业，环境干净，客服耐心。', '性价比不错，下次还会再来。', '服务细节到位，推荐。'];
+  for (const [index, text] of review.entries()) {
+    const rating = [5, 4, 5][index];
+    await pool.query(
+      `insert into store_reviews(id,tenant_id,store_id,customer_id,rating,content,reviewer_label,source,status,created_by,updated_by)
+       values($1,$2,$3,$4,$5,$6,$7,'local','active',null,null)
+       on conflict (id) do nothing`,
+      [randomUUID(), tenantId, storeId, customerId, rating, text, `本地顾客·${index + 1}`],
+    );
+  }
+
+  const firstOffer = services[0]?.offers?.[0]?.id ?? null;
+  for (const [index, campaign] of campaigns.entries()) {
+    const startsAt = new Date(now.getTime() - index * 24 * 3600 * 1000);
+    const endsAt = new Date(startsAt.getTime() + 14 * 24 * 3600 * 1000);
+    await pool.query(
+      `insert into marketing_campaigns(id,tenant_id,store_id,offer_id,campaign_type,title,description,
+          delivery_channel,starts_at,ends_at,status,created_by,updated_by)
+       values($1,$2,$3,$4,$5,$6,$7,'local',$8,$9,'live',null,null)
+       on conflict (id) do nothing`,
+      [
+        randomUUID(),
+        tenantId,
+        storeId,
+        campaign.type === 'offer' ? firstOffer : null,
+        campaign.type,
+        campaign.title,
+        campaign.desc,
+        startsAt,
+        endsAt,
+      ],
+    );
+  }
 }
 
 async function main() {

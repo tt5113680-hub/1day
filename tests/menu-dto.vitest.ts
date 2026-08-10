@@ -33,11 +33,14 @@ describe('menu DTO catalog filter', () => {
       'stores',
       'external-actions',
       'offers',
+      'orders',
       'customers',
+      'reviews',
       'attribution',
       'memberships',
       'content',
       'page-builder',
+      'marketing',
       'organization',
       'employee-performance',
       'permission-audit',
@@ -95,7 +98,7 @@ describe('menu DTO catalog filter', () => {
 
   it('exposes store nav for tenant.read store-manager mode', () => {
     expect(filterMenuCatalog(MANAGEMENT_MENU_CATALOG, ['tenant.read']).map((item) => item.key)).toEqual(
-      ['overview', 'stores', 'offers', 'memberships', 'content'],
+      ['overview', 'stores', 'offers', 'orders', 'reviews', 'memberships', 'content', 'marketing'],
     );
   });
 
@@ -196,6 +199,7 @@ describe('menu DTO catalog filter', () => {
       'workbench',
       'store',
       'goods',
+      'orders',
       'customer',
       'marketing',
       'staff',
@@ -206,6 +210,7 @@ describe('menu DTO catalog filter', () => {
       MENU_GROUP_LABELS.workbench,
       MENU_GROUP_LABELS.store,
       MENU_GROUP_LABELS.goods,
+      MENU_GROUP_LABELS.orders,
       MENU_GROUP_LABELS.customer,
       MENU_GROUP_LABELS.marketing,
       MENU_GROUP_LABELS.staff,
@@ -213,7 +218,7 @@ describe('menu DTO catalog filter', () => {
       MENU_GROUP_LABELS.workflow,
     ]);
     expect(groupMenuItems(filterMenuCatalog(MANAGEMENT_MENU_CATALOG, ['tenant.read'])).map((g) => g.key)).toEqual(
-      ['workbench', 'store', 'goods', 'marketing'],
+      ['workbench', 'store', 'goods', 'orders', 'customer', 'marketing'],
     );
   });
 });

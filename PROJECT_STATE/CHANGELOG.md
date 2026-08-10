@@ -1,5 +1,16 @@
 # CHANGELOG
 
+## 2026-08-11 - G1-W5 Management PC 订单·评价·营销骨架 (MPC-04/05/07) PASS
+
+- Migration `055_merchant_commerce.ts`（注册 migrator 055）: extend `customer_orders`（store_id/source/amount_cents/currency/fulfillment_status/items/merchant_note）; new `store_reviews` + `marketing_campaigns`（本地试点数据）。
+- `ManagementCommerceService`/`Controller`: `GET /api/v1/management/commerce/{orders,reviews,marketing}`, tenant 隔离 + store-scope（operatorContext + DataScopeService）。
+- Management PC `/m/orders` `/m/reviews` `/m/marketing` 三页，全部 `--od-*` token、诚实空态、真实行数据；菜单新增 orders/reviews/marketing + `orders` 分组。
+- `generate-commercial-fixtures.mjs` seed 本地订单/评价/营销（source=local TEST ONLY）。
+- Gates: typecheck 20/20, build 20/20, `page-m-commerce` 1/1（L2 隔离）, menu-dto 17/17, sys-29/sys-6 更新后 8/8。
+- Pre-existing unrelated failures remain: `tokens.vitest.ts`、SYS-5、hardening-001/002、sys-22（本切片未触碰 consumer/ui/onboarding 文件）。
+- Not 全部商用 / 未代签 owner UI。Next: W6 省市区代理 per inventory.
+- Evidence: `evidence/G1-MEITUAN-PARITY/W5/ACCEPTANCE.md`.
+
 ## 2026-08-10 - G1 packaging: local HUMAN PILOT READY PASS
 
 - G1 packaging milestone (`p1-g1-packaging`) closed. Local HUMAN PILOT sandbox boot-verified at HEAD `6b2dad9`: `pnpm human-pilot:start` services up on 3200–3205 — API health `200 {"status":"ok","database":"ready"}`, worker `200 {"status":"ok","service":"oneday-worker"}`, Consumer/Employee/Management/Platform webs all HTTP 200; pilot DB `oneday_human_pilot` migrated (`kysely_migration`, 100 public tables). CHARTER §8 G1.

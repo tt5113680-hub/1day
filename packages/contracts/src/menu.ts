@@ -45,6 +45,7 @@ export const MENU_GROUP_LABELS: Record<string, string> = {
   workbench: '工作台',
   store: '店铺',
   goods: '商品',
+  orders: '订单',
   customer: '顾客',
   marketing: '营销',
   staff: '员工',
@@ -116,11 +117,25 @@ export const MANAGEMENT_MENU_CATALOG: MenuCatalogItem[] = [
     requireAny: ['tenant.manage', 'tenant.read'],
   },
   {
+    key: 'orders',
+    href: '/m/orders',
+    label: '订单中心',
+    group: 'orders',
+    requireAny: ['tenant.manage', 'tenant.read'],
+  },
+  {
     key: 'customers',
     href: '/m/customers',
     label: '顾客管理',
     group: 'customer',
     requireAny: ['tenant.manage', 'customer.manage'],
+  },
+  {
+    key: 'reviews',
+    href: '/m/reviews',
+    label: '评价管理',
+    group: 'customer',
+    requireAny: ['tenant.manage', 'tenant.read'],
   },
   {
     key: 'attribution',
@@ -149,6 +164,13 @@ export const MANAGEMENT_MENU_CATALOG: MenuCatalogItem[] = [
     label: '店铺装修',
     group: 'marketing',
     requireAny: ['tenant.manage', 'page.manage'],
+  },
+  {
+    key: 'marketing',
+    href: '/m/marketing',
+    label: '营销活动',
+    group: 'marketing',
+    requireAny: ['tenant.manage', 'tenant.read'],
   },
   {
     key: 'organization',

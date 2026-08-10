@@ -82,7 +82,8 @@
 - [x] **G1-W2** `G1-R-MEITUAN-H5-NEARBY-STORE` PASS — Consumer H5 附近/商家页对标美团 App; see `evidence/G1-MEITUAN-PARITY/W2/ACCEPTANCE.md`.
 - [x] **G1-W3** `G1-R-MEITUAN-PC-STORE-GOODS` PASS (首刀) — Management 门店/商品美团文案+概况条; see `evidence/G1-MEITUAN-PARITY/W3/ACCEPTANCE.md`.
 - [x] **G1-W4** `G1-R-MEITUAN-EMPLOYEE-WORKBENCH` PASS (首刀) — Employee 美团商家 App 工作台（今日经营概览条 + 常用功能宫格 + 任务区），真实 workbench 数据 + 既有路由深链; see `evidence/G1-MEITUAN-PARITY/W4/ACCEPTANCE.md`.
-- [ ] **NEXT:** G1-W5 Management 订单·评价·营销 (MPC-04/05/07) skeleton.
+- [x] **G1-W5** `G1-R-MEITUAN-PC-COMMERCE-SKELETON` PASS (首刀) — Management PC 订单·评价·营销骨架（`/m/orders` `/m/reviews` `/m/marketing`，MPC-04/05/07）: migration 055 + `ManagementCommerce` 只读 API（tenant+store 隔离）+ 本地 seed；菜单新增 orders/reviews/marketing。typecheck 20/20、build 20/20、`page-m-commerce` L2 隔离 PASS、menu-dto 17/17、sys-29/sys-6 更新 8/8。见 `evidence/G1-MEITUAN-PARITY/W5/ACCEPTANCE.md`。
+- [ ] **NEXT:** G1-W6 省市区代理（MP-01~03, R5）沿美团代理后台。
 - [ ] G1 OWNER GATE — owner signs only after Meituan PC/H5 parity waves pass re-test (`PRODUCT_OWNER_UI_ACCEPTANCE.md`). P1-C still blocked on lifting G + cloud inventory.
 - [ ] HUMAN-PILOT-HANDOFF / product-owner UI acceptance — local sandbox refreshed through migration `054` + consult CTA bindings + walkthrough shots (Playwright 4/4); **human sign-off still required**; not auto-claimed as 全部商用. Phase-1 P1-C blocked until owner lifts G (deploy templates in `infra/deploy/`).
 

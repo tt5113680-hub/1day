@@ -110,6 +110,8 @@ import { OneCodeController } from './one-code.controller';
 import { OneCodeService } from './one-code.service';
 import { ManagementCatalogController } from './management-catalog.controller';
 import { ManagementCatalogService } from './management-catalog.service';
+import { ManagementCommerceController } from './management-commerce.controller';
+import { ManagementCommerceService } from './management-commerce.service';
 import { MembershipCommercialController } from './membership-commercial.controller';
 import { MembershipCommercialService } from './membership-commercial.service';
 import { SyncGatewayController } from './sync-gateway.controller';
@@ -178,6 +180,7 @@ import { EmployeeManagedStoresController } from './employee-managed-stores.contr
     PlatformOnboardingController,
     OneCodeController,
     ManagementCatalogController,
+    ManagementCommerceController,
     MembershipCommercialController,
     SyncGatewayController,
     MenuController,
@@ -239,6 +242,7 @@ import { EmployeeManagedStoresController } from './employee-managed-stores.contr
     PlatformOnboardingService,
     OneCodeService,
     ManagementCatalogService,
+    ManagementCommerceService,
     MembershipCommercialService,
     SyncGatewayService,
     MenuService,

@@ -16,7 +16,17 @@ test('SYS-29 / G1-W1: Management menu groups follow Meituan merchant-PC IA', () 
   const groups = groupMenuItems(items);
   assert.deepEqual(
     groups.map((group) => group.key),
-    ['workbench', 'store', 'goods', 'customer', 'marketing', 'staff', 'settings', 'workflow'],
+    [
+      'workbench',
+      'store',
+      'goods',
+      'orders',
+      'customer',
+      'marketing',
+      'staff',
+      'settings',
+      'workflow',
+    ],
   );
   assert.equal(groups[0]?.label, MENU_GROUP_LABELS.workbench);
   assert.equal(groups.at(-1)?.label, MENU_GROUP_LABELS.workflow);
@@ -27,11 +37,11 @@ test('SYS-29 / G1-W1: store-manager chrome keeps workbench+store+goods+marketing
   const groups = groupMenuItems(filterMenuCatalog(MANAGEMENT_MENU_CATALOG, ['tenant.read']));
   assert.deepEqual(
     groups.map((group) => group.key),
-    ['workbench', 'store', 'goods', 'marketing'],
+    ['workbench', 'store', 'goods', 'orders', 'customer', 'marketing'],
   );
   assert.deepEqual(
     groups.flatMap((group) => group.items.map((item) => item.key)),
-    ['overview', 'stores', 'offers', 'memberships', 'content'],
+    ['overview', 'stores', 'offers', 'orders', 'reviews', 'memberships', 'content', 'marketing'],
   );
 });
 

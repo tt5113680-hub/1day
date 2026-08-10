@@ -53,6 +53,7 @@ import * as contentStorePlacements from './migrations/052_content_store_placemen
 import * as storeServicePlatformOffers from './migrations/047_store_service_platform_offers.js';
 import * as syncGateway from './migrations/053_sync_gateway.js';
 import * as channelPermissions from './migrations/054_channel_permissions.js';
+import * as merchantCommerce from './migrations/055_merchant_commerce.js';
 import type { Database } from './types.js';
 
 const migrationProvider: MigrationProvider = {
@@ -112,6 +113,7 @@ const migrationProvider: MigrationProvider = {
       '052_content_store_placements': contentStorePlacements,
       '053_sync_gateway': syncGateway,
       '054_channel_permissions': channelPermissions,
+      '055_merchant_commerce': merchantCommerce,
     };
   },
 };

@@ -246,6 +246,6 @@ test('SYS-6: store managers may write catalog only on scoped stores', async () =
   assert.equal(menu.status, 200);
   assert.deepEqual(
     (await menu.json()).data.items.map((item) => item.key),
-    ['overview', 'stores', 'offers', 'memberships', 'content'],
+    ['overview', 'stores', 'offers', 'orders', 'reviews', 'memberships', 'content', 'marketing'],
   );
 });

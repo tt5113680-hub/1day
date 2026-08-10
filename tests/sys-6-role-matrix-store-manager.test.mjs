@@ -201,8 +201,11 @@ test('SYS-6 Role matrix E2E slice: Store Manager package (menu+scope+writes+deni
     'overview',
     'stores',
     'offers',
+    'orders',
+    'reviews',
     'memberships',
     'content',
+    'marketing',
   ]);
   assert.ok(!management.items.some((item) => ['roles', 'settings', 'workflows', 'organization', 'customers', 'page-builder'].includes(item.key)));
   assert.ok(management.scopes.some((scope) => scope.type === 'store' && scope.id === storeA));

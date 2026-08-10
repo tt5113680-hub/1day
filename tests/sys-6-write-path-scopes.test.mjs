@@ -375,6 +375,6 @@ test('SYS-6: write-path scopes for redeem + store commercial', async () => {
   assert.equal(managementData.homeHref, '/m/stores');
   assert.deepEqual(
     managementData.items.map((item) => item.key),
-    ['overview', 'stores', 'offers', 'memberships', 'content'],
+    ['overview', 'stores', 'offers', 'orders', 'reviews', 'memberships', 'content', 'marketing'],
   );
 });

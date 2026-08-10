@@ -622,6 +622,13 @@ export interface CustomerOrdersTable {
   order_number: string;
   occurred_at: Timestamp;
   status: string;
+  store_id: string | null;
+  source: string;
+  amount_cents: string;
+  currency: string;
+  fulfillment_status: string;
+  items: unknown;
+  merchant_note: string | null;
   created_at: Timestamp;
   created_by: string | null;
   updated_at: Timestamp;
@@ -1299,6 +1306,44 @@ export interface ConsumerOperatingProjectionsTable {
   version: Generated<number>;
 }
 
+export interface StoreReviewsTable {
+  id: string;
+  tenant_id: string;
+  store_id: string;
+  customer_id: string | null;
+  rating: number;
+  content: string;
+  reviewer_label: string;
+  source: string;
+  status: string;
+  created_at: Timestamp;
+  created_by: string | null;
+  updated_at: Timestamp;
+  updated_by: string | null;
+  deleted_at: Timestamp | null;
+  version: Generated<number>;
+}
+
+export interface MarketingCampaignsTable {
+  id: string;
+  tenant_id: string;
+  store_id: string;
+  offer_id: string | null;
+  campaign_type: string;
+  title: string;
+  description: string | null;
+  delivery_channel: string;
+  starts_at: Timestamp;
+  ends_at: Timestamp;
+  status: string;
+  created_at: Timestamp;
+  created_by: string | null;
+  updated_at: Timestamp;
+  updated_by: string | null;
+  deleted_at: Timestamp | null;
+  version: Generated<number>;
+}
+
 export interface Database {
   tenants: TenantsTable;
   sync_notifications: SyncNotificationsTable;
@@ -1380,4 +1425,6 @@ export interface Database {
   ai_suggestions: AiSuggestionsTable;
   store_managers: StoreManagersTable;
   consumer_operating_projections: ConsumerOperatingProjectionsTable;
+  store_reviews: StoreReviewsTable;
+  marketing_campaigns: MarketingCampaignsTable;
 }
