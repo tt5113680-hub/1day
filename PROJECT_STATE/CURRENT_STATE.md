@@ -9,8 +9,8 @@
 - status: SYS_1_PASS; SYS_2_PASS; SYS_3_PASS; SYS_4_PASS; SYS_4_CONTENT_DISTRIBUTIONS_PASS; SYS_4_WORKFLOW_AUTHORING_PASS; SYS_4_RBAC_ROLE_CREATE_PASS; SYS_5_SCAFFOLD_PASS; SYS_5_VISUAL_PASS; SYS_5_QUICK_ACTIONS_PAINT_PASS; SYS_5_MEMBER_OFFER_PAINT_PASS; SYS_5_COMPARE_STORY_PAINT_PASS; SYS_5_BENEFIT_STORE_INFO_PAINT_PASS; SYS_5_HERO_FLOATING_CONSULT_PAINT_PASS; SYS_6_SCAFFOLD_PASS; SYS_6_MULTI_PRODUCT_PASS; SYS_6_DATA_SCOPES_PASS; SYS_6_WRITE_PATH_SCOPES_PASS; SYS_6_NETWORK_PACKS_PASS; SYS_6_CONTENT_PLACEMENTS_PASS; SYS_6_CATALOG_SCOPES_PASS; SYS_6_MEMBERSHIP_SCOPES_PASS; SYS_6_WORKFLOW_ORG_WRITE_PASS; SYS_6_ROLE_MATRIX_STORE_MANAGER_PASS; MATRIX_GAP_CLOSEOUT_COMPLETE; HUMAN_PILOT_SANDBOX_REFRESHED; COMMERCIAL_FIXTURES_GENERATOR_PASS
 - branch: hardening/COMMERCIAL-COMPLETION
 - executor: Cursor Agent (2026-08-10; see PROJECT_STATE/EXECUTOR_HANDOFF.md)
-- last_safe_commit: pending Store Manager matrix commit
-- verified_sys_6_role_matrix_store_manager: PASS - Store Manager menu+scope+writes+denials closed loop; Management customers gated off bare customer.read. See PROJECT_STATE/SYS_6_ROLE_MATRIX_STORE_MANAGER_ACCEPTANCE.md and evidence/SYS-6/.
+- last_safe_commit: 3e9a332
+- verified_sys_6_role_matrix_store_manager: PASS - Store Manager menu+scope+writes+denials closed loop; Management customers gated off bare customer.read. See PROJECT_STATE/SYS_6_ROLE_MATRIX_STORE_MANAGER_ACCEPTANCE.md and evidence/SYS-6/. Commit 3e9a332.
 - verified_sys_4_rbac_role_create: PASS - Management creates roles via existing RBAC API. Commit e417954.
 - verified_sys_4_workflow_authoring: PASS - Management create+publish workflow templates. Commit 8cc8b45.
 - verified_sys_6_workflow_org_write: PASS - workflows/org write paths. Commit 0d3035d.
