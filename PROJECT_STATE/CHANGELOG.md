@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## 2026-08-10 - Dedicated 10-minute chain polling
+
+- Default `UNATTENDED_POLL_MINUTES=10` + `UNATTENDED_CHAIN_MODE=1`: monitor every 10m, start next task when previous finished.
+- `install-dedicated-build-machine.ps1` one-shot setup for 24h build PC.
+
 ## 2026-08-10 - Adaptive unattended scheduler
 
 - `unattended-scheduler.ps1`: task-size profiles (small/medium/large), cooldown from last run, G1 stop.

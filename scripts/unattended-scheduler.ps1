@@ -71,6 +71,33 @@ function Get-EnvInt([string]$Name, [int]$Default) {
   return $Default
 }
 
+function Load-UnattendedEnv {
+  $paths = Get-UnattendedPaths
+  $envFile = Join-Path $paths.Root '.env.local-unattended'
+  if (-not (Test-Path $envFile)) { return }
+  Get-Content $envFile | ForEach-Object {
+    if ($_ -match '^\s*([A-Za-z_][A-Za-z0-9_]*)\s*=\s*(.*)\s*$') {
+      $name = $Matches[1]
+      $value = $Matches[2].Trim().Trim('"').Trim("'")
+      if (-not [string]::IsNullOrWhiteSpace($value)) {
+        Set-Item -Path "Env:$name" -Value $value
+      }
+    }
+  }
+}
+
+function Test-ChainMode {
+  Load-UnattendedEnv
+  $v = [Environment]::GetEnvironmentVariable('UNATTENDED_CHAIN_MODE')
+  if ([string]::IsNullOrWhiteSpace($v)) { return $true }
+  return $v -match '^(1|true|yes|dedicated|on)$'
+}
+
+function Get-PollMinutes {
+  Load-UnattendedEnv
+  return Get-EnvInt 'UNATTENDED_POLL_MINUTES' 10
+}
+
 function Get-TaskSizeProfile {
   $paths = Get-UnattendedPaths
   $blob = @(
@@ -141,7 +168,10 @@ function Get-AdaptiveSchedule {
         $reason = 'last=FAIL retry sooner'
       }
       0 {
-        if ($duration -ge 90) {
+        if (Test-ChainMode) {
+          $wait = $minWait
+          $reason = 'chain: prev OK — next task after poll interval'
+        } elseif ($duration -ge 90) {
           $wait = [Math]::Min($maxWait, 55)
           $reason = 'last=OK long run cool down'
         } elseif ($duration -le 20) {
@@ -175,10 +205,11 @@ function Get-AdaptiveSchedule {
 function Test-ShouldRunNow {
   param([switch]$Force)
 
+  Load-UnattendedEnv
   $paths = Ensure-UnattendedLogDir
 
   if (Test-ConstructionLockActive) {
-    return @{ ok = $false; reason = 'run in progress (lock)' }
+    return @{ ok = $false; reason = 'previous task still running (lock)' }
   }
 
   if (Test-Path (Join-Path $paths.Root 'PROJECT_STATE/BLOCKED_REPORT.md')) {

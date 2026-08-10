@@ -1,9 +1,11 @@
 # Register Windows Scheduled Task with adaptive orchestrator (poll every N minutes).
 param(
-  [int]$PollMinutes = 15
+  [int]$PollMinutes = 0
 )
 
 $ErrorActionPreference = 'Stop'
+. "$PSScriptRoot/unattended-scheduler.ps1"
+if ($PollMinutes -le 0) { $PollMinutes = Get-PollMinutes }
 $root = Split-Path -Parent $PSScriptRoot
 $orchestrator = Join-Path $root 'scripts/local-unattended-orchestrator.ps1'
 $taskName = 'ONEDAY-V3-Unattended-Construction'

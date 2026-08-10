@@ -1,56 +1,78 @@
 # 本地无人值守施工 — 一次性配置
 
 - recorded_at: 2026-08-10 Asia/Shanghai
-- executor: **Cursor Headless CLI** + **自适应调度器**
-- owner rule: **本地跑，不要人工**
+- **推荐模式：专用机 / 24h 开机 + 每 10 分钟监控接龙**
 
-## 自适应调度（新）
+## 你要的行为（已实现）
 
-每轮结束后写入 `logs/unattended/last-run.json`，调度器根据**任务大小 + 上一轮结果**决定：
+```text
+每 10 分钟 ──► 上一轮还在跑？ ──是──► 等待，下轮再查
+                  │
+                  否（已跑完 + 冷却满 10min）
+                  ▼
+              自动开下一轮 Headless 施工
+                  │
+                  G1 READY ──► 自动停，通知你来人工测
+```
 
-| 因素 | 行为 |
-| ---- | ---- |
-| **任务大小** | 读 `PROJECT_STATE`：P1-B/视觉/Playwright → **large 180min**；小 chore → **small 60min**；默认 **medium 120min** |
-| **上一轮 OK 且跑得久 (>90min)** | 冷却 **~55min** 再跑 |
-| **上一轮 OK 且很快 (<20min)** | **~12min** 后继续 |
-| **上一轮 TIMEOUT** | 下一轮 **加长 max**、**15min** 后重试 |
-| **上一轮 FAIL** | **20min** 后重试 |
-| **仍在跑 / 冷却中** | orchestrator **SKIP**（计划任务每 15min 唤醒但不一定开工） |
-| **G1 READY** | 自动停，等你人工测 |
+- **不会**两轮同时写（锁文件）
+- **不会**上一轮没跑完就叠任务
+- **会**在上一轮成功后约 10 分钟接下一任务（`UNATTENDED_CHAIN_MODE=1`）
 
-**监控第一轮 / 任意一轮：**
+## 专用机 / 24h 开机 — 一条命令
+
+```powershell
+cd D:\ONEDAY_V3
+powershell -ExecutionPolicy Bypass -File scripts/install-dedicated-build-machine.ps1
+# 编辑 .env.local-unattended 填入 CURSOR_API_KEY（若安装脚本未带 key）
+```
+
+等价于：
+
+1. 写入 `UNATTENDED_CHAIN_MODE=1` + `UNATTENDED_POLL_MINUTES=10`
+2. 注册计划任务：**每 10 分钟**调用 orchestrator
+3. orchestrator 只在「上一轮已结束」时真正开工
+
+**电源：** 插电 **从不休眠**。Cursor IDE **不必**打开。
+
+### 或用守护进程（不用计划任务）
+
+```powershell
+pnpm unattended:daemon
+# 同样每 10 分钟监控 + 接龙
+```
+
+## 监控（不用盯 Cursor）
 
 ```powershell
 pnpm unattended:status
 ```
 
-## 一次性配置
+看：`Total runs`、上一轮是否 `OK/TIMEOUT`、下一轮何时可跑、`Should run now?`
+
+日志：`logs/unattended/daemon.log`
+
+## 专用电脑 checklist
+
+| 项 | 做法 |
+| --- | --- |
+| 仓库 | 克隆到 `D:\ONEDAY_V3`，分支 `hardening/COMMERCIAL-COMPLETION` |
+| Node | 24 + pnpm 10 |
+| Docker | 本地测试用 Postgres（可选，agent 自启） |
+| API Key | `.env.local-unattended` 里 `CURSOR_API_KEY` |
+| 施工 | `install-dedicated-build-machine.ps1` 一次 |
+| 你的电脑 | 可关机；专用机 24h 跑即可 |
+| 验收 | 收到 G1 READY 后 SSH/远程桌面过来 `pnpm human-pilot:start` 人工测 |
+
+## 手动
 
 ```powershell
-cd D:\ONEDAY_V3
-Copy-Item .env.local-unattended.example .env.local-unattended
-# 填 CURSOR_API_KEY；可选改 UNATTENDED_* 间隔
-
-pnpm unattended:install    # 计划任务：每 15min 检查，满足条件才开工
-# 或
-pnpm unattended:daemon     # 自适应守护进程（推荐 24h）
-```
-
-## 状态文件
-
-| 文件 | 含义 |
-| ---- | ---- |
-| `logs/unattended/last-run.json` | 上一轮：时长、exit、profile、是否首轮 |
-| `logs/unattended/schedule.json` | 下一轮建议 max 分钟 + 冷却分钟 |
-| `logs/unattended/daemon.log` | 人类可读摘要 |
-
-## 手动强制跑一轮（忽略冷却）
-
-```powershell
-powershell -ExecutionPolicy Bypass -File scripts/local-unattended-orchestrator.ps1 -Force
+pnpm unattended:status                              # 看状态
+powershell -File scripts/local-unattended-orchestrator.ps1 -Force   # 强制立刻一轮
+Unregister-ScheduledTask -TaskName 'ONEDAY-V3-Unattended-Construction' -Confirm:$false
 ```
 
 ## 你仍只需出现两次
 
-1. **G1**：`pnpm unattended:status` 显示 G1 ready → 人工完整测
-2. **G2**：PASS 后给域名/服务器
+1. **G1** — 本地完整人工测（1–2 小时）
+2. **G2** — PASS 后给域名/服务器

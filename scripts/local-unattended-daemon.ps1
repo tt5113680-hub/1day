@@ -1,10 +1,12 @@
-# Adaptive daemon: waits for cooldown, adjusts sleep from last run outcome.
+# 24h dedicated build machine: poll every 10m, chain next task when previous finished.
 param(
-  [int]$PollMinutes = 5
+  [int]$PollMinutes = 0
 )
 
 $ErrorActionPreference = 'Stop'
 . "$PSScriptRoot/unattended-scheduler.ps1"
+
+if ($PollMinutes -le 0) { $PollMinutes = Get-PollMinutes }
 
 function Write-Log([string]$Message) {
   $paths = Ensure-UnattendedLogDir
@@ -13,7 +15,7 @@ function Write-Log([string]$Message) {
   Add-Content -Path (Join-Path $paths.LogDir 'daemon.log') -Value $line -Encoding utf8
 }
 
-Write-Log "DAEMON adaptive start poll=${PollMinutes}m (orchestrator gates each turn)"
+Write-Log "DAEMON chain-mode poll=${PollMinutes}m — check prev task, then start next if ready"
 
 while ($true) {
   if (Test-G1Ready) {
@@ -23,17 +25,15 @@ while ($true) {
 
   $gate = Test-ShouldRunNow
   if ($gate.ok) {
+    Write-Log 'DAEMON prev finished — starting next task'
     $orchestrator = Join-Path $PSScriptRoot 'local-unattended-orchestrator.ps1'
     & powershell.exe -NoProfile -ExecutionPolicy Bypass -File $orchestrator
     $code = $LASTEXITCODE
     Write-Log "DAEMON turn finished exit=$code"
   } else {
-    Write-Log "DAEMON idle: $($gate.reason)"
+    Write-Log "DAEMON monitor: $($gate.reason)"
   }
 
-  $schedule = Read-JsonFile (Join-Path (Get-UnattendedPaths).LogDir 'schedule.json')
-  $sleepMin = if ($schedule -and $schedule.waitMinutes) { [int]$schedule.waitMinutes } else { 25 }
-  $sleepMin = [Math]::Max($PollMinutes, [Math]::Min(90, $sleepMin))
-  Write-Log "DAEMON sleep ${sleepMin}m"
-  Start-Sleep -Seconds ($sleepMin * 60)
+  Write-Log "DAEMON sleep ${PollMinutes}m until next check"
+  Start-Sleep -Seconds ($PollMinutes * 60)
 }
