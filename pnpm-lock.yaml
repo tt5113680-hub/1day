@@ -84,6 +84,9 @@ importers:
 
   apps/consumer-web:
     dependencies:
+      '@oneday/sync-client':
+        specifier: workspace:*
+        version: link:../../packages/sync-client
       '@oneday/ui':
         specifier: workspace:*
         version: link:../../packages/ui
@@ -112,6 +115,9 @@ importers:
       '@oneday/session-client':
         specifier: workspace:*
         version: link:../../packages/session-client
+      '@oneday/sync-client':
+        specifier: workspace:*
+        version: link:../../packages/sync-client
       '@oneday/ui':
         specifier: workspace:*
         version: link:../../packages/ui
@@ -146,6 +152,9 @@ importers:
       '@oneday/session-client':
         specifier: workspace:*
         version: link:../../packages/session-client
+      '@oneday/sync-client':
+        specifier: workspace:*
+        version: link:../../packages/sync-client
       '@oneday/ui':
         specifier: workspace:*
         version: link:../../packages/ui
@@ -259,6 +268,19 @@ importers:
 
   packages/session-client:
     dependencies:
+      react:
+        specifier: 19.2.8
+        version: 19.2.8
+    devDependencies:
+      '@types/react':
+        specifier: 19.2.7
+        version: 19.2.7
+
+  packages/sync-client:
+    dependencies:
+      '@oneday/session-client':
+        specifier: workspace:*
+        version: link:../session-client
       react:
         specifier: 19.2.8
         version: 19.2.8

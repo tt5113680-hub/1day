@@ -1,5 +1,6 @@
 'use client';
 import { SessionApiClient } from '@oneday/session-client';
+import { useTenantSync } from '@oneday/sync-client';
 import { AppStatePanel, Button, MetricCard, taskTitleCopy } from '@oneday/ui';
 import { useCallback, useEffect, useState } from 'react';
 import styles from './page.module.css';
@@ -13,9 +14,9 @@ const sessionApi = new SessionApiClient(api);
 export default function ManagementHome() {
   const [state, setState] = useState<'loading' | 'ready' | 'forbidden' | 'error'>('loading');
   const [data, setData] = useState<Data | null>(null);
-  const load = useCallback(async () => {
+  const load = useCallback(async (mode: 'full' | 'quiet' = 'full') => {
     if (!(await sessionApi.context())) return setState('forbidden');
-    setState('loading');
+    if (mode === 'full') setState('loading');
     try {
       const r = await sessionApi.request(`${api}/api/v1/management/dashboard`, {
         headers: {},
@@ -25,12 +26,19 @@ export default function ManagementHome() {
       setData((await r.json()).data);
       setState('ready');
     } catch {
-      setState('error');
+      if (mode === 'full') setState('error');
     }
   }, []);
   useEffect(() => {
     void load();
   }, [load]);
+  useTenantSync(
+    api,
+    sessionApi,
+    ['operating', 'lifecycle'],
+    () => void load('quiet'),
+    state === 'ready',
+  );
   if (state === 'loading')
     return (
       <main className={styles.centered}>

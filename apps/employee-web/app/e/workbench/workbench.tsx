@@ -1,5 +1,6 @@
 'use client';
 import { SessionApiClient } from '@oneday/session-client';
+import { useTenantSync } from '@oneday/sync-client';
 import { AppStatePanel, Button, MetricCard, StatusBadge } from '@oneday/ui';
 
 import { useCallback, useEffect, useState } from 'react';
@@ -40,13 +41,13 @@ export function Workbench() {
   const headers = () => ({
     'content-type': 'application/json',
   });
-  const load = useCallback(async (preserveMessage = false) => {
+  const load = useCallback(async (preserveMessage = false, mode: 'full' | 'quiet' = 'full') => {
     if (!(await sessionApi.context())) {
       setState('forbidden');
       return;
     }
-    setState('loading');
-    if (!preserveMessage) setMessage('');
+    if (mode === 'full') setState('loading');
+    if (!preserveMessage && mode === 'full') setMessage('');
     try {
       const response = await sessionApi.request(`${api}/api/v1/employee/workbench`, {
         headers: headers(),
@@ -64,12 +65,13 @@ export function Workbench() {
       if (membershipBenefits.ok) setBenefits((await membershipBenefits.json()).data as Benefit[]);
       setState('ready');
     } catch {
-      setState('error');
+      if (mode === 'full') setState('error');
     }
   }, []);
   useEffect(() => {
     void load();
   }, [load]);
+  useTenantSync(api, sessionApi, ['operating'], () => void load(true, 'quiet'), state === 'ready');
   const complete = async (task: Task) => {
     setBusy(task.id);
     setMessage('');

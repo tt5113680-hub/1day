@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## 2026-08-10 - SYS-3 FE Sync Clients PASS
+
+- Added `@oneday/sync-client` with authenticated ETag poll (`TenantSyncClient`) and public storefront version poll (`StorefrontSyncClient`), plus React hooks.
+- Wired Management dashboard and Employee workbench to quiet-reload on sync topics; Consumer store calls `router.refresh()` when publishedVersion/authEpoch changes.
+- Evidence: `PROJECT_STATE/SYS_3_ACCEPTANCE.md`, `evidence/SYS-3/`. Tests: `sync-client.vitest`, `sys-3-sync-client`. Not 全部商用.
+
 ## 2026-08-10 - SYS-1 Contract Unity + SYS-2 Config Shell/Wallet PASS
 
 - Consumer store `actions` are store-scoped consultation/platform_entry; platform cards use store links/offers with `outboundPolicy: store_scoped_links_and_offers`. Connectors documented as not outbound.

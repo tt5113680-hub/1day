@@ -1,6 +1,8 @@
 'use client';
 
+import { useRouter } from 'next/navigation';
 import { useMemo, useState } from 'react';
+import { useStorefrontSync } from '@oneday/sync-client';
 import { AppStatePanel, Button } from '@oneday/ui';
 import { ConsumerShell, resolveConsumerTabs } from '../../consumer-shell';
 import { StorefrontModules } from './storefront-modules';
@@ -121,6 +123,7 @@ export default function StorePage({
   shareCode: string | null;
   scene?: string | null;
 }) {
+  const router = useRouter();
   const [notice, setNotice] = useState('');
   const [switcher, setSwitcher] = useState(false);
   const consultAction =
@@ -135,6 +138,10 @@ export default function StorePage({
     scene: scene ?? 'storefront',
     shareCode,
   };
+  useStorefrontSync(apiBase, data.tenant.slug, data.store.id, () => {
+    setNotice('门店内容已更新，正在同步最新装修…');
+    router.refresh();
+  });
   const navTabs = resolveConsumerTabs(
     data.storefront?.modules,
     data.storefront?.industry?.channels,

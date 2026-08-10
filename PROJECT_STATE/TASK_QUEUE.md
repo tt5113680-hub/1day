@@ -15,7 +15,7 @@
 - [x] COMMERCIAL-FIXTURES generator PASS - unified 1–3 READY tenants with products/offers/content/materials for local/test; see `COMMERCIAL_FIXTURE_GENERATOR.md` and `evidence/COMMERCIAL-FIXTURES/`.
 - [x] SYS-1 Contract Unity PASS - store-scoped consult/outbound; placements-first seeds; connectors ≠ outbound; see `SYS_1_2_ACCEPTANCE.md` and `evidence/SYS-1/`.
 - [x] SYS-2 Config Shell + Wallet PASS - operating_channels shell, member_wallet render, Page Builder whitelist editors; see `SYS_1_2_ACCEPTANCE.md` and `evidence/SYS-2/`.
-- [ ] SYS-3 FE Sync Clients — shared ETag/SSE client for Management dashboard, Employee workbench, Consumer storefront (no hard-refresh-only closed loop).
+- [x] SYS-3 FE Sync Clients PASS — `@oneday/sync-client` ETag poll wired to Management dashboard, Employee workbench, Consumer storefront; see `SYS_3_ACCEPTANCE.md` and `evidence/SYS-3/`.
 - [ ] SYS-4 Ops vertical — Platform DLQ/replay **or** Content distributions UI **or** Workflow write (one full vertical).
 - [ ] SYS-5 Shared UI kit + storefront-renderer package.
 - [ ] SYS-6 Role IA / server menu DTO.

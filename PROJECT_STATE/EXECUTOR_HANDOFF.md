@@ -33,9 +33,9 @@
 
 ## Current engineering focus
 
-**Systemic waves (D3) — next SYS-3:**
+**Systemic waves (D3) — next SYS-4:**
 
-SYS-1 Contract Unity and SYS-2 Config Shell/Wallet are PASS. Continue SYS-3 FE Sync Clients (shared ETag/SSE), then SYS-4 ops vertical. No page-level patches. Product-owner UI acceptance remains a human gate and does not block SYS engineering. Do not claim 全部商用. Tencent Cloud out of scope (G).
+SYS-1…SYS-3 are PASS. Continue SYS-4 Ops vertical (one full vertical: Platform DLQ/replay, Content distributions UI, or Workflow write). No page-level patches. Product-owner UI acceptance remains a human gate and does not block SYS engineering. Do not claim 全部商用. Tencent Cloud out of scope (G).
 
 ## Secrets and cloud
 
