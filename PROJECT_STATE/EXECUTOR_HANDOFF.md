@@ -33,9 +33,9 @@
 
 ## Current engineering focus
 
-**Systemic waves (D3) - Role matrix remainders:**
+**Systemic waves (D3) - remainders:**
 
-SYS-6 Store Manager + Tenant Manager/Owner + Channel/Circle/Platform matrix slices PASS. Continue: Member Consumer journey or advanced workflow versioning. No page-level patches. Not claimed as full commercial. Tencent Cloud out of scope (G).
+SYS-6 Role matrix Store/Tenant/Channel-Circle-Platform/Member slices PASS. Continue: advanced workflow versioning. No page-level patches. Not claimed as full commercial. Tencent Cloud out of scope (G).
 
 **Usage:** keep constructing until **90%-95%**, then new window. Do not stop early.
 

@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## 2026-08-10 - SYS-6 Role matrix Member Consumer journey PASS
+
+- Store 「我的」now proves membership via shared session helper (memberCode, masked identity, wallet balances) and keeps anonymous denial without PII.
+- Enroll success deep-links to member proof; invalid session clears to re-enroll.
+- Evidence: `SYS_6_ROLE_MATRIX_MEMBER_ACCEPTANCE.md`, `evidence/SYS-6/`. Tests: API 1/1 + Playwright 1/1. Not 全部商用.
+
 ## 2026-08-10 - SYS-6 Role matrix Channel/Circle/Platform packages PASS
 
 - Added `channel.read`/`channel.manage` (migration `054`), separated Channel/Circle product chrome from Platform, and gated Channel APIs on the new codes + scopes.

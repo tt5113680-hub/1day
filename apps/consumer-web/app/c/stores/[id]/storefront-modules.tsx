@@ -20,7 +20,7 @@ import {
 import '@oneday/storefront-renderer/storefront.css';
 import { useEffect, useMemo, useState, type ReactNode } from 'react';
 import { storeHref, type ConsumerContext } from '../../consumer-shell';
-import { memberAccessStorageKey } from '../../resolve-consumer-tabs';
+import { fetchMemberWallet, readMemberAccess } from '../../member-session';
 import styles from './store.module.css';
 import type { StoreDetail } from './store';
 
@@ -431,38 +431,21 @@ function MemberWallet({ context }: { context: ConsumerContext }) {
   useEffect(() => {
     let cancelled = false;
     const load = async () => {
-      const raw =
-        typeof sessionStorage === 'undefined'
-          ? null
-          : sessionStorage.getItem(memberAccessStorageKey(context.tenant, context.storeId));
-      if (!raw) {
-        if (!cancelled) setState('anonymous');
-        return;
-      }
-      let access: { accessId?: string; access?: string } | null = null;
-      try {
-        access = JSON.parse(raw) as { accessId?: string; access?: string };
-      } catch {
-        if (!cancelled) setState('anonymous');
-        return;
-      }
-      if (!access?.accessId || !access.access) {
+      const access = readMemberAccess(context.tenant, context.storeId);
+      if (!access) {
         if (!cancelled) setState('anonymous');
         return;
       }
       if (!cancelled) setState('loading');
       try {
-        const response = await fetch(
-          `${apiBase}/api/v1/consumer/memberships/wallet?tenant=${encodeURIComponent(context.tenant)}&accessId=${encodeURIComponent(access.accessId)}&access=${encodeURIComponent(access.access)}`,
-        );
-        if (response.status === 404) {
+        const result = await fetchMemberWallet(apiBase, context.tenant, access);
+        if (result.status === 404) {
           if (!cancelled) setState('anonymous');
           return;
         }
-        if (!response.ok) throw Error();
-        const payload = (await response.json()).data as typeof wallet;
+        if (!result.data) throw Error();
         if (!cancelled) {
-          setWallet(payload);
+          setWallet(result.data);
           setState('ready');
         }
       } catch {

@@ -7,7 +7,7 @@
 
 ## Active wave
 
-**SYS remainders — Role matrix E2E (multi-week)**
+**SYS remainders — Role matrix E2E + workflow depth**
 
 | Deliverable                                        | Status                                      |
 | -------------------------------------------------- | ------------------------------------------- |
@@ -15,12 +15,12 @@
 | SYS-6 Role matrix — Store Manager package          | PASS                                        |
 | SYS-6 Role matrix — Tenant Manager vs Owner chrome | PASS                                        |
 | SYS-6 Role matrix — Channel / Circle / Platform    | PASS                                        |
+| SYS-6 Role matrix — Member Consumer journey        | PASS                                        |
 
 ## Queue
 
-- Role matrix: Member Consumer journey
-- Advanced workflow versioning
+- Advanced workflow versioning (new draft versions / condition editors)
 
 ## Honest day boundary
 
-Store Manager + Tenant Manager/Owner + Channel/Circle/Platform packages landed. Full nine-role ROLE_PRODUCT_MATRIX (Member journey included) remains multi-week - not claimed as full commercial.
+Core ROLE_PRODUCT_MATRIX packages for Store/Tenant/Channel/Circle/Platform/Member landed as engineering slices. Cross-device Member login and advanced workflow versioning remain multi-week - not claimed as full commercial.

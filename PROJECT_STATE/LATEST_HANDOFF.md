@@ -8,16 +8,17 @@
 ## Current task - systemic commercial productization (D3)
 
 - branch: `hardening/COMMERCIAL-COMPLETION`
-- last_verified: SYS-6 Role matrix Channel/Circle/Platform packages PASS
-- current_task: Role matrix Member Consumer journey or advanced workflow versioning
-- status: `SYS_6_ROLE_MATRIX_NETWORK_PASS`; **not** claimed as full commercial
+- last_verified: SYS-6 Role matrix Member Consumer journey PASS
+- current_task: Advanced workflow versioning
+- status: `SYS_6_ROLE_MATRIX_MEMBER_PASS`; **not** claimed as full commercial
 - blocker: null
-- progress: P0 26/26; Store Manager + Tenant Owner/Manager + Channel/Circle/Platform slices landed
+- progress: P0 26/26; Store/Tenant/Network/Member role matrix slices landed
 
 ### Completed this session
 
-1. SYS-6 Channel/Circle/Platform role matrix E2E (`channel.read`/`channel.manage`, product isolation, denials)
-2. Migration `054_channel_permissions` + evidence/tests green
+1. SYS-6 Channel/Circle/Platform role matrix (`channel.read`/`channel.manage`)
+2. SYS-6 Member Consumer journey (store 「我的」anonymous denial → enroll → proof)
+3. Evidence + tests green; pushed to origin
 
 ### Usage note
 
@@ -40,7 +41,7 @@
 5. PROJECT_STATE/SYSTEMIC_CONSTRUCTION_PLAN.md
 6. git status
 
-状态：SYS-6 Channel/Circle/Platform Role matrix PASS；Tenant Owner/Manager + Store Manager PASS；P0 26/26；下一任务 Member journey 或 advanced workflow versioning。
+状态：SYS-6 Member journey PASS；Channel/Circle/Platform + Tenant Owner/Manager + Store Manager PASS；P0 26/26；下一任务 advanced workflow versioning。
 工作目录仅 D:\ONEDAY_V3。禁止页级补丁。不得宣称全部商用。不做腾讯云。
 已获 A–H。继续施工；用量达到 90%–95% 再换新窗口，中途不要停。
 ```

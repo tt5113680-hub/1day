@@ -4,15 +4,16 @@
 - completed_tasks: 69/69
 - foundation_final_state_commit: 239114e
 - core_final_state_commit: df5ef65
-- last_completed_task: SYS-6 Role matrix Channel/Circle/Platform packages PASS
-- current_task: ONEDAY-V3-COMMERCIAL-COMPLETION / systemic waves (Role matrix remainder: Member journey; advanced workflow versioning)
-- status: SYS_1_PASS; SYS_2_PASS; SYS_3_PASS; SYS_4_PASS; SYS_4_CONTENT_DISTRIBUTIONS_PASS; SYS_4_WORKFLOW_AUTHORING_PASS; SYS_4_RBAC_ROLE_CREATE_PASS; SYS_5_SCAFFOLD_PASS; SYS_5_VISUAL_PASS; SYS_5_QUICK_ACTIONS_PAINT_PASS; SYS_5_MEMBER_OFFER_PAINT_PASS; SYS_5_COMPARE_STORY_PAINT_PASS; SYS_5_BENEFIT_STORE_INFO_PAINT_PASS; SYS_5_HERO_FLOATING_CONSULT_PAINT_PASS; SYS_6_SCAFFOLD_PASS; SYS_6_MULTI_PRODUCT_PASS; SYS_6_DATA_SCOPES_PASS; SYS_6_WRITE_PATH_SCOPES_PASS; SYS_6_NETWORK_PACKS_PASS; SYS_6_CONTENT_PLACEMENTS_PASS; SYS_6_CATALOG_SCOPES_PASS; SYS_6_MEMBERSHIP_SCOPES_PASS; SYS_6_WORKFLOW_ORG_WRITE_PASS; SYS_6_ROLE_MATRIX_STORE_MANAGER_PASS; SYS_6_ROLE_MATRIX_TENANT_OWNER_PASS; SYS_6_ROLE_MATRIX_NETWORK_PASS; MATRIX_GAP_CLOSEOUT_COMPLETE; HUMAN_PILOT_SANDBOX_REFRESHED; COMMERCIAL_FIXTURES_GENERATOR_PASS
+- last_completed_task: SYS-6 Role matrix Member Consumer journey PASS
+- current_task: ONEDAY-V3-COMMERCIAL-COMPLETION / systemic waves (advanced workflow versioning remainder)
+- status: SYS_1_PASS; SYS_2_PASS; SYS_3_PASS; SYS_4_PASS; SYS_4_CONTENT_DISTRIBUTIONS_PASS; SYS_4_WORKFLOW_AUTHORING_PASS; SYS_4_RBAC_ROLE_CREATE_PASS; SYS_5_SCAFFOLD_PASS; SYS_5_VISUAL_PASS; SYS_5_QUICK_ACTIONS_PAINT_PASS; SYS_5_MEMBER_OFFER_PAINT_PASS; SYS_5_COMPARE_STORY_PAINT_PASS; SYS_5_BENEFIT_STORE_INFO_PAINT_PASS; SYS_5_HERO_FLOATING_CONSULT_PAINT_PASS; SYS_6_SCAFFOLD_PASS; SYS_6_MULTI_PRODUCT_PASS; SYS_6_DATA_SCOPES_PASS; SYS_6_WRITE_PATH_SCOPES_PASS; SYS_6_NETWORK_PACKS_PASS; SYS_6_CONTENT_PLACEMENTS_PASS; SYS_6_CATALOG_SCOPES_PASS; SYS_6_MEMBERSHIP_SCOPES_PASS; SYS_6_WORKFLOW_ORG_WRITE_PASS; SYS_6_ROLE_MATRIX_STORE_MANAGER_PASS; SYS_6_ROLE_MATRIX_TENANT_OWNER_PASS; SYS_6_ROLE_MATRIX_NETWORK_PASS; SYS_6_ROLE_MATRIX_MEMBER_PASS; MATRIX_GAP_CLOSEOUT_COMPLETE; HUMAN_PILOT_SANDBOX_REFRESHED; COMMERCIAL_FIXTURES_GENERATOR_PASS
 - branch: hardening/COMMERCIAL-COMPLETION
 - executor: Cursor Agent (2026-08-10; see PROJECT_STATE/EXECUTOR_HANDOFF.md)
-- last_safe_commit: 0eca0df
-- verified_sys_6_role_matrix_network: PASS - Channel/Circle/Platform packages separated via channel.read/manage + scopes; platform tenants/suspend denied to channel/circle-only. See PROJECT_STATE/SYS_6_ROLE_MATRIX_NETWORK_ACCEPTANCE.md. Commit 0eca0df.
-- verified_sys_6_role_matrix_tenant_owner: PASS - Owner chrome requires organization.manage; Tenant Manager denied. See PROJECT_STATE/SYS_6_ROLE_MATRIX_TENANT_OWNER_ACCEPTANCE.md. Commit 544ae6c.
-- verified_sys_6_role_matrix_store_manager: PASS - Store Manager closed loop. Commit 3e9a332.
+- last_safe_commit: PENDING_AFTER_COMMIT
+- verified_sys_6_role_matrix_member: PASS - Store ????anonymous denial + enroll ? memberCode/wallet proof. See PROJECT_STATE/SYS_6_ROLE_MATRIX_MEMBER_ACCEPTANCE.md.
+- verified_sys_6_role_matrix_network: PASS - Channel/Circle/Platform packages. Commit 0eca0df.
+- verified_sys_6_role_matrix_tenant_owner: PASS. Commit 544ae6c.
+- verified_sys_6_role_matrix_store_manager: PASS. Commit 3e9a332.
 - verified_sys_4_rbac_role_create: PASS. Commit e417954.
 - verified_sys_4_workflow_authoring: PASS. Commit 8cc8b45.
 - verified_sys_6_workflow_org_write: PASS. Commit 0d3035d.
@@ -40,9 +41,9 @@
 - verified_commercial_fixtures_generator: PASS.
 - started_at: 2026-08-09T20:29:46+08:00
 - blocker: null
-- next_scope: Role matrix Member Consumer journey or advanced workflow versioning. Not claimed as full commercial. Tencent Cloud out of scope (G).
+- next_scope: Advanced workflow versioning (draft versions / condition editors). Role matrix core packages landed. Not claimed as full commercial. Tencent Cloud out of scope (G).
 - progress_p0_covered: 26/26 (100%)
 - progress_matrix_waves: 4/4 close-out complete
-- progress_sys_waves: 6/6 scaffolded; Store Manager + Tenant Owner/Manager + Channel/Circle/Platform matrix slices landed; Member journey multi-week
+- progress_sys_waves: 6/6 scaffolded; role matrix Store/Tenant/Channel-Circle-Platform/Member slices landed; advanced workflow versioning multi-week
 - verified_pre_pilot_polish: PASS at 268464d.
 - remediation_stage: A-G PASS. See PROJECT_STATE/AUDIT_REMEDIATION_CLOSEOUT.md.

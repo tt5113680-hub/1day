@@ -75,6 +75,4 @@ export function resolveConsumerTabs(
   ].slice(0, 5);
 }
 
-export function memberAccessStorageKey(tenant: string, storeId: string) {
-  return `oneday.memberAccess:${tenant}:${storeId}`;
-}
+export { memberAccessStorageKey } from './member-session';

@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import {
   ConsumerShell,
   resolveConsumerTabs,
@@ -8,11 +8,20 @@ import {
   type ConsumerContext,
   type ConsumerTab,
 } from '../../consumer-shell';
-import { memberAccessStorageKey } from '../../resolve-consumer-tabs';
+import {
+  clearMemberAccess,
+  fetchMemberProfile,
+  fetchMemberWallet,
+  readMemberAccess,
+  writeMemberAccess,
+  type MemberProfilePayload,
+  type MemberWalletPayload,
+} from '../../member-session';
 import type { StoreDetail } from './store';
 import styles from './channel.module.css';
 
 type Channel = Exclude<ConsumerTab, 'home'>;
+const apiBase = process.env.NEXT_PUBLIC_API_BASE_URL ?? 'http://127.0.0.1:3001';
 
 const money = (value: number) => `¥${value.toFixed(value % 1 === 0 ? 0 : 2)}`;
 const platformName = (platform: StoreDetail['platformOffers'][number]['platformType']) =>
@@ -76,7 +85,7 @@ export default function StoreChannel({
     setMembershipNote('');
     try {
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_BASE_URL ?? 'http://127.0.0.1:3001'}/api/v1/consumer/memberships/enroll?tenant=${encodeURIComponent(context.tenant)}`,
+        `${apiBase}/api/v1/consumer/memberships/enroll?tenant=${encodeURIComponent(context.tenant)}`,
         {
           method: 'POST',
           headers: { 'content-type': 'application/json', 'idempotency-key': crypto.randomUUID() },
@@ -84,21 +93,16 @@ export default function StoreChannel({
         },
       );
       if (!response.ok) throw Error();
-      const data = (await response.json()).data;
-      setMember(data);
-      try {
-        sessionStorage.setItem(
-          memberAccessStorageKey(context.tenant, context.storeId),
-          JSON.stringify({
-            accessId: data.profileAccessId,
-            access: data.profileAccess,
-            memberCode: data.memberCode,
-          }),
-        );
-      } catch {
-        /* sessionStorage unavailable */
-      }
-      setMembershipNote(`入会成功。请保存会员码 ${data.memberCode}，到店核销时出示。`);
+      const payload = (await response.json()).data;
+      setMember(payload);
+      writeMemberAccess(context.tenant, context.storeId, {
+        accessId: payload.profileAccessId,
+        access: payload.profileAccess,
+        memberCode: payload.memberCode,
+      });
+      setMembershipNote(
+        `入会成功。会员码 ${payload.memberCode} 已写入本机会话，可前往「我的」查看会员证明。`,
+      );
     } catch {
       setMembershipNote('暂时无法完成入会，请确认手机号、授权与门店状态后重试。');
     } finally {
@@ -120,8 +124,8 @@ export default function StoreChannel({
       : channel === 'menu'
         ? '门店已发布的套餐与商品说明'
         : channel === 'membership'
-          ? '加入会员后，可由门店为你提供专属服务'
-          : '查看本店的服务入口与隐私说明';
+          ? '完成本店入会后，可在「我的」查看会员证明与权益余额'
+          : '入会后展示会员码与授权资料；匿名时不暴露隐私';
 
   return (
     <ConsumerShell context={context} active={channel} tabs={navTabs}>
@@ -236,7 +240,7 @@ export default function StoreChannel({
               <article className={styles.memberHero}>
                 <span>ONEDAY 会员</span>
                 <h2>加入会员，获取本店专属服务</h2>
-                <p>无需先创建复杂账号；提交意向后，由门店以合规方式确认服务。</p>
+                <p>提交手机号与隐私授权后生成本店会员身份；入会成功后可在「我的」查看会员证明。</p>
                 <label>
                   手机号
                   <input
@@ -261,7 +265,16 @@ export default function StoreChannel({
                 </button>
                 {membershipNote && <p role="status">{membershipNote}</p>}
                 {member && (
-                  <small>会员凭证仅在本设备当前会话展示；会员码：{member.memberCode}</small>
+                  <>
+                    <small>会员凭证仅在本设备当前会话展示；会员码：{member.memberCode}</small>
+                    <a
+                      className={styles.profileLink}
+                      href={storeHref(context, '/profile', 'membership_ready')}
+                    >
+                      <span>我的会员</span>
+                      <b>查看会员证明 ›</b>
+                    </a>
+                  </>
                 )}
               </article>
               {data.benefits.length ? (
@@ -292,45 +305,188 @@ export default function StoreChannel({
           )}
 
           {channel === 'profile' && (
-            <section className={styles.stack} aria-label="我的服务">
-              <article className={styles.profileHero}>
-                <span>我的服务</span>
-                <h2>先轻松浏览，需要时再联系门店</h2>
-                <p>为保护隐私，未授权时不会在此展示手机号、订单或个人资料。</p>
-              </article>
-              <a
-                className={styles.profileLink}
-                href={storeHref(context, '/membership', 'profile_membership')}
-              >
-                <span>会员权益</span>
-                <b>查看本店可用权益 ›</b>
-              </a>
-              <a
-                className={styles.profileLink}
-                href={storeHref(context, '/group-buy', 'profile_group_buy')}
-              >
-                <span>团购比价</span>
-                <b>查看各平台套餐价格 ›</b>
-              </a>
-              {consultAction ? (
-                <a
-                  className={styles.profileButton}
-                  href={actionHref(
-                    consultAction.id,
-                    'profile_consult',
-                    storeHref(context, '/profile', 'tab_profile'),
-                  )}
-                >
-                  咨询门店服务
-                </a>
-              ) : (
-                <span className={styles.profileButton}>暂未开放</span>
-              )}
-            </section>
+            <MemberProfileChannel
+              context={context}
+              consultActionId={consultAction?.id}
+              actionHref={actionHref}
+            />
           )}
         </div>
       </main>
     </ConsumerShell>
+  );
+}
+
+function MemberProfileChannel({
+  context,
+  consultActionId,
+  actionHref,
+}: {
+  context: ConsumerContext;
+  consultActionId?: string;
+  actionHref: (actionId: string, scene: string, returnTo: string) => string;
+}) {
+  const [state, setState] = useState<'loading' | 'anonymous' | 'ready' | 'forbidden' | 'error'>(
+    'loading',
+  );
+  const [wallet, setWallet] = useState<MemberWalletPayload | null>(null);
+  const [profile, setProfile] = useState<MemberProfilePayload | null>(null);
+  const [accessId, setAccessId] = useState<string | null>(null);
+  const [accessToken, setAccessToken] = useState<string | null>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    const load = async () => {
+      const access = readMemberAccess(context.tenant, context.storeId);
+      if (!access) {
+        if (!cancelled) setState('anonymous');
+        return;
+      }
+      try {
+        const [walletResult, profileResult] = await Promise.all([
+          fetchMemberWallet(apiBase, context.tenant, access),
+          fetchMemberProfile(apiBase, context.tenant, access),
+        ]);
+        if (walletResult.status === 404 || profileResult.status === 404) {
+          clearMemberAccess(context.tenant, context.storeId);
+          if (!cancelled) setState('forbidden');
+          return;
+        }
+        if (!walletResult.data || !profileResult.data) throw Error();
+        if (!cancelled) {
+          setAccessId(access.accessId);
+          setAccessToken(access.access);
+          setWallet(walletResult.data);
+          setProfile(profileResult.data);
+          setState('ready');
+        }
+      } catch {
+        if (!cancelled) setState('error');
+      }
+    };
+    void load();
+    return () => {
+      cancelled = true;
+    };
+  }, [context.storeId, context.tenant]);
+
+  if (state === 'loading') {
+    return (
+      <section className={styles.stack} aria-label="我的会员" aria-busy="true">
+        <Empty>正在核对会员会话…</Empty>
+      </section>
+    );
+  }
+
+  if (state === 'error') {
+    return (
+      <section className={styles.stack} aria-label="我的会员">
+        <article className={styles.profileHero}>
+          <span>我的会员</span>
+          <h2>暂时无法读取会员资料</h2>
+          <p>网络或门店服务不稳定，请稍后重试。匿名浏览不会展示隐私字段。</p>
+        </article>
+      </section>
+    );
+  }
+
+  if (state === 'anonymous' || state === 'forbidden') {
+    return (
+      <section className={styles.stack} aria-label="我的服务">
+        <article className={styles.profileHero} data-member-state={state}>
+          <span>我的服务</span>
+          <h2>{state === 'forbidden' ? '会员授权已失效' : '尚未完成本店入会'}</h2>
+          <p>
+            {state === 'forbidden'
+              ? '当前会话无法证明会员身份；请重新入会后再查看会员码与权益余额。'
+              : '为保护隐私，未授权时不会在此展示手机号、会员码、订单或个人资料。'}
+          </p>
+        </article>
+        <a
+          className={styles.profileLink}
+          href={storeHref(context, '/membership', 'profile_membership')}
+          data-testid="member-enroll-cta"
+        >
+          <span>会员入会</span>
+          <b>完成本店入会并授权 ›</b>
+        </a>
+        <a
+          className={styles.profileLink}
+          href={storeHref(context, '/group-buy', 'profile_group_buy')}
+        >
+          <span>团购比价</span>
+          <b>查看各平台套餐价格 ›</b>
+        </a>
+        {consultActionId ? (
+          <a
+            className={styles.profileButton}
+            href={actionHref(
+              consultActionId,
+              'profile_consult',
+              storeHref(context, '/profile', 'tab_profile'),
+            )}
+          >
+            咨询门店服务
+          </a>
+        ) : (
+          <span className={styles.profileButton}>暂未开放</span>
+        )}
+      </section>
+    );
+  }
+
+  const phoneIdentity = profile?.profile.identities.find((item) => item.type === 'phone');
+  const privacyHref =
+    accessId && accessToken
+      ? `/c/profile?tenant=${encodeURIComponent(context.tenant)}&profile=${encodeURIComponent(accessId)}&access=${encodeURIComponent(accessToken)}`
+      : storeHref(context, '/membership', 'profile_privacy');
+
+  return (
+    <section className={styles.stack} aria-label="我的会员" data-member-state="ready">
+      <article className={styles.profileHero}>
+        <span>我的会员</span>
+        <h2>{profile?.profile.displayName || '本店会员'}</h2>
+        <p role="status" data-testid="member-proof">
+          已证明本店会员身份。会员码 {wallet?.memberCode}
+          {phoneIdentity ? ` · ${phoneIdentity.maskedValue}` : ''}
+        </p>
+      </article>
+      <article className={styles.benefit} aria-label="会员钱包余额">
+        <span>{wallet?.tier || 'MEMBER'}</span>
+        <h2>权益余额</h2>
+        {wallet?.benefits.length ? (
+          wallet.benefits.map((item) => (
+            <p key={item.id}>
+              {item.title} · 余额 {item.balance}
+            </p>
+          ))
+        ) : (
+          <p>门店尚未发放可核销权益；到店时可出示会员码。</p>
+        )}
+      </article>
+      {profile?.history.length ? (
+        <article className={styles.benefit} aria-label="最近服务记录">
+          <span>服务记录</span>
+          <h2>最近到店/订单</h2>
+          {profile.history.slice(0, 3).map((item) => (
+            <p key={item.orderNumber}>
+              {item.orderNumber} · {item.status}
+            </p>
+          ))}
+        </article>
+      ) : null}
+      <a className={styles.profileLink} href={privacyHref} data-testid="member-privacy-link">
+        <span>隐私授权</span>
+        <b>查看授权状态或撤回同意 ›</b>
+      </a>
+      <a
+        className={styles.profileLink}
+        href={storeHref(context, '/membership', 'profile_membership')}
+      >
+        <span>会员权益说明</span>
+        <b>查看本店可用权益 ›</b>
+      </a>
+    </section>
   );
 }
 

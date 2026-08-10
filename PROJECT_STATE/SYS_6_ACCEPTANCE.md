@@ -43,6 +43,6 @@
 
 ## Honest remainder
 
-- Full ROLE_PRODUCT_MATRIX E2E Member Consumer journey remains multi-week.
-- Dedicated `circle.read` / `circle.display` / `provision.request` permission codes remain deferred (Circle uses `circle.manage`; Channel uses `channel.read`/`channel.manage`).
+- Cross-device Member login and dedicated `circle.read` / `circle.display` / `provision.request` permission codes remain deferred.
 - Advanced workflow versioning (new draft versions / condition editors) remains deeper multi-week work; create+publish + start/decide + org create are wired.
+- Full external commercial claim still blocked on product-owner UI sign-off.
