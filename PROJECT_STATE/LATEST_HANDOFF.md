@@ -9,11 +9,11 @@
 ## Current task ? Phase-1 commercial closed loop
 
 - branch: `hardening/COMMERCIAL-COMPLETION`
-- last_verified: P1-B platform-shell slice PASS (last raw hex in the Platform product shell chrome retired; Platform admin/prod shell fully token-driven)
-- status: P1-A/P1-B continue via **local unattended** Headless turns
-- blocker: null (P1-C waits on G lift + cloud inventory)
-- progress: P0 26/26; membership closed-loop landed; P1-B ui-kit Table/Modal landed; P1-B consumer-shell shared nav landed; P1-B employee-shell shared work-nav landed; P1-B management-shell shared admin-shell chrome landed; P1-B **platform-shell** shared token-driven polish landed; remaining P1-B sync-converge + content-chain
-- push_pending: local P1-B platform-shell commit `c6b4499` ahead of origin by 1 — GitHub 443 unreachable this turn (connection reset); push `origin/hardening/COMMERCIAL-COMPLETION` when connectivity returns. Untracked/uncommitted local infra: `scripts/local-unattended-construction.ps1` (modified) + `scripts/configure-unattended-power.ps1` (new) — left outside slice (authorization: not force-push, no main rewrite).
+- last_verified: P1-B sync-converge + content-chain PASS (content approve emits `content.published.v1`; Management content page converges via the `content` sync topic; per-item honest convergence line; page-builder surfaces published_at publish effectiveness)
+- status: P1-A/P1-B continue via **local unattended** Headless turns; four P1-B shells + ui-kit + sync-converge + content-chain all PASS; remaining P1-B is essentially complete -> next P1-C bundle review + G1 packaging
+- blocker: null (P1-C live waits on G lift + cloud inventory)
+- progress: P0 26/26; membership closed-loop landed; ui-kit Table/Modal; consumer/employee/management/platform shells token-driven; **sync-converge + content-chain PASS** (see `evidence/P1-B-SYNC-CONVERGE/ACCEPTANCE.md`)
+- push_pending: local P1-B sync-converge commit ahead of origin; prior local infra (scripts/) left outside slice. Push `origin/hardening/COMMERCIAL-COMPLETION` when connectivity returns.
 
 ### Owner ? one-time only
 

@@ -97,6 +97,10 @@ export class ManagementContentService implements OnModuleDestroy {
       ).rows[0];
       if (!row) throw new ConflictException('CONFLICT');
       await this.audit(q, c, 'content.approved', id, r, row);
+      await q.query(
+        "insert into outbox_events(id,tenant_id,event_type,aggregate_type,aggregate_id,payload,correlation_id,trace_id,created_by,updated_by) values($1,$2,'content.published.v1','content_item',$3,$4,$5,'content-center',$6,$6)",
+        [randomUUID(), c.tenantId, id, row, uuid.test(r) ? r : randomUUID(), c.userId],
+      );
       await q.query('commit');
       return row;
     } catch (e) {

@@ -1,5 +1,6 @@
 'use client';
 import { SessionApiClient } from '@oneday/session-client';
+import { useTenantSync } from '@oneday/sync-client';
 import {
   AdminPageHeader,
   AppStatePanel,
@@ -37,9 +38,9 @@ export default function ContentPage() {
     [channelDraft, setChannelDraft] = useState<Record<string, string>>({}),
     [busy, setBusy] = useState<string | null>(null),
     [note, setNote] = useState('');
-  const load = useCallback(async () => {
+  const load = useCallback(async (mode: 'full' | 'quiet' = 'full') => {
     if (!(await sessionApi.context())) return setState('forbidden');
-    setState('loading');
+    if (mode === 'full') setState('loading');
     try {
       const [r, storesResponse] = await Promise.all([
         sessionApi.request(`${api}/api/v1/management/content`, { headers: {} }),
@@ -56,10 +57,11 @@ export default function ContentPage() {
         );
       setState('ready');
     } catch {
-      setState('error');
+      if (mode === 'full') setState('error');
     }
   }, []);
   useEffect(() => void load(), [load]);
+  useTenantSync(api, sessionApi, ['content'], () => void load('quiet'), state === 'ready');
   const create = async () => {
     if (!title.trim()) return setNote('请填写内容标题。');
     const r = await sessionApi.request(`${api}/api/v1/management/content`, {
@@ -225,6 +227,13 @@ export default function ContentPage() {
                       .join('、')}
                   </small>
                 )}
+                <small className={styles.convergence}>
+                  {x.status === 'approved'
+                    ? x.placements?.length
+                      ? '已生效：消费者门店已读取该条内容'
+                      : '已审批但尚未投放：消费者尚不可见'
+                    : '尚未发布：消费者不可见'}
+                </small>
                 {x.status === 'draft' ? (
                   <Button disabled={busy === `approve-${x.id}`} onClick={() => void approve(x)}>
                     审批并允许投放

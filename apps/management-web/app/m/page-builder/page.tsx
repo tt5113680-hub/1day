@@ -28,6 +28,7 @@ type Template = {
   draft_version_id: string | null;
   live_version_id: string | null;
   binding_version: number | null;
+  published_at: string | null;
   industry_config: { family?: string };
 };
 type TemplateVersion = { id: string; sequence: number; status: string; version: number };
@@ -352,6 +353,11 @@ export default function PageBuilder() {
                         ? '模板已发布（未绑定门店）'
                         : '尚未发布'}
                   </StatusBadge>
+                  {template.live_version_id && template.published_at && (
+                    <small className={styles.publishedEvidence}>
+                      消费者上次读取已发布版本：{new Date(template.published_at).toLocaleString()}
+                    </small>
+                  )}
                 </div>
                 <Button tone="secondary" onClick={() => void preview(template.id)}>
                   进入装修

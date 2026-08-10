@@ -50,6 +50,12 @@
   justify-items: start;
 }
 
+.publishedEvidence {
+  color: var(--od-brand-700);
+  font-size: 12px;
+  font-weight: 700;
+}
+
 .canvas {
   display: grid;
   gap: 10px;

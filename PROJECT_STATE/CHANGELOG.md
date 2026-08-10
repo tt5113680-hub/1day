@@ -1,5 +1,17 @@
 # CHANGELOG
 
+## 2026-08-10 - P1-B sync-converge + content-chain: content approve emits `content.published.v1` and Management converges on the content sync topic PASS
+
+- `apps/api/src/management-content.service.ts`: `approve()` now writes a `content.published.v1` outbox event **in the same transaction** (was previously silent). This closes the approve→place→Consumer event chain and routes to the `content` sync topic via `mapEventToSyncTopics` (CHARTER §3.1 publish-effectiveness, MULTI_TERMINAL_SYNC_SPEC §4). Internal publication intent only, never an external delivery claim (CHARTER §1.4).
+- `apps/management-web/app/m/content/page.tsx`: Management 内容中心 now subscribes the `content` sync topic via `useTenantSync` (same quiet-reload pattern as the 经营总览), so approve/place/distribute converge into a live refresh instead of only the manual refresh button (SY-01). Closes the server-generated-but-unconsumed content topic gap.
+- `apps/management-web/app/m/content/page.tsx`: each content card now renders an honest convergence line — 已生效（消费者已读取）/ 已审批但尚未投放（消费者尚不可见）/ 尚未发布（消费者不可见）— aligning with matrix M-05 (approval vs placement distinct) + CT-02.
+- `apps/management-web/app/m/page-builder/page.tsx`: the 数字门店装修 template card now surfaces `published_at` as publish-effectiveness evidence:「消费者上次读取已发布版本:{time}」(already returned by the list API), matrix M-03/SF-02.
+- Tests: `tests/p1-b-content-sync.test.mjs` 1/1 — fresh tenant: approve→`content.published.v1` in `outbox_events`→worker dispatch projects to `:content` topic→`/api/v1/sync/changes?topics=content` returns it (ETag)→place→Consumer published read model returns the title.
+- Gates: `pnpm typecheck` 20/20, `pnpm build` 20/20, `pnpm test:unit` 12 files/49, new test 1/1, regressions batch-2-content-placement + sys-6-content-placements + matrix-sync-gateway 3/3, eslint clean.
+- Maps to matrix SY-01/SY-02/M-05/CT-02/M-03/SF-02. Marks `p1-b-sync-converge` + `p1-b-content-chain` milestones PASS in `PHASE1_PROGRESS.json`. Evidence: `evidence/P1-B-SYNC-CONVERGE/ACCEPTANCE.md`.
+- Not 全部商用. No product-owner UI auto-sign.
+
+
 ## 2026-08-10 - P1-B Platform shell: retire raw hex in the Platform product shell chrome PASS
 
 - `apps/platform-web/app/platform-shell.module.css`: removed the hard-coded `#1f4d2e` fallback from the mode-switcher hover/active states (`var(--od-brand-800, #1f4d2e)` → `var(--od-brand-800)`). **File now carries no raw hex.**

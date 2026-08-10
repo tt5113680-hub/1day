@@ -68,6 +68,11 @@
   color: var(--od-text-muted);
 }
 
+.convergence {
+  color: var(--od-brand-700);
+  font-weight: 700;
+}
+
 .placement {
   display: grid;
   grid-template-columns: minmax(0, 1fr) 110px auto;
