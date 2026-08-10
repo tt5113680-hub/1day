@@ -8,7 +8,7 @@
 ## Current task - systemic commercial productization (D3)
 
 - branch: `hardening/COMMERCIAL-COMPLETION`
-- HEAD (pushed): tip a278ca9
+- HEAD (pushed): tip e00d2c1
 - last_safe_commit: a893c09
 - last_verified: SYS-28 Platform shell product isolation PASS
 - current_task: human product-owner UI sign-off (do NOT auto-PASS) **or** scoped P1 after owner decision
