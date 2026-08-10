@@ -1,4 +1,4 @@
-ï»¿# LATEST_HANDOFF
+# LATEST_HANDOFF
 
 ## Executor
 
@@ -9,7 +9,7 @@
 
 - branch: `hardening/COMMERCIAL-COMPLETION`
 - HEAD (pushed): tip after SYS-18 state record
-- last_safe_commit: PENDING_SYS18_COMMIT
+- last_safe_commit: d957edd
 - last_verified: SYS-18 STA condition card IA PASS
 - current_task: SYS-19 STA start-context presets (preferred) **or** human product-owner UI sign-off assist
 - status: `SYS_18_CONDITION_CARD_PASS`; **not** claimed as full commercial
@@ -20,13 +20,13 @@
 ### Completed prior window (verified + pushed)
 
 1. SYS-17 STA insert rails (`2a913f8`)
-2. SYS-18 STA condition card IA (this commit)
+2. SYS-18 STA condition card IA (`d957edd`)
 
 ### Next remainders (honest)
 
-- **SYS-19** Structured Timeline Authoring â€” start-context presets
-- **Product-owner UI sign-off (human)** â€” `PRODUCT_OWNER_UI_ACCEPTANCE.md` (engineering must not mark PASS)
-- Free-form DAG canvas â€” **deferred** (wrong default this phase)
+- **SYS-19** Structured Timeline Authoring ¡ª start-context presets
+- **Product-owner UI sign-off (human)** ¡ª `PRODUCT_OWNER_UI_ACCEPTANCE.md` (engineering must not mark PASS)
+- Free-form DAG canvas ¡ª **deferred** (wrong default this phase)
 - No Tencent Cloud (G). No full-commercial claim.
 
 ### Owner cooperation (front-loaded)
@@ -38,7 +38,7 @@
 ### New-window paste
 
 ```text
-è¯»å¹¶æ‰§è¡Œï¼š
+¶Á²¢Ö´ĞĞ£º
 1. PROJECT_STATE/EXECUTOR_HANDOFF.md
 2. PROJECT_STATE/LATEST_HANDOFF.md
 3. PROJECT_STATE/DECISION_REQUIRED.md
@@ -47,9 +47,9 @@
 6. PROJECT_STATE/WORKFLOW_AUTHORING_UX_RECOMMENDATION.md
 7. git status
 
-çŠ¶æ€ï¼šSYS-18 PASSï¼ˆsafe è§ LATEST_HANDOFFï¼‰ï¼›P0 26/26ï¼›å·¥ä½œåŒºå¹²å‡€ã€‚
-è®¾è®¡è£å†³ï¼šä¸åš free-form drag ç”»å¸ƒï¼›æŒ‰ WORKFLOW_AUTHORING_UX_RECOMMENDATION æ¨è¿› Structured Timeline Authoringã€‚
-ä¸‹ä¸€å·¥ç¨‹åˆ‡ç‰‡ï¼šSYS-19 è·¯å¾„æ¨¡æ‹Ÿå™¨ start-context presetsï¼ˆå¯å¹¶è¡ŒååŠ© human pilot æ²™ç®±ï¼Œä½†ä¸å¾—ä»£ç­¾ PRODUCT_OWNER_UI_ACCEPTANCEï¼‰ã€‚
-ç¦æ­¢é¡µçº§è¡¥ä¸ã€‚å·¥ä½œç›®å½•ä»… D:\ONEDAY_V3ã€‚ä¸å¾—å®£ç§°å…¨éƒ¨å•†ç”¨ã€‚ä¸åšè…¾è®¯äº‘ã€‚
-å·²è· Aâ€“Hã€‚ç»§ç»­æ–½å·¥ï¼›ç”¨é‡è¾¾åˆ° 90%â€“95% å†æ¢æ–°çª—å£ï¼Œä¸­é€”ä¸è¦åœã€‚
+×´Ì¬£ºSYS-18 PASS£¨safe d957edd£»tip ¼û LATEST_HANDOFF£©£»P0 26/26£»¹¤×÷Çø¸É¾»¡£
+Éè¼Æ²Ã¾ö£º²»×ö free-form drag »­²¼£»°´ WORKFLOW_AUTHORING_UX_RECOMMENDATION ÍÆ½ø Structured Timeline Authoring¡£
+ÏÂÒ»¹¤³ÌÇĞÆ¬£ºSYS-19 Â·¾¶Ä£ÄâÆ÷ start-context presets£¨¿É²¢ĞĞĞ­Öú human pilot É³Ïä£¬µ«²»µÃ´úÇ© PRODUCT_OWNER_UI_ACCEPTANCE£©¡£
+½ûÖ¹Ò³¼¶²¹¶¡¡£¹¤×÷Ä¿Â¼½ö D:\ONEDAY_V3¡£²»µÃĞû³ÆÈ«²¿ÉÌÓÃ¡£²»×öÌÚÑ¶ÔÆ¡£
+ÒÑ»ñ A¨CH¡£¼ÌĞøÊ©¹¤£»ÓÃÁ¿´ïµ½ 90%¨C95% ÔÙ»»ĞÂ´°¿Ú£¬ÖĞÍ¾²»ÒªÍ£¡£
 ```
