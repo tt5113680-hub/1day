@@ -17,12 +17,20 @@ export {
 export {
   StorefrontBannerCarousel,
   StorefrontMemberCard,
+  StorefrontOfferCompare,
   StorefrontOfferList,
   StorefrontQuickActions,
+  StorefrontStoryList,
+  storefrontPlatformGlyph,
   type StorefrontBannerSlide,
+  type StorefrontComparePackage,
+  type StorefrontComparePriceRow,
   type StorefrontMemberCardProps,
   type StorefrontOfferItem,
+  type StorefrontPlatformLinkItem,
+  type StorefrontPlatformMark,
   type StorefrontQuickActionItem,
+  type StorefrontStoryItem,
 } from './paint.js';
 export { storefrontTokens, type StorefrontTokens } from './tokens.js';
 export {

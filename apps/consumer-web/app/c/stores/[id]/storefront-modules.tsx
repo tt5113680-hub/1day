@@ -7,9 +7,11 @@ import {
   StorefrontBannerCarousel,
   StorefrontEmpty,
   StorefrontMemberCard,
+  StorefrontOfferCompare,
   StorefrontOfferList,
   StorefrontQuickActions,
   StorefrontSection,
+  StorefrontStoryList,
   visibleStorefrontModules,
 } from '@oneday/storefront-renderer';
 import '@oneday/storefront-renderer/storefront.css';
@@ -639,83 +641,43 @@ function OfferCompare({
       moduleType="offer_compare"
     >
       {data.platformOffers.length || data.externalLinks.length ? (
-        <>
-          {groupedPlatformOffers.map((group) => {
+        <StorefrontOfferCompare
+          packages={groupedPlatformOffers.map((group) => {
             const lowest = Math.min(...group.offers.map((item) => item.offerPrice));
-            return (
-              <article className={styles.comparisonPackage} key={group.offers[0]?.serviceId}>
-                <header>
-                  <span>门店推荐套餐</span>
-                  <strong>{group.serviceName}</strong>
-                  {group.servicePriceLabel && <small>门店标价 {group.servicePriceLabel}</small>}
-                </header>
-                <div className={styles.priceRows}>
-                  {group.offers.map((item) => (
-                    <a
-                      className={styles.priceRow}
-                      href={actionUrl(item.id, 'platform_compare_price')}
-                      key={item.offerId}
-                    >
-                      <span
-                        className={`${styles.platformMark} ${styles[`platform${item.platformType}`]}`}
-                      >
-                        {item.platformType === 'meituan'
-                          ? '团'
-                          : item.platformType === 'douyin'
-                            ? '抖'
-                            : '荐'}
-                      </span>
-                      <span className={styles.pricePlatform}>
-                        <strong>{item.title}</strong>
-                        <small>
-                          {item.marketPrice ? `划线价 ${money(item.marketPrice)}` : '平台推荐套餐'}
-                          {' · '}商家登记于{' '}
-                          {new Date(item.sourceUpdatedAt).toLocaleDateString('zh-CN')}
-                        </small>
-                      </span>
-                      <b className={styles.priceValue}>
-                        {item.offerPrice === lowest && <em>当前低价</em>}
-                        团购价 {money(item.offerPrice)}
-                      </b>
-                    </a>
-                  ))}
-                </div>
-              </article>
-            );
+            return {
+              key: group.offers[0]?.serviceId ?? group.serviceName,
+              serviceName: group.serviceName,
+              servicePriceLabel: group.servicePriceLabel,
+              rows: group.offers.map((item) => ({
+                key: item.offerId,
+                href: actionUrl(item.id, 'platform_compare_price'),
+                platformType: item.platformType,
+                title: item.title,
+                meta: `${item.marketPrice ? `划线价 ${money(item.marketPrice)}` : '平台推荐套餐'} · 商家登记于 ${new Date(item.sourceUpdatedAt).toLocaleDateString('zh-CN')}`,
+                priceLabel: `团购价 ${money(item.offerPrice)}`,
+                lowest: item.offerPrice === lowest,
+              })),
+            };
           })}
-          {!data.platformOffers.length && data.externalLinks.length ? (
-            <div className={styles.platformList}>
-              {data.externalLinks.map((item, index) => (
-                <a
-                  className={styles.platform}
-                  href={actionUrl(item.id, 'platform_compare')}
-                  key={item.linkId}
-                >
-                  <span
-                    className={`${styles.platformMark} ${styles[`platform${item.platformType}`]}`}
-                  >
-                    {item.platformType === 'meituan'
-                      ? '团'
-                      : item.platformType === 'douyin'
-                        ? '抖'
-                        : '荐'}
-                  </span>
-                  <span>
-                    <strong>{item.title}</strong>
-                    <p>{item.description ?? '前往对应平台查看'}</p>
-                  </span>
-                  <b>
-                    {index === 0 ? '优先查看' : '去比价'} <i>›</i>
-                  </b>
-                </a>
-              ))}
-            </div>
-          ) : null}
-        </>
+          links={
+            !data.platformOffers.length
+              ? data.externalLinks.map((item, index) => ({
+                  key: item.linkId,
+                  href: actionUrl(item.id, 'platform_compare'),
+                  platformType: item.platformType,
+                  title: item.title,
+                  description: item.description ?? '前往对应平台查看',
+                  cta: index === 0 ? '优先查看' : '去比价',
+                }))
+              : []
+          }
+        />
       ) : (
-        <StorefrontEmpty>门店暂未配置可跳转的平台入口。</StorefrontEmpty>
+        <>
+          <StorefrontEmpty>门店暂未配置可跳转的平台入口。</StorefrontEmpty>
+          <p className="od-sf-disclaimer">价格、库存及最终优惠以第三方平台实际页面为准。</p>
+        </>
       )}
-      <p className={styles.disclaimer}>价格、库存及最终优惠以第三方平台实际页面为准。</p>
     </StorefrontSection>
   );
 }
@@ -728,29 +690,21 @@ function ContentFeed({ data }: { data: StoreDetail }) {
       anchor="updates"
       moduleType="content_feed"
     >
-      <div className={styles.storyList}>
-        {data.content.length ? (
-          data.content.map((item, index) => (
-            <article className={styles.story} key={item.id}>
-              {data.store.imageUrl && (
-                <img
-                  src={data.store.imageUrl}
-                  alt=""
-                  style={{ objectPosition: index ? '40% 65%' : '75% 45%' }}
-                />
-              )}
-              <span>
-                <em>{item.content_type === 'story' ? '门店动态' : '今日推荐'}</em>
-                <strong>{item.title}</strong>
-                <p>{item.summary ?? '门店正在分享最新消息。'}</p>
-                <small>LOCAL HUMAN PILOT · TEST ONLY</small>
-              </span>
-            </article>
-          ))
-        ) : (
-          <StorefrontEmpty>门店正在准备更多动态。</StorefrontEmpty>
-        )}
-      </div>
+      {data.content.length ? (
+        <StorefrontStoryList
+          items={data.content.map((item, index) => ({
+            id: item.id,
+            eyebrow: item.content_type === 'story' ? '门店动态' : '今日推荐',
+            title: item.title,
+            summary: item.summary ?? '门店正在分享最新消息。',
+            meta: 'LOCAL HUMAN PILOT · TEST ONLY',
+            imageUrl: data.store.imageUrl,
+            imagePosition: index ? '40% 65%' : '75% 45%',
+          }))}
+        />
+      ) : (
+        <StorefrontEmpty>门店正在准备更多动态。</StorefrontEmpty>
+      )}
     </StorefrontSection>
   );
 }

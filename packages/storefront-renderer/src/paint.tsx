@@ -162,3 +162,138 @@ export function StorefrontOfferList({ items }: { items: StorefrontOfferItem[] })
     </div>
   );
 }
+
+export type StorefrontPlatformMark = 'meituan' | 'douyin' | 'external' | string;
+
+export function storefrontPlatformGlyph(platformType: StorefrontPlatformMark) {
+  if (platformType === 'meituan') return '团';
+  if (platformType === 'douyin') return '抖';
+  return '荐';
+}
+
+export type StorefrontComparePriceRow = {
+  key: string;
+  href: string;
+  platformType: StorefrontPlatformMark;
+  title: string;
+  meta: string;
+  priceLabel: string;
+  lowest?: boolean;
+};
+
+export type StorefrontComparePackage = {
+  key: string;
+  serviceName: string;
+  servicePriceLabel?: string | null;
+  rows: StorefrontComparePriceRow[];
+};
+
+export type StorefrontPlatformLinkItem = {
+  key: string;
+  href: string;
+  platformType: StorefrontPlatformMark;
+  title: string;
+  description: string;
+  cta: string;
+};
+
+export function StorefrontOfferCompare({
+  packages,
+  links = [],
+  disclaimer = '价格、库存及最终优惠以第三方平台实际页面为准。',
+}: {
+  packages: StorefrontComparePackage[];
+  links?: StorefrontPlatformLinkItem[];
+  disclaimer?: string;
+}) {
+  const empty = !packages.length && !links.length;
+  if (empty) return null;
+  return (
+    <>
+      {packages.map((group) => (
+        <article className="od-sf-compare" key={group.key}>
+          <header>
+            <span>门店推荐套餐</span>
+            <strong>{group.serviceName}</strong>
+            {group.servicePriceLabel ? <small>门店标价 {group.servicePriceLabel}</small> : null}
+          </header>
+          <div className="od-sf-compare__rows">
+            {group.rows.map((item) => (
+              <a className="od-sf-compare__row" href={item.href} key={item.key}>
+                <span
+                  className={`od-sf-platform-mark od-sf-platform-mark--${item.platformType === 'meituan' || item.platformType === 'douyin' ? item.platformType : 'external'}`}
+                >
+                  {storefrontPlatformGlyph(item.platformType)}
+                </span>
+                <span className="od-sf-compare__platform">
+                  <strong>{item.title}</strong>
+                  <small>{item.meta}</small>
+                </span>
+                <b className="od-sf-compare__price">
+                  {item.lowest ? <em>当前低价</em> : null}
+                  {item.priceLabel}
+                </b>
+              </a>
+            ))}
+          </div>
+        </article>
+      ))}
+      {!packages.length && links.length ? (
+        <div className="od-sf-platform-links">
+          {links.map((item) => (
+            <a className="od-sf-platform-link" href={item.href} key={item.key}>
+              <span
+                className={`od-sf-platform-mark od-sf-platform-mark--${item.platformType === 'meituan' || item.platformType === 'douyin' ? item.platformType : 'external'}`}
+              >
+                {storefrontPlatformGlyph(item.platformType)}
+              </span>
+              <span>
+                <strong>{item.title}</strong>
+                <p>{item.description}</p>
+              </span>
+              <b>
+                {item.cta} <i>›</i>
+              </b>
+            </a>
+          ))}
+        </div>
+      ) : null}
+      {disclaimer ? <p className="od-sf-disclaimer">{disclaimer}</p> : null}
+    </>
+  );
+}
+
+export type StorefrontStoryItem = {
+  id: string;
+  eyebrow: string;
+  title: string;
+  summary: string;
+  meta?: string;
+  imageUrl?: string | null;
+  imagePosition?: string;
+};
+
+export function StorefrontStoryList({ items }: { items: StorefrontStoryItem[] }) {
+  if (!items.length) return null;
+  return (
+    <div className="od-sf-stories">
+      {items.map((item) => (
+        <article className="od-sf-story" key={item.id}>
+          {item.imageUrl ? (
+            <img
+              src={item.imageUrl}
+              alt=""
+              style={item.imagePosition ? { objectPosition: item.imagePosition } : undefined}
+            />
+          ) : null}
+          <span>
+            <em>{item.eyebrow}</em>
+            <strong>{item.title}</strong>
+            <p>{item.summary}</p>
+            {item.meta ? <small>{item.meta}</small> : null}
+          </span>
+        </article>
+      ))}
+    </div>
+  );
+}

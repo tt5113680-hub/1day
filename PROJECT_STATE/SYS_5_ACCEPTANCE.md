@@ -11,18 +11,17 @@
 | Shared theme  | `@oneday/storefront-renderer/storefront.css` + `storefrontTokens` (`--od-sf-*`) |
 | Consumer CSS  | `store.module.css` has **zero** raw hex; colors via `--od-sf-*`                 |
 | Shared chrome | `StorefrontSection`, `StorefrontEmpty`, `storefrontActionIcon`                  |
-| Shared paint  | Banner, QuickActions, MemberCard, OfferList + matching `.od-sf-*` classes       |
+| Shared paint  | Banner, QuickActions, MemberCard, OfferList, OfferCompare, StoryList            |
 | Host wiring   | Consumer store root uses `od-sf-theme`; Management imports storefront.css       |
 
 ## Evidence
 
 - `tests/storefront-renderer.vitest.ts` 7/7
-- `tests/sys-5-storefront-renderer.test.mjs` 2/2
 - Consumer typecheck/build PASS
 - `evidence/SYS-5/`
 
 ## Honest remainder
 
-- Banner / QuickActions / Member card / Offer list paints extracted.
-- Remaining paints (OfferCompare / platform rows / story / wallet cards / …) still largely live in Consumer.
+- Major storefront module paints extracted (banner/shortcuts/member/offers/compare/stories).
+- Remaining Consumer-local paint: benefit cards, member wallet cards, store_info chrome, floating consult.
 - Product-owner UI sign-off remains human.

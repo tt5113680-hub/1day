@@ -4,12 +4,13 @@
 - completed_tasks: 69/69
 - foundation_final_state_commit: 239114e
 - core_final_state_commit: df5ef65
-- last_completed_task: SYS-5 member + offer paints extraction PASS
+- last_completed_task: SYS-5 compare + story paints extraction PASS
 - current_task: ONEDAY-V3-COMMERCIAL-COMPLETION / systemic waves (SYS-6 remainder: more write controllers; optional remaining storefront paints)
-- status: SYS_1_PASS; SYS_2_PASS; SYS_3_PASS; SYS_4_PASS; SYS_5_SCAFFOLD_PASS; SYS_5_VISUAL_PASS; SYS_5_QUICK_ACTIONS_PAINT_PASS; SYS_5_MEMBER_OFFER_PAINT_PASS; SYS_6_SCAFFOLD_PASS; SYS_6_MULTI_PRODUCT_PASS; SYS_6_DATA_SCOPES_PASS; SYS_6_WRITE_PATH_SCOPES_PASS; SYS_6_NETWORK_PACKS_PASS; SYS_6_CONTENT_PLACEMENTS_PASS; MATRIX_GAP_CLOSEOUT_COMPLETE; HUMAN_PILOT_SANDBOX_REFRESHED; COMMERCIAL_FIXTURES_GENERATOR_PASS
+- status: SYS_1_PASS; SYS_2_PASS; SYS_3_PASS; SYS_4_PASS; SYS_5_SCAFFOLD_PASS; SYS_5_VISUAL_PASS; SYS_5_QUICK_ACTIONS_PAINT_PASS; SYS_5_MEMBER_OFFER_PAINT_PASS; SYS_5_COMPARE_STORY_PAINT_PASS; SYS_6_SCAFFOLD_PASS; SYS_6_MULTI_PRODUCT_PASS; SYS_6_DATA_SCOPES_PASS; SYS_6_WRITE_PATH_SCOPES_PASS; SYS_6_NETWORK_PACKS_PASS; SYS_6_CONTENT_PLACEMENTS_PASS; MATRIX_GAP_CLOSEOUT_COMPLETE; HUMAN_PILOT_SANDBOX_REFRESHED; COMMERCIAL_FIXTURES_GENERATOR_PASS
 - branch: hardening/COMMERCIAL-COMPLETION
 - executor: Cursor Agent (2026-08-10; see PROJECT_STATE/EXECUTOR_HANDOFF.md)
-- last_safe_commit: f68bd4b
+- last_safe_commit: pending (this gate)
+- verified_sys_5_compare_story_paint: PASS - StorefrontOfferCompare + StorefrontStoryList extracted. See PROJECT_STATE/SYS_5_ACCEPTANCE.md and evidence/SYS-5/.
 - verified_sys_5_member_offer_paint: PASS - StorefrontMemberCard + StorefrontOfferList extracted. See PROJECT_STATE/SYS_5_ACCEPTANCE.md and evidence/SYS-5/.
 - verified_sys_5_quick_actions_paint: PASS - StorefrontQuickActions + .od-sf-shortcut* extracted. See PROJECT_STATE/SYS_5_ACCEPTANCE.md and evidence/SYS-5/.
 - verified_sys_6_content_placements: PASS - store managers list approved content + place on scoped stores; create/approve owner-only. See PROJECT_STATE/SYS_6_ACCEPTANCE.md and evidence/SYS-6/.
@@ -28,9 +29,9 @@
 - verified_commercial_fixtures_generator: PASS.
 - started_at: 2026-08-09T20:29:46+08:00
 - blocker: null
-- next_scope: SYS-6 remainder (more Management/Employee write controllers) or remaining storefront paints (OfferCompare/platform/story). Not claimed as full commercial. Tencent Cloud out of scope (G). Usage warn >=90% only.
+- next_scope: SYS-6 remainder (more Management/Employee write controllers) or remaining storefront paints (benefit/wallet/store_info). Not claimed as full commercial. Tencent Cloud out of scope (G). Usage warn >=90% only.
 - progress_p0_covered: 26/26 (100%)
 - progress_matrix_waves: 4/4 close-out complete
-- progress_sys_waves: 6/6 scaffolded; SYS-5 member/offer paints landed; remainders multi-week
+- progress_sys_waves: 6/6 scaffolded; SYS-5 compare/story paints landed; remainders multi-week
 - verified_pre_pilot_polish: PASS at 268464d.
 - remediation_stage: A-G PASS. See PROJECT_STATE/AUDIT_REMEDIATION_CLOSEOUT.md.

@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## 2026-08-10 - SYS-5 compare + story paints extraction PASS
+
+- Extracted `StorefrontOfferCompare` + `StorefrontStoryList` (+ platform mark/disclaimer styles) into `@oneday/storefront-renderer`.
+- Consumer keeps offer grouping, money formatting, and action URL wiring only.
+- Evidence: `SYS_5_ACCEPTANCE.md`. Tests: `storefront-renderer.vitest` 7/7. Benefit/wallet/store_info paints remain. Not claimed as full commercial.
+
 ## 2026-08-10 - SYS-5 member + offer paints extraction PASS
 
 - Extracted `StorefrontMemberCard` + `StorefrontOfferList` (+ `.od-sf-member*` / `.od-sf-offer*`) into `@oneday/storefront-renderer`.

@@ -35,7 +35,7 @@
 
 **Systemic waves (D3) - SYS-6 / SYS-5 remainders:**
 
-SYS-6 network packs + content placements PASS; SYS-5 banner + quick-actions + member + offer paints extracted. Continue: more write controllers; or OfferCompare/platform/story paints. No page-level patches. Not claimed as full commercial. Tencent Cloud out of scope (G). Usage warn only at **>=90%**.
+SYS-6 network packs + content placements PASS; SYS-5 banner/quick-actions/member/offer/compare/story paints extracted. Continue: more write controllers; or benefit/wallet/store_info paints. No page-level patches. Not claimed as full commercial. Tencent Cloud out of scope (G). Usage warn only at **>=90%**.
 
 ## Secrets and cloud
 

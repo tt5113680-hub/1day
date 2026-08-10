@@ -281,180 +281,6 @@
   font-size: 12px;
   font-weight: 700;
 }
-.story em {
-  font-style: normal;
-  color: var(--od-sf-accent);
-  font-size: 10px;
-  font-weight: 800;
-}
-.platformList {
-  display: grid;
-  gap: 9px;
-}
-.comparisonPackage {
-  overflow: hidden;
-  margin-bottom: 10px;
-  border: 1px solid var(--od-sf-border-soft);
-  border-radius: 18px;
-  background: var(--od-sf-surface-warm);
-  box-shadow: var(--od-sf-shadow-offer);
-}
-.comparisonPackage > header {
-  display: grid;
-  gap: 2px;
-  padding: 12px 13px 10px;
-  border-bottom: 1px solid var(--od-sf-border-faint);
-}
-.comparisonPackage > header > span {
-  color: var(--od-sf-accent-warm);
-  font-size: 10px;
-  font-weight: 800;
-  letter-spacing: 0.05em;
-}
-.comparisonPackage > header strong {
-  color: var(--od-sf-offer-ink);
-  font-size: 15px;
-}
-.comparisonPackage > header small {
-  color: var(--od-sf-offer-muted);
-  font-size: 11px;
-}
-.priceRows {
-  display: grid;
-}
-.priceRow {
-  display: grid;
-  grid-template-columns: 39px minmax(0, 1fr) auto;
-  gap: 10px;
-  align-items: center;
-  padding: 10px 12px;
-  color: inherit;
-  text-decoration: none;
-}
-.priceRow + .priceRow {
-  border-top: 1px solid var(--od-sf-border-row);
-}
-.pricePlatform {
-  display: grid;
-  gap: 3px;
-}
-.pricePlatform strong {
-  font-size: 13px;
-}
-.pricePlatform small {
-  color: var(--od-sf-offer-soft);
-  font-size: 10px;
-}
-.priceValue {
-  display: grid;
-  justify-items: end;
-  gap: 3px;
-  color: var(--od-sf-accent);
-  font-size: 13px;
-}
-.priceValue em {
-  border-radius: 999px;
-  padding: 2px 5px;
-  color: var(--od-sf-white);
-  background: var(--od-sf-accent);
-  font-size: 9px;
-  font-style: normal;
-}
-.platform {
-  display: grid;
-  grid-template-columns: 39px minmax(0, 1fr) auto;
-  gap: 10px;
-  align-items: center;
-  border-radius: 17px;
-  padding: 12px;
-  color: inherit;
-  background: var(--od-sf-white);
-  text-decoration: none;
-  box-shadow: var(--od-sf-shadow-platform);
-}
-.platformMark {
-  display: grid;
-  width: 39px;
-  height: 39px;
-  place-items: center;
-  border-radius: 13px;
-  color: var(--od-sf-white);
-  background: var(--od-sf-platform-meituan);
-  font-size: 16px;
-  font-weight: 900;
-}
-.platformmeituan {
-  background: var(--od-sf-platform-meituan);
-}
-.platformdouyin {
-  background: var(--od-sf-platform-douyin);
-}
-.platformexternal {
-  background: var(--od-sf-platform-external);
-}
-.platform strong {
-  font-size: 14px;
-}
-.platform p {
-  margin: 3px 0 0;
-  color: var(--od-sf-story-muted);
-  font-size: 11px;
-}
-.platform b {
-  color: var(--od-sf-accent-alt);
-  font-size: 11px;
-}
-.platform b i {
-  font-style: normal;
-  font-size: 20px;
-  line-height: 0;
-}
-.disclaimer {
-  margin: 9px 2px 0;
-  color: var(--od-sf-muted-meta);
-  font-size: 10px;
-  line-height: 1.45;
-}
-.storyList {
-  display: grid;
-  gap: 10px;
-}
-.story {
-  display: grid;
-  grid-template-columns: 88px minmax(0, 1fr);
-  overflow: hidden;
-  border-radius: 18px;
-  background: var(--od-sf-white);
-}
-.story > img {
-  width: 100%;
-  height: 100%;
-  min-height: 105px;
-  object-fit: cover;
-}
-.story > span {
-  padding: 12px;
-}
-.story strong {
-  display: block;
-  margin-top: 5px;
-  font-size: 14px;
-}
-.story p {
-  display: -webkit-box;
-  overflow: hidden;
-  margin: 5px 0;
-  color: var(--od-sf-muted-copy);
-  font-size: 11px;
-  line-height: 1.45;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-}
-.story small {
-  color: var(--od-sf-muted-label);
-  font-size: 9px;
-  font-weight: 800;
-}
 .benefitList {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -748,8 +574,7 @@
 }
 .storeInfo button:focus-visible,
 .shareButton:focus-visible,
-.storeButton:focus-visible,
-.platform:focus-visible {
+.storeButton:focus-visible {
   outline: 3px solid var(--od-sf-accent-deep);
   outline-offset: 2px;
 }
@@ -804,19 +629,17 @@
     align-items: start;
     padding: 0 8px;
   }
-  .comparisonPackage {
-    max-width: none;
-  }
-  .storyList,
   .benefitList {
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
-  .desktopGrid .storyList,
   .desktopGrid .benefitList {
     grid-template-columns: minmax(0, 1fr);
   }
-  .desktopGrid :global(.od-sf-offers) {
+  .desktopGrid :global(.od-sf-offers),
+  .desktopGrid :global(.od-sf-stories),
+  .desktopGrid :global(.od-sf-compare) {
     grid-template-columns: minmax(0, 1fr);
+    max-width: none;
   }
   .storeInfo {
     margin: 24px 32px;
