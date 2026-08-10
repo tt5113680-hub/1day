@@ -64,3 +64,62 @@ export function mergeStoreScopes(
   }
   return [...byId.values()].sort((a, b) => a.label.localeCompare(b.label, 'zh-CN'));
 }
+
+export type NetworkScopeType = 'channel' | 'circle';
+
+/** Read/list: typed scopes must include the target id. */
+export function networkScopeAllows(
+  scopes: Array<Pick<DataScopeRecord, 'type' | 'id'>>,
+  type: NetworkScopeType,
+  id: string,
+): boolean {
+  const typed = scopes.filter((scope) => scope.type === type);
+  if (typed.length === 0) return false;
+  return typed.some((scope) => scope.id === id);
+}
+
+/**
+ * Channel/circle write-path: platform.manage unrestricted; unscoped operators
+ * unrestricted (legacy platform/circle admins); scoped operators must match.
+ */
+export function networkWriteAllows(
+  scopes: Array<Pick<DataScopeRecord, 'type' | 'id'>>,
+  type: NetworkScopeType,
+  id: string,
+  hasPlatformManage: boolean,
+): boolean {
+  if (hasPlatformManage) return true;
+  const typed = scopes.filter((scope) => scope.type === type);
+  if (typed.length === 0) return true;
+  return typed.some((scope) => scope.id === id);
+}
+
+/**
+ * null = unrestricted list; string[] = filter to these ids.
+ * platform.manage always unrestricted; otherwise typed scopes restrict when present.
+ */
+export function networkListFilter(
+  scopes: Array<Pick<DataScopeRecord, 'type' | 'id'>>,
+  type: NetworkScopeType,
+  hasPlatformManage: boolean,
+): string[] | null {
+  if (hasPlatformManage) return null;
+  const typed = scopes.filter((scope) => scope.type === type).map((scope) => scope.id);
+  return typed.length ? typed : null;
+}
+
+export function mergeNetworkScopes(
+  type: NetworkScopeType,
+  primary: MenuScopeDto[],
+  secondary: MenuScopeDto[] = [],
+): MenuScopeDto[] {
+  const byId = new Map<string, MenuScopeDto>();
+  for (const scope of [...primary, ...secondary]) {
+    if (scope.type !== type) continue;
+    const existing = byId.get(scope.id);
+    if (!existing || (existing.label === existing.id && scope.label !== scope.id)) {
+      byId.set(scope.id, scope);
+    }
+  }
+  return [...byId.values()].sort((a, b) => a.label.localeCompare(b.label, 'zh-CN'));
+}

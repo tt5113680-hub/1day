@@ -49,11 +49,14 @@ const benefits = (value: unknown) => {
 export class CircleMerchantService implements OnModuleDestroy {
   private readonly pool = createApiPool();
 
-  async list(tenantId: string) {
+  async list(tenantId: string, circleIds: string[] | null = null) {
+    const scoped = circleIds !== null;
+    const memberFilter = scoped ? ' and m.circle_id = any($2::uuid[])' : '';
+    const memberParams = scoped ? [tenantId, circleIds] : [tenantId];
     const [members, merchantPool] = await Promise.all([
       this.pool.query(
-        `select m.id,m.circle_id,c.code circle_code,c.name circle_name,m.merchant_tenant_id,t.name,t.slug,m.benefits,m.invitation_status,m.invitation_note,m.circle_approval_status,m.approval_status,m.display_config,m.exit_reason,m.version from platform_business_circle_merchants m join platform_business_circles c on c.id=m.circle_id and c.tenant_id=m.tenant_id and c.deleted_at is null join tenants t on t.id=m.merchant_tenant_id and t.deleted_at is null where m.tenant_id=$1 and m.deleted_at is null order by c.name,t.name`,
-        [tenantId],
+        `select m.id,m.circle_id,c.code circle_code,c.name circle_name,m.merchant_tenant_id,t.name,t.slug,m.benefits,m.invitation_status,m.invitation_note,m.circle_approval_status,m.approval_status,m.display_config,m.exit_reason,m.version from platform_business_circle_merchants m join platform_business_circles c on c.id=m.circle_id and c.tenant_id=m.tenant_id and c.deleted_at is null join tenants t on t.id=m.merchant_tenant_id and t.deleted_at is null where m.tenant_id=$1 and m.deleted_at is null${memberFilter} order by c.name,t.name`,
+        memberParams,
       ),
       this.pool.query(
         `select t.id tenant_id,t.name,t.slug from tenants t where t.id<>$1 and t.status='active' and t.deleted_at is null and not exists(select 1 from platform_business_circle_merchants m where m.tenant_id=$1 and m.merchant_tenant_id=t.id and m.deleted_at is null) order by t.name`,

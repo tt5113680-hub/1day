@@ -1,5 +1,13 @@
 import { ForbiddenException, Injectable, OnModuleDestroy } from '@nestjs/common';
-import { mergeStoreScopes, storeWriteAllows, type MenuScopeDto } from '@oneday/contracts';
+import {
+  mergeNetworkScopes,
+  mergeStoreScopes,
+  networkListFilter,
+  networkWriteAllows,
+  storeWriteAllows,
+  type MenuScopeDto,
+  type NetworkScopeType,
+} from '@oneday/contracts';
 import { randomUUID } from 'node:crypto';
 import type { PoolClient } from 'pg';
 import { createApiPool } from './database-pool';
@@ -21,15 +29,23 @@ export class DataScopeService implements OnModuleDestroy {
       scope_type: string;
       scope_value: string;
       store_name: string | null;
+      channel_name: string | null;
+      circle_name: string | null;
     }>(
-      `select ds.scope_type, ds.scope_value, s.name as store_name
+      `select ds.scope_type, ds.scope_value, s.name as store_name,
+              pc.name as channel_name, pbc.name as circle_name
        from data_scopes ds
        join memberships m on m.id = ds.membership_id and m.tenant_id = ds.tenant_id
          and m.user_id = $2 and m.status = 'active' and m.deleted_at is null
        left join stores s on ds.scope_type = 'store' and s.id::text = ds.scope_value
          and s.tenant_id = ds.tenant_id and s.deleted_at is null
+       left join platform_channels pc on ds.scope_type = 'channel' and pc.id::text = ds.scope_value
+         and pc.tenant_id = ds.tenant_id and pc.deleted_at is null
+       left join platform_business_circles pbc on ds.scope_type = 'circle' and pbc.id::text = ds.scope_value
+         and pbc.tenant_id = ds.tenant_id and pbc.deleted_at is null
        where ds.tenant_id = $1 and ds.status = 'active' and ds.deleted_at is null
-       order by ds.scope_type, coalesce(s.name, ds.scope_value)`,
+       order by ds.scope_type,
+         coalesce(s.name, pc.name, pbc.name, ds.scope_value)`,
       [tenantId, userId],
     );
     return result.rows
@@ -41,11 +57,18 @@ export class DataScopeService implements OnModuleDestroy {
             label: row.store_name ?? row.scope_value,
           };
         }
-        if (row.scope_type === 'channel' || row.scope_type === 'circle') {
+        if (row.scope_type === 'channel') {
           return {
-            type: row.scope_type as 'channel' | 'circle',
+            type: 'channel' as const,
             id: row.scope_value,
-            label: row.scope_value,
+            label: row.channel_name ?? row.scope_value,
+          };
+        }
+        if (row.scope_type === 'circle') {
+          return {
+            type: 'circle' as const,
+            id: row.scope_value,
+            label: row.circle_name ?? row.scope_value,
           };
         }
         if (row.scope_type === 'tenant') {
@@ -140,6 +163,76 @@ export class DataScopeService implements OnModuleDestroy {
     if (!(await this.canWriteStore(tenantId, userId, storeId, permissionCodes))) {
       throw new ForbiddenException('FORBIDDEN');
     }
+  }
+
+  async resolveNetworkScopes(
+    tenantId: string,
+    userId: string,
+    type: NetworkScopeType,
+  ): Promise<MenuScopeDto[]> {
+    const active = await this.listActive(tenantId, userId);
+    return mergeNetworkScopes(type, active);
+  }
+
+  async networkListIds(
+    tenantId: string,
+    userId: string,
+    type: NetworkScopeType,
+    permissionCodes: string[],
+  ): Promise<string[] | null> {
+    const scopes = await this.resolveNetworkScopes(tenantId, userId, type);
+    return networkListFilter(scopes, type, permissionCodes.includes('platform.manage'));
+  }
+
+  async canWriteNetwork(
+    tenantId: string,
+    userId: string,
+    type: NetworkScopeType,
+    id: string,
+    permissionCodes: string[],
+  ): Promise<boolean> {
+    const scopes = await this.resolveNetworkScopes(tenantId, userId, type);
+    return networkWriteAllows(scopes, type, id, permissionCodes.includes('platform.manage'));
+  }
+
+  async requireNetworkWriteScope(
+    tenantId: string,
+    userId: string,
+    type: NetworkScopeType,
+    id: string,
+    permissionCodes: string[],
+  ) {
+    if (!(await this.canWriteNetwork(tenantId, userId, type, id, permissionCodes))) {
+      throw new ForbiddenException('FORBIDDEN');
+    }
+  }
+
+  async circleIdForMerchantMembership(
+    platformTenantId: string,
+    membershipId: string,
+  ): Promise<string | null> {
+    const result = await this.pool.query<{ circle_id: string }>(
+      `select circle_id::text as circle_id
+       from platform_business_circle_merchants
+       where id=$1 and tenant_id=$2 and deleted_at is null
+       limit 1`,
+      [membershipId, platformTenantId],
+    );
+    return result.rows[0]?.circle_id ?? null;
+  }
+
+  async channelIdForOnboarding(
+    platformTenantId: string,
+    onboardingId: string,
+  ): Promise<string | null> {
+    const result = await this.pool.query<{ channel_id: string }>(
+      `select channel_id::text as channel_id
+       from channel_merchant_onboardings
+       where id=$1 and tenant_id=$2 and deleted_at is null
+       limit 1`,
+      [onboardingId, platformTenantId],
+    );
+    return result.rows[0]?.channel_id ?? null;
   }
 
   async permissionCodes(tenantId: string, userId: string): Promise<string[]> {

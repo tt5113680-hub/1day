@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## 2026-08-10 - SYS-6 channel/circle network packs PASS
+
+- Channel/circle dashboards and merchant write APIs now filter/deny by `data_scopes` (`channel` / `circle`); `platform.manage` stays unrestricted; unscoped legacy admins unchanged.
+- Circle dashboard accepts `circle.manage` (not only `platform.read`); menu context shows assigned channel/circle labels.
+- Contract helpers: `networkWriteAllows` / `networkListFilter` / `mergeNetworkScopes`.
+- Evidence: `SYS_6_ACCEPTANCE.md`, `evidence/SYS-6/`. Tests: `data-scope.vitest` 5/5, `sys-6-network-packs` 1/1, `circle-002-api` 1/1. Not 全部商用.
+
 ## 2026-08-10 - SYS-5 banner paint extraction PASS
 
 - Extracted `StorefrontBannerCarousel` + `.od-sf-banner*` into `@oneday/storefront-renderer`; Consumer assembles slides only.

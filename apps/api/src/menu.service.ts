@@ -137,8 +137,18 @@ export class MenuService implements OnModuleDestroy {
       return '租户经营工作台';
     }
     if (product === 'platform') return '平台治理 · 系统租户';
-    if (product === 'channel') return '渠道负责人 · 授权渠道范围';
-    if (product === 'circle') return '商圈负责人 · 授权商圈范围';
+    if (product === 'channel') {
+      const channels = scopes.filter((scope) => scope.type === 'channel');
+      if (channels.length === 1) return `渠道经营范围 · ${channels[0]?.label ?? '授权渠道'}`;
+      if (channels.length > 1) return `渠道经营范围 · ${channels.length} 个渠道`;
+      return '渠道负责人 · 授权渠道范围';
+    }
+    if (product === 'circle') {
+      const circles = scopes.filter((scope) => scope.type === 'circle');
+      if (circles.length === 1) return `商圈经营范围 · ${circles[0]?.label ?? '授权商圈'}`;
+      if (circles.length > 1) return `商圈经营范围 · ${circles.length} 个商圈`;
+      return '商圈负责人 · 授权商圈范围';
+    }
     const stores = scopes.filter((scope) => scope.type === 'store');
     if (stores.length === 1) return `店长工作台 · ${stores[0]?.label ?? '授权门店'}`;
     if (stores.length > 1) return `店长工作台 · ${stores.length} 家门店`;

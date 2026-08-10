@@ -1,9 +1,9 @@
-# evidence/SYS-6
+# SYS-6 evidence
 
-- result: SYS_6_MULTI_PRODUCT_PASS + SYS_6_DATA_SCOPES_PASS + SYS_6_WRITE_PATH_SCOPES_PASS
-- endpoints: `/api/v1/me/menu`; `/api/v1/employee/managed-stores`; scoped redeem; scoped management store commercial/list
-- unit: `menu-dto.vitest` 5/5; `data-scope.vitest` 4/4
-- contract: `sys-6-menu-dto` 2/2; `sys-6-data-scopes` 1/1; `sys-6-write-path-scopes` 1/1
-- acceptance: `PROJECT_STATE/SYS_6_ACCEPTANCE.md`
-- usage_warn_threshold: ≥90%
-- note: Not full cross-controller scope E2E. Not 全部商用.
+- package: `@oneday/contracts` network scope helpers; API channel/circle scope gates
+- endpoints: `/api/v1/channel/dashboard`; `/api/v1/circle/dashboard`; `/api/v1/circle/merchants*`; `/api/v1/channel/merchant-onboardings*`; `/api/v1/me/menu`
+- contract: `sys-6-menu-dto` 2/2; `sys-6-data-scopes` 1/1; `sys-6-write-path-scopes` 1/1; `sys-6-network-packs` 1/1
+- unit: `data-scope.vitest` 5/5; `menu-dto.vitest` 6/6
+- regression: `circle-002-api` 1/1
+- api typecheck/build: PASS
+- honest boundary: not full ROLE_PRODUCT_MATRIX E2E; not 全部商用; Tencent Cloud out of scope

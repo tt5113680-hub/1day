@@ -1,6 +1,10 @@
 import { describe, expect, it } from 'vitest';
 import {
+  mergeNetworkScopes,
   mergeStoreScopes,
+  networkListFilter,
+  networkScopeAllows,
+  networkWriteAllows,
   storeScopeAllows,
   storeWriteAllows,
 } from '../packages/contracts/src/data-scope';
@@ -43,5 +47,24 @@ describe('data scope helpers', () => {
     expect(storeWriteAllows([{ type: 'store', id: 'a' }], 'a', false)).toBe(true);
     expect(storeWriteAllows([{ type: 'store', id: 'a' }], 'b', false)).toBe(false);
     expect(storeWriteAllows([{ type: 'store', id: 'a' }], 'b', true)).toBe(true);
+  });
+
+  it('network packs filter and write like store scopes', () => {
+    expect(networkScopeAllows([{ type: 'channel', id: 'ch-a' }], 'channel', 'ch-a')).toBe(true);
+    expect(networkScopeAllows([{ type: 'channel', id: 'ch-a' }], 'channel', 'ch-b')).toBe(false);
+    expect(networkWriteAllows([], 'circle', 'c1', false)).toBe(true);
+    expect(networkWriteAllows([{ type: 'circle', id: 'c1' }], 'circle', 'c2', false)).toBe(false);
+    expect(networkWriteAllows([{ type: 'circle', id: 'c1' }], 'circle', 'c2', true)).toBe(true);
+    expect(networkListFilter([], 'channel', false)).toBeNull();
+    expect(networkListFilter([{ type: 'channel', id: 'ch-a' }], 'channel', false)).toEqual([
+      'ch-a',
+    ]);
+    expect(networkListFilter([{ type: 'channel', id: 'ch-a' }], 'channel', true)).toBeNull();
+    expect(
+      mergeNetworkScopes('circle', [{ type: 'circle', id: 'c1', label: 'c1' }], [
+        { type: 'circle', id: 'c1', label: '国贸商圈' },
+        { type: 'channel', id: 'ch', label: 'ignored' },
+      ]),
+    ).toEqual([{ type: 'circle', id: 'c1', label: '国贸商圈' }]);
   });
 });

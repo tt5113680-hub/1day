@@ -24,14 +24,16 @@ const slug = (value: unknown) => {
 export class ChannelMerchantOnboardingService implements OnModuleDestroy {
   private readonly pool = createApiPool();
 
-  async list(platformTenantId: string) {
+  async list(platformTenantId: string, channelIds: string[] | null = null) {
+    const scoped = channelIds !== null;
     const result = await this.pool.query(
       `select o.id,o.channel_id,c.code channel_code,c.name channel_name,o.merchant_tenant_id,t.slug,t.name,o.invitation_email,o.invitation_status,o.template_code,o.plan,o.delivery_status,o.delivery_note,o.delivered_at,o.version,o.created_at
        from channel_merchant_onboardings o
        join platform_channels c on c.id=o.channel_id and c.tenant_id=o.tenant_id and c.deleted_at is null
        join tenants t on t.id=o.merchant_tenant_id and t.deleted_at is null
-       where o.tenant_id=$1 and o.deleted_at is null order by o.created_at desc`,
-      [platformTenantId],
+       where o.tenant_id=$1 and o.deleted_at is null${scoped ? ' and o.channel_id = any($2::uuid[])' : ''}
+       order by o.created_at desc`,
+      scoped ? [platformTenantId, channelIds] : [platformTenantId],
     );
     return result.rows.map((row) => ({
       id: row.id,

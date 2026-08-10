@@ -8,9 +8,9 @@
 ## Current task — systemic commercial productization (D3)
 
 - branch: `hardening/COMMERCIAL-COMPLETION`
-- last_verified: SYS-6 write-path scopes + SYS-5 banner paint PASS
-- current_task: SYS-6 remainder (more write controllers / channel-circle packs) **or** continue storefront paint (QuickActions/…)
-- status: `SYS_6_WRITE_PATH_SCOPES_PASS` + banner paint extracted; **not** 全部商用
+- last_verified: SYS-6 channel/circle network packs PASS
+- current_task: SYS-6 remainder (more write controllers / Store Manager content writes) **or** continue storefront paint (QuickActions/…)
+- status: `SYS_6_NETWORK_PACKS_PASS`; **not** 全部商用
 - blocker: null
 - progress: P0 26/26; SYS waves scaffolded 6/6 with multi-week remainders
 
@@ -22,7 +22,8 @@
 4. Write-path scopes: redeem + store commercial/list for assigned managers
 5. Store-manager Management nav (`/m/stores`)
 6. SYS-5 banner paint → `@oneday/storefront-renderer`
-7. Evidence + tests green
+7. SYS-6 channel/circle network packs (list/write scope gates)
+8. Evidence + tests green
 
 ### Usage note
 
@@ -45,7 +46,7 @@ Keep building until **≥90%**. Do not prompt earlier.
 5. PROJECT_STATE/SYSTEMIC_CONSTRUCTION_PLAN.md
 6. git status
 
-状态：SYS-6 write-path scopes PASS；P0 26/26；下一任务 SYS-6 余量（更多写路径/渠道商圈包）或 storefront paint。
+状态：SYS-6 network packs PASS；P0 26/26；下一任务 SYS-6 余量（更多写路径/店长内容写）或 storefront paint。
 工作目录仅 D:\ONEDAY_V3。禁止页级补丁。不得宣称全部商用。不做腾讯云。
 已获 A–H。继续施工；用量≥90%再换新窗口。
 ```

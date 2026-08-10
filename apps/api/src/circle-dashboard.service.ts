@@ -5,15 +5,20 @@ import { createApiPool } from './database-pool';
 export class CircleDashboardService implements OnModuleDestroy {
   private readonly pool = createApiPool();
 
-  async overview(platformTenantId: string) {
+  async overview(platformTenantId: string, circleIds: string[] | null = null) {
+    const scoped = circleIds !== null;
+    const circleIdFilter = scoped ? ' and id = any($2::uuid[])' : '';
+    const circleAliasFilter = scoped ? ' and c.id = any($2::uuid[])' : '';
+    const merchantCircleFilter = scoped ? ' and circle_id = any($2::uuid[])' : '';
+    const params = scoped ? [platformTenantId, circleIds] : [platformTenantId];
     const [metrics, circles] = await Promise.all([
       this.pool.query(
         `select
-          (select count(*)::int from platform_business_circles c where c.tenant_id=$1 and c.deleted_at is null) circle_count,
-          (select count(*)::int from platform_business_circle_merchants m where m.tenant_id=$1 and m.approval_status='approved' and m.deleted_at is null) merchant_count,
-          (select count(*)::int from consumer_action_events e where e.deleted_at is null and e.tenant_id in (select merchant_tenant_id from platform_business_circle_merchants where tenant_id=$1 and approval_status='approved' and deleted_at is null)) traffic_events,
-          (select count(*)::int from customer_orders o where o.status='active' and o.deleted_at is null and o.tenant_id in (select merchant_tenant_id from platform_business_circle_merchants where tenant_id=$1 and approval_status='approved' and deleted_at is null)) conversion_orders`,
-        [platformTenantId],
+          (select count(*)::int from platform_business_circles where tenant_id=$1 and deleted_at is null${circleIdFilter}) circle_count,
+          (select count(*)::int from platform_business_circle_merchants where tenant_id=$1 and approval_status='approved' and deleted_at is null${merchantCircleFilter}) merchant_count,
+          (select count(*)::int from consumer_action_events e where e.deleted_at is null and e.tenant_id in (select merchant_tenant_id from platform_business_circle_merchants where tenant_id=$1 and approval_status='approved' and deleted_at is null${merchantCircleFilter})) traffic_events,
+          (select count(*)::int from customer_orders o where o.status='active' and o.deleted_at is null and o.tenant_id in (select merchant_tenant_id from platform_business_circle_merchants where tenant_id=$1 and approval_status='approved' and deleted_at is null${merchantCircleFilter})) conversion_orders`,
+        params,
       ),
       this.pool.query(
         `select c.id,c.code,c.name,c.description,
@@ -26,8 +31,8 @@ export class CircleDashboardService implements OnModuleDestroy {
          from platform_business_circles c
          left join platform_business_circle_merchants m on m.circle_id=c.id and m.tenant_id=c.tenant_id and m.approval_status='approved' and coalesce((m.display_config->>'visible')::boolean,true) and m.deleted_at is null
          left join tenants t on t.id=m.merchant_tenant_id and t.deleted_at is null
-         where c.tenant_id=$1 and c.deleted_at is null group by c.id order by c.created_at desc`,
-        [platformTenantId],
+         where c.tenant_id=$1 and c.deleted_at is null${circleAliasFilter} group by c.id order by c.created_at desc`,
+        params,
       ),
     ]);
     return {

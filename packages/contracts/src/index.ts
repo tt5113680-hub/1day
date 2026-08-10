@@ -19,10 +19,15 @@ export {
   type MenuScopeDto,
 } from './menu';
 export {
+  mergeNetworkScopes,
   mergeStoreScopes,
+  networkListFilter,
+  networkScopeAllows,
+  networkWriteAllows,
   storeScopeAllows,
   storeWriteAllows,
   toMenuScope,
   type DataScopeRecord,
   type DataScopeType,
+  type NetworkScopeType,
 } from './data-scope';

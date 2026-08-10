@@ -7,7 +7,7 @@
 
 ## Active wave
 
-**SYS-6 remainder — more write controllers / role packs (multi-week)**
+**SYS-6 remainder — more write controllers / Store Manager content (multi-week)**
 
 | Deliverable                                        | Status                                      |
 | -------------------------------------------------- | ------------------------------------------- |
@@ -16,12 +16,13 @@
 | SYS-6 multi-product menus + role homes scaffold    | PASS                                        |
 | SYS-6 data_scopes resolver + managed-stores gate   | PASS                                        |
 | SYS-6 write-path scopes (redeem + store commercial)| PASS                                        |
+| SYS-6 channel/circle network packs                 | PASS                                        |
 
 ## Queue
 
-- SYS-6 remainder: more write controllers; dedicated channel/circle packs; Store Manager content writes
+- SYS-6 remainder: more Management/Employee write controllers; Store Manager content writes
 - Optional: full storefront module paint extraction; Content distributions UI; Workflow write
 
 ## Honest day boundary
 
-Menus + data_scopes resolver + first write-path scopes landed. Full ROLE_PRODUCT_MATRIX E2E and 一线大厂 remain multi-week — not 全部商用.
+Menus + data_scopes + store write-path + channel/circle network packs landed. Full ROLE_PRODUCT_MATRIX E2E and 一线大厂 remain multi-week — not 全部商用.
