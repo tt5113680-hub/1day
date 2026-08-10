@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## 2026-08-10 - SYS-5 banner paint extraction PASS
+
+- Extracted `StorefrontBannerCarousel` + `.od-sf-banner*` into `@oneday/storefront-renderer`; Consumer assembles slides only.
+- Evidence: `SYS_5_ACCEPTANCE.md`. Tests: `storefront-renderer.vitest` 7/7. Remaining module paints stay in Consumer. Not 全部商用.
+
 ## 2026-08-10 - SYS-6 write-path scopes PASS
 
 - Membership redeem now enforces store write-scope against enrollment.store_id.

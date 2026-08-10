@@ -4,6 +4,7 @@ import {
   effectiveStorefrontModules,
   normalizeModuleType,
   SECTION_MODULE_TYPES,
+  StorefrontBannerCarousel,
   StorefrontEmpty,
   StorefrontSection,
   storefrontActionIcon,
@@ -328,46 +329,8 @@ function BannerCarousel({
     }
     return slides.slice(0, limit);
   }, [data, context, sourceValue, shareCode, limit]);
-  const [slide, setSlide] = useState(0);
-  useEffect(() => {
-    if (banners.length < 2) return;
-    const timer = window.setInterval(
-      () => setSlide((current) => (current + 1) % banners.length),
-      4800,
-    );
-    return () => window.clearInterval(timer);
-  }, [banners.length]);
   if (!banners.length) return null;
-  const currentBanner = banners[slide] ?? banners[0]!;
-  return (
-    <section className={styles.banner} aria-label="门店营销活动" data-module="banner_carousel">
-      {data.store.imageUrl && (
-        <img src={data.store.imageUrl} alt="" className={styles.bannerImage} />
-      )}
-      <div className={styles.bannerShade} />
-      <div className={styles.bannerCopy}>
-        <p>{currentBanner.eyebrow}</p>
-        <h1>{currentBanner.title}</h1>
-        <span>{currentBanner.copy}</span>
-        <a href={currentBanner.href}>
-          立即查看 <b>→</b>
-        </a>
-      </div>
-      {banners.length > 1 ? (
-        <div className={styles.dots} aria-label="Banner 指示器">
-          {banners.map((item, index) => (
-            <button
-              type="button"
-              onClick={() => setSlide(index)}
-              className={index === slide ? styles.dotActive : styles.dot}
-              aria-label={`第 ${index + 1} 张活动`}
-              key={`${item.title}-${index}`}
-            />
-          ))}
-        </div>
-      ) : null}
-    </section>
-  );
+  return <StorefrontBannerCarousel slides={banners} imageUrl={data.store.imageUrl} />;
 }
 
 function QuickActions({

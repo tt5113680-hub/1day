@@ -17,7 +17,8 @@
 - [x] SYS-2 Config Shell + Wallet PASS - operating_channels shell, member_wallet render, Page Builder whitelist editors; see `SYS_1_2_ACCEPTANCE.md` and `evidence/SYS-2/`.
 - [x] SYS-3 FE Sync Clients PASS — `@oneday/sync-client` ETag poll wired to Management dashboard, Employee workbench, Consumer storefront; see `SYS_3_ACCEPTANCE.md` and `evidence/SYS-3/`.
 - [x] SYS-4 Ops vertical PASS — Platform Outbox DLQ/replay UI at `/p/outbox`; see `SYS_4_ACCEPTANCE.md` and `evidence/SYS-4/`.
-- [x] SYS-5 Shared UI kit + storefront-renderer **scaffold + visual token** PASS — `@oneday/storefront-renderer` extracted; `--od-sf-*` theme; Consumer store CSS hex retired; Management outline + storefront.css; see `SYS_5_ACCEPTANCE.md` and `evidence/SYS-5/`. Full module paint extraction into the package remains multi-week optional continuation before/with SYS-6.
+- [x] SYS-5 Shared UI kit + storefront-renderer **scaffold + visual token** PASS — `@oneday/storefront-renderer` extracted; `--od-sf-*` theme; Consumer store CSS hex retired; Management outline + storefront.css; see `SYS_5_ACCEPTANCE.md` and `evidence/SYS-5/`.
+- [x] SYS-5 banner paint extraction PASS — `StorefrontBannerCarousel` + shared `.od-sf-banner*`; other module paints remain in Consumer; see `SYS_5_ACCEPTANCE.md`.
 - [x] SYS-6 Role IA / menu DTO **scaffold** PASS — `GET /api/v1/me/menu` + Management shell consumer; see `SYS_6_ACCEPTANCE.md` and `evidence/SYS-6/`.
 - [x] SYS-6 multi-product menus + role homes **scaffold** PASS — Platform/Channel/Circle/Employee catalogs + shells; Store Manager `/e/store`; `homeHref`/`scopes`/`availableProducts`; see `SYS_6_ACCEPTANCE.md`.
 - [x] SYS-6 data_scopes resolver PASS — `DataScopeService` merges `data_scopes` ∪ `store_managers`; manager assign/onboarding sync; `GET /api/v1/employee/managed-stores` + access gate; see `SYS_6_ACCEPTANCE.md`.

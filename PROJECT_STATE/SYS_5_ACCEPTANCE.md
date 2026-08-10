@@ -22,5 +22,6 @@
 
 ## Honest remainder
 
-- Full module **paint** components (Banner/QuickActions/…) still live in Consumer; package owns contract + chrome + tokens.
-- SYS-6 Role IA remains queued. Product-owner UI sign-off remains human.
+- Banner carousel paint extracted to `@oneday/storefront-renderer` (`StorefrontBannerCarousel` + `.od-sf-banner*`).
+- Remaining module paint (QuickActions / Member / Offers / …) still largely lives in Consumer.
+- Product-owner UI sign-off remains human.

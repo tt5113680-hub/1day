@@ -14,6 +14,10 @@ export {
   StorefrontSection,
   storefrontActionIcon,
 } from './chrome.js';
+export {
+  StorefrontBannerCarousel,
+  type StorefrontBannerSlide,
+} from './paint.js';
 export { storefrontTokens, type StorefrontTokens } from './tokens.js';
 export {
   NORMALIZED_MODULE_TYPES,
