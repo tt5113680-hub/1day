@@ -32,8 +32,8 @@
   margin: 0;
   padding: 8px 10px;
   border-radius: var(--od-radius-sm);
-  color: var(--od-brand-800, #1f4d2e);
-  background: color-mix(in srgb, var(--od-brand-100) 70%, #fff);
+  color: var(--od-brand-800);
+  background: color-mix(in srgb, var(--od-brand-100) 70%, var(--od-surface));
   font-size: 13px;
   font-weight: 600;
   line-height: 1.45;
@@ -57,7 +57,7 @@
 }
 .switcher a.switcherActive,
 .switcher a[aria-current='page'] {
-  color: var(--od-brand-800, #1f4d2e);
+  color: var(--od-brand-800);
   border-color: color-mix(in srgb, var(--od-brand-500) 40%, var(--od-border));
   background: var(--od-brand-100);
 }
@@ -95,7 +95,7 @@
   min-height: 38px;
   padding: 0 14px;
   border-radius: var(--od-radius-sm);
-  color: var(--od-brand-800, #1f4d2e);
+  color: var(--od-brand-800);
   background: var(--od-brand-100);
   font-size: 13px;
   font-weight: 700;

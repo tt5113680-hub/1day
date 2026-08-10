@@ -1,5 +1,15 @@
 # CHANGELOG
 
+## 2026-08-10 - P1-B Platform shell: retire raw hex in the Platform product shell chrome PASS
+
+- `apps/platform-web/app/platform-shell.module.css`: removed the hard-coded `#1f4d2e` fallback from the mode-switcher hover/active states (`var(--od-brand-800, #1f4d2e)` → `var(--od-brand-800)`). **File now carries no raw hex.**
+- `apps/platform-web/app/platform-product-home.module.css`: removed the `#1f4d2e` fallback from `.boundary` / `.switcher a[aria-current]` / `.actions a` (→ `var(--od-brand-800)`) and the raw `#fff` inside a `color-mix()` (→ `var(--od-surface)`, the `#fff` token). **File now carries no raw hex.**
+- The Platform admin/prod product shell chrome now draws its whole palette from the shared `var(--od-*)` foundation tokens / `color-mix()`, the same single-source palette as the Consumer / Employee / Management shells (CHARTER §1.2 no page-level hex stacking, §6 design tokens + shared kit, §7.1 AdminShell product modes).
+- Tests: `tests/platform-shell-tokens.vitest.ts` (no-hex token-contract for both Platform shell chrome CSS), `tests/e2e/p1-b-platform-shell.spec.ts` (platform-admin `/p/dashboard` 390/768/1440).
+- Gates: `pnpm typecheck` 20/20, `pnpm build` 20/20, `pnpm test:unit` 12 files/49, Playwright `p1-b-platform-shell` 1/1, `pnpm evidence:check` 74/74, eslint clean.
+- Maps to matrix UI-01/UI-02/P-01. Marks `p1-b-platform-shell` milestone PASS in `PHASE1_PROGRESS.json`. Evidence: `evidence/P1-B-PLATFORM-SHELL/ACCEPTANCE.md` + 3 viewport screenshots.
+- Not 全部商用. No product-owner UI auto-sign.
+
 ## 2026-08-10 - P1-B Management/Platform shell: shared token-driven AdminShell chrome PASS
 
 - `packages/design-tokens/foundation.css`: remapped the shared `.od-admin-shell*` chrome block from raw hex/rgb literals to `var(--od-*)` foundation tokens + `color-mix()` (sidebar text, brand mark, product label, nav-group label, nav link/hover/active, context, topbar). **No raw hex remains in the admin-shell chrome.** Both Management (`management-shell.tsx` → `AdminShell`) and Platform (`platform-shell.tsx` → `AdminShell`, incl. channel/circle product modes) shells inherit the cleaned shared shell (CHARTER §1.2 no page-level hex stacking; BLUEPRINT Admin Shell §4.2).

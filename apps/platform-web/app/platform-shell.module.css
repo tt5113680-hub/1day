@@ -16,12 +16,12 @@
   text-decoration: none;
 }
 .switcher a:hover {
-  color: var(--od-brand-800, #1f4d2e);
+  color: var(--od-brand-800);
   background: var(--od-brand-100);
 }
 .switcher a.switcherActive,
 .switcher a[aria-current='page'] {
-  color: var(--od-brand-800, #1f4d2e);
+  color: var(--od-brand-800);
   border-color: color-mix(in srgb, var(--od-brand-500) 40%, var(--od-border));
   background: var(--od-brand-100);
 }
