@@ -8,11 +8,13 @@
 ## Current task - systemic commercial productization (D3)
 
 - branch: `hardening/COMMERCIAL-COMPLETION`
+- HEAD (pushed): pending push of SYS-8
 - last_verified: SYS-8 Cross-device Member resume PASS
 - current_task: systemic remainders after SYS-8 (optional visual workflow editor / product-owner UI sign-off)
 - status: `SYS_8_MEMBER_RESUME_PASS`; **not** claimed as full commercial
 - blocker: null
 - progress: P0 26/26
+- last_safe_commit: `69f87d8`
 
 ### Completed (verified)
 
