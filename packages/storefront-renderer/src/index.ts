@@ -17,6 +17,8 @@ export {
 export {
   StorefrontBannerCarousel,
   StorefrontBenefitList,
+  StorefrontFloatingConsult,
+  StorefrontHero,
   StorefrontMemberCard,
   StorefrontOfferCompare,
   StorefrontOfferList,
@@ -28,6 +30,8 @@ export {
   type StorefrontBenefitItem,
   type StorefrontComparePackage,
   type StorefrontComparePriceRow,
+  type StorefrontHeroFact,
+  type StorefrontHeroProps,
   type StorefrontMemberCardProps,
   type StorefrontOfferItem,
   type StorefrontPlatformLinkItem,

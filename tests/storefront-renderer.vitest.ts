@@ -83,5 +83,7 @@ describe('storefront visual tokens', () => {
     expect(theme).toContain('.od-sf-stories');
     expect(theme).toContain('.od-sf-benefits');
     expect(theme).toContain('.od-sf-store-info');
+    expect(theme).toContain('.od-sf-hero');
+    expect(theme).toContain('.od-sf-floating-consult');
   });
 });

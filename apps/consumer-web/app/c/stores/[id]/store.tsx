@@ -2,6 +2,7 @@
 
 import { useRouter } from 'next/navigation';
 import { useMemo, useState } from 'react';
+import { StorefrontFloatingConsult } from '@oneday/storefront-renderer';
 import { useStorefrontSync } from '@oneday/sync-client';
 import { AppStatePanel, Button } from '@oneday/ui';
 import { ConsumerShell, resolveConsumerTabs } from '../../consumer-shell';
@@ -254,13 +255,12 @@ export default function StorePage({
             money={money}
             groupedPlatformOffers={groupedPlatformOffers}
           />
-          {consultAction && (
-            <div className={styles.floatingConsult}>
-              <a href={actionUrl(consultAction.id, 'storefront_primary_consult')}>
-                {consultAction.name}
-              </a>
-            </div>
-          )}
+          {consultAction ? (
+            <StorefrontFloatingConsult
+              href={actionUrl(consultAction.id, 'storefront_primary_consult')}
+              label={consultAction.name}
+            />
+          ) : null}
           {notice && (
             <p className={styles.notice} role="status">
               {notice}

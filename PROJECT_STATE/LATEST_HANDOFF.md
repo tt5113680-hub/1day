@@ -8,16 +8,16 @@
 ## Current task - systemic commercial productization (D3)
 
 - branch: `hardening/COMMERCIAL-COMPLETION`
-- last_verified: SYS-6 catalog write-path scopes PASS
-- current_task: SYS-5 store_hero/floating-consult paint **or** more write controllers (memberships/workflows)
-- status: `SYS_6_CATALOG_SCOPES_PASS`; **not** claimed as full commercial
+- last_verified: SYS-5 store_hero + floating consult paints PASS
+- current_task: SYS-6 remainder (memberships/workflows write controllers) **or** Content distributions UI
+- status: `SYS_5_HERO_FLOATING_CONSULT_PAINT_PASS`; **not** claimed as full commercial
 - blocker: null
 - progress: P0 26/26; SYS waves scaffolded 6/6 with multi-week remainders
 
 ### Completed this session
 
-1. SYS-6 catalog scopes (store-manager services/offers on scoped stores)
-2. Management menu 套餐与 Offer for `tenant.read`
+1. SYS-6 catalog scopes (store-manager services/offers)
+2. SYS-5 store_hero + floating consult paints
 3. Evidence + tests green
 
 ### Usage note
@@ -41,7 +41,7 @@
 5. PROJECT_STATE/SYSTEMIC_CONSTRUCTION_PLAN.md
 6. git status
 
-状态：SYS-6 catalog scopes PASS；P0 26/26；下一任务 store_hero/floating-consult paint 或更多写路径。
+状态：SYS-5 store_hero/floating-consult paints PASS；SYS-6 catalog scopes PASS；P0 26/26；下一任务 memberships/workflows 写路径或 Content distributions UI。
 工作目录仅 D:\ONEDAY_V3。禁止页级补丁。不得宣称全部商用。不做腾讯云。
 已获 A–H。继续施工；用量达到 90%–95% 再换新窗口，中途不要停。
 ```

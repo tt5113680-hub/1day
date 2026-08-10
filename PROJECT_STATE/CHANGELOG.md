@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## 2026-08-10 - SYS-5 store_hero + floating consult paints extraction PASS
+
+- Extracted `StorefrontHero` + `StorefrontFloatingConsult` into `@oneday/storefront-renderer`.
+- Consumer keeps navigation/share/switcher callbacks and consult action URL wiring only.
+- Evidence: `SYS_5_ACCEPTANCE.md`. Tests: `storefront-renderer.vitest` 7/7. Channel-specific pages remain local. Not claimed as full commercial.
+
 ## 2026-08-10 - SYS-6 catalog write-path scopes PASS
 
 - Assigned store managers (`tenant.read` + store scopes) may list and write services/offers only on scoped stores via `/api/v1/management/catalog*`.

@@ -367,3 +367,119 @@ export function StorefrontStoreInfo({
     </section>
   );
 }
+
+export type StorefrontHeroFact = {
+  label: string;
+  value: string;
+};
+
+export type StorefrontHeroProps = {
+  merchant: string;
+  storeName: string;
+  tenantLabel: string;
+  addressLabel: string;
+  openStateLabel: string;
+  imageUrl?: string | null;
+  navigationEnabled: boolean;
+  facts: StorefrontHeroFact[];
+  onNavigate: () => void | Promise<void>;
+  onShare: () => void | Promise<void>;
+  onOpenSwitcher: () => void;
+};
+
+export function StorefrontHero({
+  merchant,
+  storeName,
+  tenantLabel,
+  addressLabel,
+  openStateLabel,
+  imageUrl,
+  navigationEnabled,
+  facts,
+  onNavigate,
+  onShare,
+  onOpenSwitcher,
+}: StorefrontHeroProps) {
+  return (
+    <header className="od-sf-hero" data-module="store_hero">
+      <div className="od-sf-hero__meta">
+        <button
+          className="od-sf-hero__lbs"
+          type="button"
+          onClick={onNavigate}
+          disabled={!navigationEnabled}
+        >
+          <i>⌖</i>
+          <span>LBS 定位</span>
+          <b>{addressLabel}</b>
+        </button>
+        <span className="od-sf-hero__recommend" aria-label="商圈或 OEM 品牌推荐，暂未开放">
+          <i>◇</i>
+          <span>商圈 / OEM 推荐</span>
+          <small>即将开放</small>
+        </span>
+      </div>
+      <div className="od-sf-hero__overview">
+        <button
+          className="od-sf-hero__identity"
+          type="button"
+          onClick={onOpenSwitcher}
+          aria-haspopup="dialog"
+        >
+          {imageUrl ? (
+            <img className="od-sf-hero__thumb" src={imageUrl} alt="" />
+          ) : (
+            <span className="od-sf-hero__brand">O</span>
+          )}
+          <span className="od-sf-hero__identity-copy">
+            <small>{merchant}</small>
+            <strong>{storeName}</strong>
+          </span>
+        </button>
+        <button className="od-sf-hero__share" type="button" onClick={onShare} aria-label="分享门店">
+          ↗
+        </button>
+      </div>
+      <dl className="od-sf-hero__facts" aria-label="门店基础信息">
+        {facts.map((fact) => (
+          <div key={fact.label}>
+            <dt>{fact.label}</dt>
+            <dd>{fact.value}</dd>
+          </div>
+        ))}
+      </dl>
+      <button
+        className="od-sf-hero__store-button"
+        type="button"
+        onClick={onOpenSwitcher}
+        aria-haspopup="dialog"
+      >
+        <span className="od-sf-hero__brand">O</span>
+        <span>
+          <b>{tenantLabel}</b>
+          <strong>
+            {storeName}⌄
+          </strong>
+        </span>
+      </button>
+      <span className="od-sf-hero__open-state">{openStateLabel}</span>
+      <button className="od-sf-hero__share" type="button" onClick={onShare} aria-label="分享门店">
+        ↗
+      </button>
+    </header>
+  );
+}
+
+export function StorefrontFloatingConsult({
+  href,
+  label,
+}: {
+  href: string;
+  label: string;
+}) {
+  return (
+    <div className="od-sf-floating-consult">
+      <a href={href}>{label}</a>
+    </div>
+  );
+}

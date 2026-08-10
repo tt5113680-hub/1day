@@ -7,6 +7,7 @@ import {
   StorefrontBannerCarousel,
   StorefrontBenefitList,
   StorefrontEmpty,
+  StorefrontHero,
   StorefrontMemberCard,
   StorefrontOfferCompare,
   StorefrontOfferList,
@@ -204,81 +205,26 @@ function StoreHero({
   share: () => Promise<void>;
   setSwitcher: (open: boolean) => void;
 }) {
+  const hours = data.store.businessHours ?? '以门店为准';
   return (
-    <header className={styles.topbar} data-module="store_hero">
-      <div className={styles.topMeta}>
-        <button
-          className={styles.lbsButton}
-          type="button"
-          onClick={openNavigation}
-          disabled={!navigationUrl}
-        >
-          <i>⌖</i>
-          <span>LBS 定位</span>
-          <b>{data.store.address ?? '定位当前门店'}</b>
-        </button>
-        <span className={styles.futureRecommend} aria-label="商圈或 OEM 品牌推荐，暂未开放">
-          <i>◇</i>
-          <span>商圈 / OEM 推荐</span>
-          <small>即将开放</small>
-        </span>
-      </div>
-      <div className={styles.storeOverview}>
-        <button
-          className={styles.storeIdentity}
-          type="button"
-          onClick={() => setSwitcher(true)}
-          aria-haspopup="dialog"
-        >
-          {data.store.imageUrl ? (
-            <img className={styles.storeThumb} src={data.store.imageUrl} alt="" />
-          ) : (
-            <span className={styles.brandMark}>O</span>
-          )}
-          <span className={styles.storeIdentityCopy}>
-            <small>{data.store.merchant}</small>
-            <strong>{data.store.name}</strong>
-          </span>
-        </button>
-        <button className={styles.shareButton} type="button" onClick={share} aria-label="分享门店">
-          ↗
-        </button>
-      </div>
-      <dl className={styles.storeFacts} aria-label="门店基础信息">
-        <div>
-          <dt>门店状态</dt>
-          <dd>营业中</dd>
-        </div>
-        <div>
-          <dt>营业时间</dt>
-          <dd>{data.store.businessHours ?? '以门店为准'}</dd>
-        </div>
-        <div>
-          <dt>服务方式</dt>
-          <dd>到店自取</dd>
-        </div>
-        <div>
-          <dt>门店标识</dt>
-          <dd>TEST ONLY</dd>
-        </div>
-      </dl>
-      <button
-        className={styles.storeButton}
-        type="button"
-        onClick={() => setSwitcher(true)}
-        aria-haspopup="dialog"
-      >
-        <span className={styles.brandMark}>O</span>
-        <span>
-          <b>{data.tenant.name.replace(' · ONEDAY测试模拟租户', '')}</b>
-          <strong>{data.store.name}⌄</strong>
-        </span>
-      </button>
-      <span className={styles.openState}>营业中 · {data.store.businessHours ?? '以门店为准'}</span>
-      <button className={styles.shareButton} type="button" onClick={share} aria-label="分享门店">
-        ↗
-      </button>
-    </header>
+    <StorefrontHero
+      merchant={data.store.merchant}
+      storeName={data.store.name}
+      tenantLabel={data.tenant.name.replace(' · ONEDAY测试模拟租户', '')}
+      addressLabel={data.store.address ?? '定位当前门店'}
+      openStateLabel={`营业中 · ${hours}`}
+      imageUrl={data.store.imageUrl}
+      navigationEnabled={Boolean(navigationUrl)}
+      facts={[
+        { label: '门店状态', value: '营业中' },
+        { label: '营业时间', value: hours },
+        { label: '服务方式', value: '到店自取' },
+        { label: '门店标识', value: 'TEST ONLY' },
+      ]}
+      onNavigate={openNavigation}
+      onShare={share}
+      onOpenSwitcher={() => setSwitcher(true)}
+    />
   );
 }
 

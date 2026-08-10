@@ -10,7 +10,7 @@
 | ------------- | --------------------------------------------------------------------------- |
 | Shared theme  | `@oneday/storefront-renderer/storefront.css` + `storefrontTokens`           |
 | Shared chrome | `StorefrontSection`, `StorefrontEmpty`, `storefrontActionIcon`              |
-| Shared paint  | Banner, QuickActions, Member, Offer, Compare, Story, Benefit, StoreInfo     |
+| Shared paint  | Banner, QuickActions, Member, Offer, Compare, Story, Benefit, StoreInfo, Hero, FloatingConsult |
 | Host wiring   | Consumer `od-sf-theme`; Management imports storefront.css                   |
 
 ## Evidence
@@ -21,6 +21,6 @@
 
 ## Honest remainder
 
-- Major storefront module paints extracted.
-- Remaining Consumer-local chrome: store_hero topbar/facts, floating consult, channel-specific pages.
+- Major storefront module paints extracted (incl. store_hero + floating consult).
+- Remaining Consumer-local chrome: channel-specific pages / shell chrome outside the shared renderer.
 - Product-owner UI sign-off remains human.

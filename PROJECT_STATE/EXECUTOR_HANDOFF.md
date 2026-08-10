@@ -35,7 +35,7 @@
 
 **Systemic waves (D3) - SYS-6 / SYS-5 remainders:**
 
-SYS-6 catalog scopes PASS (store-manager services/offers). Continue: store_hero/floating-consult paint; or more write controllers (memberships/workflows). No page-level patches. Not claimed as full commercial. Tencent Cloud out of scope (G).
+SYS-5 store_hero + floating consult paints PASS; SYS-6 catalog scopes PASS. Continue: memberships/workflows write controllers; or Content distributions UI. No page-level patches. Not claimed as full commercial. Tencent Cloud out of scope (G).
 
 **Usage:** keep constructing until **90%-95%**, then new window. Do not stop early.
 
