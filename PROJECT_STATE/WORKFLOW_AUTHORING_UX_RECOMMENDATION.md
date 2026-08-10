@@ -2,7 +2,7 @@
 
 - recorded_at: 2026-08-10 Asia/Shanghai
 - branch: `hardening/COMMERCIAL-COMPLETION`
-- baseline: SYS-10…SYS-18 PASS
+- baseline: SYS-10…SYS-19 PASS
 - rule: no page-level patches; no 全部商用 claim; Tencent Cloud out of scope (G)
 
 ## Verdict
@@ -39,8 +39,8 @@ Free-form canvas remains a **possible later phase** only after product-owner UI 
 | -------- | ----- | ------ |
 | P0 done | SYS-10…16 | Linear viz, branches, preview, reorder, export |
 | P0 done | SYS-17 | Insert rails — Between-step「在此插入」+ duplicate step; still ordered list |
-| **P0 done** | **SYS-18** | **Condition card IA** — Dedicated card UI: when-true continues / when-false skips next; copy explains API limits |
-| **SYS-19 (next eng)** | **Start-context presets** | Named sample contexts (e.g. `upsell=true`) saved locally for simulator |
+| P0 done | SYS-18 | Condition card IA — Dedicated card UI: when-true continues / when-false skips next; copy explains API limits |
+| **P0 done** | **SYS-19** | **Start-context presets** — Named sample contexts (e.g. `upsell=true`) saved locally for simulator |
 | Optional later | List drag-reorder only | HTML5/list DnD on the spine — **not** a graph canvas |
 | Deferred | Free-form DAG canvas | Requires product freeze + engine capability upgrade |
 

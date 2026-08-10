@@ -446,6 +446,39 @@
   gap: 10px;
 }
 
+.presetBar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: end;
+  margin-bottom: 8px;
+}
+
+.presetBar label {
+  display: grid;
+  gap: 4px;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.presetBar input,
+.presetBar select {
+  min-height: 38px;
+  min-width: 140px;
+  padding: 8px 10px;
+  border: 1px solid var(--od-border);
+  border-radius: var(--od-radius-sm);
+  font: inherit;
+  background: var(--od-surface);
+  color: var(--od-ink);
+}
+
+.presetBar small {
+  flex-basis: 100%;
+  color: var(--od-text-muted);
+  font-size: 12px;
+}
+
 .pathPreviewKey {
   display: grid;
   gap: 4px;

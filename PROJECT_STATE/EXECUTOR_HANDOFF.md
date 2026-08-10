@@ -35,7 +35,7 @@
 
 **Systemic waves (D3) - remainders:**
 
-SYS-6…SYS-18 PASS. Next eng: SYS-19 STA start-context presets (see `WORKFLOW_AUTHORING_UX_RECOMMENDATION.md`). Parallel: product-owner UI sign-off (human). Free-form drag canvas deferred. Not claimed as full commercial. Tencent Cloud out of scope (G).
+SYS-6…SYS-19 PASS. STA eng slices complete. Next: human product-owner UI sign-off (must not auto-PASS). Free-form drag canvas deferred. Not claimed as full commercial. Tencent Cloud out of scope (G).
 
 **Usage:** keep constructing until **90%-95%**, then new window. Do not stop early.
 

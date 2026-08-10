@@ -5,7 +5,7 @@
 
 ## Status
 
-SYS-1…SYS-18 PASS (through STA condition card IA).
+SYS-1…SYS-19 PASS (STA insert rails + condition cards + start-context presets complete).
 
 ## Recommended authoring direction (owner 2026-08-10)
 
@@ -13,16 +13,12 @@ SYS-1…SYS-18 PASS (through STA condition card IA).
 
 **Structured Timeline Authoring (STA)** — vertical spine + condition cards + path simulator + insert rails.
 
-Next engineering slices if continuing auto-construction:
-
-1. **SYS-19** — start-context presets for path simulator
-
 ## Queue
 
-- Product-owner UI sign-off (human) — parallel gate
-- SYS-19 STA slice (preferred over free-form drag)
+- Product-owner UI sign-off (human) — required for external pilot claim
+- Optional later: list DnD reorder only (still not graph canvas)
 - Free-form DAG canvas — deferred; needs PRODUCT_FREEZE + engine capability
 
 ## Honest day boundary
 
-External commercial claims blocked without human sign-off. STA continues the honest linear model already proven in SYS-10…18.
+External commercial claims blocked without human sign-off. STA eng SYS-17…19 complete on the honest linear model (SYS-10…19).

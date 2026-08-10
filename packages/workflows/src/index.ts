@@ -200,6 +200,69 @@ export function collectConditionKeys(steps: WorkflowStepLike[]): string[] {
   return keys;
 }
 
+/**
+ * Named sample contexts for the linear path simulator (SYS-19).
+ * Local/builtin only — not a free-form graph start node.
+ */
+export type StartContextPreset = {
+  id: string;
+  name: string;
+  context: Record<string, boolean>;
+  source: 'builtin' | 'local';
+  editor: 'not_free_form_drag';
+};
+
+export function buildBuiltinStartContextPresets(keys: string[]): StartContextPreset[] {
+  const allTrue: Record<string, boolean> = {};
+  const allFalse: Record<string, boolean> = {};
+  for (const key of keys) {
+    allTrue[key] = true;
+    allFalse[key] = false;
+  }
+  return [
+    {
+      id: 'builtin:all-true',
+      name: '全部 true',
+      context: allTrue,
+      source: 'builtin',
+      editor: 'not_free_form_drag',
+    },
+    {
+      id: 'builtin:all-false',
+      name: '全部 false',
+      context: allFalse,
+      source: 'builtin',
+      editor: 'not_free_form_drag',
+    },
+  ];
+}
+
+export function createLocalStartContextPreset(
+  name: string,
+  context: Record<string, boolean>,
+  id = `local:${Date.now()}`,
+): StartContextPreset {
+  return {
+    id,
+    name: name.trim() || '未命名预设',
+    context: { ...context },
+    source: 'local',
+    editor: 'not_free_form_drag',
+  };
+}
+
+/** Project a preset onto the current condition key set (missing keys default true). */
+export function applyStartContextPreset(
+  keys: string[],
+  preset: StartContextPreset,
+): Record<string, boolean> {
+  const next: Record<string, boolean> = {};
+  for (const key of keys) {
+    next[key] = typeof preset.context[key] === 'boolean' ? preset.context[key]! : true;
+  }
+  return next;
+}
+
 export type ConditionPathPreview = {
   appliedIndexes: number[];
   skippedIndexes: number[];

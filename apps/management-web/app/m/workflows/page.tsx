@@ -10,15 +10,19 @@ import {
   StatusBadge,
 } from '@oneday/ui';
 import {
+  applyStartContextPreset,
+  buildBuiltinStartContextPresets,
   buildConditionBranchFlow,
   buildConditionCard,
   collectConditionKeys,
+  createLocalStartContextPreset,
   duplicateStepAt,
   insertStepAt,
   previewConditionPath,
   reorderSteps,
   serializeConditionBranchFlow,
   summarizeCondition,
+  type StartContextPreset,
 } from '@oneday/workflows';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import styles from './page.module.css';
@@ -96,6 +100,7 @@ const draftCondition = (step: StepDraft) => {
 };
 const api = process.env.NEXT_PUBLIC_API_BASE_URL ?? 'http://127.0.0.1:3001';
 const sessionApi = new SessionApiClient(api);
+const START_CONTEXT_PRESET_STORAGE_KEY = 'oneday.workflow.startContextPresets';
 const emptyStep = (assigneeEmployeeId = ''): StepDraft => ({
   name: '',
   type: 'approval',
@@ -104,6 +109,34 @@ const emptyStep = (assigneeEmployeeId = ''): StepDraft => ({
   conditionKey: '',
   conditionEquals: '',
 });
+const readLocalStartContextPresets = (): StartContextPreset[] => {
+  if (typeof window === 'undefined') return [];
+  try {
+    const raw = window.localStorage.getItem(START_CONTEXT_PRESET_STORAGE_KEY);
+    if (!raw) return [];
+    const parsed = JSON.parse(raw) as StartContextPreset[];
+    if (!Array.isArray(parsed)) return [];
+    return parsed.filter(
+      (item) =>
+        item &&
+        typeof item.id === 'string' &&
+        typeof item.name === 'string' &&
+        item.source === 'local' &&
+        item.editor === 'not_free_form_drag' &&
+        item.context &&
+        typeof item.context === 'object',
+    );
+  } catch {
+    return [];
+  }
+};
+const writeLocalStartContextPresets = (presets: StartContextPreset[]) => {
+  if (typeof window === 'undefined') return;
+  window.localStorage.setItem(
+    START_CONTEXT_PRESET_STORAGE_KEY,
+    JSON.stringify(presets.filter((item) => item.source === 'local')),
+  );
+};
 
 export default function WorkflowsPage() {
   const [state, setState] = useState<'loading' | 'ready' | 'forbidden' | 'error'>('loading');
@@ -119,6 +152,23 @@ export default function WorkflowsPage() {
   const [versionPanel, setVersionPanel] = useState<VersionPanel | null>(null);
   const [pathPreviewContext, setPathPreviewContext] = useState<Record<string, boolean>>({});
   const [draftPathContext, setDraftPathContext] = useState<Record<string, boolean>>({});
+  const [localPresets, setLocalPresets] = useState<StartContextPreset[]>([]);
+  const [presetName, setPresetName] = useState('');
+  const [selectedPanelPresetId, setSelectedPanelPresetId] = useState('');
+  const [selectedDraftPresetId, setSelectedDraftPresetId] = useState('');
+  useEffect(() => {
+    setLocalPresets(readLocalStartContextPresets());
+  }, []);
+  const saveLocalPreset = (context: Record<string, boolean>, keys: string[]) => {
+    if (!keys.length) return;
+    const scoped: Record<string, boolean> = {};
+    for (const key of keys) scoped[key] = context[key] ?? true;
+    const created = createLocalStartContextPreset(presetName || `预设 ${keys.join('+')}`, scoped);
+    const next = [...localPresets.filter((item) => item.id !== created.id), created];
+    setLocalPresets(next);
+    writeLocalStartContextPresets(next);
+    setPresetName('');
+  };
   const pathPreview = useMemo(() => {
     if (!versionPanel?.steps.length) return null;
     const keys = collectConditionKeys(versionPanel.steps);
@@ -876,6 +926,68 @@ export default function WorkflowsPage() {
               })}
             </ol>
             {draftPreview.keys.length > 0 ? (
+              <>
+              <div
+                className={styles.presetBar}
+                data-testid="workflow-draft-start-context-presets"
+              >
+                <label>
+                  开始上下文预设
+                  <select
+                    aria-label="草稿开始上下文预设"
+                    data-testid="workflow-draft-preset-select"
+                    value={selectedDraftPresetId}
+                    onChange={(event) => {
+                      const id = event.target.value;
+                      setSelectedDraftPresetId(id);
+                      const builtins = buildBuiltinStartContextPresets(draftPreview.keys);
+                      const preset = [...builtins, ...localPresets].find((item) => item.id === id);
+                      if (!preset) return;
+                      setDraftPathContext(applyStartContextPreset(draftPreview.keys, preset));
+                    }}
+                  >
+                    <option value="">手动切换键值</option>
+                    {buildBuiltinStartContextPresets(draftPreview.keys).map((preset) => (
+                      <option key={preset.id} value={preset.id}>
+                        {preset.name}
+                      </option>
+                    ))}
+                    {localPresets.map((preset) => (
+                      <option key={preset.id} value={preset.id}>
+                        {preset.name}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+                <label>
+                  保存为本地预设
+                  <input
+                    aria-label="草稿预设名称"
+                    data-testid="workflow-draft-preset-name"
+                    value={presetName}
+                    onChange={(event) => setPresetName(event.target.value)}
+                    placeholder="如 upsell=true"
+                  />
+                </label>
+                <Button
+                  tone="secondary"
+                  data-testid="workflow-draft-preset-save"
+                  onClick={() =>
+                    saveLocalPreset(
+                      Object.fromEntries(
+                        draftPreview.keys.map((key) => [
+                          key,
+                          Boolean(draftPreview.context[key] ?? true),
+                        ]),
+                      ),
+                      draftPreview.keys,
+                    )
+                  }
+                >
+                  保存预设
+                </Button>
+                <small>本地浏览器预设；不是自由拖拽图画布起点。</small>
+              </div>
               <div className={styles.pathPreviewKeys}>
                 {draftPreview.keys.map((key) => (
                   <label key={key} className={styles.pathPreviewKey}>
@@ -897,6 +1009,7 @@ export default function WorkflowsPage() {
                   </label>
                 ))}
               </div>
+              </>
             ) : null}
           </div>
         ) : null}
@@ -1091,7 +1204,70 @@ export default function WorkflowsPage() {
                 data-preview-mode="linear_condition_path_preview"
               >
                 <strong>条件路径预览</strong>
-                <p>切换样例上下文，高亮线性步骤中将执行 / 将跳过的节点。不改变已发布定义。</p>
+                <p>
+                  切换样例上下文或本地预设，高亮线性步骤中将执行 / 将跳过的节点。不是自由拖拽图编辑器。
+                </p>
+                <div
+                  className={styles.presetBar}
+                  data-testid="workflow-panel-start-context-presets"
+                >
+                  <label>
+                    开始上下文预设
+                    <select
+                      aria-label="面板开始上下文预设"
+                      data-testid="workflow-panel-preset-select"
+                      value={selectedPanelPresetId}
+                      onChange={(event) => {
+                        const id = event.target.value;
+                        setSelectedPanelPresetId(id);
+                        const builtins = buildBuiltinStartContextPresets(pathPreview.keys);
+                        const preset = [...builtins, ...localPresets].find((item) => item.id === id);
+                        if (!preset) return;
+                        setPathPreviewContext(applyStartContextPreset(pathPreview.keys, preset));
+                      }}
+                    >
+                      <option value="">手动切换键值</option>
+                      {buildBuiltinStartContextPresets(pathPreview.keys).map((preset) => (
+                        <option key={preset.id} value={preset.id}>
+                          {preset.name}
+                        </option>
+                      ))}
+                      {localPresets.map((preset) => (
+                        <option key={preset.id} value={preset.id}>
+                          {preset.name}
+                        </option>
+                      ))}
+                    </select>
+                  </label>
+                  <label>
+                    保存为本地预设
+                    <input
+                      aria-label="面板预设名称"
+                      data-testid="workflow-panel-preset-name"
+                      value={presetName}
+                      onChange={(event) => setPresetName(event.target.value)}
+                      placeholder="如 upsell=true"
+                    />
+                  </label>
+                  <Button
+                    tone="secondary"
+                    data-testid="workflow-panel-preset-save"
+                    onClick={() =>
+                      saveLocalPreset(
+                        Object.fromEntries(
+                          pathPreview.keys.map((key) => [
+                            key,
+                            Boolean(pathPreview.context[key] ?? true),
+                          ]),
+                        ),
+                        pathPreview.keys,
+                      )
+                    }
+                  >
+                    保存预设
+                  </Button>
+                  <small>本地浏览器预设；不写入服务端。</small>
+                </div>
                 <div className={styles.pathPreviewKeys}>
                   {pathPreview.keys.map((key) => (
                     <label key={key} className={styles.pathPreviewKey}>

@@ -8,11 +8,11 @@
 ## Current task - systemic commercial productization (D3)
 
 - branch: `hardening/COMMERCIAL-COMPLETION`
-- HEAD (pushed): tip after SYS-18 state record
-- last_safe_commit: d957edd
-- last_verified: SYS-18 STA condition card IA PASS
-- current_task: SYS-19 STA start-context presets (preferred) **or** human product-owner UI sign-off assist
-- status: `SYS_18_CONDITION_CARD_PASS`; **not** claimed as full commercial
+- HEAD (pushed): tip after SYS-19 state record
+- last_safe_commit: PENDING_SYS19_COMMIT
+- last_verified: SYS-19 STA start-context presets PASS
+- current_task: Human product-owner UI sign-off (engineering must not mark PASS)
+- status: `SYS_19_START_CONTEXT_PRESETS_PASS`; STA eng SYS-17?19 complete; **not** claimed as full commercial
 - blocker: null
 - progress: P0 26/26
 - working_tree: clean after commit
@@ -21,12 +21,13 @@
 
 1. SYS-17 STA insert rails (`2a913f8`)
 2. SYS-18 STA condition card IA (`d957edd`)
+3. SYS-19 STA start-context presets (this commit)
 
 ### Next remainders (honest)
 
-- **SYS-19** Structured Timeline Authoring — start-context presets
-- **Product-owner UI sign-off (human)** — `PRODUCT_OWNER_UI_ACCEPTANCE.md` (engineering must not mark PASS)
-- Free-form DAG canvas — **deferred** (wrong default this phase)
+- **Product-owner UI sign-off (human)** ? `PRODUCT_OWNER_UI_ACCEPTANCE.md` (engineering must not mark PASS)
+- Optional later: list DnD reorder only (still not graph canvas)
+- Free-form DAG canvas ? **deferred**
 - No Tencent Cloud (G). No full-commercial claim.
 
 ### Owner cooperation (front-loaded)
@@ -38,7 +39,7 @@
 ### New-window paste
 
 ```text
-读并执行：
+?????
 1. PROJECT_STATE/EXECUTOR_HANDOFF.md
 2. PROJECT_STATE/LATEST_HANDOFF.md
 3. PROJECT_STATE/DECISION_REQUIRED.md
@@ -47,9 +48,9 @@
 6. PROJECT_STATE/WORKFLOW_AUTHORING_UX_RECOMMENDATION.md
 7. git status
 
-状态：SYS-18 PASS（safe d957edd；tip 见 LATEST_HANDOFF）；P0 26/26；工作区干净。
-设计裁决：不做 free-form drag 画布；按 WORKFLOW_AUTHORING_UX_RECOMMENDATION 推进 Structured Timeline Authoring。
-下一工程切片：SYS-19 路径模拟器 start-context presets（可并行协助 human pilot 沙箱，但不得代签 PRODUCT_OWNER_UI_ACCEPTANCE）。
-禁止页级补丁。工作目录仅 D:\ONEDAY_V3。不得宣称全部商用。不做腾讯云。
-已获 A–H。继续施工；用量达到 90%–95% 再换新窗口，中途不要停。
+???SYS-19 PASS?safe ? LATEST_HANDOFF??STA eng SYS-17?19 ???P0 26/26???????
+??????? free-form drag ???STA ??? insert rails / condition cards / start-context presets?
+??????? human pilot ??/??????? PRODUCT_OWNER_UI_ACCEPTANCE????? STA eng ?????????
+???????????? D:\ONEDAY_V3????????????????
+?? A?H?????????? 90%?95% ????????????
 ```

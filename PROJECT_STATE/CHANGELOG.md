@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## 2026-08-10 - SYS-19 STA start-context presets PASS
+
+- Added `@oneday/workflows` builtin/local start-context presets + Management path-simulator preset bar (localStorage).
+- Evidence: `SYS_19_START_CONTEXT_PRESETS_ACCEPTANCE.md`, `evidence/SYS-19/`. Unit 1/1 + Playwright 1/1. STA eng SYS-17…19 complete. Not free-form drag graph. Not 全部商用.
+
 ## 2026-08-10 - SYS-18 STA condition card IA PASS
 
 - Added `@oneday/workflows.buildConditionCard(s)` with when-true / when-false readout and `apiLimit: key_equals_only`; Management create + version panel show condition cards.

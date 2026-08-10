@@ -52,7 +52,7 @@
 - [x] SYS-16 Linear flow JSON export PASS — honest linear serialize + clipboard (not free-form drag graph); see `SYS_16_LINEAR_FLOW_EXPORT_ACCEPTANCE.md`.
 - [x] SYS-17 Structured Timeline Authoring — insert rails PASS — between-step「在此插入」+ duplicate (not free-form drag); see `SYS_17_INSERT_RAILS_ACCEPTANCE.md`.
 - [x] SYS-18 Structured Timeline Authoring — condition card IA PASS — when-true/when-false equals-only cards (not free-form drag); see `SYS_18_CONDITION_CARD_ACCEPTANCE.md`.
-- [ ] SYS-19 Structured Timeline Authoring — start-context presets for path simulator.
+- [x] SYS-19 Structured Timeline Authoring — start-context presets PASS — builtin + localStorage presets for path simulator (not free-form drag); see `SYS_19_START_CONTEXT_PRESETS_ACCEPTANCE.md`.
 - [ ] HUMAN-PILOT-HANDOFF / product-owner UI acceptance — local sandbox refreshed through migration `054` + consult CTA bindings + walkthrough shots (Playwright 4/4); **human sign-off still required**; not auto-claimed as 全部商用. Optional scoped P1 only after product-owner decision.
 
 ## Current product-owner acceptance
