@@ -70,8 +70,8 @@
   gap: 16px;
   padding: 20px;
   border-radius: 20px;
-  color: var(--od-surface);
-  background: linear-gradient(135deg, var(--od-brand-700), var(--od-brand-800));
+  color: var(--od-on-brand);
+  background: linear-gradient(135deg, var(--od-brand-700), var(--od-brand-600));
   box-shadow: var(--od-shadow-mid);
 }
 
@@ -79,20 +79,57 @@
   color: var(--od-ink);
 }
 
-.hero p {
+.heroCopy strong {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 16px;
+}
+
+.heroCopy p {
   margin: 0;
   font-size: 14px;
   line-height: 1.55;
+  color: var(--od-on-brand);
 }
 
-.hero strong {
-  display: inline-block;
-  margin: 4px 6px 0 0;
-  font-size: 40px;
-  line-height: 1;
+.shortcuts {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
 }
 
-.hero span {
+.shortcut {
+  display: grid;
+  gap: 4px;
+  min-height: 72px;
+  padding: 12px;
+  border: 1px solid var(--od-border);
+  border-radius: 14px;
+  background: var(--od-surface);
+  color: inherit;
+  text-decoration: none;
+  box-shadow: var(--od-shadow-low);
+}
+
+.shortcut strong {
+  font-size: 15px;
+}
+
+.shortcut span {
+  color: var(--od-text-muted);
+  font-size: 12px;
+}
+
+.crmRow {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.link {
+  color: var(--od-brand-800);
+  font-weight: 700;
+  text-decoration: none;
   font-size: 13px;
 }
 

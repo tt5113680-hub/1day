@@ -121,13 +121,21 @@ export function Workbench() {
       </main>
     );
   if (!data) return null;
+  const shortcuts = [
+    { href: '/e/tasks', label: '任务', desc: '今日待办' },
+    { href: '/e/customers', label: '客户', desc: 'CRM 客户' },
+    { href: '/e/leads', label: '线索', desc: '线索池' },
+    { href: '/e/share', label: '获客', desc: '分享码' },
+    { href: '/e/memberships', label: '核销', desc: '会员权益' },
+    { href: '/e/profile', label: '我的', desc: '个人工具' },
+  ] as const;
   return (
     <main className={styles.page}>
       <header className={styles.header}>
         <div>
-          <p>ONEDAY / 今日执行</p>
+          <p>员工工作台</p>
           <h1>你好，{data.employee.displayName}</h1>
-          <span>{data.employee.title ?? '员工'} · 所有行动仅显示你的任务范围</span>
+          <span>{data.employee.title ?? '员工'} · 仅显示你的任务与客户范围</span>
         </div>
         <Button className={styles.refresh} tone="quiet" onClick={() => void load()}>
           刷新
@@ -138,10 +146,43 @@ export function Workbench() {
           {message}
         </p>
       )}
+
+      <section className={styles.section} aria-label="工作快捷入口">
+        <div className={styles.sectionHead}>
+          <h2>常用功能</h2>
+          <span>一点直达</span>
+        </div>
+        <div className={styles.shortcuts}>
+          {shortcuts.map((item) => (
+            <a className={styles.shortcut} href={item.href} key={item.href}>
+              <strong>{item.label}</strong>
+              <span>{item.desc}</span>
+            </a>
+          ))}
+        </div>
+      </section>
+
       <section className={styles.hero} aria-labelledby="today-title">
         <MetricCard hint="项待推进" label="今日任务" value={data.tasks.length} />
-        <p>优先完成有时限的客户动作，完成后会自动保留执行记录。</p>
+        <div className={styles.heroCopy}>
+          <strong>今日工作</strong>
+          <p>优先完成有时限的客户动作；完成后自动保留执行记录。</p>
+        </div>
       </section>
+
+      <section className={styles.section} aria-labelledby="crm-title">
+        <div className={styles.sectionHead}>
+          <h2 id="crm-title">客户 CRM</h2>
+          <a className={styles.link} href="/e/customers">
+            客户目录 →
+          </a>
+        </div>
+        <div className={styles.crmRow}>
+          <MetricCard hint="客户提醒" label="客户提醒" value={data.customerReminders.length} />
+          <MetricCard hint="智能机会" label="行动机会" value={data.opportunities.length} />
+        </div>
+      </section>
+
       <section className={styles.section} aria-labelledby="today-title">
         <div className={styles.sectionHead}>
           <h2 id="today-title">今天要做</h2>
@@ -179,7 +220,7 @@ export function Workbench() {
       </section>
       <section className={styles.section} aria-labelledby="opportunity-title">
         <div className={styles.sectionHead}>
-          <h2 id="opportunity-title">智能机会</h2>
+          <h2 id="opportunity-title">行动机会</h2>
           <span>来自任务时限信号</span>
         </div>
         {data.opportunities.length === 0 ? (
@@ -218,19 +259,6 @@ export function Workbench() {
             </article>
           ))
         )}
-      </section>
-      <section className={styles.section} aria-label="会员权益核销" id="membership-redeem">
-        <div className={styles.sectionHead}>
-          <h2>会员权益核销</h2>
-          <span>一等入口</span>
-        </div>
-        <div className={styles.task}>
-          <div>
-            <strong>前往会员核销页</strong>
-            <p>核销表单已迁至 `/e/memberships`，与店长能力包共用同一路由。</p>
-          </div>
-          <a href="/e/memberships">打开核销</a>
-        </div>
       </section>
     </main>
   );
