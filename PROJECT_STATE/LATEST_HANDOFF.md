@@ -9,19 +9,17 @@
 ## Current task ? Phase-1 commercial closed loop
 
 - branch: `hardening/COMMERCIAL-COMPLETION`
-- last_verified: P1-B sync-converge + content-chain PASS (content approve emits `content.published.v1`; Management content page converges via the `content` sync topic; per-item honest convergence line; page-builder surfaces published_at publish effectiveness)
-- status: P1-A/P1-B continue via **local unattended** Headless turns; four P1-B shells + ui-kit + sync-converge + content-chain all PASS; remaining P1-B is essentially complete -> next P1-C bundle review + G1 packaging
-- blocker: null (P1-C live waits on G lift + cloud inventory)
-- progress: P0 26/26; membership closed-loop landed; ui-kit Table/Modal; consumer/employee/management/platform shells token-driven; **sync-converge + content-chain PASS** (see `evidence/P1-B-SYNC-CONVERGE/ACCEPTANCE.md`)
-- push_pending: local P1-B sync-converge commit ahead of origin; prior local infra (scripts/) left outside slice. Push `origin/hardening/COMMERCIAL-COMPLETION` when connectivity returns.
+- last_verified: **G1 READY (2026-08-10 21:55)** — G1 packaging milestone PASS: local HUMAN PILOT sandbox boot-verified at HEAD `6b2dad9` (API + worker + four webs all HTTP 200, DB `oneday_human_pilot` migrated), typecheck 20/20, build 20/20, unit 49/49. Runbook + checklist + deployment + limitations + recovery + walkthrough all present. Evidence: `evidence/G1-PACKAGING/ACCEPTANCE.md`. Services left **running** on 3200–3205 for the owner's G1 full test.
+- status: P1-A and P1-B fully PASS; remaining AI-actionable milestones complete. Next is the **owner G1 gate** (local full human test + sign-off), then P1-C live (blocked on G lift + cloud inventory). No further P1-A/B slice remains for unattended turns.
+- blocker: G1 awaits owner (local full test). P1-C live waits on G lift + cloud inventory. Do **not** auto-sign `PRODUCT_OWNER_UI_ACCEPTANCE.md`.
+- progress: P0 26/26; P1-A PASS; P1-B (session-login, ui-kit, four shells, sync-converge, content-chain) PASS; **G1 packaging PASS** (locally boot-verified); P1-D owner sign-off waiting; P1-C live blocked.
+- push_pending: this turn's `G1-PACKAGING` evidence + state updates committed locally and pushed to `origin/hardening/COMMERCIAL-COMPLETION`.
 
-### Owner ? one-time only
+### Owner ? next actions (G1 gate)
 
-1. Copy `.env.local-unattended.example` ? `.env.local-unattended`, set `CURSOR_API_KEY`
-2. `pnpm unattended:install` (or `pnpm unattended:daemon` for hidden loop)
-3. Power: never sleep on AC
-4. **Do not** open IDE Agent for construction while task/daemon runs
-5. Appear only at **G1** (full local test) and **G2** (cloud after PASS)
+1. On this machine run `pnpm human-pilot:seed` then `pnpm human-pilot:start` (services already up on 3200–3205) and walk `docs/HUMAN_PILOT_MANUAL_TEST.md`.
+2. Complete `docs/PILOT_ACCEPTANCE_CHECKLIST.md` and sign `PROJECT_STATE/PRODUCT_OWNER_UI_ACCEPTANCE.md`.
+3. For P1-C live: lift authorization G and supply the cloud inventory in `PHASE1_COMMERCIAL_CLOSED_LOOP_PLAN.md` §2.
 
 ### Headless turn prompt
 

@@ -1,0 +1,17 @@
+G1-PACKAGING — local HUMAN PILOT sandbox boot verification at HEAD 6b2dad9
+recorded_at: 2026-08-10 21:55 Asia/Shanghai
+
+Docker services (oneday-human-pilot project, image oneday-human-pilot-*):
+  api, worker, consumer, employee, management, platform — all Up
+
+Endpoint checks (raw):
+  GET http://127.0.0.1:3200/api/v1/health -> 200 {"status":"ok","service":"oneday-api","database":"ready"}
+  GET http://127.0.0.1:3205/health -> 200 {"status":"ok","service":"oneday-worker","running":false,"lastRun":{...},"lastError":null}
+  GET http://127.0.0.1:3201/ -> 200  (Consumer web)
+  GET http://127.0.0.1:3202/ -> 200  (Employee web)
+  GET http://127.0.0.1:3203/ -> 200  (Management web)
+  GET http://127.0.0.1:3204/ -> 200  (Platform web)
+
+Pilot database: oneday_human_pilot @ 127.0.0.1:5434 (kysely_migration; 100 public schema tables)
+
+Quality gates at HEAD: pnpm typecheck 20/20; pnpm build 20/20; pnpm test:unit 12/12 files (49 tests)

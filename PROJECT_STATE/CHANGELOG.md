@@ -1,5 +1,14 @@
 # CHANGELOG
 
+## 2026-08-10 - G1 packaging: local HUMAN PILOT READY PASS
+
+- G1 packaging milestone (`p1-g1-packaging`) closed. Local HUMAN PILOT sandbox boot-verified at HEAD `6b2dad9`: `pnpm human-pilot:start` services up on 3200–3205 — API health `200 {"status":"ok","database":"ready"}`, worker `200 {"status":"ok","service":"oneday-worker"}`, Consumer/Employee/Management/Platform webs all HTTP 200; pilot DB `oneday_human_pilot` migrated (`kysely_migration`, 100 public tables). CHARTER §8 G1.
+- G1 packaging artifacts present: runbook `docs/HUMAN_PILOT_MANUAL_TEST.md`, deployment `docs/PILOT_DEPLOYMENT.md`, acceptance checklist `docs/PILOT_ACCEPTANCE_CHECKLIST.md`, admin guide `docs/PILOT_ADMIN_GUIDE.md`, limitations `docs/PILOT_LIMITATIONS.md`, recovery `docs/RELEASE_AND_RECOVERY.md`, start `pnpm human-pilot:start`, plus walkthrough/preflight evidence in `evidence/HUMAN-PILOT-HANDOFF/`.
+- Gates: `pnpm typecheck` 20/20, `pnpm build` 20/20, `pnpm test:unit` 12 files/49.
+- Maps to CHARTER §8 G1 + `docs/PILOT_ACCEPTANCE_CHECKLIST.md` readiness posture (matrix C-02 / E-01 / M-01 / P-01 readiness + RC-01 recovery-doc presence). Marks `p1-g1-packaging` PASS in `PHASE1_PROGRESS.json`; declares **G1 READY** in `LATEST_HANDOFF.md`.
+- **Not** a product-owner UI sign-off. No public HTTPS / Tencent Cloud (authorization G not lifted). P1-C live and external pilot claim remain blocked on owner G1 test + G lift.
+- Fresh boot health captured: `evidence/G1-PACKAGING/boot-health.txt`; acceptance: `evidence/G1-PACKAGING/ACCEPTANCE.md`.
+
 ## 2026-08-10 - P1-B sync-converge + content-chain: content approve emits `content.published.v1` and Management converges on the content sync topic PASS
 
 - `apps/api/src/management-content.service.ts`: `approve()` now writes a `content.published.v1` outbox event **in the same transaction** (was previously silent). This closes the approve→place→Consumer event chain and routes to the `content` sync topic via `mapEventToSyncTopics` (CHARTER §3.1 publish-effectiveness, MULTI_TERMINAL_SYNC_SPEC §4). Internal publication intent only, never an external delivery claim (CHARTER §1.4).

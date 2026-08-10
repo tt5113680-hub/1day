@@ -2,7 +2,7 @@
   "recordedAt": "2026-08-10T15:50:00+08:00",
   "phase": "Phase-1 commercial closed loop",
   "goal": "G1 local human pilot ready (not public HTTPS, not full commercial)",
-  "currentStep": "P1-B visual depth (four shells + UI kit; ui-kit PASS, consumer-shell PASS, employee-shell PASS, management-shell PASS, platform-shell PASS, sync-converge PASS, content-chain PASS; next P1-C bundle + G1 packaging)",
+  "currentStep": "P1-A/P1-B PASS complete (shells, ui-kit, sync-converge, content-chain). G1 packaging PASS (runbook + local HUMAN PILOT sandbox boot-verified at HEAD 6b2dad9; G1 READY declared for owner local full test). P1-C live remains blocked on G lift; P1-D owner sign-off waiting.",
   "milestones": [
     { "id": "p0-sys", "label": "P0 matrix + SYS-1..34", "weight": 35, "status": "pass", "evidence": "TASK_QUEUE SYS-34 PASS" },
     { "id": "p1-a", "label": "P1-A commercial main loop", "weight": 10, "status": "pass", "evidence": "P1_A_COMMERCIAL_CLOSED_LOOP_ACCEPTANCE.md" },
@@ -15,12 +15,12 @@
     { "id": "p1-b-sync-converge", "label": "P1-B publish -> four-terminal sync", "weight": 8, "status": "pass", "evidence": "evidence/P1-B-SYNC-CONVERGE/ACCEPTANCE.md" },
     { "id": "p1-b-content-chain", "label": "P1-B content approve->place chain", "weight": 3, "status": "pass", "evidence": "evidence/P1-B-SYNC-CONVERGE/ACCEPTANCE.md" },
     { "id": "p1-c-deploy-templates", "label": "P1-C deploy templates (infra/deploy)", "weight": 5, "status": "pass", "evidence": "infra/deploy/" },
-    { "id": "p1-g1-packaging", "label": "G1 packaging (runbook + G1 READY)", "weight": 5, "status": "pending" }
+    { "id": "p1-g1-packaging", "label": "G1 packaging (runbook + G1 READY)", "weight": 5, "status": "pass", "evidence": "evidence/G1-PACKAGING/ACCEPTANCE.md" }
   ],
   "ownerGates": [
     { "id": "p1-d", "label": "P1-D owner local full test + sign-off", "status": "waiting" },
     { "id": "p1-c-live", "label": "P1-C public HTTPS (needs G + domain/server)", "status": "blocked" },
     { "id": "p1-e", "label": "P1-E external controlled trial claim", "status": "waiting" }
   ],
-  "notes": "Agent must update milestone status each unattended turn. Must comply with COMMERCIAL_EXECUTION_CHARTER.md — no PRD deviation."
+  "notes": "Agent must update milestone status each unattended turn. Must comply with COMMERCIAL_EXECUTION_CHARTER.md — no PRD deviation. G1 packaging PASS at HEAD 6b2dad9 (local HUMAN PILOT boot-verified + runbook in evidence/G1-PACKAGING). G1 is an owner gate; do not auto-sign PRODUCT_OWNER_UI_ACCEPTANCE.md. Next owner actions: G1 local full test, then (if G lifted + cloud inventory) P1-C live."
 }
