@@ -9,7 +9,7 @@
 - status: SYS_1_PASS; SYS_2_PASS; SYS_3_PASS; SYS_4_PASS; SYS_5_SCAFFOLD_PASS; SYS_5_VISUAL_PASS; SYS_6_SCAFFOLD_PASS; SYS_6_MULTI_PRODUCT_PASS; SYS_6_DATA_SCOPES_PASS; SYS_6_WRITE_PATH_SCOPES_PASS; SYS_6_NETWORK_PACKS_PASS; MATRIX_GAP_CLOSEOUT_COMPLETE; HUMAN_PILOT_SANDBOX_REFRESHED; COMMERCIAL_FIXTURES_GENERATOR_PASS
 - branch: hardening/COMMERCIAL-COMPLETION
 - executor: Cursor Agent (2026-08-10; see PROJECT_STATE/EXECUTOR_HANDOFF.md)
-- last_safe_commit: pending (this gate)
+- last_safe_commit: e6e5721
 - verified_sys_6_network_packs: PASS — channel/circle list+write gated by data_scopes; platform.manage unrestricted. See PROJECT_STATE/SYS_6_ACCEPTANCE.md and evidence/SYS-6/.
 - verified_sys_6_write_path_scopes: PASS — redeem store write-scope; assigned managers list/update commercial+links. See PROJECT_STATE/SYS_6_ACCEPTANCE.md and evidence/SYS-6/.
 - verified_sys_6_data_scopes: PASS — DataScopeService; managed-stores API; assign/onboarding sync. See PROJECT_STATE/SYS_6_ACCEPTANCE.md and evidence/SYS-6/.
