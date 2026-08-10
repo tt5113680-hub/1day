@@ -14,6 +14,42 @@ const UUID = /^[0-9a-f-]{36}$/i;
 export class EmployeeCustomerDetailService implements OnModuleDestroy {
   private readonly pool = createApiPool();
 
+  async list(context: OrganizationContext, limit = 50) {
+    const employee = await this.employee(context);
+    const result = await this.pool.query(
+      `select c.id,c.display_name,c.status,c.created_at,
+              exists(
+                select 1 from customer_ownerships o
+                where o.tenant_id=c.tenant_id and o.customer_id=c.id and o.employee_id=$2
+                  and o.status='active' and o.deleted_at is null
+              ) as owned,
+              (
+                select count(*)::int from tasks t
+                where t.tenant_id=c.tenant_id and t.customer_id=c.id and t.assignee_employee_id=$2
+                  and t.status in ('open','overdue') and t.deleted_at is null
+              ) as open_tasks
+       from customers c
+       where c.tenant_id=$1 and c.status='active' and c.deleted_at is null and (
+         exists(select 1 from customer_ownerships o where o.tenant_id=c.tenant_id and o.customer_id=c.id and o.employee_id=$2 and o.status='active' and o.deleted_at is null)
+         or exists(select 1 from tasks t where t.tenant_id=c.tenant_id and t.customer_id=c.id and t.assignee_employee_id=$2 and t.deleted_at is null)
+         or exists(select 1 from customer_contributions r where r.tenant_id=c.tenant_id and r.customer_id=c.id and r.employee_id=$2 and r.status='active' and r.deleted_at is null)
+       )
+       order by c.updated_at desc nulls last, c.created_at desc
+       limit $3`,
+      [context.tenantId, employee.id, limit],
+    );
+    return {
+      customers: result.rows.map((row) => ({
+        id: row.id,
+        displayName: row.display_name,
+        status: row.status,
+        createdAt: row.created_at,
+        owned: Boolean(row.owned),
+        openTasks: Number(row.open_tasks) || 0,
+      })),
+    };
+  }
+
   async detail(context: OrganizationContext, customerId: string) {
     if (!UUID.test(customerId)) throw new BadRequestException('VALIDATION_ERROR');
     const employee = await this.employee(context);

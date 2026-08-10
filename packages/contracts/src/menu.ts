@@ -308,7 +308,7 @@ export const EMPLOYEE_MENU_CATALOG: MenuCatalogItem[] = [
   },
   {
     key: 'customers',
-    href: '/e/leads',
+    href: '/e/customers',
     label: '客户',
     requireAny: ['customer.read', 'customer.manage', 'task.read'],
   },

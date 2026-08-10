@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## 2026-08-10 - SYS-31 Employee customer directory PASS
+
+- Added scoped `GET /api/v1/employee/customers` + Employee `/e/customers` directory; menu「客户」now opens the directory (获客池 remains `/e/leads`).
+- Evidence: `SYS_31_EMPLOYEE_CUSTOMER_DIRECTORY_ACCEPTANCE.md`, `evidence/SYS-31/`. Unit 2/2 + menu-dto 16/16 + Playwright 1/1. Not 全部商用.
+
 ## 2026-08-10 - SYS-30 Employee task inbox PASS
 
 - Employee menu「任务」now opens `/e/tasks` inbox (today + customer reminders) via existing workbench API; detail routes unchanged.

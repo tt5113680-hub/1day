@@ -157,6 +157,11 @@ describe('menu DTO catalog filter', () => {
     expect(tasks?.href).toBe('/e/tasks');
   });
 
+  it('routes Employee 客户 tab to customer directory (SYS-31)', () => {
+    const customers = EMPLOYEE_MENU_CATALOG.find((item) => item.key === 'customers');
+    expect(customers?.href).toBe('/e/customers');
+  });
+
   it('isolates channel-only and circle-only shell modes from platform (SYS-28)', () => {
     const channelOnly = resolvePlatformShellAccess(['channel.read', 'channel.manage']);
     expect(channelOnly.allowed).toEqual(['channel']);
