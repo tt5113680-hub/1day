@@ -18,7 +18,7 @@
 
 1. SYS-6 Channel/Circle/Platform role matrix
 2. SYS-6 Member Consumer journey
-3. SYS-7 Workflow versioning (GET version steps + clone + publish v2 + start)
+3. SYS-7 Workflow versioning API + Management 「克隆发布新版本」
 4. Evidence + tests green; pushed to origin
 
 ### Usage note
