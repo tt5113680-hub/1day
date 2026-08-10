@@ -9,7 +9,7 @@
 - status: SYS_1_PASS; SYS_2_PASS; SYS_3_PASS; SYS_4_PASS; SYS_5_SCAFFOLD_PASS; SYS_5_VISUAL_PASS; SYS_6_SCAFFOLD_PASS; MATRIX_GAP_CLOSEOUT_COMPLETE; HUMAN_PILOT_SANDBOX_REFRESHED; COMMERCIAL_FIXTURES_GENERATOR_PASS
 - branch: hardening/COMMERCIAL-COMPLETION
 - executor: Cursor Agent (2026-08-10; see PROJECT_STATE/EXECUTOR_HANDOFF.md)
-- last_safe_commit: pending SYS-6 scaffold commit
+- last_safe_commit: 448b1ed
 - verified_sys_6_scaffold: PASS ? `GET /api/v1/me/menu` + Management AdminShell DTO. See PROJECT_STATE/SYS_6_ACCEPTANCE.md and evidence/SYS-6/.
 - verified_sys_5_visual: PASS ? Consumer store CSS hex retired to `--od-sf-*`; shared chrome Section/Empty/icons. See PROJECT_STATE/SYS_5_ACCEPTANCE.md and evidence/SYS-5/.
 - verified_sys_5_scaffold: PASS ? `@oneday/storefront-renderer` package; token hole `--od-brand-50` closed; Management Page Builder imports shared outline.
