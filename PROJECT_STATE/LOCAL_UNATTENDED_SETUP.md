@@ -1,6 +1,7 @@
 # 本地无人值守施工 — 一次性配置
 
 - recorded_at: 2026-08-10 Asia/Shanghai
+- **施工总纲（不可偏离）：** `PROJECT_STATE/COMMERCIAL_EXECUTION_CHARTER.md`
 - **推荐模式：专用机 / 24h 开机 + 每 10 分钟监控接龙**
 
 ## 你要的行为（已实现）
