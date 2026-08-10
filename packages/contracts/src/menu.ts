@@ -79,7 +79,7 @@ export const MANAGEMENT_MENU_CATALOG: MenuCatalogItem[] = [
     key: 'content',
     href: '/m/content',
     label: '内容中心',
-    requireAny: ['tenant.manage'],
+    requireAny: ['tenant.manage', 'tenant.read'],
   },
   {
     key: 'page-builder',

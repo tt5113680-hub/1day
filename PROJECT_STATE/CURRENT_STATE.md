@@ -4,12 +4,13 @@
 - completed_tasks: 69/69
 - foundation_final_state_commit: 239114e
 - core_final_state_commit: df5ef65
-- last_completed_task: SYS-6 channel/circle network packs PASS
-- current_task: ONEDAY-V3-COMMERCIAL-COMPLETION / systemic waves (SYS-6 remainder: more write controllers / Store Manager content writes; optional storefront paint)
-- status: SYS_1_PASS; SYS_2_PASS; SYS_3_PASS; SYS_4_PASS; SYS_5_SCAFFOLD_PASS; SYS_5_VISUAL_PASS; SYS_6_SCAFFOLD_PASS; SYS_6_MULTI_PRODUCT_PASS; SYS_6_DATA_SCOPES_PASS; SYS_6_WRITE_PATH_SCOPES_PASS; SYS_6_NETWORK_PACKS_PASS; MATRIX_GAP_CLOSEOUT_COMPLETE; HUMAN_PILOT_SANDBOX_REFRESHED; COMMERCIAL_FIXTURES_GENERATOR_PASS
+- last_completed_task: SYS-6 store-manager content placements PASS
+- current_task: ONEDAY-V3-COMMERCIAL-COMPLETION / systemic waves (SYS-6 remainder: more write controllers; optional storefront paint)
+- status: SYS_1_PASS; SYS_2_PASS; SYS_3_PASS; SYS_4_PASS; SYS_5_SCAFFOLD_PASS; SYS_5_VISUAL_PASS; SYS_6_SCAFFOLD_PASS; SYS_6_MULTI_PRODUCT_PASS; SYS_6_DATA_SCOPES_PASS; SYS_6_WRITE_PATH_SCOPES_PASS; SYS_6_NETWORK_PACKS_PASS; SYS_6_CONTENT_PLACEMENTS_PASS; MATRIX_GAP_CLOSEOUT_COMPLETE; HUMAN_PILOT_SANDBOX_REFRESHED; COMMERCIAL_FIXTURES_GENERATOR_PASS
 - branch: hardening/COMMERCIAL-COMPLETION
 - executor: Cursor Agent (2026-08-10; see PROJECT_STATE/EXECUTOR_HANDOFF.md)
-- last_safe_commit: e6e5721
+- last_safe_commit: pending (this gate)
+- verified_sys_6_content_placements: PASS — store managers list approved content + place on scoped stores; create/approve owner-only. See PROJECT_STATE/SYS_6_ACCEPTANCE.md and evidence/SYS-6/.
 - verified_sys_6_network_packs: PASS — channel/circle list+write gated by data_scopes; platform.manage unrestricted. See PROJECT_STATE/SYS_6_ACCEPTANCE.md and evidence/SYS-6/.
 - verified_sys_6_write_path_scopes: PASS — redeem store write-scope; assigned managers list/update commercial+links. See PROJECT_STATE/SYS_6_ACCEPTANCE.md and evidence/SYS-6/.
 - verified_sys_6_data_scopes: PASS — DataScopeService; managed-stores API; assign/onboarding sync. See PROJECT_STATE/SYS_6_ACCEPTANCE.md and evidence/SYS-6/.
@@ -25,9 +26,9 @@
 - verified_commercial_fixtures_generator: PASS.
 - started_at: 2026-08-09T20:29:46+08:00
 - blocker: null
-- next_scope: SYS-6 remainder (more Management/Employee write controllers; Store Manager content writes) or optional storefront paint. Not 全部商用. Tencent Cloud out of scope (G). Usage warn ≥90% only.
+- next_scope: SYS-6 remainder (more Management/Employee write controllers) or optional storefront paint. Not 全部商用. Tencent Cloud out of scope (G). Usage warn ≥90% only.
 - progress_p0_covered: 26/26 (100%)
 - progress_matrix_waves: 4/4 close-out complete
-- progress_sys_waves: 6/6 scaffolded; SYS-6 network packs landed; remainders multi-week
+- progress_sys_waves: 6/6 scaffolded; SYS-6 content placements landed; remainders multi-week
 - verified_pre_pilot_polish: PASS at 268464d.
 - remediation_stage: A-G PASS. See PROJECT_STATE/AUDIT_REMEDIATION_CLOSEOUT.md.

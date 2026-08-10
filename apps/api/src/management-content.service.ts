@@ -20,7 +20,8 @@ const text = (v: unknown, n: number) =>
 @Injectable()
 export class ManagementContentService implements OnModuleDestroy {
   private readonly pool = createApiPool();
-  async list(c: OrganizationContext) {
+  async list(c: OrganizationContext, storeIds: string[] | null = null) {
+    const scoped = storeIds !== null;
     const r = await this.pool.query(
       `select i.id,i.kind,i.title,i.body,i.media_url,i.status,i.version,i.created_at,
         coalesce(d.channels,'{}') channels,
@@ -35,9 +36,12 @@ export class ManagementContentService implements OnModuleDestroy {
          from content_store_placements p
          join stores s on s.id=p.store_id and s.tenant_id=p.tenant_id and s.deleted_at is null
          where p.content_id=i.id and p.tenant_id=i.tenant_id and p.status='active' and p.deleted_at is null
+           ${scoped ? 'and p.store_id = any($2::uuid[])' : ''}
        ) p on true
-       where i.tenant_id=$1 and i.deleted_at is null order by i.created_at desc`,
-      [c.tenantId],
+       where i.tenant_id=$1 and i.deleted_at is null
+         ${scoped ? "and i.status='approved'" : ''}
+       order by i.created_at desc`,
+      scoped ? [c.tenantId, storeIds] : [c.tenantId],
     );
     return r.rows;
   }

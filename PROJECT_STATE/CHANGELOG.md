@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## 2026-08-10 - SYS-6 store-manager content placements PASS
+
+- Assigned store managers (`tenant.read` + store scopes) may list approved content and place it on scoped stores only; create/approve/distribute remain owner-only.
+- Management menu exposes 内容中心 for `tenant.read` store-manager mode.
+- Evidence: `SYS_6_ACCEPTANCE.md`, `evidence/SYS-6/`. Tests: `sys-6-content-placements` 1/1, `menu-dto.vitest` 6/6, `page-m-013-api` 1/1. Not 全部商用.
+
 ## 2026-08-10 - SYS-6 channel/circle network packs PASS
 
 - Channel/circle dashboards and merchant write APIs now filter/deny by `data_scopes` (`channel` / `circle`); `platform.manage` stays unrestricted; unscoped legacy admins unchanged.

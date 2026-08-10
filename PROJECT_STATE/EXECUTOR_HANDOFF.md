@@ -35,7 +35,7 @@
 
 **Systemic waves (D3) — SYS-6 remainder:**
 
-SYS-6 multi-product + data_scopes + write-path scopes + channel/circle network packs PASS. Continue: more write controllers; Store Manager content writes; or optional storefront paint. No page-level patches. Not 全部商用. Tencent Cloud out of scope (G). Usage warn only at **≥90%**.
+SYS-6 multi-product + data_scopes + write-path scopes + channel/circle network packs + store-manager content placements PASS. Continue: more write controllers; or optional storefront paint. No page-level patches. Not 全部商用. Tencent Cloud out of scope (G). Usage warn only at **≥90%**.
 
 ## Secrets and cloud
 
