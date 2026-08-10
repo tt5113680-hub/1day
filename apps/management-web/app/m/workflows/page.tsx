@@ -374,6 +374,12 @@ export default function WorkflowsPage() {
       return { ...current, steps };
     });
   };
+  const reorderPanelStep = (from: number, to: number) => {
+    setVersionPanel((current) => {
+      if (!current) return current;
+      return { ...current, steps: reorderSteps(current.steps, from, to) };
+    });
+  };
   const publishClonedVersion = async (
     template: Data['templates'][number],
     options?: { fromPanel?: boolean },
@@ -404,12 +410,11 @@ export default function WorkflowsPage() {
           ? { steps: versionPanel.steps }
           : await loadVersionSteps(template.id, sourceId);
       const nextSteps = versionDetail.steps.map((step, index) => ({
-        name:
-          options?.fromPanel && step.condition
-            ? step.name
-            : index === versionDetail.steps.length - 1
-              ? `${step.name} · 修订`
-              : step.name,
+        name: options?.fromPanel
+          ? step.name
+          : index === versionDetail.steps.length - 1
+            ? `${step.name} · 修订`
+            : step.name,
         type: step.type,
         assigneeEmployeeId: step.assigneeEmployeeId,
         timeoutMinutes: step.timeoutMinutes,
@@ -888,7 +893,7 @@ export default function WorkflowsPage() {
             <div>
               <h2>版本面板 · {versionPanel.templateName}</h2>
               <p>
-                线性步骤 + 条件分支 + 路径预览，复用既有版本 API；不是自由拖拽图编辑器。
+                线性步骤 + 条件分支 + 路径预览 + 上移/下移后克隆发布；不是自由拖拽图编辑器。
               </p>
             </div>
             <Button tone="secondary" onClick={() => setVersionPanel(null)}>
@@ -1020,10 +1025,38 @@ export default function WorkflowsPage() {
                 <p className={styles.hint}>正在读取步骤…</p>
               ) : versionPanel.steps.length ? (
                 versionPanel.steps.map((step, index) => (
-                  <div className={styles.versionStep} key={`${step.name}-${index}`}>
-                    <strong>
-                      {index + 1}. {step.name}
-                    </strong>
+                  <div
+                    className={styles.versionStep}
+                    key={`${step.name}-${index}`}
+                    data-testid={`workflow-panel-step-${index}`}
+                  >
+                    <div className={styles.stepOrder}>
+                      <strong>
+                        {index + 1}. {step.name}
+                      </strong>
+                      <div className={styles.stepOrderActions}>
+                        <Button
+                          tone="secondary"
+                          disabled={index === 0 || versionPanel.loading}
+                          aria-label={`面板上移步骤${index + 1}`}
+                          data-testid={`workflow-panel-move-up-${index}`}
+                          onClick={() => reorderPanelStep(index, index - 1)}
+                        >
+                          上移
+                        </Button>
+                        <Button
+                          tone="secondary"
+                          disabled={
+                            index >= versionPanel.steps.length - 1 || versionPanel.loading
+                          }
+                          aria-label={`面板下移步骤${index + 1}`}
+                          data-testid={`workflow-panel-move-down-${index}`}
+                          onClick={() => reorderPanelStep(index, index + 1)}
+                        >
+                          下移
+                        </Button>
+                      </div>
+                    </div>
                     <small>
                       {businessLabel(step.type)} · 超时 {step.timeoutMinutes} 分钟 ·{' '}
                       {summarizeCondition(step.condition)}
@@ -1073,7 +1106,7 @@ export default function WorkflowsPage() {
                     if (template) void publishClonedVersion(template, { fromPanel: true });
                   }}
                 >
-                  按面板条件克隆发布
+                  按面板顺序与条件克隆发布
                 </Button>
               </div>
             </div>

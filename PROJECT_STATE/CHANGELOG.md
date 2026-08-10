@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## 2026-08-10 - SYS-15 Version panel linear reorder PASS
+
+- Management version panel supports 上移/下移; clone-publish persists panel order via existing workflow version APIs.
+- Evidence: `SYS_15_VERSION_PANEL_REORDER_ACCEPTANCE.md`, `evidence/SYS-15/`. Unit 1/1 + Playwright 1/1. Not free-form drag graph. Not 全部商用.
+
 ## 2026-08-10 - SYS-14 Draft authoring preview PASS
 
 - Added `@oneday/workflows.reorderSteps`; Management create form supports 上移/下移 and live branch/path preview before publish.

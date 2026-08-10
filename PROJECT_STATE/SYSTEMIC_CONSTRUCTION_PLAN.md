@@ -5,12 +5,12 @@
 
 ## Status
 
-SYS-1…SYS-14 PASS (through draft authoring preview on linear spine).
+SYS-1…SYS-15 PASS (through version panel linear reorder + clone-publish).
 
 ## Queue
 
 - Product-owner UI sign-off (human)
-- Optional full free-form drag graph editor (multi-week; SYS-12..14 are linear branch/path/reorder only)
+- Optional full free-form drag graph editor (multi-week; SYS-12..15 are linear branch/path/reorder only)
 
 ## Honest day boundary
 
