@@ -19,7 +19,8 @@
 - [x] SYS-4 Ops vertical PASS — Platform Outbox DLQ/replay UI at `/p/outbox`; see `SYS_4_ACCEPTANCE.md` and `evidence/SYS-4/`.
 - [x] SYS-5 Shared UI kit + storefront-renderer **scaffold + visual token** PASS — `@oneday/storefront-renderer` extracted; `--od-sf-*` theme; Consumer store CSS hex retired; Management outline + storefront.css; see `SYS_5_ACCEPTANCE.md` and `evidence/SYS-5/`. Full module paint extraction into the package remains multi-week optional continuation before/with SYS-6.
 - [x] SYS-6 Role IA / menu DTO **scaffold** PASS — `GET /api/v1/me/menu` + Management shell consumer; see `SYS_6_ACCEPTANCE.md` and `evidence/SYS-6/`.
-- [x] SYS-6 multi-product menus + role homes **scaffold** PASS — Platform/Channel/Circle/Employee catalogs + shells; Store Manager `/e/store`; `homeHref`/`scopes`/`availableProducts`; see `SYS_6_ACCEPTANCE.md`. data_scopes E2E and deeper role packs remain.
+- [x] SYS-6 multi-product menus + role homes **scaffold** PASS — Platform/Channel/Circle/Employee catalogs + shells; Store Manager `/e/store`; `homeHref`/`scopes`/`availableProducts`; see `SYS_6_ACCEPTANCE.md`.
+- [x] SYS-6 data_scopes resolver PASS — `DataScopeService` merges `data_scopes` ∪ `store_managers`; manager assign/onboarding sync; `GET /api/v1/employee/managed-stores` + access gate; see `SYS_6_ACCEPTANCE.md`. Deeper write-path scopes / role packs remain.
 - [ ] HUMAN-PILOT-HANDOFF / product-owner UI acceptance — local sandbox refreshed through migration `053` + storefront bindings (Playwright 4/4); **human sign-off still required**; not auto-claimed as 全部商用. Optional scoped P1 only after product-owner decision.
 
 ## Current product-owner acceptance

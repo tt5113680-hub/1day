@@ -18,3 +18,10 @@ export {
   type MenuProductLink,
   type MenuScopeDto,
 } from './menu';
+export {
+  mergeStoreScopes,
+  storeScopeAllows,
+  toMenuScope,
+  type DataScopeRecord,
+  type DataScopeType,
+} from './data-scope';

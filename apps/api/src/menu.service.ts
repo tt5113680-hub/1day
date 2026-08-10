@@ -12,12 +12,16 @@ import {
   type MenuScopeDto,
 } from '@oneday/contracts';
 import { createApiPool } from './database-pool';
+import { DataScopeService } from './data-scope.service';
 import { TenantContextService } from './tenant-context.service';
 
 @Injectable()
 export class MenuService implements OnModuleDestroy {
   private readonly pool = createApiPool();
-  constructor(private readonly tenantContext: TenantContextService) {}
+  constructor(
+    private readonly tenantContext: TenantContextService,
+    private readonly dataScopes: DataScopeService,
+  ) {}
 
   async menuFor(
     authorization: string | undefined,
@@ -38,7 +42,7 @@ export class MenuService implements OnModuleDestroy {
     );
     const roleCodes = [...new Set(membership.rows.map((row) => row.role_code))].sort();
     const permissionCodes = [...new Set(membership.rows.map((row) => row.permission_code))].sort();
-    const scopes = await this.scopesFor(product, context.tenantId, context.userId, roleCodes);
+    const scopes = await this.scopesFor(product, context.tenantId, context.userId);
     const items = this.itemsFor(product, permissionCodes, scopes, roleCodes);
     const homeHref = this.homeHrefFor(product, items, scopes, permissionCodes);
     return {
@@ -92,36 +96,39 @@ export class MenuService implements OnModuleDestroy {
     product: MenuProduct,
     tenantId: string,
     userId: string,
-    roleCodes: string[],
   ): Promise<MenuScopeDto[]> {
-    if (product === 'employee' || roleCodes.includes('store_manager')) {
-      const stores = await this.pool.query<{ id: string; name: string }>(
-        `select s.id, s.name
-         from store_managers sm
-         join employees e on e.id = sm.employee_id and e.tenant_id = sm.tenant_id
-           and e.status = 'active' and e.deleted_at is null
-         join memberships m on m.id = e.membership_id and m.tenant_id = e.tenant_id
-           and m.user_id = $2 and m.status = 'active' and m.deleted_at is null
-         join stores s on s.id = sm.store_id and s.tenant_id = sm.tenant_id
-           and s.status = 'active' and s.deleted_at is null
-         where sm.tenant_id = $1 and sm.status = 'active' and sm.deleted_at is null
-         order by s.name`,
-        [tenantId, userId],
-      );
-      return stores.rows.map((store) => ({
-        type: 'store' as const,
-        id: store.id,
-        label: store.name,
-      }));
+    if (product === 'employee') {
+      return this.dataScopes.resolveStoreScopes(tenantId, userId);
+    }
+    if (product === 'management') {
+      const active = await this.dataScopes.listActive(tenantId, userId);
+      const stores = await this.dataScopes.resolveStoreScopes(tenantId, userId);
+      if (stores.length) return stores;
+      if (active.length) return active;
+      return [{ type: 'tenant', id: tenantId, label: '当前租户' }];
     }
     if (product === 'platform' || product === 'channel' || product === 'circle') {
+      const active = await this.dataScopes.listActive(tenantId, userId);
+      const scoped = active.filter((scope) =>
+        product === 'channel'
+          ? scope.type === 'channel'
+          : product === 'circle'
+            ? scope.type === 'circle'
+            : scope.type === 'system' || scope.type === 'channel' || scope.type === 'circle',
+      );
+      if (scoped.length) return scoped;
       return [{ type: 'system', id: tenantId, label: '系统租户' }];
     }
     return [{ type: 'tenant', id: tenantId, label: '当前租户' }];
   }
 
   private contextLabel(product: MenuProduct, scopes: MenuScopeDto[]) {
-    if (product === 'management') return '租户经营工作台';
+    if (product === 'management') {
+      const stores = scopes.filter((scope) => scope.type === 'store');
+      if (stores.length === 1) return `门店经营范围 · ${stores[0]?.label ?? '授权门店'}`;
+      if (stores.length > 1) return `门店经营范围 · ${stores.length} 家门店`;
+      return '租户经营工作台';
+    }
     if (product === 'platform') return '平台治理 · 系统租户';
     if (product === 'channel') return '渠道负责人 · 授权渠道范围';
     if (product === 'circle') return '商圈负责人 · 授权商圈范围';

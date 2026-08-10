@@ -200,12 +200,12 @@ test('SYS-6: platform/channel/circle/employee menus + store-manager home', async
       [managerMembershipId, tenantId, managerUserId],
     );
     await client.query(
-      "insert into roles(id,tenant_id,code,name,status,created_by,updated_by) values($1,$2,'platform_admin','Platform Admin','active',null,null)",
-      [platformRoleId, systemTenant],
+      "insert into roles(id,tenant_id,code,name,status,created_by,updated_by) values($1,$2,$3,'Platform Admin','active',null,null)",
+      [platformRoleId, systemTenant, `platform_admin_${stamp}`],
     );
     await client.query(
-      "insert into roles(id,tenant_id,code,name,status,created_by,updated_by) values($1,$2,'store_manager','Store Manager','active',null,null)",
-      [managerRoleId, tenantId],
+      "insert into roles(id,tenant_id,code,name,status,created_by,updated_by) values($1,$2,$3,'Store Manager','active',null,null)",
+      [managerRoleId, tenantId, `store_manager_${stamp}`],
     );
     await client.query(
       'insert into membership_roles(id,tenant_id,membership_id,role_id) values($1,$2,$3,$4)',
@@ -318,7 +318,7 @@ test('SYS-6: platform/channel/circle/employee menus + store-manager home', async
   const employeeData = (await employeeMenu.json()).data;
   assert.equal(employeeData.product, 'employee');
   assert.equal(employeeData.homeHref, '/e/store');
-  assert.ok(employeeData.roleCodes.includes('store_manager'));
+  assert.ok(employeeData.roleCodes.includes(`store_manager_${stamp}`));
   assert.ok(employeeData.items.some((item) => item.key === 'store'));
   assert.ok(employeeData.scopes.some((scope) => scope.type === 'store' && scope.id === storeId));
   assert.deepEqual(

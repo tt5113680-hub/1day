@@ -8,6 +8,7 @@ import {
 import { randomUUID, scryptSync } from 'node:crypto';
 import type { PoolClient } from 'pg';
 import { createApiPool } from './database-pool';
+import { DataScopeService } from './data-scope.service';
 import type { OrganizationContext } from './organization.service';
 
 const INDUSTRIES = new Set(['restaurant', 'beauty', 'education', 'retail']);
@@ -179,6 +180,7 @@ const industryCatalog: Record<
 @Injectable()
 export class PlatformOnboardingService implements OnModuleDestroy {
   private readonly pool = createApiPool();
+  constructor(private readonly dataScopes: DataScopeService) {}
 
   private input(body: Record<string, unknown>) {
     const plan = String(body.plan ?? 'starter');
@@ -461,6 +463,12 @@ export class PlatformOnboardingService implements OnModuleDestroy {
       'insert into store_managers(id,tenant_id,store_id,employee_id,created_by,updated_by) values($1,$2,$3,$4,$5,$5)',
       [randomUUID(), ids.tenantId, ids.storeId, ids.employeeId, context.userId],
     );
+    await this.dataScopes.syncStoreAssignment(client, {
+      tenantId: ids.tenantId,
+      storeId: ids.storeId,
+      employeeId: ids.employeeId,
+      actorId: context.userId,
+    });
     await this.completeStep(client, runId, 'organization_store', {
       organizationId: ids.orgId,
       merchantId: ids.merchantId,

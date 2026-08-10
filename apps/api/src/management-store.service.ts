@@ -7,6 +7,7 @@ import {
 } from '@nestjs/common';
 import { randomUUID } from 'node:crypto';
 import { createApiPool } from './database-pool';
+import { DataScopeService } from './data-scope.service';
 import type { OrganizationContext } from './organization.service';
 
 const UUID = /^[0-9a-f-]{36}$/i;
@@ -38,7 +39,7 @@ const coordinate = (value: unknown) => {
 @Injectable()
 export class ManagementStoreService implements OnModuleDestroy {
   private readonly pool = createApiPool();
-
+  constructor(private readonly dataScopes: DataScopeService) {}
   async list(context: OrganizationContext) {
     const result = await this.pool.query(
       `select s.id,s.code,s.name,s.address,s.phone,s.business_hours,s.image_url,s.latitude,s.longitude,s.status,s.version,m.name merchant_name,
@@ -366,6 +367,12 @@ export class ManagementStoreService implements OnModuleDestroy {
         "insert into store_managers(id,tenant_id,store_id,employee_id,created_by,updated_by) values($1,$2,$3,$4,$5,$5) on conflict(store_id,employee_id) do update set status='active',deleted_at=null,updated_at=now(),updated_by=excluded.updated_by,version=store_managers.version+1",
         [randomUUID(), context.tenantId, storeId, body.employeeId, context.userId],
       );
+      await this.dataScopes.syncStoreAssignment(client, {
+        tenantId: context.tenantId,
+        storeId,
+        employeeId: body.employeeId,
+        actorId: context.userId,
+      });
       const updated = (
         await client.query(
           'update stores set version=version+1,updated_at=now(),updated_by=$1 where id=$2 returning version',

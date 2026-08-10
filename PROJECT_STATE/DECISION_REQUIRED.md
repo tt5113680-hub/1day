@@ -33,7 +33,7 @@
 
 ## Owner cooperation protocol (2026-08-10)
 
-- Agent must warn **before** chat usage/context is full and provide a new-window paste prompt.
+- Agent must warn at **≥90%** chat usage/context pressure and provide a new-window paste prompt. Do not stop early around ~40%.
 - Agent must front-load all owner cooperation questions at session start / before long runs.
 - Owner keeps machine awake, Cursor open, and Agent Auto-run enabled during autonomous work (authorization H).
 

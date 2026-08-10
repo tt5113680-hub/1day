@@ -35,7 +35,7 @@
 
 **Systemic waves (D3) — SYS-6 remainder:**
 
-SYS-1…SYS-6 multi-product menus PASS (SYS-5 includes visual tokens; SYS-6 includes Platform/Employee/Channel/Circle shells + Store Manager home). Continue SYS-6 remainder: data_scopes, deeper role packages, Store Manager write surfaces. Optional: storefront module paint extraction. No page-level patches. Product-owner UI acceptance remains a human gate. Do not claim 全部商用. Tencent Cloud out of scope (G).
+SYS-1…SYS-6 multi-product + data_scopes resolver PASS. Continue SYS-6 remainder: deeper role packages; apply scopes on more write controllers; Store Manager write surfaces. Optional: storefront module paint extraction. No page-level patches. Product-owner UI acceptance remains a human gate. Do not claim 全部商用. Tencent Cloud out of scope (G). Usage warn threshold: **≥90%**.
 
 ## Secrets and cloud
 
@@ -46,7 +46,7 @@ SYS-1…SYS-6 multi-product menus PASS (SYS-5 includes visual tokens; SYS-6 incl
 ## Session / usage monitoring (owner rule 2026-08-10)
 
 1. Agent must monitor conversation length and usage pressure across construction work.
-2. When context/usage is approaching the limit, **warn the owner early** and provide a ready-to-paste new-window starter prompt. Do not wait until quality collapses.
+2. Warn and provide a ready-to-paste new-window starter prompt at **≥90%** usage/context pressure. Do not stop early (~40%) and do not wait until quality collapses.
 3. Before long autonomous runs, **front-load every owner cooperation item** (approvals, machine stay-awake, Auto-run, decisions). Do not drip-feed questions mid-batch.
 4. New Agent windows cold-start only from: `EXECUTOR_HANDOFF.md`, `LATEST_HANDOFF.md`, `DECISION_REQUIRED.md`, `CURRENT_STATE.md`, current TASK, `git status`.
 5. Display name "1day" is the GitHub remote; the only writable root remains `D:\ONEDAY_V3`.

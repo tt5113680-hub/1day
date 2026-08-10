@@ -3,17 +3,15 @@
 import { useEffect, useState } from 'react';
 import { SessionApiClient } from '@oneday/session-client';
 import { AppStatePanel, Card, StatusBadge } from '@oneday/ui';
-import type { MenuScopeDto } from '@oneday/contracts';
 import styles from './store-home.module.css';
 
 const api = process.env.NEXT_PUBLIC_API_BASE_URL ?? 'http://127.0.0.1:3001';
 const sessionApi = new SessionApiClient(api);
 
+type ManagedStore = { id: string; name: string };
 type MenuPayload = {
   context?: string;
   roleCodes?: string[];
-  scopes?: MenuScopeDto[];
-  homeHref?: string;
 };
 
 export function StoreHome() {
@@ -21,7 +19,7 @@ export function StoreHome() {
     'loading',
   );
   const [context, setContext] = useState('店长工作台');
-  const [stores, setStores] = useState<MenuScopeDto[]>([]);
+  const [stores, setStores] = useState<ManagedStore[]>([]);
   const [roles, setRoles] = useState<string[]>([]);
 
   useEffect(() => {
@@ -32,19 +30,31 @@ export function StoreHome() {
           if (!cancelled) setState('forbidden');
           return;
         }
-        const response = await sessionApi.request(`${api}/api/v1/me/menu?product=employee`);
-        if (response.status === 401 || response.status === 403) {
+        const [menuResponse, storesResponse] = await Promise.all([
+          sessionApi.request(`${api}/api/v1/me/menu?product=employee`),
+          sessionApi.request(`${api}/api/v1/employee/managed-stores`, {
+            headers: { 'content-type': 'application/json' },
+          }),
+        ]);
+        if (
+          [menuResponse.status, storesResponse.status].some((status) =>
+            [401, 403].includes(status),
+          )
+        ) {
           if (!cancelled) setState('forbidden');
           return;
         }
-        if (!response.ok) throw new Error('LOAD');
-        const payload = (await response.json()).data as MenuPayload;
+        if (!menuResponse.ok || !storesResponse.ok) throw new Error('LOAD');
+        const menu = (await menuResponse.json()).data as MenuPayload;
+        const managed = (await storesResponse.json()).data as {
+          stores?: ManagedStore[];
+        };
         if (cancelled) return;
-        const storeScopes = (payload.scopes ?? []).filter((scope) => scope.type === 'store');
-        setContext(payload.context ?? '店长工作台');
-        setRoles(payload.roleCodes ?? []);
-        setStores(storeScopes);
-        setState(storeScopes.length ? 'ready' : 'empty');
+        const storeList = managed.stores ?? [];
+        setContext(menu.context ?? '店长工作台');
+        setRoles(menu.roleCodes ?? []);
+        setStores(storeList);
+        setState(storeList.length ? 'ready' : 'empty');
       } catch {
         if (!cancelled) setState('error');
       }
@@ -91,7 +101,7 @@ export function StoreHome() {
         <AppStatePanel
           kind="empty"
           title="尚未任命门店"
-          description="当前账号没有 store_managers 任命。店长经营能力需要门店任命后才会出现。"
+          description="当前账号没有 data_scopes / store_managers 门店范围。店长经营能力需要门店任命后才会出现。"
           action={<a href="/e/workbench">返回工作台</a>}
         />
       </main>
@@ -101,7 +111,7 @@ export function StoreHome() {
   return (
     <main className={styles.page}>
       <header className={styles.header}>
-        <p className={styles.eyebrow}>Store Manager · Role home</p>
+        <p className={styles.eyebrow}>Store Manager · data_scopes</p>
         <h1>门店经营首页</h1>
         <p>{context}</p>
         <div className={styles.meta}>
@@ -115,15 +125,14 @@ export function StoreHome() {
       <section className={styles.grid} aria-label="授权门店">
         {stores.map((store) => (
           <Card key={store.id}>
-            <h2>{store.label}</h2>
-            <p>门店范围已由服务端菜单 DTO 下发，后续排班/核销/门店内容维护将挂在此范围上。</p>
+            <h2>{store.name}</h2>
+            <p>门店范围来自 data_scopes 与 store_managers 合并解析，写动作须通过服务端 scope 校验。</p>
             <p className={styles.id}>scope: store:{store.id}</p>
           </Card>
         ))}
       </section>
       <p className={styles.note}>
-        本页是 SYS-6 店长首页骨架：证明 membership → store_managers →
-        导航/范围闭环。完整店长经营写能力仍为多周范围，不宣称全部商用。
+        SYS-6 data_scopes 切片：任命店长会同步写入 data_scopes；菜单与店长首页共用解析器。完整跨控制器范围决策仍为多周范围，不宣称全部商用。
       </p>
     </main>
   );

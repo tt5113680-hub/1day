@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## 2026-08-10 - SYS-6 data_scopes resolver PASS
+
+- Added `DataScopeService` merging `data_scopes` ∪ `store_managers`; manager assign + platform onboarding sync store scopes.
+- Employee `managed-stores` list + per-store access gate; Store Manager home consumes the API.
+- Usage warn threshold documented as ≥90%. Evidence: `SYS_6_ACCEPTANCE.md`, `evidence/SYS-6/`. Tests: `data-scope.vitest` 3/3, `sys-6-data-scopes` 1/1. Not 全部商用.
+
 ## 2026-08-10 - SYS-6 multi-product menus + role homes scaffold PASS
 
 - Extended `@oneday/contracts` with Platform/Channel/Circle/Employee catalogs plus `homeHref` / `scopes` / `availableProducts`.

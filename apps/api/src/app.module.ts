@@ -116,6 +116,8 @@ import { SyncGatewayController } from './sync-gateway.controller';
 import { SyncGatewayService } from './sync-gateway.service';
 import { MenuController } from './menu.controller';
 import { MenuService } from './menu.service';
+import { DataScopeService } from './data-scope.service';
+import { EmployeeManagedStoresController } from './employee-managed-stores.controller';
 
 @Module({
   controllers: [
@@ -179,6 +181,7 @@ import { MenuService } from './menu.service';
     MembershipCommercialController,
     SyncGatewayController,
     MenuController,
+    EmployeeManagedStoresController,
   ],
   providers: [
     AuthService,
@@ -239,6 +242,7 @@ import { MenuService } from './menu.service';
     MembershipCommercialService,
     SyncGatewayService,
     MenuService,
+    DataScopeService,
   ],
 })
 export class AppModule {}
