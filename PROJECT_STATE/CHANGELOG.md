@@ -1,5 +1,15 @@
 # CHANGELOG
 
+## 2026-08-10 - P1-B shared UI kit: Table + Modal PASS
+
+- `@oneday/ui`: added generic dense `Table<T>` (columns/rows/rowKey/empty) and accessible `Modal` (backdrop + dialog + close + footer); exported `TableColumn`/`TableProps`/`ModalProps`.
+- `packages/design-tokens/foundation.css`: token-based `.od-table*` / `.od-modal*` styles (no raw hex).
+- `apps/management-web/app/m/permission-audit`: adopted shared `Table` for the dense audit list and shared `Modal` for evidence detail (replaces bespoke page-level list markup).
+- Tests: `tests/ui-kit.vitest.ts` (contract), `tests/e2e/management-permission-audit.spec.ts` asserts `permission-audit-table`/`permission-audit-modal`.
+- Gates: `pnpm typecheck` 20/20, `pnpm build` 20/20, `pnpm test:unit` 8 files/40 tests, Playwright `page-m-010` 2/2.
+- Maps to matrix UI-01/UI-02/UI-03. Evidence: `evidence/P1-B-UI-KIT/ACCEPTANCE.md`, `evidence/PAGE-M-010/management-permission-audit-desktop-v3-table-modal.png`.
+- Not 全部商用. No product-owner UI auto-sign.
+
 ## 2026-08-10 - Commercial Execution Charter (non-deviation constitution)
 
 - `COMMERCIAL_EXECUTION_CHARTER.md`: PRD hierarchy, big-tech practical bar, merchant habits/metrics, Cursor anthropomorphic testing, plugin maximization, multi-role openness, commercial gates.

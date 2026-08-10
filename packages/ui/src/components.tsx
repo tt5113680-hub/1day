@@ -5,6 +5,103 @@ import type {
   SelectHTMLAttributes,
 } from 'react';
 
+/** Dense, scannable admin table column (CHARTER §2 data density; maps to UI-01/UI-02). */
+export type TableColumn<T> = {
+  key: string;
+  header: ReactNode;
+  align?: 'left' | 'right' | 'center';
+  width?: number | string;
+  render?: (row: T) => ReactNode;
+};
+
+export type TableProps<T> = {
+  columns: TableColumn<T>[];
+  rows: T[];
+  rowKey: (row: T) => string;
+  empty?: ReactNode;
+  'data-testid'?: string;
+};
+
+/** Shared dense list/table for Management/Platform so dense views converge on the design system. */
+export function Table<T>({ columns, rows, rowKey, empty, ...rest }: TableProps<T>) {
+  const cell = (row: T, col: TableColumn<T>) =>
+    col.render ? col.render(row) : (row as Record<string, ReactNode>)[col.key];
+  return (
+    <div className="od-table" {...rest}>
+      <table className="od-table__grid">
+        <thead>
+          <tr>
+            {columns.map((col) => (
+              <th
+                className={`od-table__head od-table__head--${col.align ?? 'left'}`}
+                key={col.key}
+                style={col.width ? { width: col.width } : undefined}
+                scope="col"
+              >
+                {col.header}
+              </th>
+            ))}
+          </tr>
+        </thead>
+        <tbody>
+          {rows.map((row) => (
+            <tr key={rowKey(row)}>
+              {columns.map((col) => (
+                <td
+                  className={`od-table__cell od-table__cell--${col.align ?? 'left'}`}
+                  key={col.key}
+                >
+                  {cell(row, col)}
+                </td>
+              ))}
+            </tr>
+          ))}
+        </tbody>
+      </table>
+      {rows.length === 0 && empty ? <div className="od-table__empty">{empty}</div> : null}
+    </div>
+  );
+}
+
+export type ModalProps = {
+  open: boolean;
+  title: string;
+  onClose: () => void;
+  children: ReactNode;
+  footer?: ReactNode;
+  'data-testid'?: string;
+};
+
+/** Accessible confirmation/detail dialog for write feedback (CHARTER §2 feedback; maps to UI-03). */
+export function Modal({ open, title, onClose, children, footer, ...rest }: ModalProps) {
+  if (!open) return null;
+  return (
+    <div
+      className="od-modal__backdrop"
+      onMouseDown={(event) => {
+        if (event.target === event.currentTarget) onClose();
+      }}
+    >
+      <section
+        className="od-modal"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="od-modal-title"
+        {...rest}
+      >
+        <header className="od-modal__header">
+          <h2 id="od-modal-title">{title}</h2>
+          <button type="button" className="od-modal__close" aria-label="关闭弹窗" onClick={onClose}>
+            ×
+          </button>
+        </header>
+        <div className="od-modal__body">{children}</div>
+        {footer ? <footer className="od-modal__footer">{footer}</footer> : null}
+      </section>
+    </div>
+  );
+}
+
 export type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
   tone?: 'primary' | 'secondary' | 'danger' | 'quiet';
   loading?: boolean;

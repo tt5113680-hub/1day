@@ -185,11 +185,16 @@ export {
   Input,
   MetricCard,
   MobileShell,
+  Modal,
   Select,
   Skeleton,
   StatusBadge,
+  Table,
   type AdminNavItem,
   type ButtonProps,
+  type ModalProps,
+  type TableColumn,
+  type TableProps,
 } from './components.js';
 
 export { designTokenCssVars, designTokens, type DesignTokens } from '@oneday/design-tokens';

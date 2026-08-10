@@ -9,10 +9,10 @@
 ## Current task ? Phase-1 commercial closed loop
 
 - branch: `hardening/COMMERCIAL-COMPLETION`
-- last_verified: SYS-34 Membership ledger + revoke PASS
+- last_verified: P1-B shared UI kit (Table + Modal) PASS
 - status: P1-A/P1-B continue via **local unattended** Headless turns
 - blocker: null (P1-C waits on G lift + cloud inventory)
-- progress: P0 26/26; membership closed-loop landed
+- progress: P0 26/26; membership closed-loop landed; P1-B ui-kit Table/Modal landed
 
 ### Owner ? one-time only
 

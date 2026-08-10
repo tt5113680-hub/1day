@@ -5,8 +5,11 @@ import {
   AppStatePanel,
   Button,
   Card,
+  Modal,
   StatusBadge,
+  Table,
   businessLabel,
+  type TableColumn,
 } from '@oneday/ui';
 import { useCallback, useEffect, useState } from 'react';
 import styles from './page.module.css';
@@ -79,6 +82,52 @@ export default function PermissionAuditPage() {
     setOpen(null);
     void load(next);
   };
+
+  const isRisk = (record: AuditRecord) =>
+    record.kind.includes('privilege') || record.kind.includes('unattributed');
+
+  const openRecord = data?.records.find((record) => record.id === open) ?? null;
+
+  const auditColumns: TableColumn<AuditRecord>[] = [
+    {
+      key: 'kind',
+      header: '类型',
+      render: (record) => (
+        <StatusBadge tone={isRisk(record) ? 'warning' : 'neutral'}>
+          {labels[record.kind]}
+        </StatusBadge>
+      ),
+    },
+    {
+      key: 'action',
+      header: '操作',
+      render: (record) => <strong>{record.action}</strong>,
+    },
+    {
+      key: 'actor',
+      header: '操作人 / 资源',
+      render: (record) => (
+        <span>
+          {record.actorName} · {businessLabel(record.resource.type)} · 租户内记录
+        </span>
+      ),
+    },
+    {
+      key: 'createdAt',
+      header: '时间',
+      render: (record) => new Date(record.createdAt).toLocaleString('zh-CN'),
+    },
+    {
+      key: 'evidence',
+      header: '',
+      align: 'right',
+      render: (record) => (
+        <Button tone="secondary" onClick={() => setOpen(record.id)}>
+          查看证据
+        </Button>
+      ),
+    },
+  ];
 
   if (state === 'loading')
     return (
@@ -170,55 +219,12 @@ export default function PermissionAuditPage() {
           <span>{data.records.length} 条记录</span>
         </div>
         {data.records.length ? (
-          <div className={styles.records}>
-            {data.records.map((record) => {
-              const isRisk =
-                record.kind.includes('privilege') || record.kind.includes('unattributed');
-              return (
-                <article className={styles.record} key={record.id}>
-                  <div className={styles.recordMain}>
-                    <div className={styles.recordMeta}>
-                      <StatusBadge tone={isRisk ? 'warning' : 'neutral'}>
-                        {labels[record.kind]}
-                      </StatusBadge>
-                      <span>{new Date(record.createdAt).toLocaleString('zh-CN')}</span>
-                    </div>
-                    <strong>{record.action}</strong>
-                    <p>
-                      {record.actorName} · {businessLabel(record.resource.type)} · 租户内记录
-                    </p>
-                  </div>
-                  <Button
-                    tone="secondary"
-                    onClick={() => setOpen(open === record.id ? null : record.id)}
-                  >
-                    {open === record.id ? '收起证据' : '查看证据'}
-                  </Button>
-                  {open === record.id && (
-                    <div className={styles.evidence}>
-                      <dl>
-                        <div>
-                          <dt>关联 ID</dt>
-                          <dd>{record.correlationId}</dd>
-                        </div>
-                        <div>
-                          <dt>Trace ID</dt>
-                          <dd>{record.traceId}</dd>
-                        </div>
-                        <div>
-                          <dt>资源 ID</dt>
-                          <dd>{record.resource.id}</dd>
-                        </div>
-                      </dl>
-                      {record.detail !== null && record.detail !== undefined && (
-                        <pre>{JSON.stringify(record.detail, null, 2)}</pre>
-                      )}
-                    </div>
-                  )}
-                </article>
-              );
-            })}
-          </div>
+          <Table
+            columns={auditColumns}
+            rows={data.records}
+            rowKey={(record) => record.id}
+            data-testid="permission-audit-table"
+          />
         ) : (
           <AppStatePanel
             kind="empty"
@@ -227,6 +233,39 @@ export default function PermissionAuditPage() {
           />
         )}
       </Card>
+      <Modal
+        open={openRecord !== null}
+        title="审计证据"
+        onClose={() => setOpen(null)}
+        data-testid="permission-audit-modal"
+        footer={
+          <Button tone="secondary" onClick={() => setOpen(null)}>
+            关闭
+          </Button>
+        }
+      >
+        {openRecord ? (
+          <div className={styles.evidence}>
+            <dl>
+              <div>
+                <dt>关联 ID</dt>
+                <dd>{openRecord.correlationId}</dd>
+              </div>
+              <div>
+                <dt>Trace ID</dt>
+                <dd>{openRecord.traceId}</dd>
+              </div>
+              <div>
+                <dt>资源 ID</dt>
+                <dd>{openRecord.resource.id}</dd>
+              </div>
+            </dl>
+            {openRecord.detail !== null && openRecord.detail !== undefined && (
+              <pre>{JSON.stringify(openRecord.detail, null, 2)}</pre>
+            )}
+          </div>
+        ) : null}
+      </Modal>
     </main>
   );
 }

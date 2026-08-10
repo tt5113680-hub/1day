@@ -62,12 +62,16 @@ test('manager filters audit records and opens persisted evidence at desktop widt
   await expect(
     page.getByRole('heading', { name: '将权限变更、风险信号与证据链放在同一审计视图' }),
   ).toBeVisible();
+  // P1-B shared-kit Table is the dense audit list (UI-01 design system consistency).
+  await expect(page.getByTestId('permission-audit-table')).toBeVisible();
   await page.getByLabel('审计类型').selectOption('risk');
   await expect(page.getByText('高权限扩展信号').first()).toBeVisible();
   await page.getByRole('button', { name: '查看证据' }).first().click();
+  // Evidence now surfaces in the shared-kit Modal (UI-03 feedback/confirm).
+  await expect(page.getByTestId('permission-audit-modal')).toBeVisible();
   await expect(page.getByText('Trace ID')).toBeVisible();
   await page.screenshot({
-    path: 'evidence/PAGE-M-010/management-permission-audit-desktop-v2.png',
+    path: 'evidence/PAGE-M-010/management-permission-audit-desktop-v3-table-modal.png',
     fullPage: false,
   });
 });

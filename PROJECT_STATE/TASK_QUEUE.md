@@ -70,6 +70,7 @@
 - [x] SYS-34 Membership ledger + revoke PASS — Management ledger timeline + revoke API/UI; see `SYS_34_MEMBERSHIP_LEDGER_ACCEPTANCE.md`.
 - [x] Phase-1 P1-A PASS — Batch-4 clean-tenant rehearsal extended with membership ledger/revoke chain; see `P1_A_COMMERCIAL_CLOSED_LOOP_ACCEPTANCE.md`.
 - [x] Phase-1 P1-B PASS — `@oneday/session-client` SessionLogin promotion-grade baseline via `@oneday/ui`; see `P1_B_SESSION_LOGIN_ACCEPTANCE.md`.
+- [x] Phase-1 P1-B ui-kit PASS — shared `@oneday/ui` `Table` + `Modal` primitives with token-based Design System CSS; adopted in Management `permission-audit` (dense audit list + evidence modal). Maps to matrix UI-01/UI-02/UI-03; typecheck+`pnpm build` 20/20, `pnpm test:unit` 8/8 files, Playwright `page-m-010` 2/2. See `evidence/P1-B-UI-KIT/ACCEPTANCE.md`.
 - [ ] HUMAN-PILOT-HANDOFF / product-owner UI acceptance — local sandbox refreshed through migration `054` + consult CTA bindings + walkthrough shots (Playwright 4/4); **human sign-off still required**; not auto-claimed as 全部商用. Phase-1 P1-C blocked until owner lifts G (deploy templates in `infra/deploy/`).
 
 ## Current product-owner acceptance
