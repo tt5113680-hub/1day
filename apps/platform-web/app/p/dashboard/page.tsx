@@ -2,6 +2,7 @@
 import { SessionApiClient } from '@oneday/session-client';
 import { AppStatePanel, Button, MetricCard, businessLabel } from '@oneday/ui';
 import { useCallback, useEffect, useState } from 'react';
+import { PlatformProductHome } from '../../platform-product-home';
 import styles from './page.module.css';
 type Data = {
   metrics: { tenants: number; channels: number; activeTenants: number; pendingEvents: number };
@@ -78,6 +79,7 @@ export default function PlatformDashboard() {
   ];
   return (
     <main className={styles.page}>
+      <PlatformProductHome mode="platform" />
       <header>
         <div>
           <p>ONEDAY / 平台总览</p>

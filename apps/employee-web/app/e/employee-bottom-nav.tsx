@@ -31,6 +31,8 @@ function matchesItem(pathname: string, item: MenuItemDto) {
 export function EmployeeBottomNav() {
   const pathname = usePathname();
   const [items, setItems] = useState(fallbackNavigation);
+  const [context, setContext] = useState('员工工作台');
+  const [storeManagerMode, setStoreManagerMode] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
@@ -39,8 +41,20 @@ export function EmployeeBottomNav() {
         if (!(await sessionApi.context())) return;
         const response = await sessionApi.request(`${api}/api/v1/me/menu?product=employee`);
         if (!response.ok) return;
-        const payload = (await response.json()).data as { items?: MenuItemDto[] };
-        if (!cancelled && payload.items?.length) setItems(payload.items);
+        const payload = (await response.json()).data as {
+          items?: MenuItemDto[];
+          context?: string;
+          scopes?: { type: string }[];
+        };
+        if (cancelled) return;
+        if (payload.items?.length) setItems(payload.items);
+        if (payload.context) setContext(payload.context);
+        setStoreManagerMode(
+          Boolean(
+            payload.items?.some((item) => item.key === 'store') ||
+              payload.scopes?.some((scope) => scope.type === 'store'),
+          ),
+        );
       } catch {
         // Keep static five-tab fail-open.
       }
@@ -52,17 +66,29 @@ export function EmployeeBottomNav() {
   }, []);
 
   if (pathname === '/e/login') return null;
+
+  const renderLinks = (className?: string) =>
+    items.map((item) => (
+      <a
+        className={matchesItem(pathname, item) ? styles.active : undefined}
+        href={item.href}
+        key={`${className ?? 'nav'}-${item.key}`}
+      >
+        {item.label}
+      </a>
+    ));
+
   return (
-    <nav className={styles.nav} aria-label="员工工作导航">
-      {items.map((item) => (
-        <a
-          className={matchesItem(pathname, item) ? styles.active : undefined}
-          href={item.href}
-          key={item.key}
-        >
-          {item.label}
-        </a>
-      ))}
-    </nav>
+    <>
+      <nav className={styles.nav} aria-label="员工工作导航">
+        {renderLinks('mobile')}
+      </nav>
+      <aside className={styles.desktop} aria-label="员工桌面导航">
+        <p className={styles.brand}>ONEDAY 员工</p>
+        <p className={styles.mode}>{storeManagerMode ? '店长模式' : '员工工作台'}</p>
+        <nav className={styles.desktopNav}>{renderLinks('desktop')}</nav>
+        <p className={styles.context}>{context}</p>
+      </aside>
+    </>
   );
 }

@@ -7,12 +7,14 @@ import {
   CHANNEL_MENU_CATALOG,
   CIRCLE_MENU_CATALOG,
   PLATFORM_MENU_CATALOG,
+  PLATFORM_PRODUCT_HOMES,
   type MenuItemDto,
   type MenuProduct,
   type MenuProductLink,
 } from '@oneday/contracts';
 import { SessionApiClient } from '@oneday/session-client';
 import { AdminShell } from '@oneday/ui';
+import styles from './platform-shell.module.css';
 
 const api = process.env.NEXT_PUBLIC_API_BASE_URL ?? 'http://127.0.0.1:3001';
 const sessionApi = new SessionApiClient(api);
@@ -103,20 +105,20 @@ export function PlatformShell({
     );
     if (shellModes.length < 2) return null;
     return (
-      <nav aria-label="角色工作区" style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
-        {shellModes.map((link) => (
-          <a
-            href={link.homeHref}
-            key={link.product}
-            style={{
-              fontSize: 12,
-              fontWeight: link.product === mode ? 700 : 500,
-              textDecoration: link.product === mode ? 'underline' : 'none',
-            }}
-          >
-            {link.label}
-          </a>
-        ))}
+      <nav aria-label="角色工作区" className={styles.switcher}>
+        {shellModes.map((link) => {
+          const home = PLATFORM_PRODUCT_HOMES[link.product as keyof typeof PLATFORM_PRODUCT_HOMES];
+          return (
+            <a
+              aria-current={link.product === mode ? 'page' : undefined}
+              className={link.product === mode ? styles.switcherActive : undefined}
+              href={link.homeHref || home?.homeHref}
+              key={link.product}
+            >
+              {link.label}
+            </a>
+          );
+        })}
       </nav>
     );
   }, [availableProducts, mode]);

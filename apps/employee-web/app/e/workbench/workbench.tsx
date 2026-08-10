@@ -243,7 +243,7 @@ export function Workbench() {
           ))
         )}
       </section>
-      <section className={styles.section} aria-label="会员权益核销">
+      <section className={styles.section} aria-label="会员权益核销" id="membership-redeem">
         <div className={styles.sectionHead}>
           <h2>会员权益核销</h2>
           <span>仅核销门店已发放权益</span>

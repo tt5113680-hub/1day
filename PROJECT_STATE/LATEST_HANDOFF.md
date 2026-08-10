@@ -1,4 +1,4 @@
-ï»¿# LATEST_HANDOFF
+# LATEST_HANDOFF
 
 ## Executor
 
@@ -8,25 +8,25 @@
 ## Current task - systemic commercial productization (D3)
 
 - branch: `hardening/COMMERCIAL-COMPLETION`
-- HEAD (pushed): tip `6a3559a`; safe feature `60e8029`
-- last_safe_commit: 60e8029
-- last_verified: SYS-26 Management orphan IA discoverability PASS
-- current_task: human product-owner UI sign-off (do NOT auto-PASS) **or** S3 Employee/Platform IA depth
-- status: `SYS_26_MANAGEMENT_ORPHAN_IA_PASS`; **not** claimed as full commercial
+- HEAD (pushed): tip TBD after SYS-27 commit
+- last_safe_commit: TBD (SYS-27 feature commit)
+- last_verified: SYS-27 S3 Role×IA Employee store-manager chrome + Platform product homes PASS
+- current_task: human product-owner UI sign-off (do NOT auto-PASS) **or** scoped P1 after owner decision
+- status: `SYS_27_S3_ROLE_IA_PASS`; **not** claimed as full commercial
 - blocker: null
-- progress: P0 26/26
+- progress: P0 26/26; S3 Employee/Platform chrome depth landed (SYS-27)
 - working_tree: clean after commit
 
-### Completed this window (verified + pushed)
+### Completed this window (verified)
 
-1. SYS-25 external-actions catalog (`67a888e`)
-2. SYS-26 Management orphan IA (`60e8029`)
+1. SYS-27 Employee store-manager chrome package + Platform product homes
 
 ### Next remainders (honest)
 
 - **Product-owner UI sign-off (human)** - do not auto-PASS
-- Optional eng: Employee store-manager chrome depth; Platform product homes (S3)
+- Full nine-role ROLE_PRODUCT_MATRIX packages remain multi-week
 - Free-form DAG canvas - **deferred**
+- Scoped P1 only after product-owner decision
 - No Tencent Cloud (G). No full-commercial claim.
 
 ### Owner cooperation (front-loaded)
@@ -47,8 +47,8 @@ Read and execute:
 6. PROJECT_STATE/SYSTEMIC_COMMERCIAL_GAP_ANALYSIS.md
 7. git status
 
-Status: SYS-26 PASS (safe 60e8029; tip 6a3559a); P0 26/26; clean tree.
-Next: human PRODUCT_OWNER_UI_ACCEPTANCE (do NOT auto-sign) or S3 Employee/Platform IA depth.
+Status: SYS-27 PASS (safe COMMIT); P0 26/26; S3 Employee/Platform chrome depth landed; clean tree.
+Next: human PRODUCT_OWNER_UI_ACCEPTANCE (do NOT auto-sign) or scoped P1 after owner decision.
 No page-level patches. Writable root only D:\ONEDAY_V3. Do not claim full commercial. No Tencent Cloud.
 A-H granted. Continue until 90%-95% usage, then new window; do not stop mid-run.
 ```

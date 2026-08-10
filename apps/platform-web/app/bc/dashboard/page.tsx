@@ -3,6 +3,7 @@ import { SessionApiClient } from '@oneday/session-client';
 import { AdminPageHeader, AppStatePanel, Button, Card, MetricCard } from '@oneday/ui';
 
 import { useCallback, useEffect, useState } from 'react';
+import { PlatformProductHome } from '../../platform-product-home';
 import styles from './page.module.css';
 
 type Merchant = {
@@ -73,6 +74,7 @@ export default function BusinessCircleDashboard() {
   const metrics = data?.metrics;
   return (
     <main className={styles.page}>
+      <PlatformProductHome mode="circle" />
       <AdminPageHeader
         eyebrow="ONEDAY / 商圈经营"
         title="成员权益、内容、流量与转化"

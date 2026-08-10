@@ -58,12 +58,12 @@ Backend controllers exist and are matrix/API-proven; operators cannot operate th
 
 ### S3 — Role × IA incomplete (P0)
 
-`ROLE_PRODUCT_MATRIX` freezes nine roles. Runtime chrome is mostly:
+`ROLE_PRODUCT_MATRIX` freezes nine roles. Runtime chrome progress:
 
 - Consumer anonymous shell
-- Employee flat ≤5 tabs (no store-manager mode)
+- Employee menu DTO + **SYS-27** desktop nav ≥700px + store-manager mode/package on `/e/store` (full nine-role packages still multi-week)
 - Management flat `tenant.manage` nav (**SYS-26** closed connectors/AI/audit/employee-process orphans; deeper role packages remain)
-- Platform path-mode (`/p` `/ch` `/bc`) without role home / switcher
+- Platform path-mode (`/p` `/ch` `/bc`) with **SYS-27** product switcher + role home strips (deeper Channel/Circle scope UX remains)
 
 ### S4 — Config-driven Storefront incomplete vs HIGH_FIDELITY (P1)
 
@@ -77,9 +77,9 @@ Backend controllers exist and are matrix/API-proven; operators cannot operate th
 | Terminal   | Honest bar | Structural gap                                                       |
 | ---------- | ---------- | -------------------------------------------------------------------- |
 | Consumer   | ~6/10      | Three IAs (entry/discovery/store); cream vs green tokens; fixed tabs |
-| Employee   | ~6/10      | No task inbox/customer directory; no desktop nav ≥700px              |
-| Management | ~6/10      | Flat nav; orphans; thin `@oneday/ui` kit                             |
-| Platform   | ~5.5/10    | Mode-by-URL; enum bleed; intent-only connectors                      |
+| Employee   | ~6.5/10    | Desktop nav ≥700px landed (SYS-27); task inbox depth remains         |
+| Management | ~6/10      | Flat nav; thin `@oneday/ui` kit                                      |
+| Platform   | ~6/10      | Product switcher + role homes (SYS-27); enum bleed; intent connectors |
 
 ~70% of remaining distance is **structural** (IA, shared kit, config chrome, shared renderer). ~30% is cosmetic. **Page-level hex/CSS patches will not close this.**
 

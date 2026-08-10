@@ -1,0 +1,27 @@
+.switcher {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.switcher a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 32px;
+  padding: 0 10px;
+  border: 1px solid var(--od-border);
+  border-radius: 999px;
+  color: var(--od-text-muted);
+  font-size: 12px;
+  font-weight: 700;
+  text-decoration: none;
+}
+.switcher a:hover {
+  color: var(--od-brand-800, #1f4d2e);
+  background: var(--od-brand-100);
+}
+.switcher a.switcherActive,
+.switcher a[aria-current='page'] {
+  color: var(--od-brand-800, #1f4d2e);
+  border-color: color-mix(in srgb, var(--od-brand-500) 40%, var(--od-border));
+  background: var(--od-brand-100);
+}

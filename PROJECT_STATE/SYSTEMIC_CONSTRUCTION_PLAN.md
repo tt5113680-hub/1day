@@ -5,12 +5,12 @@
 
 ## Status
 
-SYS-1…SYS-26 PASS (S1 closed; Management orphan IA discoverability landed).
+SYS-1…SYS-27 PASS (S3 Employee store-manager chrome + Platform product homes landed).
 
 ## Queue
 
 - Product-owner UI sign-off (human) — required for external pilot claim
-- Remaining S3 depth: Employee store-manager chrome packages; Platform product switcher homes
+- Full nine-role ROLE_PRODUCT_MATRIX packages — multi-week remainder
 - Free-form DAG canvas — deferred
 - Scoped P1 only after product-owner decision
 - Note: external-actions API has list/create/open only (no update/delete)

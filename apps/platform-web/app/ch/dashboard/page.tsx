@@ -3,6 +3,7 @@ import { SessionApiClient } from '@oneday/session-client';
 import { AdminPageHeader, AppStatePanel, Button, Card, MetricCard, StatusBadge } from '@oneday/ui';
 
 import { useCallback, useEffect, useState } from 'react';
+import { PlatformProductHome } from '../../platform-product-home';
 import styles from './page.module.css';
 
 type Merchant = {
@@ -85,6 +86,7 @@ export default function ChannelDashboardPage() {
   const metrics = data?.metrics;
   return (
     <main className={styles.page}>
+      <PlatformProductHome mode="channel" />
       <AdminPageHeader
         eyebrow="ONEDAY / 渠道经营"
         title="商户池、开通进度与经营信号"

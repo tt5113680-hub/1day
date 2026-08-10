@@ -1,6 +1,11 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import {
+  STORE_MANAGER_PACKAGE_ACTIONS,
+  type MenuItemDto,
+  type MenuScopeDto,
+} from '@oneday/contracts';
 import { SessionApiClient } from '@oneday/session-client';
 import { AppStatePanel, Card, StatusBadge } from '@oneday/ui';
 import styles from './store-home.module.css';
@@ -12,6 +17,8 @@ type ManagedStore = { id: string; name: string };
 type MenuPayload = {
   context?: string;
   roleCodes?: string[];
+  scopes?: MenuScopeDto[];
+  items?: MenuItemDto[];
 };
 
 export function StoreHome() {
@@ -111,7 +118,7 @@ export function StoreHome() {
   return (
     <main className={styles.page}>
       <header className={styles.header}>
-        <p className={styles.eyebrow}>Store Manager · data_scopes</p>
+        <p className={styles.eyebrow}>Store Manager · 店长模式</p>
         <h1>门店经营首页</h1>
         <p>{context}</p>
         <div className={styles.meta}>
@@ -122,17 +129,37 @@ export function StoreHome() {
           ))}
         </div>
       </header>
+
+      <section className={styles.package} aria-label="店长经营能力包">
+        <h2>店长能力包</h2>
+        <p>任务、线索、核销与分享复用员工端既有路由；写动作仍由服务端 scope 校验。</p>
+        <div className={styles.actions}>
+          {STORE_MANAGER_PACKAGE_ACTIONS.map((action) => (
+            <a className={styles.action} href={action.href} key={action.key}>
+              {action.label}
+            </a>
+          ))}
+        </div>
+      </section>
+
       <section className={styles.grid} aria-label="授权门店">
         {stores.map((store) => (
           <Card key={store.id}>
             <h2>{store.name}</h2>
-            <p>门店范围来自 data_scopes 与 store_managers 合并解析，写动作须通过服务端 scope 校验。</p>
+            <p>门店范围来自 data_scopes 与 store_managers 合并解析。</p>
             <p className={styles.id}>scope: store:{store.id}</p>
+            <div className={styles.storeActions}>
+              {STORE_MANAGER_PACKAGE_ACTIONS.map((action) => (
+                <a href={action.href} key={`${store.id}-${action.key}`}>
+                  {action.label}
+                </a>
+              ))}
+            </div>
           </Card>
         ))}
       </section>
       <p className={styles.note}>
-        SYS-6 data_scopes 切片：任命店长会同步写入 data_scopes；菜单与店长首页共用解析器。完整跨控制器范围决策仍为多周范围，不宣称全部商用。
+        SYS-27 店长 chrome 包：桌面侧栏 + 门店首页能力包。不宣称完整九角色矩阵或全部商用。
       </p>
     </main>
   );

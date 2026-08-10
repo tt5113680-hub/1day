@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## 2026-08-10 - SYS-27 S3 Role×IA Employee/Platform chrome depth PASS
+
+- Employee: desktop side nav ≥700px from menu DTO + store-manager mode; `/e/store` capability package deep-links existing Employee routes; workbench `#membership-redeem` anchor.
+- Platform: product switcher chrome + role product home strips on `/p` `/ch` `/bc` dashboards (scopes + CTAs from menu DTO).
+- Contracts: `STORE_MANAGER_PACKAGE_ACTIONS` + `PLATFORM_PRODUCT_HOMES`.
+- Evidence: `SYS_27_S3_ROLE_IA_ACCEPTANCE.md`, `evidence/SYS-27/`. Unit 2/2 + menu-dto 12/12 + Playwright 1/1. Not 全部商用.
+
 ## 2026-08-10 - SYS-26 Management orphan IA discoverability PASS
 
 - Added employee-performance / AI suggestions / connectors / permission-audit entries to `MANAGEMENT_MENU_CATALOG` so existing Management pages are discoverable under `tenant.manage`.

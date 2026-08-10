@@ -3,7 +3,9 @@ import {
   EMPLOYEE_MENU_CATALOG,
   MANAGEMENT_MENU_CATALOG,
   PLATFORM_MENU_CATALOG,
+  PLATFORM_PRODUCT_HOMES,
   STORE_MANAGER_MENU_ITEM,
+  STORE_MANAGER_PACKAGE_ACTIONS,
   defaultHomeHref,
   filterMenuCatalog,
   menuCatalogFor,
@@ -128,5 +130,20 @@ describe('menu DTO catalog filter', () => {
       defaultHomeHref('employee', filterMenuCatalog(EMPLOYEE_MENU_CATALOG, ['task.read'])),
     ).toBe('/e/workbench');
     expect(STORE_MANAGER_MENU_ITEM.href).toBe('/e/store');
+  });
+
+  it('exposes store-manager package actions and platform product homes (SYS-27)', () => {
+    expect(STORE_MANAGER_PACKAGE_ACTIONS.map((item) => item.key)).toEqual([
+      'tasks',
+      'leads',
+      'redeem',
+      'share',
+    ]);
+    expect(STORE_MANAGER_PACKAGE_ACTIONS.find((item) => item.key === 'redeem')?.href).toBe(
+      '/e/workbench#membership-redeem',
+    );
+    expect(PLATFORM_PRODUCT_HOMES.platform.homeHref).toBe('/p/dashboard');
+    expect(PLATFORM_PRODUCT_HOMES.channel.homeHref).toBe('/ch/dashboard');
+    expect(PLATFORM_PRODUCT_HOMES.circle.homeHref).toBe('/bc/dashboard');
   });
 });

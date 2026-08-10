@@ -278,6 +278,44 @@ export const STORE_MANAGER_MENU_ITEM: MenuItemDto = {
   group: 'store_manager',
 };
 
+/**
+ * Store Manager Employee chrome package (SYS-27).
+ * Deep-links only to existing Employee routes — no second API surface.
+ */
+export const STORE_MANAGER_PACKAGE_ACTIONS: MenuItemDto[] = [
+  { key: 'tasks', href: '/e/workbench', label: '今日任务', group: 'store_manager' },
+  { key: 'leads', href: '/e/leads', label: '线索客户', group: 'store_manager' },
+  {
+    key: 'redeem',
+    href: '/e/workbench#membership-redeem',
+    label: '会员核销',
+    group: 'store_manager',
+  },
+  { key: 'share', href: '/e/share', label: '分享获客', group: 'store_manager' },
+];
+
+/** Platform Admin Shell product homes (SYS-27) — primary CTA per mode. */
+export const PLATFORM_PRODUCT_HOMES: Record<
+  'platform' | 'channel' | 'circle',
+  { label: string; homeHref: string; description: string }
+> = {
+  platform: {
+    label: '平台运营',
+    homeHref: '/p/dashboard',
+    description: '租户治理、开通编排、模板与安全。',
+  },
+  channel: {
+    label: '渠道经营',
+    homeHref: '/ch/dashboard',
+    description: '授权渠道范围内的商户招募与交付。',
+  },
+  circle: {
+    label: '商圈经营',
+    homeHref: '/bc/dashboard',
+    description: '授权商圈的准入、展示与退出治理。',
+  },
+};
+
 export function menuCatalogFor(product: MenuProduct): MenuCatalogItem[] {
   if (product === 'platform') return PLATFORM_MENU_CATALOG;
   if (product === 'channel') return CHANNEL_MENU_CATALOG;
