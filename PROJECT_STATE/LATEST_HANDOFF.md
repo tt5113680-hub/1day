@@ -13,7 +13,7 @@
 - status: P1-A/P1-B continue via **local unattended** Headless turns
 - blocker: null (P1-C waits on G lift + cloud inventory)
 - progress: P0 26/26; membership closed-loop landed; P1-B ui-kit Table/Modal landed; P1-B consumer-shell shared nav landed; P1-B employee-shell shared work-nav landed; P1-B management-shell shared admin-shell chrome landed; P1-B **platform-shell** shared token-driven polish landed; remaining P1-B sync-converge + content-chain
-- push_pending: none — prior local commits `8578302` + `4b16124` pushed to origin (`d802d25..4b16124`) once connectivity returned (port 443 reachable). This turn's P1-B management-shell evidence/state commits will be pushed in the same turn. Untracked/uncommitted local infra: `scripts/local-unattended-construction.ps1` (modified) + `scripts/configure-unattended-power.ps1` (new) — left outside slice (authorization: not force-push, no main rewrite).
+- push_pending: local P1-B platform-shell commit `c6b4499` ahead of origin by 1 — GitHub 443 unreachable this turn (connection reset); push `origin/hardening/COMMERCIAL-COMPLETION` when connectivity returns. Untracked/uncommitted local infra: `scripts/local-unattended-construction.ps1` (modified) + `scripts/configure-unattended-power.ps1` (new) — left outside slice (authorization: not force-push, no main rewrite).
 
 ### Owner ? one-time only
 
