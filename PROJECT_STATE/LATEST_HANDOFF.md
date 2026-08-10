@@ -8,9 +8,9 @@
 ## Current task — systemic commercial productization (D3)
 
 - branch: `hardening/COMMERCIAL-COMPLETION`
-- last_verified: SYS-6 write-path scopes PASS
-- current_task: SYS-6 remainder (more write controllers / channel-circle packs) **or** optional storefront paint extraction
-- status: `SYS_6_MULTI_PRODUCT_PASS` + `SYS_6_DATA_SCOPES_PASS` + `SYS_6_WRITE_PATH_SCOPES_PASS`; **not** 全部商用
+- last_verified: SYS-6 write-path scopes + SYS-5 banner paint PASS
+- current_task: SYS-6 remainder (more write controllers / channel-circle packs) **or** continue storefront paint (QuickActions/…)
+- status: `SYS_6_WRITE_PATH_SCOPES_PASS` + banner paint extracted; **not** 全部商用
 - blocker: null
 - progress: P0 26/26; SYS waves scaffolded 6/6 with multi-week remainders
 
