@@ -35,7 +35,9 @@
 
 **Systemic waves (D3) - remainders:**
 
-SYS-6…SYS-16 PASS. Next: product-owner UI sign-off (human). Not claimed as full commercial. Tencent Cloud out of scope (G).
+**Systemic waves (D3) - remainders:**
+
+SYS-6…SYS-16 PASS. Next eng: SYS-17 STA insert rails (see `WORKFLOW_AUTHORING_UX_RECOMMENDATION.md`). Parallel: product-owner UI sign-off (human). Free-form drag canvas deferred. Not claimed as full commercial. Tencent Cloud out of scope (G).
 
 **Usage:** keep constructing until **90%-95%**, then new window. Do not stop early.
 

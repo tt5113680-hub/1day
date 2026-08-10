@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## 2026-08-10 - Workflow authoring UX recommendation (STA over free-form drag)
+
+- Documented Structured Timeline Authoring as the preferred next path; free-form DAG canvas deferred.
+- See `WORKFLOW_AUTHORING_UX_RECOMMENDATION.md`. Queued SYS-17 insert rails. Not 全部商用.
+
 ## 2026-08-10 - SYS-16 Linear flow JSON export PASS
 
 - Added `@oneday/workflows.serializeConditionBranchFlow` (`editor: not_free_form_drag`) and Management「复制线性流程 JSON」.
