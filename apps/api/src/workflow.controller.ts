@@ -23,6 +23,35 @@ export class WorkflowController {
       error: null,
     };
   }
+  @Get('instances/:id') async instance(
+    @Headers('authorization') a: string | undefined,
+    @Headers('x-tenant-context') t: string | undefined,
+    @Headers('x-request-id') r: string | undefined,
+    @Param('id') id: string,
+  ) {
+    return {
+      data: await this.workflows.instance(await this.auth.require(a, 'workflow.read', t), id),
+      meta: meta(r),
+      error: null,
+    };
+  }
+  @Get(':id/versions/:versionId') async versionDetail(
+    @Headers('authorization') a: string | undefined,
+    @Headers('x-tenant-context') t: string | undefined,
+    @Headers('x-request-id') r: string | undefined,
+    @Param('id') id: string,
+    @Param('versionId') versionId: string,
+  ) {
+    return {
+      data: await this.workflows.versionDetail(
+        await this.auth.require(a, 'workflow.read', t),
+        id,
+        versionId,
+      ),
+      meta: meta(r),
+      error: null,
+    };
+  }
   @Get(':id') async detail(
     @Headers('authorization') a: string | undefined,
     @Headers('x-tenant-context') t: string | undefined,
@@ -85,18 +114,6 @@ export class WorkflowController {
     return {
       data: await this.workflows.start(c, id, b, k ?? '', m.requestId),
       meta: m,
-      error: null,
-    };
-  }
-  @Get('instances/:id') async instance(
-    @Headers('authorization') a: string | undefined,
-    @Headers('x-tenant-context') t: string | undefined,
-    @Headers('x-request-id') r: string | undefined,
-    @Param('id') id: string,
-  ) {
-    return {
-      data: await this.workflows.instance(await this.auth.require(a, 'workflow.read', t), id),
-      meta: meta(r),
       error: null,
     };
   }

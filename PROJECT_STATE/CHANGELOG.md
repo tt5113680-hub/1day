@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## 2026-08-10 - SYS-7 Workflow versioning PASS
+
+- Added `GET /workflows/:id/versions/:versionId` and clone-from-published on `POST /versions` (`sourceVersionId`).
+- Closed-loop publish v2 + start with updated conditions; stale publish / invalid condition denials covered.
+- Evidence: `SYS_7_WORKFLOW_VERSIONING_ACCEPTANCE.md`, `evidence/SYS-7/`. Tests: `sys-7-workflow-versioning` 1/1 (+ core-010 / sys-4 authoring regression). Not 全部商用.
+
 ## 2026-08-10 - SYS-6 Role matrix Member Consumer journey PASS
 
 - Store 「我的」now proves membership via shared session helper (memberCode, masked identity, wallet balances) and keeps anonymous denial without PII.

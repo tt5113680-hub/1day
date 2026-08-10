@@ -7,20 +7,20 @@
 
 ## Active wave
 
-**SYS remainders — Role matrix E2E + workflow depth**
+**SYS remainders — deeper multi-week items**
 
 | Deliverable                                        | Status                                      |
 | -------------------------------------------------- | ------------------------------------------- |
 | SYS-1…SYS-5 / SYS-4 ops UIs / SYS-6 write scopes   | PASS                                        |
-| SYS-6 Role matrix — Store Manager package          | PASS                                        |
-| SYS-6 Role matrix — Tenant Manager vs Owner chrome | PASS                                        |
-| SYS-6 Role matrix — Channel / Circle / Platform    | PASS                                        |
-| SYS-6 Role matrix — Member Consumer journey        | PASS                                        |
+| SYS-6 Role matrix packages (Store/Tenant/Network/Member) | PASS                                 |
+| SYS-7 Workflow versioning (API clone/publish v2)   | PASS                                        |
 
 ## Queue
 
-- Advanced workflow versioning (new draft versions / condition editors)
+- Management workflow version panel / visual condition editor (optional, no page hex patches)
+- Cross-device Member login
+- Product-owner UI sign-off (human)
 
 ## Honest day boundary
 
-Core ROLE_PRODUCT_MATRIX packages for Store/Tenant/Channel/Circle/Platform/Member landed as engineering slices. Cross-device Member login and advanced workflow versioning remain multi-week - not claimed as full commercial.
+Role matrix core packages + API workflow versioning landed. Visual editors and external commercial claims remain out of auto scope - not claimed as full commercial.

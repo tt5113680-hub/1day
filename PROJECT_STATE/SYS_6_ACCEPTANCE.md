@@ -44,5 +44,5 @@
 ## Honest remainder
 
 - Cross-device Member login and dedicated `circle.read` / `circle.display` / `provision.request` permission codes remain deferred.
-- Advanced workflow versioning (new draft versions / condition editors) remains deeper multi-week work; create+publish + start/decide + org create are wired.
+- Visual condition editor / Management version panel remain deeper multi-week work; API clone/publish v2 is wired (SYS-7).
 - Full external commercial claim still blocked on product-owner UI sign-off.

@@ -112,6 +112,45 @@ export class WorkflowService implements OnModuleDestroy {
     return { definition, versions };
   }
 
+  async versionDetail(c: OrganizationContext, definitionId: string, versionId: string) {
+    if (!UUID.test(definitionId) || !UUID.test(versionId))
+      throw new BadRequestException('VALIDATION_ERROR');
+    const version = (
+      await this.pool.query(
+        `select v.id,v.definition_id,v.sequence,v.status,v.version,d.code,d.name,d.published_version_id,d.version as definition_version
+         from workflow_versions v
+         join workflow_definitions d on d.id=v.definition_id and d.tenant_id=v.tenant_id and d.deleted_at is null
+         where v.id=$1 and v.definition_id=$2 and v.tenant_id=$3 and v.deleted_at is null`,
+        [versionId, definitionId, c.tenantId],
+      )
+    ).rows[0];
+    if (!version) throw new NotFoundException('NOT_FOUND');
+    const steps = (
+      await this.pool.query(
+        `select id,position,name,step_type as type,assignee_employee_id as "assigneeEmployeeId",
+                timeout_minutes as "timeoutMinutes",condition
+         from workflow_steps
+         where workflow_version_id=$1 and tenant_id=$2 and deleted_at is null
+         order by position`,
+        [versionId, c.tenantId],
+      )
+    ).rows;
+    return {
+      definitionId: version.definition_id,
+      code: version.code,
+      name: version.name,
+      publishedVersionId: version.published_version_id,
+      definitionVersion: version.definition_version,
+      version: {
+        id: version.id,
+        sequence: version.sequence,
+        status: version.status,
+        version: version.version,
+      },
+      steps,
+    };
+  }
+
   async create(
     c: OrganizationContext,
     body: Record<string, unknown>,
@@ -153,18 +192,18 @@ export class WorkflowService implements OnModuleDestroy {
     requestId: string,
   ) {
     if (!UUID.test(id)) throw new BadRequestException('VALIDATION_ERROR');
-    const steps = this.steps(body.steps),
-      version = expectedVersion(body.definitionVersion),
+    const version = expectedVersion(body.definitionVersion),
       q = await this.pool.connect();
     try {
       await q.query('begin');
       const definition = (
         await q.query(
-          'select id from workflow_definitions where id=$1 and tenant_id=$2 and deleted_at is null and version=$3 for update',
+          'select id,published_version_id from workflow_definitions where id=$1 and tenant_id=$2 and deleted_at is null and version=$3 for update',
           [id, c.tenantId, version],
         )
       ).rows[0];
       if (!definition) throw new ConflictException('CONFLICT');
+      const steps = await this.resolveVersionSteps(q, c, id, body, definition.published_version_id);
       await this.assertEmployees(q, c, steps);
       const sequence = (
         await q.query(
@@ -184,7 +223,15 @@ export class WorkflowService implements OnModuleDestroy {
           [c.userId, id],
         )
       ).rows[0];
-      const result = { id: versionId, sequence, definitionVersion: data.version };
+      const result = {
+        id: versionId,
+        sequence,
+        definitionVersion: data.version,
+        sourceVersionId:
+          typeof body.sourceVersionId === 'string'
+            ? body.sourceVersionId
+            : (definition.published_version_id ?? null),
+      };
       await this.audit(q, c, 'workflow.version_created', id, requestId, result);
       await this.event(q, c, 'workflow.version.created.v1', id, requestId, result);
       await q.query('commit');
@@ -471,6 +518,54 @@ export class WorkflowService implements OnModuleDestroy {
         condition,
       };
     });
+  }
+
+  private async resolveVersionSteps(
+    q: PoolClient,
+    c: OrganizationContext,
+    definitionId: string,
+    body: Record<string, unknown>,
+    publishedVersionId: string | null,
+  ): Promise<Step[]> {
+    const hasSteps = body.steps !== undefined;
+    const hasSource =
+      typeof body.sourceVersionId === 'string' && body.sourceVersionId.trim().length > 0;
+    if (!hasSteps && !hasSource && !publishedVersionId) {
+      throw new BadRequestException('VALIDATION_ERROR');
+    }
+    if (hasSteps && !hasSource) return this.steps(body.steps);
+    const sourceId = hasSource ? String(body.sourceVersionId) : String(publishedVersionId);
+    if (!UUID.test(sourceId)) throw new BadRequestException('VALIDATION_ERROR');
+    const source = (
+      await q.query(
+        `select id,status from workflow_versions
+         where id=$1 and definition_id=$2 and tenant_id=$3 and deleted_at is null`,
+        [sourceId, definitionId, c.tenantId],
+      )
+    ).rows[0];
+    if (!source) throw new NotFoundException('NOT_FOUND');
+    if (!['published', 'archived', 'active'].includes(source.status)) {
+      throw new BadRequestException('VALIDATION_ERROR');
+    }
+    if (hasSteps) return this.steps(body.steps);
+    const rows = (
+      await q.query(
+        `select name,step_type,assignee_employee_id,timeout_minutes,condition
+         from workflow_steps
+         where workflow_version_id=$1 and tenant_id=$2 and deleted_at is null
+         order by position`,
+        [sourceId, c.tenantId],
+      )
+    ).rows;
+    return this.steps(
+      rows.map((row) => ({
+        name: row.name,
+        type: row.step_type,
+        assigneeEmployeeId: row.assignee_employee_id,
+        timeoutMinutes: row.timeout_minutes,
+        condition: row.condition ?? {},
+      })),
+    );
   }
 
   private async insertSteps(

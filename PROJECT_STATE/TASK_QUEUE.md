@@ -40,6 +40,7 @@
 - [x] SYS-6 Role matrix Tenant Manager vs Owner chrome PASS — roles/settings + RBAC/settings APIs require `organization.manage` with `tenant.manage`; see `SYS_6_ROLE_MATRIX_TENANT_OWNER_ACCEPTANCE.md`.
 - [x] SYS-6 Role matrix Channel/Circle/Platform packages PASS — `channel.read`/`channel.manage`, product isolation, scoped dashboards, platform tenant/suspend denials; see `SYS_6_ROLE_MATRIX_NETWORK_ACCEPTANCE.md`.
 - [x] SYS-6 Role matrix Member Consumer journey PASS — store 「我的」anonymous denial + enroll continuity + memberCode/wallet proof; see `SYS_6_ROLE_MATRIX_MEMBER_ACCEPTANCE.md`.
+- [x] SYS-7 Workflow versioning PASS — GET version steps, clone-from-published, publish v2, start with condition skip; see `SYS_7_WORKFLOW_VERSIONING_ACCEPTANCE.md`.
 - [ ] HUMAN-PILOT-HANDOFF / product-owner UI acceptance — local sandbox refreshed through migration `053` + storefront bindings (Playwright 4/4); **human sign-off still required**; not auto-claimed as 全部商用. Optional scoped P1 only after product-owner decision.
 
 ## Current product-owner acceptance
