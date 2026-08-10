@@ -1,0 +1,83 @@
+# Reference pilot stack — bind to localhost; terminate TLS at nginx (see nginx.conf.template).
+# Requires external Postgres or uncomment postgres service. Do NOT expose Postgres publicly.
+
+name: oneday-pilot
+
+services:
+  api:
+    build:
+      context: ../..
+      dockerfile: infra/docker/Dockerfile
+      target: human-pilot
+    command: node apps/api/dist/main.js
+    env_file:
+      - path: ./pilot.env
+        required: false
+    environment:
+      NODE_ENV: production
+      PORT: 3001
+    ports: ['127.0.0.1:3001:3001']
+    restart: unless-stopped
+
+  worker:
+    build:
+      context: ../..
+      dockerfile: infra/docker/Dockerfile
+      target: human-pilot
+    command: node apps/worker/dist/index.js
+    env_file:
+      - path: ./pilot.env
+        required: false
+    environment:
+      NODE_ENV: production
+      HEALTH_PORT: 3002
+    ports: ['127.0.0.1:3002:3002']
+    restart: unless-stopped
+
+  consumer:
+    build:
+      context: ../..
+      dockerfile: infra/docker/Dockerfile
+      target: human-pilot
+    command: pnpm --filter @oneday/consumer-web exec next start --hostname 0.0.0.0 --port 3201
+    environment:
+      NODE_ENV: production
+      NEXT_PUBLIC_API_BASE_URL: ${NEXT_PUBLIC_API_BASE_URL:?set in pilot.env}
+    ports: ['127.0.0.1:3201:3201']
+    restart: unless-stopped
+
+  employee:
+    build:
+      context: ../..
+      dockerfile: infra/docker/Dockerfile
+      target: human-pilot
+    command: pnpm --filter @oneday/employee-web exec next start --hostname 0.0.0.0 --port 3202
+    environment:
+      NODE_ENV: production
+      NEXT_PUBLIC_API_BASE_URL: ${NEXT_PUBLIC_API_BASE_URL:?set in pilot.env}
+    ports: ['127.0.0.1:3202:3202']
+    restart: unless-stopped
+
+  management:
+    build:
+      context: ../..
+      dockerfile: infra/docker/Dockerfile
+      target: human-pilot
+    command: pnpm --filter @oneday/management-web exec next start --hostname 0.0.0.0 --port 3203
+    environment:
+      NODE_ENV: production
+      NEXT_PUBLIC_API_BASE_URL: ${NEXT_PUBLIC_API_BASE_URL:?set in pilot.env}
+    ports: ['127.0.0.1:3203:3203']
+    restart: unless-stopped
+
+  platform:
+    build:
+      context: ../..
+      dockerfile: infra/docker/Dockerfile
+      target: human-pilot
+    command: pnpm --filter @oneday/platform-web exec next start --hostname 0.0.0.0 --port 3204
+    environment:
+      NODE_ENV: production
+      NEXT_PUBLIC_API_BASE_URL: ${NEXT_PUBLIC_API_BASE_URL:?set in pilot.env}
+    ports: ['127.0.0.1:3204:3204']
+    restart: unless-stopped

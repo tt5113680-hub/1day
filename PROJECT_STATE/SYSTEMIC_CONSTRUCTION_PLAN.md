@@ -9,9 +9,9 @@ SYS-1…SYS-34 PASS (membership grant/redeem/revoke timeline closed for Manageme
 
 ## Queue (Phase-1)
 
-- **P1-A** continue local commercial closed-loop gaps
-- **P1-B** promotion-grade `@oneday/ui` + shell baseline (not pixel parity)
-- **P1-C** blocked until owner lifts G + cloud inventory (`PHASE1_COMMERCIAL_CLOSED_LOOP_PLAN.md`)
+- **P1-A** PASS — Batch-4 membership ledger/revoke chain re-verified (`P1_A_COMMERCIAL_CLOSED_LOOP_ACCEPTANCE.md`)
+- **P1-B** PASS — shared SessionLogin `@oneday/ui` baseline (`P1_B_SESSION_LOGIN_ACCEPTANCE.md`)
+- **P1-C** blocked until owner lifts G + cloud inventory; deploy templates in `infra/deploy/`
 - **P1-D** human PRODUCT_OWNER_UI_ACCEPTANCE (do not auto-sign)
 - Full nine-role packages / free-form DAG — deferred to v2
 

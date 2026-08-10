@@ -11,6 +11,7 @@
     "test": "node --test"
   },
   "dependencies": {
+    "@oneday/ui": "workspace:*",
     "react": "19.2.8"
   },
   "devDependencies": {

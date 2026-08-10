@@ -162,6 +162,47 @@ test('Batch 4 clean-tenant commercial rehearsal covers READY through isolation a
   assert.equal(wallet.status, 200);
   assert.equal((await wallet.json()).data.benefits[0].balance, 1);
 
+  const ledger = await fetch(
+    `${base}/api/v1/management/memberships/${member.enrollmentId}/ledger`,
+    { headers: headers(owner, tenantA.run.tenantId) },
+  );
+  assert.equal(ledger.status, 200);
+  const ledgerData = (await ledger.json()).data;
+  assert.ok(ledgerData.entries.some((row) => row.entry_type === 'grant'));
+  assert.ok(ledgerData.entries.some((row) => row.entry_type === 'redeem'));
+  assert.equal(ledgerData.balances.find((row) => row.benefit_id === benefit.id).balance, 1);
+
+  const revoke = await fetch(
+    `${base}/api/v1/management/memberships/${member.enrollmentId}/revokes`,
+    {
+      method: 'POST',
+      headers: headers(owner, tenantA.run.tenantId, { 'idempotency-key': randomUUID() }),
+      body: JSON.stringify({ benefitId: benefit.id, quantity: 1 }),
+    },
+  );
+  const revokeBody = await revoke.json();
+  assert.equal(revoke.status, 201, JSON.stringify(revokeBody));
+  assert.equal(revokeBody.data.entry_type, 'revoke');
+  assert.equal(revokeBody.data.balance_after, 0);
+
+  const ledgerAfterRevoke = await fetch(
+    `${base}/api/v1/management/memberships/${member.enrollmentId}/ledger`,
+    { headers: headers(owner, tenantA.run.tenantId) },
+  );
+  assert.equal(ledgerAfterRevoke.status, 200);
+  const ledgerAfterRevokeData = (await ledgerAfterRevoke.json()).data;
+  assert.ok(ledgerAfterRevokeData.entries.some((row) => row.entry_type === 'revoke'));
+  assert.equal(
+    ledgerAfterRevokeData.balances.find((row) => row.benefit_id === benefit.id).balance,
+    0,
+  );
+
+  const walletAfterRevoke = await fetch(
+    `${base}/api/v1/consumer/memberships/wallet?tenant=${tenantA.slug}&accessId=${member.profileAccessId}&access=${member.profileAccess}`,
+  );
+  assert.equal(walletAfterRevoke.status, 200);
+  assert.equal((await walletAfterRevoke.json()).data.benefits[0].balance, 0);
+
   const share = await fetch(`${base}/api/v1/employee/share-codes`, {
     method: 'POST',
     headers: headers(owner, tenantA.run.tenantId, { 'idempotency-key': randomUUID() }),

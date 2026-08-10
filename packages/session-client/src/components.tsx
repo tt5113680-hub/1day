@@ -1,7 +1,8 @@
 'use client';
 
-import type { ReactNode } from 'react';
+import type { FormEvent, ReactNode } from 'react';
 import { useEffect, useState } from 'react';
+import { AppStatePanel, Button, FormField, Input } from '@oneday/ui';
 import { BrowserSession } from './index.js';
 
 export function SessionLogin({
@@ -9,15 +10,19 @@ export function SessionLogin({
   deviceName,
   destination,
   title,
+  subtitle,
 }: {
   apiBase: string;
   deviceName: string;
   destination: string;
   title: string;
+  subtitle?: string;
 }) {
   const [error, setError] = useState('');
   const [submitting, setSubmitting] = useState(false);
-  const submit = async (form: FormData) => {
+  const submit = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const form = new FormData(event.currentTarget);
     setSubmitting(true);
     setError('');
     try {
@@ -37,20 +42,43 @@ export function SessionLogin({
   return (
     <main className="od-session-login">
       <section className="od-session-login__card">
-        <p className="od-session-login__brand">ONEDAY / SECURE ACCESS</p>
+        <p className="od-session-login__brand">ONEDAY · 安全登录</p>
         <h1>{title}</h1>
-        <form action={submit}>
-          <input name="tenantSlug" required autoComplete="organization" placeholder="租户标识" />
-          <input name="email" type="email" required autoComplete="username" placeholder="邮箱" />
-          <input
-            name="password"
-            type="password"
-            required
-            autoComplete="current-password"
-            placeholder="密码"
-          />
-          <button disabled={submitting}>{submitting ? '正在登录…' : '登录'}</button>
-          {error && <p role="alert">{error}</p>}
+        {subtitle ? <p className="od-session-login__subtitle">{subtitle}</p> : null}
+        <form onSubmit={submit} noValidate>
+          <FormField label="租户标识" htmlFor="tenantSlug">
+            <Input
+              id="tenantSlug"
+              name="tenantSlug"
+              required
+              autoComplete="organization"
+              placeholder="例如 luckin-oneday-human-pilot"
+            />
+          </FormField>
+          <FormField label="邮箱" htmlFor="email">
+            <Input
+              id="email"
+              name="email"
+              type="email"
+              required
+              autoComplete="username"
+              placeholder="name@company.com"
+            />
+          </FormField>
+          <FormField label="密码" htmlFor="password">
+            <Input
+              id="password"
+              name="password"
+              type="password"
+              required
+              autoComplete="current-password"
+              placeholder="请输入密码"
+            />
+          </FormField>
+          <Button type="submit" loading={submitting} className="od-session-login__submit">
+            登录
+          </Button>
+          {error ? <AppStatePanel kind="error" title="登录未成功" description={error} /> : null}
         </form>
       </section>
     </main>
@@ -74,7 +102,13 @@ export function SessionGuard({
       setReady(true);
     });
   }, [apiBase, loginPath]);
-  return ready ? <>{children}</> : <main className="od-session-recovery">正在恢复安全会话…</main>;
+  return ready ? (
+    <>{children}</>
+  ) : (
+    <main className="od-session-recovery">
+      <AppStatePanel kind="loading" title="正在恢复安全会话" description="请稍候…" />
+    </main>
+  );
 }
 
 export function SessionControls({ apiBase, loginPath }: { apiBase: string; loginPath: string }) {
@@ -84,7 +118,8 @@ export function SessionControls({ apiBase, loginPath }: { apiBase: string; login
   }, [apiBase]);
   if (!signedIn) return null;
   return (
-    <button
+    <Button
+      tone="quiet"
       className="od-session-control"
       onClick={async () => {
         await new BrowserSession(apiBase).logout();
@@ -92,6 +127,6 @@ export function SessionControls({ apiBase, loginPath }: { apiBase: string; login
       }}
     >
       退出登录
-    </button>
+    </Button>
   );
 }

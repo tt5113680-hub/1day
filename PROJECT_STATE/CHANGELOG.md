@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## 2026-08-10 - Phase-1 P1-A/P1-B PASS + P1-C deploy prep
+
+- **P1-A**: Extended Batch-4 clean-tenant rehearsal with membership ledger/revoke chain (enroll → grant → redeem → ledger → revoke → wallet). Evidence: `P1_A_COMMERCIAL_CLOSED_LOOP_ACCEPTANCE.md`, `evidence/P1-A/`.
+- **P1-B**: `@oneday/session-client` SessionLogin now uses `@oneday/ui` FormField/Input/Button/AppStatePanel across E/M/P login. Playwright 1/1. Evidence: `P1_B_SESSION_LOGIN_ACCEPTANCE.md`, `evidence/P1-B/`.
+- **P1-C prep**: Added `infra/deploy/` templates (env, nginx, compose, healthcheck). Live public deploy still blocked until owner lifts G.
+- Not 全部商用. No product-owner UI auto-sign.
+
 ## 2026-08-10 - SYS-34 Membership ledger + revoke PASS
 
 - Added Management membership ledger (`GET .../ledger`) and revoke (`POST .../revokes`) on `member_benefit_ledger`.

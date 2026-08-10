@@ -33,9 +33,12 @@
 
 ## Current engineering focus
 
-**Systemic waves (D3) - remainders:**
+**Phase-1 (P1-A/P1-B local; P1-C blocked on G):**
 
-SYS-6…SYS-34 PASS. Phase-1: continue P1-A/P1-B locally; P1-C blocked until G lifted + cloud inventory. Human UI sign-off must not auto-PASS. Not claimed as full commercial.
+- P1-A PASS — Batch-4 rehearsal extended with membership ledger/revoke chain
+- P1-B PASS — `@oneday/session-client` promotion-grade login via `@oneday/ui`
+- P1-C prep — `infra/deploy/` templates (no live deploy until G lifted)
+- Human UI sign-off must not auto-PASS. Not claimed as full commercial.
 
 **Usage:** keep constructing until **90%-95%**, then new window. Do not stop early.
 
