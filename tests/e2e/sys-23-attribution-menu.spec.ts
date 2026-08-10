@@ -34,7 +34,7 @@ test('SYS-23 Management shell surfaces attribution nav and opens /m/attribution'
   );
 
   await page.goto(`${management}/`);
-  const navLink = page.getByRole('link', { name: '来源归因' });
+  const navLink = page.getByRole('link', { name: '来源分析' });
   await expect(navLink).toBeVisible({ timeout: 15000 });
   await expect(navLink).toHaveAttribute('href', '/m/attribution');
   await page.screenshot({

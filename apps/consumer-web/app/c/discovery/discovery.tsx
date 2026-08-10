@@ -23,6 +23,9 @@ export type Discovery = {
     address: string | null;
     distanceKm: number;
     entryUrl: string | null;
+    rating?: number;
+    ratingSource?: 'local_pilot';
+    salesHint?: number;
   }[];
   locationRequired: boolean;
 };
@@ -48,6 +51,7 @@ export function DiscoveryState({ kind }: { kind: 'forbidden' | 'error' }) {
 }
 export default function DiscoveryPage({ data }: { data: Discovery }) {
   const [notice, setNotice] = useState('');
+  const [nearbySort, setNearbySort] = useState<'distance' | 'rating' | 'sales'>('distance');
   const tenantQ = encodeURIComponent(data.tenant.slug);
   const discoveryHref = `/c/discovery?tenant=${tenantQ}`;
   const entryHref = `/c/entry?tenant=${tenantQ}`;
@@ -69,6 +73,11 @@ export default function DiscoveryPage({ data }: { data: Discovery }) {
   };
   const focus = (id: string) =>
     document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  const nearbySorted = [...data.nearby].sort((a, b) => {
+    if (nearbySort === 'rating') return (b.rating ?? 0) - (a.rating ?? 0);
+    if (nearbySort === 'sales') return (b.salesHint ?? 0) - (a.salesHint ?? 0);
+    return a.distanceKm - b.distanceKm;
+  });
   return (
     <MobileShell>
       <ConsumerStorefrontNav
@@ -184,10 +193,35 @@ export default function DiscoveryPage({ data }: { data: Discovery }) {
             <div className={styles.sectionHead}>
               <div>
                 <h2>附近商户</h2>
-                <p>仅按设备位置计算距离，不使用商圈成员关系。</p>
+                <p>按距离 / 好评 / 人气筛选，点进门店（美团附近同构）</p>
               </div>
               <span className={styles.badge}>LBS</span>
             </div>
+            {!data.locationRequired ? (
+              <div className={styles.sortBar} role="toolbar" aria-label="附近排序">
+                <button
+                  type="button"
+                  className={nearbySort === 'distance' ? styles.sortActive : styles.sortChip}
+                  onClick={() => setNearbySort('distance')}
+                >
+                  附近
+                </button>
+                <button
+                  type="button"
+                  className={nearbySort === 'rating' ? styles.sortActive : styles.sortChip}
+                  onClick={() => setNearbySort('rating')}
+                >
+                  好评
+                </button>
+                <button
+                  type="button"
+                  className={nearbySort === 'sales' ? styles.sortActive : styles.sortChip}
+                  onClick={() => setNearbySort('sales')}
+                >
+                  人气
+                </button>
+              </div>
+            ) : null}
             {data.locationRequired ? (
               <>
                 <button className={styles.location} type="button" onClick={locate}>
@@ -199,15 +233,22 @@ export default function DiscoveryPage({ data }: { data: Discovery }) {
                   </p>
                 )}
               </>
-            ) : data.nearby.length ? (
+            ) : nearbySorted.length ? (
               <div className={styles.nearby}>
-                {data.nearby.map((item) => {
+                {nearbySorted.map((item) => {
                   const content = (
                     <>
                       <span className={styles.pin}>⌖</span>
                       <span>
                         <strong>{item.name}</strong>
                         <p>{item.address ?? '地址待商家补充'}</p>
+                        <p className={styles.meta}>
+                          {item.rating != null ? (
+                            <span className={styles.rating}>{item.rating} 分</span>
+                          ) : null}
+                          {item.salesHint != null ? <span>月售 {item.salesHint}+</span> : null}
+                          <span>本地试用</span>
+                        </p>
                       </span>
                       <span className={styles.distance}>{item.distanceKm} km</span>
                     </>

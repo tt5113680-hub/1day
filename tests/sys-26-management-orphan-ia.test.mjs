@@ -9,11 +9,11 @@ const orphans = [
   {
     key: 'employee-performance',
     href: '/m/employee-process-performance',
-    label: '员工过程',
+    label: '员工表现',
   },
-  { key: 'ai-suggestions', href: '/m/ai-suggestions', label: 'AI 建议' },
-  { key: 'connectors', href: '/m/connectors', label: '连接器意图' },
-  { key: 'permission-audit', href: '/m/permission-audit', label: '权限审计' },
+  { key: 'ai-suggestions', href: '/m/ai-suggestions', label: '经营建议' },
+  { key: 'connectors', href: '/m/connectors', label: '连接配置' },
+  { key: 'permission-audit', href: '/m/permission-audit', label: '操作审计' },
 ];
 
 test('SYS-26: former Management orphan pages are discoverable in menu catalog', () => {

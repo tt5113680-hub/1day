@@ -121,11 +121,24 @@ try {
     $prevEap = $ErrorActionPreference
     $ErrorActionPreference = 'Continue'
     try {
-      git fetch origin 2>&1 | Tee-Object -FilePath $runLog -Append | Out-Null
-      $branch = git rev-parse --abbrev-ref HEAD
-      if ($branch -eq 'hardening/COMMERCIAL-COMPLETION') {
-        git pull --ff-only origin $branch 2>&1 | Tee-Object -FilePath $runLog -Append | Out-Null
+      # Soft timeout: network after reboot can hang forever on git fetch.
+      $gitJob = Start-Job -ScriptBlock {
+        param($Root)
+        Set-Location $Root
+        git fetch origin 2>&1
+        $branch = git rev-parse --abbrev-ref HEAD 2>$null
+        if ($branch -eq 'hardening/COMMERCIAL-COMPLETION') {
+          git pull --ff-only origin $branch 2>&1
+        }
+      } -ArgumentList $root
+      if (-not (Wait-Job $gitJob -Timeout 45)) {
+        Stop-Job $gitJob -Force
+        Write-Log 'WARN: git fetch/pull timed out after 45s — continuing without pull'
+        "git fetch/pull timed out after 45s" | Out-File $runLog -Append -Encoding utf8
+      } else {
+        Receive-Job $gitJob | Tee-Object -FilePath $runLog -Append | Out-Null
       }
+      Remove-Job $gitJob -Force -ErrorAction SilentlyContinue
     } finally {
       $ErrorActionPreference = $prevEap
     }
@@ -175,10 +188,19 @@ try {
     $output = Receive-Job $job
     $output | Out-File $runLog -Encoding utf8
     $outputText = ($output | Out-String)
-    if ($outputText -match 'usage limit|ActionRequiredError') {
+    # Commits this turn prove real work succeeded — ignore false positives from diffs/logs.
+    $commitsNow = Count-CommitsSince $headBefore
+    $realCursorLimit = ($executor -eq 'cursor') -and (
+      $outputText -match '(?m)^ActionRequiredError: You''ve hit your usage limit'
+    )
+    $realApiFail = $outputText -match '(?m)^(Error:|APIError|AuthenticationError).{0,120}(Insufficient Balance|insufficient_quota|invalid_api_key|Authentication Fails|401 Unauthorized)'
+    if ($commitsNow -gt 0) {
+      Write-Log "END turn OK (commits=$commitsNow)"
+      $exitCode = 0
+    } elseif ($realCursorLimit) {
       Write-Log 'SKIP: Cursor Agent usage limit — wait for quota reset'
       $exitCode = 4
-    } elseif ($outputText -match 'Insufficient Balance|insufficient_quota|invalid_api_key|Authentication Fails|401 Unauthorized') {
+    } elseif ($realApiFail) {
       Write-Log 'SKIP: API billing/auth issue — check DEEPSEEK balance and key'
       $exitCode = 4
     } elseif ($job.State -eq 'Failed') {

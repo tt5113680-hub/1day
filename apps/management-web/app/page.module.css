@@ -38,6 +38,41 @@
   color: var(--od-text-muted);
 }
 
+.todayStrip {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: var(--od-space-3);
+  padding: var(--od-space-4);
+  border-radius: var(--od-radius-lg);
+  background: linear-gradient(
+    135deg,
+    var(--od-brand-100) 0%,
+    color-mix(in srgb, var(--od-brand-50) 70%, var(--od-surface)) 100%
+  );
+  border: 1px solid color-mix(in srgb, var(--od-brand-600) 25%, var(--od-border));
+}
+
+.todayItem {
+  display: grid;
+  gap: 6px;
+  min-width: 0;
+}
+
+.todayItem span {
+  color: var(--od-brand-800);
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.todayItem strong {
+  font: 700 22px / 1.1 var(--od-font-display);
+  color: var(--od-ink);
+}
+
+.danger {
+  color: var(--od-danger);
+}
+
 .section {
   display: grid;
   gap: var(--od-space-3);
@@ -174,7 +209,8 @@
 }
 
 @media (max-width: 1100px) {
-  .shortcuts {
+  .shortcuts,
+  .todayStrip {
     grid-template-columns: repeat(4, minmax(0, 1fr));
   }
 }
@@ -185,7 +221,8 @@
     grid-template-columns: 1fr 1fr;
   }
 
-  .shortcuts {
+  .shortcuts,
+  .todayStrip {
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 
@@ -197,7 +234,8 @@
 @media (max-width: 580px) {
   .metrics,
   .grid,
-  .shortcuts {
+  .shortcuts,
+  .todayStrip {
     grid-template-columns: 1fr 1fr;
   }
 

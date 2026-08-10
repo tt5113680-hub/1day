@@ -11,25 +11,44 @@ export function SessionLogin({
   destination,
   title,
   subtitle,
+  defaultTenantSlug = '',
+  defaultEmail = '',
+  defaultPassword = '',
 }: {
   apiBase: string;
   deviceName: string;
   destination: string;
   title: string;
   subtitle?: string;
+  defaultTenantSlug?: string;
+  defaultEmail?: string;
+  defaultPassword?: string;
 }) {
+  const [tenantSlug, setTenantSlug] = useState(defaultTenantSlug);
+  const [email, setEmail] = useState(defaultEmail);
+  const [password, setPassword] = useState(defaultPassword);
   const [error, setError] = useState('');
   const [submitting, setSubmitting] = useState(false);
+
+  useEffect(() => {
+    const q = new URLSearchParams(window.location.search);
+    const t = q.get('tenant') ?? q.get('tenantSlug');
+    const e = q.get('email');
+    const p = q.get('password');
+    if (t) setTenantSlug(t);
+    if (e) setEmail(e);
+    if (p) setPassword(p);
+  }, []);
+
   const submit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    const form = new FormData(event.currentTarget);
     setSubmitting(true);
     setError('');
     try {
       await new BrowserSession(apiBase).login(
-        String(form.get('email')),
-        String(form.get('password')),
-        { slug: String(form.get('tenantSlug')).trim() },
+        email,
+        password,
+        { slug: tenantSlug.trim() },
         deviceName,
       );
       window.location.assign(destination);
@@ -53,6 +72,8 @@ export function SessionLogin({
               required
               autoComplete="organization"
               placeholder="例如 luckin-oneday-human-pilot"
+              value={tenantSlug}
+              onChange={(event) => setTenantSlug(event.target.value)}
             />
           </FormField>
           <FormField label="邮箱" htmlFor="email">
@@ -63,6 +84,8 @@ export function SessionLogin({
               required
               autoComplete="username"
               placeholder="name@company.com"
+              value={email}
+              onChange={(event) => setEmail(event.target.value)}
             />
           </FormField>
           <FormField label="密码" htmlFor="password">
@@ -73,6 +96,8 @@ export function SessionLogin({
               required
               autoComplete="current-password"
               placeholder="请输入密码"
+              value={password}
+              onChange={(event) => setPassword(event.target.value)}
             />
           </FormField>
           <Button type="submit" loading={submitting} className="od-session-login__submit">

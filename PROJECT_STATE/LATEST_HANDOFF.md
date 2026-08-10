@@ -9,17 +9,17 @@
 ## Current task ? Phase-1 commercial closed loop
 
 - branch: `hardening/COMMERCIAL-COMPLETION`
-- last_verified: **G1 READY (2026-08-10 21:55)** — G1 packaging milestone PASS: local HUMAN PILOT sandbox boot-verified at HEAD `6b2dad9` (API + worker + four webs all HTTP 200, DB `oneday_human_pilot` migrated), typecheck 20/20, build 20/20, unit 49/49. Runbook + checklist + deployment + limitations + recovery + walkthrough all present. Evidence: `evidence/G1-PACKAGING/ACCEPTANCE.md`. Services left **running** on 3200–3205 for the owner's G1 full test.
-- status: P1-A and P1-B fully PASS; remaining AI-actionable milestones complete. Next is the **owner G1 gate** (local full human test + sign-off), then P1-C live (blocked on G lift + cloud inventory). No further P1-A/B slice remains for unattended turns.
-- blocker: G1 awaits owner (local full test). P1-C live waits on G lift + cloud inventory. Do **not** auto-sign `PRODUCT_OWNER_UI_ACCEPTANCE.md`.
-- progress: P0 26/26; P1-A PASS; P1-B (session-login, ui-kit, four shells, sync-converge, content-chain) PASS; **G1 packaging PASS** (locally boot-verified); P1-D owner sign-off waiting; P1-C live blocked.
-- push_pending: this turn's `G1-PACKAGING` evidence + state updates committed locally and pushed to `origin/hardening/COMMERCIAL-COMPLETION`.
+- last_verified: **2026-08-11 ~00:05** — Owner authorized 全自动施工. **G1-W1 PASS** (Meituan merchant PC nav + 商家中心 workbench). Unattended prompt retargeted to Meituan parity waves. Next = W2 Consumer H5.
+- status: G1 HOLD for owner sign. Auto construction active on Meituan parity queue. Only `/m/workflows` CUSTOM.
+- blocker: G1 HOLD until four-surface 1:1 passes owner re-test. Do **not** auto-sign.
+- progress: W0 inventory PASS; **W1 PASS**; W2 pending.
+- note: Hub http://127.0.0.1:3299/ ; Management http://127.0.0.1:3203/
 
-### Owner ? next actions (G1 gate)
+### Owner ? next actions
 
-1. On this machine run `pnpm human-pilot:seed` then `pnpm human-pilot:start` (services already up on 3200–3205) and walk `docs/HUMAN_PILOT_MANUAL_TEST.md`.
-2. Complete `docs/PILOT_ACCEPTANCE_CHECKLIST.md` and sign `PROJECT_STATE/PRODUCT_OWNER_UI_ACCEPTANCE.md`.
-3. For P1-C live: lift authorization G and supply the cloud inventory in `PHASE1_COMMERCIAL_CLOSED_LOOP_PLAN.md` §2.
+1. Optional peek: login management (prefilled) → 侧栏应为 店铺/商品/顾客/…/工作流整合.
+2. Agent continues W2 automatically (美团 App H5).
+3. Sign G1 only after real 1:1 waves — not yet.
 
 ### Headless turn prompt
 

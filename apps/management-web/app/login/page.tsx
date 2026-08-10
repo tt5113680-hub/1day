@@ -9,6 +9,10 @@ export default function Login() {
       deviceName="management-web"
       destination="/m/dashboard"
       title="管理端登录"
+      subtitle="本地试用账号已预填，点登录即可"
+      defaultTenantSlug="luckin-oneday-human-pilot"
+      defaultEmail="pilot.owner@oneday.local"
+      defaultPassword="OnedayHumanPilot!2026"
     />
   );
 }

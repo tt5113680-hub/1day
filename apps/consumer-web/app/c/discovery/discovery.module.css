@@ -83,6 +83,44 @@
   font-size: 11px;
   font-weight: 700;
 }
+.sortBar {
+  display: flex;
+  gap: 8px;
+  margin: 0 0 12px;
+  overflow-x: auto;
+}
+.sortChip,
+.sortActive {
+  flex: 0 0 auto;
+  min-height: 36px;
+  border-radius: 999px;
+  padding: 0 14px;
+  font: inherit;
+  font-size: 13px;
+  cursor: pointer;
+}
+.sortChip {
+  border: 1px solid var(--od-border);
+  color: var(--od-text);
+  background: var(--od-surface);
+}
+.sortActive {
+  border: 1px solid var(--od-brand-700);
+  color: var(--od-on-brand);
+  background: var(--od-brand-700);
+  font-weight: 700;
+}
+.meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 6px 0 0 !important;
+  font-size: 12px !important;
+}
+.rating {
+  color: var(--od-warning);
+  font-weight: 700;
+}
 .collection {
   display: grid;
   gap: 10px;

@@ -8,7 +8,7 @@ import {
   groupMenuItems,
 } from '../packages/contracts/dist/index.js';
 
-test('SYS-29: Management menu groups into operate/commerce/people/intents', () => {
+test('SYS-29 / G1-W1: Management menu groups follow Meituan merchant-PC IA', () => {
   const items = filterMenuCatalog(MANAGEMENT_MENU_CATALOG, [
     'tenant.manage',
     'organization.manage',
@@ -16,17 +16,18 @@ test('SYS-29: Management menu groups into operate/commerce/people/intents', () =
   const groups = groupMenuItems(items);
   assert.deepEqual(
     groups.map((group) => group.key),
-    ['operate', 'commerce', 'people', 'intents'],
+    ['workbench', 'store', 'goods', 'customer', 'marketing', 'staff', 'settings', 'workflow'],
   );
-  assert.equal(groups[0]?.label, MENU_GROUP_LABELS.operate);
+  assert.equal(groups[0]?.label, MENU_GROUP_LABELS.workbench);
+  assert.equal(groups.at(-1)?.label, MENU_GROUP_LABELS.workflow);
   assert.ok(items.every((item) => item.group));
 });
 
-test('SYS-29: store-manager chrome keeps operate+commerce groups only', () => {
+test('SYS-29 / G1-W1: store-manager chrome keeps workbench+store+goods+marketing', () => {
   const groups = groupMenuItems(filterMenuCatalog(MANAGEMENT_MENU_CATALOG, ['tenant.read']));
   assert.deepEqual(
     groups.map((group) => group.key),
-    ['operate', 'commerce'],
+    ['workbench', 'store', 'goods', 'marketing'],
   );
   assert.deepEqual(
     groups.flatMap((group) => group.items.map((item) => item.key)),

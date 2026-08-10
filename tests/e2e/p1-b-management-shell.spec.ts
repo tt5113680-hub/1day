@@ -41,11 +41,11 @@ test('P1-B Management/Platform AdminShell renders the shared token chrome across
   // Desktop (1440px): Management sidebar nav groups + topbar.
   await page.setViewportSize({ width: 1440, height: 900 });
   await page.goto(`${management}/`);
-  const sidebar = page.getByRole('complementary', { name: '商户经营 主导航' });
+  const sidebar = page.getByRole('complementary', { name: '商家中心 主导航' });
   await expect(sidebar).toBeVisible({ timeout: 30000 });
-  await expect(sidebar.getByText('经营运营')).toBeVisible();
-  await expect(sidebar.getByText('组织与权限')).toBeVisible();
-  await expect(sidebar.getByRole('link', { name: '客户资产' })).toHaveAttribute(
+  await expect(sidebar.getByText('店铺')).toBeVisible();
+  await expect(sidebar.getByText('员工')).toBeVisible();
+  await expect(sidebar.getByRole('link', { name: '顾客管理' })).toHaveAttribute(
     'href',
     /\/m\/customers/,
   );

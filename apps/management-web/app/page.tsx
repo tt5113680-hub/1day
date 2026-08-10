@@ -25,19 +25,20 @@ type Data = {
 const api = process.env.NEXT_PUBLIC_API_BASE_URL ?? 'http://127.0.0.1:3001';
 const sessionApi = new SessionApiClient(api);
 
+/** Meituan merchant-PC workbench shortcuts — real routes only (no fake 订单/评价). */
 const SHORTCUTS = [
-  { href: '/m/customers', label: '客户', desc: 'CRM 客户资产' },
-  { href: '/m/attribution', label: '归因', desc: '来源与归属' },
-  { href: '/m/stores', label: '门店', desc: '门店与外链' },
-  { href: '/m/organization-employees', label: '员工', desc: '组织与人员' },
-  { href: '/m/employee-process-performance', label: '过程', desc: '员工工作过程' },
-  { href: '/m/memberships', label: '会员', desc: '权益与核销' },
-  { href: '/m/offers', label: '套餐', desc: 'Offer 管理' },
-  { href: '/m/content', label: '内容', desc: '内容中心' },
-  { href: '/m/page-builder', label: '装修', desc: '模板与发布' },
-  { href: '/m/workflows', label: '流程', desc: '运营流程' },
-  { href: '/m/settings', label: '设置', desc: '商户设置' },
-  { href: '/m/ai-suggestions', label: '提醒', desc: '经营建议' },
+  { href: '/m/stores', label: '门店', desc: '门店管理' },
+  { href: '/m/offers', label: '商品', desc: '商品与套餐' },
+  { href: '/m/customers', label: '顾客', desc: '顾客管理' },
+  { href: '/m/memberships', label: '会员', desc: '会员中心' },
+  { href: '/m/content', label: '营销', desc: '营销内容' },
+  { href: '/m/page-builder', label: '装修', desc: '店铺装修' },
+  { href: '/m/attribution', label: '数据', desc: '来源分析' },
+  { href: '/m/organization-employees', label: '员工', desc: '员工管理' },
+  { href: '/m/employee-process-performance', label: '表现', desc: '员工表现' },
+  { href: '/m/settings', label: '设置', desc: '商家设置' },
+  { href: '/m/ai-suggestions', label: '建议', desc: '经营建议' },
+  { href: '/m/workflows', label: '工作流', desc: '工作流整合（定制）' },
 ] as const;
 
 export default function ManagementHome() {
@@ -73,8 +74,8 @@ export default function ManagementHome() {
       <main className={styles.centered}>
         <AppStatePanel
           kind="loading"
-          title="正在加载工作台"
-          description="正在汇总今日门店与员工工作数据。"
+          title="正在加载商家中心"
+          description="正在汇总今日门店、顾客与待办。"
         />
       </main>
     );
@@ -83,7 +84,7 @@ export default function ManagementHome() {
       <main className={styles.centered}>
         <AppStatePanel
           kind="forbidden"
-          title="无法进入工作台"
+          title="无法进入商家中心"
           description="请使用具备管理权限的账号登录。"
         />
       </main>
@@ -105,19 +106,46 @@ export default function ManagementHome() {
     <main className={styles.page}>
       <header className={styles.hero}>
         <div>
-          <p>商户工作台</p>
+          <p>美团商家端 PC · 商家中心</p>
           <h1>工作台</h1>
-          <span>今日经营 · 门店与员工实况 · CRM 快捷入口（美团商家端同构）</span>
+          <span>今日概况 · 常用功能 · 待办提醒（对标美团商家 PC，订单/评价页下一波补齐）</span>
         </div>
         <Button tone="secondary" onClick={() => void load()}>
           刷新
         </Button>
       </header>
 
-      <section className={styles.section} aria-label="工作快捷入口">
+      <section className={styles.todayStrip} aria-label="今日概况">
+        <div className={styles.todayItem}>
+          <span>今日顾客</span>
+          <strong>{m.customersToday}</strong>
+        </div>
+        <div className={styles.todayItem}>
+          <span>今日待办</span>
+          <strong>{m.openTasksToday}</strong>
+        </div>
+        <div className={styles.todayItem}>
+          <span>今日完成</span>
+          <strong>{m.completedTasksToday}</strong>
+        </div>
+        <div className={styles.todayItem}>
+          <span>逾期</span>
+          <strong className={m.overdueTasks > 0 ? styles.danger : undefined}>{m.overdueTasks}</strong>
+        </div>
+        <div className={styles.todayItem}>
+          <span>门店</span>
+          <strong>{m.stores}</strong>
+        </div>
+        <div className={styles.todayItem}>
+          <span>在岗跟进</span>
+          <strong>{m.activeAssignees}</strong>
+        </div>
+      </section>
+
+      <section className={styles.section} aria-label="常用功能">
         <div className={styles.sectionHead}>
           <h2>常用功能</h2>
-          <span>一点直达</span>
+          <span>对标美团商家端快捷入口</span>
         </div>
         <div className={styles.shortcuts}>
           {SHORTCUTS.map((item) => (
@@ -129,29 +157,16 @@ export default function ManagementHome() {
         </div>
       </section>
 
-      <section className={styles.section} aria-label="今日门店与员工数据">
+      <section className={styles.section} aria-label="经营数据">
         <div className={styles.sectionHead}>
-          <h2>今日数据</h2>
-          <span>门店 {m.stores} · 在岗跟进 {m.activeAssignees}</span>
-        </div>
-        <div className={styles.metrics}>
-          <MetricCard hint="今日新增客户" label="今日客户" value={m.customersToday} />
-          <MetricCard hint="今日待办任务" label="今日待办" value={m.openTasksToday} />
-          <MetricCard hint="今日已完成" label="今日完成" value={m.completedTasksToday} />
-          <MetricCard hint="逾期需处理" label="逾期任务" value={m.overdueTasks} />
-        </div>
-      </section>
-
-      <section className={styles.section} aria-label="CRM 与经营资产">
-        <div className={styles.sectionHead}>
-          <h2>客户与经营</h2>
+          <h2>经营数据</h2>
           <a className={styles.link} href="/m/customers">
-            进入 CRM →
+            顾客管理 →
           </a>
         </div>
         <div className={styles.metrics}>
-          <MetricCard hint="客户资产总量" label="客户总数" value={m.customers} />
-          <MetricCard hint="近 30 天订单" label="近30日订单" value={m.orders30d} />
+          <MetricCard hint="顾客总量" label="顾客总数" value={m.customers} />
+          <MetricCard hint="近 30 天订单（本地试点）" label="近30日订单" value={m.orders30d} />
           <MetricCard hint="近 30 天完成任务" label="近30日完成" value={m.completedTasks30d} />
           <MetricCard hint="全部未完成任务" label="待推进任务" value={m.openTasks} />
         </div>

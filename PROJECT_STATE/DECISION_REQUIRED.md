@@ -35,13 +35,14 @@
 
 | Decision | Resolution |
 | -------- | ---------- |
-| Differentiated surfaces | **Consumer pages + Employee home + Boss (Management) home** = ONEDAY unique workflow + independent DIY (template/module/brand). See `PRODUCT_DUAL_TRACK_STRATEGY.md`. |
-| Meituan-aligned surfaces | Merchant management deep pages + staff/boss **management** capabilities = develop **1:1 vs 美团商家端** IA/capability density. |
-| Channel model | Channels = **美团各级代理** (geo hierarchy, subordinate management, merchant affiliation). |
+| Meituan PC + H5 | **四套面 100% 复刻：** Consumer H5→美团 App；Employee H5→美团商家 App；Management PC→美团商家 PC；Platform PC→美团平台/代理 PC。见 `PRODUCT_DUAL_TRACK_STRATEGY.md` + `MEITUAN_PC_H5_PARITY_INVENTORY.md`。 |
+| Sole custom surface | **仅「工作流整合页」单独定制**；其余页面不得以 DIY/自创首页替代美团对应页。 |
+| Prior DIY-home wording | **废止**：消费者/员工/老板「内容 DIY、壳仍美团」的宽口径不再作为产品差异面。 |
+| Channel model | Channels = **美团各级代理**；Platform PC 对标美团平台/代理后台 (geo hierarchy, subordinate management, merchant affiliation). |
 | Platform onboarding | Correct direction to **省市区 / agent-tree tenant open & manage** (Alibaba/Meituan ops), not flat single-merchant wizard only. |
 | Management chrome color | **Meituan yellow default** (token); WeCom blue optional via `data-theme` — not locked. |
-| UI fidelity | **100% Meituan** for visual detail, IA, interaction, and functional chains (`PRODUCT_DUAL_TRACK_STRATEGY.md`). |
-| G1 status | **HOLD** until dual-track remediations pass owner re-test (`G1_HOLD_FINDINGS.md`). |
+| UI fidelity | 上表四套面与美团一模一样；工作流整合页除外。 |
+| G1 status | **HOLD** until Meituan parity remediations pass owner re-test (`G1_HOLD_FINDINGS.md`). |
 
 ## Open (will BLOCKED)
 

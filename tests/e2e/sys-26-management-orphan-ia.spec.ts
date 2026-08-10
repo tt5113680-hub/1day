@@ -6,10 +6,10 @@ const management = 'http://localhost:3340';
 const tenant = '00000000-0000-4000-8000-000000000001';
 
 const orphans = [
-  { label: '员工过程', path: '/m/employee-process-performance', heading: /员工/ },
-  { label: 'AI 建议', path: '/m/ai-suggestions', heading: /建议|AI/ },
-  { label: '连接器意图', path: '/m/connectors', heading: /连接器|意图|授权/ },
-  { label: '权限审计', path: '/m/permission-audit', heading: /审计|权限/ },
+  { label: '员工表现', path: '/m/employee-process-performance', heading: /员工/ },
+  { label: '经营建议', path: '/m/ai-suggestions', heading: /建议|经营/ },
+  { label: '连接配置', path: '/m/connectors', heading: /连接|授权/ },
+  { label: '操作审计', path: '/m/permission-audit', heading: /审计|操作/ },
 ];
 
 test('SYS-26 Management shell surfaces former orphan nav entries', async ({ page }) => {
@@ -49,7 +49,7 @@ test('SYS-26 Management shell surfaces former orphan nav entries', async ({ page
     fullPage: false,
   });
 
-  await page.getByRole('link', { name: '连接器意图' }).click();
+  await page.getByRole('link', { name: '连接配置' }).click();
   await expect(page).toHaveURL(/\/m\/connectors/);
   await expect(page.getByRole('heading').first()).toBeVisible({ timeout: 15000 });
   await page.screenshot({

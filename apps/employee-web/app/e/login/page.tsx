@@ -9,6 +9,10 @@ export default function Login() {
       deviceName="employee-web"
       destination="/e/workbench"
       title="员工登录"
+      subtitle="本地试用账号已预填，点登录即可"
+      defaultTenantSlug="luckin-oneday-human-pilot"
+      defaultEmail="pilot.storemanager@oneday.local"
+      defaultPassword="OnedayHumanPilot!2026"
     />
   );
 }

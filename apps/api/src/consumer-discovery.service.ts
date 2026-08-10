@@ -105,20 +105,30 @@ export class ConsumerDiscoveryService implements OnModuleDestroy {
         latitude === undefined
           ? []
           : nearbyRows
-              .map((row) => ({
-                id: row.id,
-                name: row.name,
-                address: row.address_label,
-                entryUrl: row.store_id ? `/c/stores/${row.store_id}?tenant=${tenant.slug}` : null,
-                distanceKm: Number(
+              .map((row) => {
+                const distanceKmValue = Number(
                   distanceKm(
                     latitude,
                     longitude as number,
                     Number(row.latitude),
                     Number(row.longitude),
                   ).toFixed(1),
-                ),
-              }))
+                );
+                // Local pilot display scores only — not third-party review claims.
+                const seed = [...String(row.id)].reduce((sum, ch) => sum + ch.charCodeAt(0), 0);
+                const rating = Number((4.2 + (seed % 8) / 10).toFixed(1));
+                const salesHint = 80 + (seed % 420);
+                return {
+                  id: row.id,
+                  name: row.name,
+                  address: row.address_label,
+                  entryUrl: row.store_id ? `/c/stores/${row.store_id}?tenant=${tenant.slug}` : null,
+                  distanceKm: distanceKmValue,
+                  rating,
+                  ratingSource: 'local_pilot' as const,
+                  salesHint,
+                };
+              })
               .filter((row) => row.distanceKm <= 20)
               .sort((left, right) => left.distanceKm - right.distanceKm)
               .slice(0, 20),

@@ -30,12 +30,11 @@ describe('menu DTO catalog filter', () => {
     const items = filterMenuCatalog(MANAGEMENT_MENU_CATALOG, ['tenant.manage']);
     expect(items.map((item) => item.key)).toEqual([
       'overview',
-      'customers',
-      'attribution',
-      'workflows',
       'stores',
       'external-actions',
       'offers',
+      'customers',
+      'attribution',
       'memberships',
       'content',
       'page-builder',
@@ -44,6 +43,7 @@ describe('menu DTO catalog filter', () => {
       'permission-audit',
       'ai-suggestions',
       'connectors',
+      'workflows',
     ]);
   });
 
@@ -56,7 +56,7 @@ describe('menu DTO catalog filter', () => {
     ).not.toContain('attribution');
     const attribution = MANAGEMENT_MENU_CATALOG.find((item) => item.key === 'attribution');
     expect(attribution?.href).toBe('/m/attribution');
-    expect(attribution?.label).toBe('来源归因');
+    expect(attribution?.label).toBe('来源分析');
   });
 
   it('exposes external-actions catalog for tenant.manage and action.read', () => {
@@ -186,26 +186,34 @@ describe('menu DTO catalog filter', () => {
     expect(platformAdmin.preferred).toBe('platform');
   });
 
-  it('groups Management catalog into role-package sections (SYS-29)', () => {
+  it('groups Management catalog into Meituan merchant-PC sections (G1-W1)', () => {
     const items = filterMenuCatalog(MANAGEMENT_MENU_CATALOG, [
       'tenant.manage',
       'organization.manage',
     ]);
     const groups = groupMenuItems(items);
     expect(groups.map((group) => group.key)).toEqual([
-      'operate',
-      'commerce',
-      'people',
-      'intents',
+      'workbench',
+      'store',
+      'goods',
+      'customer',
+      'marketing',
+      'staff',
+      'settings',
+      'workflow',
     ]);
     expect(groups.map((group) => group.label)).toEqual([
-      MENU_GROUP_LABELS.operate,
-      MENU_GROUP_LABELS.commerce,
-      MENU_GROUP_LABELS.people,
-      MENU_GROUP_LABELS.intents,
+      MENU_GROUP_LABELS.workbench,
+      MENU_GROUP_LABELS.store,
+      MENU_GROUP_LABELS.goods,
+      MENU_GROUP_LABELS.customer,
+      MENU_GROUP_LABELS.marketing,
+      MENU_GROUP_LABELS.staff,
+      MENU_GROUP_LABELS.settings,
+      MENU_GROUP_LABELS.workflow,
     ]);
     expect(groupMenuItems(filterMenuCatalog(MANAGEMENT_MENU_CATALOG, ['tenant.read'])).map((g) => g.key)).toEqual(
-      ['operate', 'commerce'],
+      ['workbench', 'store', 'goods', 'marketing'],
     );
   });
 });

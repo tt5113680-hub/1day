@@ -9,7 +9,7 @@ test('SYS-23: Management attribution is discoverable in menu catalog for tenant.
   const item = MANAGEMENT_MENU_CATALOG.find((entry) => entry.key === 'attribution');
   assert.ok(item, 'attribution catalog entry missing');
   assert.equal(item.href, '/m/attribution');
-  assert.equal(item.label, '来源归因');
+  assert.equal(item.label, '来源分析');
   assert.deepEqual(item.requireAny, ['tenant.manage']);
 
   const managerKeys = filterMenuCatalog(MANAGEMENT_MENU_CATALOG, ['tenant.manage']).map(

@@ -37,14 +37,23 @@ export type MenuCatalogItem = MenuItemDto & {
   requireAny?: string[];
 };
 
-/** SYS-29: AdminShell section labels keyed by MenuItemDto.group. */
+/**
+ * SYS-29 / G1-W1: AdminShell section labels keyed by MenuItemDto.group.
+ * Management groups follow 美团商家端 PC IA (not self-invented operate/commerce).
+ */
 export const MENU_GROUP_LABELS: Record<string, string> = {
-  operate: '经营运营',
-  commerce: '门店与商品',
-  people: '组织与权限',
-  intents: '能力边界',
+  workbench: '工作台',
+  store: '店铺',
+  goods: '商品',
+  customer: '顾客',
+  marketing: '营销',
+  staff: '员工',
+  settings: '设置',
+  /** Sole ONEDAY custom surface — not a Meituan clone. */
+  workflow: '工作流整合',
   govern: '平台治理',
   network: '渠道与商圈',
+  intents: '能力边界',
   store_manager: '店长经营',
 };
 
@@ -72,127 +81,130 @@ export function groupMenuItems(items: MenuItemDto[]): MenuNavGroup[] {
   return groups;
 }
 
-/** Server catalog for Management AdminShell (SYS-6). */
+/**
+ * Server catalog for Management AdminShell.
+ * G1-W1: labels/groups align to 美团商家端 PC; routes reuse existing pages.
+ * `/m/workflows` is the sole CUSTOM (非美团复刻) entry.
+ */
 export const MANAGEMENT_MENU_CATALOG: MenuCatalogItem[] = [
   {
     key: 'overview',
     href: '/',
     label: '工作台',
-    group: 'operate',
+    group: 'workbench',
     requireAny: ['tenant.manage', 'tenant.read', 'customer.read'],
-  },
-  {
-    key: 'customers',
-    href: '/m/customers',
-    label: '客户资产',
-    group: 'operate',
-    requireAny: ['tenant.manage', 'customer.manage'],
-  },
-  {
-    key: 'attribution',
-    href: '/m/attribution',
-    label: '来源归因',
-    group: 'operate',
-    // Matches ManagementAttributionController (`tenant.manage`).
-    requireAny: ['tenant.manage'],
-  },
-  {
-    key: 'workflows',
-    href: '/m/workflows',
-    label: '运营流程',
-    group: 'operate',
-    requireAny: ['tenant.manage', 'workflow.read', 'workflow.manage'],
   },
   {
     key: 'stores',
     href: '/m/stores',
-    label: '门店与外链',
-    group: 'commerce',
+    label: '门店管理',
+    group: 'store',
     requireAny: ['tenant.manage', 'tenant.read'],
   },
   {
     key: 'external-actions',
     href: '/m/external-actions',
-    label: '外链动作目录',
-    group: 'commerce',
+    label: '外链服务',
+    group: 'store',
     requireAny: ['tenant.manage', 'action.read', 'action.manage'],
   },
   {
     key: 'offers',
     href: '/m/offers',
-    label: '套餐与 Offer',
-    group: 'commerce',
+    label: '商品管理',
+    group: 'goods',
     requireAny: ['tenant.manage', 'tenant.read'],
+  },
+  {
+    key: 'customers',
+    href: '/m/customers',
+    label: '顾客管理',
+    group: 'customer',
+    requireAny: ['tenant.manage', 'customer.manage'],
+  },
+  {
+    key: 'attribution',
+    href: '/m/attribution',
+    label: '来源分析',
+    group: 'customer',
+    requireAny: ['tenant.manage'],
   },
   {
     key: 'memberships',
     href: '/m/memberships',
-    label: '会员与权益',
-    group: 'commerce',
+    label: '会员中心',
+    group: 'marketing',
     requireAny: ['tenant.manage', 'tenant.read'],
   },
   {
     key: 'content',
     href: '/m/content',
-    label: '内容中心',
-    group: 'commerce',
+    label: '营销内容',
+    group: 'marketing',
     requireAny: ['tenant.manage', 'tenant.read'],
   },
   {
     key: 'page-builder',
     href: '/m/page-builder',
-    label: '模板与发布',
-    group: 'commerce',
+    label: '店铺装修',
+    group: 'marketing',
     requireAny: ['tenant.manage', 'page.manage'],
   },
   {
     key: 'organization',
     href: '/m/organization-employees',
-    label: '组织与员工',
-    group: 'people',
+    label: '员工管理',
+    group: 'staff',
     requireAny: ['tenant.manage', 'employee.manage', 'organization.read', 'organization.manage'],
   },
   {
     key: 'employee-performance',
     href: '/m/employee-process-performance',
-    label: '员工过程',
-    group: 'people',
+    label: '员工表现',
+    group: 'staff',
     requireAny: ['tenant.manage'],
   },
   {
     key: 'roles',
     href: '/m/roles-permissions',
-    label: '角色与权限',
-    group: 'people',
+    label: '角色权限',
+    group: 'staff',
+    requireAll: ['tenant.manage', 'organization.manage'],
+  },
+  {
+    key: 'settings',
+    href: '/m/settings',
+    label: '商家设置',
+    group: 'settings',
     requireAll: ['tenant.manage', 'organization.manage'],
   },
   {
     key: 'permission-audit',
     href: '/m/permission-audit',
-    label: '权限审计',
-    group: 'people',
+    label: '操作审计',
+    group: 'settings',
     requireAny: ['tenant.manage'],
-  },
-  {
-    key: 'settings',
-    href: '/m/settings',
-    label: '经营设置',
-    group: 'people',
-    requireAll: ['tenant.manage', 'organization.manage'],
   },
   {
     key: 'ai-suggestions',
     href: '/m/ai-suggestions',
-    label: 'AI 建议',
-    group: 'intents',
+    label: '经营建议',
+    group: 'settings',
     requireAny: ['tenant.manage'],
   },
   {
     key: 'connectors',
     href: '/m/connectors',
-    label: '连接器意图',
-    group: 'intents',
+    label: '连接配置',
+    group: 'settings',
     requireAny: ['tenant.manage'],
+  },
+  {
+    key: 'workflows',
+    href: '/m/workflows',
+    label: '工作流整合',
+    group: 'workflow',
+    requireAny: ['tenant.manage', 'workflow.read', 'workflow.manage'],
   },
 ];
 
@@ -428,7 +440,7 @@ export function resolveAvailableProducts(permissionCodes: string[]): MenuProduct
   const perms = new Set(permissionCodes);
   const links: MenuProductLink[] = [];
   if (perms.has('tenant.manage') || perms.has('tenant.read') || perms.has('customer.read')) {
-    links.push({ product: 'management', label: '商户经营', homeHref: '/' });
+    links.push({ product: 'management', label: '商家中心', homeHref: '/' });
   }
   const hasPlatform = perms.has('platform.read') || perms.has('platform.manage');
   const hasChannel = perms.has('channel.read') || perms.has('channel.manage');

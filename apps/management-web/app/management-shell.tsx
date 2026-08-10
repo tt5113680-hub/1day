@@ -23,7 +23,7 @@ export function ManagementShell({
 }) {
   const pathname = usePathname();
   const [navigation, setNavigation] = useState(fallbackNavigation);
-  const [contextLabel, setContextLabel] = useState('租户经营工作台');
+  const [contextLabel, setContextLabel] = useState('商家中心');
 
   useEffect(() => {
     let cancelled = false;
@@ -54,7 +54,7 @@ export function ManagementShell({
   return (
     <AdminShell
       activeHref={pathname}
-      product="商户经营"
+      product="商家中心"
       context={contextLabel}
       controls={controls}
       navigation={navigation}
