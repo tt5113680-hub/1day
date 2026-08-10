@@ -195,4 +195,46 @@ export function reorderSteps<T>(steps: T[], from: number, to: number): T[] {
   return next;
 }
 
+export type SerializedLinearWorkflow = {
+  mode: 'linear_with_condition_branches';
+  editor: 'not_free_form_drag';
+  nodes: Array<{
+    index: number;
+    name: string;
+    type: string;
+    conditionLabel: string;
+    hasCondition: boolean;
+  }>;
+  edges: Array<{
+    from: number;
+    to: number | null;
+    kind: BranchFlowEdgeKind;
+    label: string;
+  }>;
+};
+
+/** Honest JSON export of the linear branch model (SYS-16). Not a free-form graph document. */
+export function serializeConditionBranchFlow(
+  steps: WorkflowStepLike[],
+): SerializedLinearWorkflow {
+  const flow = buildConditionBranchFlow(steps);
+  return {
+    mode: flow.mode,
+    editor: 'not_free_form_drag',
+    nodes: flow.nodes.map((node) => ({
+      index: node.index,
+      name: node.name,
+      type: node.type,
+      conditionLabel: node.conditionLabel,
+      hasCondition: node.hasCondition,
+    })),
+    edges: flow.edges.map((edge) => ({
+      from: edge.from,
+      to: edge.to,
+      kind: edge.kind,
+      label: edge.label,
+    })),
+  };
+}
+
 export const workflowsPackage = '@oneday/workflows';

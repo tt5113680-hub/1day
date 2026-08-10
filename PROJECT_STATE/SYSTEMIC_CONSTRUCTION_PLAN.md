@@ -5,12 +5,12 @@
 
 ## Status
 
-SYS-1…SYS-15 PASS (through version panel linear reorder + clone-publish).
+SYS-1…SYS-16 PASS (through honest linear flow JSON export).
 
 ## Queue
 
 - Product-owner UI sign-off (human)
-- Optional full free-form drag graph editor (multi-week; SYS-12..15 are linear branch/path/reorder only)
+- Optional full free-form drag graph editor (multi-week; SYS-12..16 are linear branch/path/reorder/export only)
 
 ## Honest day boundary
 

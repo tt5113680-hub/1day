@@ -459,3 +459,15 @@
   color: var(--od-text-muted);
   font-size: 12px;
 }
+
+.flowExport {
+  display: grid;
+  gap: 6px;
+  margin: 0 0 18px;
+  justify-items: start;
+}
+
+.flowExport small {
+  color: var(--od-text-muted);
+  font-size: 12px;
+}

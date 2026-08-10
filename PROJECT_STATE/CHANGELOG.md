@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## 2026-08-10 - SYS-16 Linear flow JSON export PASS
+
+- Added `@oneday/workflows.serializeConditionBranchFlow` (`editor: not_free_form_drag`) and Management「复制线性流程 JSON」.
+- Evidence: `SYS_16_LINEAR_FLOW_EXPORT_ACCEPTANCE.md`, `evidence/SYS-16/`. Unit 1/1 + Playwright 1/1. Not free-form drag graph. Not 全部商用.
+
 ## 2026-08-10 - SYS-15 Version panel linear reorder PASS
 
 - Management version panel supports 上移/下移; clone-publish persists panel order via existing workflow version APIs.

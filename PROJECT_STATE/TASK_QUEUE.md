@@ -49,6 +49,7 @@
 - [x] SYS-13 Condition path preview PASS — sample-context apply/skip highlight (not free-form drag graph); see `SYS_13_CONDITION_PATH_PREVIEW_ACCEPTANCE.md`.
 - [x] SYS-14 Draft authoring preview PASS — linear 上移/下移 + create-form live path preview (not free-form drag graph); see `SYS_14_DRAFT_AUTHORING_PREVIEW_ACCEPTANCE.md`.
 - [x] SYS-15 Version panel linear reorder PASS — panel ↑↓ + clone-publish order (not free-form drag graph); see `SYS_15_VERSION_PANEL_REORDER_ACCEPTANCE.md`.
+- [x] SYS-16 Linear flow JSON export PASS — honest linear serialize + clipboard (not free-form drag graph); see `SYS_16_LINEAR_FLOW_EXPORT_ACCEPTANCE.md`.
 - [ ] HUMAN-PILOT-HANDOFF / product-owner UI acceptance — local sandbox refreshed through migration `054` + consult CTA bindings + walkthrough shots (Playwright 4/4); **human sign-off still required**; not auto-claimed as 全部商用. Optional scoped P1 only after product-owner decision.
 
 ## Current product-owner acceptance

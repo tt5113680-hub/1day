@@ -14,6 +14,7 @@ import {
   collectConditionKeys,
   previewConditionPath,
   reorderSteps,
+  serializeConditionBranchFlow,
   summarizeCondition,
 } from '@oneday/workflows';
 import { useCallback, useEffect, useMemo, useState } from 'react';
@@ -108,6 +109,7 @@ export default function WorkflowsPage() {
   const [filter, setFilter] = useState('');
   const [busy, setBusy] = useState<string | null>(null);
   const [note, setNote] = useState('');
+  const [flowJsonCopied, setFlowJsonCopied] = useState(false);
   const [code, setCode] = useState('');
   const [name, setName] = useState('');
   const [steps, setSteps] = useState<StepDraft[]>([emptyStep()]);
@@ -999,6 +1001,26 @@ export default function WorkflowsPage() {
                 </small>
               </div>
             ) : null}
+            <div className={styles.flowExport} data-testid="workflow-flow-export">
+              <Button
+                tone="secondary"
+                data-testid="workflow-copy-linear-json"
+                onClick={async () => {
+                  const payload = serializeConditionBranchFlow(versionPanel.steps);
+                  const text = JSON.stringify(payload, null, 2);
+                  try {
+                    await navigator.clipboard.writeText(text);
+                    setFlowJsonCopied(true);
+                    setTimeout(() => setFlowJsonCopied(false), 2000);
+                  } catch {
+                    setNote('无法写入剪贴板，请检查浏览器权限。');
+                  }
+                }}
+              >
+                {flowJsonCopied ? '已复制线性流程 JSON' : '复制线性流程 JSON'}
+              </Button>
+              <small>导出为线性分支模型（editor=not_free_form_drag），不是自由拖拽图画布文档。</small>
+            </div>
             </>
           )}
           <div className={styles.versionLayout}>
