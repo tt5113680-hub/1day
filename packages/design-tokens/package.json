@@ -10,7 +10,8 @@
       "types": "./dist/index.d.ts",
       "default": "./dist/index.js"
     },
-    "./foundation.css": "./foundation.css"
+    "./foundation.css": "./foundation.css",
+    "./themes.css": "./themes.css"
   },
   "scripts": {
     "build": "tsc --project tsconfig.json",

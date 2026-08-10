@@ -31,6 +31,18 @@
 | Local unattended mode | Headless CLI + Windows Task Scheduler / daemon; no IDE window chaining     |
 | Human gates           | G1 local full test + G2 cloud inventory only; not per construction turn    |
 
+## Resolved (2026-08-10 — product dual-track IA)
+
+| Decision | Resolution |
+| -------- | ---------- |
+| Differentiated surfaces | **Consumer pages + Employee home + Boss (Management) home** = ONEDAY unique workflow + independent DIY (template/module/brand). See `PRODUCT_DUAL_TRACK_STRATEGY.md`. |
+| Meituan-aligned surfaces | Merchant management deep pages + staff/boss **management** capabilities = develop **1:1 vs 美团商家端** IA/capability density. |
+| Channel model | Channels = **美团各级代理** (geo hierarchy, subordinate management, merchant affiliation). |
+| Platform onboarding | Correct direction to **省市区 / agent-tree tenant open & manage** (Alibaba/Meituan ops), not flat single-merchant wizard only. |
+| Management chrome color | **Meituan yellow default** (token); WeCom blue optional via `data-theme` — not locked. |
+| UI fidelity | **100% Meituan** for visual detail, IA, interaction, and functional chains (`PRODUCT_DUAL_TRACK_STRATEGY.md`). |
+| G1 status | **HOLD** until dual-track remediations pass owner re-test (`G1_HOLD_FINDINGS.md`). |
+
 ## Open (will BLOCKED)
 
 | Decision                                      | Default if blocked                                                 |
