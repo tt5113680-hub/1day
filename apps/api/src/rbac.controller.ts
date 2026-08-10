@@ -16,7 +16,7 @@ export class RbacController {
     @Headers('x-tenant-context') t: string | undefined,
     @Headers('x-request-id') r: string | undefined,
   ) {
-    const c = await this.auth.require(a, 'tenant.read', t);
+    const c = await this.auth.requireAny(a, ['tenant.read', 'tenant.manage'], t);
     return { data: await this.rbac.list(c), meta: meta(r), error: null };
   }
   @Post('roles') async create(

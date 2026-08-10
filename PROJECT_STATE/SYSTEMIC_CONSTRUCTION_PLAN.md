@@ -7,27 +7,16 @@
 
 ## Active wave
 
-**SYS remainders — Role matrix E2E / advanced workflow versioning (multi-week)**
+**SYS remainders — Role matrix E2E (multi-week)**
 
 | Deliverable                                        | Status                                      |
 | -------------------------------------------------- | ------------------------------------------- |
 | SYS-1…SYS-5                                        | PASS                                        |
-| SYS-6 menu DTO scaffold (Management)               | PASS                                        |
-| SYS-6 multi-product menus + role homes scaffold    | PASS                                        |
-| SYS-6 data_scopes resolver + managed-stores gate   | PASS                                        |
-| SYS-6 write-path scopes (redeem + store commercial)| PASS                                        |
-| SYS-6 channel/circle network packs                 | PASS                                        |
-| SYS-6 store-manager content placements             | PASS                                        |
-| SYS-6 store-manager catalog scopes                 | PASS                                        |
-| SYS-6 store-manager membership scopes              | PASS                                        |
-| SYS-6 workflow/org write paths                     | PASS                                        |
+| SYS-6 write paths / scopes / packs                 | PASS (membership/catalog/content/network/workflow/org) |
 | SYS-4 content distributions UI                     | PASS                                        |
 | SYS-4 workflow authoring UI (create+publish)       | PASS                                        |
-| SYS-5 quick-actions paint extraction               | PASS                                        |
-| SYS-5 member + offer paints extraction             | PASS                                        |
-| SYS-5 compare + story paints extraction            | PASS                                        |
-| SYS-5 benefit + store_info paints extraction       | PASS                                        |
-| SYS-5 store_hero + floating consult paints         | PASS                                        |
+| SYS-4 RBAC role create UI                          | PASS                                        |
+| SYS-5 storefront paint extractions                   | PASS                                        |
 
 ## Queue
 
@@ -36,4 +25,4 @@
 
 ## Honest day boundary
 
-Menus + data_scopes + write-path + network packs + content/catalog/membership scopes + workflow/org write + content distributions + workflow authoring + major storefront paints landed. Full ROLE_PRODUCT_MATRIX E2E remains multi-week - not claimed as full commercial.
+SYS-4 ops verticals (outbox, distributions, workflow authoring, role create) and SYS-6 write/scopes landed. Full ROLE_PRODUCT_MATRIX E2E remains multi-week - not claimed as full commercial.

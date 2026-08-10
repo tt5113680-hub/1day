@@ -1,27 +1,26 @@
-# SYS-4 Ops Vertical ACCEPTANCE — Platform Outbox + Content distributions + Workflow authoring
+# SYS-4 Ops Vertical ACCEPTANCE — Outbox + Content distributions + Workflow authoring + RBAC role create
 
 ## Result
 
-`SYS_4_PASS` (Platform DLQ/replay) + `SYS_4_CONTENT_DISTRIBUTIONS_PASS` + `SYS_4_WORKFLOW_AUTHORING_PASS`. Not 全部商用. Not Tencent Cloud.
+`SYS_4_PASS` + `SYS_4_CONTENT_DISTRIBUTIONS_PASS` + `SYS_4_WORKFLOW_AUTHORING_PASS` + `SYS_4_RBAC_ROLE_CREATE_PASS`. Not 全部商用. Not Tencent Cloud.
 
 ## Delivered
 
-| Item                 | Detail                                                                                                               |
-| -------------------- | -------------------------------------------------------------------------------------------------------------------- |
-| Platform UI          | `/p/outbox` lists `needs_attention` dead letters and replays via existing APIs                                       |
-| Navigation           | Platform shell includes「Outbox 死信」                                                                               |
-| API reuse            | Outbox list/replay — no second API                                                                                   |
-| Content UI           | `/m/content` registers channel distributions (`pending_authorization`) via existing `POST .../distributions`         |
-| Workflow authoring UI| `/m/workflows` create+publish templates via existing `POST /workflows` + `POST .../publish`                          |
+| Item                  | Detail                                                                                                      |
+| --------------------- | ----------------------------------------------------------------------------------------------------------- |
+| Platform Outbox       | `/p/outbox` DLQ list + replay                                                                               |
+| Content distributions | `/m/content` registers pending-authorization channel distributions                                          |
+| Workflow authoring    | `/m/workflows` create+publish via existing workflow APIs                                                    |
+| RBAC role create      | `/m/roles-permissions` creates roles via `POST /api/v1/rbac/roles`; list accepts `tenant.manage`/`tenant.read` |
 
 ## Evidence
 
 - `tests/sys-4-platform-outbox.test.mjs` 1/1
 - `tests/sys-4-workflow-authoring.test.mjs` 1/1
+- `tests/sys-4-rbac-role-create.test.mjs` 1/1
 - `tests/page-m-013-api.test.mjs` 1/1
-- `tests/core-010-e2e.test.mjs` 1/1
 - `evidence/SYS-4/`
 
 ## Honest remainder
 
-Advanced versioning (new draft versions with complex condition editors) remains deeper multi-week work. Start/decide already wired. Full Role matrix E2E remains.
+Frozen role packs / Role matrix E2E and advanced workflow versioning remain multi-week.

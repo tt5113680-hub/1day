@@ -35,7 +35,7 @@
 
 **Systemic waves (D3) - SYS remainders:**
 
-SYS-4 workflow authoring + content distributions PASS; SYS-6 workflow/org write PASS. Continue: Role matrix E2E or advanced workflow versioning. No page-level patches. Not claimed as full commercial. Tencent Cloud out of scope (G).
+SYS-4 RBAC role create + workflow authoring + content distributions PASS; SYS-6 workflow/org write PASS. Continue: Role matrix E2E. No page-level patches. Not claimed as full commercial. Tencent Cloud out of scope (G).
 
 **Usage:** keep constructing until **90%-95%**, then new window. Do not stop early.
 

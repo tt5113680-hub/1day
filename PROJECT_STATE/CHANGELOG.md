@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## 2026-08-10 - SYS-4 RBAC role create UI PASS
+
+- Management `/m/roles-permissions` creates roles via existing `POST /api/v1/rbac/roles`; role list accepts `tenant.manage` as well as `tenant.read`.
+- Evidence: `SYS_4_ACCEPTANCE.md`, `evidence/SYS-4/`. Tests: `sys-4-rbac-role-create` 1/1. Not 全部商用.
+
 ## 2026-08-10 - SYS-4 workflow authoring UI PASS
 
 - Management `/m/workflows` creates and publishes workflow templates via existing `POST /api/v1/workflows` + publish; assignee picker uses organization-employees.

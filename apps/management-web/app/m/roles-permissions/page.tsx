@@ -50,7 +50,10 @@ export default function RolesPermissionsPage() {
     [selected, setSelected] = useState<Role | null>(null),
     [reason, setReason] = useState(''),
     [confirmed, setConfirmed] = useState(false),
-    [note, setNote] = useState('');
+    [note, setNote] = useState(''),
+    [createCode, setCreateCode] = useState(''),
+    [createName, setCreateName] = useState(''),
+    [busy, setBusy] = useState(false);
   const load = useCallback(async () => {
     if (!(await sessionApi.context())) return setState('forbidden');
     setState('loading');
@@ -69,6 +72,33 @@ export default function RolesPermissionsPage() {
     }
   }, []);
   useEffect(() => void load(), [load]);
+  const createRole = async () => {
+    if (!createCode.trim() || !createName.trim()) {
+      setNote('请填写角色编码与名称。');
+      return;
+    }
+    setBusy(true);
+    setNote('');
+    try {
+      const response = await sessionApi.request(`${api}/api/v1/rbac/roles`, {
+        method: 'POST',
+        headers: {
+          'content-type': 'application/json',
+          'idempotency-key': crypto.randomUUID(),
+        },
+        body: JSON.stringify({ code: createCode, name: createName }),
+      });
+      if (!response.ok) throw new Error('CREATE');
+      setCreateCode('');
+      setCreateName('');
+      setNote('角色已创建，可继续配置权限。');
+      await load();
+    } catch {
+      setNote('角色未创建，请确认编码唯一且具备经营管理权限。');
+    } finally {
+      setBusy(false);
+    }
+  };
   const toggle = (code: string) =>
     selected &&
     setSelected({
@@ -136,7 +166,7 @@ export default function RolesPermissionsPage() {
       <AdminPageHeader
         eyebrow="ONEDAY / 商户角色与权限"
         title="在变更前看清权限范围与成员影响"
-        description="高风险权限必须二次确认；最终校验、版本锁和审计均在服务端执行。"
+        description="可创建角色模板并变更权限；高风险权限必须二次确认；最终校验、版本锁和审计均在服务端执行。"
         actions={
           <Button tone="secondary" onClick={() => void load()}>
             刷新权限
@@ -148,6 +178,32 @@ export default function RolesPermissionsPage() {
           {note}
         </p>
       )}
+      <Card className={styles.create}>
+        <h2>创建角色</h2>
+        <div className={styles.createForm}>
+          <label>
+            编码
+            <input
+              aria-label="角色编码"
+              value={createCode}
+              onChange={(event) => setCreateCode(event.target.value)}
+              maxLength={80}
+            />
+          </label>
+          <label>
+            名称
+            <input
+              aria-label="角色名称"
+              value={createName}
+              onChange={(event) => setCreateName(event.target.value)}
+              maxLength={160}
+            />
+          </label>
+          <Button disabled={busy} onClick={() => void createRole()}>
+            创建角色
+          </Button>
+        </div>
+      </Card>
       <section className={styles.grid}>
         <Card className={styles.panel}>
           <h2>角色模板</h2>
