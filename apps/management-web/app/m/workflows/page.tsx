@@ -179,6 +179,80 @@ export default function WorkflowsPage() {
       setBusy(null);
     }
   };
+  const publishClonedVersion = async (template: Data['templates'][number]) => {
+    if (!template.published_version_id) {
+      setNote('该模板尚未发布，无法克隆新版本。');
+      return;
+    }
+    setBusy(`version-${template.id}`);
+    setNote('');
+    try {
+      const detailResponse = await sessionApi.request(`${api}/api/v1/workflows/${template.id}`, {
+        headers: {},
+      });
+      if (!detailResponse.ok) throw new Error('DETAIL');
+      const detail = (await detailResponse.json()).data as {
+        definition: { version: number; published_version_id: string | null };
+      };
+      const publishedId = detail.definition.published_version_id ?? template.published_version_id;
+      const versionResponse = await sessionApi.request(
+        `${api}/api/v1/workflows/${template.id}/versions/${publishedId}`,
+        { headers: {} },
+      );
+      if (!versionResponse.ok) throw new Error('VERSION');
+      const versionDetail = (await versionResponse.json()).data as {
+        steps: {
+          name: string;
+          type: string;
+          assigneeEmployeeId: string;
+          timeoutMinutes: number;
+          condition?: Record<string, unknown>;
+        }[];
+      };
+      const nextSteps = versionDetail.steps.map((step, index) => ({
+        name: index === versionDetail.steps.length - 1 ? `${step.name} · 修订` : step.name,
+        type: step.type,
+        assigneeEmployeeId: step.assigneeEmployeeId,
+        timeoutMinutes: step.timeoutMinutes,
+        ...(step.condition && Object.keys(step.condition).length
+          ? { condition: step.condition }
+          : {}),
+      }));
+      const createVersion = await sessionApi.request(
+        `${api}/api/v1/workflows/${template.id}/versions`,
+        {
+          method: 'POST',
+          headers: { 'content-type': 'application/json' },
+          body: JSON.stringify({
+            definitionVersion: detail.definition.version,
+            sourceVersionId: publishedId,
+            steps: nextSteps,
+          }),
+        },
+      );
+      if (!createVersion.ok) throw new Error('CREATE_VERSION');
+      const draft = (await createVersion.json()).data as {
+        id: string;
+        sequence: number;
+        definitionVersion: number;
+      };
+      const publish = await sessionApi.request(`${api}/api/v1/workflows/${template.id}/publish`, {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({
+          versionId: draft.id,
+          definitionVersion: draft.definitionVersion,
+        }),
+      });
+      if (!publish.ok) throw new Error('PUBLISH_VERSION');
+      setNote(`流程「${template.name}」已发布第 ${draft.sequence} 版，新实例将使用该版本。`);
+      await load();
+    } catch {
+      setNote('新版本未发布，请确认流程管理权限与已发布版本仍有效。');
+    } finally {
+      setBusy(null);
+    }
+  };
   const decide = async (approval: Data['approvals'][number], action: 'approve' | 'reject') => {
     setBusy(`${action}-${approval.id}`);
     setNote('');
@@ -237,7 +311,7 @@ export default function WorkflowsPage() {
       <AdminPageHeader
         eyebrow="ONEDAY / 商户运营流程"
         title="让每个流程实例都可定位、可推进"
-        description="创建并发布模板、启动实例与审批推进均复用既有流程写接口；不另造第二套 API。"
+        description="创建并发布模板、克隆新版本、启动实例与审批推进均复用既有流程写接口；不另造第二套 API。"
         actions={
           <label className={styles.filter}>
             实例状态
@@ -440,13 +514,22 @@ export default function WorkflowsPage() {
                   · 运行 {x.active_instances} · 超时 {x.timed_out_instances}
                 </small>
               </p>
-              <Button
-                tone="secondary"
-                disabled={!x.published_version_id || busy === `start-${x.id}`}
-                onClick={() => void startInstance(x)}
-              >
-                启动实例
-              </Button>
+              <div className={styles.actions}>
+                <Button
+                  tone="secondary"
+                  disabled={!x.published_version_id || busy === `start-${x.id}`}
+                  onClick={() => void startInstance(x)}
+                >
+                  启动实例
+                </Button>
+                <Button
+                  tone="secondary"
+                  disabled={!x.published_version_id || busy === `version-${x.id}`}
+                  onClick={() => void publishClonedVersion(x)}
+                >
+                  克隆发布新版本
+                </Button>
+              </div>
             </div>
           ))}
         </Panel>

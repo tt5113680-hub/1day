@@ -12,6 +12,7 @@
 | `POST /api/v1/workflows/:id/versions` | Optional `sourceVersionId` (default published) to clone; steps may override conditions |
 | Closed loop | Publish v1 → read steps → clone/edit → publish v2 → start instance on v2 with condition skip |
 | Denials | Stale `definitionVersion` 409; re-publish published version 404; invalid condition 400 |
+| Management UI | `/m/workflows` 「克隆发布新版本」reads version steps, clones, publishes via existing APIs |
 
 ## Evidence
 
