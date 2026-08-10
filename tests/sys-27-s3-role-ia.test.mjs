@@ -12,7 +12,7 @@ test('SYS-27: store-manager package deep-links existing Employee routes only', (
   assert.deepEqual(
     STORE_MANAGER_PACKAGE_ACTIONS.map((item) => ({ key: item.key, href: item.href })),
     [
-      { key: 'tasks', href: '/e/workbench' },
+      { key: 'tasks', href: '/e/tasks' },
       { key: 'leads', href: '/e/leads' },
       { key: 'redeem', href: '/e/workbench#membership-redeem' },
       { key: 'share', href: '/e/share' },

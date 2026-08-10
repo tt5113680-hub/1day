@@ -143,12 +143,18 @@ describe('menu DTO catalog filter', () => {
       'redeem',
       'share',
     ]);
+    expect(STORE_MANAGER_PACKAGE_ACTIONS.find((item) => item.key === 'tasks')?.href).toBe('/e/tasks');
     expect(STORE_MANAGER_PACKAGE_ACTIONS.find((item) => item.key === 'redeem')?.href).toBe(
       '/e/workbench#membership-redeem',
     );
     expect(PLATFORM_PRODUCT_HOMES.platform.homeHref).toBe('/p/dashboard');
     expect(PLATFORM_PRODUCT_HOMES.channel.homeHref).toBe('/ch/dashboard');
     expect(PLATFORM_PRODUCT_HOMES.circle.homeHref).toBe('/bc/dashboard');
+  });
+
+  it('routes Employee 任务 tab to task inbox (SYS-30)', () => {
+    const tasks = EMPLOYEE_MENU_CATALOG.find((item) => item.key === 'tasks');
+    expect(tasks?.href).toBe('/e/tasks');
   });
 
   it('isolates channel-only and circle-only shell modes from platform (SYS-28)', () => {

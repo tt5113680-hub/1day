@@ -1,0 +1,97 @@
+.page {
+  display: grid;
+  gap: 20px;
+  max-width: 920px;
+  margin: 0 auto;
+  padding: 24px 16px 96px;
+}
+.header {
+  display: grid;
+  gap: 8px;
+}
+.eyebrow {
+  margin: 0;
+  color: var(--od-text-muted);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+.header h1 {
+  margin: 0;
+  font-size: clamp(1.5rem, 4vw, 2rem);
+}
+.header p {
+  margin: 0;
+  color: var(--od-text-muted);
+}
+.feedback {
+  margin: 0;
+  padding: 10px 12px;
+  border-radius: var(--od-radius-sm);
+  background: var(--od-brand-100);
+  color: var(--od-brand-800, #1f4d2e);
+  font-size: 13px;
+  font-weight: 600;
+}
+.section {
+  display: grid;
+  gap: 10px;
+}
+.sectionHead {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+}
+.sectionHead h2 {
+  margin: 0;
+  font-size: 1.05rem;
+}
+.sectionHead span,
+.emptyLine,
+.note {
+  color: var(--od-text-muted);
+  font-size: 13px;
+}
+.emptyLine,
+.note {
+  margin: 0;
+  line-height: 1.5;
+}
+.task {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  justify-content: space-between;
+  padding: 14px;
+  border: 1px solid var(--od-border);
+  border-radius: var(--od-radius-md, 12px);
+  background: var(--od-surface);
+}
+.task h3 {
+  margin: 8px 0 4px;
+  font-size: 1rem;
+}
+.task p,
+.task strong {
+  margin: 0;
+  color: var(--od-text-muted);
+  line-height: 1.45;
+}
+.actions {
+  display: flex;
+  flex-shrink: 0;
+  gap: 8px;
+  align-items: center;
+}
+.actions a {
+  color: var(--od-brand-700);
+  font-size: 13px;
+  font-weight: 700;
+}
+@media (min-width: 700px) {
+  .page {
+    padding-bottom: 24px;
+  }
+}

@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## 2026-08-10 - SYS-30 Employee task inbox PASS
+
+- Employee menu「任务」now opens `/e/tasks` inbox (today + customer reminders) via existing workbench API; detail routes unchanged.
+- Evidence: `SYS_30_EMPLOYEE_TASK_INBOX_ACCEPTANCE.md`, `evidence/SYS-30/`. Unit 1/1 + menu-dto 15/15 + Playwright 1/1. Not 全部商用.
+
 ## 2026-08-10 - SYS-29 AdminShell role-package nav groups PASS
 
 - Management/Platform menu catalogs carry contiguous `group` tags; AdminShell renders section labels (经营运营/门店与商品/组织与权限/能力边界).

@@ -314,7 +314,7 @@ export const EMPLOYEE_MENU_CATALOG: MenuCatalogItem[] = [
   },
   {
     key: 'tasks',
-    href: '/e/workbench#today-title',
+    href: '/e/tasks',
     label: '任务',
     requireAny: ['task.read', 'task.manage'],
   },
@@ -344,7 +344,7 @@ export const STORE_MANAGER_MENU_ITEM: MenuItemDto = {
  * Deep-links only to existing Employee routes — no second API surface.
  */
 export const STORE_MANAGER_PACKAGE_ACTIONS: MenuItemDto[] = [
-  { key: 'tasks', href: '/e/workbench', label: '今日任务', group: 'store_manager' },
+  { key: 'tasks', href: '/e/tasks', label: '今日任务', group: 'store_manager' },
   { key: 'leads', href: '/e/leads', label: '线索客户', group: 'store_manager' },
   {
     key: 'redeem',

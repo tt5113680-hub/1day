@@ -61,7 +61,7 @@ Backend controllers exist and are matrix/API-proven; operators cannot operate th
 `ROLE_PRODUCT_MATRIX` freezes nine roles. Runtime chrome progress:
 
 - Consumer anonymous shell
-- Employee menu DTO + **SYS-27** desktop nav ≥700px + store-manager mode/package on `/e/store` (full nine-role packages still multi-week)
+- Employee menu DTO + **SYS-27** desktop nav ≥700px + store-manager mode/package on `/e/store` + **SYS-30** `/e/tasks` inbox (full nine-role packages still multi-week)
 - Management flat `tenant.manage` nav (**SYS-26** orphans closed; **SYS-29** role-package section groups; deeper nine-role packages remain)
 - Platform path-mode (`/p` `/ch` `/bc`) with **SYS-27** product switcher + role home strips and **SYS-28** channel/circle-only path isolation (deeper Channel/Circle commercial ops remain)
 
@@ -77,7 +77,7 @@ Backend controllers exist and are matrix/API-proven; operators cannot operate th
 | Terminal   | Honest bar | Structural gap                                                       |
 | ---------- | ---------- | -------------------------------------------------------------------- |
 | Consumer   | ~6/10      | Three IAs (entry/discovery/store); cream vs green tokens; fixed tabs |
-| Employee   | ~6.5/10    | Desktop nav ≥700px landed (SYS-27); task inbox depth remains         |
+| Employee   | ~7/10      | Desktop nav + task inbox (SYS-27/30); customer directory depth remains |
 | Management | ~6.5/10    | Role-package nav groups (SYS-29); thin `@oneday/ui` kit remains       |
 | Platform   | ~6/10      | Product switcher + role homes (SYS-27); enum bleed; intent connectors |
 
