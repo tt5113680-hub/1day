@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## 2026-08-10 - SYS-26 Management orphan IA discoverability PASS
+
+- Added employee-performance / AI suggestions / connectors / permission-audit entries to `MANAGEMENT_MENU_CATALOG` so existing Management pages are discoverable under `tenant.manage`.
+- Evidence: `SYS_26_MANAGEMENT_ORPHAN_IA_ACCEPTANCE.md`, `evidence/SYS-26/`. Unit 1/1 + menu-dto 11/11 + Playwright 1/1. Not 全部商用.
+
 ## 2026-08-10 - SYS-25 Generic external-actions catalog UX PASS
 
 - Added Management `/m/external-actions` + menu catalog entry for tenant-level list/create against existing `/api/v1/external-actions`; honest no-fake-delivery copy; store binding remains on `/m/stores`.

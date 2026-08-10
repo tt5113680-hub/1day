@@ -34,6 +34,10 @@ describe('menu DTO catalog filter', () => {
       'content',
       'page-builder',
       'organization',
+      'employee-performance',
+      'ai-suggestions',
+      'connectors',
+      'permission-audit',
     ]);
   });
 
@@ -59,6 +63,23 @@ describe('menu DTO catalog filter', () => {
     expect(
       filterMenuCatalog(MANAGEMENT_MENU_CATALOG, ['tenant.read']).map((item) => item.key),
     ).not.toContain('external-actions');
+  });
+
+  it('surfaces former Management orphan pages for tenant.manage only', () => {
+    const keys = filterMenuCatalog(MANAGEMENT_MENU_CATALOG, ['tenant.manage']).map(
+      (item) => item.key,
+    );
+    expect(keys).toEqual(
+      expect.arrayContaining([
+        'employee-performance',
+        'ai-suggestions',
+        'connectors',
+        'permission-audit',
+      ]),
+    );
+    expect(
+      filterMenuCatalog(MANAGEMENT_MENU_CATALOG, ['tenant.read']).map((item) => item.key),
+    ).not.toEqual(expect.arrayContaining(['connectors', 'ai-suggestions', 'permission-audit']));
   });
 
   it('exposes overview for customer.read without Management CRM entry', () => {

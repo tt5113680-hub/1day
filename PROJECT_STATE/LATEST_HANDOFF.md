@@ -8,26 +8,25 @@
 ## Current task - systemic commercial productization (D3)
 
 - branch: `hardening/COMMERCIAL-COMPLETION`
-- HEAD (pushed): tip `06d06ec`; safe feature `67a888e`
-- last_safe_commit: 67a888e
-- last_verified: SYS-25 Generic external-actions catalog PASS
-- current_task: human product-owner UI sign-off (do NOT auto-PASS) **or** scoped P1 after owner decision
-- status: `SYS_25_EXTERNAL_ACTIONS_PASS`; S1 islands closed; **not** claimed as full commercial
+- HEAD (pushed): tip PENDING_SYS26_PUSH
+- last_safe_commit: PENDING_SYS26_COMMIT
+- last_verified: SYS-26 Management orphan IA discoverability PASS
+- current_task: human product-owner UI sign-off (do NOT auto-PASS) **or** S3 Employee/Platform IA depth
+- status: `SYS_26_MANAGEMENT_ORPHAN_IA_PASS`; **not** claimed as full commercial
 - blocker: null
 - progress: P0 26/26
 - working_tree: clean after commit
 
-### Completed this window (verified + pushed)
+### Completed this window (verified)
 
-1. SYS-23 attribution menu discoverability (`d09bcc4`)
-2. SYS-24 customer merge/transfer UX (`1c95b93`)
-3. SYS-25 external-actions catalog (`67a888e`)
+1. SYS-25 external-actions catalog (`67a888e`)
+2. SYS-26 Management orphan IA (this commit)
 
 ### Next remainders (honest)
 
-- **Product-owner UI sign-off (human)** - do not auto-PASS; required for external pilot claim
+- **Product-owner UI sign-off (human)** - do not auto-PASS
+- Optional eng: Employee store-manager chrome depth; Platform product homes (S3)
 - Free-form DAG canvas - **deferred**
-- Scoped P1 only after product-owner decision
 - No Tencent Cloud (G). No full-commercial claim.
 
 ### Owner cooperation (front-loaded)
@@ -48,8 +47,8 @@ Read and execute:
 6. PROJECT_STATE/SYSTEMIC_COMMERCIAL_GAP_ANALYSIS.md
 7. git status
 
-Status: SYS-25 PASS (safe 67a888e; tip 896f191); S1 islands closed; P0 26/26; clean tree.
-Next: human PRODUCT_OWNER_UI_ACCEPTANCE (do NOT auto-sign). Eng may assist pilot sandbox only.
+Status: SYS-26 PASS; P0 26/26; clean tree.
+Next: human PRODUCT_OWNER_UI_ACCEPTANCE (do NOT auto-sign) or S3 Employee/Platform IA depth.
 No page-level patches. Writable root only D:\ONEDAY_V3. Do not claim full commercial. No Tencent Cloud.
 A-H granted. Continue until 90%-95% usage, then new window; do not stop mid-run.
 ```

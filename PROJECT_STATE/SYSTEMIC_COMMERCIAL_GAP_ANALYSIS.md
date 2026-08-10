@@ -62,7 +62,7 @@ Backend controllers exist and are matrix/API-proven; operators cannot operate th
 
 - Consumer anonymous shell
 - Employee flat ≤5 tabs (no store-manager mode)
-- Management flat `tenant.manage` nav (attribution/connectors/AI/audit orphaned from IA)
+- Management flat `tenant.manage` nav (**SYS-26** closed connectors/AI/audit/employee-process orphans; deeper role packages remain)
 - Platform path-mode (`/p` `/ch` `/bc`) without role home / switcher
 
 ### S4 — Config-driven Storefront incomplete vs HIGH_FIDELITY (P1)

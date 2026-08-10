@@ -107,10 +107,34 @@ export const MANAGEMENT_MENU_CATALOG: MenuCatalogItem[] = [
     requireAny: ['tenant.manage', 'employee.manage', 'organization.read', 'organization.manage'],
   },
   {
+    key: 'employee-performance',
+    href: '/m/employee-process-performance',
+    label: '员工过程',
+    requireAny: ['tenant.manage'],
+  },
+  {
+    key: 'ai-suggestions',
+    href: '/m/ai-suggestions',
+    label: 'AI 建议',
+    requireAny: ['tenant.manage'],
+  },
+  {
+    key: 'connectors',
+    href: '/m/connectors',
+    label: '连接器意图',
+    requireAny: ['tenant.manage'],
+  },
+  {
     key: 'roles',
     href: '/m/roles-permissions',
     label: '角色与权限',
     requireAll: ['tenant.manage', 'organization.manage'],
+  },
+  {
+    key: 'permission-audit',
+    href: '/m/permission-audit',
+    label: '权限审计',
+    requireAny: ['tenant.manage'],
   },
   {
     key: 'settings',
