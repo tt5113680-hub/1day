@@ -65,6 +65,7 @@
 - [x] SYS-29 AdminShell nav groups PASS — Management/Platform role-package section labels via menu `group`; see `SYS_29_ADMIN_NAV_GROUPS_ACCEPTANCE.md`.
 - [x] SYS-30 Employee task inbox PASS — `/e/tasks` list via workbench API; menu 任务 deep-link; see `SYS_30_EMPLOYEE_TASK_INBOX_ACCEPTANCE.md`.
 - [x] SYS-31 Employee customer directory PASS — scoped `/e/customers` list API+UI; menu 客户 deep-link; see `SYS_31_EMPLOYEE_CUSTOMER_DIRECTORY_ACCEPTANCE.md`.
+- [x] SYS-32 External-actions lifecycle PASS — `PUT` update + `DELETE` soft-archive + Management edit/archive UX; see `SYS_32_EXTERNAL_ACTIONS_LIFECYCLE_ACCEPTANCE.md`.
 - [ ] HUMAN-PILOT-HANDOFF / product-owner UI acceptance — local sandbox refreshed through migration `054` + consult CTA bindings + walkthrough shots (Playwright 4/4); **human sign-off still required**; not auto-claimed as 全部商用. Optional scoped P1 only after product-owner decision.
 
 ## Current product-owner acceptance

@@ -1,4 +1,14 @@
-import { BadRequestException, Body, Controller, Get, Headers, Param, Post } from '@nestjs/common';
+import {
+  BadRequestException,
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Headers,
+  Param,
+  Post,
+  Put,
+} from '@nestjs/common';
 import { AuthorizationService } from './authorization.service';
 import { ExternalActionService } from './external-action.service';
 const meta = (r?: string) => {
@@ -29,6 +39,28 @@ export class ExternalActionController {
     const c = await this.auth.require(a, 'action.manage', t),
       m = meta(r);
     return { data: await this.actions.create(c, b, k ?? '', m.requestId), meta: m, error: null };
+  }
+  @Put(':id') async update(
+    @Headers('authorization') a: string | undefined,
+    @Headers('x-tenant-context') t: string | undefined,
+    @Headers('x-request-id') r: string | undefined,
+    @Param('id') id: string,
+    @Body() b: Record<string, unknown>,
+  ) {
+    const c = await this.auth.require(a, 'action.manage', t),
+      m = meta(r);
+    return { data: await this.actions.update(c, id, b, m.requestId), meta: m, error: null };
+  }
+  @Delete(':id') async archive(
+    @Headers('authorization') a: string | undefined,
+    @Headers('x-tenant-context') t: string | undefined,
+    @Headers('x-request-id') r: string | undefined,
+    @Param('id') id: string,
+    @Body() b: Record<string, unknown>,
+  ) {
+    const c = await this.auth.require(a, 'action.manage', t),
+      m = meta(r);
+    return { data: await this.actions.archive(c, id, b, m.requestId), meta: m, error: null };
   }
   @Post(':id/open') async open(
     @Headers('authorization') a: string | undefined,

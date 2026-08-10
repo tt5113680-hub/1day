@@ -21,4 +21,4 @@
 
 ## Honest remainder
 
-API surface is list/create/open (no update/delete endpoints exist). Product-owner UI sign-off remains human. Free-form DAG deferred. Not claimed as full commercial.
+Closed by SYS-32 (`PUT` update + `DELETE` soft-archive). Product-owner UI sign-off remains human. Free-form DAG deferred. Not claimed as full commercial.

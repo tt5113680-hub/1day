@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## 2026-08-10 - SYS-32 External-actions lifecycle PASS
+
+- Added `PUT /api/v1/external-actions/:id` (optimistic version update) and `DELETE` soft-archive (frees code for recreate).
+- Management `/m/external-actions` now supports per-card 编辑 / 归档; store binding remains on `/m/stores`.
+- Evidence: `SYS_32_EXTERNAL_ACTIONS_LIFECYCLE_ACCEPTANCE.md`, `evidence/SYS-32/`. API 1/1 + Playwright 1/1. Not 全部商用.
+
 ## 2026-08-10 - SYS-31 Employee customer directory PASS
 
 - Added scoped `GET /api/v1/employee/customers` + Employee `/e/customers` directory; menu「客户」now opens the directory (获客池 remains `/e/leads`).

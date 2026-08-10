@@ -5,7 +5,7 @@
 
 ## Status
 
-SYS-1…SYS-31 PASS (Employee customer directory landed).
+SYS-1…SYS-32 PASS (external-actions update/archive lifecycle landed; closes SYS-25 honest remainder).
 
 ## Queue
 
@@ -13,7 +13,6 @@ SYS-1…SYS-31 PASS (Employee customer directory landed).
 - Full nine-role ROLE_PRODUCT_MATRIX packages — multi-week remainder
 - Free-form DAG canvas — deferred
 - Scoped P1 only after product-owner decision
-- Note: external-actions API has list/create/open only (no update/delete)
 
 ## Honest day boundary
 

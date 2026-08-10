@@ -91,6 +91,19 @@
   word-break: break-all;
 }
 
+.editPanel {
+  margin-top: 14px;
+  display: grid;
+  gap: 12px;
+}
+
+.cardActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 14px;
+}
+
 .centered {
   display: grid;
   min-height: 70vh;

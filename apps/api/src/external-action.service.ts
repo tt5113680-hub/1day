@@ -16,36 +16,65 @@ const text = (v: unknown, n: number) => {
     throw new BadRequestException('VALIDATION_ERROR');
   return v.trim();
 };
+const versionOf = (v: unknown) => {
+  if (typeof v !== 'number' || !Number.isInteger(v) || v < 1)
+    throw new BadRequestException('VALIDATION_ERROR');
+  return v;
+};
 const correlation = (r: string) => (UUID.test(r) ? r : randomUUID());
-function input(b: Record<string, unknown>) {
-  const actionType = text(b.actionType, 32);
-  if (!TYPES.has(actionType)) throw new BadRequestException('VALIDATION_ERROR');
-  const common = {
-    code: text(b.code, 80),
-    name: text(b.name, 120),
-    actionType,
-    platform: b.platform === undefined ? null : text(b.platform, 64),
-  };
+function linkUrl(targetUrl: string) {
+  let url: URL;
+  try {
+    url = new URL(targetUrl);
+  } catch {
+    throw new BadRequestException('VALIDATION_ERROR');
+  }
+  if (!['https:', 'http:'].includes(url.protocol) || url.username || url.password)
+    throw new BadRequestException('VALIDATION_ERROR');
+  return url.toString();
+}
+function typedFields(actionType: string, b: Record<string, unknown>, platform: string | null) {
   if (actionType === 'link') {
-    const targetUrl = text(b.targetUrl, 2000);
-    let url: URL;
-    try {
-      url = new URL(targetUrl);
-    } catch {
-      throw new BadRequestException('VALIDATION_ERROR');
-    }
-    if (!['https:', 'http:'].includes(url.protocol) || url.username || url.password)
-      throw new BadRequestException('VALIDATION_ERROR');
-    return { ...common, targetUrl: url.toString(), appId: null, path: null };
+    return {
+      targetUrl: linkUrl(text(b.targetUrl, 2000)),
+      appId: null as string | null,
+      path: null as string | null,
+      platform,
+    };
   }
   if (actionType === 'mini_program') {
     const appId = text(b.miniProgramAppId, 128),
       path = text(b.miniProgramPath, 1024);
     if (!/^\/[^\s]*$/.test(path)) throw new BadRequestException('VALIDATION_ERROR');
-    return { ...common, targetUrl: null, appId, path };
+    return { targetUrl: null as string | null, appId, path, platform };
   }
-  if (!common.platform) throw new BadRequestException('VALIDATION_ERROR');
-  return { ...common, targetUrl: null, appId: null, path: null };
+  if (!platform) throw new BadRequestException('VALIDATION_ERROR');
+  return {
+    targetUrl: null as string | null,
+    appId: null as string | null,
+    path: null as string | null,
+    platform,
+  };
+}
+function input(b: Record<string, unknown>) {
+  const actionType = text(b.actionType, 32);
+  if (!TYPES.has(actionType)) throw new BadRequestException('VALIDATION_ERROR');
+  const platform = b.platform === undefined ? null : text(b.platform, 64);
+  return {
+    code: text(b.code, 80),
+    name: text(b.name, 120),
+    actionType,
+    ...typedFields(actionType, b, platform),
+  };
+}
+function updateInput(actionType: string, b: Record<string, unknown>) {
+  if (!TYPES.has(actionType)) throw new BadRequestException('VALIDATION_ERROR');
+  const platform = b.platform === undefined || b.platform === null ? null : text(b.platform, 64);
+  return {
+    name: text(b.name, 120),
+    version: versionOf(b.version),
+    ...typedFields(actionType, b, platform),
+  };
 }
 @Injectable()
 export class ExternalActionService implements OnModuleDestroy {
@@ -84,6 +113,95 @@ export class ExternalActionService implements OnModuleDestroy {
       await this.event(q, c, 'external_action.created.v1', id, r, row);
       return row;
     });
+  }
+  async update(c: OrganizationContext, id: string, b: Record<string, unknown>, r: string) {
+    if (!UUID.test(id)) throw new BadRequestException('VALIDATION_ERROR');
+    const q = await this.pool.connect();
+    try {
+      await q.query('begin');
+      const existing = (
+        await q.query(
+          'select * from external_actions where id=$1 and tenant_id=$2 and status=$3 and deleted_at is null for update',
+          [id, c.tenantId, 'active'],
+        )
+      ).rows[0];
+      if (!existing) throw new NotFoundException('NOT_FOUND');
+      const i = updateInput(String(existing.action_type), b);
+      const result = await q.query(
+        `update external_actions
+         set name=$1,target_url=$2,mini_program_app_id=$3,mini_program_path=$4,platform=$5,
+             version=version+1,updated_at=now(),updated_by=$6
+         where id=$7 and tenant_id=$8 and deleted_at is null and version=$9
+         returning id,code,name,action_type,target_url,mini_program_app_id,mini_program_path,platform,status,version`,
+        [
+          i.name,
+          i.targetUrl,
+          i.appId,
+          i.path,
+          i.platform,
+          c.userId,
+          id,
+          c.tenantId,
+          i.version,
+        ],
+      );
+      if (!result.rowCount) throw new ConflictException('CONFLICT');
+      const row = result.rows[0];
+      await this.audit(q, c, 'external_action.updated', id, r, row);
+      await this.event(q, c, 'external_action.updated.v1', id, r, row);
+      await q.query('commit');
+      return row;
+    } catch (e) {
+      await q.query('rollback');
+      throw e;
+    } finally {
+      q.release();
+    }
+  }
+  async archive(c: OrganizationContext, id: string, b: Record<string, unknown>, r: string) {
+    if (!UUID.test(id)) throw new BadRequestException('VALIDATION_ERROR');
+    const expected = versionOf(b.version);
+    const q = await this.pool.connect();
+    try {
+      await q.query('begin');
+      const existing = (
+        await q.query(
+          'select * from external_actions where id=$1 and tenant_id=$2 and status=$3 and deleted_at is null for update',
+          [id, c.tenantId, 'active'],
+        )
+      ).rows[0];
+      if (!existing) throw new NotFoundException('NOT_FOUND');
+      // Free tenant+code unique constraint so operators can recreate the same code later.
+      const freedCode = `${String(existing.code).slice(0, 48)}__archived__${String(id).slice(0, 8)}`.slice(
+        0,
+        80,
+      );
+      const result = await q.query(
+        `update external_actions
+         set status='archived',deleted_at=now(),code=$1,version=version+1,updated_at=now(),updated_by=$2
+         where id=$3 and tenant_id=$4 and deleted_at is null and version=$5
+         returning id,code,name,action_type,target_url,mini_program_app_id,mini_program_path,platform,status,version,deleted_at`,
+        [freedCode, c.userId, id, c.tenantId, expected],
+      );
+      if (!result.rowCount) throw new ConflictException('CONFLICT');
+      const row = result.rows[0];
+      await this.audit(q, c, 'external_action.archived', id, r, row);
+      await this.event(q, c, 'external_action.archived.v1', id, r, row);
+      await q.query('commit');
+      return row;
+    } catch (e) {
+      await q.query('rollback');
+      if (
+        typeof e === 'object' &&
+        e !== null &&
+        'code' in e &&
+        (e as { code: string }).code === '23505'
+      )
+        throw new ConflictException('CONFLICT');
+      throw e;
+    } finally {
+      q.release();
+    }
   }
   async open(c: OrganizationContext, id: string, b: Record<string, unknown>, r: string) {
     if (!UUID.test(id)) throw new BadRequestException('VALIDATION_ERROR');

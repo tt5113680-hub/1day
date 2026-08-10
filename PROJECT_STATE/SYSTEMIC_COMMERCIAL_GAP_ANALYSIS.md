@@ -41,7 +41,7 @@ Backend controllers exist and are matrix/API-proven; operators cannot operate th
 | Customer merge / identity / transfer | Customer + attribution APIs              | **CLOSED (SYS-24)** detail transfer/approve/merge UX; list batch transfer already existed |
 | Result/order/evidence/verification   | Result-evidence APIs                     | **MOSTLY CLOSED** Consumer process + Mgmt customer read; deep order UX remains P1 |
 | Membership wallet                    | `GET consumer/memberships/wallet`        | **CLOSED (SYS-2)** Consumer member session wallet call                            |
-| Generic external-actions CRUD        | `/external-actions`                      | **CLOSED (SYS-25)** Management catalog list/create; store bind remains `/m/stores` |
+| Generic external-actions CRUD        | `/external-actions`                      | **CLOSED (SYS-25/32)** Management catalog list/create/update/archive; store bind remains `/m/stores` |
 | RBAC role create / role packs        | RBAC API                                 | **CLOSED (SYS-4)** `/m/roles-permissions` role create                             |
 | Management attribution IA            | Attribution APIs + `/m/attribution` page | **CLOSED (SYS-23)** `MANAGEMENT_MENU_CATALOG.attribution` for `tenant.manage`     |
 
