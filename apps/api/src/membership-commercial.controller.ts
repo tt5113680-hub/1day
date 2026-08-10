@@ -137,6 +137,46 @@ export class MembershipCommercialController {
     };
   }
 
+  @Post('management/memberships/:id/revokes')
+  async revoke(
+    @Param('id') id: string,
+    @Headers('authorization') a: string | undefined,
+    @Headers('x-tenant-context') t: string | undefined,
+    @Headers('x-request-id') r: string | undefined,
+    @Headers('idempotency-key') key: string | undefined,
+    @Body() body: Record<string, unknown>,
+  ) {
+    const context = await this.managementOperatorContext(a, t, r);
+    const storeId = await this.memberships.enrollmentStoreId(context.tenantId, id);
+    if (!storeId) throw new NotFoundException('NOT_FOUND');
+    await this.dataScopes.requireStoreWriteScope(
+      context.tenantId,
+      context.userId,
+      storeId,
+      context.permissionCodes,
+    );
+    return {
+      data: await this.memberships.revoke(context, id, body, key ?? ''),
+      meta: { requestId: r },
+      error: null,
+    };
+  }
+
+  @Get('management/memberships/:id/ledger')
+  async ledger(
+    @Param('id') id: string,
+    @Headers('authorization') a: string | undefined,
+    @Headers('x-tenant-context') t: string | undefined,
+    @Headers('x-request-id') r: string | undefined,
+  ) {
+    const context = await this.managementOperatorContext(a, t, r);
+    return {
+      data: await this.memberships.ledger(context, id, context.storeIds),
+      meta: { requestId: r },
+      error: null,
+    };
+  }
+
   @Post('employee/memberships/redeem')
   async redeem(
     @Headers('authorization') a: string | undefined,

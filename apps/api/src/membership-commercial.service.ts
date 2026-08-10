@@ -326,6 +326,74 @@ export class MembershipCommercialService implements OnModuleDestroy {
       `grant:${key}`,
     );
   }
+  async revoke(
+    context: OrganizationContext,
+    enrollmentId: string,
+    body: Record<string, unknown>,
+    key: string,
+  ) {
+    if (!key.trim() || !Number.isInteger(body.quantity) || Number(body.quantity) < 1)
+      throw new BadRequestException('VALIDATION_ERROR');
+    return this.change(
+      context,
+      enrollmentId,
+      String(body.benefitId),
+      -Number(body.quantity),
+      `revoke:${key}`,
+    );
+  }
+  async ledger(context: OrganizationContext, enrollmentId: string, storeIds: string[] | null) {
+    if (!UUID.test(enrollmentId)) throw new BadRequestException('VALIDATION_ERROR');
+    const enrollment = (
+      await this.pool.query(
+        `select e.id,e.member_code,e.store_id,c.display_name
+         from membership_enrollments e
+         join customers c on c.id=e.customer_id and c.tenant_id=e.tenant_id
+         where e.id=$1 and e.tenant_id=$2 and e.deleted_at is null`,
+        [enrollmentId, context.tenantId],
+      )
+    ).rows[0];
+    if (!enrollment) throw new NotFoundException('NOT_FOUND');
+    if (storeIds !== null && !storeIds.includes(String(enrollment.store_id)))
+      throw new NotFoundException('NOT_FOUND');
+    const entries = (
+      await this.pool.query(
+        `select l.id,l.benefit_id,b.title benefit_title,l.entry_type,l.quantity,l.balance_after,
+                l.business_reference,l.created_at
+         from member_benefit_ledger l
+         join store_benefits b on b.id=l.benefit_id and b.tenant_id=l.tenant_id
+         where l.tenant_id=$1 and l.enrollment_id=$2 and l.deleted_at is null
+         order by l.created_at desc, l.id desc
+         limit 100`,
+        [context.tenantId, enrollmentId],
+      )
+    ).rows;
+    const balances = (
+      await this.pool.query(
+        `select b.id benefit_id,b.title,coalesce(sum(l.quantity),0)::int balance
+         from store_benefits b
+         left join member_benefit_ledger l
+           on l.benefit_id=b.id and l.tenant_id=b.tenant_id and l.enrollment_id=$2 and l.deleted_at is null
+         where b.tenant_id=$1 and b.store_id=$3 and b.status='active' and b.deleted_at is null
+         group by b.id
+         having coalesce(sum(l.quantity),0) <> 0 or b.id in (
+           select benefit_id from member_benefit_ledger
+           where tenant_id=$1 and enrollment_id=$2 and deleted_at is null
+         )
+         order by b.title`,
+        [context.tenantId, enrollmentId, enrollment.store_id],
+      )
+    ).rows;
+    return {
+      enrollment: {
+        id: enrollment.id,
+        memberCode: enrollment.member_code,
+        displayName: enrollment.display_name,
+      },
+      balances,
+      entries,
+    };
+  }
   async redeem(context: OrganizationContext, body: Record<string, unknown>, key: string) {
     const code = String(body.memberCode ?? '').toUpperCase();
     if (!/^[A-F0-9]{12}$/.test(code) || !key.trim())
@@ -392,17 +460,19 @@ export class MembershipCommercialService implements OnModuleDestroy {
           )
         ).rows[0].value,
       );
-      if (quantity < 0 && balance < 1) throw new ConflictException('INSUFFICIENT_BENEFIT');
+      if (quantity < 0 && balance < Math.abs(quantity))
+        throw new ConflictException('INSUFFICIENT_BENEFIT');
+      const entryType = quantity > 0 ? 'grant' : reference.startsWith('revoke:') ? 'revoke' : 'redeem';
       const data = (
         await client.query(
-          'insert into member_benefit_ledger(id,tenant_id,enrollment_id,benefit_id,store_id,entry_type,quantity,balance_after,business_reference,created_by,updated_by) values($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$10) returning id,balance_after',
+          'insert into member_benefit_ledger(id,tenant_id,enrollment_id,benefit_id,store_id,entry_type,quantity,balance_after,business_reference,created_by,updated_by) values($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$10) returning id,balance_after,entry_type,quantity',
           [
             randomUUID(),
             context.tenantId,
             enrollmentId,
             benefitId,
             enrollment.store_id,
-            quantity > 0 ? 'grant' : 'redeem',
+            entryType,
             quantity,
             balance + quantity,
             reference,
@@ -410,12 +480,24 @@ export class MembershipCommercialService implements OnModuleDestroy {
           ],
         )
       ).rows[0];
+      const auditAction =
+        entryType === 'grant'
+          ? 'membership.benefit_granted'
+          : entryType === 'revoke'
+            ? 'membership.benefit_revoked'
+            : 'membership.benefit_redeemed';
+      const eventType =
+        entryType === 'grant'
+          ? 'membership.benefit.granted.v1'
+          : entryType === 'revoke'
+            ? 'membership.benefit.revoked.v1'
+            : 'membership.benefit.redeemed.v1';
       await this.receipt(
         client,
         context.tenantId,
         context.userId,
-        quantity > 0 ? 'membership.benefit_granted' : 'membership.benefit_redeemed',
-        quantity > 0 ? 'membership.benefit.granted.v1' : 'membership.benefit.redeemed.v1',
+        auditAction,
+        eventType,
         enrollmentId,
         { ...data, benefitId },
       );

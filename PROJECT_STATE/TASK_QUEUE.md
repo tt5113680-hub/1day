@@ -67,7 +67,8 @@
 - [x] SYS-31 Employee customer directory PASS — scoped `/e/customers` list API+UI; menu 客户 deep-link; see `SYS_31_EMPLOYEE_CUSTOMER_DIRECTORY_ACCEPTANCE.md`.
 - [x] SYS-32 External-actions lifecycle PASS — `PUT` update + `DELETE` soft-archive + Management edit/archive UX; see `SYS_32_EXTERNAL_ACTIONS_LIFECYCLE_ACCEPTANCE.md`.
 - [x] SYS-33 Employee membership redeem PASS — `/e/memberships` first-class redeem + store-manager package deep-link; see `SYS_33_EMPLOYEE_MEMBERSHIP_REDEEM_ACCEPTANCE.md`.
-- [ ] HUMAN-PILOT-HANDOFF / product-owner UI acceptance — local sandbox refreshed through migration `054` + consult CTA bindings + walkthrough shots (Playwright 4/4); **human sign-off still required**; not auto-claimed as 全部商用. Optional scoped P1 only after product-owner decision.
+- [x] SYS-34 Membership ledger + revoke PASS — Management ledger timeline + revoke API/UI; see `SYS_34_MEMBERSHIP_LEDGER_ACCEPTANCE.md`.
+- [ ] HUMAN-PILOT-HANDOFF / product-owner UI acceptance — local sandbox refreshed through migration `054` + consult CTA bindings + walkthrough shots (Playwright 4/4); **human sign-off still required**; not auto-claimed as 全部商用. Phase-1 P1-C blocked until owner lifts G.
 
 ## Current product-owner acceptance
 
