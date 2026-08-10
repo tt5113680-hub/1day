@@ -1,4 +1,4 @@
-﻿# LATEST_HANDOFF
+# LATEST_HANDOFF
 
 ## Executor
 
@@ -8,7 +8,7 @@
 ## Current task - systemic commercial productization (D3)
 
 - branch: `hardening/COMMERCIAL-COMPLETION`
-- HEAD (pushed): tip TBD
+- HEAD (pushed): tip 27d1ea8
 - last_safe_commit: 6d32d6e
 - last_verified: SYS-30 Employee task inbox PASS
 - current_task: human product-owner UI sign-off (do NOT auto-PASS) **or** scoped P1 after owner decision
