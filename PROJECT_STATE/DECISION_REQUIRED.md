@@ -28,8 +28,13 @@
 | Decision                                      | Default if blocked                                                 |
 | --------------------------------------------- | ------------------------------------------------------------------ |
 | Product-owner Consumer UI visual sign-off     | Does not block Batch 4 technical PASS; blocks external pilot claim |
-| Public HTTPS pilot on Tencent Cloud           | STOP — phase G says not this phase                                 |
+| Public HTTPS pilot on Tencent Cloud           | STOP until owner **explicitly lifts G** and supplies cloud inventory (see `PHASE1_COMMERCIAL_CLOSED_LOOP_PLAN.md`) |
 | Change PRODUCT_FREEZE / claim SaaS commercial | STOP — need explicit owner decision                                |
+
+## Owner intent (2026-08-10, not yet formal G lift)
+
+Owner directed Phase-1 goal = **usable commercial closed loop for real customer trial**, including public HTTPS and promotion-grade visual baseline; non-essential deferred to v2.  
+Cloud account/domain/cert may have been shared in prior chats — **nothing is in this repo** (correct). Agent must collect checklist in `PHASE1_COMMERCIAL_CLOSED_LOOP_PLAN.md` §2 and must **not** start public deploy until owner replies with explicit **「授权公网 HTTPS / 腾讯云试点」** plus missing inventory.
 
 ## Owner cooperation protocol (2026-08-10)
 
