@@ -1392,11 +1392,64 @@ export interface AgentMerchantAffiliationsTable {
   version: Generated<number>;
 }
 
+export interface AgentQuotasTable {
+  id: string;
+  tenant_id: string;
+  agent_id: string;
+  merchant_quota: number;
+  status: string;
+  created_at: Timestamp;
+  created_by: string | null;
+  updated_at: Timestamp;
+  updated_by: string | null;
+  deleted_at: Timestamp | null;
+  version: Generated<number>;
+}
+
+export interface AgentSettlementsTable {
+  id: string;
+  tenant_id: string;
+  agent_id: string;
+  period_code: string;
+  period_start: string;
+  period_end: string;
+  settlement_status: string;
+  amount_cents: string | number;
+  status: string;
+  created_at: Timestamp;
+  created_by: string | null;
+  updated_at: Timestamp;
+  updated_by: string | null;
+  deleted_at: Timestamp | null;
+  version: Generated<number>;
+}
+
+export interface AgentOnboardingApprovalsTable {
+  id: string;
+  tenant_id: string;
+  agent_id: string;
+  merchant_tenant_id: string;
+  approval_status: string;
+  requested_by: string | null;
+  approved_by: string | null;
+  approved_at: Timestamp | null;
+  status: string;
+  created_at: Timestamp;
+  created_by: string | null;
+  updated_at: Timestamp;
+  updated_by: string | null;
+  deleted_at: Timestamp | null;
+  version: Generated<number>;
+}
+
 export interface Database {
   tenants: TenantsTable;
   agent_regions: AgentRegionsTable;
   platform_agents: PlatformAgentsTable;
   agent_merchant_affiliations: AgentMerchantAffiliationsTable;
+  agent_quotas: AgentQuotasTable;
+  agent_settlements: AgentSettlementsTable;
+  agent_onboarding_approvals: AgentOnboardingApprovalsTable;
   sync_notifications: SyncNotificationsTable;
   users: UsersTable;
   memberships: MembershipsTable;

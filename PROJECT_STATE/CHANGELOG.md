@@ -1,5 +1,21 @@
 # CHANGELOG
 
+## 2026-08-11 - G1-W∞ agent 深层运营（结算 / 配额 / 审批）PASS
+
+- Migration `057_agent_operations.ts`（注册 migrator 057）: `agent_quotas`（代理商入驻配额 merchant_quota + 唯一 tenant+agent）、`agent_settlements`（结算期 period_code/start/end/status/amount_cents + 唯一 tenant+agent+period）、`agent_onboarding_approvals`（商户入驻开通审批 pending/approved/rejected + 唯一 agent+merchant）。真实基建，无演示 seed。
+- `PlatformAgentService`/`Controller` 扩展:
+  - `POST /api/v1/platform/agents/:id/quota` — 设定/更新入驻配额（不得小于已用商户数，400）
+  - `POST /api/v1/platform/agents/:id/settlements` — 开启结算期（重复 period 409）
+  - `POST /api/v1/platform/agents/settlements/:settlementId/finalize` — 按已归属商户数 × 每商户应收结算并关闭（重复 409）
+  - `POST /api/v1/platform/agents/:id/approvals` — 发起入驻审批（重复 409）
+  - `POST /api/v1/platform/agents/approvals/:approvalId/decide` — 通过（自动归属商户）/ 驳回（重复 409）
+  - `GET /api/v1/platform/agents` 投影扩展 `quotas/settlements/approvals`；读写权限沿用 `platform.read`/`platform.manage`
+- Platform PC `/p/agents` 深层运营区: 配额面板、周期结算面板（起止日期 + 每商户应收）、入驻审批面板；结算记录卡（结算中/已结算 + 结算按钮）、审批记录卡（待审批通过/驳回）；代理树卡片展示「配额 X 席 · 已用 Y 席」。全 `--od-*` token。
+- Gates: typecheck 20/20, build 20/20（platform-web 含 `/p/agents`）, `page-p-agent-ops` 1/1（L2: 配额/低于已用 400/开结算/重复 409/结算 1 商户 10000 分/重申 409/审批/重复 409/通过自动归属/重申 409/投影 quotas+settlements+approvals+merchantCount 2/DB 1-1-1/401）, `page-p-agents` 1/1 回归, menu-dto 17/17 + platform-shell-tokens 2/2, sys-6-network-packs+sys-29+sys-28+page-p-004+channel-001 9/9。
+- Pre-existing unrelated failures remain: `tokens.vitest.ts`、`storefront-renderer.vitest.ts`（design-token `brand-800` 投影，本切片未触碰）。
+- Not 全部商用 / 未接美团实时结算配额审批 / 未代签 owner UI。Next: 续 W∞ 逐页 per inventory.
+- Evidence: `evidence/G1-MEITUAN-PARITY/WINF/ACCEPTANCE.md`.
+
 ## 2026-08-11 - G1-W6 省市区代理（MP-01~03, R5）PASS
 
 - Migration `056_geo_agent_tree.ts`（注册进 migrator 056）: `agent_regions`（province/city/district + parent 层级）、`platform_agents`（代理商绑定区域 + agent_level + parent_agent_id）、`agent_merchant_affiliations`（商户入驻归属）；seed 演示地理层级（广东省→广州市→天河区，TEST ONLY）。

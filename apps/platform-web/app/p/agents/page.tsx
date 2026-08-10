@@ -44,11 +44,41 @@ type Affiliation = {
   regionName: string;
 };
 type MerchantPool = { tenantId: string; slug: string; name: string; status: string };
+type Quota = {
+  id: string;
+  agentId: string;
+  merchantQuota: number;
+  usedMerchants: number;
+};
+type Settlement = {
+  id: string;
+  agentId: string;
+  agentName: string;
+  regionName: string;
+  periodCode: string;
+  periodStart: string;
+  periodEnd: string;
+  settlementStatus: string;
+  amountCents: string | number;
+};
+type Approval = {
+  id: string;
+  agentId: string;
+  agentName: string;
+  regionName: string;
+  merchantTenantId: string;
+  slug: string;
+  name: string;
+  approvalStatus: string;
+};
 type Data = {
   regions: Region[];
   agents: Agent[];
   affiliations: Affiliation[];
   merchantPool: MerchantPool[];
+  quotas: Quota[];
+  settlements: Settlement[];
+  approvals: Approval[];
 };
 
 const api = process.env.NEXT_PUBLIC_API_BASE_URL ?? 'http://127.0.0.1:3001';
@@ -56,6 +86,12 @@ const sessionApi = new SessionApiClient(api);
 const levelLabel = (level: string) =>
   ({ province: '省级', city: '市级', district: '区县' })[level] ?? level;
 const agentStatusLabel = (status: string) => (status === 'active' ? '正常' : '已暂停');
+const settlementStatusLabel = (status: string) => (status === 'finalized' ? '已结算' : '结算中');
+const approvalStatusLabel = (status: string) =>
+  ({ pending: '待审批', approved: '已通过', rejected: '已驳回' })[status] ?? status;
+const centsToYuan = (value: string | number) => Number(value ?? 0).toLocaleString('zh-CN');
+const quotaFor = (quotas: Quota[], agentId: string) =>
+  quotas.find((quota) => quota.agentId === agentId);
 
 const byLevel = (regions: Region[]) =>
   regions.reduce<Record<string, Region[]>>((acc, region) => {
@@ -65,7 +101,15 @@ const byLevel = (regions: Region[]) =>
 
 export default function AgentsPage() {
   const [state, setState] = useState<'loading' | 'ready' | 'forbidden' | 'error'>('loading');
-  const [data, setData] = useState<Data>({ regions: [], agents: [], affiliations: [], merchantPool: [] });
+  const [data, setData] = useState<Data>({
+    regions: [],
+    agents: [],
+    affiliations: [],
+    merchantPool: [],
+    quotas: [],
+    settlements: [],
+    approvals: [],
+  });
   const [regionForm, setRegionForm] = useState({
     code: '',
     name: '',
@@ -82,6 +126,15 @@ export default function AgentsPage() {
   });
   const [affiliateAgentId, setAffiliateAgentId] = useState('');
   const [merchantTenantId, setMerchantTenantId] = useState('');
+  const [quotaAgentId, setQuotaAgentId] = useState('');
+  const [merchantQuota, setMerchantQuota] = useState('50');
+  const [settleAgentId, setSettleAgentId] = useState('');
+  const [periodCode, setPeriodCode] = useState('');
+  const [periodStart, setPeriodStart] = useState('');
+  const [periodEnd, setPeriodEnd] = useState('');
+  const [unitCents, setUnitCents] = useState('100000');
+  const [approvalAgentId, setApprovalAgentId] = useState('');
+  const [approvalMerchantTenantId, setApprovalMerchantTenantId] = useState('');
   const [note, setNote] = useState('');
   const [saving, setSaving] = useState(false);
 
@@ -192,7 +245,130 @@ export default function AgentsPage() {
       setMerchantTenantId('');
       await load();
     } catch {
-      setNote('商户归属失败，请检查后重试。');
+      setNote('商户入驻归属失败，请检查后重试。');
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const setQuota = async () => {
+    if (!quotaAgentId) return setNote('请选择代理商。');
+    setSaving(true);
+    setNote('');
+    try {
+      const response = await sessionApi.request(`${api}/api/v1/platform/agents/${quotaAgentId}/quota`, {
+        method: 'POST',
+        headers: { 'content-type': 'application/json', 'x-request-id': crypto.randomUUID() },
+        body: JSON.stringify({ merchantQuota: Number(merchantQuota) }),
+      });
+      if ([401, 403].includes(response.status)) return setState('forbidden');
+      if (response.status === 400) return setNote('配额需为不小于已用商户数的非负整数。');
+      if (!response.ok) throw Error();
+      setNote('代理商入驻配额已更新。');
+      await load();
+    } catch {
+      setNote('配额设置失败，请检查后重试。');
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const createSettlement = async () => {
+    if (!settleAgentId || !periodCode || !periodStart || !periodEnd)
+      return setNote('请选择代理商并填写结算期编码、起止日期。');
+    setSaving(true);
+    setNote('');
+    try {
+      const response = await sessionApi.request(`${api}/api/v1/platform/agents/${settleAgentId}/settlements`, {
+        method: 'POST',
+        headers: { 'content-type': 'application/json', 'x-request-id': crypto.randomUUID() },
+        body: JSON.stringify({ periodCode, periodStart, periodEnd }),
+      });
+      if ([401, 403].includes(response.status)) return setState('forbidden');
+      if (response.status === 409) return setNote('该结算期编码已存在。');
+      if (response.status === 400) return setNote('请填写有效的结算期编码（大写字码）与起止日期。');
+      if (!response.ok) throw Error();
+      setNote('结算期已开启（结算中）。');
+      setPeriodCode('');
+      setPeriodStart('');
+      setPeriodEnd('');
+      await load();
+    } catch {
+      setNote('结算期创建失败，请检查后重试。');
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const finalizeSettlement = async (settlementId: string) => {
+    setSaving(true);
+    setNote('');
+    try {
+      const response = await sessionApi.request(
+        `${api}/api/v1/platform/agents/settlements/${settlementId}/finalize`,
+        {
+          method: 'POST',
+          headers: { 'content-type': 'application/json', 'x-request-id': crypto.randomUUID() },
+          body: JSON.stringify({ unitCents: Number(unitCents) }),
+        },
+      );
+      if ([401, 403].includes(response.status)) return setState('forbidden');
+      if (response.status === 409) return setNote('该结算期已结算，不能重复结算。');
+      if (!response.ok) throw Error();
+      setNote('结算期已关闭，按当前归属商户数生成应收金额。');
+      await load();
+    } catch {
+      setNote('结算失败，请检查后重试。');
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const requestApproval = async () => {
+    if (!approvalAgentId || !approvalMerchantTenantId)
+      return setNote('请选择代理商与待入驻审批商户。');
+    setSaving(true);
+    setNote('');
+    try {
+      const response = await sessionApi.request(`${api}/api/v1/platform/agents/${approvalAgentId}/approvals`, {
+        method: 'POST',
+        headers: { 'content-type': 'application/json', 'x-request-id': crypto.randomUUID() },
+        body: JSON.stringify({ merchantTenantId: approvalMerchantTenantId }),
+      });
+      if ([401, 403].includes(response.status)) return setState('forbidden');
+      if (response.status === 409) return setNote('该商户在该代理商下已有审批记录。');
+      if (response.status === 400) return setNote('商户不可用或选择无效。');
+      if (!response.ok) throw Error();
+      setNote('已发起商户入驻开通审批（待审批）。');
+      setApprovalMerchantTenantId('');
+      await load();
+    } catch {
+      setNote('发起审批失败，请检查后重试。');
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const decideApproval = async (approvalId: string, decision: 'approved' | 'rejected') => {
+    setSaving(true);
+    setNote('');
+    try {
+      const response = await sessionApi.request(
+        `${api}/api/v1/platform/agents/approvals/${approvalId}/decide`,
+        {
+          method: 'POST',
+          headers: { 'content-type': 'application/json', 'x-request-id': crypto.randomUUID() },
+          body: JSON.stringify({ approvalStatus: decision }),
+        },
+      );
+      if ([401, 403].includes(response.status)) return setState('forbidden');
+      if (response.status === 409) return setNote('该审批已处理，不能重复裁决。');
+      if (response.status === 400) return setNote('裁决参数无效。');
+      if (!response.ok) throw Error();
+      setNote(decision === 'approved' ? '已通过：商户自动入驻归属到该代理商。' : '已驳回该入驻申请。');
+      await load();
+    } catch {
+      setNote('审批裁决失败，请检查后重试。');
     } finally {
       setSaving(false);
     }
@@ -424,6 +600,226 @@ export default function AgentsPage() {
           <p className={styles.empty}>尚未归属任何商户。开通并归属后，代理商后台可见商户池。</p>
         )}
       </Card>
+
+      <h2 className={styles.opsHeading}>代理商深层运营</h2>
+      <section className={styles.opsGrid}>
+        <Card className={styles.panel}>
+          <h2>入驻配额</h2>
+          <label>
+            代理商
+            <select
+              aria-label="配额代理商"
+              value={quotaAgentId}
+              onChange={(event) => setQuotaAgentId(event.target.value)}
+            >
+              <option value="">选择代理商</option>
+              {data.agents.map((agent) => (
+                <option key={agent.id} value={agent.id}>
+                  {agent.name}（{agent.regionName}）
+                </option>
+              ))}
+            </select>
+          </label>
+          <label>
+            可开通商户席位数
+            <input
+              aria-label="商户配额数"
+              type="number"
+              min="0"
+              value={merchantQuota}
+              onChange={(event) => setMerchantQuota(event.target.value)}
+            />
+          </label>
+          <Button loading={saving} onClick={() => void setQuota()}>
+            保存配额
+          </Button>
+        </Card>
+        <Card className={styles.panel}>
+          <h2>周期结算</h2>
+          <label>
+            代理商
+            <select
+              aria-label="结算代理商"
+              value={settleAgentId}
+              onChange={(event) => setSettleAgentId(event.target.value)}
+            >
+              <option value="">选择代理商</option>
+              {data.agents.map((agent) => (
+                <option key={agent.id} value={agent.id}>
+                  {agent.name}（{agent.regionName}）
+                </option>
+              ))}
+            </select>
+          </label>
+          <label>
+            结算期编码
+            <input
+              aria-label="结算期编码"
+              value={periodCode}
+              onChange={(event) => setPeriodCode(event.target.value)}
+              placeholder="2026-08"
+            />
+          </label>
+          <label>
+            起 / 止日期
+            <span className={styles.dateRow}>
+              <input
+                aria-label="结算期起始日期"
+                value={periodStart}
+                onChange={(event) => setPeriodStart(event.target.value)}
+                placeholder="2026-08-01"
+              />
+              <input
+                aria-label="结算期结束日期"
+                value={periodEnd}
+                onChange={(event) => setPeriodEnd(event.target.value)}
+                placeholder="2026-08-31"
+              />
+            </span>
+          </label>
+          <label>
+            每商户应收（元）
+            <input
+              aria-label="每商户应收金额"
+              type="number"
+              min="0"
+              value={(Number(unitCents) / 100).toFixed(2)}
+              onChange={(event) => setUnitCents(String(Math.round(Number(event.target.value) * 100)))}
+            />
+          </label>
+          <Button loading={saving} onClick={() => void createSettlement()}>
+            开启结算期
+          </Button>
+        </Card>
+        <Card className={styles.panel}>
+          <h2>入驻开通审批</h2>
+          <label>
+            代理商
+            <select
+              aria-label="审批代理商"
+              value={approvalAgentId}
+              onChange={(event) => setApprovalAgentId(event.target.value)}
+            >
+              <option value="">选择代理商</option>
+              {data.agents.map((agent) => (
+                <option key={agent.id} value={agent.id}>
+                  {agent.name}（{agent.regionName}）
+                </option>
+              ))}
+            </select>
+          </label>
+          <label>
+            待入驻商户
+            <select
+              aria-label="审批商户"
+              value={approvalMerchantTenantId}
+              onChange={(event) => setApprovalMerchantTenantId(event.target.value)}
+            >
+              <option value="">选择商户</option>
+              {data.merchantPool.map((merchant) => (
+                <option key={merchant.tenantId} value={merchant.tenantId}>
+                  {merchant.name}（{merchant.slug}）
+                </option>
+              ))}
+            </select>
+          </label>
+          <Button
+            disabled={!data.merchantPool.length || !data.agents.length}
+            loading={saving}
+            onClick={() => void requestApproval()}
+          >
+            发起入驻开通审批
+          </Button>
+        </Card>
+      </section>
+
+      <Card className={styles.tree}>
+        <h2>结算记录</h2>
+        {data.settlements.length ? (
+          <div className={styles.affiliations}>
+            {data.settlements.map((settlement) => (
+              <div className={styles.affiliation} key={settlement.id}>
+                <div>
+                  <strong>
+                    {settlement.agentName} · {settlement.periodCode}
+                  </strong>
+                  <span className={styles.agentMeta}>
+                    {settlement.regionName} · {settlement.periodStart} 至 {settlement.periodEnd} · 应收{' '}
+                    {centsToYuan(settlement.amountCents)} 元
+                  </span>
+                </div>
+                <StatusBadge
+                  tone={settlement.settlementStatus === 'finalized' ? 'success' : 'warning'}
+                >
+                  {settlementStatusLabel(settlement.settlementStatus)}
+                </StatusBadge>
+                {settlement.settlementStatus === 'open' ? (
+                  <Button
+                    tone="secondary"
+                    loading={saving}
+                    onClick={() => void finalizeSettlement(settlement.id)}
+                  >
+                    结算
+                  </Button>
+                ) : null}
+              </div>
+            ))}
+          </div>
+        ) : (
+          <p className={styles.empty}>尚无结算记录。开启结算期后，可在此按归属商户数结算。</p>
+        )}
+      </Card>
+
+      <Card className={styles.tree}>
+        <h2>入驻开通审批记录</h2>
+        {data.approvals.length ? (
+          <div className={styles.affiliations}>
+            {data.approvals.map((approval) => (
+              <div className={styles.affiliation} key={approval.id}>
+                <div>
+                  <strong>
+                    {approval.name}（{approval.slug}）
+                  </strong>
+                  <span className={styles.agentMeta}>
+                    归属 {approval.agentName}（{approval.regionName}）
+                  </span>
+                </div>
+                <StatusBadge
+                  tone={
+                    approval.approvalStatus === 'approved'
+                      ? 'success'
+                      : approval.approvalStatus === 'rejected'
+                        ? 'warning'
+                        : 'neutral'
+                  }
+                >
+                  {approvalStatusLabel(approval.approvalStatus)}
+                </StatusBadge>
+                {approval.approvalStatus === 'pending' ? (
+                  <span className={styles.approveActions}>
+                    <Button
+                      tone="secondary"
+                      loading={saving}
+                      onClick={() => void decideApproval(approval.id, 'approved')}
+                    >
+                      通过
+                    </Button>
+                    <Button
+                      tone="danger"
+                      loading={saving}
+                      onClick={() => void decideApproval(approval.id, 'rejected')}
+                    >
+                      驳回
+                    </Button>
+                  </span>
+                ) : null}
+              </div>
+            ))}
+          </div>
+        ) : (
+          <p className={styles.empty}>尚无入驻审批。通过后商户自动归属该代理商。</p>
+        )}
+      </Card>
     </main>
   );
 
@@ -458,6 +854,14 @@ export default function AgentsPage() {
                   </StatusBadge>
                 </header>
                 <span className={styles.agentMeta}>归属商户 {agent.merchantCount} 家</span>
+                {quotaFor(data.quotas, agent.id) ? (
+                  <span className={styles.agentMeta}>
+                    配额 {quotaFor(data.quotas, agent.id)?.merchantQuota} 席 · 已用{' '}
+                    {quotaFor(data.quotas, agent.id)?.usedMerchants} 席
+                  </span>
+                ) : (
+                  <span className={styles.agentMeta}>未设入驻配额</span>
+                )}
               </div>
             ))}
             {children.length ? children.map(render) : null}

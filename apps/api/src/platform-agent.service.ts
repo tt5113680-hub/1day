@@ -11,6 +11,8 @@ import type { OrganizationContext } from './organization.service';
 const LEVELS = new Set(['province', 'city', 'district']);
 const AGENT_STATUS = new Set(['active', 'paused']);
 const AFFILIATION_STATUS = new Set(['invited', 'active', 'paused']);
+const SETTLEMENT_STATUS = new Set(['open', 'finalized']);
+const APPROVAL_STATUS = new Set(['pending', 'approved', 'rejected']);
 const uuid = /^[0-9a-f-]{36}$/i;
 
 const codeOf = (value: unknown) => {
@@ -81,6 +83,40 @@ export class PlatformAgentService implements OnModuleDestroy {
       )
     ).rows;
 
+    const quotas = (
+      await this.pool.query(
+        `select q.id,q.agent_id,q.merchant_quota,
+                (select count(*)::int from agent_merchant_affiliations m where m.agent_id=q.agent_id and m.tenant_id=q.tenant_id and m.deleted_at is null and m.affiliation_status<>'paused') used_merchants
+         from agent_quotas q
+         where q.deleted_at is null
+         order by q.agent_id`,
+      )
+    ).rows;
+
+    const settlements = (
+      await this.pool.query(
+        `select s.id,s.agent_id,s.period_code,s.period_start,s.period_end,s.settlement_status,s.amount_cents,
+                a.name as agent_name,r.name as region_name
+         from agent_settlements s
+         join platform_agents a on a.id=s.agent_id
+         join agent_regions r on r.id=a.region_id
+         where s.deleted_at is null
+         order by s.created_at desc`,
+      )
+    ).rows;
+
+    const approvals = (
+      await this.pool.query(
+        `select o.id,o.agent_id,o.merchant_tenant_id,o.approval_status,t.slug,t.name,a.name as agent_name,r.name as region_name
+         from agent_onboarding_approvals o
+         join platform_agents a on a.id=o.agent_id
+         join agent_regions r on r.id=a.region_id
+         join tenants t on t.id=o.merchant_tenant_id and t.deleted_at is null
+         where o.deleted_at is null
+         order by o.created_at desc`,
+      )
+    ).rows;
+
     return {
       regions: regions.map((row) => ({
         id: row.id,
@@ -118,6 +154,33 @@ export class PlatformAgentService implements OnModuleDestroy {
         slug: row.slug,
         name: row.name,
         status: row.status,
+      })),
+      quotas: quotas.map((row) => ({
+        id: row.id,
+        agentId: row.agent_id,
+        merchantQuota: row.merchant_quota,
+        usedMerchants: row.used_merchants,
+      })),
+      settlements: settlements.map((row) => ({
+        id: row.id,
+        agentId: row.agent_id,
+        agentName: row.agent_name,
+        regionName: row.region_name,
+        periodCode: row.period_code,
+        periodStart: row.period_start,
+        periodEnd: row.period_end,
+        settlementStatus: row.settlement_status,
+        amountCents: row.amount_cents,
+      })),
+      approvals: approvals.map((row) => ({
+        id: row.id,
+        agentId: row.agent_id,
+        agentName: row.agent_name,
+        regionName: row.region_name,
+        merchantTenantId: row.merchant_tenant_id,
+        slug: row.slug,
+        name: row.name,
+        approvalStatus: row.approval_status,
       })),
     };
   }
@@ -226,6 +289,184 @@ export class PlatformAgentService implements OnModuleDestroy {
       name: merchant.name,
       affiliationStatus: 'active',
     };
+  }
+
+  // 配额：为代理商设定可开通商户席位数；超出配额将拒绝对接新商户归属。
+  async setQuota(
+    context: OrganizationContext,
+    agentId: string,
+    body: Record<string, unknown>,
+  ): Promise<{ id: string; agentId: string; merchantQuota: number; usedMerchants: number }> {
+    if (!uuid.test(agentId)) throw new BadRequestException('VALIDATION_ERROR');
+    const quota = Number(body.merchantQuota ?? '');
+    if (!Number.isInteger(quota) || quota < 0 || quota > 1_000_000)
+      throw new BadRequestException('VALIDATION_ERROR');
+    const agent = (
+      await this.pool.query('select id,tenant_id from platform_agents where id=$1 and deleted_at is null', [agentId])
+    ).rows[0];
+    if (!agent) throw new BadRequestException('VALIDATION_ERROR');
+    const used = Number(
+      (
+        await this.pool.query(
+          `select count(*)::int as c from agent_merchant_affiliations
+           where agent_id=$1 and deleted_at is null and affiliation_status<>'paused'`,
+          [agentId],
+        )
+      ).rows[0].c,
+    );
+    if (quota < used) throw new BadRequestException('QUOTA_BELOW_USED');
+    const existing = (
+      await this.pool.query('select id from agent_quotas where agent_id=$1 and deleted_at is null', [agentId])
+    ).rows[0];
+    if (existing) {
+      await this.pool.query('update agent_quotas set merchant_quota=$1,updated_by=$2,updated_at=now() where id=$3', [
+        quota,
+        context.userId,
+        existing.id,
+      ]);
+      return { id: existing.id, agentId, merchantQuota: quota, usedMerchants: used };
+    }
+    const id = randomUUID();
+    try {
+      await this.pool.query(
+        `insert into agent_quotas(id,tenant_id,agent_id,merchant_quota,created_by,updated_by)
+         values($1,$2,$3,$4,$5,$5)`,
+        [id, context.tenantId, agentId, quota, context.userId],
+      );
+    } catch (error: unknown) {
+      if ((error as { code?: string }).code === '23505') {
+        return this.setQuota(context, agentId, body);
+      }
+      throw error;
+    }
+    return { id, agentId, merchantQuota: quota, usedMerchants: used };
+  }
+
+  // 结算：开启一个周期结算期；结算期不可重复。
+  async createSettlement(context: OrganizationContext, agentId: string, body: Record<string, unknown>) {
+    if (!uuid.test(agentId)) throw new BadRequestException('VALIDATION_ERROR');
+    const agent = (
+      await this.pool.query('select id,tenant_id from platform_agents where id=$1 and deleted_at is null', [agentId])
+    ).rows[0];
+    if (!agent) throw new BadRequestException('VALIDATION_ERROR');
+    const periodCode = String(body.periodCode ?? '').trim();
+    const periodStart = String(body.periodStart ?? '').trim();
+    const periodEnd = String(body.periodEnd ?? '').trim();
+    if (
+      !/^[A-Z0-9-]{2,32}$/.test(periodCode) ||
+      !/^\d{4}-\d{2}-\d{2}$/.test(periodStart) ||
+      !/^\d{4}-\d{2}-\d{2}$/.test(periodEnd)
+    )
+      throw new BadRequestException('VALIDATION_ERROR');
+    if (periodEnd < periodStart) throw new BadRequestException('VALIDATION_ERROR');
+    const id = randomUUID();
+    try {
+      await this.pool.query(
+        `insert into agent_settlements(id,tenant_id,agent_id,period_code,period_start,period_end,settlement_status,amount_cents,created_by,updated_by)
+         values($1,$2,$3,$4,$5,$6,'open',0,$7,$7)`,
+        [id, context.tenantId, agentId, periodCode, periodStart, periodEnd, context.userId],
+      );
+    } catch (error: unknown) {
+      if ((error as { code?: string }).code === '23505') throw new ConflictException('CONFLICT');
+      throw error;
+    }
+    return { id, agentId, periodCode, periodStart, periodEnd, settlementStatus: 'open', amountCents: 0 };
+  }
+
+  // 结算：按已归属商户数更新应收金额并关闭结算期。
+  async finalizeSettlement(context: OrganizationContext, settlementId: string, body: Record<string, unknown>) {
+    if (!uuid.test(settlementId)) throw new BadRequestException('VALIDATION_ERROR');
+    const unitCents = Number(body.unitCents ?? 0);
+    if ((!Number.isInteger(unitCents) || unitCents < 0) && unitCents !== 0)
+      throw new BadRequestException('VALIDATION_ERROR');
+    const settlement = (
+      await this.pool.query('select id,agent_id,settlement_status from agent_settlements where id=$1 and deleted_at is null', [
+        settlementId,
+      ])
+    ).rows[0];
+    if (!settlement) throw new BadRequestException('VALIDATION_ERROR');
+    if (settlement.settlement_status === 'finalized') throw new ConflictException('CONFLICT');
+    const merchants = Number(
+      (
+        await this.pool.query(
+          `select count(*)::int as c from agent_merchant_affiliations
+           where agent_id=$1 and deleted_at is null and affiliation_status<>'paused'`,
+          [settlement.agent_id],
+        )
+      ).rows[0].c,
+    );
+    const amountCents = merchants * unitCents;
+    await this.pool.query(
+      `update agent_settlements set settlement_status='finalized',amount_cents=$1,updated_by=$2,updated_at=now() where id=$3`,
+      [BigInt(amountCents), context.userId, settlementId],
+    );
+    return { id: settlementId, agentId: settlement.agent_id, merchantCount: merchants, amountCents };
+  }
+
+  // 审批：为代理商发起商户入驻开通审批（pending → approved 之后触发归属）。
+  async requestApproval(context: OrganizationContext, agentId: string, body: Record<string, unknown>) {
+    if (!uuid.test(agentId)) throw new BadRequestException('VALIDATION_ERROR');
+    const merchantTenantId = String(body.merchantTenantId ?? '');
+    if (!uuid.test(merchantTenantId)) throw new BadRequestException('VALIDATION_ERROR');
+    const agent = (
+      await this.pool.query('select id,tenant_id from platform_agents where id=$1 and deleted_at is null', [agentId])
+    ).rows[0];
+    if (!agent) throw new BadRequestException('VALIDATION_ERROR');
+    const merchant = (
+      await this.pool.query('select id,slug,name from tenants where id=$1 and status=$2 and deleted_at is null', [
+        merchantTenantId,
+        'active',
+      ])
+    ).rows[0];
+    if (!merchant) throw new BadRequestException('MERCHANT_TENANT_NOT_AVAILABLE');
+    const id = randomUUID();
+    try {
+      await this.pool.query(
+        `insert into agent_onboarding_approvals(id,tenant_id,agent_id,merchant_tenant_id,approval_status,requested_by,created_by,updated_by)
+         values($1,$2,$3,$4,'pending',$5,$5,$5)`,
+        [id, context.tenantId, agentId, merchantTenantId, context.userId],
+      );
+    } catch (error: unknown) {
+      if ((error as { code?: string }).code === '23505') throw new ConflictException('CONFLICT');
+      throw error;
+    }
+    return { id, agentId, merchantTenantId, slug: merchant.slug, name: merchant.name, approvalStatus: 'pending' };
+  }
+
+  // 审批裁决：approved 时执行商户归属（复用 affiliate 逻辑）；rejected 归档。
+  async decideApproval(context: OrganizationContext, approvalId: string, body: Record<string, unknown>) {
+    if (!uuid.test(approvalId)) throw new BadRequestException('VALIDATION_ERROR');
+    const decision = String(body.approvalStatus ?? '');
+    if (!APPROVAL_STATUS.has(decision) || decision === 'pending') throw new BadRequestException('VALIDATION_ERROR');
+    const approval = (
+      await this.pool.query(
+        'select id,agent_id,merchant_tenant_id,approval_status,tenant_id from agent_onboarding_approvals where id=$1 and deleted_at is null',
+        [approvalId],
+      )
+    ).rows[0];
+    if (!approval) throw new BadRequestException('VALIDATION_ERROR');
+    if (approval.approval_status !== 'pending') throw new ConflictException('CONFLICT');
+    if (decision === 'approved') {
+      await this.pool.query(
+        `update agent_onboarding_approvals set approval_status='approved',approved_by=$1,approved_at=now(),updated_by=$1,updated_at=now() where id=$2`,
+        [context.userId, approvalId],
+      );
+      const affiliation = await this.affiliate(context, approval.agent_id, {
+        merchantTenantId: approval.merchant_tenant_id,
+      });
+      return {
+        id: approvalId,
+        agentId: approval.agent_id,
+        merchantTenantId: approval.merchant_tenant_id,
+        approvalStatus: 'approved',
+        affiliationId: affiliation.id,
+      };
+    }
+    await this.pool.query(
+      `update agent_onboarding_approvals set approval_status='rejected',approved_by=$1,updated_by=$1,updated_at=now() where id=$2`,
+      [context.userId, approvalId],
+    );
+    return { id: approvalId, agentId: approval.agent_id, merchantTenantId: approval.merchant_tenant_id, approvalStatus: 'rejected' };
   }
 
   async onModuleDestroy() {

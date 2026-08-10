@@ -172,3 +172,64 @@
     grid-template-columns: 1fr;
   }
 }
+
+.opsHeading {
+  margin: 36px 0 4px;
+  font-size: 18px;
+}
+
+.opsGrid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 20px;
+  margin-top: 16px;
+}
+
+.opsGrid .panel {
+  align-content: start;
+}
+
+.opsGrid label {
+  display: grid;
+  gap: 6px;
+  font-weight: 700;
+}
+
+.opsGrid input,
+.opsGrid select {
+  min-height: 42px;
+  padding: 10px;
+  border: 1px solid var(--od-border);
+  border-radius: var(--od-radius-sm);
+  color: var(--od-ink);
+  background: var(--od-surface);
+  font: inherit;
+}
+
+.opsGrid input:focus-visible,
+.opsGrid select:focus-visible {
+  outline: 3px solid color-mix(in srgb, var(--od-brand-600) 32%, transparent);
+  outline-offset: 1px;
+}
+
+.dateRow {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  font-weight: 400;
+}
+
+.approveActions {
+  display: flex;
+  gap: 8px;
+}
+
+@media (max-width: 900px) {
+  .opsGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .dateRow {
+    grid-template-columns: 1fr;
+  }
+}

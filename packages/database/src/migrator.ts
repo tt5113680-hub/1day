@@ -55,6 +55,7 @@ import * as syncGateway from './migrations/053_sync_gateway.js';
 import * as channelPermissions from './migrations/054_channel_permissions.js';
 import * as merchantCommerce from './migrations/055_merchant_commerce.js';
 import * as geoAgentTree from './migrations/056_geo_agent_tree.js';
+import * as agentOperations from './migrations/057_agent_operations.js';
 import type { Database } from './types.js';
 
 const migrationProvider: MigrationProvider = {
@@ -116,6 +117,7 @@ const migrationProvider: MigrationProvider = {
       '054_channel_permissions': channelPermissions,
       '055_merchant_commerce': merchantCommerce,
       '056_geo_agent_tree': geoAgentTree,
+      '057_agent_operations': agentOperations,
     };
   },
 };

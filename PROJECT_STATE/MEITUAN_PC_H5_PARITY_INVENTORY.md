@@ -136,4 +136,4 @@
 
 ## 6. 当前下一刀
 
-**W6 省市区代理（MP-01~03）PASS. 下一刀：** **W∞** — 其余 GAP 逐页（美团代理后台深层、Management PC 深页、Consumer H5 搜索/下单/订单、Meituan parity 细部），直到主人签 G1。
+**W6 省市区代理（MP-01~03）PASS. W∞-1（省市区代理深层运营：结算/配额/审批, MP-03 深层）PASS** `evidence/G1-MEITUAN-PARITY/WINF/ACCEPTANCE.md`. **下一刀：** **W∞-2** — 其余 GAP 逐页（Consumer H5 搜索/下单/订单、Management PC 深页、美团代理后台更深/Meituan parity 细部），直到主人签 G1。
