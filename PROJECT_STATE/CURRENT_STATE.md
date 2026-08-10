@@ -9,8 +9,8 @@
 - status: SYS_1_PASS; SYS_2_PASS; SYS_3_PASS; SYS_4_PASS; SYS_5_SCAFFOLD_PASS; SYS_5_VISUAL_PASS; SYS_6_SCAFFOLD_PASS; SYS_6_MULTI_PRODUCT_PASS; MATRIX_GAP_CLOSEOUT_COMPLETE; HUMAN_PILOT_SANDBOX_REFRESHED; COMMERCIAL_FIXTURES_GENERATOR_PASS
 - branch: hardening/COMMERCIAL-COMPLETION
 - executor: Cursor Agent (2026-08-10; see PROJECT_STATE/EXECUTOR_HANDOFF.md)
-- last_safe_commit: pending SYS-6 multi-product commit
-- verified_sys_6_multi_product: PASS ? Platform/Channel/Circle/Employee menu catalogs + shells; Store Manager `/e/store`; homeHref/scopes/availableProducts. See PROJECT_STATE/SYS_6_ACCEPTANCE.md and evidence/SYS-6/.
+- last_safe_commit: 5fe7af3
+- verified_sys_6_multi_product: PASS ? Platform/Channel/Circle/Employee menu catalogs + shells; Store Manager `/e/store`; homeHref/scopes/availableProducts. See PROJECT_STATE/SYS_6_ACCEPTANCE.md and evidence/SYS-6/. HEAD 5fe7af3.
 - verified_sys_6_scaffold: PASS ? `GET /api/v1/me/menu` + Management AdminShell DTO. See PROJECT_STATE/SYS_6_ACCEPTANCE.md and evidence/SYS-6/.
 - verified_sys_5_visual: PASS ? Consumer store CSS hex retired to `--od-sf-*`; shared chrome Section/Empty/icons. See PROJECT_STATE/SYS_5_ACCEPTANCE.md and evidence/SYS-5/.
 - verified_sys_5_scaffold: PASS ? `@oneday/storefront-renderer` package; token hole `--od-brand-50` closed; Management Page Builder imports shared outline.
@@ -22,7 +22,7 @@
 - verified_commercial_fixtures_generator: PASS ? scripts/generate-commercial-fixtures.mjs; evidence/COMMERCIAL-FIXTURES/; tests/commercial-fixture-generator.test.mjs 1/1.
 - started_at: 2026-08-09T20:29:46+08:00
 - blocker: null
-- next_scope: SYS-6 remainder (data_scopes-driven queries; dedicated channel/circle packs; Store Manager write surfaces) or optional storefront module paint extraction. Product-owner UI sign-off remains human. Still no page-level patches. Not a public ???? claim. Tencent Cloud out of scope (G).
+- next_scope: SYS-6 remainder (data_scopes-driven queries; dedicated channel/circle packs; Store Manager write surfaces) or optional storefront module paint extraction. Product-owner UI sign-off remains human. Still no page-level patches. Not a public commercial claim. Tencent Cloud out of scope (G).
 - progress_p0_covered: 26/26 (100%)
 - progress_matrix_waves: 4/4 close-out complete
 - progress_sys_waves: 6/6 scaffolded; SYS-6 multi-product landed; SYS-5/6 still have multi-week remainders
