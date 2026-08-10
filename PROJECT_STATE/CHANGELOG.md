@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## 2026-08-10 - SYS-13 Condition path preview PASS + pilot walkthrough shots
+
+- Added `@oneday/workflows.previewConditionPath` / `collectConditionKeys`; Management version panel toggles sample context and highlights 将执行 / 将跳过.
+- Captured engineering-only human-pilot walkthrough screenshots (does not sign product-owner UI acceptance).
+- Evidence: `SYS_13_CONDITION_PATH_PREVIEW_ACCEPTANCE.md`, `evidence/SYS-13/`, `evidence/HUMAN-PILOT-HANDOFF/walkthrough/`. Not free-form drag graph. Not 全部商用.
+
 ## 2026-08-10 - SYS-12 Condition branch flow PASS + human-pilot sandbox refresh
 
 - Seeded `@oneday/workflows.buildConditionBranchFlow` (take/skip on linear spine); Management version panel shows 满足则进入 / 否则跳过.

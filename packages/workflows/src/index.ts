@@ -136,4 +136,41 @@ export function previewStepApplies(
   return context[condition.key] === condition.equals;
 }
 
+/** Distinct condition keys used by steps (for preview controls). */
+export function collectConditionKeys(steps: WorkflowStepLike[]): string[] {
+  const keys: string[] = [];
+  const seen = new Set<string>();
+  for (const step of steps) {
+    const condition = step.condition;
+    if (!isWorkflowCondition(condition)) continue;
+    if (seen.has(condition.key)) continue;
+    seen.add(condition.key);
+    keys.push(condition.key);
+  }
+  return keys;
+}
+
+export type ConditionPathPreview = {
+  appliedIndexes: number[];
+  skippedIndexes: number[];
+  mode: 'linear_condition_path_preview';
+};
+
+/**
+ * Simulate which linear steps would run under a sample context.
+ * Not a free-form graph executor — step order stays fixed; conditions only gate apply/skip.
+ */
+export function previewConditionPath(
+  steps: WorkflowStepLike[],
+  context: Record<string, unknown>,
+): ConditionPathPreview {
+  const appliedIndexes: number[] = [];
+  const skippedIndexes: number[] = [];
+  steps.forEach((step, index) => {
+    if (previewStepApplies(step.condition, context)) appliedIndexes.push(index);
+    else skippedIndexes.push(index);
+  });
+  return { appliedIndexes, skippedIndexes, mode: 'linear_condition_path_preview' };
+}
+
 export const workflowsPackage = '@oneday/workflows';

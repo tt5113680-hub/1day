@@ -377,3 +377,49 @@
   color: var(--od-text-muted);
   font-weight: 700;
 }
+
+.flowNodeApplied {
+  outline: 2px solid color-mix(in srgb, var(--od-brand-600) 55%, transparent);
+}
+
+.flowNodeSkipped {
+  opacity: 0.45;
+}
+
+.pathPreview {
+  display: grid;
+  gap: 8px;
+  margin: 0 0 18px;
+  padding: 12px 14px;
+  border: 1px dashed var(--od-border);
+  border-radius: var(--od-radius-sm);
+  background: var(--od-surface);
+}
+
+.pathPreview strong {
+  font-size: 13px;
+}
+
+.pathPreview p,
+.pathPreview small {
+  margin: 0;
+  color: var(--od-text-muted);
+  font-size: 12px;
+}
+
+.pathPreviewKeys {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.pathPreviewKey {
+  display: grid;
+  gap: 4px;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.pathPreviewKey select {
+  min-width: 88px;
+}

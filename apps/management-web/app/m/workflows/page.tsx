@@ -9,8 +9,13 @@ import {
   MetricCard,
   StatusBadge,
 } from '@oneday/ui';
-import { buildConditionBranchFlow, summarizeCondition } from '@oneday/workflows';
-import { useCallback, useEffect, useState } from 'react';
+import {
+  buildConditionBranchFlow,
+  collectConditionKeys,
+  previewConditionPath,
+  summarizeCondition,
+} from '@oneday/workflows';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import styles from './page.module.css';
 
 type Employee = { id: string; display_name: string; employee_code: string; status: string };
@@ -106,6 +111,20 @@ export default function WorkflowsPage() {
   const [name, setName] = useState('');
   const [steps, setSteps] = useState<StepDraft[]>([emptyStep()]);
   const [versionPanel, setVersionPanel] = useState<VersionPanel | null>(null);
+  const [pathPreviewContext, setPathPreviewContext] = useState<Record<string, boolean>>({});
+  const pathPreview = useMemo(() => {
+    if (!versionPanel?.steps.length) return null;
+    const keys = collectConditionKeys(versionPanel.steps);
+    const context: Record<string, unknown> = {};
+    for (const key of keys) {
+      context[key] = pathPreviewContext[key] ?? true;
+    }
+    return {
+      keys,
+      context,
+      path: previewConditionPath(versionPanel.steps, context),
+    };
+  }, [versionPanel?.steps, pathPreviewContext]);
   const load = useCallback(
     async (status = filter) => {
       if (!(await sessionApi.context())) return setState('forbidden');
@@ -747,7 +766,7 @@ export default function WorkflowsPage() {
             <div>
               <h2>版本面板 · {versionPanel.templateName}</h2>
               <p>
-                线性步骤 + 条件满足/跳过分支预览，复用既有版本 API；不是自由拖拽图编辑器。
+                线性步骤 + 条件分支 + 路径预览，复用既有版本 API；不是自由拖拽图编辑器。
               </p>
             </div>
             <Button tone="secondary" onClick={() => setVersionPanel(null)}>
@@ -755,6 +774,7 @@ export default function WorkflowsPage() {
             </Button>
           </div>
           {!versionPanel.loading && versionPanel.steps.length > 0 && (
+            <>
             <ol
               className={styles.flow}
               data-testid="workflow-linear-flow"
@@ -763,13 +783,25 @@ export default function WorkflowsPage() {
             >
               {(() => {
                 const flow = buildConditionBranchFlow(versionPanel.steps);
+                const applied = new Set(pathPreview?.path.appliedIndexes ?? []);
                 return flow.nodes.map((node, index) => {
                   const outgoing = flow.edges.filter((edge) => edge.from === index);
+                  const applies = pathPreview ? applied.has(index) : true;
                   return (
                     <li key={`${node.name}-${node.index}`} className={styles.flowItem}>
                       <div
-                        className={node.hasCondition ? styles.flowNodeConditional : styles.flowNode}
+                        className={[
+                          node.hasCondition ? styles.flowNodeConditional : styles.flowNode,
+                          pathPreview
+                            ? applies
+                              ? styles.flowNodeApplied
+                              : styles.flowNodeSkipped
+                            : '',
+                        ]
+                          .filter(Boolean)
+                          .join(' ')}
                         data-testid={`workflow-flow-node-${node.index}`}
+                        data-path-state={pathPreview ? (applies ? 'applied' : 'skipped') : 'idle'}
                       >
                         <span>
                           {index + 1}. {node.name}
@@ -777,6 +809,7 @@ export default function WorkflowsPage() {
                         <small>
                           {businessLabel(node.type)}
                           {node.timeoutMinutes ? ` · ${node.timeoutMinutes} 分` : ''}
+                          {pathPreview ? (applies ? ' · 将执行' : ' · 将跳过') : ''}
                         </small>
                         <b>{node.conditionLabel}</b>
                       </div>
@@ -803,6 +836,43 @@ export default function WorkflowsPage() {
                 });
               })()}
             </ol>
+            {pathPreview && pathPreview.keys.length > 0 ? (
+              <div
+                className={styles.pathPreview}
+                data-testid="workflow-path-preview"
+                data-preview-mode="linear_condition_path_preview"
+              >
+                <strong>条件路径预览</strong>
+                <p>切换样例上下文，高亮线性步骤中将执行 / 将跳过的节点。不改变已发布定义。</p>
+                <div className={styles.pathPreviewKeys}>
+                  {pathPreview.keys.map((key) => (
+                    <label key={key} className={styles.pathPreviewKey}>
+                      {key}
+                      <select
+                        aria-label={`预览条件 ${key}`}
+                        data-testid={`workflow-path-preview-${key}`}
+                        value={String(pathPreview.context[key] ?? true)}
+                        onChange={(event) =>
+                          setPathPreviewContext((current) => ({
+                            ...current,
+                            [key]: event.target.value === 'true',
+                          }))
+                        }
+                      >
+                        <option value="true">true</option>
+                        <option value="false">false</option>
+                      </select>
+                    </label>
+                  ))}
+                </div>
+                <small data-testid="workflow-path-preview-summary">
+                  将执行 {pathPreview.path.appliedIndexes.map((i) => i + 1).join('、') || '无'}
+                  {' · '}
+                  将跳过 {pathPreview.path.skippedIndexes.map((i) => i + 1).join('、') || '无'}
+                </small>
+              </div>
+            ) : null}
+            </>
           )}
           <div className={styles.versionLayout}>
             <div className={styles.versionList} aria-label="版本列表">

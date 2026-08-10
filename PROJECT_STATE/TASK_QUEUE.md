@@ -46,7 +46,8 @@
 - [x] SYS-10 Workflow linear visual flow PASS — `@oneday/workflows` linear flow + Management visualization; see `SYS_10_WORKFLOW_LINEAR_FLOW_ACCEPTANCE.md`.
 - [x] SYS-11 Platform provisioning failure trail PASS — honest failed/pending steps + fresh retry; see `SYS_11_PROVISIONING_FAILURE_TRAIL_ACCEPTANCE.md`.
 - [x] SYS-12 Condition branch flow PASS — linear take/skip preview (not free-form drag graph); see `SYS_12_CONDITION_BRANCH_FLOW_ACCEPTANCE.md`.
-- [ ] HUMAN-PILOT-HANDOFF / product-owner UI acceptance — local sandbox refreshed through migration `054` + consult CTA bindings (Playwright 4/4); **human sign-off still required**; not auto-claimed as 全部商用. Optional scoped P1 only after product-owner decision.
+- [x] SYS-13 Condition path preview PASS — sample-context apply/skip highlight (not free-form drag graph); see `SYS_13_CONDITION_PATH_PREVIEW_ACCEPTANCE.md`.
+- [ ] HUMAN-PILOT-HANDOFF / product-owner UI acceptance — local sandbox refreshed through migration `054` + consult CTA bindings + walkthrough shots (Playwright 4/4); **human sign-off still required**; not auto-claimed as 全部商用. Optional scoped P1 only after product-owner decision.
 
 ## Current product-owner acceptance
 
