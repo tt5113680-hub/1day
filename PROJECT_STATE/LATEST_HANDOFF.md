@@ -8,25 +8,26 @@
 ## Current task - systemic commercial productization (D3)
 
 - branch: `hardening/COMMERCIAL-COMPLETION`
-- HEAD (pushed): tip PENDING_SYS24_STATE_PIN
-- last_safe_commit: 1c95b93
-- last_verified: SYS-24 Customer merge/transfer UX PASS
-- current_task: SYS-25 generic external-actions CRUD (preferred) **or** human product-owner UI sign-off
-- status: `SYS_24_CUSTOMER_MERGE_TRANSFER_PASS`; **not** claimed as full commercial
+- HEAD (pushed): tip PENDING_SYS25_PUSH
+- last_safe_commit: PENDING_SYS25_COMMIT
+- last_verified: SYS-25 Generic external-actions catalog PASS
+- current_task: human product-owner UI sign-off (do NOT auto-PASS) **or** scoped P1 after owner decision
+- status: `SYS_25_EXTERNAL_ACTIONS_PASS`; S1 islands closed; **not** claimed as full commercial
 - blocker: null
 - progress: P0 26/26
 - working_tree: clean after commit
 
-### Completed prior window (verified + pushed)
+### Completed this window (verified)
 
 1. SYS-23 attribution menu discoverability (`d09bcc4`)
 2. SYS-24 customer merge/transfer UX (`1c95b93`)
+3. SYS-25 external-actions catalog (this commit)
 
 ### Next remainders (honest)
 
-- **SYS-25** Generic external-actions CRUD (S1)
-- **Product-owner UI sign-off (human)** - do not auto-PASS
+- **Product-owner UI sign-off (human)** - do not auto-PASS; required for external pilot claim
 - Free-form DAG canvas - **deferred**
+- Scoped P1 only after product-owner decision
 - No Tencent Cloud (G). No full-commercial claim.
 
 ### Owner cooperation (front-loaded)
@@ -47,8 +48,8 @@ Read and execute:
 6. PROJECT_STATE/SYSTEMIC_COMMERCIAL_GAP_ANALYSIS.md
 7. git status
 
-Status: SYS-24 PASS (safe 1c95b93); P0 26/26; clean tree.
-Next eng: SYS-25 generic external-actions CRUD (S1). Parallel human PRODUCT_OWNER_UI_ACCEPTANCE (do NOT auto-sign).
+Status: SYS-25 PASS; S1 islands closed; P0 26/26; clean tree.
+Next: human PRODUCT_OWNER_UI_ACCEPTANCE (do NOT auto-sign). Eng may assist pilot sandbox only.
 No page-level patches. Writable root only D:\ONEDAY_V3. Do not claim full commercial. No Tencent Cloud.
 A-H granted. Continue until 90%-95% usage, then new window; do not stop mid-run.
 ```

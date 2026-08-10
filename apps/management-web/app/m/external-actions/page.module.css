@@ -1,0 +1,109 @@
+.page {
+  width: min(100%, 1400px);
+  min-height: 100vh;
+  margin: 0 auto;
+  padding: 48px;
+}
+
+.form {
+  margin: 24px 0;
+  padding: 20px;
+  display: grid;
+  gap: 16px;
+}
+
+.form h2 {
+  margin: 0 0 6px;
+  font-size: 18px;
+}
+
+.form > div > p,
+.card > p,
+.card > small,
+.empty > p {
+  margin: 0;
+  color: var(--od-text-muted);
+  line-height: 1.5;
+}
+
+.fields {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.fields label {
+  display: grid;
+  gap: 6px;
+  color: var(--od-text-muted);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.fields .wide {
+  grid-column: 1 / -1;
+}
+
+.fields input,
+.fields select {
+  min-height: 42px;
+  border: 1px solid var(--od-border);
+  border-radius: var(--od-radius-sm);
+  padding: 10px 14px;
+  color: var(--od-ink);
+  background: var(--od-surface);
+  font: inherit;
+}
+
+.notice {
+  margin: 0;
+  color: var(--od-brand-700);
+  font-weight: 700;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 18px;
+}
+
+.card,
+.empty {
+  padding: 20px;
+  height: 100%;
+}
+
+.title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+.title strong {
+  font-size: 20px;
+}
+
+.card small {
+  display: block;
+  margin-top: 8px;
+  word-break: break-all;
+}
+
+.centered {
+  display: grid;
+  min-height: 70vh;
+  place-items: center;
+  text-align: center;
+}
+
+@media (max-width: 900px) {
+  .page {
+    padding: 28px 18px;
+  }
+  .fields,
+  .grid {
+    grid-template-columns: 1fr;
+  }
+}

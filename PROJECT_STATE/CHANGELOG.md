@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## 2026-08-10 - SYS-25 Generic external-actions catalog UX PASS
+
+- Added Management `/m/external-actions` + menu catalog entry for tenant-level list/create against existing `/api/v1/external-actions`; honest no-fake-delivery copy; store binding remains on `/m/stores`.
+- Evidence: `SYS_25_EXTERNAL_ACTIONS_ACCEPTANCE.md`, `evidence/SYS-25/`. Unit/API 1/1 + menu-dto 10/10 + Playwright 1/1. Not 全部商用.
+
 ## 2026-08-10 - SYS-24 Customer merge/transfer UX PASS
 
 - Management customer detail now requests ownership transfer, approves pending transfers, and merges into a target customer via existing APIs; merged archives are read-only with `mergedIntoId`.

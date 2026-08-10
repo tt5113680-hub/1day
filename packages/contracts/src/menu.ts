@@ -71,6 +71,12 @@ export const MANAGEMENT_MENU_CATALOG: MenuCatalogItem[] = [
     requireAny: ['tenant.manage', 'tenant.read'],
   },
   {
+    key: 'external-actions',
+    href: '/m/external-actions',
+    label: '外链动作目录',
+    requireAny: ['tenant.manage', 'action.read', 'action.manage'],
+  },
+  {
     key: 'offers',
     href: '/m/offers',
     label: '套餐与 Offer',

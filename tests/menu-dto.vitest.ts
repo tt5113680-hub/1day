@@ -28,6 +28,7 @@ describe('menu DTO catalog filter', () => {
       'attribution',
       'workflows',
       'stores',
+      'external-actions',
       'offers',
       'memberships',
       'content',
@@ -46,6 +47,18 @@ describe('menu DTO catalog filter', () => {
     const attribution = MANAGEMENT_MENU_CATALOG.find((item) => item.key === 'attribution');
     expect(attribution?.href).toBe('/m/attribution');
     expect(attribution?.label).toBe('来源归因');
+  });
+
+  it('exposes external-actions catalog for tenant.manage and action.read', () => {
+    expect(
+      filterMenuCatalog(MANAGEMENT_MENU_CATALOG, ['tenant.manage']).map((item) => item.key),
+    ).toContain('external-actions');
+    expect(
+      filterMenuCatalog(MANAGEMENT_MENU_CATALOG, ['action.read']).map((item) => item.key),
+    ).toEqual(['external-actions']);
+    expect(
+      filterMenuCatalog(MANAGEMENT_MENU_CATALOG, ['tenant.read']).map((item) => item.key),
+    ).not.toContain('external-actions');
   });
 
   it('exposes overview for customer.read without Management CRM entry', () => {

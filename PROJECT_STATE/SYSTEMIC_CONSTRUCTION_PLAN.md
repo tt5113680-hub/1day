@@ -5,14 +5,14 @@
 
 ## Status
 
-SYS-1…SYS-24 PASS (attribution menu IA + customer merge/transfer UX).
+SYS-1…SYS-25 PASS (S1 islands closed: attribution menu, customer merge/transfer, external-actions catalog).
 
 ## Queue
 
 - Product-owner UI sign-off (human) — required for external pilot claim
-- Remaining S1 islands (systemic, not page patches): generic external-actions CRUD
 - Free-form DAG canvas — deferred
 - Scoped P1 only after product-owner decision
+- Note: external-actions API has list/create/open only (no update/delete)
 
 ## Honest day boundary
 
