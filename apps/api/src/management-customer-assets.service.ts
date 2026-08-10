@@ -61,7 +61,7 @@ export class ManagementCustomerAssetsService implements OnModuleDestroy {
   async detail(context: OrganizationContext, id: string) {
     if (!uuid.test(id)) throw new BadRequestException('VALIDATION_ERROR');
     const customer = await this.pool.query(
-      `select c.id,c.display_name,c.status,c.version,c.created_at,coalesce(n.segment,'active') segment,n.next_touch_at
+      `select c.id,c.display_name,c.status,c.version,c.merged_into_id,c.created_at,coalesce(n.segment,'active') segment,n.next_touch_at
        from customers c left join employee_nurture_profiles n on n.tenant_id=c.tenant_id and n.customer_id=c.id and n.status='active' and n.deleted_at is null
        where c.id=$1 and c.tenant_id=$2 and c.deleted_at is null`,
       [id, context.tenantId],
@@ -168,6 +168,7 @@ export class ManagementCustomerAssetsService implements OnModuleDestroy {
         displayName: detail.display_name,
         status: detail.status,
         version: detail.version,
+        mergedIntoId: detail.merged_into_id,
         segment: detail.segment,
         nextTouchAt: detail.next_touch_at,
         createdAt: detail.created_at,

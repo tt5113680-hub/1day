@@ -8,24 +8,23 @@
 ## Current task - systemic commercial productization (D3)
 
 - branch: `hardening/COMMERCIAL-COMPLETION`
-- HEAD (pushed): tip PENDING_SYS23_STATE_PIN
-- last_safe_commit: d09bcc4
-- last_verified: SYS-23 Management attribution menu discoverability PASS
-- current_task: SYS-24 customer merge/transfer UX (preferred) **or** generic external-actions CRUD **or** human product-owner UI sign-off
-- status: `SYS_23_ATTRIBUTION_MENU_PASS`; **not** claimed as full commercial
+- HEAD (pushed): tip PENDING_SYS24_PUSH
+- last_safe_commit: PENDING_SYS24_COMMIT
+- last_verified: SYS-24 Customer merge/transfer UX PASS
+- current_task: SYS-25 generic external-actions CRUD (preferred) **or** human product-owner UI sign-off
+- status: `SYS_24_CUSTOMER_MERGE_TRANSFER_PASS`; **not** claimed as full commercial
 - blocker: null
 - progress: P0 26/26
 - working_tree: clean after commit
 
-### Completed prior window (verified + pushed)
+### Completed prior window (verified)
 
-1. SYS-22 ONE-CODE consumer landing (`d5ac530`)
-2. SYS-23 attribution menu discoverability (`d09bcc4`)
+1. SYS-23 attribution menu discoverability (`d09bcc4`)
+2. SYS-24 customer merge/transfer UX (this commit)
 
 ### Next remainders (honest)
 
-- **SYS-24** Customer merge/transfer UX (S1)
-- Generic external-actions CRUD
+- **SYS-25** Generic external-actions CRUD (S1)
 - **Product-owner UI sign-off (human)** - do not auto-PASS
 - Free-form DAG canvas - **deferred**
 - No Tencent Cloud (G). No full-commercial claim.
@@ -48,8 +47,8 @@ Read and execute:
 6. PROJECT_STATE/SYSTEMIC_COMMERCIAL_GAP_ANALYSIS.md
 7. git status
 
-Status: SYS-23 PASS (safe d09bcc4); P0 26/26; clean tree.
-Next eng: SYS-24 customer merge/transfer UX (S1). Parallel human PRODUCT_OWNER_UI_ACCEPTANCE (do NOT auto-sign).
+Status: SYS-24 PASS; P0 26/26; clean tree.
+Next eng: SYS-25 generic external-actions CRUD (S1). Parallel human PRODUCT_OWNER_UI_ACCEPTANCE (do NOT auto-sign).
 No page-level patches. Writable root only D:\ONEDAY_V3. Do not claim full commercial. No Tencent Cloud.
 A-H granted. Continue until 90%-95% usage, then new window; do not stop mid-run.
 ```

@@ -13,6 +13,73 @@
 .page > :global(.od-page-header) {
   margin: 26px 0;
 }
+.merged {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+  margin-bottom: 16px;
+  padding: 12px 14px;
+  border: 1px solid color-mix(in srgb, var(--od-warning) 28%, var(--od-border));
+  border-radius: 10px;
+  background: color-mix(in srgb, var(--od-warning) 8%, var(--od-surface));
+  color: var(--od-text-muted);
+}
+.merged a {
+  color: var(--od-brand-700);
+  font-weight: 700;
+}
+.ops {
+  margin-bottom: 16px;
+  padding: 20px;
+  border: 1px solid var(--od-border);
+  border-radius: 14px;
+  background: var(--od-surface);
+  box-shadow: var(--od-shadow-low);
+}
+.ops h2 {
+  margin: 0 0 8px;
+  font-size: 18px;
+}
+.ops > p {
+  margin: 0 0 16px;
+  color: var(--od-text-muted);
+  line-height: 1.5;
+}
+.opsGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+}
+.opsGrid section {
+  display: grid;
+  gap: 10px;
+  align-content: start;
+}
+.opsGrid h3 {
+  margin: 0;
+  font-size: 15px;
+}
+.opsGrid label {
+  display: grid;
+  gap: 6px;
+  color: var(--od-text-muted);
+  font-size: 13px;
+}
+.opsGrid input,
+.opsGrid select {
+  min-height: 40px;
+  padding: 8px 10px;
+  border: 1px solid var(--od-border);
+  border-radius: 8px;
+  background: var(--od-surface);
+  color: var(--od-ink);
+}
+.notice {
+  margin: 14px 0 0;
+  color: var(--od-brand-700);
+  font-weight: 600;
+}
 .alerts {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
@@ -106,7 +173,8 @@
   .page {
     padding: 28px 18px;
   }
-  .grid {
+  .grid,
+  .opsGrid {
     grid-template-columns: 1fr;
   }
   .timeline article {

@@ -38,7 +38,7 @@ Backend controllers exist and are matrix/API-proven; operators cannot operate th
 | Workflow write machine               | Full CRUD/publish/decide                 | **CLOSED (SYS-4/7/9…21)** Management `/m/workflows` STA authoring                 |
 | Content distributions (intent)       | `POST .../distributions`                 | **CLOSED (SYS-4)** Management `/m/content` distributions                          |
 | Org/merchant/store create            | Organization APIs                        | **CLOSED (SYS-6)** Management organization-employees creates                      |
-| Customer merge / identity / transfer | Customer + attribution APIs              | **STILL OPEN** customer detail mostly read-only; no merge/transfer write UX       |
+| Customer merge / identity / transfer | Customer + attribution APIs              | **CLOSED (SYS-24)** detail transfer/approve/merge UX; list batch transfer already existed |
 | Result/order/evidence/verification   | Result-evidence APIs                     | **MOSTLY CLOSED** Consumer process + Mgmt customer read; deep order UX remains P1 |
 | Membership wallet                    | `GET consumer/memberships/wallet`        | **CLOSED (SYS-2)** Consumer member session wallet call                            |
 | Generic external-actions CRUD        | `/external-actions`                      | **STILL OPEN** FE uses store external-links only                                  |

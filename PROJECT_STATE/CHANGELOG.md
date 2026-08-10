@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## 2026-08-10 - SYS-24 Customer merge/transfer UX PASS
+
+- Management customer detail now requests ownership transfer, approves pending transfers, and merges into a target customer via existing APIs; merged archives are read-only with `mergedIntoId`.
+- Evidence: `SYS_24_CUSTOMER_MERGE_TRANSFER_ACCEPTANCE.md`, `evidence/SYS-24/`. API 1/1 + Playwright 1/1. Not 全部商用.
+
 ## 2026-08-10 - SYS-23 Management attribution menu discoverability PASS
 
 - Added `attribution` to `MANAGEMENT_MENU_CATALOG` (`/m/attribution`, `来源归因`, `tenant.manage`) so AdminShell/menu DTO can surface the existing PAGE-M-012 page.
