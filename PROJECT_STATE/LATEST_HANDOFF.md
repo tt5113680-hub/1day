@@ -13,6 +13,7 @@
 - status: P1-A/P1-B continue via **local unattended** Headless turns
 - blocker: null (P1-C waits on G lift + cloud inventory)
 - progress: P0 26/26; membership closed-loop landed; P1-B ui-kit Table/Modal landed; P1-B consumer-shell shared nav landed; P1-B employee-shell shared work-nav landed; remaining P1-B management/platform shell polish + sync-converge + content-chain
+- push_pending: local commit `8578302` (P1-B employee-shell) is verified but **not yet pushed** — GitHub network unreachable (port 443 TcpTest False) during this turn on 2026-08-10. Next turn SHOULD run `git push origin HEAD` once connectivity returns. Untracked/uncommitted local infra: `scripts/local-unattended-construction.ps1` (modified) + `scripts/configure-unattended-power.ps1` (new) — left outside this slice (authorization: not force-push, no main rewrite).
 
 ### Owner ? one-time only
 
