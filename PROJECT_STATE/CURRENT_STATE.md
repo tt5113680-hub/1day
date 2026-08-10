@@ -52,7 +52,7 @@
 - verified_commercial_fixtures_generator: PASS.
 - started_at: 2026-08-09T20:29:46+08:00
 - blocker: null
-- next_scope: Product-owner UI sign-off (human). Free-form drag graph remains multi-week. Not claimed as full commercial. Tencent Cloud out of scope (G).
+- next_scope: SYS-17 STA insert rails (preferred; see WORKFLOW_AUTHORING_UX_RECOMMENDATION.md). Parallel human product-owner UI sign-off. Free-form drag deferred. Not claimed as full commercial. Tencent Cloud out of scope (G).
 - progress_p0_covered: 26/26 (100%)
 - progress_matrix_waves: 4/4 close-out complete
 - progress_sys_waves: 6/6 scaffolded + SYS-7..SYS-16 workflow/member/pilot remainders landed
