@@ -8,19 +8,20 @@
 ## Current task - systemic commercial productization (D3)
 
 - branch: `hardening/COMMERCIAL-COMPLETION`
-- HEAD (pushed): tip a126fb2
-- last_safe_commit: a893c09
-- last_verified: SYS-28 Platform shell product isolation PASS
+- HEAD (pushed): tip TBD
+- last_safe_commit: TBD
+- last_verified: SYS-29 AdminShell role-package nav groups PASS
 - current_task: human product-owner UI sign-off (do NOT auto-PASS) **or** scoped P1 after owner decision
-- status: `SYS_28_PLATFORM_SHELL_ISOLATION_PASS`; **not** claimed as full commercial
+- status: `SYS_29_ADMIN_NAV_GROUPS_PASS`; **not** claimed as full commercial
 - blocker: null
-- progress: P0 26/26; S3 Employee/Platform chrome + shell isolation landed
+- progress: P0 26/26; Management nav groups landed
 - working_tree: clean after commit
 
-### Completed this window (verified + pushed)
+### Completed this window (verified)
 
-1. SYS-27 Employee store-manager chrome + Platform product homes (`538acb5`)
-2. SYS-28 Platform channel/circle-only shell isolation (`a893c09`)
+1. SYS-27 Employee/Platform chrome (`538acb5`)
+2. SYS-28 Platform shell isolation (`a893c09`)
+3. SYS-29 AdminShell role-package nav groups
 
 ### Next remainders (honest)
 
@@ -48,7 +49,7 @@ Read and execute:
 6. PROJECT_STATE/SYSTEMIC_COMMERCIAL_GAP_ANALYSIS.md
 7. git status
 
-Status: SYS-28 PASS (safe a893c09); P0 26/26; S3 chrome + shell isolation landed; clean tree.
+Status: SYS-29 PASS (safe COMMIT); P0 26/26; AdminShell nav groups landed; clean tree.
 Next: human PRODUCT_OWNER_UI_ACCEPTANCE (do NOT auto-sign) or scoped P1 after owner decision.
 No page-level patches. Writable root only D:\ONEDAY_V3. Do not claim full commercial. No Tencent Cloud.
 A-H granted. Continue until 90%-95% usage, then new window; do not stop mid-run.

@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## 2026-08-10 - SYS-29 AdminShell role-package nav groups PASS
+
+- Management/Platform menu catalogs carry contiguous `group` tags; AdminShell renders section labels (经营运营/门店与商品/组织与权限/能力边界).
+- Contracts: `MENU_GROUP_LABELS` + `groupMenuItems`.
+- Evidence: `SYS_29_ADMIN_NAV_GROUPS_ACCEPTANCE.md`, `evidence/SYS-29/`. Unit 3/3 + menu-dto 14/14 + Playwright 1/1. Not 全部商用.
+
 ## 2026-08-10 - SYS-28 Platform shell product isolation PASS
 
 - Channel/circle-only operators are redirected away from `/p/*` to their preferred shell home; product homes show honest no-platform-governance boundary copy.

@@ -5,7 +5,7 @@
 
 ## Status
 
-SYS-1…SYS-28 PASS (S3 Employee/Platform chrome depth + channel/circle shell isolation landed).
+SYS-1…SYS-29 PASS (AdminShell role-package nav groups landed).
 
 ## Queue
 

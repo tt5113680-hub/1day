@@ -202,6 +202,32 @@ export function AdminShell({
 }) {
   const isActive = (href: string) =>
     activeHref === href || (href !== '/' && activeHref?.startsWith(`${href}/`));
+  const groups: Array<{ key: string; label: string | null; items: AdminNavItem[] }> = [];
+  for (const item of navigation) {
+    const key = item.group ?? '';
+    const last = groups[groups.length - 1];
+    if (last && last.key === key) {
+      last.items.push(item);
+      continue;
+    }
+    groups.push({
+      key,
+      label: key || null,
+      items: [item],
+    });
+  }
+  const groupTitle = (key: string) => {
+    const labels: Record<string, string> = {
+      operate: '经营运营',
+      commerce: '门店与商品',
+      people: '组织与权限',
+      intents: '能力边界',
+      govern: '平台治理',
+      network: '渠道与商圈',
+      store_manager: '店长经营',
+    };
+    return labels[key] ?? key;
+  };
   return (
     <div className="od-admin-shell">
       <aside className="od-admin-shell__sidebar" aria-label={`${product} 主导航`}>
@@ -211,15 +237,22 @@ export function AdminShell({
         </a>
         <p className="od-admin-shell__product">{product}</p>
         <nav>
-          {navigation.map((item) => (
-            <a
-              aria-current={isActive(item.href) ? 'page' : undefined}
-              className={isActive(item.href) ? 'od-admin-shell__nav-link--active' : undefined}
-              href={item.href}
-              key={item.href}
-            >
-              {item.label}
-            </a>
+          {groups.map((group) => (
+            <div className="od-admin-shell__nav-group" key={`${group.key}-${group.items[0]?.href}`}>
+              {group.label ? (
+                <p className="od-admin-shell__nav-group-label">{groupTitle(group.key)}</p>
+              ) : null}
+              {group.items.map((item) => (
+                <a
+                  aria-current={isActive(item.href) ? 'page' : undefined}
+                  className={isActive(item.href) ? 'od-admin-shell__nav-link--active' : undefined}
+                  href={item.href}
+                  key={item.href}
+                >
+                  {item.label}
+                </a>
+              ))}
+            </div>
           ))}
         </nav>
         <p className="od-admin-shell__context">{context}</p>

@@ -2,12 +2,14 @@ import { describe, expect, it } from 'vitest';
 import {
   EMPLOYEE_MENU_CATALOG,
   MANAGEMENT_MENU_CATALOG,
+  MENU_GROUP_LABELS,
   PLATFORM_MENU_CATALOG,
   PLATFORM_PRODUCT_HOMES,
   STORE_MANAGER_MENU_ITEM,
   STORE_MANAGER_PACKAGE_ACTIONS,
   defaultHomeHref,
   filterMenuCatalog,
+  groupMenuItems,
   menuCatalogFor,
   resolveAvailableProducts,
   resolveMenuProduct,
@@ -39,9 +41,9 @@ describe('menu DTO catalog filter', () => {
       'page-builder',
       'organization',
       'employee-performance',
+      'permission-audit',
       'ai-suggestions',
       'connectors',
-      'permission-audit',
     ]);
   });
 
@@ -165,5 +167,28 @@ describe('menu DTO catalog filter', () => {
     const platformAdmin = resolvePlatformShellAccess(['platform.read', 'platform.manage']);
     expect(platformAdmin.allowed).toEqual(['platform', 'channel', 'circle']);
     expect(platformAdmin.preferred).toBe('platform');
+  });
+
+  it('groups Management catalog into role-package sections (SYS-29)', () => {
+    const items = filterMenuCatalog(MANAGEMENT_MENU_CATALOG, [
+      'tenant.manage',
+      'organization.manage',
+    ]);
+    const groups = groupMenuItems(items);
+    expect(groups.map((group) => group.key)).toEqual([
+      'operate',
+      'commerce',
+      'people',
+      'intents',
+    ]);
+    expect(groups.map((group) => group.label)).toEqual([
+      MENU_GROUP_LABELS.operate,
+      MENU_GROUP_LABELS.commerce,
+      MENU_GROUP_LABELS.people,
+      MENU_GROUP_LABELS.intents,
+    ]);
+    expect(groupMenuItems(filterMenuCatalog(MANAGEMENT_MENU_CATALOG, ['tenant.read'])).map((g) => g.key)).toEqual(
+      ['operate', 'commerce'],
+    );
   });
 });

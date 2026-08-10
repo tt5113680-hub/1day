@@ -37,24 +37,62 @@ export type MenuCatalogItem = MenuItemDto & {
   requireAny?: string[];
 };
 
+/** SYS-29: AdminShell section labels keyed by MenuItemDto.group. */
+export const MENU_GROUP_LABELS: Record<string, string> = {
+  operate: '经营运营',
+  commerce: '门店与商品',
+  people: '组织与权限',
+  intents: '能力边界',
+  govern: '平台治理',
+  network: '渠道与商圈',
+  store_manager: '店长经营',
+};
+
+export type MenuNavGroup = {
+  key: string;
+  label: string | null;
+  items: MenuItemDto[];
+};
+
+export function groupMenuItems(items: MenuItemDto[]): MenuNavGroup[] {
+  const groups: MenuNavGroup[] = [];
+  for (const item of items) {
+    const key = item.group ?? '';
+    const last = groups[groups.length - 1];
+    if (last && last.key === key) {
+      last.items.push(item);
+      continue;
+    }
+    groups.push({
+      key,
+      label: key ? (MENU_GROUP_LABELS[key] ?? key) : null,
+      items: [item],
+    });
+  }
+  return groups;
+}
+
 /** Server catalog for Management AdminShell (SYS-6). */
 export const MANAGEMENT_MENU_CATALOG: MenuCatalogItem[] = [
   {
     key: 'overview',
     href: '/',
     label: '经营总览',
+    group: 'operate',
     requireAny: ['tenant.manage', 'tenant.read', 'customer.read'],
   },
   {
     key: 'customers',
     href: '/m/customers',
     label: '客户资产',
+    group: 'operate',
     requireAny: ['tenant.manage', 'customer.manage'],
   },
   {
     key: 'attribution',
     href: '/m/attribution',
     label: '来源归因',
+    group: 'operate',
     // Matches ManagementAttributionController (`tenant.manage`).
     requireAny: ['tenant.manage'],
   },
@@ -62,85 +100,99 @@ export const MANAGEMENT_MENU_CATALOG: MenuCatalogItem[] = [
     key: 'workflows',
     href: '/m/workflows',
     label: '运营流程',
+    group: 'operate',
     requireAny: ['tenant.manage', 'workflow.read', 'workflow.manage'],
   },
   {
     key: 'stores',
     href: '/m/stores',
     label: '门店与外链',
+    group: 'commerce',
     requireAny: ['tenant.manage', 'tenant.read'],
   },
   {
     key: 'external-actions',
     href: '/m/external-actions',
     label: '外链动作目录',
+    group: 'commerce',
     requireAny: ['tenant.manage', 'action.read', 'action.manage'],
   },
   {
     key: 'offers',
     href: '/m/offers',
     label: '套餐与 Offer',
+    group: 'commerce',
     requireAny: ['tenant.manage', 'tenant.read'],
   },
   {
     key: 'memberships',
     href: '/m/memberships',
     label: '会员与权益',
+    group: 'commerce',
     requireAny: ['tenant.manage', 'tenant.read'],
   },
   {
     key: 'content',
     href: '/m/content',
     label: '内容中心',
+    group: 'commerce',
     requireAny: ['tenant.manage', 'tenant.read'],
   },
   {
     key: 'page-builder',
     href: '/m/page-builder',
     label: '模板与发布',
+    group: 'commerce',
     requireAny: ['tenant.manage', 'page.manage'],
   },
   {
     key: 'organization',
     href: '/m/organization-employees',
     label: '组织与员工',
+    group: 'people',
     requireAny: ['tenant.manage', 'employee.manage', 'organization.read', 'organization.manage'],
   },
   {
     key: 'employee-performance',
     href: '/m/employee-process-performance',
     label: '员工过程',
-    requireAny: ['tenant.manage'],
-  },
-  {
-    key: 'ai-suggestions',
-    href: '/m/ai-suggestions',
-    label: 'AI 建议',
-    requireAny: ['tenant.manage'],
-  },
-  {
-    key: 'connectors',
-    href: '/m/connectors',
-    label: '连接器意图',
+    group: 'people',
     requireAny: ['tenant.manage'],
   },
   {
     key: 'roles',
     href: '/m/roles-permissions',
     label: '角色与权限',
+    group: 'people',
     requireAll: ['tenant.manage', 'organization.manage'],
   },
   {
     key: 'permission-audit',
     href: '/m/permission-audit',
     label: '权限审计',
+    group: 'people',
     requireAny: ['tenant.manage'],
   },
   {
     key: 'settings',
     href: '/m/settings',
     label: '经营设置',
+    group: 'people',
     requireAll: ['tenant.manage', 'organization.manage'],
+  },
+  {
+    key: 'ai-suggestions',
+    href: '/m/ai-suggestions',
+    label: 'AI 建议',
+    group: 'intents',
+    requireAny: ['tenant.manage'],
+  },
+  {
+    key: 'connectors',
+    href: '/m/connectors',
+    label: '连接器意图',
+    group: 'intents',
+    requireAny: ['tenant.manage'],
   },
 ];
 
@@ -150,54 +202,63 @@ export const PLATFORM_MENU_CATALOG: MenuCatalogItem[] = [
     key: 'dashboard',
     href: '/p/dashboard',
     label: '平台总览',
+    group: 'govern',
     requireAny: ['platform.read', 'platform.manage'],
   },
   {
     key: 'onboarding',
     href: '/p/tenants/new',
     label: '开通租户',
+    group: 'govern',
     requireAny: ['platform.manage'],
   },
   {
     key: 'tenants',
     href: '/p/tenants',
     label: '租户治理',
-    requireAny: ['platform.read', 'platform.manage'],
-  },
-  {
-    key: 'templates',
-    href: '/p/templates',
-    label: '模板目录',
-    requireAny: ['platform.read', 'platform.manage'],
-  },
-  {
-    key: 'channels',
-    href: '/p/channels',
-    label: '渠道运营',
-    requireAny: ['platform.read', 'platform.manage'],
-  },
-  {
-    key: 'business-circles',
-    href: '/p/business-circles',
-    label: '商圈运营',
-    requireAny: ['platform.read', 'platform.manage', 'circle.manage'],
-  },
-  {
-    key: 'connectors',
-    href: '/p/connectors',
-    label: '连接器',
+    group: 'govern',
     requireAny: ['platform.read', 'platform.manage'],
   },
   {
     key: 'outbox',
     href: '/p/outbox',
     label: 'Outbox 死信',
+    group: 'govern',
     requireAny: ['platform.read', 'platform.manage'],
   },
   {
     key: 'security-audit',
     href: '/p/security-audit',
     label: '安全审计',
+    group: 'govern',
+    requireAny: ['platform.read', 'platform.manage'],
+  },
+  {
+    key: 'templates',
+    href: '/p/templates',
+    label: '模板目录',
+    group: 'network',
+    requireAny: ['platform.read', 'platform.manage'],
+  },
+  {
+    key: 'channels',
+    href: '/p/channels',
+    label: '渠道运营',
+    group: 'network',
+    requireAny: ['platform.read', 'platform.manage'],
+  },
+  {
+    key: 'business-circles',
+    href: '/p/business-circles',
+    label: '商圈运营',
+    group: 'network',
+    requireAny: ['platform.read', 'platform.manage', 'circle.manage'],
+  },
+  {
+    key: 'connectors',
+    href: '/p/connectors',
+    label: '连接器',
+    group: 'intents',
     requireAny: ['platform.read', 'platform.manage'],
   },
 ];

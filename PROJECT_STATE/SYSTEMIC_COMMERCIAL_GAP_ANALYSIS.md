@@ -62,7 +62,7 @@ Backend controllers exist and are matrix/API-proven; operators cannot operate th
 
 - Consumer anonymous shell
 - Employee menu DTO + **SYS-27** desktop nav ≥700px + store-manager mode/package on `/e/store` (full nine-role packages still multi-week)
-- Management flat `tenant.manage` nav (**SYS-26** closed connectors/AI/audit/employee-process orphans; deeper role packages remain)
+- Management flat `tenant.manage` nav (**SYS-26** orphans closed; **SYS-29** role-package section groups; deeper nine-role packages remain)
 - Platform path-mode (`/p` `/ch` `/bc`) with **SYS-27** product switcher + role home strips and **SYS-28** channel/circle-only path isolation (deeper Channel/Circle commercial ops remain)
 
 ### S4 — Config-driven Storefront incomplete vs HIGH_FIDELITY (P1)
@@ -78,7 +78,7 @@ Backend controllers exist and are matrix/API-proven; operators cannot operate th
 | ---------- | ---------- | -------------------------------------------------------------------- |
 | Consumer   | ~6/10      | Three IAs (entry/discovery/store); cream vs green tokens; fixed tabs |
 | Employee   | ~6.5/10    | Desktop nav ≥700px landed (SYS-27); task inbox depth remains         |
-| Management | ~6/10      | Flat nav; thin `@oneday/ui` kit                                      |
+| Management | ~6.5/10    | Role-package nav groups (SYS-29); thin `@oneday/ui` kit remains       |
 | Platform   | ~6/10      | Product switcher + role homes (SYS-27); enum bleed; intent connectors |
 
 ~70% of remaining distance is **structural** (IA, shared kit, config chrome, shared renderer). ~30% is cosmetic. **Page-level hex/CSS patches will not close this.**
