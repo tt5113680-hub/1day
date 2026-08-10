@@ -44,6 +44,7 @@
 - [x] SYS-8 Cross-device Member resume PASS — resume API + Consumer 「我的」resume form (phone+memberCode+consent; no SMS OTP); see `SYS_8_MEMBER_RESUME_ACCEPTANCE.md`.
 - [x] SYS-9 Management workflow version panel PASS — version list + step conditions + panel clone-publish; see `SYS_9_WORKFLOW_VERSION_PANEL_ACCEPTANCE.md`.
 - [x] SYS-10 Workflow linear visual flow PASS — `@oneday/workflows` linear flow + Management visualization; see `SYS_10_WORKFLOW_LINEAR_FLOW_ACCEPTANCE.md`.
+- [x] SYS-11 Platform provisioning failure trail PASS — honest failed/pending steps + fresh retry; see `SYS_11_PROVISIONING_FAILURE_TRAIL_ACCEPTANCE.md`.
 - [ ] HUMAN-PILOT-HANDOFF / product-owner UI acceptance — local sandbox refreshed through migration `053` + storefront bindings (Playwright 4/4); **human sign-off still required**; not auto-claimed as 全部商用. Optional scoped P1 only after product-owner decision.
 
 ## Current product-owner acceptance

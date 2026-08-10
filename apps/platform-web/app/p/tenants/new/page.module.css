@@ -109,6 +109,23 @@
   border-bottom: 1px solid var(--od-border);
 }
 
+.failure {
+  margin: 0;
+  padding: 10px 12px;
+  border: 1px solid color-mix(in srgb, #b42318 35%, var(--od-border));
+  border-radius: var(--od-radius-sm);
+  color: #7a271a;
+  background: #fef3f2;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
 @media (max-width: 900px) {
   .page {
     padding: 28px 18px;

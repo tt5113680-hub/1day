@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## 2026-08-10 - SYS-11 Platform provisioning failure trail PASS
+
+- Recoverable onboarding failures return step trail; Platform UI shows failed/pending honestly and offers fresh retry (new idempotency key).
+- Evidence: `SYS_11_PROVISIONING_FAILURE_TRAIL_ACCEPTANCE.md`, `evidence/SYS-11/`. API 1/1 + Playwright 1/1. Not mid-run resume. Not 全部商用.
+
 ## 2026-08-10 - SYS-10 Workflow linear visual flow PASS
 
 - Seeded `@oneday/workflows` with `buildLinearFlow` / `summarizeCondition` / `previewStepApplies`.

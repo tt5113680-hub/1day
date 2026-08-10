@@ -282,21 +282,52 @@ export class PlatformOnboardingService implements OnModuleDestroy {
       const conflict =
         error instanceof ConflictException || (error as { code?: string }).code === '23505';
       const terminal = conflict || error instanceof BadRequestException;
+      const detail =
+        error instanceof Error ? error.message.slice(0, 1000) : 'Unknown provisioning failure';
       await this.pool.query(
         'update tenant_provisioning_runs set state=$2,error_code=$3,error_detail=$4,updated_at=now(),updated_by=$5 where id=$1',
         [
           runId,
           terminal ? 'failed_terminal' : 'failed_recoverable',
           terminal ? 'VALIDATION_OR_CONFLICT' : 'PROVISIONING_FAILED',
-          error instanceof Error ? error.message.slice(0, 1000) : 'Unknown provisioning failure',
+          detail,
           context.userId,
         ],
       );
+      await this.persistFailedStepTrail(runId, context.userId, detail);
       if (conflict && !(error instanceof ConflictException))
         throw new ConflictException('CONFLICT');
-      throw error;
+      if (terminal) throw error;
+      // Recoverable failures return the run + step trail so Platform UI can show where it stopped.
+      return this.get(context, runId);
     } finally {
       client.release();
+    }
+  }
+
+  /** After a rolled-back TX, re-materialize step rows so operators can see the failure trail. */
+  private async persistFailedStepTrail(runId: string, userId: string, detail: string) {
+    const existing = await this.pool.query(
+      'select 1 from tenant_provisioning_steps where run_id=$1 and deleted_at is null limit 1',
+      [runId],
+    );
+    if (existing.rowCount) return;
+    for (const [position, code] of STEP_CODES.entries()) {
+      const failed = position === 0;
+      await this.pool.query(
+        'insert into tenant_provisioning_steps(id,run_id,step_code,position,state,attempts,started_at,ended_at,error_code,output,created_by,updated_by) values($1,$2,$3,$4,$5,$6,now(),now(),$7,$8,$9,$9)',
+        [
+          randomUUID(),
+          runId,
+          code,
+          position,
+          failed ? 'failed' : 'pending',
+          failed ? 1 : 0,
+          failed ? 'PROVISIONING_FAILED' : null,
+          failed ? { detail } : null,
+          userId,
+        ],
+      );
     }
   }
 
