@@ -195,6 +195,34 @@ export function reorderSteps<T>(steps: T[], from: number, to: number): T[] {
   return next;
 }
 
+/**
+ * Insert a step on the linear spine at `index` (0..length inclusive).
+ * SYS-17 insert rails — not free-form drag placement.
+ */
+export function insertStepAt<T>(steps: T[], index: number, step: T): T[] {
+  if (!Number.isInteger(index) || index < 0 || index > steps.length) {
+    return steps;
+  }
+  const next = steps.slice();
+  next.splice(index, 0, step);
+  return next;
+}
+
+/**
+ * Duplicate the step at `index`, inserting the clone immediately after.
+ * SYS-17 — ordered list only; caller supplies a clone (no canvas copy).
+ */
+export function duplicateStepAt<T>(
+  steps: T[],
+  index: number,
+  clone: (step: T) => T,
+): T[] {
+  if (!Number.isInteger(index) || index < 0 || index >= steps.length) {
+    return steps;
+  }
+  return insertStepAt(steps, index + 1, clone(steps[index]!));
+}
+
 export type SerializedLinearWorkflow = {
   mode: 'linear_with_condition_branches';
   editor: 'not_free_form_drag';

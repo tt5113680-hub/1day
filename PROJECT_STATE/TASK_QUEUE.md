@@ -50,7 +50,9 @@
 - [x] SYS-14 Draft authoring preview PASS — linear 上移/下移 + create-form live path preview (not free-form drag graph); see `SYS_14_DRAFT_AUTHORING_PREVIEW_ACCEPTANCE.md`.
 - [x] SYS-15 Version panel linear reorder PASS — panel ↑↓ + clone-publish order (not free-form drag graph); see `SYS_15_VERSION_PANEL_REORDER_ACCEPTANCE.md`.
 - [x] SYS-16 Linear flow JSON export PASS — honest linear serialize + clipboard (not free-form drag graph); see `SYS_16_LINEAR_FLOW_EXPORT_ACCEPTANCE.md`.
-- [ ] SYS-17 Structured Timeline Authoring — insert rails between steps (see `WORKFLOW_AUTHORING_UX_RECOMMENDATION.md`); preferred over free-form drag.
+- [x] SYS-17 Structured Timeline Authoring — insert rails PASS — between-step「在此插入」+ duplicate (not free-form drag); see `SYS_17_INSERT_RAILS_ACCEPTANCE.md`.
+- [ ] SYS-18 Structured Timeline Authoring — condition card IA (see `WORKFLOW_AUTHORING_UX_RECOMMENDATION.md`).
+- [ ] SYS-19 Structured Timeline Authoring — start-context presets for path simulator.
 - [ ] HUMAN-PILOT-HANDOFF / product-owner UI acceptance — local sandbox refreshed through migration `054` + consult CTA bindings + walkthrough shots (Playwright 4/4); **human sign-off still required**; not auto-claimed as 全部商用. Optional scoped P1 only after product-owner decision.
 
 ## Current product-owner acceptance

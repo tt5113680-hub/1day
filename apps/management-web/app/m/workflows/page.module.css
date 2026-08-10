@@ -440,6 +440,30 @@
   gap: 6px;
 }
 
+.timeline {
+  display: grid;
+  gap: 0;
+  margin-bottom: 8px;
+}
+
+.timelineHint {
+  margin: 0 0 10px;
+  color: var(--od-text-muted);
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.insertRail {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 4px 0;
+  padding: 6px 0;
+  border-top: 1px dashed color-mix(in srgb, var(--od-brand-600) 28%, var(--od-border));
+  border-bottom: 1px dashed color-mix(in srgb, var(--od-brand-600) 28%, var(--od-border));
+  background: color-mix(in srgb, var(--od-brand-50) 35%, transparent);
+}
+
 .draftPreview {
   display: grid;
   gap: 10px;

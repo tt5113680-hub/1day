@@ -12,6 +12,8 @@ import {
 import {
   buildConditionBranchFlow,
   collectConditionKeys,
+  duplicateStepAt,
+  insertStepAt,
   previewConditionPath,
   reorderSteps,
   serializeConditionBranchFlow,
@@ -382,6 +384,37 @@ export default function WorkflowsPage() {
       return { ...current, steps: reorderSteps(current.steps, from, to) };
     });
   };
+  const emptyPanelStep = (seed?: VersionStep): VersionStep => ({
+    name: '新步骤',
+    type: seed?.type || 'task',
+    assigneeEmployeeId: seed?.assigneeEmployeeId || employees[0]?.id || '',
+    timeoutMinutes: seed?.timeoutMinutes || 60,
+    condition: null,
+  });
+  const insertPanelStepAt = (index: number) => {
+    setVersionPanel((current) => {
+      if (!current) return current;
+      const seed = current.steps[Math.min(index, Math.max(current.steps.length - 1, 0))];
+      return {
+        ...current,
+        steps: insertStepAt(current.steps, index, emptyPanelStep(seed)),
+      };
+    });
+  };
+  const duplicatePanelStepAt = (index: number) => {
+    setVersionPanel((current) => {
+      if (!current) return current;
+      return {
+        ...current,
+        steps: duplicateStepAt(current.steps, index, (step) => ({
+          ...step,
+          id: undefined,
+          name: step.name ? `${step.name} · 副本` : '未命名步骤 · 副本',
+          condition: step.condition ? { ...step.condition } : null,
+        })),
+      };
+    });
+  };
   const publishClonedVersion = async (
     template: Data['templates'][number],
     options?: { fromPanel?: boolean },
@@ -571,143 +604,203 @@ export default function WorkflowsPage() {
             />
           </label>
         </div>
-        {steps.map((step, index) => (
-          <div className={styles.stepRow} key={`step-${index}`}>
-            <div className={styles.stepOrder}>
-              <span>步骤 {index + 1}</span>
-              <div className={styles.stepOrderActions}>
+        <div
+          className={styles.timeline}
+          data-testid="workflow-draft-timeline"
+          data-authoring-mode="structured_timeline"
+        >
+          <p className={styles.timelineHint}>
+            结构化时间线：步骤间「在此插入」/「复制」；不是自由拖拽图编辑器。
+          </p>
+          {steps.map((step, index) => (
+            <div key={`draft-block-${index}`}>
+              <div
+                className={styles.insertRail}
+                data-testid={`workflow-draft-insert-rail-${index}`}
+              >
                 <Button
                   tone="secondary"
-                  disabled={index === 0}
-                  aria-label={`上移步骤${index + 1}`}
-                  data-testid={`workflow-draft-move-up-${index}`}
-                  onClick={() => setSteps((value) => reorderSteps(value, index, index - 1))}
+                  aria-label={`在步骤${index + 1}前插入`}
+                  data-testid={`workflow-draft-insert-${index}`}
+                  onClick={() =>
+                    setSteps((value) =>
+                      insertStepAt(value, index, emptyStep(employees[0]?.id ?? '')),
+                    )
+                  }
                 >
-                  上移
-                </Button>
-                <Button
-                  tone="secondary"
-                  disabled={index >= steps.length - 1}
-                  aria-label={`下移步骤${index + 1}`}
-                  data-testid={`workflow-draft-move-down-${index}`}
-                  onClick={() => setSteps((value) => reorderSteps(value, index, index + 1))}
-                >
-                  下移
+                  在此插入
                 </Button>
               </div>
-            </div>
-            <label>
-              步骤名称
-              <input
-                aria-label={`步骤${index + 1}名称`}
-                value={step.name}
-                onChange={(event) =>
-                  setSteps((value) =>
-                    value.map((item, i) =>
-                      i === index ? { ...item, name: event.target.value } : item,
-                    ),
-                  )
-                }
-              />
-            </label>
-            <label>
-              类型
-              <select
-                aria-label={`步骤${index + 1}类型`}
-                value={step.type}
-                onChange={(event) =>
-                  setSteps((value) =>
-                    value.map((item, i) =>
-                      i === index
-                        ? { ...item, type: event.target.value as StepDraft['type'] }
-                        : item,
-                    ),
-                  )
-                }
-              >
-                <option value="approval">审批</option>
-                <option value="task">任务</option>
-              </select>
-            </label>
-            <label>
-              责任人
-              <select
-                aria-label={`步骤${index + 1}责任人`}
-                value={step.assigneeEmployeeId}
-                onChange={(event) =>
-                  setSteps((value) =>
-                    value.map((item, i) =>
-                      i === index ? { ...item, assigneeEmployeeId: event.target.value } : item,
-                    ),
-                  )
-                }
-              >
-                <option value="">选择员工</option>
-                {employees.map((employee) => (
-                  <option key={employee.id} value={employee.id}>
-                    {employee.display_name} · {employee.employee_code}
-                  </option>
-                ))}
-              </select>
-            </label>
-            <label>
-              超时（分钟）
-              <input
-                aria-label={`步骤${index + 1}超时分钟`}
-                type="number"
-                min={1}
-                value={step.timeoutMinutes}
-                onChange={(event) =>
-                  setSteps((value) =>
-                    value.map((item, i) =>
-                      i === index
-                        ? { ...item, timeoutMinutes: Number(event.target.value) || 1 }
-                        : item,
-                    ),
-                  )
-                }
-              />
-            </label>
-            <label>
-              条件键
-              <input
-                aria-label={`步骤${index + 1}条件键`}
-                value={step.conditionKey}
-                onChange={(event) =>
-                  setSteps((value) =>
-                    value.map((item, i) =>
-                      i === index ? { ...item, conditionKey: event.target.value } : item,
-                    ),
-                  )
-                }
-                placeholder="可选，如 upsell"
-              />
-            </label>
-            <label>
-              equals
-              <select
-                aria-label={`步骤${index + 1}条件值`}
-                value={step.conditionEquals}
-                onChange={(event) =>
-                  setSteps((value) =>
-                    value.map((item, i) =>
-                      i === index
-                        ? {
+              <div className={styles.stepRow} data-testid={`workflow-draft-step-${index}`}>
+                <div className={styles.stepOrder}>
+                  <span>步骤 {index + 1}</span>
+                  <div className={styles.stepOrderActions}>
+                    <Button
+                      tone="secondary"
+                      disabled={index === 0}
+                      aria-label={`上移步骤${index + 1}`}
+                      data-testid={`workflow-draft-move-up-${index}`}
+                      onClick={() => setSteps((value) => reorderSteps(value, index, index - 1))}
+                    >
+                      上移
+                    </Button>
+                    <Button
+                      tone="secondary"
+                      disabled={index >= steps.length - 1}
+                      aria-label={`下移步骤${index + 1}`}
+                      data-testid={`workflow-draft-move-down-${index}`}
+                      onClick={() => setSteps((value) => reorderSteps(value, index, index + 1))}
+                    >
+                      下移
+                    </Button>
+                    <Button
+                      tone="secondary"
+                      aria-label={`复制步骤${index + 1}`}
+                      data-testid={`workflow-draft-duplicate-${index}`}
+                      onClick={() =>
+                        setSteps((value) =>
+                          duplicateStepAt(value, index, (item) => ({
                             ...item,
-                            conditionEquals: event.target.value as StepDraft['conditionEquals'],
-                          }
-                        : item,
-                    ),
-                  )
-                }
-              >
-                <option value="">始终执行</option>
-                <option value="true">true</option>
-                <option value="false">false</option>
-              </select>
-            </label>
+                            name: item.name ? `${item.name} · 副本` : '',
+                          })),
+                        )
+                      }
+                    >
+                      复制
+                    </Button>
+                  </div>
+                </div>
+                <label>
+                  步骤名称
+                  <input
+                    aria-label={`步骤${index + 1}名称`}
+                    value={step.name}
+                    onChange={(event) =>
+                      setSteps((value) =>
+                        value.map((item, i) =>
+                          i === index ? { ...item, name: event.target.value } : item,
+                        ),
+                      )
+                    }
+                  />
+                </label>
+                <label>
+                  类型
+                  <select
+                    aria-label={`步骤${index + 1}类型`}
+                    value={step.type}
+                    onChange={(event) =>
+                      setSteps((value) =>
+                        value.map((item, i) =>
+                          i === index
+                            ? { ...item, type: event.target.value as StepDraft['type'] }
+                            : item,
+                        ),
+                      )
+                    }
+                  >
+                    <option value="approval">审批</option>
+                    <option value="task">任务</option>
+                  </select>
+                </label>
+                <label>
+                  责任人
+                  <select
+                    aria-label={`步骤${index + 1}责任人`}
+                    value={step.assigneeEmployeeId}
+                    onChange={(event) =>
+                      setSteps((value) =>
+                        value.map((item, i) =>
+                          i === index ? { ...item, assigneeEmployeeId: event.target.value } : item,
+                        ),
+                      )
+                    }
+                  >
+                    <option value="">选择员工</option>
+                    {employees.map((employee) => (
+                      <option key={employee.id} value={employee.id}>
+                        {employee.display_name} · {employee.employee_code}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+                <label>
+                  超时（分钟）
+                  <input
+                    aria-label={`步骤${index + 1}超时分钟`}
+                    type="number"
+                    min={1}
+                    value={step.timeoutMinutes}
+                    onChange={(event) =>
+                      setSteps((value) =>
+                        value.map((item, i) =>
+                          i === index
+                            ? { ...item, timeoutMinutes: Number(event.target.value) || 1 }
+                            : item,
+                        ),
+                      )
+                    }
+                  />
+                </label>
+                <label>
+                  条件键
+                  <input
+                    aria-label={`步骤${index + 1}条件键`}
+                    value={step.conditionKey}
+                    onChange={(event) =>
+                      setSteps((value) =>
+                        value.map((item, i) =>
+                          i === index ? { ...item, conditionKey: event.target.value } : item,
+                        ),
+                      )
+                    }
+                    placeholder="可选，如 upsell"
+                  />
+                </label>
+                <label>
+                  equals
+                  <select
+                    aria-label={`步骤${index + 1}条件值`}
+                    value={step.conditionEquals}
+                    onChange={(event) =>
+                      setSteps((value) =>
+                        value.map((item, i) =>
+                          i === index
+                            ? {
+                                ...item,
+                                conditionEquals: event.target.value as StepDraft['conditionEquals'],
+                              }
+                            : item,
+                        ),
+                      )
+                    }
+                  >
+                    <option value="">始终执行</option>
+                    <option value="true">true</option>
+                    <option value="false">false</option>
+                  </select>
+                </label>
+              </div>
+            </div>
+          ))}
+          <div
+            className={styles.insertRail}
+            data-testid={`workflow-draft-insert-rail-${steps.length}`}
+          >
+            <Button
+              tone="secondary"
+              aria-label="在末尾插入步骤"
+              data-testid={`workflow-draft-insert-${steps.length}`}
+              onClick={() =>
+                setSteps((value) =>
+                  insertStepAt(value, value.length, emptyStep(employees[0]?.id ?? '')),
+                )
+              }
+            >
+              在此插入
+            </Button>
           </div>
-        ))}
+        </div>
         {draftPreview ? (
           <div
             className={styles.draftPreview}
@@ -715,7 +808,7 @@ export default function WorkflowsPage() {
             data-preview-mode="linear_draft_authoring_preview"
           >
             <strong>草稿预览（发布前）</strong>
-            <p>线性上移/下移 + 条件分支/路径预览；不是自由拖拽图编辑器。</p>
+            <p>线性插入轨 / 上移下移 / 条件路径预览；不是自由拖拽图编辑器。</p>
             <ol className={styles.flow} aria-label="草稿线性步骤预览">
               {draftPreview.flow.nodes.map((node, index) => {
                 const applies = draftPreview.path.appliedIndexes.includes(index);
@@ -895,7 +988,7 @@ export default function WorkflowsPage() {
             <div>
               <h2>版本面板 · {versionPanel.templateName}</h2>
               <p>
-                线性步骤 + 条件分支 + 路径预览 + 上移/下移后克隆发布；不是自由拖拽图编辑器。
+                结构化时间线：插入轨 / 复制 / 上移下移后克隆发布；不是自由拖拽图编辑器。
               </p>
             </div>
             <Button tone="secondary" onClick={() => setVersionPanel(null)}>
@@ -1046,72 +1139,116 @@ export default function WorkflowsPage() {
               {versionPanel.loading ? (
                 <p className={styles.hint}>正在读取步骤…</p>
               ) : versionPanel.steps.length ? (
-                versionPanel.steps.map((step, index) => (
-                  <div
-                    className={styles.versionStep}
-                    key={`${step.name}-${index}`}
-                    data-testid={`workflow-panel-step-${index}`}
-                  >
-                    <div className={styles.stepOrder}>
-                      <strong>
-                        {index + 1}. {step.name}
-                      </strong>
-                      <div className={styles.stepOrderActions}>
+                <div
+                  className={styles.timeline}
+                  data-testid="workflow-panel-timeline"
+                  data-authoring-mode="structured_timeline"
+                >
+                  {versionPanel.steps.map((step, index) => (
+                    <div key={`${step.name}-${index}`}>
+                      <div
+                        className={styles.insertRail}
+                        data-testid={`workflow-panel-insert-rail-${index}`}
+                      >
                         <Button
                           tone="secondary"
-                          disabled={index === 0 || versionPanel.loading}
-                          aria-label={`面板上移步骤${index + 1}`}
-                          data-testid={`workflow-panel-move-up-${index}`}
-                          onClick={() => reorderPanelStep(index, index - 1)}
+                          disabled={versionPanel.loading}
+                          aria-label={`面板在步骤${index + 1}前插入`}
+                          data-testid={`workflow-panel-insert-${index}`}
+                          onClick={() => insertPanelStepAt(index)}
                         >
-                          上移
-                        </Button>
-                        <Button
-                          tone="secondary"
-                          disabled={
-                            index >= versionPanel.steps.length - 1 || versionPanel.loading
-                          }
-                          aria-label={`面板下移步骤${index + 1}`}
-                          data-testid={`workflow-panel-move-down-${index}`}
-                          onClick={() => reorderPanelStep(index, index + 1)}
-                        >
-                          下移
+                          在此插入
                         </Button>
                       </div>
+                      <div
+                        className={styles.versionStep}
+                        data-testid={`workflow-panel-step-${index}`}
+                      >
+                        <div className={styles.stepOrder}>
+                          <strong>
+                            {index + 1}. {step.name || '未命名步骤'}
+                          </strong>
+                          <div className={styles.stepOrderActions}>
+                            <Button
+                              tone="secondary"
+                              disabled={index === 0 || versionPanel.loading}
+                              aria-label={`面板上移步骤${index + 1}`}
+                              data-testid={`workflow-panel-move-up-${index}`}
+                              onClick={() => reorderPanelStep(index, index - 1)}
+                            >
+                              上移
+                            </Button>
+                            <Button
+                              tone="secondary"
+                              disabled={
+                                index >= versionPanel.steps.length - 1 || versionPanel.loading
+                              }
+                              aria-label={`面板下移步骤${index + 1}`}
+                              data-testid={`workflow-panel-move-down-${index}`}
+                              onClick={() => reorderPanelStep(index, index + 1)}
+                            >
+                              下移
+                            </Button>
+                            <Button
+                              tone="secondary"
+                              disabled={versionPanel.loading}
+                              aria-label={`面板复制步骤${index + 1}`}
+                              data-testid={`workflow-panel-duplicate-${index}`}
+                              onClick={() => duplicatePanelStepAt(index)}
+                            >
+                              复制
+                            </Button>
+                          </div>
+                        </div>
+                        <small>
+                          {businessLabel(step.type)} · 超时 {step.timeoutMinutes} 分钟 ·{' '}
+                          {summarizeCondition(step.condition)}
+                        </small>
+                        <div className={styles.conditionRow}>
+                          <label>
+                            条件键
+                            <input
+                              aria-label={`步骤${index + 1}条件键`}
+                              value={conditionKeyOf(step.condition)}
+                              onChange={(event) =>
+                                updatePanelStepCondition(index, { key: event.target.value })
+                              }
+                              placeholder="例如 upsell"
+                            />
+                          </label>
+                          <label>
+                            equals
+                            <select
+                              aria-label={`步骤${index + 1}条件值`}
+                              value={conditionEqualsOf(step.condition)}
+                              onChange={(event) =>
+                                updatePanelStepCondition(index, { equals: event.target.value })
+                              }
+                            >
+                              <option value="">无</option>
+                              <option value="true">true</option>
+                              <option value="false">false</option>
+                            </select>
+                          </label>
+                        </div>
+                      </div>
                     </div>
-                    <small>
-                      {businessLabel(step.type)} · 超时 {step.timeoutMinutes} 分钟 ·{' '}
-                      {summarizeCondition(step.condition)}
-                    </small>
-                    <div className={styles.conditionRow}>
-                      <label>
-                        条件键
-                        <input
-                          aria-label={`步骤${index + 1}条件键`}
-                          value={conditionKeyOf(step.condition)}
-                          onChange={(event) =>
-                            updatePanelStepCondition(index, { key: event.target.value })
-                          }
-                          placeholder="例如 upsell"
-                        />
-                      </label>
-                      <label>
-                        equals
-                        <select
-                          aria-label={`步骤${index + 1}条件值`}
-                          value={conditionEqualsOf(step.condition)}
-                          onChange={(event) =>
-                            updatePanelStepCondition(index, { equals: event.target.value })
-                          }
-                        >
-                          <option value="">无</option>
-                          <option value="true">true</option>
-                          <option value="false">false</option>
-                        </select>
-                      </label>
-                    </div>
+                  ))}
+                  <div
+                    className={styles.insertRail}
+                    data-testid={`workflow-panel-insert-rail-${versionPanel.steps.length}`}
+                  >
+                    <Button
+                      tone="secondary"
+                      disabled={versionPanel.loading}
+                      aria-label="面板在末尾插入步骤"
+                      data-testid={`workflow-panel-insert-${versionPanel.steps.length}`}
+                      onClick={() => insertPanelStepAt(versionPanel.steps.length)}
+                    >
+                      在此插入
+                    </Button>
                   </div>
-                ))
+                </div>
               ) : (
                 <p className={styles.hint}>该版本没有步骤。</p>
               )}

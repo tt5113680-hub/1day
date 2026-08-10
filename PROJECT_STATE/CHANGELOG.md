@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## 2026-08-10 - SYS-17 STA insert rails PASS
+
+- Added `@oneday/workflows.insertStepAt` / `duplicateStepAt`; Management create form + version panel expose between-step「在此插入」and「复制」on the linear spine.
+- Evidence: `SYS_17_INSERT_RAILS_ACCEPTANCE.md`, `evidence/SYS-17/`. Unit 1/1 + Playwright 1/1. Not free-form drag graph. Not 全部商用.
+
 ## 2026-08-10 - Workflow authoring UX recommendation (STA over free-form drag)
 
 - Documented Structured Timeline Authoring as the preferred next path; free-form DAG canvas deferred.
