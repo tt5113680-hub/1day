@@ -8,7 +8,7 @@
 ## Current task - systemic commercial productization (D3)
 
 - branch: `hardening/COMMERCIAL-COMPLETION`
-- HEAD (pushed): tip after SYS-22 state record
+- HEAD (pushed): tip `85b9bf6`; safe feature `d5ac530`
 - last_safe_commit: d5ac530
 - last_verified: SYS-22 ONE-CODE consumer landing PASS
 - current_task: SYS-23 attribution menu discoverability (preferred) **or** human product-owner UI sign-off
@@ -48,7 +48,7 @@ Read and execute:
 6. PROJECT_STATE/SYSTEMIC_COMMERCIAL_GAP_ANALYSIS.md
 7. git status
 
-Status: SYS-22 PASS (safe d5ac530; tip in LATEST_HANDOFF); P0 26/26; clean tree.
+Status: SYS-22 PASS (safe d5ac530; tip 85b9bf6); P0 26/26; clean tree.
 Next eng: SYS-23 attribution menu discoverability (S1). Parallel human PRODUCT_OWNER_UI_ACCEPTANCE (do NOT auto-sign).
 No page-level patches. Writable root only D:\ONEDAY_V3. Do not claim full commercial. No Tencent Cloud.
 A-H granted. Continue until 90%-95% usage, then new window; do not stop mid-run.
