@@ -65,8 +65,11 @@ export function ProfilePage({
   };
   return (
     <main className={styles.page}>
-      <p className={styles.eyebrow}>我的会员资料</p>
+      <p className={styles.eyebrow}>推广员工具 · 我的会员资料</p>
       <h1>{data.profile.displayName}</h1>
+      <p className={styles.disclaimer} role="note">
+        本页仅展示本店会员证明、权益与门店服务痕迹；不代表美团/抖音等第三方订单，非本平台下单。
+      </p>
       <section className={styles.card}>
         <h2>已绑定身份</h2>
         {data.profile.identities.map((x) => (

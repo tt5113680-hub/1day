@@ -1,3 +1,12 @@
+## 2026-08-11 - G1-W∞-18 管理/平台工作台 + C 端资料 densify PASS
+
+- Management 工作台：推广员工具 · 商家中心；作业数据/服务档案；去掉美团眉标。
+- Platform `/p/dashboard` `/bc/dashboard`：工具身份；「已确认入口转化」替换「已确认订单」。
+- Consumer `/c/profile`：会员资料工具身份 + 非本平台下单免责。
+- Gates: `node --test tests/g1-winf18-admin-dashboards.test.mjs` 1/1；management+platform+consumer typecheck+build PASS。
+- Not 全部商用 / 未代签 owner UI。Next: W∞-19。
+- Evidence: `evidence/G1-MEITUAN-PARITY/WINF18/ACCEPTANCE.md`.
+
 ## 2026-08-11 - G1-W∞-17 工作台/获客跟进/管理档案 densify PASS
 
 - Employee `/e/workbench` `/e/leads` `/e/nurture`: 推广员工具身份；去掉「美团商家/复购」销售话术。

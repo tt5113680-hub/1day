@@ -39,7 +39,7 @@ const SHORTCUTS = [
   { href: '/m/organization-employees', label: '员工', desc: '员工管理' },
   { href: '/m/employee-process-performance', label: '表现', desc: '员工表现' },
   { href: '/m/settings', label: '设置', desc: '商家设置' },
-  { href: '/m/ai-suggestions', label: '建议', desc: '经营建议' },
+  { href: '/m/ai-suggestions', label: '建议', desc: '作业建议' },
   { href: '/m/workflows', label: '工作流', desc: '工作流整合（定制）' },
 ] as const;
 
@@ -108,9 +108,11 @@ export default function ManagementHome() {
     <main className={styles.page}>
       <header className={styles.hero}>
         <div>
-          <p>美团商家端 PC · 商家中心</p>
+          <p>推广员工具 · 商家中心</p>
           <h1>工作台</h1>
-          <span>今日概况 · 常用功能 · 待办提醒（对标美团商家 PC，订单/评价页下一波补齐）</span>
+          <span>
+            今日概况 · 常用功能 · 待办提醒 · 入口痕迹；不含支付金额与第三方订单履约
+          </span>
         </div>
         <Button tone="secondary" onClick={() => void load()}>
           刷新
@@ -147,7 +149,7 @@ export default function ManagementHome() {
       <section className={styles.section} aria-label="常用功能">
         <div className={styles.sectionHead}>
           <h2>常用功能</h2>
-          <span>对标美团商家端快捷入口</span>
+          <span>推广员工具快捷入口</span>
         </div>
         <div className={styles.shortcuts}>
           {SHORTCUTS.map((item) => (
@@ -159,16 +161,16 @@ export default function ManagementHome() {
         </div>
       </section>
 
-      <section className={styles.section} aria-label="经营数据">
+      <section className={styles.section} aria-label="作业数据">
         <div className={styles.sectionHead}>
-          <h2>经营数据</h2>
+          <h2>作业数据</h2>
           <a className={styles.link} href="/m/customers">
             顾客管理 →
           </a>
         </div>
         <div className={styles.metrics}>
           <MetricCard hint="顾客总量" label="顾客总数" value={m.customers} />
-          <MetricCard hint="近 30 天订单（本地试点）" label="近30日订单" value={m.orders30d} />
+          <MetricCard hint="近 30 天服务档案（本地试点，非本平台下单）" label="近30日服务档案" value={m.orders30d} />
           <MetricCard hint="近 30 天完成任务" label="近30日完成" value={m.completedTasks30d} />
           <MetricCard hint="全部未完成任务" label="待推进任务" value={m.openTasks} />
         </div>
@@ -196,7 +198,7 @@ export default function ManagementHome() {
         </div>
         <div className={styles.panel}>
           <div className={styles.head}>
-            <h2>经营提醒</h2>
+            <h2>作业提醒</h2>
             <span>可解释</span>
           </div>
           {data.suggestions.map((item) => (

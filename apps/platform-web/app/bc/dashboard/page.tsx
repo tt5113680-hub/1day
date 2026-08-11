@@ -76,9 +76,9 @@ export default function BusinessCircleDashboard() {
     <main className={styles.page}>
       <PlatformProductHome mode="circle" />
       <AdminPageHeader
-        eyebrow="ONEDAY / 商圈经营"
-        title="成员权益、内容、流量与转化"
-        description="仅展示平台已批准的固定商圈成员；商户经营数据仍归属各租户，本页只呈现聚合指标。"
+        eyebrow="推广员工具 · 商圈联盟"
+        title="成员权益、内容、流量与入口转化"
+        description="仅展示平台已批准的固定商圈成员；商户数据仍归属各租户。本页只呈现聚合入口痕迹，非本平台下单。"
         actions={<Button onClick={() => void load()}>刷新数据</Button>}
       />
       <section className={styles.metrics} aria-label="Business-circle metrics">
@@ -86,13 +86,13 @@ export default function BusinessCircleDashboard() {
           ['固定商圈', metrics?.circle_count ?? 0],
           ['已批准商户', metrics?.merchant_count ?? 0],
           ['Consumer 行为', metrics?.traffic_events ?? 0],
-          ['已确认订单', metrics?.conversion_orders ?? 0],
+          ['已确认入口转化', metrics?.conversion_orders ?? 0],
         ].map(([label, value]) => (
           <MetricCard label={String(label)} value={value} key={String(label)} />
         ))}
       </section>
       <Card className={styles.panel}>
-        <h2>固定商圈经营明细</h2>
+        <h2>固定商圈联盟明细</h2>
         {data?.circles.length ? (
           <div className={styles.circles}>
             {data.circles.map((circle) => (

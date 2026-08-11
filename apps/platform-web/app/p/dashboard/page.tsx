@@ -82,9 +82,11 @@ export default function PlatformDashboard() {
       <PlatformProductHome mode="platform" />
       <header>
         <div>
-          <p>ONEDAY / 平台总览</p>
-          <h1>跨租户经营信号与系统状态</h1>
-          <span>仅平台专用权限可查看；指标来自真实租户、渠道、任务、订单和事件记录。</span>
+          <p>推广员工具 · 平台总览</p>
+          <h1>跨租户入口信号与系统状态</h1>
+          <span>
+            仅平台专用权限可查看；指标来自真实租户、渠道、任务与事件。不含本平台收款与第三方订单履约。
+          </span>
         </div>
         <Button tone="secondary" onClick={() => void load()}>
           刷新
