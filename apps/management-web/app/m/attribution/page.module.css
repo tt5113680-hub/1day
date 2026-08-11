@@ -32,11 +32,19 @@
   outline-offset: 1px;
 }
 
+.disclaimer {
+  margin: 12px 0 0;
+  color: var(--od-text-muted);
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.5;
+}
+
 .cards {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 16px;
-  margin: 30px 0 18px;
+  margin: 18px 0 18px;
 }
 
 .panel {

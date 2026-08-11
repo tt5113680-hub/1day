@@ -12,6 +12,7 @@
 - last_safe_commit: d83663a
 - verified_tool_phase_5_saved_views: PASS (2026-08-11) - migration 060 + saved-views API + /m/entry-funnel save/load/delete. See evidence/TOOL-PHASE-5/ACCEPTANCE.md.
 - verified_tool_phase_6_l2_completeness: PASS (2026-08-11) - one-code visit, circle invite/apply emit, employee share/share_open funnel rows, summary sharePairing. See evidence/TOOL-PHASE-6/ACCEPTANCE.md.
+- verified_g1_winf4_attribution_deep: PASS (2026-08-11) - /m/attribution tool-path densify + entry-funnel cross-link. See evidence/G1-MEITUAN-PARITY/WINF4/ACCEPTANCE.md.
 - verified_g1_winf3_handoff_confirm: PASS (2026-08-11) - /c/actions platform preview + no-deal disclaimer + scene surface for jump_confirm. See evidence/G1-MEITUAN-PARITY/WINF3/ACCEPTANCE.md.
 - verified_sys_34_membership_ledger: PASS - Management membership ledger + revoke via member_benefit_ledger. See PROJECT_STATE/SYS_34_MEMBERSHIP_LEDGER_ACCEPTANCE.md.
 - verified_p1_a_commercial_closed_loop: PASS - Batch-4 rehearsal extended with ledger/revoke chain. See PROJECT_STATE/P1_A_COMMERCIAL_CLOSED_LOOP_ACCEPTANCE.md.

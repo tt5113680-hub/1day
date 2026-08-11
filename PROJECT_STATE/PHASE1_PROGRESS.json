@@ -1,8 +1,8 @@
-﻿{
+{
     "recordedAt":  "2026-08-11T13:05:00+08:00",
     "phase":  "Promoter-tool entry funnel (post Meituan waves)",
     "goal":  "Unified entry / ecosystem / workflow; L0+L1+L2 traces; no money/sales/store-ops",
-    "currentStep":  "TOOL-PHASE-0..6 + W∞-3 hand-off confirm PASS. Next: W∞-4 Management/agent polish (no native checkout).",
+    "currentStep": "TOOL-PHASE-0..6 + W∞-3/4 PASS. Next: W∞-5 agent/circles polish (no native checkout).",
     "milestones":  [
                        {
                            "id":  "p0-sys",

@@ -332,6 +332,14 @@ export default function EntryFunnelPage() {
                 <option value="retail">零售</option>
               </select>
             </label>
+            <Button
+              tone="secondary"
+              onClick={() => {
+                window.location.href = '/m/attribution';
+              }}
+            >
+              来源归因
+            </Button>
             <Button tone="secondary" onClick={() => void load()}>
               刷新
             </Button>
