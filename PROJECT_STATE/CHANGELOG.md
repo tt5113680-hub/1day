@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## 2026-08-12 - G1-W∞-42 Management 订单痕迹 / 评价档案 / 营销活动 视觉/IA densify（MPC-04/05/07）PASS
+
+- `/m/orders` + `/m/reviews` + `/m/marketing`：由旧 `AdminPageHeader` + 品牌渐变概况条改为美团商家端 PC 黄顶栏（承载既有 eyebrow + 刷新）+ 灰底白卡（heroCard h1 + 诚实描述）+ 白卡概况条 + 白卡 row 列表；移除页面级 AdminPageHeader/eyebrow=；工具身份与诚实边界全保留，继承 W∞-22/23 语裁定档，新增 e2e `data-testid`。无 schema/DB/API，不复活本平台下单/收单。
+- Gates: g1-winf42 4/4；随动更新 W∞-22/W∞-23（订单/评价/营销 `eyebrow=`/`title=` prop → 顶栏 + `<h1>` 断言）；`g1-winf*.test.mjs` 115/115；management typecheck+build PASS（28 routes）；`pnpm build` 20/20；单测 47 passed（2 个 pre-existing token 失败照旧）；eslint + prettier clean。
+- Evidence: `evidence/G1-MEITUAN-PARITY/WINF42/ACCEPTANCE.md`.
+
 ## 2026-08-12 - G1-W∞-41 Management 会员中心视觉/IA densify（MPC-08）PASS
 
 - `/m/memberships`：黄顶栏、灰底白卡、heroCard、概况条（在册会员/权益项）、白卡会员卡 panel（发放/吊销时间线 ledger）densify；移除页面级 AdminPageHeader/Card；工具身份与诚实边界全保留（会员码核销/member_benefit_ledger 时间线/不伪造第三方投放或本平台成交/推广员工具授权范围），e2e hooks 全保留。无 schema/DB/API。

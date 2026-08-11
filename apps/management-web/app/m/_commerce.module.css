@@ -1,119 +1,197 @@
 .page {
-  max-width: 1440px;
-  min-height: 100vh;
-  margin: auto;
-  padding: 42px 48px;
-  background: var(--od-background);
-  color: var(--od-ink);
+  display: grid;
+  gap: 12px;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 16px 32px;
+  color: #222;
+  background: #f5f5f5;
 }
+
 .centered {
   display: grid;
   min-height: 70vh;
   place-items: center;
+  padding: 40px;
   text-align: center;
 }
-.centered section {
-  padding: 32px;
-  border-radius: 16px;
-  background: var(--od-surface);
-}
+
 .notice {
-  padding: 12px;
+  margin: 0;
   border-radius: 10px;
-  background: var(--od-brand-100);
-  color: var(--od-brand-800);
+  padding: 12px 14px;
+  background: #fff9db;
+  color: #b8860b;
+  font-weight: 600;
 }
+
+.topBar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  min-height: 52px;
+  margin: 0 -16px;
+  padding: 0 20px;
+  background: linear-gradient(180deg, #ffe14d 0%, #ffd100 100%);
+  box-shadow: 0 1px 3px rgb(0 0 0 / 8%);
+}
+
+.topBarTitle {
+  color: #222;
+  font-size: 16px;
+  font-weight: 800;
+}
+
+.topBarRefresh {
+  min-height: 34px;
+  border: 0;
+  border-radius: 17px;
+  padding: 0 14px;
+  color: #333;
+  background: rgb(255 255 255 / 65%);
+  font: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.heroCard {
+  display: grid;
+  gap: 6px;
+  border-radius: 12px;
+  padding: 16px 18px;
+  background: #fff;
+  box-shadow: 0 1px 2px rgb(0 0 0 / 4%);
+}
+
+.heroCard h1 {
+  margin: 0;
+  font: 700 24px / 1.2 var(--od-font-display, system-ui);
+  letter-spacing: -0.02em;
+}
+
+.heroCard p {
+  margin: 0;
+  color: #666;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
 .summaryStrip {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 12px;
-  margin-top: 20px;
-  padding: 14px 16px;
-  border: 1px solid color-mix(in srgb, var(--od-brand-600) 25%, var(--od-border));
+}
+
+.summaryStrip > div {
+  display: grid;
+  gap: 4px;
   border-radius: 12px;
-  background: linear-gradient(
-    135deg,
-    var(--od-brand-100) 0%,
-    color-mix(in srgb, var(--od-brand-50) 65%, var(--od-surface)) 100%
-  );
+  padding: 14px 18px;
+  background: #fff;
+  box-shadow: 0 1px 2px rgb(0 0 0 / 4%);
 }
+
 .summaryStrip span {
-  display: block;
-  color: var(--od-brand-800);
-  font-size: 12px;
-  font-weight: 700;
-}
-.summaryStrip strong {
-  display: block;
-  margin-top: 6px;
-  font-size: 22px;
-  font-family: var(--od-font-display);
-}
-.honest {
-  margin: 18px 0 0;
-  padding: 12px 14px;
-  border-left: 4px solid var(--od-brand-600);
-  background: var(--od-surface-subtle);
-  color: var(--od-text-muted);
+  color: #999;
   font-size: 13px;
 }
+
+.summaryStrip strong {
+  font: 700 24px / 1.2 var(--od-font-display, system-ui);
+  color: #222;
+}
+
+.honest {
+  margin: 0;
+  border-radius: 10px;
+  padding: 12px 14px;
+  background: #f8f8f8;
+  color: #666;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
 .grid {
   display: grid;
-  gap: 16px;
-  margin-top: 24px;
+  gap: 12px;
 }
+
 .row {
-  padding: 18px 20px;
-  border: 1px solid var(--od-border);
-  border-radius: 14px;
-  background: var(--od-surface);
-  box-shadow: var(--od-shadow-mid);
+  display: grid;
+  gap: 12px;
+  border-radius: 12px;
+  padding: 16px 18px;
+  background: #fff;
+  box-shadow: 0 1px 2px rgb(0 0 0 / 4%);
 }
+
 .rowHead {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
   gap: 16px;
 }
+
 .rowHead h2 {
   margin: 0;
-  font-size: 18px;
+  font-size: 17px;
 }
+
 .rowHead p {
   margin: 4px 0 0;
-  color: var(--od-text-muted);
+  color: #999;
   font-size: 13px;
 }
+
 .dl {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 10px;
-  border-top: 1px solid var(--od-border);
-  margin-top: 14px;
-  padding-top: 14px;
+  border-top: 1px solid #eee;
+  margin-top: 4px;
+  padding-top: 12px;
 }
+
 .dl dt {
-  color: var(--od-text-muted);
+  color: #999;
   font-size: 12px;
 }
+
 .dl dd {
   margin: 5px 0;
+  color: #222;
   font-weight: 700;
 }
+
 .amount {
-  color: var(--od-brand-700);
-  font-size: 22px;
+  color: #c08a00;
+  font-size: 20px;
   font-family: var(--od-font-display);
 }
+
 .rating {
-  color: var(--od-brand-600);
+  color: #f0a500;
   font-size: 20px;
   letter-spacing: 2px;
 }
+
 @media (max-width: 900px) {
   .page {
-    padding: 28px 18px;
+    padding-right: 10px;
+    padding-left: 10px;
   }
+
+  .topBar {
+    margin-right: -10px;
+    margin-left: -10px;
+  }
+
+  .summaryStrip {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
   .dl {
     grid-template-columns: 1fr 1fr;
   }

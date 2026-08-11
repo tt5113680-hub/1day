@@ -11,9 +11,9 @@ const menu = () => read('packages/contracts/src/menu.ts');
 
 test('W∞-22: management orders page is framed as trace archive, matching menu 订单痕迹', () => {
   const o = orders();
-  // title & header aligned to the trace/menu label (no 订单中心 store-ops title)
-  assert.match(o, /title="订单痕迹"/);
-  assert.match(o, /eyebrow="推广员工具 · 订单痕迹"/);
+  // topBar & hero title aligned to the trace/menu label (no 订单中心 store-ops title)
+  assert.match(o, /推广员工具 · 订单痕迹/);
+  assert.match(o, /<h1>订单痕迹<\/h1>/);
   assert.doesNotMatch(o, /title="订单中心"/);
   assert.doesNotMatch(o, /eyebrow="推广员工具 · 订单档案"/);
   // loading / forbidden / error states speak of 痕迹, not a sales center

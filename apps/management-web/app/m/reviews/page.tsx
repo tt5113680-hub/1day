@@ -1,7 +1,7 @@
 'use client';
 
 import { SessionApiClient } from '@oneday/session-client';
-import { AdminPageHeader, AppStatePanel, Button, StatusBadge } from '@oneday/ui';
+import { AppStatePanel, Button, StatusBadge } from '@oneday/ui';
 import { useCallback, useEffect, useState } from 'react';
 import styles from '../_commerce.module.css';
 
@@ -64,17 +64,23 @@ export default function CommerceReviewsPage() {
   const sum = reviews.reduce((acc, r) => acc + r.rating, 0);
   const avg = reviews.length ? (sum / reviews.length).toFixed(1) : '0';
   return (
-    <main className={styles.page}>
-      <AdminPageHeader
-        eyebrow="推广员工具 · 评价档案"
-        title="评价档案"
-        description="本地试点评价记录与平均分（租户隔离）。来源如实标注；不接第三方评价流，不伪造评分。"
-        actions={
-          <Button tone="secondary" onClick={() => void load()}>
-            刷新
-          </Button>
-        }
-      />
+    <main className={styles.page} data-testid="management-reviews">
+      <header className={styles.topBar}>
+        <span className={styles.topBarTitle}>推广员工具 · 评价档案</span>
+        <button className={styles.topBarRefresh} type="button" onClick={() => void load()}>
+          刷新
+        </button>
+      </header>
+
+      <section className={styles.heroCard} aria-label="评价档案说明">
+        <h1>评价档案</h1>
+        <p>本地试点评价记录与平均分（租户隔离）。来源如实标注；不接第三方评价流，不伪造评分。</p>
+      </section>
+
+      <p className={styles.honest} role="status">
+        评价骨架为本地试点数据（source=local）。推广员工具只做档案与回复痕迹；不接美团评价接口，不伪造第三方评价分。
+      </p>
+
       <section className={styles.summaryStrip} aria-label="评价概况">
         <div>
           <span>评价数</span>
@@ -93,9 +99,6 @@ export default function CommerceReviewsPage() {
           <strong>{new Set(reviews.map((r) => r.store_id)).size}</strong>
         </div>
       </section>
-      <p className={styles.honest}>
-        评价骨架为本地试点数据（source=local）。推广员工具只做档案与回复痕迹；不接美团评价接口，不伪造第三方评价分。
-      </p>
       <section className={styles.grid}>
         {reviews.map((review) => (
           <article className={styles.row} key={review.id}>

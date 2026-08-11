@@ -35,8 +35,8 @@ test('W∞-23: /m/stores page heading + states aligned to nav label 门店入口
 
 test('W∞-23: /m/reviews page heading + states framed as honest 评价档案 (menu label aligned)', () => {
   const r = reviews();
-  assert.match(r, /eyebrow="推广员工具 · 评价档案"/);
-  assert.match(r, /title="评价档案"/);
+  assert.match(r, /推广员工具 · 评价档案/);
+  assert.match(r, /<h1>评价档案<\/h1>/);
   assert.match(r, /正在加载评价档案/);
   assert.match(r, /无权查看评价档案/);
   assert.doesNotMatch(r, /评价管理/);
@@ -46,8 +46,8 @@ test('W∞-23: /m/reviews page heading + states framed as honest 评价档案 (m
 
 test('W∞-23: /m/marketing page heading + states aligned to nav label 营销活动', () => {
   const m = marketing();
-  assert.match(m, /eyebrow="推广员工具 · 营销档案"/);
-  assert.match(m, /title="营销活动"/);
+  assert.match(m, /推广员工具 · 营销档案/);
+  assert.match(m, /<h1>营销活动<\/h1>/);
   assert.match(m, /正在加载营销活动/);
   assert.match(m, /无权查看营销活动/);
   assert.doesNotMatch(m, /营销中心/);

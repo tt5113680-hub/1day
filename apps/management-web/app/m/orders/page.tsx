@@ -1,7 +1,7 @@
 'use client';
 
 import { SessionApiClient } from '@oneday/session-client';
-import { AdminPageHeader, AppStatePanel, Button, StatusBadge } from '@oneday/ui';
+import { AppStatePanel, Button, StatusBadge } from '@oneday/ui';
 import { useCallback, useEffect, useState } from 'react';
 import styles from '../_commerce.module.css';
 
@@ -79,20 +79,31 @@ export default function CommerceOrdersPage() {
         />
       </main>
     );
-  const paidCount = orders.filter((o) => ['paid', 'fulfilled', 'active', 'completed'].includes(o.fulfillment_status)).length;
+  const paidCount = orders.filter((o) =>
+    ['paid', 'fulfilled', 'active', 'completed'].includes(o.fulfillment_status),
+  ).length;
   const amount = orders.reduce((sum, o) => sum + Number(o.amount_cents), 0);
+  const topBarTitle = '推广员工具 · 订单痕迹';
   return (
-    <main className={styles.page}>
-      <AdminPageHeader
-        eyebrow="推广员工具 · 订单痕迹"
-        title="订单痕迹"
-        description="第三方成交/跳转档案（本地试点，租户隔离）。来源如实标注；不宣称美团实时同步，不包含本平台收款，不代表第三方订单履约。"
-        actions={
-          <Button tone="secondary" onClick={() => void load()}>
-            刷新
-          </Button>
-        }
-      />
+    <main className={styles.page} data-testid="management-orders">
+      <header className={styles.topBar}>
+        <span className={styles.topBarTitle}>{topBarTitle}</span>
+        <button className={styles.topBarRefresh} type="button" onClick={() => void load()}>
+          刷新
+        </button>
+      </header>
+
+      <section className={styles.heroCard} aria-label="订单痕迹说明">
+        <h1>订单痕迹</h1>
+        <p>
+          第三方成交/跳转档案（本地试点，租户隔离）。来源如实标注；不宣称美团实时同步，不包含本平台收款，不代表第三方订单履约。
+        </p>
+      </section>
+
+      <p className={styles.honest} role="status">
+        订单痕迹为本地试点档案（source=local）。推广员工具只留档案痕迹；不接美团实时订单，不伪造第三方成交，不包含本平台收款，非本平台下单。
+      </p>
+
       <section className={styles.summaryStrip} aria-label="订单痕迹概况">
         <div>
           <span>档案记录数</span>
@@ -113,9 +124,6 @@ export default function CommerceOrdersPage() {
           <strong>{new Set(orders.map((o) => o.store_id)).size}</strong>
         </div>
       </section>
-      <p className={styles.honest}>
-        订单痕迹为本地试点档案（source=local）。推广员工具只留档案痕迹；不接美团实时订单，不伪造第三方成交，不包含本平台收款，非本平台下单。
-      </p>
       <section className={styles.grid}>
         {orders.map((order) => (
           <article className={styles.row} key={order.id}>
@@ -146,7 +154,12 @@ export default function CommerceOrdersPage() {
               </div>
               <div>
                 <dt>商品/套餐</dt>
-                <dd>{order.items?.map((i) => i.name).filter(Boolean).join('、') ?? '—'}</dd>
+                <dd>
+                  {order.items
+                    ?.map((i) => i.name)
+                    .filter(Boolean)
+                    .join('、') ?? '—'}
+                </dd>
               </div>
               <div>
                 <dt>门店备注</dt>

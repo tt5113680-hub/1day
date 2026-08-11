@@ -1,7 +1,7 @@
 'use client';
 
 import { SessionApiClient } from '@oneday/session-client';
-import { AdminPageHeader, AppStatePanel, Button, StatusBadge } from '@oneday/ui';
+import { AppStatePanel, Button, StatusBadge } from '@oneday/ui';
 import { useCallback, useEffect, useState } from 'react';
 import styles from '../_commerce.module.css';
 
@@ -81,17 +81,25 @@ export default function CommerceMarketingPage() {
     );
   const live = campaigns.filter((c) => c.status === 'live').length;
   return (
-    <main className={styles.page}>
-      <AdminPageHeader
-        eyebrow="推广员工具 · 营销档案"
-        title="营销活动"
-        description="本地营销活动档案（券/活动/内容窗口）。投放渠道如实标注；不宣称已投第三方渠道，不含支付金额。"
-        actions={
-          <Button tone="secondary" onClick={() => void load()}>
-            刷新
-          </Button>
-        }
-      />
+    <main className={styles.page} data-testid="management-marketing">
+      <header className={styles.topBar}>
+        <span className={styles.topBarTitle}>推广员工具 · 营销档案</span>
+        <button className={styles.topBarRefresh} type="button" onClick={() => void load()}>
+          刷新
+        </button>
+      </header>
+
+      <section className={styles.heroCard} aria-label="营销活动说明">
+        <h1>营销活动</h1>
+        <p>
+          本地营销活动档案（券/活动/内容窗口）。投放渠道如实标注；不宣称已投第三方渠道，不含支付金额。
+        </p>
+      </section>
+
+      <p className={styles.honest} role="status">
+        营销骨架为本地试点数据（delivery=local）。推广员工具只登记档案与发布时间窗；不接美团/抖音实时投放，非本平台成交。
+      </p>
+
       <section className={styles.summaryStrip} aria-label="营销概况">
         <div>
           <span>活动数</span>
@@ -110,9 +118,6 @@ export default function CommerceMarketingPage() {
           <strong>{new Set(campaigns.map((c) => c.store_id)).size}</strong>
         </div>
       </section>
-      <p className={styles.honest}>
-        营销骨架为本地试点数据（delivery=local）。推广员工具只登记档案与发布时间窗；不接美团/抖音实时投放，非本平台成交。
-      </p>
       <section className={styles.grid}>
         {campaigns.map((campaign) => (
           <article className={styles.row} key={campaign.id}>
@@ -120,7 +125,8 @@ export default function CommerceMarketingPage() {
               <div>
                 <h2>{campaign.title}</h2>
                 <p>
-                  {typeCopy[campaign.campaign_type] ?? campaign.campaign_type} · {campaign.store_name}
+                  {typeCopy[campaign.campaign_type] ?? campaign.campaign_type} ·{' '}
+                  {campaign.store_name}
                 </p>
               </div>
               <StatusBadge tone={statusTone[campaign.status] ?? 'neutral'}>
