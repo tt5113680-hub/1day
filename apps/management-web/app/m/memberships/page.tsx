@@ -143,7 +143,7 @@ export default function MembershipsPage() {
         <AppStatePanel
           kind="forbidden"
           title="无权查看会员"
-          description="需要经营管理或门店范围的 tenant.read。"
+          description="需要推广员工具授权或门店范围的 tenant.read。"
         />
       </main>
     );

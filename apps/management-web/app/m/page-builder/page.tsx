@@ -301,7 +301,7 @@ export default function PageBuilder() {
         <AppStatePanel
           kind="forbidden"
           title="无权查看页面装修"
-          description="请使用具备模板经营权限的账号。"
+          description="请使用具备模板工具权限的账号。"
         />
       </main>
     );

@@ -224,7 +224,7 @@ export default function ManagementCirclesPage() {
         <AppStatePanel
           kind="forbidden"
           title="无权管理商圈"
-          description="请使用具备租户经营管理权限的账号。"
+          description="请使用具备租户推广员工具权限的账号。"
         />
       </main>
     );

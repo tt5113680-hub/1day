@@ -5,8 +5,8 @@ export default function Forbidden() {
     <main className="od-route-state">
       <AppStatePanel
         kind="forbidden"
-        title="当前角色没有经营权限"
-        description="请返回经营总览，或由租户管理员调整你的角色范围。"
+        title="当前角色没有工具访问权限"
+        description="请返回推广员工具工作台，或由租户管理员调整你的角色范围。"
       />
     </main>
   );

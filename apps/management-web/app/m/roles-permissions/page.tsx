@@ -94,7 +94,7 @@ export default function RolesPermissionsPage() {
       setNote('角色已创建，可继续配置权限。');
       await load();
     } catch {
-      setNote('角色未创建，请确认编码唯一且具备经营管理权限。');
+      setNote('角色未创建，请确认编码唯一且具备工具授权。');
     } finally {
       setBusy(false);
     }
@@ -146,7 +146,7 @@ export default function RolesPermissionsPage() {
         <AppStatePanel
           kind="forbidden"
           title="无权查看角色与权限"
-          description="请使用具备经营管理权限的账号。"
+          description="请使用具备推广员工具权限的账号。"
         />
       </main>
     );

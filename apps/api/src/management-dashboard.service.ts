@@ -64,7 +64,7 @@ export class ManagementDashboardService implements OnModuleDestroy {
             {
               id: 'retention',
               title: '保持客户触达节奏',
-              reason: '当前无未完成任务，可从客户资产与内容投放建立下一轮行动。',
+              reason: '当前无未完成任务，可从客户跟进与内容投放建立下一轮行动。',
               deepLink: '/m/customers',
             },
           ]),

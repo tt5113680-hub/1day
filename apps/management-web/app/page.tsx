@@ -27,7 +27,7 @@ const sessionApi = new SessionApiClient(api);
 
 /** Meituan merchant-PC workbench shortcuts — real routes only (no fake 订单/评价). */
 const SHORTCUTS = [
-  { href: '/m/stores', label: '门店', desc: '门店管理' },
+  { href: '/m/stores', label: '门店', desc: '门店入口' },
   { href: '/m/offers', label: '商品', desc: '商品与套餐' },
   { href: '/m/customers', label: '顾客', desc: '顾客管理' },
   { href: '/m/memberships', label: '会员', desc: '会员中心' },

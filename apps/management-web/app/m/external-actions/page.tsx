@@ -207,7 +207,7 @@ export default function ExternalActionsPage() {
         <AppStatePanel
           kind="forbidden"
           title="无权管理外链动作"
-          description="需要经营管理或 action.read / action.manage 权限。"
+          description="需要推广员工具授权或 action.read / action.manage 权限。"
         />
       </main>
     );

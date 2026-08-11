@@ -141,7 +141,7 @@ export function MembershipRedeem() {
           </select>
         </label>
         {benefits.length === 0 ? (
-          <p className={styles.note}>当前没有可核销权益；请先由经营管理发放门店权益。</p>
+          <p className={styles.note}>当前没有可核销权益；请先由推广员工具授权的账号发放门店权益。</p>
         ) : null}
         <Button
           loading={busy}

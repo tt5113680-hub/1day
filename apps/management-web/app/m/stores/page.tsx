@@ -181,7 +181,7 @@ export default function StoresPage() {
         <AppStatePanel
           kind="forbidden"
           title="无权访问门店入口"
-          description="请使用具备经营管理权限的账号登录。"
+          description="请使用具备推广员工具权限的账号登录。"
         />
       </main>
     );

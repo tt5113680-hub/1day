@@ -102,7 +102,7 @@ export default function AiSuggestions() {
         <AppStatePanel
           kind="loading"
           title="正在加载可执行建议"
-          description="正在校验建议来源、执行状态与经营权限。"
+          description="正在校验建议来源、执行状态与工具授权。"
         />
       </main>
     );
@@ -112,7 +112,7 @@ export default function AiSuggestions() {
         <AppStatePanel
           kind="forbidden"
           title="无权查看 AI 建议"
-          description="请使用具备经营管理权限的账号。"
+          description="请使用具备推广员工具权限的账号。"
         />
       </main>
     );

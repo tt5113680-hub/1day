@@ -84,7 +84,7 @@ export default function AttributionPage() {
         <AppStatePanel
           kind="forbidden"
           title="无权查看来源归因"
-          description="请使用具备经营管理权限的账号。"
+          description="请使用具备推广员工具权限的账号。"
         />
       </main>
     );

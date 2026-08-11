@@ -1,3 +1,20 @@
+## 2026-08-11 - G1-W∞-27 工具身份收尾·管理/员工「经营管理」状态口径对齐（去 store-ops `经营` 权限/数据话术）PASS
+
+- 残留 store-ops `经营管理/经营权限/经营数据/客户资产/门店管理` 全改挂 `推广员工具 · 工具权限/工具授权/工具数据/客户跟进/门店入口`：
+  - 14 页 forbidden/loading 状态：`/m/workflows`、`/m/attribution`、`/m/organization-employees`、`/m/ai-suggestions`、
+    `/m/employee-process-performance`、`/m/permission-audit`、`/m/roles-permissions`、`/m/entry-funnel`、`/m/circles`、
+    `/m/memberships`、`/m/external-actions`、`/m/stores`、`/m/content`、`/m/page-builder`（`请使用具备推广员工具权限的账号` /
+    `租户推广员工具权限` / `需要推广员工具授权或 ...` / `内容工具权限` / `模板工具权限` / loading `工具授权`）。
+  - `/m/roles-permissions` save note `具备工具授权`；`/m` 全局 forbidden `工具访问权限`/`推广员工具工作台`、loading `工具数据/工具信息`、error `工具数据暂时不可用/工具操作`。
+  - Management 工作台门店快捷入口 desc `门店入口`（对齐 W∞-19/23 菜单 label）。
+  - Employee `/e/memberships` 核销空态 `推广员工具授权的账号`；API 概览建议原因 `客户跟进`（对齐 W∞-24）。
+- **Platform 渠道/商圈经营台**（`ch/*`、`bc/*`、`p/channels`）`经营` 措辞按主人身份保留，不在本切片范围。
+- Text/copy/aria-only，无 schema/DB/API，无 RBAC 变更，不复活本平台下单/收单。
+- 新增 `tests/g1-winf27-tool-permission-state-copy.test.mjs` 7/7；全仓扫描确认 management/employee App TSX 无 `经营管理` 残留。
+- Gates: `node --test tests/g1-winf*.test.mjs` 49/49；`node --test tests/*menu*.test.mjs` 4/4；typecheck+build 20/20（management-web 27 routes）；
+  单测 47 passed / 2 pre-existing token 失败照旧；eslint clean。
+- Not 全部商用 / 未代签 owner UI。Evidence: `evidence/G1-MEITUAN-PARITY/WINF27/ACCEPTANCE.md`.
+
 ## 2026-08-11 - G1-W∞-26 工具身份收尾·`/m/settings` 状态口径对齐（设置页去 store-ops `经营` 话术）PASS
 
 - `/m/settings`（MPC-12 设置，菜单「工具设置」）状态口径对齐工具身份：title/loading/forbidden/error/保存按钮/成功提示

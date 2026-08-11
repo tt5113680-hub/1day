@@ -145,7 +145,7 @@ export default function PermissionAuditPage() {
         <AppStatePanel
           kind="forbidden"
           title="无权查看权限审计"
-          description="请使用具备经营管理权限的账号。"
+          description="请使用具备推广员工具权限的账号。"
         />
       </main>
     );

@@ -161,7 +161,7 @@ export default function ContentPage() {
         <AppStatePanel
           kind="forbidden"
           title="无权查看内容中心"
-          description="请使用具备内容经营权限的账号。"
+          description="请使用具备内容工具权限的账号。"
         />
       </main>
     );
