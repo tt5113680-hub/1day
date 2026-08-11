@@ -21,7 +21,7 @@ test('G1-W∞-12: group-buy + membership densify (MH5-04/10)', () => {
   assert.match(channel, /本店会员 · 推广员工具/);
   assert.match(channel, /不含支付金额/);
   assert.match(channel, /不替代美团\/抖音会员/);
-  assert.doesNotMatch(channel, /本平台下单/);
+  assert.doesNotMatch(channel, /(?<!非)本平台下单/);
 
   assert.match(settings, /推广员工具 · 经营设置/);
   assert.match(settings, /\/m\/entry-funnel/);

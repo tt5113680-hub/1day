@@ -42,6 +42,30 @@
   white-space: nowrap;
 }
 
+.disclaimer {
+  margin: 12px 0 0;
+  border-left: 3px solid color-mix(in srgb, #a84331 55%, transparent);
+  padding-left: 10px;
+  color: #9c857a;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.5;
+}
+
+.quickLinks {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: 10px 0 0;
+}
+
+.quickLinks a {
+  color: #a84331;
+  font-size: 13px;
+  font-weight: 700;
+  text-decoration: none;
+}
+
 .productCard {
   display: grid;
   grid-template-columns: 112px minmax(0, 1fr);

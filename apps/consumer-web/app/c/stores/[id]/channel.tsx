@@ -125,7 +125,7 @@ export default function StoreChannel({
         ? '推广员工具 · 门店套餐说明；成交经确认跳转第三方（不在此下单）'
         : channel === 'membership'
           ? '本店入会与权益说明 · 推广员工具留痕；不含第三方成交'
-          : '会员证明、外链团购与咨询入口；不含第三方订单履约';
+          : '推广员工具 · 会员证明与外链入口；非本平台下单，不含第三方订单履约';
   const platformTypes = useMemo(() => {
     const set = new Set(data.platformOffers.map((item) => item.platformType));
     return [...set];
@@ -139,7 +139,10 @@ export default function StoreChannel({
             <a href={storeHref(context, '', 'channel_back')}>‹ 返回门店</a>
             <p>
               {data.store.merchant} · {data.store.name}
-              {channel === 'group-buy' || channel === 'membership' || channel === 'menu'
+              {channel === 'group-buy' ||
+              channel === 'membership' ||
+              channel === 'menu' ||
+              channel === 'profile'
                 ? ' · 推广员工具'
                 : ''}
             </p>
@@ -360,11 +363,25 @@ export default function StoreChannel({
           )}
 
           {channel === 'profile' && (
-            <MemberProfileChannel
-              context={context}
-              consultActionId={consultAction?.id}
-              actionHref={actionHref}
-            />
+            <>
+              <p className={styles.disclaimer} role="note">
+                「我的」仅展示本店会员证明与外链入口；团购成交在第三方完成，非本平台下单。
+              </p>
+              <div className={styles.quickLinks}>
+                <a href={storeHref(context, '', 'profile_home')}>门店首页</a>
+                <a href={storeHref(context, '/membership', 'profile_tab_membership')}>
+                  会员权益
+                </a>
+                <a href={storeHref(context, '/group-buy', 'profile_tab_group_buy')}>
+                  全平台团购
+                </a>
+              </div>
+              <MemberProfileChannel
+                context={context}
+                consultActionId={consultAction?.id}
+                actionHref={actionHref}
+              />
+            </>
           )}
         </div>
       </main>
@@ -611,7 +628,7 @@ function MemberProfileChannel({
           {phoneIdentity ? ` · ${phoneIdentity.maskedValue}` : ''}
         </p>
         <p className={styles.profileHint}>
-          本页展示入会证明与权益余额；第三方团购成交不在此履约。
+          本页展示入会证明与权益余额；第三方团购成交不在此履约，非本平台下单。
         </p>
       </article>
       <article className={styles.benefit} aria-label="会员钱包余额">

@@ -1,3 +1,11 @@
+## 2026-08-11 - G1-W∞-14 套餐详情/门店「我的」densify PASS
+
+- Consumer `/c/services/[id]`: 推广员工具文案、快捷链、不在此下单免责；CTA「确认前往…」替换「去购买」；外链须知替换购买须知。
+- Consumer `/c/stores/[id]/profile`: header ·推广员工具 + 免责 + 快捷链；恢复「非本平台下单」表述。
+- Gates: `node --test tests/g1-winf14-service-profile.test.mjs` 1/1；W∞-10/12/13 回归 3/3；consumer typecheck+build PASS。
+- Not 全部商用 / 未代签 owner UI。Next: W∞-15。
+- Evidence: `evidence/G1-MEITUAN-PARITY/WINF14/ACCEPTANCE.md`.
+
 ## 2026-08-11 - G1-W∞-13 菜单/商家入口 densify PASS
 
 - Consumer `/c/stores/[id]/menu`: 推广员工具文案、快捷链、不在此下单免责。
