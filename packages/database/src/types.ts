@@ -1495,6 +1495,27 @@ export interface EntryFunnelEventsTable {
   created_at: Timestamp;
 }
 
+/** TOOL-PHASE-5: saved DIY query configs (no payment fields). */
+export interface EntryFunnelSavedViewsTable {
+  id: string;
+  tenant_id: string;
+  name: string;
+  days: number;
+  group_by: string;
+  surface: string | null;
+  module_key: string | null;
+  target_platform: string | null;
+  event_code: string | null;
+  industry_template: string | null;
+  status: string;
+  created_at: Timestamp;
+  created_by: string | null;
+  updated_at: Timestamp;
+  updated_by: string | null;
+  deleted_at: Timestamp | null;
+  version: Generated<number>;
+}
+
 export interface Database {
   tenants: TenantsTable;
   agent_regions: AgentRegionsTable;
@@ -1504,6 +1525,7 @@ export interface Database {
   agent_settlements: AgentSettlementsTable;
   agent_onboarding_approvals: AgentOnboardingApprovalsTable;
   entry_funnel_events: EntryFunnelEventsTable;
+  entry_funnel_saved_views: EntryFunnelSavedViewsTable;
   sync_notifications: SyncNotificationsTable;
   users: UsersTable;
   memberships: MembershipsTable;

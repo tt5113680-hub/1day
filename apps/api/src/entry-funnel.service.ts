@@ -1,6 +1,12 @@
-import { BadRequestException, Injectable, OnModuleDestroy } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+  OnModuleDestroy,
+} from '@nestjs/common';
 import { randomUUID } from 'node:crypto';
 import { createApiPool } from './database-pool';
+import type { OrganizationContext } from './organization.service';
 
 const SLUG = /^[a-z0-9][a-z0-9-]{0,62}$/;
 const EVENT_CODES = new Set([
@@ -71,7 +77,18 @@ export class EntryFunnelService implements OnModuleDestroy {
       if (!tenant) throw new BadRequestException('VALIDATION_ERROR');
       tenantId = tenant.id as string;
     }
+    return this.writeEvents(tenantId, rawEvents);
+  }
 
+  /** Authenticated management/employee emit (tenant from session). */
+  async ingestAuthenticated(tenantId: string, body: Record<string, unknown>) {
+    const rawEvents = body.events;
+    if (!Array.isArray(rawEvents) || rawEvents.length === 0 || rawEvents.length > 50)
+      throw new BadRequestException('VALIDATION_ERROR');
+    return this.writeEvents(tenantId, rawEvents);
+  }
+
+  private async writeEvents(tenantId: string | null, rawEvents: unknown[]) {
     const inserted: string[] = [];
     const client = await this.pool.connect();
     try {
@@ -206,7 +223,7 @@ export class EntryFunnelService implements OnModuleDestroy {
           ? Math.max(1, Math.min(90, Number(daysRaw)))
           : 7;
 
-    const [totals, byCode, bySurfaceRows, byModuleRows, byPlatform] = await Promise.all([
+    const [totals, byCode, bySurfaceRows, byModuleRows, byPlatform, sharePair] = await Promise.all([
       this.pool.query(
         `select count(*)::int as total,
                 count(*) filter (where event_code='impression')::int as impressions,
@@ -246,6 +263,25 @@ export class EntryFunnelService implements OnModuleDestroy {
          where tenant_id=$1 and occurred_at >= now() - make_interval(days => $2)
            and event_code in ('jump','jump_confirm')
          group by 1 order by count desc`,
+        [tenantId, days],
+      ),
+      this.pool.query(
+        `select
+           (select count(distinct share_code)::int from entry_funnel_events
+            where tenant_id=$1 and occurred_at >= now() - make_interval(days => $2)
+              and event_code='share' and share_code is not null) as sent_codes,
+           (select count(distinct share_code)::int from entry_funnel_events
+            where tenant_id=$1 and occurred_at >= now() - make_interval(days => $2)
+              and event_code='share_open' and share_code is not null) as opened_codes,
+           (select count(distinct s.share_code)::int from entry_funnel_events s
+            where s.tenant_id=$1 and s.occurred_at >= now() - make_interval(days => $2)
+              and s.event_code='share' and s.share_code is not null
+              and exists (
+                select 1 from entry_funnel_events o
+                where o.tenant_id=s.tenant_id and o.event_code='share_open'
+                  and o.share_code=s.share_code
+                  and o.occurred_at >= now() - make_interval(days => $2)
+              )) as paired_codes`,
         [tenantId, days],
       ),
     ]);
@@ -337,6 +373,12 @@ export class EntryFunnelService implements OnModuleDestroy {
       bySurface,
       byModule,
       byTargetPlatform,
+      sharePairing: {
+        sentCodes: Number(sharePair.rows[0]?.sent_codes ?? 0),
+        openedCodes: Number(sharePair.rows[0]?.opened_codes ?? 0),
+        pairedCodes: Number(sharePair.rows[0]?.paired_codes ?? 0),
+        note: '员工发出分享 ↔ 消费者打开分享（按 share_code 去重配对）；不含成交。',
+      },
       industryTemplates,
       generatedAt: new Date().toISOString(),
     };
@@ -468,6 +510,132 @@ export class EntryFunnelService implements OnModuleDestroy {
       queryPreview: query.rows.slice(0, 12),
       generatedAt: new Date().toISOString(),
     };
+  }
+
+  async listSavedViews(context: OrganizationContext) {
+    const rows = (
+      await this.pool.query(
+        `select id, name, days, group_by, surface, module_key, target_platform, event_code,
+                industry_template, version, updated_at
+         from entry_funnel_saved_views
+         where tenant_id=$1 and status='active' and deleted_at is null
+         order by updated_at desc
+         limit 50`,
+        [context.tenantId],
+      )
+    ).rows;
+    return {
+      items: rows.map((row) => ({
+        id: row.id as string,
+        name: row.name as string,
+        days: Number(row.days),
+        groupBy: row.group_by as string,
+        surface: (row.surface as string | null) ?? null,
+        moduleKey: (row.module_key as string | null) ?? null,
+        targetPlatform: (row.target_platform as string | null) ?? null,
+        eventCode: (row.event_code as string | null) ?? null,
+        industryTemplate: (row.industry_template as string | null) ?? null,
+        version: Number(row.version),
+        updatedAt: row.updated_at,
+      })),
+    };
+  }
+
+  async saveView(context: OrganizationContext, body: Record<string, unknown>) {
+    const name = textOpt(body.name, 120);
+    if (!name) throw new BadRequestException('VALIDATION_ERROR');
+    const days = parseDays(body.days);
+    const groupBy = textOpt(body.groupBy ?? body.group_by, 32) ?? 'module_key';
+    const allowedGroup = new Set([
+      'surface',
+      'module_key',
+      'target_platform',
+      'event_code',
+      'day',
+    ]);
+    if (!allowedGroup.has(groupBy)) throw new BadRequestException('VALIDATION_ERROR');
+    const surface = textOpt(body.surface, 48);
+    const moduleKey = textOpt(body.moduleKey ?? body.module_key, 80);
+    const targetPlatform = textOpt(body.targetPlatform ?? body.target_platform, 32);
+    const eventCode = textOpt(body.eventCode ?? body.event_code, 48);
+    const industryTemplate = textOpt(body.industryTemplate ?? body.industry_template, 32);
+    if (surface && !SURFACES.has(surface)) throw new BadRequestException('VALIDATION_ERROR');
+    if (targetPlatform && !PLATFORMS.has(targetPlatform))
+      throw new BadRequestException('VALIDATION_ERROR');
+    if (eventCode && !EVENT_CODES.has(eventCode)) throw new BadRequestException('VALIDATION_ERROR');
+
+    const existing = (
+      await this.pool.query(
+        `select id from entry_funnel_saved_views
+         where tenant_id=$1 and name=$2 and deleted_at is null`,
+        [context.tenantId, name],
+      )
+    ).rows[0];
+
+    if (existing) {
+      const updated = await this.pool.query(
+        `update entry_funnel_saved_views set
+           days=$3, group_by=$4, surface=$5, module_key=$6, target_platform=$7, event_code=$8,
+           industry_template=$9, updated_at=now(), updated_by=$10, version=version+1
+         where id=$1 and tenant_id=$2 and deleted_at is null
+         returning id, name, days, group_by, version`,
+        [
+          existing.id,
+          context.tenantId,
+          days,
+          groupBy,
+          surface,
+          moduleKey,
+          targetPlatform,
+          eventCode,
+          industryTemplate,
+          context.userId,
+        ],
+      );
+      return {
+        id: updated.rows[0].id,
+        name: updated.rows[0].name,
+        days: Number(updated.rows[0].days),
+        groupBy: updated.rows[0].group_by,
+        version: Number(updated.rows[0].version),
+        replaced: true,
+      };
+    }
+
+    const id = randomUUID();
+    await this.pool.query(
+      `insert into entry_funnel_saved_views(
+         id, tenant_id, name, days, group_by, surface, module_key, target_platform, event_code,
+         industry_template, status, created_by, updated_by
+       ) values ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,'active',$11,$11)`,
+      [
+        id,
+        context.tenantId,
+        name,
+        days,
+        groupBy,
+        surface,
+        moduleKey,
+        targetPlatform,
+        eventCode,
+        industryTemplate,
+        context.userId,
+      ],
+    );
+    return { id, name, days, groupBy, version: 1, replaced: false };
+  }
+
+  async deleteView(context: OrganizationContext, viewId: string) {
+    if (!UUID.test(viewId)) throw new BadRequestException('VALIDATION_ERROR');
+    const result = await this.pool.query(
+      `update entry_funnel_saved_views
+       set deleted_at=now(), status='deleted', updated_at=now(), updated_by=$3, version=version+1
+       where id=$1 and tenant_id=$2 and deleted_at is null
+       returning id`,
+      [viewId, context.tenantId, context.userId],
+    );
+    if (!result.rows[0]) throw new NotFoundException('NOT_FOUND');
+    return { id: viewId, deleted: true };
   }
 
   async onModuleDestroy() {

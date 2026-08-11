@@ -2,6 +2,8 @@
 
 ## 2026-08-11
 
+- **TOOL-PHASE-6** L2 completeness: one-code visit emit, circle invite/apply emit, employee share↔open funnel events + summary sharePairing. Evidence: evidence/TOOL-PHASE-6/ACCEPTANCE.md.
+- **TOOL-PHASE-5** Saved DIY funnel views (`060_entry_funnel_saved_views` + `/m/entry-funnel` save/load/delete). Evidence: evidence/TOOL-PHASE-5/ACCEPTANCE.md.
 - **TOOL-PHASE-4** DIY entry-funnel query + interpret-only insights on /m/entry-funnel (no deal fabrication). Evidence: evidence/TOOL-PHASE-4/ACCEPTANCE.md.
 
 

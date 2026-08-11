@@ -136,7 +136,25 @@ export default function ManagementCirclesPage() {
         body: JSON.stringify(invite),
       });
       if (!response.ok) throw Error();
-      setNote('邀约已发出（等待对方/本圈审批流：本页可批准）。');
+      void sessionApi.request(`${api}/api/v1/management/entry-funnel/events`, {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({
+          events: [
+            {
+              eventCode: 'circle_invite',
+              surface: 'circle',
+              moduleKey: 'circle_manager_invite',
+              actorRole: 'boss',
+              device: 'pc',
+              circleId: invite.circleId,
+              scene: 'management_invite',
+              payload: { applicantTenantSlug: invite.applicantTenantSlug },
+            },
+          ],
+        }),
+      });
+      setNote('邀约已发出并入圈（经理邀约即时生效）。');
       setInvite((prev) => ({ ...prev, applicantTenantSlug: '', note: '' }));
       await load();
     } catch {
@@ -152,6 +170,23 @@ export default function ManagementCirclesPage() {
         body: JSON.stringify({ circleId, note: '希望加入商家互助商圈' }),
       });
       if (!response.ok) throw Error();
+      void sessionApi.request(`${api}/api/v1/management/entry-funnel/events`, {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({
+          events: [
+            {
+              eventCode: 'circle_apply',
+              surface: 'circle',
+              moduleKey: 'circle_merchant_apply',
+              actorRole: 'boss',
+              device: 'pc',
+              circleId,
+              scene: 'management_apply',
+            },
+          ],
+        }),
+      });
       setNote('入圈申请已提交。');
       await load();
     } catch {

@@ -3,6 +3,7 @@
 import { AppStatePanel, Button } from '@oneday/ui';
 import { useParams, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
+import { trackFunnelEvent } from '../../entry-funnel-client';
 import styles from './one-code-landing.module.css';
 
 const api = process.env.NEXT_PUBLIC_API_BASE_URL ?? 'http://127.0.0.1:3001';
@@ -47,6 +48,16 @@ export function OneCodeLanding() {
         if (!payload.targetPath?.startsWith('/')) {
           setError('error');
           return;
+        }
+        if (payload.tenant?.slug) {
+          void trackFunnelEvent(payload.tenant.slug, {
+            eventCode: 'visit',
+            surface: 'one_code',
+            moduleKey: 'one_code_landing',
+            source: payload.source,
+            scene: payload.scene || 'one_code',
+            payload: { code: payload.code },
+          });
         }
         const target = new URL(payload.targetPath, window.location.origin);
         if (!target.searchParams.get('tenant') && payload.tenant?.slug) {

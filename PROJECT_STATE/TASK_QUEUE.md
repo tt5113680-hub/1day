@@ -90,7 +90,9 @@
 - [x] **TOOL-PHASE-2** TOOL-PHASE-2-CIRCLE-DUAL-IDENTITY PASS — 商圈单独页双身份：migration 059 + consumer /c/circles + management /m/circles 创建/邀约/申请. See evidence/TOOL-PHASE-2/ACCEPTANCE.md.
 - [x] **TOOL-PHASE-3** TOOL-PHASE-3-L2-INDUSTRY-TEMPLATES PASS — L2 module_impression 去重曝光 + consult_click + 餐饮/美业/零售行业模板（只解读痕迹）. See evidence/TOOL-PHASE-3/ACCEPTANCE.md.
 - [x] **TOOL-PHASE-4** TOOL-PHASE-4-DIY-INTERPRET PASS — DIY query + interpret-only AI（只解读 L0–L2）. See evidence/TOOL-PHASE-4/ACCEPTANCE.md.
-- [ ] **NEXT:** Owner G1 re-test / optional saved DIY views — **不做** 本平台下单/订单（不碰销售）.
+- [x] **TOOL-PHASE-5** TOOL-PHASE-5-SAVED-VIEWS PASS — migration 060 saved DIY views + board save/load/delete. See evidence/TOOL-PHASE-5/ACCEPTANCE.md.
+- [x] **TOOL-PHASE-6** TOOL-PHASE-6-L2-COMPLETENESS PASS — one-code/circle/share L2 emit + sharePairing. See evidence/TOOL-PHASE-6/ACCEPTANCE.md.
+- [ ] **NEXT:** W∞-3 tool-path gaps（外链 hand-off 确认、Management PC 深页、代理细部、体验对标）— **不做** 本平台下单/订单履约（不碰销售）. Owner G1 re-test when ready.
 - [x] **G1-W∞-2** `G1-R-MEITUAN-H5-SEARCH` PASS (首刀) — Consumer H5 搜索（MH5-02）: `ConsumerDiscoveryService.search` + `GET /api/v1/consumer/search?tenant&q`（租户 fail-closed 按名 ILIKE 检索已发布商户，返回 local_pilot 评分/月售/距离 + 进店深链）+ `/c/search` 美团 App 搜索面 + `/c/discovery` 的搜索壳升级为可点击搜索入口。typecheck 20/20、build 20/20（consumer 路由新增 `/c/search`）、page-c-consumer-search L2 PASS、page-c-002 回归 PASS、resolve-consumer-tabs 3/3。见 `evidence/G1-MEITUAN-PARITY/WINF2/ACCEPTANCE.md`。
 - [ ] G1 OWNER GATE — owner signs only after tool-identity + funnel waves pass re-test (`PRODUCT_OWNER_UI_ACCEPTANCE.md`). P1-C still blocked on lifting G + cloud inventory.
 - [ ] HUMAN-PILOT-HANDOFF / product-owner UI acceptance — local sandbox refreshed through migration `054` + consult CTA bindings + walkthrough shots (Playwright 4/4); **human sign-off still required**; not auto-claimed as 全部商用. Phase-1 P1-C blocked until owner lifts G (deploy templates in `infra/deploy/`).

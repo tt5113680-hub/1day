@@ -4,6 +4,7 @@ import {
   Controller,
   Get,
   Headers,
+  Param,
   Post,
   Put,
   Query,
@@ -27,6 +28,23 @@ export class EntryFunnelController {
     return {
       data: await this.funnel.ingest(tenant ?? '', body ?? {}),
       meta: { public: true },
+      error: null,
+    };
+  }
+
+  /** Authenticated batch ingest (management/employee). */
+  @Post('management/entry-funnel/events')
+  async ingestAuthed(
+    @Headers('authorization') authorization: string | undefined,
+    @Headers('x-tenant-context') tenant: string | undefined,
+    @Headers('x-request-id') requestId: string | undefined,
+    @Body() body: Record<string, unknown>,
+  ) {
+    if (!requestId?.trim()) throw new BadRequestException('VALIDATION_ERROR');
+    const context = await this.auth.require(authorization, 'tenant.manage', tenant);
+    return {
+      data: await this.funnel.ingestAuthenticated(context.tenantId, body ?? {}),
+      meta: { requestId },
       error: null,
     };
   }
@@ -89,6 +107,53 @@ export class EntryFunnelController {
     const context = await this.auth.require(authorization, 'tenant.manage', tenant);
     return {
       data: await this.funnel.interpret(context.tenantId, body ?? {}),
+      meta: { requestId },
+      error: null,
+    };
+  }
+
+  @Get('management/entry-funnel/saved-views')
+  async listSavedViews(
+    @Headers('authorization') authorization: string | undefined,
+    @Headers('x-tenant-context') tenant: string | undefined,
+    @Headers('x-request-id') requestId: string | undefined,
+  ) {
+    if (!requestId?.trim()) throw new BadRequestException('VALIDATION_ERROR');
+    const context = await this.auth.require(authorization, 'tenant.manage', tenant);
+    return {
+      data: await this.funnel.listSavedViews(context),
+      meta: { requestId },
+      error: null,
+    };
+  }
+
+  @Post('management/entry-funnel/saved-views')
+  async saveView(
+    @Headers('authorization') authorization: string | undefined,
+    @Headers('x-tenant-context') tenant: string | undefined,
+    @Headers('x-request-id') requestId: string | undefined,
+    @Body() body: Record<string, unknown>,
+  ) {
+    if (!requestId?.trim()) throw new BadRequestException('VALIDATION_ERROR');
+    const context = await this.auth.require(authorization, 'tenant.manage', tenant);
+    return {
+      data: await this.funnel.saveView(context, body ?? {}),
+      meta: { requestId },
+      error: null,
+    };
+  }
+
+  @Post('management/entry-funnel/saved-views/:id/delete')
+  async deleteView(
+    @Param('id') id: string,
+    @Headers('authorization') authorization: string | undefined,
+    @Headers('x-tenant-context') tenant: string | undefined,
+    @Headers('x-request-id') requestId: string | undefined,
+  ) {
+    if (!requestId?.trim()) throw new BadRequestException('VALIDATION_ERROR');
+    const context = await this.auth.require(authorization, 'tenant.manage', tenant);
+    return {
+      data: await this.funnel.deleteView(context, id),
       meta: { requestId },
       error: null,
     };

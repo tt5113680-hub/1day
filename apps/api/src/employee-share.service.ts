@@ -103,6 +103,25 @@ export class EmployeeShareService implements OnModuleDestroy {
         correlation,
         data,
       );
+      // L2 share-sent trace (no payment fields) for funnel pairing.
+      await client.query(
+        `insert into entry_funnel_events(
+           id, tenant_id, actor_role, event_code, surface, module_key, share_code,
+           source, scene, session_id, device, payload, occurred_at
+         ) values (
+           $1,$2,'employee','share','share','employee_share_create',$3,
+           $4,$5,$6,'mobile',$7,now()
+         )`,
+        [
+          randomUUID(),
+          context.tenantId,
+          row.code,
+          scenario,
+          'employee_share',
+          correlation,
+          JSON.stringify({ shareCodeId: row.id, targetPath: path }),
+        ],
+      );
       await client.query(
         'insert into idempotency_keys(id,tenant_id,resource_type,idempotency_key,response,created_by,updated_by) values($1,$2,$3,$4,$5,$6,$6)',
         [randomUUID(), context.tenantId, 'employee_share_code', key, data, context.userId],
@@ -187,6 +206,23 @@ export class EmployeeShareService implements OnModuleDestroy {
       await client.query(
         "insert into outbox_events(id,tenant_id,event_type,aggregate_type,aggregate_id,payload,correlation_id,trace_id,created_by,updated_by) values($1,$2,'employee.share_code.opened.v1','employee_share_code',$3,$4,$5,'page-e-005',null,null)",
         [randomUUID(), row.tenant_id, row.id, details, correlation],
+      );
+      await client.query(
+        `insert into entry_funnel_events(
+           id, tenant_id, actor_role, event_code, surface, module_key, share_code,
+           source, scene, session_id, device, payload, occurred_at
+         ) values (
+           $1,$2,'anonymous','share_open','share','share_landing',$3,
+           $4,'share_open',$5,'mobile',$6,now()
+         )`,
+        [
+          randomUUID(),
+          row.tenant_id,
+          row.code,
+          row.scenario,
+          correlation,
+          JSON.stringify({ shareCodeId: row.id, eventId }),
+        ],
       );
       await client.query('commit');
       return {

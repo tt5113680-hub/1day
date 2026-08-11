@@ -1,8 +1,8 @@
 ﻿{
-    "recordedAt":  "2026-08-11T13:15:00+08:00",
+    "recordedAt":  "2026-08-11T13:05:00+08:00",
     "phase":  "Promoter-tool entry funnel (post Meituan waves)",
     "goal":  "Unified entry / ecosystem / workflow; L0+L1+L2 traces; no money/sales/store-ops",
-    "currentStep":  "TOOL-PHASE-0..4 PASS (module board + industry + DIY + interpret-only). Owner G1 re-test when ready.",
+    "currentStep":  "TOOL-PHASE-0..6 PASS. Next: W∞-3 tool-path gaps (no native checkout). Owner G1 re-test when ready.",
     "milestones":  [
                        {
                            "id":  "p0-sys",
@@ -115,6 +115,20 @@
                            "weight":  7,
                            "status":  "pass",
                            "evidence":  "evidence/TOOL-PHASE-4/ACCEPTANCE.md"
+                       },
+                       {
+                           "id":  "tool-phase-5",
+                           "label":  "TOOL-PHASE-5 saved DIY views",
+                           "weight":  5,
+                           "status":  "pass",
+                           "evidence":  "evidence/TOOL-PHASE-5/ACCEPTANCE.md"
+                       },
+                       {
+                           "id":  "tool-phase-6",
+                           "label":  "TOOL-PHASE-6 L2 completeness",
+                           "weight":  6,
+                           "status":  "pass",
+                           "evidence":  "evidence/TOOL-PHASE-6/ACCEPTANCE.md"
                        }
                    ],
     "ownerGates":  [

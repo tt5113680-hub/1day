@@ -37,6 +37,12 @@ type Summary = {
   bySurface: Bucket[];
   byModule: Bucket[];
   byTargetPlatform: Bucket[];
+  sharePairing?: {
+    sentCodes: number;
+    openedCodes: number;
+    pairedCodes: number;
+    note: string;
+  };
   industryTemplates?: Record<string, IndustryTemplate>;
   generatedAt: string;
 };
@@ -54,6 +60,17 @@ type InterpretResult = {
   insights: string[];
   comparedToPriorWindow: { priorDays: number; visitsDelta: number; jumpsDelta: number };
   queryPreview: Bucket[];
+};
+type SavedView = {
+  id: string;
+  name: string;
+  days: number;
+  groupBy: string;
+  surface: string | null;
+  moduleKey: string | null;
+  targetPlatform: string | null;
+  eventCode: string | null;
+  industryTemplate: string | null;
 };
 
 const api = process.env.NEXT_PUBLIC_API_BASE_URL ?? 'http://127.0.0.1:3001';
@@ -117,23 +134,87 @@ export default function EntryFunnelPage() {
   const [diyLoading, setDiyLoading] = useState(false);
   const [interpret, setInterpret] = useState<InterpretResult | null>(null);
   const [interpretLoading, setInterpretLoading] = useState(false);
+  const [savedViews, setSavedViews] = useState<SavedView[]>([]);
+  const [viewName, setViewName] = useState('');
+  const [saveNote, setSaveNote] = useState('');
   const load = useCallback(async () => {
     if (!(await sessionApi.context())) return setState('forbidden');
     setState('loading');
     try {
-      const r = await sessionApi.request(
-        `${api}/api/v1/management/entry-funnel/summary?days=${days}`,
-        { headers: {} },
-      );
+      const [r, viewsRes] = await Promise.all([
+        sessionApi.request(`${api}/api/v1/management/entry-funnel/summary?days=${days}`, {
+          headers: {},
+        }),
+        sessionApi.request(`${api}/api/v1/management/entry-funnel/saved-views`, {
+          headers: {},
+        }),
+      ]);
       if ([401, 403].includes(r.status)) return setState('forbidden');
       if (!r.ok) throw Error();
       setData((await r.json()).data as Summary);
+      if (viewsRes.ok) {
+        const body = (await viewsRes.json()).data as { items: SavedView[] };
+        setSavedViews(body.items ?? []);
+      }
       setState('ready');
     } catch {
       setState('error');
     }
   }, [days]);
   useEffect(() => void load(), [load]);
+
+  const applySaved = (view: SavedView) => {
+    setDays(view.days);
+    setGroupBy(view.groupBy);
+    setFilterSurface(view.surface ?? '');
+    setFilterPlatform(view.targetPlatform ?? '');
+    setFilterEvent(view.eventCode ?? '');
+    if (view.industryTemplate === 'restaurant' || view.industryTemplate === 'beauty' || view.industryTemplate === 'retail')
+      setIndustry(view.industryTemplate);
+    setViewName(view.name);
+    setSaveNote(`已加载视图「${view.name}」，可再点查询/解读。`);
+  };
+
+  const saveCurrentView = async () => {
+    if (!viewName.trim()) {
+      setSaveNote('请先填写视图名称。');
+      return;
+    }
+    try {
+      const r = await sessionApi.request(`${api}/api/v1/management/entry-funnel/saved-views`, {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({
+          name: viewName.trim(),
+          days,
+          groupBy,
+          surface: filterSurface || null,
+          targetPlatform: filterPlatform || null,
+          eventCode: filterEvent || null,
+          industryTemplate: industry,
+        }),
+      });
+      if (!r.ok) throw Error();
+      setSaveNote('视图已保存（同名覆盖）。');
+      await load();
+    } catch {
+      setSaveNote('保存失败，请检查权限后重试。');
+    }
+  };
+
+  const removeView = async (id: string) => {
+    try {
+      const r = await sessionApi.request(
+        `${api}/api/v1/management/entry-funnel/saved-views/${encodeURIComponent(id)}/delete`,
+        { method: 'POST', headers: {} },
+      );
+      if (!r.ok) throw Error();
+      setSaveNote('视图已删除。');
+      await load();
+    } catch {
+      setSaveNote('删除失败。');
+    }
+  };
 
   const runDiy = async () => {
     setDiyLoading(true);
@@ -276,7 +357,27 @@ export default function EntryFunnelPage() {
           value={data.totals.jumpConfirms ?? 0}
           hint="确认页完成"
         />
+        <MetricCard
+          label="分享发出码"
+          value={data.sharePairing?.sentCodes ?? 0}
+          hint="员工发出（去重）"
+        />
+        <MetricCard
+          label="分享打开码"
+          value={data.sharePairing?.openedCodes ?? 0}
+          hint="消费者打开（去重）"
+        />
+        <MetricCard
+          label="分享配对"
+          value={data.sharePairing?.pairedCodes ?? 0}
+          hint="发出↔打开同码"
+        />
       </section>
+      {data.sharePairing?.note ? (
+        <p className={styles.hint} role="note">
+          {data.sharePairing.note}
+        </p>
+      ) : null}
 
       {template ? (
         <Card className={styles.panelWide}>
@@ -366,6 +467,45 @@ export default function EntryFunnelPage() {
             AI 解读（只读痕迹）
           </Button>
         </div>
+        <div className={styles.diyRow}>
+          <label className={styles.grow}>
+            视图名
+            <input
+              aria-label="保存视图名称"
+              value={viewName}
+              onChange={(e) => setViewName(e.target.value)}
+              placeholder="例如：比价跳转周报"
+              maxLength={120}
+            />
+          </label>
+          <Button tone="secondary" onClick={() => void saveCurrentView()}>
+            保存当前 DIY
+          </Button>
+        </div>
+        {saveNote ? (
+          <p className={styles.hint} role="status">
+            {saveNote}
+          </p>
+        ) : null}
+        {savedViews.length ? (
+          <ul className={styles.savedList}>
+            {savedViews.map((view) => (
+              <li key={view.id}>
+                <button type="button" className={styles.savedLink} onClick={() => applySaved(view)}>
+                  {view.name}
+                  <span>
+                    {view.days}d · {view.groupBy}
+                  </span>
+                </button>
+                <Button tone="secondary" onClick={() => void removeView(view.id)}>
+                  删除
+                </Button>
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <p className={styles.hint}>尚未保存 DIY 视图。</p>
+        )}
         {diy ? (
           <>
             <p className={styles.hint}>{diy.disclaimer}</p>

@@ -136,4 +136,6 @@
 
 ## 6. 当前下一刀
 
-**W6 省市区代理（MP-01~03）PASS. W∞-1（省市区代理深层运营：结算/配额/审批, MP-03 深层）PASS** `evidence/G1-MEITUAN-PARITY/WINF/ACCEPTANCE.md`. **W∞-2（Consumer H5 搜索, MH5-02）PASS** `evidence/G1-MEITUAN-PARITY/WINF2/ACCEPTANCE.md`. **下一刀：** **W∞-3** — 其余 GAP 逐页（Consumer H5 下单/订单、Management PC 深页、美团代理后台更深/Meituan parity 细部），直到主人签 G1。
+**W6 省市区代理（MP-01~03）PASS. W∞-1（省市区代理深层运营：结算/配额/审批, MP-03 深层）PASS** `evidence/G1-MEITUAN-PARITY/WINF/ACCEPTANCE.md`. **W∞-2（Consumer H5 搜索, MH5-02）PASS** `evidence/G1-MEITUAN-PARITY/WINF2/ACCEPTANCE.md`.
+
+**产品身份锁定后的下一刀（W∞-3 重写）：** 不做本平台「下单/订单履约」（不碰销售）。工程优先收口推广员工具路径缺口：入口痕迹 L0–L2 完整面、外链 hand-off 确认、Management PC 深页、代理后台细部、Meituan **体验对标**（非自营成交）。MH5-07/08 保持外链 hand-off GAP（诚实标注），不复活本平台成交。
