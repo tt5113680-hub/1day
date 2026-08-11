@@ -1,4 +1,21 @@
-## 2026-08-11 - G1-W∞-27 工具身份收尾·管理/员工「经营管理」状态口径对齐（去 store-ops `经营` 权限/数据话术）PASS
+## 2026-08-11 - G1-W∞-30 工具身份收尾·管理/员工 ONEDAY / 眉标前缀去除 PASS
+
+- 7 页 management/employee tool surfaces 去除 `ONEDAY /` 眉标/hero 前缀，统一 `推广员工具 ·` 模式（对齐 W∞-25）：
+  `/m/attribution`、`/m/entry-funnel`、`/m/circles`、`/m/customers/[id]`、`/e/share`、`/e/tasks/[id]/follow-up`、`/e/customers/[id]`。
+- `/m/customers/[id]` 眉标 `ONEDAY / 客户跟进全链路` → `推广员工具 · 客户跟进`；loading 态 `正在加载客户跟进全链路` 保留（W∞-24）。
+- Platform/Channel/Circle/Consumer 页面 `ONEDAY /` 按主人边界保留。
+- Text/copy-only，无 schema/DB/API。新增 `tests/g1-winf30-oneday-eyebrow-copy.test.mjs` 4/4；`g1-winf*.test.mjs` 72/72。
+- Evidence: `evidence/G1-MEITUAN-PARITY/WINF30/ACCEPTANCE.md`.
+
+## 2026-08-11 - G1-W∞-29 工具身份收尾·残留 `顾客`→`客户`/客户跟进 nav+工作台对齐 PASS
+
+- 管理 nav `MENU_GROUP_LABELS.customer` `顾客→客户`；customers nav label `顾客管理→客户跟进`（对齐 W∞-24 眉标）。
+- 管理工作台 `/m` 5 处 `顾客`/`顾客管理`/`今日顾客`/`顾客总量`/`顾客总数` → `客户`/`客户跟进`/`今日客户`/`客户总量`/`客户总数`。
+- 员工工作台 `/e/customers` 快捷入口 label `顾客→客户`（对齐 desc `客户档案`）。
+- 随动更新 sys-29 + p1-b-management-shell e2e。Text/copy/导航 label，无 schema/DB/API。
+- 新增 `tests/g1-winf29-customer-tool-copy.test.mjs` 4/4；`g1-winf*.test.mjs` 68/68。
+- Evidence: `evidence/G1-MEITUAN-PARITY/WINF29/ACCEPTANCE.md`.
+
 
 - 残留 store-ops `经营管理/经营权限/经营数据/客户资产/门店管理` 全改挂 `推广员工具 · 工具权限/工具授权/工具数据/客户跟进/门店入口`：
   - 14 页 forbidden/loading 状态：`/m/workflows`、`/m/attribution`、`/m/organization-employees`、`/m/ai-suggestions`、

@@ -238,7 +238,7 @@ export default function ManagementCustomerDetail({ params }: { params: Promise<{
         ← 返回客户跟进
       </Link>
       <AdminPageHeader
-        eyebrow={`ONEDAY / 客户跟进全链路 · ${businessLabel(data.customer.segment)}`}
+        eyebrow={`推广员工具 · 客户跟进 · ${businessLabel(data.customer.segment)}`}
         title={customerNameCopy(data.customer.displayName) ?? '客户'}
         description={`${
           data.customer.identities

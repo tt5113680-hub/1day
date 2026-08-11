@@ -35,9 +35,9 @@ test('SYS-29 Management AdminShell renders role-package nav groups', async ({ pa
   const nav = page.getByRole('complementary', { name: '推广员工具 主导航' });
   await expect(nav.getByText('店铺')).toBeVisible({ timeout: 15000 });
   await expect(nav.getByText('商品')).toBeVisible();
-  await expect(nav.getByText('顾客')).toBeVisible();
+  await expect(nav.getByText('客户')).toBeVisible();
   await expect(nav.getByText('工作流整合')).toBeVisible();
-  await expect(nav.getByRole('link', { name: '顾客管理' })).toBeVisible();
+  await expect(nav.getByRole('link', { name: '客户跟进' })).toBeVisible();
   await expect(nav.getByRole('link', { name: '连接配置' })).toBeVisible();
   await page.screenshot({
     path: 'evidence/SYS-29/management-nav-groups.png',

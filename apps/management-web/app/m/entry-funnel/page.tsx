@@ -301,7 +301,7 @@ export default function EntryFunnelPage() {
   return (
     <main className={styles.page}>
       <AdminPageHeader
-        eyebrow="ONEDAY / 推广员工具 · 入口痕迹"
+        eyebrow="推广员工具 · 入口痕迹"
         title="按模块看分流是否有效"
         description={data.disclaimer}
         actions={

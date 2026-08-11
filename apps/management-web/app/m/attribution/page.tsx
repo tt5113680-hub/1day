@@ -110,7 +110,7 @@ export default function AttributionPage() {
   return (
     <main className={styles.page}>
       <AdminPageHeader
-        eyebrow="ONEDAY / 推广员工具 · 来源归因"
+        eyebrow="推广员工具 · 来源归因"
         title="看清从哪进、谁承接、证据到哪一级"
         description="来源、渠道、分享码与员工贡献均来自已留痕数据。不表示第三方已下单或已支付；成交结果以外部平台为准。"
         actions={

@@ -46,7 +46,7 @@ export const MENU_GROUP_LABELS: Record<string, string> = {
   store: '店铺',
   goods: '商品',
   orders: '订单',
-  customer: '顾客',
+  customer: '客户',
   marketing: '营销',
   staff: '员工',
   settings: '设置',
@@ -126,7 +126,7 @@ export const MANAGEMENT_MENU_CATALOG: MenuCatalogItem[] = [
   {
     key: 'customers',
     href: '/m/customers',
-    label: '顾客管理',
+    label: '客户跟进',
     group: 'customer',
     requireAny: ['tenant.manage', 'customer.manage'],
   },

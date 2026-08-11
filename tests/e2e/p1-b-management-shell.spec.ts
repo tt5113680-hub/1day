@@ -45,7 +45,7 @@ test('P1-B Management/Platform AdminShell renders the shared token chrome across
   await expect(sidebar).toBeVisible({ timeout: 30000 });
   await expect(sidebar.getByText('店铺')).toBeVisible();
   await expect(sidebar.getByText('员工')).toBeVisible();
-  await expect(sidebar.getByRole('link', { name: '顾客管理' })).toHaveAttribute(
+  await expect(sidebar.getByRole('link', { name: '客户跟进' })).toHaveAttribute(
     'href',
     /\/m\/customers/,
   );

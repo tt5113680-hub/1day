@@ -98,7 +98,7 @@ export function CustomerDetail() {
           ←
         </Button>
         <div>
-          <p>ONEDAY / 我的客户</p>
+          <p>推广员工具 · 我的客户</p>
           <h1>{data.customer.displayName}</h1>
         </div>
         <StatusBadge tone="info">客户摘要</StatusBadge>

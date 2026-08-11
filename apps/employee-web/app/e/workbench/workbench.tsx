@@ -128,7 +128,7 @@ export function Workbench() {
   ] as const;
   const functions = [
     { href: '/e/tasks', label: '任务待办', desc: '今日任务' },
-    { href: '/e/customers', label: '顾客', desc: '客户档案' },
+    { href: '/e/customers', label: '客户', desc: '客户档案' },
     { href: '/e/memberships', label: '会员核销', desc: '权益核销' },
     { href: '/e/leads', label: '获客线索', desc: '线索池' },
     { href: '/e/store', label: '门店', desc: '店长工作台' },

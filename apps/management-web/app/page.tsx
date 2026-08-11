@@ -29,7 +29,7 @@ const sessionApi = new SessionApiClient(api);
 const SHORTCUTS = [
   { href: '/m/stores', label: '门店', desc: '门店入口' },
   { href: '/m/offers', label: '商品', desc: '商品与套餐' },
-  { href: '/m/customers', label: '顾客', desc: '顾客管理' },
+  { href: '/m/customers', label: '客户', desc: '客户跟进' },
   { href: '/m/memberships', label: '会员', desc: '会员中心' },
   { href: '/m/content', label: '营销', desc: '营销内容' },
   { href: '/m/page-builder', label: '装修', desc: '入口页装修' },
@@ -77,7 +77,7 @@ export default function ManagementHome() {
         <AppStatePanel
           kind="loading"
           title="正在加载推广员工具工作台"
-          description="正在汇总今日门店、顾客与待办。"
+          description="正在汇总今日门店、客户与待办。"
         />
       </main>
     );
@@ -121,7 +121,7 @@ export default function ManagementHome() {
 
       <section className={styles.todayStrip} aria-label="今日概况">
         <div className={styles.todayItem}>
-          <span>今日顾客</span>
+          <span>今日客户</span>
           <strong>{m.customersToday}</strong>
         </div>
         <div className={styles.todayItem}>
@@ -165,11 +165,11 @@ export default function ManagementHome() {
         <div className={styles.sectionHead}>
           <h2>作业数据</h2>
           <a className={styles.link} href="/m/customers">
-            顾客管理 →
+            客户跟进 →
           </a>
         </div>
         <div className={styles.metrics}>
-          <MetricCard hint="顾客总量" label="顾客总数" value={m.customers} />
+          <MetricCard hint="客户总量" label="客户总数" value={m.customers} />
           <MetricCard hint="近 30 天服务档案（本地试点，非本平台下单）" label="近30日服务档案" value={m.orders30d} />
           <MetricCard hint="近 30 天完成任务" label="近30日完成" value={m.completedTasks30d} />
           <MetricCard hint="全部未完成任务" label="待推进任务" value={m.openTasks} />

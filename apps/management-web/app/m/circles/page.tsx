@@ -243,7 +243,7 @@ export default function ManagementCirclesPage() {
   return (
     <main className={styles.page}>
       <AdminPageHeader
-        eyebrow="ONEDAY / 推广员工具 · 商圈双身份"
+        eyebrow="推广员工具 · 商圈双身份"
         title="经营自己的商圈，也能申请加入附近商圈"
         description="经理可邀约商家；商家可浏览公开商圈并申请。不碰钱、不碰销售。"
         actions={

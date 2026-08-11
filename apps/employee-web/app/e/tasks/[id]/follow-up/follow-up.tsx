@@ -124,7 +124,7 @@ export function FollowUp() {
           ←
         </Button>
         <div>
-          <p>ONEDAY / 任务跟进</p>
+          <p>推广员工具 · 任务跟进</p>
           <h1>记录本次进展</h1>
         </div>
         <StatusBadge tone="info">可编辑总结</StatusBadge>
