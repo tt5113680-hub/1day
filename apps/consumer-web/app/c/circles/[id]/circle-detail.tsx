@@ -61,7 +61,8 @@ export default function CircleDetail({ data }: { data: CircleDetailData }) {
           </a>
           <section className={styles.detailHero}>
             <p className={styles.eyebrow}>
-              {data.circle.owner.name} · {data.circle.industryTag ?? '商家联盟'}
+              推广员工具 · 商圈详情 · {data.circle.owner.name} ·{' '}
+              {data.circle.industryTag ?? '商家联盟'}
             </p>
             <div className={styles.heroBadges}>
               {data.circle.ownedByViewer ? (
@@ -82,7 +83,7 @@ export default function CircleDetail({ data }: { data: CircleDetailData }) {
               {data.merchants.length} 家入驻 · {withStore} 家可进店
             </p>
             <p className={styles.disclaimer} role="note">
-              进店后的团购/收银跳转由第三方完成；本页只统计入口痕迹。
+              进店后的团购/收银跳转由第三方完成；本页只统计入口痕迹，不在此下单，也不含支付金额。
             </p>
           </section>
           <section className={styles.merchants} aria-label="圈内商家">

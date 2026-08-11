@@ -83,9 +83,9 @@ export default function CommerceMarketingPage() {
   return (
     <main className={styles.page}>
       <AdminPageHeader
-        eyebrow="美团商家端 PC · 营销"
+        eyebrow="推广员工具 · 营销档案"
         title="营销中心"
-        description="对标美团商家端营销中心（券/活动/内容）：真实、租户隔离的本地营销活动档案。投放渠道如实标注，不宣称已投第三方渠道。"
+        description="本地营销活动档案（券/活动/内容窗口）。投放渠道如实标注；不宣称已投第三方渠道，不含支付金额。"
         actions={
           <Button tone="secondary" onClick={() => void load()}>
             刷新
@@ -111,7 +111,7 @@ export default function CommerceMarketingPage() {
         </div>
       </section>
       <p className={styles.honest}>
-        营销骨架为本地试点数据（delivery=local）。券/活动仅记录档案与发布时间窗，不接美团/抖音实时投放。
+        营销骨架为本地试点数据（delivery=local）。推广员工具只登记档案与发布时间窗；不接美团/抖音实时投放，非本平台成交。
       </p>
       <section className={styles.grid}>
         {campaigns.map((campaign) => (

@@ -3,18 +3,18 @@
 ## Executor
 
 - **Local unattended (auth I):** Cursor Headless CLI — `pnpm unattended:install` once, then scheduled task runs every 30m. **No IDE windows required.**
-- IDE Agent: human test / review only; do not write in parallel with Headless.
+- IDE Agent: continuous auto-run authorized by owner (2026-08-11); still no parallel Headless writers.
 - Setup: `PROJECT_STATE/LOCAL_UNATTENDED_SETUP.md`
 
 ## Current task — promoter-tool phases
 
 - branch: `hardening/COMMERCIAL-COMPLETION`
 - product_bar: **团购推广员工具** — 统一入口/整合/工作流；不碰钱·销售·管理。痕迹 **L0+L1+L2 同批**。
-- last_verified: **2026-08-11** — TOOL-PHASE-0..6 + G1-W∞-3..16 PASS.
-- status: Tool-identity construction active. Owner 不用管（已授权全自动连续施工）.
+- last_verified: **2026-08-11** — TOOL-PHASE-0..6 + G1-W∞-3..17 PASS.
+- status: Tool-identity construction active. Owner 已授权全自动连续施工.
 - blocker: none for engineering; **retry `git push origin HEAD`** if GitHub :443 flaps (local may be ahead).
-- progress: Next engineering: **W∞-17**（体验对标细部；不做本平台下单）. Owner G1 re-test when ready (not auto-signed).
-- note: Hub http://127.0.0.1:3299/ · 员工面 ME-03..07 工具身份 · 第三方结果单号
+- progress: Next engineering: **W∞-18**（体验对标细部；不做本平台下单）. Owner G1 re-test when ready (not auto-signed).
+- note: Hub http://127.0.0.1:3299/ · 工作台/获客/跟进去销售话术 · 管理端订单档案工具身份
 
 ### Owner — next actions
 

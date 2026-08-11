@@ -1,3 +1,12 @@
+## 2026-08-11 - G1-W∞-17 工作台/获客跟进/管理档案 densify PASS
+
+- Employee `/e/workbench` `/e/leads` `/e/nurture`: 推广员工具身份；去掉「美团商家/复购」销售话术。
+- Management `/m/orders` `/m/reviews` `/m/marketing`: 推广员工具档案 framing + 非本平台下单/成交。
+- Consumer `/c/circles/[id]`: 商圈详情工具身份 + 不在此下单。
+- Gates: `node --test tests/g1-winf17-workbench-commerce.test.mjs` 1/1；employee+management+consumer typecheck+build PASS。
+- Not 全部商用 / 未代签 owner UI。Next: W∞-18。
+- Evidence: `evidence/G1-MEITUAN-PARITY/WINF17/ACCEPTANCE.md`.
+
 ## 2026-08-11 - G1-W∞-16 员工面 ME-03..07 densify PASS
 
 - Employee `/e/customers` `/e/store` `/e/memberships` `/e/profile` `/e/notifications`: 推广员工具身份 + 不含第三方订单/支付声明。

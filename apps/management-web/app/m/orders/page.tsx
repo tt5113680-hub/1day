@@ -84,9 +84,9 @@ export default function CommerceOrdersPage() {
   return (
     <main className={styles.page}>
       <AdminPageHeader
-        eyebrow="美团商家端 PC · 订单"
+        eyebrow="推广员工具 · 订单档案"
         title="订单中心"
-        description="对标美团商家端订单中心：真实、租户隔离的本地订单与履约状态。来源字段如实标注，不宣称第三方实时同步。"
+        description="本地试点订单与履约档案（租户隔离）。来源如实标注；不宣称美团实时同步，也不含本平台收款。"
         actions={
           <Button tone="secondary" onClick={() => void load()}>
             刷新
@@ -114,7 +114,7 @@ export default function CommerceOrdersPage() {
         </div>
       </section>
       <p className={styles.honest}>
-        订单骨架为本地试点数据（source=local）。不接美团实时订单接口，不伪造第三方订单。
+        订单骨架为本地试点数据（source=local）。推广员工具只留档案痕迹；不接美团实时订单，不伪造第三方成交，非本平台下单。
       </p>
       <section className={styles.grid}>
         {orders.map((order) => (

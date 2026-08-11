@@ -18,7 +18,7 @@ type Profile = {
 
 const api = process.env.NEXT_PUBLIC_API_BASE_URL ?? 'http://127.0.0.1:3001';
 const sessionApi = new SessionApiClient(api);
-const labels = { active: '持续养客', repurchase: '复购机会', dormant: '沉睡唤醒' };
+const labels = { active: '持续跟进', repurchase: '回访机会', dormant: '沉睡唤醒' };
 
 export function NurtureWorkbench() {
   const [state, setState] = useState<'loading' | 'ready' | 'forbidden' | 'error'>('loading');
@@ -109,9 +109,11 @@ export function NurtureWorkbench() {
     <main className={styles.page}>
       <header className={styles.header}>
         <div>
-          <p>ONEDAY / 客户经营</p>
-          <h1>把下一次复购变成今天的行动</h1>
-          <span>分层查看复购机会与沉睡客户，记录每次触达，并把关键承诺转成可执行任务。</span>
+          <p>推广员工具 · 客户跟进</p>
+          <h1>把下一次触达变成今天的行动</h1>
+          <span>
+            分层查看回访机会与沉睡客户，记录每次触达并转成可执行任务；不碰销售成交、不含支付金额。
+          </span>
         </div>
         <Button tone="quiet" onClick={() => void load()}>
           刷新
@@ -131,9 +133,9 @@ export function NurtureWorkbench() {
             onChange={(event) => setSegment(event.target.value)}
           >
             <option value="">全部客户</option>
-            <option value="repurchase">复购机会</option>
+            <option value="repurchase">回访机会</option>
             <option value="dormant">沉睡唤醒</option>
-            <option value="active">持续养客</option>
+            <option value="active">持续跟进</option>
           </select>
         </label>
         <strong>{profiles.length} 位</strong>
@@ -156,13 +158,13 @@ export function NurtureWorkbench() {
                 </StatusBadge>
                 <h2>{profile.customerName}</h2>
                 <p>
-                  成交 {profile.orderCount} 次 ·{' '}
+                  服务痕迹 {profile.orderCount} 次 ·{' '}
                   {profile.openTasks ? `${profile.openTasks} 个待办` : '暂无待办'}
                 </p>
                 <small>
                   {profile.lastOrderAt
-                    ? `最近成交 ${new Date(profile.lastOrderAt).toLocaleDateString()}`
-                    : '尚无成交记录'}
+                    ? `最近服务 ${new Date(profile.lastOrderAt).toLocaleDateString()}`
+                    : '尚无服务痕迹'}
                   {profile.nextTouchAt
                     ? ` · 下次触达 ${new Date(profile.nextTouchAt).toLocaleDateString()}`
                     : ''}
@@ -182,9 +184,9 @@ export function NurtureWorkbench() {
                     )
                   }
                 >
-                  <option value="active">持续养客</option>
-                  <option value="repurchase">复购机会</option>
-                  <option value="dormant">沉睡唤醒</option>
+                      <option value="active">持续跟进</option>
+                      <option value="repurchase">回访机会</option>
+                      <option value="dormant">沉睡唤醒</option>
                 </select>
                 <Button
                   tone="secondary"
@@ -226,7 +228,7 @@ export function NurtureWorkbench() {
           <AppStatePanel
             kind="empty"
             title="暂时没有需要养护的客户"
-            description="把获客池中的线索转入养客后，会在这里形成可执行的经营队列。"
+            description="把获客池中的线索转入跟进后，会在这里形成可执行的服务队列。"
           />
         )}
       </section>

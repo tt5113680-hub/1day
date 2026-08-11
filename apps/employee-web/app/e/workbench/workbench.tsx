@@ -138,9 +138,11 @@ export function Workbench() {
     <main className={styles.page}>
       <header className={styles.header}>
         <div>
-          <p>美团商家 · 工作台</p>
+          <p>推广员工具 · 工作台</p>
           <h1>你好，{data.employee.displayName}</h1>
-          <span>{data.employee.title ?? '员工'} · 仅显示你的任务与客户范围</span>
+          <span>
+            {data.employee.title ?? '员工'} · 仅显示你的任务与客户范围 · 不含第三方订单履约
+          </span>
         </div>
         <Button className={styles.refresh} tone="quiet" onClick={() => void load()}>
           刷新
@@ -154,7 +156,7 @@ export function Workbench() {
 
       <section className={styles.business} aria-labelledby="overview-title">
         <div className={styles.businessHead}>
-          <span id="overview-title">今日经营概览</span>
+          <span id="overview-title">今日作业概览</span>
           <span className={styles.businessDate}>{time(data.generatedAt)}</span>
         </div>
         <div className={styles.metrics}>
@@ -164,7 +166,7 @@ export function Workbench() {
         </div>
       </section>
 
-      <section className={styles.section} aria-label="经营功能网格">
+      <section className={styles.section} aria-label="常用功能网格">
         <div className={styles.sectionHead}>
           <h2>常用功能</h2>
           <span>商家工作台</span>

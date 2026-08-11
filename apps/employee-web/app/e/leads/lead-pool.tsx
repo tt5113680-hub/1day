@@ -118,9 +118,11 @@ export function LeadPool() {
     <main className={styles.page}>
       <header className={styles.header}>
         <div>
-          <p>ONEDAY / 员工获客</p>
-          <h1>找到最值得立即跟进的客户</h1>
-          <span>领取后可转入跟进任务或养客队列，所有批量动作留存审计。</span>
+          <p>推广员工具 · 获客池</p>
+          <h1>找到最值得立即跟进的线索</h1>
+          <span>
+            领取后可转入跟进任务或养客队列；审计留痕不含支付金额与第三方订单结果。
+          </span>
         </div>
         <Button tone="quiet" onClick={() => void load()}>
           刷新

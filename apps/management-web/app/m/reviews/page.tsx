@@ -66,9 +66,9 @@ export default function CommerceReviewsPage() {
   return (
     <main className={styles.page}>
       <AdminPageHeader
-        eyebrow="美团商家端 PC · 评价"
+        eyebrow="推广员工具 · 评价档案"
         title="评价管理"
-        description="对标美团商家端评价管理：真实、租户隔离的本地评价记录与平均分。来源如实标注，不接第三方评价流。"
+        description="本地试点评价记录与平均分（租户隔离）。来源如实标注；不接第三方评价流，不伪造评分。"
         actions={
           <Button tone="secondary" onClick={() => void load()}>
             刷新
@@ -94,7 +94,7 @@ export default function CommerceReviewsPage() {
         </div>
       </section>
       <p className={styles.honest}>
-        评价骨架为本地试点数据（source=local）。不接美团评价接口，不伪造第三方评价分。
+        评价骨架为本地试点数据（source=local）。推广员工具只做档案与回复痕迹；不接美团评价接口，不伪造第三方评价分。
       </p>
       <section className={styles.grid}>
         {reviews.map((review) => (
