@@ -10,10 +10,10 @@
 
 - branch: `hardening/COMMERCIAL-COMPLETION`
 - product_bar: **商用前提 = 四端完整对标美团成熟场景**（消费者/员工/管理/平台）；**唯一例外** `/m/workflows`。团购推广员工具身份 + L0+L1+L2；不碰钱·销售·本平台下单。
-- last_verified: **2026-08-12** — W∞-54: Platform 平台渠道管理 真实数据深页密度 densify（平台面，禁止假 BI）：`/p/channels` 移除页面级 AdminPageHeader，新增黄顶栏 `推广员工具 · 平台渠道管理`+灰底白卡画布+heroCard+summaryStrip（一级渠道/纳入商户/已就绪服务/商户池）+白卡分布面板 `aria-label="渠道运营分布"`（渠道服务状态/渠道规模/商户开通状态/商户服务状态/渠道状态，全部由已抓取的真实一级渠道与商户池档案行 channel.status/serviceStatus/merchant.onboardingStatus/merchant.serviceStatus/merchants.length 推导，禁止假 BI，渠道是工具开通与整合网络不是消费者成交）。
+- last_verified: **2026-08-12** — W∞-55: Platform 平台商圈管理 真实数据深页密度 densify（平台面，禁止假 BI）：`/p/business-circles` 移除页面级 AdminPageHeader/Card/ONEDAY 眉标，新增黄顶栏 `推广员工具 · 平台商圈管理`+灰底白卡画布+heroCard+summaryStrip（固定商圈/推荐商户/已批准/待审批）+白卡分布面板 `aria-label="商圈运营分布"`（商圈规模/推荐审批状态/商圈覆盖商户/推荐权益，全部由已抓取的真实平台商圈档案行 circle.merchants.length/merchant.approvalStatus/merchant.benefits.length 推导，禁止假 BI，商圈是商家联盟整合网络不是消费者成交）。
 - status: Owner 重申完整对标为商用前提（2026-08-11 21:47）。工程继续视觉+IA 完整对标 densify（非仅文案）。全权委托 agent 连续施工。
 - blocker: **none** — `BLOCKED_REPORT` marked RESOLVED 2026-08-12.
-- progress: Next: **W∞-55** 续 Management/平台/商圈/员工 深度 densify（真实数据深页已收 Management MPC 全序列 W∞-45~51 + 平台面 `/p/agents` W∞-52 + `/p/tenants` W∞-53 + `/p/channels` W∞-54；续平台 `/p/outbox` `/p/security-audit` `/p/business-circles` `/p/connectors` `/p/templates` 真实数据深页密度 或 商圈 `/bc/*` / 员工 `/e/*` 剩余真实数据面下一处缺口）。
+- progress: Next: **W∞-56** 续 Management/平台/商圈/员工 深度 densify（真实数据深页已收 Management MPC 全序列 W∞-45~51 + 平台面 `/p/agents` W∞-52 + `/p/tenants` W∞-53 + `/p/channels` W∞-54 + `/p/business-circles` W∞-55；续平台 `/p/outbox` `/p/security-audit` `/p/connectors` `/p/templates` 真实数据深页密度 或 商圈 `/bc/*` / 员工 `/e/*` 剩余真实数据面下一处缺口）。
 - note: Hub http://127.0.0.1:3299/ · **健康排查：每 6 小时** `pnpm unattended:health`（计划任务 `ONEDAY-V3-Unattended-Health-6h`）；BLOCKED/停摆会写 `logs/unattended/health-latest.json`。daemon 与 IDE 勿并行写同分支。
 
 ### Owner — next actions

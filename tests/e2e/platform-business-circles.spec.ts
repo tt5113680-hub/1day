@@ -34,7 +34,7 @@ test('platform admin creates and approves an explicitly recommended business-cir
     { accessToken: token, refresh: refreshToken },
   );
   await page.goto('/p/business-circles');
-  await expect(page.getByRole('heading', { name: /显式推荐/ })).toBeVisible();
+  await expect(page.getByRole('heading', { name: /固定商圈、推荐商户与平台审批/ })).toBeVisible();
   const select = page.locator('select');
   expect(await select.locator('option').count()).toBeGreaterThan(1);
   const circleCode = `browser-circle-${Date.now()}`;
