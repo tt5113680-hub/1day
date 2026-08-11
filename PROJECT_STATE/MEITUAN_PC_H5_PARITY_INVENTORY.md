@@ -97,7 +97,7 @@
 
 | ID | 美团对标 | ONEDAY 现路由 | 状态 |
 | -- | -------- | ------------- | ---- |
-| ME-01 | 商家 App 工作台 | `/e/workbench` | PARTIAL | W4 首刀；W∞-15/17 工具身份（去「美团商家」眉标） |
+| ME-01 | 商家 App 工作台 | `/e/workbench` | PARTIAL | W4 首刀；W∞-17 工具身份；**W∞-34** 视觉/IA densify（黄顶栏+头像 hero+icon 功能格+白卡面板）；toward PARITY；见 WINF34 |
 | ME-02 | 订单 / 待办 | `/e/tasks` | PARTIAL | W∞-15 densify 任务待办/收件箱工具身份；非第三方订单履约 |
 | ME-03 | 顾客 | `/e/customers` | PARTIAL | W∞-16 densify 推广员工具客户目录 |
 | ME-04 | 门店 | `/e/store` | PARTIAL | W∞-16 densify 店长模式工具身份 |
@@ -141,7 +141,7 @@
 
 ## 6. 当前下一刀
 
-**W24 工作台/顾客跟进收尾 PASS.** **W∞-28（体验对标细部·工具身份收尾·残留 `经营` store-ops 语裁定档：管理/员工工具身份面 `经营` 店务话术统一推广员工具——`/m` 404 `工具页面/推广员工具功能`、attribution `入口证据/入口分流与承接`、ai-suggestions `入口异常`、page-builder `入口频道`、offers `商户后台登记`、roles-permissions/employee-profile `查看/管理租户工具`、customers `跟进异常`、员工 loading `推广员工具工作台`、nurture `客户跟进队列`、notification `工具提醒`、share `工具入口/消费者入口`、`/e/store` `门店入口首页`；商圈/渠道网络身份 `经营` 保留）PASS** `evidence/G1-MEITUAN-PARITY/WINF28/ACCEPTANCE.md`. **W∞-27（管理/员工「经营管理」状态口径对齐）PASS** `evidence/G1-MEITUAN-PARITY/WINF27/ACCEPTANCE.md`. **W∞-29（残留 顾客→客户/客户跟进 nav+工作台）PASS** evidence/G1-MEITUAN-PARITY/WINF29/ACCEPTANCE.md. **W∞-30（管理/员工 ONEDAY / 眉标前缀去除，对齐 W∞-25 推广员工具 · 模式）PASS** evidence/G1-MEITUAN-PARITY/WINF30/ACCEPTANCE.md. **W∞-31（MPC-13 消息/通知→管理通知中心，`/m/notifications` 只读聚合 + `GET /api/v1/management/notifications`）PASS** `evidence/G1-MEITUAN-PARITY/WINF31/ACCEPTANCE.md`. **W∞-32（Consumer 发现页视觉/IA densify toward PARITY）PASS** `evidence/G1-MEITUAN-PARITY/WINF32/ACCEPTANCE.md`. **W∞-33（Consumer 门店页视觉/IA densify toward PARITY）PASS** `evidence/G1-MEITUAN-PARITY/WINF33/ACCEPTANCE.md`. **Next: W∞-34 Employee H5 工作台视觉 densify (ME-01) → 管理/平台视觉 densify。**
+**W24 工作台/顾客跟进收尾 PASS.** **W∞-28（体验对标细部·工具身份收尾·残留 `经营` store-ops 语裁定档：管理/员工工具身份面 `经营` 店务话术统一推广员工具——`/m` 404 `工具页面/推广员工具功能`、attribution `入口证据/入口分流与承接`、ai-suggestions `入口异常`、page-builder `入口频道`、offers `商户后台登记`、roles-permissions/employee-profile `查看/管理租户工具`、customers `跟进异常`、员工 loading `推广员工具工作台`、nurture `客户跟进队列`、notification `工具提醒`、share `工具入口/消费者入口`、`/e/store` `门店入口首页`；商圈/渠道网络身份 `经营` 保留）PASS** `evidence/G1-MEITUAN-PARITY/WINF28/ACCEPTANCE.md`. **W∞-27（管理/员工「经营管理」状态口径对齐）PASS** `evidence/G1-MEITUAN-PARITY/WINF27/ACCEPTANCE.md`. **W∞-29（残留 顾客→客户/客户跟进 nav+工作台）PASS** evidence/G1-MEITUAN-PARITY/WINF29/ACCEPTANCE.md. **W∞-30（管理/员工 ONEDAY / 眉标前缀去除，对齐 W∞-25 推广员工具 · 模式）PASS** evidence/G1-MEITUAN-PARITY/WINF30/ACCEPTANCE.md. **W∞-31（MPC-13 消息/通知→管理通知中心，`/m/notifications` 只读聚合 + `GET /api/v1/management/notifications`）PASS** `evidence/G1-MEITUAN-PARITY/WINF31/ACCEPTANCE.md`. **W∞-32（Consumer 发现页视觉/IA densify toward PARITY）PASS** `evidence/G1-MEITUAN-PARITY/WINF32/ACCEPTANCE.md`. **W∞-33（Consumer 门店页视觉/IA densify toward PARITY）PASS** `evidence/G1-MEITUAN-PARITY/WINF33/ACCEPTANCE.md`. **W∞-34（Employee 工作台视觉/IA densify toward PARITY）PASS** `evidence/G1-MEITUAN-PARITY/WINF34/ACCEPTANCE.md`. **Next: W∞-35 Management PC 工作台视觉 densify (MPC-01)。**
 
 **W6 省市区代理（MP-01~03）PASS. W∞-1（省市区代理深层运营：结算/配额/审批, MP-03 深层）PASS** `evidence/G1-MEITUAN-PARITY/WINF/ACCEPTANCE.md`. **W∞-2（Consumer H5 搜索, MH5-02）PASS** `evidence/G1-MEITUAN-PARITY/WINF2/ACCEPTANCE.md`.
 

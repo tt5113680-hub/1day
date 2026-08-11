@@ -1,7 +1,7 @@
 'use client';
 import { SessionApiClient } from '@oneday/session-client';
 import { useTenantSync } from '@oneday/sync-client';
-import { AppStatePanel, Button, MetricCard, StatusBadge } from '@oneday/ui';
+import { AppStatePanel, Button, StatusBadge } from '@oneday/ui';
 
 import { useCallback, useEffect, useState } from 'react';
 import styles from './workbench.module.css';
@@ -28,6 +28,15 @@ const api = process.env.NEXT_PUBLIC_API_BASE_URL ?? 'http://127.0.0.1:3001';
 const sessionApi = new SessionApiClient(api);
 const time = (value: string) =>
   new Intl.DateTimeFormat('zh-CN', { hour: '2-digit', minute: '2-digit' }).format(new Date(value));
+
+const FUNCTION_ICONS: Record<string, string> = {
+  任务待办: '✓',
+  客户: '客',
+  会员核销: '会',
+  获客线索: '线',
+  门店: '店',
+  消息: '讯',
+};
 
 export function Workbench() {
   const [state, setState] = useState<State>('loading');
@@ -134,46 +143,61 @@ export function Workbench() {
     { href: '/e/store', label: '门店', desc: '店长工作台' },
     { href: '/e/notifications', label: '消息', desc: '通知提醒' },
   ] as const;
+  const initial = data.employee.displayName.slice(0, 1);
   return (
     <main className={styles.page}>
-      <header className={styles.header}>
-        <div>
-          <p>推广员工具 · 工作台</p>
-          <h1>你好，{data.employee.displayName}</h1>
-          <span>
-            {data.employee.title ?? '员工'} · 仅显示你的任务与客户范围 · 不含第三方订单履约
-          </span>
-        </div>
-        <Button className={styles.refresh} tone="quiet" onClick={() => void load()}>
+      <header className={styles.topBar}>
+        <span className={styles.topBarTitle}>推广员工具 · 工作台</span>
+        <button className={styles.topBarRefresh} type="button" onClick={() => void load()}>
           刷新
-        </Button>
+        </button>
       </header>
-      {message && (
+
+      <section className={styles.heroCard} aria-label="员工概览">
+        <span className={styles.avatar} aria-hidden>
+          {initial}
+        </span>
+        <div className={styles.heroCopy}>
+          <h1>你好，{data.employee.displayName}</h1>
+          <p>
+            {data.employee.title ?? '员工'} · 仅显示你的任务与客户范围 · 不含第三方订单履约
+          </p>
+        </div>
+      </section>
+
+      {message ? (
         <p className={styles.feedback} role="status">
           {message}
         </p>
-      )}
+      ) : null}
 
-      <section className={styles.business} aria-labelledby="overview-title">
-        <div className={styles.businessHead}>
+      <section className={styles.panel} aria-labelledby="overview-title">
+        <div className={styles.panelHead}>
           <span id="overview-title">今日作业概览</span>
-          <span className={styles.businessDate}>{time(data.generatedAt)}</span>
+          <span className={styles.panelMeta}>{time(data.generatedAt)} 更新</span>
         </div>
         <div className={styles.metrics}>
           {overview.map((item) => (
-            <MetricCard key={item.label} hint={item.hint} label={item.label} value={item.value} />
+            <article className={styles.metric} key={item.label}>
+              <strong>{item.value}</strong>
+              <span>{item.label}</span>
+              <small>{item.hint}</small>
+            </article>
           ))}
         </div>
       </section>
 
-      <section className={styles.section} aria-label="常用功能网格">
-        <div className={styles.sectionHead}>
+      <section className={styles.panel} aria-label="常用功能网格">
+        <div className={styles.panelHead}>
           <h2>常用功能</h2>
           <span>商家工作台</span>
         </div>
         <div className={styles.functions}>
           {functions.map((item) => (
             <a className={styles.function} href={item.href} key={item.href}>
+              <span className={styles.functionIcon} aria-hidden>
+                {FUNCTION_ICONS[item.label] ?? '·'}
+              </span>
               <strong>{item.label}</strong>
               <span>{item.desc}</span>
             </a>
@@ -181,8 +205,8 @@ export function Workbench() {
         </div>
       </section>
 
-      <section className={styles.section} aria-labelledby="today-title">
-        <div className={styles.sectionHead}>
+      <section className={styles.panel} aria-labelledby="today-title">
+        <div className={styles.panelHead}>
           <h2 id="today-title">今天要做</h2>
           <span>可直接完成</span>
         </div>
@@ -216,8 +240,9 @@ export function Workbench() {
           ))
         )}
       </section>
-      <section className={styles.section} aria-labelledby="opportunity-title">
-        <div className={styles.sectionHead}>
+
+      <section className={styles.panel} aria-labelledby="opportunity-title">
+        <div className={styles.panelHead}>
           <h2 id="opportunity-title">行动机会</h2>
           <span>来自任务时限信号</span>
         </div>
@@ -236,8 +261,9 @@ export function Workbench() {
           ))
         )}
       </section>
-      <section className={styles.section} aria-labelledby="customer-title">
-        <div className={styles.sectionHead}>
+
+      <section className={styles.panel} aria-labelledby="customer-title">
+        <div className={styles.panelHead}>
           <h2 id="customer-title">客户提醒</h2>
           <span>与你有关的待办</span>
         </div>

@@ -1,3 +1,9 @@
+## 2026-08-11 - G1-W∞-34 Employee 工作台视觉/IA densify（ME-01 商用完整对标）PASS
+
+- `/e/workbench`：黄顶栏、头像 hero、icon 功能格、白卡面板、紧凑任务列表。
+- Gates: g1-winf34 4/4；winf17 回归；employee typecheck+build PASS。
+- Evidence: `evidence/G1-MEITUAN-PARITY/WINF34/ACCEPTANCE.md`.
+
 ## 2026-08-11 - G1-W∞-33 Consumer 门店页视觉/IA densify（MH5-03 商用完整对标）PASS
 
 - `/c/stores/[id]`：sticky 黄顶栏、封面 hero、营业中 badge、导航/电话/分享、sticky 分区 Tab（推荐/比价/活动/门店信息）。
