@@ -97,7 +97,7 @@ test('AUDIT-BATCH-7 presents the real commercial journey in business language wi
     await employee.locator('textarea').nth(2).fill('客户需求已确认，准备记录结果。');
     await employee.locator('footer button').click();
     await employee.goto(`${employeeBase}/e/tasks/${projection.task_id}`);
-    await employee.getByLabel('结果订单号').fill(`B7-${Date.now()}`);
+    await employee.getByLabel('第三方结果单号').fill(`B7-${Date.now()}`);
     await employee.getByLabel('图片证据').setInputFiles({
       name: 'audit-batch-7.png',
       mimeType: 'image/png',

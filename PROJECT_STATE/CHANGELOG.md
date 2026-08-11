@@ -1,3 +1,11 @@
+## 2026-08-11 - G1-W∞-16 员工面 ME-03..07 densify PASS
+
+- Employee `/e/customers` `/e/store` `/e/memberships` `/e/profile` `/e/notifications`: 推广员工具身份 + 不含第三方订单/支付声明。
+- `/e/tasks/[id]`: 「第三方结果单号」替换「结果订单号」；e2e aria-label 同步。
+- Gates: `node --test tests/g1-winf16-employee-surfaces.test.mjs` 1/1；employee typecheck+build PASS。
+- Not 全部商用 / 未代签 owner UI。Next: W∞-17。
+- Evidence: `evidence/G1-MEITUAN-PARITY/WINF16/ACCEPTANCE.md`.
+
 ## 2026-08-11 - G1-W∞-15 服务过程/任务路径 densify PASS
 
 - Consumer `/c/processes/[id]`: 门店服务过程工具身份；服务编号/已登记；非第三方订单履约免责。

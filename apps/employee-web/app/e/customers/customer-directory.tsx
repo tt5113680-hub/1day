@@ -85,9 +85,11 @@ export function CustomerDirectory() {
   return (
     <main className={styles.page}>
       <header className={styles.header}>
-        <p className={styles.eyebrow}>Employee · 客户目录</p>
+        <p className={styles.eyebrow}>推广员工具 · 客户目录</p>
         <h1>客户目录</h1>
-        <p>仅展示你拥有归属、任务或贡献关系的客户；公海线索请进入获客池。</p>
+        <p>
+          仅展示你拥有归属、任务或贡献关系的客户；公海线索请进入获客池。跟进服务痕迹，不含第三方订单履约。
+        </p>
         <div className={styles.headerActions}>
           <a href="/e/leads">获客池</a>
           <Button tone="quiet" onClick={() => void load()}>
@@ -125,7 +127,7 @@ export function CustomerDirectory() {
         </section>
       )}
       <p className={styles.note}>
-        SYS-31 客户目录：列表与详情共用同一服务端客户范围规则，不宣称跨店导出或租户 CRM。
+        推广员工具客户目录：列表与详情共用同一服务端客户范围规则；不宣称跨店导出、租户 CRM 或第三方成交回写。
       </p>
     </main>
   );

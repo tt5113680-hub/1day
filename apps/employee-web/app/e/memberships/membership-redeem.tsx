@@ -103,9 +103,11 @@ export function MembershipRedeem() {
   return (
     <main className={styles.page} data-testid="employee-membership-redeem">
       <header className={styles.header}>
-        <p className={styles.eyebrow}>ONEDAY / 会员核销</p>
+        <p className={styles.eyebrow}>推广员工具 · 会员核销</p>
         <h1>会员权益核销</h1>
-        <p>使用既有 `POST /api/v1/employee/memberships/redeem`；仅核销门店已发放权益。</p>
+        <p>
+          核销本店已发放权益；不替代美团/抖音会员，也不含支付金额与第三方订单成功态。
+        </p>
       </header>
       {message ? (
         <p className={styles.feedback} role="status">
@@ -150,7 +152,7 @@ export function MembershipRedeem() {
         </Button>
       </section>
       <p className={styles.note}>
-        工作台保留入口链接；店长能力包「会员核销」直达本页。不伪造第三方投放或短信验证。
+        推广员工具会员核销：工作台与店长能力包可直达本页。不伪造第三方投放、短信验证或本平台成交。
       </p>
     </main>
   );

@@ -118,9 +118,11 @@ export function StoreHome() {
   return (
     <main className={styles.page}>
       <header className={styles.header}>
-        <p className={styles.eyebrow}>Store Manager · 店长模式</p>
+        <p className={styles.eyebrow}>推广员工具 · 店长模式</p>
         <h1>门店经营首页</h1>
-        <p>{context}</p>
+        <p>
+          {context} · 统一入口与工作流；不碰钱、不碰销售、不代履约第三方订单。
+        </p>
         <div className={styles.meta}>
           {roles.map((role) => (
             <StatusBadge key={role} tone="neutral">
@@ -132,7 +134,9 @@ export function StoreHome() {
 
       <section className={styles.package} aria-label="店长经营能力包">
         <h2>店长能力包</h2>
-        <p>任务、线索、核销与分享复用员工端既有路由；写动作仍由服务端 scope 校验。</p>
+        <p>
+          任务、线索、核销与分享复用员工端既有路由；写动作仍由服务端 scope 校验。本页不含支付金额。
+        </p>
         <div className={styles.actions}>
           {STORE_MANAGER_PACKAGE_ACTIONS.map((action) => (
             <a className={styles.action} href={action.href} key={action.key}>
@@ -159,7 +163,7 @@ export function StoreHome() {
         ))}
       </section>
       <p className={styles.note}>
-        SYS-27 店长 chrome 包：桌面侧栏 + 门店首页能力包。不宣称完整九角色矩阵或全部商用。
+        推广员工具店长 chrome：桌面侧栏 + 门店首页能力包。不宣称完整九角色矩阵、全部商用或本平台下单。
       </p>
     </main>
   );

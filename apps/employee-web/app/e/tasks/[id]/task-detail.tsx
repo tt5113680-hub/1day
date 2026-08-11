@@ -153,7 +153,7 @@ export function TaskDetail() {
   };
   const recordResult = async () => {
     if (!id || !data?.customer || !orderNumber.trim() || !resultFile) {
-      setMessage('请填写结果订单号并选择图片证据。');
+      setMessage('请填写第三方结果单号并选择图片证据。');
       return;
     }
     setBusy('result');
@@ -232,7 +232,7 @@ export function TaskDetail() {
           ←
         </Button>
         <div>
-          <p>ONEDAY / 我的任务</p>
+          <p>推广员工具 · 我的任务</p>
           <h1>{taskTitleCopy(data.task.title)}</h1>
         </div>
         <StatusBadge tone={done ? 'success' : 'info'}>{done ? '已完成' : '待执行'}</StatusBadge>
@@ -304,13 +304,13 @@ export function TaskDetail() {
           <p className={styles.card}>仅可为分配给本人的当前任务记录关联客户的真实结果。</p>
           <div className={styles.resultForm}>
             <label>
-              结果订单号
+              第三方结果单号
               <input
-                aria-label="结果订单号"
+                aria-label="第三方结果单号"
                 value={orderNumber}
                 maxLength={120}
                 onChange={(event) => setOrderNumber(event.target.value)}
-                placeholder="例如：ONEDAY-RESULT-001"
+                placeholder="美团/抖音等平台单号（可选留痕）"
               />
             </label>
             <label>

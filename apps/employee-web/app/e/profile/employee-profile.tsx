@@ -21,11 +21,12 @@ type Data = {
 const api = process.env.NEXT_PUBLIC_API_BASE_URL ?? 'http://127.0.0.1:3001';
 const sessionApi = new SessionApiClient(api);
 const tools = [
-  ['我的任务', '/e/workbench'],
-  ['客户与跟进', '/e/nurture'],
+  ['任务收件箱', '/e/tasks'],
+  ['客户目录', '/e/customers'],
   ['获客池', '/e/leads'],
-  ['通知中心', '/e/notifications'],
+  ['会员核销', '/e/memberships'],
   ['分享工具', '/e/share'],
+  ['通知中心', '/e/notifications'],
 ];
 const permissionNames: Record<string, string> = {
   'action.manage': '管理外部行动',
@@ -147,10 +148,10 @@ export function EmployeeProfile() {
     <main className={styles.page}>
       <header className={styles.header}>
         <div>
-          <p>ONEDAY / 我的工作空间</p>
+          <p>推广员工具 · 我的工作空间</p>
           <h1>{data.employee.displayName}</h1>
           <span>
-            {data.employee.title ?? '员工'} · {data.employee.employeeCode}
+            {data.employee.title ?? '员工'} · {data.employee.employeeCode} · 不含第三方订单履约
           </span>
         </div>
         <Button tone="quiet" onClick={() => void load()}>

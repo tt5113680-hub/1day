@@ -107,10 +107,10 @@ export function NotificationCenter() {
     <main className={styles.page}>
       <header className={styles.header}>
         <div>
-          <p>ONEDAY / 执行提醒</p>
+          <p>推广员工具 · 执行提醒</p>
           <h1>把该处理的事，留在眼前</h1>
           <span>
-            任务、异常、审批与系统提醒只会显示给当前员工；每条提醒都能回到安全的工作上下文。
+            任务、异常、审批与系统提醒仅显示给当前员工；不含第三方订单履约或支付成功态。
           </span>
         </div>
       </header>
