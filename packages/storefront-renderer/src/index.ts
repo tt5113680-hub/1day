@@ -26,6 +26,8 @@ export {
   StorefrontStoreInfo,
   StorefrontStoryList,
   storefrontPlatformGlyph,
+  storefrontPlatformMarkClass,
+  storefrontPlatformName,
   type StorefrontBannerSlide,
   type StorefrontBenefitItem,
   type StorefrontComparePackage,

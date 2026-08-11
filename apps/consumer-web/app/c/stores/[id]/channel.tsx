@@ -25,7 +25,13 @@ const apiBase = process.env.NEXT_PUBLIC_API_BASE_URL ?? 'http://127.0.0.1:3001';
 
 const money = (value: number) => `¥${value.toFixed(value % 1 === 0 ? 0 : 2)}`;
 const platformName = (platform: StoreDetail['platformOffers'][number]['platformType']) =>
-  platform === 'meituan' ? '美团团购' : platform === 'douyin' ? '抖音团购' : '其他平台';
+  platform === 'meituan'
+    ? '美团团购'
+    : platform === 'douyin'
+      ? '抖音团购'
+      : platform === 'saabei'
+        ? '扫呗平台'
+        : '其他平台·外链';
 
 export default function StoreChannel({
   data,
@@ -167,7 +173,7 @@ export default function StoreChannel({
                       <span
                         className={`${styles.platformBadge} ${styles[`platform${platform}`]}`}
                       >
-                        {platform === 'meituan' ? '团' : platform === 'douyin' ? '抖' : '选'}
+                        {platform === 'meituan' ? '团' : platform === 'douyin' ? '抖' : platform === 'saabei' ? '扫' : '选'}
                       </span>
                       {platformName(platform)}
                     </li>
@@ -201,7 +207,9 @@ export default function StoreChannel({
                               ? '团'
                               : offer.platformType === 'douyin'
                                 ? '抖'
-                                : '选'}
+                                : offer.platformType === 'saabei'
+                                  ? '扫'
+                                  : '选'}
                           </span>
                           <span>
                             <strong>{offer.title || platformName(offer.platformType)}</strong>

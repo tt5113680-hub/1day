@@ -9,7 +9,7 @@ type PlatformOffer = {
   id: string;
   offerId: string;
   title: string;
-  platformType: 'meituan' | 'douyin' | 'external';
+  platformType: 'meituan' | 'douyin' | 'saabei' | 'external';
   offerPrice: number;
   marketPrice: number | null;
   targetUrl: string | null;
@@ -49,7 +49,13 @@ export type ServiceDetail = {
 
 const money = (value: number) => `¥${value.toFixed(value % 1 === 0 ? 0 : 2)}`;
 const platformLabel = (type: PlatformOffer['platformType']) =>
-  type === 'meituan' ? '美团团购' : type === 'douyin' ? '抖音团购' : '其他平台';
+  type === 'meituan'
+    ? '美团团购'
+    : type === 'douyin'
+      ? '抖音团购'
+      : type === 'saabei'
+        ? '扫呗平台'
+        : '其他平台·外链';
 
 export function ServiceState({ kind }: { kind: 'error' | 'forbidden' }) {
   const forbidden = kind === 'forbidden';

@@ -170,12 +170,26 @@ export function StorefrontOfferList({ items }: { items: StorefrontOfferItem[] })
   );
 }
 
-export type StorefrontPlatformMark = 'meituan' | 'douyin' | 'external' | string;
+export type StorefrontPlatformMark = 'meituan' | 'douyin' | 'saabei' | 'external' | string;
 
 export function storefrontPlatformGlyph(platformType: StorefrontPlatformMark) {
   if (platformType === 'meituan') return '团';
   if (platformType === 'douyin') return '抖';
+  if (platformType === 'saabei') return '扫';
   return '荐';
+}
+
+export function storefrontPlatformName(platformType: StorefrontPlatformMark) {
+  if (platformType === 'meituan') return '美团团购';
+  if (platformType === 'douyin') return '抖音团购';
+  if (platformType === 'saabei') return '扫呗平台';
+  return '其他平台·外链';
+}
+
+export function storefrontPlatformMarkClass(platformType: StorefrontPlatformMark) {
+  if (platformType === 'meituan' || platformType === 'douyin' || platformType === 'saabei')
+    return platformType;
+  return 'external';
 }
 
 export type StorefrontComparePriceRow = {
@@ -228,7 +242,7 @@ export function StorefrontOfferCompare({
             {group.rows.map((item) => (
               <a className="od-sf-compare__row" href={item.href} key={item.key}>
                 <span
-                  className={`od-sf-platform-mark od-sf-platform-mark--${item.platformType === 'meituan' || item.platformType === 'douyin' ? item.platformType : 'external'}`}
+                  className={`od-sf-platform-mark od-sf-platform-mark--${storefrontPlatformMarkClass(item.platformType)}`}
                 >
                   {storefrontPlatformGlyph(item.platformType)}
                 </span>
@@ -250,7 +264,7 @@ export function StorefrontOfferCompare({
           {links.map((item) => (
             <a className="od-sf-platform-link" href={item.href} key={item.key}>
               <span
-                className={`od-sf-platform-mark od-sf-platform-mark--${item.platformType === 'meituan' || item.platformType === 'douyin' ? item.platformType : 'external'}`}
+                className={`od-sf-platform-mark od-sf-platform-mark--${storefrontPlatformMarkClass(item.platformType)}`}
               >
                 {storefrontPlatformGlyph(item.platformType)}
               </span>

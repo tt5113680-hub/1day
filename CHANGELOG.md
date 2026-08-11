@@ -2,6 +2,7 @@
 
 ## 2026-08-11
 
+- **G1-W∞-20** Third-party platform-naming consistency (`G1-R-TOOL-PATH-EXPERIENCE`): shared `@oneday/storefront-renderer` adds `storefrontPlatformName`/`storefrontPlatformMarkClass` + 扫呗 glyph（`扫`）+ `--od-sf-platform-saabei` mark token; `/c/stores` group-buy/menu `platformName` and badges render 扫呗/外链 explicitly; `/c/services` `PlatformOffer.platformType` widened to include `'saabei'` + `platformLabel` names 扫呗. Honest no-native-checkout boundary retained everywhere. Copy/renderer-only, no schema/DB. typecheck+build 20/20, `g1-winf*.test.mjs` 18/18, unit 47 passed (2 documented pre-existing token failures unchanged). Evidence: `evidence/G1-MEITUAN-PARITY/WINF20/ACCEPTANCE.md`. Not owner sign-off.
 - **G1-W∞-19** Management tool-path gap normalization (`G1-R-TOOL-PATH-GAPS`): retired last「美团商家端 PC」eyebrows on `/m/offers`（→ 推广员工具 · 商品/套餐入口）and `/m/stores`（→ 推广员工具 · 门店入口）for consistent promotion-tool identity; honest no-sales boundary. Text-only; no native checkout. Evidence: `evidence/G1-MEITUAN-PARITY/WINF19/ACCEPTANCE.md`. Not owner sign-off.
 - **G1-W∞-18** Admin dashboards + consumer profile densify (`G1-R-ADMIN-DASHBOARDS`): Management /m/dashboard 商家中心 + Platform /p//bc dashboards + Consumer /c/profile tool identity + no-deal disclaimer. Evidence: evidence/G1-MEITUAN-PARITY/WINF18/ACCEPTANCE.md.
 - **G1-W∞-3** External hand-off confirm densify (MH5-12): `/c/actions` platform preview + honest no-deal disclaimer + scene-derived funnel surface. Evidence: evidence/G1-MEITUAN-PARITY/WINF3/ACCEPTANCE.md.

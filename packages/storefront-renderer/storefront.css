@@ -59,6 +59,7 @@
   --od-sf-info-copy: #d9c7be;
   --od-sf-platform-meituan: #ff8c30;
   --od-sf-platform-douyin: #171717;
+  --od-sf-platform-saabei: #1f9d8f;
   --od-sf-platform-external: #866cbe;
   --od-sf-benefit-new-from: #fff5d9;
   --od-sf-benefit-new-to: #f4dec0;
@@ -572,6 +573,10 @@
 
 .od-sf-platform-mark--douyin {
   background: var(--od-sf-platform-douyin);
+}
+
+.od-sf-platform-mark--saabei {
+  background: var(--od-sf-platform-saabei);
 }
 
 .od-sf-platform-mark--external {
