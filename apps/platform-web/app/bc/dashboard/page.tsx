@@ -1,6 +1,6 @@
 'use client';
 import { SessionApiClient } from '@oneday/session-client';
-import { AdminPageHeader, AppStatePanel, Button, Card, MetricCard } from '@oneday/ui';
+import { AppStatePanel, Button } from '@oneday/ui';
 
 import { useCallback, useEffect, useState } from 'react';
 import { PlatformProductHome } from '../../platform-product-home';
@@ -34,6 +34,20 @@ type Data = {
 const api = process.env.NEXT_PUBLIC_API_BASE_URL ?? 'http://127.0.0.1:3001';
 const sessionApi = new SessionApiClient(api);
 
+const CIRCLE_SHORTCUTS = [
+  { href: '/p/business-circles', label: '商圈', desc: '商圈治理' },
+  { href: '/p/channels', label: '渠道', desc: '渠道运营' },
+  { href: '/p/tenants', label: '租户', desc: '租户治理' },
+  { href: '/ch/dashboard', label: '代理', desc: '渠道代理台' },
+] as const;
+
+const SHORTCUT_ICONS: Record<string, string> = {
+  商圈: '圈',
+  渠道: '渠',
+  租户: '租',
+  代理: '代',
+};
+
 export default function BusinessCircleDashboard() {
   const [state, setState] = useState<'loading' | 'ready' | 'forbidden' | 'error'>('loading');
   const [data, setData] = useState<Data | null>(null);
@@ -56,47 +70,89 @@ export default function BusinessCircleDashboard() {
   useEffect(() => void load(), [load]);
   if (state !== 'ready')
     return (
-      <AppStatePanel
-        kind={state}
-        title={
-          state === 'loading'
-            ? '正在读取商圈经营数据'
-            : state === 'forbidden'
-              ? '当前账号无商圈经营权限'
-              : '商圈经营数据暂时不可用'
-        }
-        description="这里只展示已获平台批准的商圈成员聚合经营数据。"
-        action={
-          state === 'error' ? <Button onClick={() => void load()}>重新加载</Button> : undefined
-        }
-      />
+      <main className={styles.centered}>
+        <AppStatePanel
+          kind={state}
+          title={
+            state === 'loading'
+              ? '正在读取商圈经营数据'
+              : state === 'forbidden'
+                ? '当前账号无商圈经营权限'
+                : '商圈经营数据暂时不可用'
+          }
+          description="这里只展示已获平台批准的商圈成员聚合经营数据。"
+          action={
+            state === 'error' ? <Button onClick={() => void load()}>重新加载</Button> : undefined
+          }
+        />
+      </main>
     );
   const metrics = data?.metrics;
+  const metricCards = [
+    { label: '固定商圈', value: metrics?.circle_count ?? 0 },
+    { label: '已批准商户', value: metrics?.merchant_count ?? 0 },
+    { label: 'Consumer 行为', value: metrics?.traffic_events ?? 0 },
+    { label: '已确认入口转化', value: metrics?.conversion_orders ?? 0 },
+  ] as const;
   return (
     <main className={styles.page}>
       <PlatformProductHome mode="circle" />
-      <AdminPageHeader
-        eyebrow="推广员工具 · 商圈联盟"
-        title="成员权益、内容、流量与入口转化"
-        description="仅展示平台已批准的固定商圈成员；商户数据仍归属各租户。本页只呈现聚合入口痕迹，非本平台下单。"
-        actions={<Button onClick={() => void load()}>刷新数据</Button>}
-      />
-      <section className={styles.metrics} aria-label="Business-circle metrics">
-        {[
-          ['固定商圈', metrics?.circle_count ?? 0],
-          ['已批准商户', metrics?.merchant_count ?? 0],
-          ['Consumer 行为', metrics?.traffic_events ?? 0],
-          ['已确认入口转化', metrics?.conversion_orders ?? 0],
-        ].map(([label, value]) => (
-          <MetricCard label={String(label)} value={value} key={String(label)} />
-        ))}
+
+      <header className={styles.topBar}>
+        <span className={styles.topBarTitle}>推广员工具 · 商圈联盟</span>
+        <button className={styles.topBarRefresh} type="button" onClick={() => void load()}>
+          刷新
+        </button>
+      </header>
+
+      <section className={styles.heroCard} aria-label="商圈总览">
+        <h1>成员权益、内容、流量与入口转化</h1>
+        <p>
+          仅展示平台已批准的固定商圈成员；商户数据仍归属各租户。本页只呈现聚合入口痕迹，非本平台下单。
+        </p>
       </section>
-      <Card className={styles.panel}>
-        <h2>固定商圈联盟明细</h2>
+
+      <section className={styles.panel} aria-label="常用功能">
+        <div className={styles.panelHead}>
+          <h2>常用功能</h2>
+          <span className={styles.panelMeta}>商圈联盟快捷入口</span>
+        </div>
+        <div className={styles.functions}>
+          {CIRCLE_SHORTCUTS.map((item) => (
+            <a className={styles.function} href={item.href} key={item.href}>
+              <span className={styles.functionIcon} aria-hidden>
+                {SHORTCUT_ICONS[item.label] ?? '·'}
+              </span>
+              <strong>{item.label}</strong>
+              <span>{item.desc}</span>
+            </a>
+          ))}
+        </div>
+      </section>
+
+      <section className={styles.panel} aria-label="Business-circle metrics">
+        <div className={styles.panelHead}>
+          <h2>商圈指标</h2>
+        </div>
+        <div className={styles.metrics}>
+          {metricCards.map((item) => (
+            <article className={styles.metric} key={item.label}>
+              <strong>{item.value}</strong>
+              <span>{item.label}</span>
+            </article>
+          ))}
+        </div>
+      </section>
+
+      <section className={styles.panel} aria-label="固定商圈联盟明细">
+        <div className={styles.panelHead}>
+          <h2>固定商圈联盟明细</h2>
+          <span className={styles.panelMeta}>{data?.circles.length ?? 0} 个商圈</span>
+        </div>
         {data?.circles.length ? (
           <div className={styles.circles}>
             {data.circles.map((circle) => (
-              <Card key={circle.id} className={styles.circle}>
+              <article className={styles.circle} key={circle.id}>
                 <header>
                   <div>
                     <strong>{circle.name}</strong>
@@ -139,13 +195,13 @@ export default function BusinessCircleDashboard() {
                 ) : (
                   <p className={styles.empty}>当前固定商圈尚无已批准商户。</p>
                 )}
-              </Card>
+              </article>
             ))}
           </div>
         ) : (
           <p className={styles.empty}>当前尚无固定商圈，请先在平台商圈治理中创建并批准。</p>
         )}
-      </Card>
+      </section>
     </main>
   );
 }

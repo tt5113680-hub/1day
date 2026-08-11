@@ -1,6 +1,6 @@
 'use client';
 import { SessionApiClient } from '@oneday/session-client';
-import { AdminPageHeader, AppStatePanel, Button, Card, MetricCard, StatusBadge } from '@oneday/ui';
+import { AppStatePanel, Button, StatusBadge } from '@oneday/ui';
 
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { PlatformProductHome } from '../../platform-product-home';
@@ -47,6 +47,20 @@ const statusLabel = (value: string) =>
     growth: '成长版',
     enterprise: '企业版',
   })[value] ?? value;
+
+const CHANNEL_SHORTCUTS = [
+  { href: '/p/agents', label: '代理', desc: '省市区代理' },
+  { href: '/ch/merchants/new', label: '开通', desc: '开通商户' },
+  { href: '/p/channels', label: '渠道', desc: '渠道运营' },
+  { href: '/p/tenants', label: '租户', desc: '租户治理' },
+] as const;
+
+const SHORTCUT_ICONS: Record<string, string> = {
+  代理: '代',
+  开通: '开',
+  渠道: '渠',
+  租户: '租',
+};
 
 export default function ChannelDashboardPage() {
   const [state, setState] = useState<'loading' | 'ready' | 'forbidden' | 'error'>('loading');
@@ -104,72 +118,99 @@ export default function ChannelDashboardPage() {
 
   if (state !== 'ready')
     return (
-      <AppStatePanel
-        kind={state}
-        title={
-          state === 'loading'
-            ? '正在读取渠道经营数据'
-            : state === 'forbidden'
-              ? '当前账号无渠道经营权限'
-              : '渠道经营数据暂时不可用'
-        }
-        description="这里只展示当前授权渠道范围内的商户开通与跟进信号。"
-        action={
-          state === 'error' ? <Button onClick={() => void load()}>重新加载</Button> : undefined
-        }
-      />
+      <main className={styles.centered}>
+        <AppStatePanel
+          kind={state}
+          title={
+            state === 'loading'
+              ? '正在读取渠道经营数据'
+              : state === 'forbidden'
+                ? '当前账号无渠道经营权限'
+                : '渠道经营数据暂时不可用'
+          }
+          description="这里只展示当前授权渠道范围内的商户开通与跟进信号。"
+          action={
+            state === 'error' ? <Button onClick={() => void load()}>重新加载</Button> : undefined
+          }
+        />
+      </main>
     );
   const metrics = data?.metrics;
+  const metricCards = [
+    { label: '渠道商户', value: metrics?.merchant_count ?? 0, hint: '授权范围内' },
+    { label: '已开通', value: metrics?.onboarded_count ?? 0, hint: '可进入口' },
+    { label: '近 30 天活跃', value: metrics?.active_count ?? 0, hint: '有经营痕迹' },
+    { label: '跟进信号', value: metrics?.renewal_opportunity_count ?? 0, hint: '非成交漏斗' },
+  ] as const;
   return (
     <main className={styles.page}>
       <PlatformProductHome mode="channel" />
-      <AdminPageHeader
-        eyebrow="ONEDAY / 推广员工具 · 渠道代理"
-        title="商户开通队列与跟进信号"
-        description="代理后台看开通进度、省市区归属与跟进信号。续约机会仅来自不活跃或既有高风险证据，不表示套餐到期或本平台成交。"
-        actions={
-          <>
-            <Button
-              tone="secondary"
-              onClick={() => {
-                window.location.href = '/p/agents';
-              }}
-            >
-              省市区代理
-            </Button>
-            <Button
-              tone="secondary"
-              onClick={() => {
-                window.location.href = '/ch/merchants/new';
-              }}
-            >
-              开通商户
-            </Button>
-            <Button onClick={() => void load()}>刷新数据</Button>
-          </>
-        }
-      />
+
+      <header className={styles.topBar}>
+        <span className={styles.topBarTitle}>推广员工具 · 渠道代理</span>
+        <div className={styles.topBarActions}>
+          <a className={styles.topBarBtn} href="/p/agents">
+            省市区代理
+          </a>
+          <a className={styles.topBarBtn} href="/ch/merchants/new">
+            开通商户
+          </a>
+          <button className={styles.topBarRefresh} type="button" onClick={() => void load()}>
+            刷新
+          </button>
+        </div>
+      </header>
+
+      <section className={styles.heroCard} aria-label="渠道总览">
+        <h1>商户开通队列与跟进信号</h1>
+        <p>
+          代理后台看开通进度、省市区归属与跟进信号。续约机会仅来自不活跃或既有高风险证据，不表示套餐到期或本平台成交。
+        </p>
+      </section>
+
       <p className={styles.disclaimer} role="note">
         渠道代理服务「统一入口开通与归属」；不碰钱、不碰销售履约、不做替商家管店。
       </p>
-      <section className={styles.metrics} aria-label="Channel operating metrics">
-        {[
-          ['渠道商户', metrics?.merchant_count ?? 0, '授权范围内'],
-          ['已开通', metrics?.onboarded_count ?? 0, '可进入口'],
-          ['近 30 天活跃', metrics?.active_count ?? 0, '有经营痕迹'],
-          ['跟进信号', metrics?.renewal_opportunity_count ?? 0, '非成交漏斗'],
-        ].map(([label, value, hint]) => (
-          <MetricCard
-            label={String(label)}
-            value={value as number}
-            hint={String(hint)}
-            key={String(label)}
-          />
-        ))}
+
+      <section className={styles.panel} aria-label="常用功能">
+        <div className={styles.panelHead}>
+          <h2>常用功能</h2>
+          <span className={styles.panelMeta}>渠道代理快捷入口</span>
+        </div>
+        <div className={styles.functions}>
+          {CHANNEL_SHORTCUTS.map((item) => (
+            <a className={styles.function} href={item.href} key={item.href}>
+              <span className={styles.functionIcon} aria-hidden>
+                {SHORTCUT_ICONS[item.label] ?? '·'}
+              </span>
+              <strong>{item.label}</strong>
+              <span>{item.desc}</span>
+            </a>
+          ))}
+        </div>
       </section>
-      <Card className={styles.panel}>
-        <div className={styles.controls}>
+
+      <section className={styles.panel} aria-label="Channel operating metrics">
+        <div className={styles.panelHead}>
+          <h2>渠道指标</h2>
+        </div>
+        <div className={styles.metrics}>
+          {metricCards.map((item) => (
+            <article className={styles.metric} key={item.label}>
+              <strong>{item.value}</strong>
+              <span>{item.label}</span>
+              <small>{item.hint}</small>
+            </article>
+          ))}
+        </div>
+      </section>
+
+      <section className={styles.panel} aria-label="商户经营队列">
+        <div className={styles.panelHead}>
           <h2>商户经营队列</h2>
+          <span className={styles.panelMeta}>{rows.length} 家</span>
+        </div>
+        <div className={styles.controls}>
           <label>
             搜索
             <input
@@ -223,7 +264,7 @@ export default function ChannelDashboardPage() {
         {rows.length ? (
           <div className={styles.table}>
             {rows.map((merchant) => (
-              <Card key={merchant.membershipId}>
+              <article className={styles.merchantCard} key={merchant.membershipId}>
                 <div>
                   <strong>{merchant.name}</strong>
                   <span>{merchant.slug}</span>
@@ -249,14 +290,14 @@ export default function ChannelDashboardPage() {
                     {merchant.activeIn30Days ? '；近 30 天活跃' : '；近 30 天无活跃'}
                   </span>
                 </div>
-                <div className={merchant.renewalSignal ? styles.signal : ''}>
+                <div className={merchant.renewalSignal ? styles.signal : undefined}>
                   {merchant.renewalSignal === 'inactive_30d'
                     ? '建议跟进：连续 30 天不活跃（入口痕迹）'
                     : merchant.renewalSignal === 'high_risk'
                       ? '建议跟进：高风险商户'
                       : '暂无跟进信号'}
                 </div>
-              </Card>
+              </article>
             ))}
           </div>
         ) : (
@@ -266,7 +307,7 @@ export default function ChannelDashboardPage() {
               : '当前一级渠道尚未分配商户。'}
           </p>
         )}
-      </Card>
+      </section>
     </main>
   );
 }

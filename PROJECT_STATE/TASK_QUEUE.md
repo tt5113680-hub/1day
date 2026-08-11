@@ -126,7 +126,8 @@
 - [x] **G1-W∞-34** `G1-R-EMPLOYEE-WORKBENCH` PASS — Employee H5 工作台视觉/IA densify toward 美团商家端（sticky 黄顶栏+头像 hero+icon 功能格+白卡面板+紧凑任务列表）；诚实边界保留。tests/g1-winf34 4/4。见 `evidence/G1-MEITUAN-PARITY/WINF34/ACCEPTANCE.md`。
 - [x] **G1-W∞-35** `G1-R-MANAGEMENT-WORKBENCH` PASS — Management PC 工作台视觉/IA densify toward 美团商家端 PC（黄顶栏+icon 功能格+白卡面板+自定义指标）；诚实边界保留。tests/g1-winf35 4/4。见 `evidence/G1-MEITUAN-PARITY/WINF35/ACCEPTANCE.md`。
 - [x] **G1-W∞-36** `G1-R-PLATFORM-DASHBOARD` PASS — Platform PC 总览视觉/IA densify toward 美团平台端（黄顶栏+icon 功能格+白卡面板+自定义指标）；诚实边界保留。tests/g1-winf36 4/4。见 `evidence/G1-MEITUAN-PARITY/WINF36/ACCEPTANCE.md`。
-- [ ] **NEXT:** **W∞-37** Channel/Circle dashboard visual densify — 商用前提完整对标.
+- [x] **G1-W∞-37** `G1-R-CHANNEL-CIRCLE-DASHBOARD` PASS — Channel `/ch/dashboard` + Circle `/bc/dashboard` 视觉/IA densify（黄顶栏+icon 功能格+白卡面板）；诚实边界保留。tests/g1-winf37 4/4。见 `evidence/G1-MEITUAN-PARITY/WINF37/ACCEPTANCE.md`。
+- [ ] **NEXT:** **W∞-38** Management 门店入口视觉 densify（MPC-02）— 商用前提完整对标.
 - [x] **G1-W∞-2** `G1-R-MEITUAN-H5-SEARCH` PASS (首刀) — Consumer H5 搜索（MH5-02）: `ConsumerDiscoveryService.search` + `GET /api/v1/consumer/search?tenant&q`（租户 fail-closed 按名 ILIKE 检索已发布商户，返回 local_pilot 评分/月售/距离 + 进店深链）+ `/c/search` 美团 App 搜索面 + `/c/discovery` 的搜索壳升级为可点击搜索入口。typecheck 20/20、build 20/20（consumer 路由新增 `/c/search`）、page-c-consumer-search L2 PASS、page-c-002 回归 PASS、resolve-consumer-tabs 3/3。见 `evidence/G1-MEITUAN-PARITY/WINF2/ACCEPTANCE.md`。
 - [ ] G1 OWNER GATE — owner signs only after tool-identity + funnel waves pass re-test (`PRODUCT_OWNER_UI_ACCEPTANCE.md`). P1-C still blocked on lifting G + cloud inventory.
 - [ ] HUMAN-PILOT-HANDOFF / product-owner UI acceptance — local sandbox refreshed through migration `054` + consult CTA bindings + walkthrough shots (Playwright 4/4); **human sign-off still required**; not auto-claimed as 全部商用. Phase-1 P1-C blocked until owner lifts G (deploy templates in `infra/deploy/`).
