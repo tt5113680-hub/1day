@@ -1,7 +1,7 @@
 'use client';
 import { SessionApiClient } from '@oneday/session-client';
-import { AdminPageHeader, AppStatePanel, Button, StatusBadge } from '@oneday/ui';
-import { useCallback, useEffect, useState } from 'react';
+import { AppStatePanel, Button, StatusBadge } from '@oneday/ui';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import styles from './page.module.css';
 type Tenant = {
   id: string;
@@ -16,6 +16,10 @@ type Tenant = {
 };
 const api = process.env.NEXT_PUBLIC_API_BASE_URL ?? 'http://127.0.0.1:3001';
 const sessionApi = new SessionApiClient(api);
+const planLabel = (plan: string) =>
+  ({ starter: '起步版', growth: '成长版', enterprise: '企业版' })[plan] ?? plan;
+const riskLabel = (risk: string) => ({ low: '低', medium: '中', high: '高' })[risk] ?? risk;
+const barWidth = (total: number, value: number) => (total ? `${(value / total) * 100}%` : '0%');
 export default function TenantsPage() {
   const [state, setState] = useState<'loading' | 'ready' | 'forbidden' | 'error'>('loading'),
     [items, setItems] = useState<Tenant[]>([]),
@@ -65,12 +69,53 @@ export default function TenantsPage() {
       setSaving(false);
     }
   };
+  const counts = (fn: (x: Tenant) => string) => {
+    const map = new Map<string, number>();
+    for (const x of items) {
+      const key = fn(x);
+      map.set(key, (map.get(key) ?? 0) + 1);
+    }
+    return [...map.entries()].map(([key, value]) => ({ key, value }));
+  };
+  const statusCounts = useMemo(
+    () =>
+      counts((x) => (x.status === 'active' ? '开通中' : '已暂停')).sort(
+        (a, b) => b.value - a.value,
+      ),
+    [items],
+  );
+  const planCounts = useMemo(
+    () => counts((x) => planLabel(x.plan)).sort((a, b) => b.value - a.value),
+    [items],
+  );
+  const riskCounts = useMemo(
+    () => counts((x) => `${riskLabel(x.riskLevel)}风险`).sort((a, b) => b.value - a.value),
+    [items],
+  );
+  const overdueCounts = useMemo(
+    () =>
+      counts((x) =>
+        x.overdueTasks <= 0 ? '无逾期' : x.overdueTasks <= 5 ? '轻负担 1-5' : '重负担 6+',
+      ).sort((a, b) => b.value - a.value),
+    [items],
+  );
+  const quotaCounts = useMemo(
+    () =>
+      counts((x) =>
+        x.quotas.users <= 10
+          ? '用户配额 ≤10'
+          : x.quotas.users <= 50
+            ? '用户配额 11-50'
+            : '用户配额 51+',
+      ).sort((a, b) => b.value - a.value),
+    [items],
+  );
   if (state === 'loading')
     return (
       <main className={styles.centered}>
         <AppStatePanel
           kind="loading"
-          title="正在加载租户治理"
+          title="正在加载平台租户治理"
           description="正在同步租户生命周期、配额与风险信息。"
         />
       </main>
@@ -97,17 +142,140 @@ export default function TenantsPage() {
       </main>
     );
   return (
-    <main className={styles.page}>
-      <AdminPageHeader
-        eyebrow="平台租户治理"
-        title="租户开通、暂停与经营边界"
-        description="生命周期变更需精确二次确认；套餐、配额和风险等级均由平台侧持久化与审计。"
-        actions={
-          <Button tone="secondary" onClick={() => void load()}>
+    <main className={styles.page} data-testid="platform-tenants">
+      <header className={styles.topBar}>
+        <span className={styles.topBarTitle}>推广员工具 · 平台租户管理</span>
+        <span className={styles.topBarActions}>
+          <button className={styles.topBarRefresh} type="button" onClick={() => void load()}>
             刷新
-          </Button>
-        }
-      />
+          </button>
+        </span>
+      </header>
+
+      <section className={styles.heroCard} aria-label="平台租户管理说明">
+        <h1>租户开通、暂停与工具边界</h1>
+        <p>
+          生命周期变更需精确二次确认；套餐、配额和风险等级均由平台侧持久化与审计。租户是工具开通经济体，不涉及本平台收款、非本平台下单。
+        </p>
+      </section>
+
+      <section className={styles.summaryStrip} aria-label="平台租户概况">
+        <div>
+          <span>租户</span>
+          <strong>{items.length}</strong>
+        </div>
+        <div>
+          <span>开通中</span>
+          <strong>{items.filter((x) => x.status === 'active').length}</strong>
+        </div>
+        <div>
+          <span>已暂停</span>
+          <strong>{items.filter((x) => x.status === 'suspended').length}</strong>
+        </div>
+        <div>
+          <span>高风险</span>
+          <strong>{items.filter((x) => x.riskLevel === 'high').length}</strong>
+        </div>
+      </section>
+
+      <section className={styles.distribution} aria-label="平台租户运营分布">
+        <div className={styles.panelBlock}>
+          <h2>租户状态分布</h2>
+          <ul className={styles.bars}>
+            {statusCounts.map((b) => (
+              <li key={b.key} className={styles.barRow}>
+                <span className={styles.barLabel}>{b.key}</span>
+                <span className={styles.barTrack}>
+                  <span
+                    className={styles.barFill}
+                    style={{ width: barWidth(items.length, b.value) }}
+                  />
+                </span>
+                <span className={styles.barValue}>{b.value}</span>
+              </li>
+            ))}
+            {!items.length && <li className={styles.barEmpty}>暂无记录</li>}
+          </ul>
+        </div>
+        <div className={styles.panelBlock}>
+          <h2>套餐分布</h2>
+          <ul className={styles.bars}>
+            {planCounts.map((b) => (
+              <li key={b.key} className={styles.barRow}>
+                <span className={styles.barLabel}>{b.key}</span>
+                <span className={styles.barTrack}>
+                  <span
+                    className={styles.barFill}
+                    style={{ width: barWidth(items.length, b.value) }}
+                  />
+                </span>
+                <span className={styles.barValue}>{b.value}</span>
+              </li>
+            ))}
+            {!items.length && <li className={styles.barEmpty}>暂无记录</li>}
+          </ul>
+        </div>
+        <div className={styles.panelBlock}>
+          <h2>风险等级分布</h2>
+          <ul className={styles.bars}>
+            {riskCounts.map((b) => (
+              <li key={b.key} className={styles.barRow}>
+                <span className={styles.barLabel}>{b.key}</span>
+                <span className={styles.barTrack}>
+                  <span
+                    className={styles.barFill}
+                    style={{ width: barWidth(items.length, b.value) }}
+                  />
+                </span>
+                <span className={styles.barValue}>{b.value}</span>
+              </li>
+            ))}
+            {!items.length && <li className={styles.barEmpty}>暂无记录</li>}
+          </ul>
+        </div>
+        <div className={styles.panelBlock}>
+          <h2>逾期任务分布</h2>
+          <ul className={styles.bars}>
+            {overdueCounts.map((b) => (
+              <li key={b.key} className={styles.barRow}>
+                <span className={styles.barLabel}>{b.key}</span>
+                <span className={styles.barTrack}>
+                  <span
+                    className={styles.barFill}
+                    style={{ width: barWidth(items.length, b.value) }}
+                  />
+                </span>
+                <span className={styles.barValue}>{b.value}</span>
+              </li>
+            ))}
+            {!items.length && <li className={styles.barEmpty}>暂无记录</li>}
+          </ul>
+        </div>
+        <div className={styles.panelBlock}>
+          <h2>用户配额分布</h2>
+          <ul className={styles.bars}>
+            {quotaCounts.map((b) => (
+              <li key={b.key} className={styles.barRow}>
+                <span className={styles.barLabel}>{b.key}</span>
+                <span className={styles.barTrack}>
+                  <span
+                    className={styles.barFill}
+                    style={{ width: barWidth(items.length, b.value) }}
+                  />
+                </span>
+                <span className={styles.barValue}>{b.value}</span>
+              </li>
+            ))}
+            {!items.length && <li className={styles.barEmpty}>暂无记录</li>}
+          </ul>
+        </div>
+      </section>
+
+      <p className={styles.honest}>
+        以上分布全部由已抓取平台租户档案行现场推导（source=local）：租户状态、套餐、风险等级、逾期任务与用户配额；
+        租户是工具开通与整合经济体，不包含本平台收款、非本平台下单；本地试点记录，未接美团实时商户数据。
+      </p>
+
       {note && (
         <p role="status" className={styles.note}>
           {note}
@@ -133,7 +301,7 @@ export default function TenantsPage() {
                   </StatusBadge>
                 </span>
                 <small>
-                  {x.plan} · 风险 {x.riskLevel} · 逾期 {x.overdueTasks}
+                  {planLabel(x.plan)} · 风险 {riskLabel(x.riskLevel)}· 逾期 {x.overdueTasks}
                 </small>
               </button>
             ))

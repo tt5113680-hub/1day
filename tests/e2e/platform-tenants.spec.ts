@@ -27,7 +27,7 @@ test('platform admin updates a tenant after second confirmation', async ({ page 
     sessionStorage.setItem('oneday.accessExpiresAt', value.expiresAt);
   }, session);
   await page.goto('/p/tenants');
-  await expect(page.getByRole('heading', { name: '租户开通、暂停与经营边界' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: '租户开通、暂停与工具边界' })).toBeVisible();
   await page.getByLabel('套餐').selectOption('enterprise');
   await page.getByLabel('用户配额').fill('80');
   await page.getByLabel('二次确认').fill('ACTIVATE:system');
