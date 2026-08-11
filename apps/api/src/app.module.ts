@@ -63,6 +63,8 @@ import { EmployeeProfileController } from './employee-profile.controller';
 import { EmployeeProfileService } from './employee-profile.service';
 import { ManagementDashboardController } from './management-dashboard.controller';
 import { ManagementDashboardService } from './management-dashboard.service';
+import { ManagementNotificationController } from './management-notification.controller';
+import { ManagementNotificationService } from './management-notification.service';
 import { ManagementFunnelController } from './management-funnel.controller';
 import { ManagementFunnelService } from './management-funnel.service';
 import { ManagementCustomerAssetsController } from './management-customer-assets.controller';
@@ -162,6 +164,7 @@ import { EmployeeManagedStoresController } from './employee-managed-stores.contr
     EmployeeNotificationController,
     EmployeeProfileController,
     ManagementDashboardController,
+    ManagementNotificationController,
     ManagementFunnelController,
     ManagementCustomerAssetsController,
     ManagementAiSuggestionController,
@@ -228,6 +231,7 @@ import { EmployeeManagedStoresController } from './employee-managed-stores.contr
     EmployeeNotificationService,
     EmployeeProfileService,
     ManagementDashboardService,
+    ManagementNotificationService,
     ManagementFunnelService,
     ManagementCustomerAssetsService,
     ManagementAiSuggestionService,

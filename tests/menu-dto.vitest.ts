@@ -30,6 +30,7 @@ describe('menu DTO catalog filter', () => {
     const items = filterMenuCatalog(MANAGEMENT_MENU_CATALOG, ['tenant.manage']);
     expect(items.map((item) => item.key)).toEqual([
       'overview',
+      'notifications',
       'stores',
       'external-actions',
       'offers',
@@ -97,9 +98,18 @@ describe('menu DTO catalog filter', () => {
   });
 
   it('exposes store nav for tenant.read store-manager mode', () => {
-    expect(filterMenuCatalog(MANAGEMENT_MENU_CATALOG, ['tenant.read']).map((item) => item.key)).toEqual(
-      ['overview', 'stores', 'offers', 'orders', 'reviews', 'memberships', 'content', 'marketing'],
-    );
+    expect(
+      filterMenuCatalog(MANAGEMENT_MENU_CATALOG, ['tenant.read']).map((item) => item.key),
+    ).toEqual([
+      'overview',
+      'stores',
+      'offers',
+      'orders',
+      'reviews',
+      'memberships',
+      'content',
+      'marketing',
+    ]);
   });
 
   it('defaults unknown product to management and resolves known products', () => {
@@ -120,16 +130,18 @@ describe('menu DTO catalog filter', () => {
   });
 
   it('separates channel-only and circle-only products from platform chrome', () => {
-    expect(resolveAvailableProducts(['channel.read', 'channel.manage']).map((item) => item.product)).toEqual([
-      'channel',
+    expect(
+      resolveAvailableProducts(['channel.read', 'channel.manage']).map((item) => item.product),
+    ).toEqual(['channel']);
+    expect(resolveAvailableProducts(['circle.manage']).map((item) => item.product)).toEqual([
+      'circle',
     ]);
-    expect(resolveAvailableProducts(['circle.manage']).map((item) => item.product)).toEqual(['circle']);
     expect(
       filterMenuCatalog(menuCatalogFor('channel'), ['channel.read']).map((item) => item.key),
     ).toEqual(['channel-dashboard', 'channel-onboarding']);
-    expect(filterMenuCatalog(menuCatalogFor('platform'), ['channel.read']).map((item) => item.key)).toEqual(
-      [],
-    );
+    expect(
+      filterMenuCatalog(menuCatalogFor('platform'), ['channel.read']).map((item) => item.key),
+    ).toEqual([]);
   });
 
   it('defaults employee home and store-manager item href', () => {
@@ -146,7 +158,9 @@ describe('menu DTO catalog filter', () => {
       'redeem',
       'share',
     ]);
-    expect(STORE_MANAGER_PACKAGE_ACTIONS.find((item) => item.key === 'tasks')?.href).toBe('/e/tasks');
+    expect(STORE_MANAGER_PACKAGE_ACTIONS.find((item) => item.key === 'tasks')?.href).toBe(
+      '/e/tasks',
+    );
     expect(STORE_MANAGER_PACKAGE_ACTIONS.find((item) => item.key === 'redeem')?.href).toBe(
       '/e/memberships',
     );
@@ -217,8 +231,8 @@ describe('menu DTO catalog filter', () => {
       MENU_GROUP_LABELS.settings,
       MENU_GROUP_LABELS.workflow,
     ]);
-    expect(groupMenuItems(filterMenuCatalog(MANAGEMENT_MENU_CATALOG, ['tenant.read'])).map((g) => g.key)).toEqual(
-      ['workbench', 'store', 'goods', 'orders', 'customer', 'marketing'],
-    );
+    expect(
+      groupMenuItems(filterMenuCatalog(MANAGEMENT_MENU_CATALOG, ['tenant.read'])).map((g) => g.key),
+    ).toEqual(['workbench', 'store', 'goods', 'orders', 'customer', 'marketing']);
   });
 });

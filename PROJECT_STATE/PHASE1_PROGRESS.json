@@ -1,8 +1,8 @@
 {
-    "recordedAt":  "2026-08-11T13:05:00+08:00",
+    "recordedAt":  "2026-08-11T21:20:00+08:00",
     "phase":  "Promoter-tool entry funnel (post Meituan waves)",
     "goal":  "Unified entry / ecosystem / workflow; L0+L1+L2 traces; no money/sales/store-ops",
-    "currentStep": "TOOL-PHASE-0..6 + G1-W∞-3..19 PASS. Next: G1-W∞-20 experience polish (no native checkout).",
+    "currentStep": "TOOL-PHASE-0..6 + G1-W∞-3..30 + W∞-31(MPC-13 通知中心) PASS. Tool-identity plateau + MPC-13 通知中心 closed; owner G1 re-test when ready.",
     "milestones":  [
                        {
                            "id":  "p0-sys",
@@ -130,13 +130,20 @@
                            "status":  "pass",
                            "evidence":  "evidence/TOOL-PHASE-6/ACCEPTANCE.md"
                        },
-                       {
-                           "id":  "g1-winf3-handoff",
-                           "label":  "W∞-3 hand-off confirm densify",
-                           "weight":  5,
-                           "status":  "pass",
-                           "evidence":  "evidence/G1-MEITUAN-PARITY/WINF3/ACCEPTANCE.md"
-                       }
+                        {
+                            "id":  "g1-winf3-handoff",
+                            "label":  "W∞-3 hand-off confirm densify",
+                            "weight":  5,
+                            "status":  "pass",
+                            "evidence":  "evidence/G1-MEITUAN-PARITY/WINF3/ACCEPTANCE.md"
+                        },
+                        {
+                            "id":  "g1-winf31-notifications",
+                            "label":  "W∞-31 MPC-13 管理通知中心",
+                            "weight":  4,
+                            "status":  "pass",
+                            "evidence":  "evidence/G1-MEITUAN-PARITY/WINF31/ACCEPTANCE.md"
+                        }
                    ],
     "ownerGates":  [
                        {

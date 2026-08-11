@@ -96,6 +96,13 @@ export const MANAGEMENT_MENU_CATALOG: MenuCatalogItem[] = [
     requireAny: ['tenant.manage', 'tenant.read', 'customer.read'],
   },
   {
+    key: 'notifications',
+    href: '/m/notifications',
+    label: '通知中心',
+    group: 'workbench',
+    requireAny: ['tenant.manage'],
+  },
+  {
     key: 'stores',
     href: '/m/stores',
     label: '门店入口',
@@ -518,9 +525,6 @@ export function resolvePlatformShellAccess(permissionCodes: string[]): {
   return { allowed: [], preferred: 'platform', homeHref: PLATFORM_PRODUCT_HOMES.platform.homeHref };
 }
 
-export function shellModeAllows(
-  mode: PlatformShellMode,
-  permissionCodes: string[],
-): boolean {
+export function shellModeAllows(mode: PlatformShellMode, permissionCodes: string[]): boolean {
   return resolvePlatformShellAccess(permissionCodes).allowed.includes(mode);
 }
