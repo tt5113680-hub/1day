@@ -2,7 +2,7 @@
     "recordedAt":  "2026-08-11T13:05:00+08:00",
     "phase":  "Promoter-tool entry funnel (post Meituan waves)",
     "goal":  "Unified entry / ecosystem / workflow; L0+L1+L2 traces; no money/sales/store-ops",
-    "currentStep":  "TOOL-PHASE-0..6 PASS. Next: W∞-3 tool-path gaps (no native checkout). Owner G1 re-test when ready.",
+    "currentStep":  "TOOL-PHASE-0..6 + W∞-3 hand-off confirm PASS. Next: W∞-4 Management/agent polish (no native checkout).",
     "milestones":  [
                        {
                            "id":  "p0-sys",
@@ -129,6 +129,13 @@
                            "weight":  6,
                            "status":  "pass",
                            "evidence":  "evidence/TOOL-PHASE-6/ACCEPTANCE.md"
+                       },
+                       {
+                           "id":  "g1-winf3-handoff",
+                           "label":  "W∞-3 hand-off confirm densify",
+                           "weight":  5,
+                           "status":  "pass",
+                           "evidence":  "evidence/G1-MEITUAN-PARITY/WINF3/ACCEPTANCE.md"
                        }
                    ],
     "ownerGates":  [

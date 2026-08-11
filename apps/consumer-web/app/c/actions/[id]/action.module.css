@@ -24,9 +24,55 @@
   letter-spacing: 0.04em;
 }
 .page h1 {
-  margin: 0 0 20px;
+  margin: 0 0 16px;
   font-size: 30px;
   letter-spacing: -0.04em;
+}
+.meta {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 12px;
+  align-items: center;
+  margin-bottom: 14px;
+  border: 1px solid #f0e0d8;
+  border-radius: 16px;
+  padding: 14px 16px;
+  background: #fff;
+}
+.meta strong {
+  display: block;
+  font-size: 15px;
+}
+.meta p {
+  margin: 4px 0 0;
+  color: #826c64;
+  font-size: 13px;
+  line-height: 1.5;
+}
+.platformBadge {
+  display: inline-grid;
+  place-items: center;
+  min-width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  padding: 0 8px;
+  color: #fff;
+  background: #b54935;
+  font-size: 13px;
+  font-weight: 800;
+}
+.platformBadge[data-platform='meituan'] {
+  background: #ffc300;
+  color: #1a1a1a;
+}
+.platformBadge[data-platform='douyin'] {
+  background: #161823;
+}
+.platformBadge[data-platform='eleme'] {
+  background: #0097ff;
+}
+.platformBadge[data-platform='saabei'] {
+  background: #0f766e;
 }
 .card,
 .messageCard {
@@ -43,6 +89,14 @@
 .messageCard p {
   color: #826c64;
   line-height: 1.7;
+}
+.disclaimer {
+  margin: 12px 0 0;
+  border-left: 3px solid #e8b59f;
+  padding-left: 10px;
+  color: #8a5a48 !important;
+  font-size: 13px;
+  font-weight: 600;
 }
 .actions {
   display: grid;

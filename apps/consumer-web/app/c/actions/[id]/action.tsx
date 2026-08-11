@@ -1,8 +1,12 @@
 'use client';
 
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { AppStatePanel, Button } from '@oneday/ui';
-import { mapPlatform, trackFunnelEvent } from '../../entry-funnel-client';
+import {
+  mapPlatform,
+  trackFunnelEvent,
+  type FunnelSurface,
+} from '../../entry-funnel-client';
 import { ConsumerShell } from '../../consumer-shell';
 import styles from './action.module.css';
 
@@ -16,6 +20,34 @@ export type ConsumerAction = {
   platform: string | null;
   copyCode: string;
 };
+
+const PLATFORM_LABEL: Record<string, string> = {
+  meituan: '美团',
+  douyin: '抖音',
+  eleme: '饿了么',
+  saabei: '扫呗',
+  external: '外部平台',
+};
+
+function surfaceFromScene(scene?: string): FunnelSurface {
+  const s = (scene ?? '').toLowerCase();
+  if (s.includes('entry')) return 'entry';
+  if (s.includes('share')) return 'share';
+  if (s.includes('search')) return 'search';
+  if (s.includes('circle')) return 'circle';
+  if (s.includes('one_code') || s.includes('onecode')) return 'one_code';
+  if (s.includes('nearby') || s.includes('discovery')) return 'nearby';
+  return 'store';
+}
+
+function destinationHost(url: string | null): string | null {
+  if (!url) return null;
+  try {
+    return new URL(url).hostname.replace(/^www\./, '');
+  } catch {
+    return null;
+  }
+}
 
 export function ActionState({ kind }: { kind: 'forbidden' | 'error' }) {
   const copy: readonly [string, string] =
@@ -62,15 +94,21 @@ export function ActionPage({
   const back = returnTo?.startsWith('/c/')
     ? returnTo
     : `/c/entry?tenant=${encodeURIComponent(tenant)}`;
+  const surface = surfaceFromScene(scene);
+  const platformKey = mapPlatform(action.platform) ?? 'external';
+  const platformLabel = PLATFORM_LABEL[platformKey] ?? PLATFORM_LABEL.external;
+  const host = useMemo(() => destinationHost(action.targetUrl), [action.targetUrl]);
+  const requiresCopy = action.actionType !== 'link';
+
   const confirm = async () => {
     setStatus('submitting');
     try {
       void trackFunnelEvent(tenant, {
         eventCode: 'jump_confirm',
-        surface: 'store',
+        surface,
         moduleKey: 'external_action_confirm',
         targetStoreId: storeId,
-        targetPlatform: mapPlatform(action.platform),
+        targetPlatform: platformKey,
         targetUrl: action.targetUrl ?? undefined,
         source,
         scene: scene ?? 'action_confirm',
@@ -90,10 +128,10 @@ export function ActionPage({
       if (payload.data?.destination) {
         void trackFunnelEvent(tenant, {
           eventCode: 'jump',
-          surface: 'store',
+          surface,
           moduleKey: action.name || 'external_jump',
           targetStoreId: storeId,
-          targetPlatform: mapPlatform(action.platform),
+          targetPlatform: platformKey,
           targetUrl: payload.data.destination,
           source,
           scene: scene ?? 'action_jump',
@@ -117,24 +155,47 @@ export function ActionPage({
   };
   const platformCopy =
     action.actionType === 'mini_program' ? action.miniProgramPath : action.copyCode;
-  const requiresCopy = action.actionType !== 'link';
+
   const page = (
     <main className={styles.page}>
       <a className={styles.back} href={back}>
         返回上一页
       </a>
-      <p className={styles.eyebrow}>{tenantName} · 外部动作确认</p>
+      <p className={styles.eyebrow}>{tenantName} · 外链确认（推广员入口）</p>
       <h1>{action.name}</h1>
+
+      <section className={styles.meta} aria-label="跳转目标">
+        <span className={styles.platformBadge} data-platform={platformKey}>
+          {platformLabel}
+        </span>
+        <div>
+          <strong>即将离开 ONEDAY</strong>
+          <p>
+            {host
+              ? `目标站点：${host}`
+              : requiresCopy
+                ? '目标为第三方小程序/口令入口'
+                : '目标为外部服务链接'}
+          </p>
+        </div>
+      </section>
+
       <section className={styles.card}>
         <strong>
-          {action.actionType === 'link' ? '即将跳转到外部服务' : '先记录本次咨询，再前往目标平台'}
+          {action.actionType === 'link'
+            ? '确认后记录跳转并打开外部服务'
+            : '先记录本次咨询，再前往目标平台'}
         </strong>
         <p>
           {requiresCopy
-            ? '确认后会记录本次咨询，并显示专属口令。请复制口令后在目标平台完成服务；也可随时返回商家页面继续咨询。'
-            : '确认后会记录本次咨询并跳转到外部服务。如未成功打开，可返回商家页面继续咨询。'}
+            ? '确认后会记录入口痕迹，并显示专属口令。请复制口令后在目标平台完成服务；也可随时返回商家页面。'
+            : '确认后会记录入口痕迹并跳转到外部服务。价格、库存与是否成交以第三方页面为准。'}
+        </p>
+        <p className={styles.disclaimer} role="note">
+          ONEDAY 只统计至「确认/跳转」，不表示第三方已下单或已支付。
         </p>
       </section>
+
       {status === 'failed' && <p className={styles.error}>操作未完成，请检查网络后重试。</p>}
       {status === 'copied' && (
         <p className={styles.success}>
@@ -142,17 +203,17 @@ export function ActionPage({
         </p>
       )}
       <section className={styles.actions}>
-        <button disabled={status === 'submitting'} onClick={confirm}>
+        <button disabled={status === 'submitting'} onClick={() => void confirm()}>
           {status === 'submitting'
             ? '正在确认…'
             : action.actionType === 'link'
-              ? '确认并打开'
+              ? `确认前往${platformLabel}`
               : requiresCopy
                 ? '记录咨询并获取口令'
-                : '确认并打开'}
+                : `确认前往${platformLabel}`}
         </button>
         {action.actionType !== 'link' && (
-          <button className={styles.secondary} onClick={copyCode}>
+          <button className={styles.secondary} onClick={() => void copyCode()}>
             复制专属口令
           </button>
         )}

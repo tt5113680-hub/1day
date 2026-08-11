@@ -78,12 +78,12 @@
 | MH5-04 | 团购 / 套餐（外链聚合） | `/c/stores/[id]/group-buy` | PARTIAL | 美团/抖音/外链，非自有货架 |
 | MH5-05 | 菜单 / 点单 | `/c/stores/[id]/menu` | PARTIAL | |
 | MH5-06 | 商家详情 | `/c/stores/[id]/profile` | PARTIAL | |
-| MH5-07 | 下单 / 提单 | — | GAP | 主路径为外链 hand-off |
-| MH5-08 | 订单列表 / 详情 | — | GAP | |
+| MH5-07 | 下单 / 提单 | — | GAP (外链 only) | **不做本平台成交**；统一走 `/c/actions` 确认后 hand-off |
+| MH5-08 | 订单列表 / 详情 | — | GAP (外链 only) | **不做本平台订单履约**；第三方结果不回传则不写「已成交」 |
 | MH5-09 | 我的 | `/c/profile` | PARTIAL | |
 | MH5-10 | 会员 | `/c/stores/[id]/membership` | PARTIAL | |
 | MH5-11 | 分享落地 | `/c/share/[code]`, `/c/one-code/[code]` | PARTIAL | |
-| MH5-12 | 服务 / 咨询 hand-off | `/c/services/[id]`, `/c/actions/[id]` | PARTIAL | |
+| MH5-12 | 服务 / 咨询 hand-off | `/c/services/[id]`, `/c/actions/[id]` | PARITY (首刀) | 确认页平台预览+诚实免责+jump_confirm；见 WINF3 |
 | MH5-13 | 美团 App 首页型 → **商圈联盟首页** | 商圈投影 / discovery circles | PARTIAL | 商圈经理+互助推流+引流指标（§C） |
 
 ---
@@ -138,4 +138,4 @@
 
 **W6 省市区代理（MP-01~03）PASS. W∞-1（省市区代理深层运营：结算/配额/审批, MP-03 深层）PASS** `evidence/G1-MEITUAN-PARITY/WINF/ACCEPTANCE.md`. **W∞-2（Consumer H5 搜索, MH5-02）PASS** `evidence/G1-MEITUAN-PARITY/WINF2/ACCEPTANCE.md`.
 
-**产品身份锁定后的下一刀（W∞-3 重写）：** 不做本平台「下单/订单履约」（不碰销售）。工程优先收口推广员工具路径缺口：入口痕迹 L0–L2 完整面、外链 hand-off 确认、Management PC 深页、代理后台细部、Meituan **体验对标**（非自营成交）。MH5-07/08 保持外链 hand-off GAP（诚实标注），不复活本平台成交。
+**W∞-3（外链 hand-off 确认 densify, MH5-12）PASS** `evidence/G1-MEITUAN-PARITY/WINF3/ACCEPTANCE.md`。**下一刀 W∞-4：** Management PC 深页 / 代理细部 / 体验对标（仍不做本平台下单）。MH5-07/08 保持外链 hand-off GAP。
