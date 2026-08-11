@@ -1,21 +1,27 @@
 # BLOCKED_REPORT
 
 - updated_at: 2026-08-11 Asia/Shanghai
-- status: **RESOLVED** — no active blocker for Meituan parity construction
+- status: **RESOLVED** — no active engineering blocker
 
-## Prior gate (cleared)
+## Prior gate (cleared 2026-08-11 ~20:36)
 
-Owner previously HOLDed G1 on IA. Owner then authorized:
+Headless turn at ~20:35 flagged a **competing write executor** while W∞-29 was in flight and W∞-30
+test file appeared from the IDE Agent session. This was a **transient overlap**, not a policy violation
+requiring owner action.
 
-1. PC+H5 100% Meituan copy; only `/m/workflows` custom
-2. Four-surface map (App / 商家 App / 商家 PC / 平台代理 PC)
-3. **全自动施工** (2026-08-10 ~23:57)
+**Resolution:** IDE Agent completed W∞-29 + W∞-30 in commit `4268589`, pushed to
+`origin/hardening/COMMERCIAL-COMPLETION`. Working tree clean except this report reset.
+Sole-write-executor rule restored: Headless scheduled turns only when IDE Agent is not writing.
 
-## Current non-blockers
+## Current non-blockers (owner-only when ready)
 
-- G1 **owner visual sign-off** remains HOLD until parity waves pass re-test — does **not** block engineering construction.
-- P1-C public HTTPS still blocked on authorization **G** (unchanged).
+| Gate | Status | Owner action |
+| ---- | ------ | ------------ |
+| G1 product UI sign-off | **HOLD** | Local hub http://127.0.0.1:3299/ → walkthrough → sign `PRODUCT_OWNER_UI_ACCEPTANCE.md` |
+| P1-C public HTTPS | **BLOCKED (auth G)** | Lift Tencent Cloud authorization + supply cloud inventory |
+| 全部商用 claim | **FORBIDDEN** | Agent will not auto-claim |
 
-## Active queue
+## Engineering next
 
-See `MEITUAN_PC_H5_PARITY_INVENTORY.md` — W1–W2 PASS; next W3.
+Tool-identity W∞-3..30 plateau reached. Unattended/IDE executor continues inventory PARTIAL/GAP slices
+or G1 re-test prep without waiting for owner between authorized gates.
