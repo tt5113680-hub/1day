@@ -162,6 +162,41 @@ export default function RolesPermissionsPage() {
       </main>
     );
   const affectedMembers = roles.reduce((sum, role) => sum + role.member_count, 0);
+  const memberLabel = (count: number) =>
+    count <= 0 ? '无成员' : count <= 5 ? '轻量 1-5' : '活跃 6+';
+  const scaleLabel = (count: number) =>
+    count <= 0 ? '无权限' : count <= 5 ? '基础 1-5' : count <= 10 ? '中等 6-10' : '全量 11+';
+  const memberCounts = new Map<string, number>();
+  const scaleCounts = new Map<string, number>();
+  const permissionCounts = new Map<string, number>();
+  const sensitiveCounts = new Map<string, number>();
+  for (const role of roles) {
+    const memberKey = memberLabel(role.member_count);
+    memberCounts.set(memberKey, (memberCounts.get(memberKey) ?? 0) + 1);
+    const scaleKey = scaleLabel(role.permissions.length);
+    scaleCounts.set(scaleKey, (scaleCounts.get(scaleKey) ?? 0) + 1);
+    for (const code of role.permissions) {
+      permissionCounts.set(code, (permissionCounts.get(code) ?? 0) + 1);
+      if (sensitive.has(code)) {
+        sensitiveCounts.set(code, (sensitiveCounts.get(code) ?? 0) + 1);
+      }
+    }
+  }
+  const byMember = [...memberCounts.entries()].map(([key, value]) => ({ key, value }));
+  const byScale = [...scaleCounts.entries()].map(([key, value]) => ({ key, value }));
+  const byPermission = [...permissionCounts.entries()]
+    .map(([key, value]) => ({
+      key: permissionNames[key] || key,
+      value,
+    }))
+    .sort((a, b) => b.value - a.value);
+  const bySensitive = [...sensitiveCounts.entries()].map(([key, value]) => ({
+    key: permissionNames[key] || key,
+    value,
+  }));
+  const rolesTotal = roles.length;
+  const permissionTotal = [...permissionCounts.values()].reduce((sum, count) => sum + count, 0);
+  const sensitiveTotal = [...sensitiveCounts.values()].reduce((sum, count) => sum + count, 0);
   return (
     <main className={styles.page} data-testid="management-roles-permissions">
       <header className={styles.topBar}>
@@ -196,6 +231,93 @@ export default function RolesPermissionsPage() {
           <strong>{sensitive.size}</strong>
         </div>
       </section>
+
+      <section className={styles.distribution} aria-label="角色权限分布">
+        <div className={styles.panelBlock}>
+          <h2>成员负载分布</h2>
+          <ul className={styles.bars}>
+            {byMember.map((b) => (
+              <li key={b.key} className={styles.barRow}>
+                <span className={styles.barLabel}>{b.key}</span>
+                <span className={styles.barTrack}>
+                  <span
+                    className={styles.barFill}
+                    style={{
+                      width: `${rolesTotal ? (b.value / rolesTotal) * 100 : 0}%`,
+                    }}
+                  />
+                </span>
+                <span className={styles.barValue}>{b.value}</span>
+              </li>
+            ))}
+            {!rolesTotal && <li className={styles.barEmpty}>暂无记录</li>}
+          </ul>
+        </div>
+        <div className={styles.panelBlock}>
+          <h2>权限规模分布</h2>
+          <ul className={styles.bars}>
+            {byScale.map((b) => (
+              <li key={b.key} className={styles.barRow}>
+                <span className={styles.barLabel}>{b.key}</span>
+                <span className={styles.barTrack}>
+                  <span
+                    className={styles.barFill}
+                    style={{
+                      width: `${rolesTotal ? (b.value / rolesTotal) * 100 : 0}%`,
+                    }}
+                  />
+                </span>
+                <span className={styles.barValue}>{b.value}</span>
+              </li>
+            ))}
+            {!rolesTotal && <li className={styles.barEmpty}>暂无记录</li>}
+          </ul>
+        </div>
+        <div className={styles.panelBlock}>
+          <h2>权限项分布</h2>
+          <ul className={styles.bars}>
+            {byPermission.map((b) => (
+              <li key={b.key} className={styles.barRow}>
+                <span className={styles.barLabel}>{b.key}</span>
+                <span className={styles.barTrack}>
+                  <span
+                    className={styles.barFill}
+                    style={{
+                      width: `${permissionTotal ? (b.value / permissionTotal) * 100 : 0}%`,
+                    }}
+                  />
+                </span>
+                <span className={styles.barValue}>{b.value}</span>
+              </li>
+            ))}
+            {!rolesTotal && <li className={styles.barEmpty}>暂无记录</li>}
+          </ul>
+        </div>
+        <div className={styles.panelBlock}>
+          <h2>高风险权限持有分布</h2>
+          <ul className={styles.bars}>
+            {bySensitive.map((b) => (
+              <li key={b.key} className={styles.barRow}>
+                <span className={styles.barLabel}>{b.key}</span>
+                <span className={styles.barTrack}>
+                  <span
+                    className={styles.barFill}
+                    style={{
+                      width: `${sensitiveTotal ? (b.value / sensitiveTotal) * 100 : 0}%`,
+                    }}
+                  />
+                </span>
+                <span className={styles.barValue}>{b.value}</span>
+              </li>
+            ))}
+            {!sensitiveTotal && <li className={styles.barEmpty}>暂无记录</li>}
+          </ul>
+        </div>
+      </section>
+
+      <p className={styles.honest}>
+        以上分布全部由已抓取的真实角色与权限档案行现场推导（source=local）：不接美团/抖音实时人事或绩效、不伪造第三方评分或成交、不包含本平台收款、非本平台下单。
+      </p>
 
       {note && (
         <p role="status" className={styles.notice}>
