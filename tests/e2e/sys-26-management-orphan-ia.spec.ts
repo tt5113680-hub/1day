@@ -7,7 +7,7 @@ const tenant = '00000000-0000-4000-8000-000000000001';
 
 const orphans = [
   { label: '员工表现', path: '/m/employee-process-performance', heading: /员工/ },
-  { label: '经营建议', path: '/m/ai-suggestions', heading: /建议|经营/ },
+  { label: '作业建议', path: '/m/ai-suggestions', heading: /建议|经营/ },
   { label: '连接配置', path: '/m/connectors', heading: /连接|授权/ },
   { label: '操作审计', path: '/m/permission-audit', heading: /审计|操作/ },
 ];

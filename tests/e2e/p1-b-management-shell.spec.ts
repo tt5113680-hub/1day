@@ -41,7 +41,7 @@ test('P1-B Management/Platform AdminShell renders the shared token chrome across
   // Desktop (1440px): Management sidebar nav groups + topbar.
   await page.setViewportSize({ width: 1440, height: 900 });
   await page.goto(`${management}/`);
-  const sidebar = page.getByRole('complementary', { name: '商家中心 主导航' });
+  const sidebar = page.getByRole('complementary', { name: '推广员工具 主导航' });
   await expect(sidebar).toBeVisible({ timeout: 30000 });
   await expect(sidebar.getByText('店铺')).toBeVisible();
   await expect(sidebar.getByText('员工')).toBeVisible();

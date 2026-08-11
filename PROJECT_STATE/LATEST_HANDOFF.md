@@ -10,11 +10,11 @@
 
 - branch: `hardening/COMMERCIAL-COMPLETION`
 - product_bar: **团购推广员工具** — 统一入口/整合/工作流；不碰钱·销售·管理。痕迹 **L0+L1+L2 同批**。
-- last_verified: **2026-08-11** — TOOL-PHASE-0..6 + G1-W∞-3..20 PASS.
+- last_verified: **2026-08-11** — TOOL-PHASE-0..6 + G1-W∞-3..21 PASS.
 - status: Tool-identity construction active. Owner 已授权全自动连续施工.
-- blocker: **push to origin blocked by outbound network** — github.com:443 TCP connect fails (connection reset / timeout) on 2026-08-11; `git push` retried 3x + `git ls-remote` all failed. Committed locally at `e8f3c56`. **EDITOR/NEXT TURN must retry `git push origin hardening/COMMERCIAL-COMPLETION` when network restores.** No force-push.
-- progress: Next engineering: **W∞-21**（体验对标细部；不做本平台下单）. Owner G1 re-test when ready.
-- note: Hub http://127.0.0.1:3299/ · Management/Platform 工作台工具身份 · `/c/profile` densify · W∞-20 third-party platform-naming consistency（扫呗/外链显式）
+- blocker: **none** — `git push` retried and succeeded 2026-08-11 (network restored), origin in sync at HEAD (W∞-20 pushed). No force-push.
+- progress: Next engineering: **W∞-22**（体验对标细部·工具身份收尾；不做本平台下单）. Owner G1 re-test when ready.
+- note: Hub http://127.0.0.1:3299/ · Management/Platform 工作台工具身份（menu 六项改挂入口/痕迹/工作流） · Consumer 第三方命名 美团/抖音/扫呗 一致 · W∞-21 pushed. Background daemon touched `evidence/MATRIX-GAP-WAVE-4/recovery-report.json` during the turn; reverted, not committed.
 
 ### Owner — next actions
 

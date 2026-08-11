@@ -126,7 +126,7 @@ export default function StoreChannel({
           : '我的服务';
   const subtitle =
     channel === 'group-buy'
-      ? '推广员工具 · 比价聚合后经确认页跳转美团/抖音等（不在此下单）'
+      ? '推广员工具 · 比价聚合后经确认页跳转美团/抖音/扫呗等（不在此下单）'
       : channel === 'menu'
         ? '推广员工具 · 门店套餐说明；成交经确认跳转第三方（不在此下单）'
         : channel === 'membership'
@@ -240,7 +240,7 @@ export default function StoreChannel({
           {channel === 'menu' && (
             <section className={styles.menu} aria-label="门店菜单">
               <p className={styles.disclaimer} role="note">
-                菜单频道展示门店已发布套餐说明；下单请经确认页前往美团/抖音等，不在此下单。
+                菜单频道展示门店已发布套餐说明；下单请经确认页前往美团/抖音/扫呗等，不在此下单。
               </p>
               <div className={styles.quickLinks}>
                 <a href={storeHref(context, '', 'menu_home')}>门店首页</a>
@@ -294,7 +294,7 @@ export default function StoreChannel({
           {channel === 'membership' && (
             <section className={styles.stack} aria-label="会员权益">
               <p className={styles.disclaimer} role="note">
-                会员频道服务本店身份与权益说明；不替代美团/抖音会员，也不在此成交。
+                会员频道服务本店身份与权益说明；不替代美团/抖音/扫呗会员，也不在此成交。
               </p>
               <div className={styles.quickLinks}>
                 <a href={storeHref(context, '/profile', 'membership_profile')}>我的会员</a>
@@ -656,7 +656,7 @@ function MemberProfileChannel({
         <article className={styles.benefit} aria-label="最近服务记录">
           <span>门店服务痕迹</span>
           <h2>最近到店服务记录</h2>
-          <p className={styles.profileHint}>以下为门店侧服务痕迹，不代表美团/抖音等第三方订单。</p>
+          <p className={styles.profileHint}>以下为门店侧服务痕迹，不代表美团/抖音/扫呗等第三方订单。</p>
           {profile.history.slice(0, 3).map((item) => (
             <p key={item.orderNumber}>
               {item.orderNumber} · {item.status}

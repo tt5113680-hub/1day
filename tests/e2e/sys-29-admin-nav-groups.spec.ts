@@ -32,7 +32,7 @@ test('SYS-29 Management AdminShell renders role-package nav groups', async ({ pa
   );
 
   await page.goto(`${management}/`);
-  const nav = page.getByRole('complementary', { name: '商家中心 主导航' });
+  const nav = page.getByRole('complementary', { name: '推广员工具 主导航' });
   await expect(nav.getByText('店铺')).toBeVisible({ timeout: 15000 });
   await expect(nav.getByText('商品')).toBeVisible();
   await expect(nav.getByText('顾客')).toBeVisible();

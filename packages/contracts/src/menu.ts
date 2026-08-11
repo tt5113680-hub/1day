@@ -98,7 +98,7 @@ export const MANAGEMENT_MENU_CATALOG: MenuCatalogItem[] = [
   {
     key: 'stores',
     href: '/m/stores',
-    label: '门店管理',
+    label: '门店入口',
     group: 'store',
     requireAny: ['tenant.manage', 'tenant.read'],
   },
@@ -112,14 +112,14 @@ export const MANAGEMENT_MENU_CATALOG: MenuCatalogItem[] = [
   {
     key: 'offers',
     href: '/m/offers',
-    label: '商品管理',
+    label: '商品/套餐入口',
     group: 'goods',
     requireAny: ['tenant.manage', 'tenant.read'],
   },
   {
     key: 'orders',
     href: '/m/orders',
-    label: '订单中心',
+    label: '订单痕迹',
     group: 'orders',
     requireAny: ['tenant.manage', 'tenant.read'],
   },
@@ -161,7 +161,7 @@ export const MANAGEMENT_MENU_CATALOG: MenuCatalogItem[] = [
   {
     key: 'page-builder',
     href: '/m/page-builder',
-    label: '店铺装修',
+    label: '入口页装修',
     group: 'marketing',
     requireAny: ['tenant.manage', 'page.manage'],
   },
@@ -196,7 +196,7 @@ export const MANAGEMENT_MENU_CATALOG: MenuCatalogItem[] = [
   {
     key: 'settings',
     href: '/m/settings',
-    label: '商家设置',
+    label: '工具设置',
     group: 'settings',
     requireAll: ['tenant.manage', 'organization.manage'],
   },
@@ -210,7 +210,7 @@ export const MANAGEMENT_MENU_CATALOG: MenuCatalogItem[] = [
   {
     key: 'ai-suggestions',
     href: '/m/ai-suggestions',
-    label: '经营建议',
+    label: '作业建议',
     group: 'settings',
     requireAny: ['tenant.manage'],
   },
@@ -469,7 +469,7 @@ export function resolveAvailableProducts(permissionCodes: string[]): MenuProduct
   const perms = new Set(permissionCodes);
   const links: MenuProductLink[] = [];
   if (perms.has('tenant.manage') || perms.has('tenant.read') || perms.has('customer.read')) {
-    links.push({ product: 'management', label: '商家中心', homeHref: '/' });
+    links.push({ product: 'management', label: '推广员工具', homeHref: '/' });
   }
   const hasPlatform = perms.has('platform.read') || perms.has('platform.manage');
   const hasChannel = perms.has('channel.read') || perms.has('channel.manage');

@@ -76,7 +76,7 @@ export default function ConsumerEntry({ entry }: { entry: Entry }) {
     .filter((item) => item.module_type === 'content')
     .flatMap((item) => cards(object(item.config).cards));
   const title = text(hero.title) || entry.tenant.name,
-    summary = text(hero.summary) || '统一入口：发现门店、商圈与第三方服务；成交在外部平台完成。';
+    summary = text(hero.summary) || '统一入口：发现门店、商圈与第三方服务；成交在美团/抖音/扫呗等外部平台完成。';
   const entryUrl = `/c/entry?tenant=${encodeURIComponent(entry.tenant.slug)}`;
   const actionUrl = (action: ConsumerAction) =>
     `/c/actions/${action.id}?tenant=${encodeURIComponent(entry.tenant.slug)}&source=consumer:entry&scene=entry_shortcut&returnTo=${encodeURIComponent(entryUrl)}`;

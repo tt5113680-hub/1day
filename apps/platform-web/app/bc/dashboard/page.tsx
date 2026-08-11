@@ -129,7 +129,7 @@ export default function BusinessCircleDashboard() {
                             <dd>{merchant.trafficEvents}</dd>
                           </div>
                           <div>
-                            <dt>订单</dt>
+                            <dt>入口转化</dt>
                             <dd>{merchant.conversionOrders}</dd>
                           </div>
                         </dl>

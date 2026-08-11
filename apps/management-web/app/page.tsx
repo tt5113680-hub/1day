@@ -32,13 +32,13 @@ const SHORTCUTS = [
   { href: '/m/customers', label: '顾客', desc: '顾客管理' },
   { href: '/m/memberships', label: '会员', desc: '会员中心' },
   { href: '/m/content', label: '营销', desc: '营销内容' },
-  { href: '/m/page-builder', label: '装修', desc: '店铺装修' },
+  { href: '/m/page-builder', label: '装修', desc: '入口页装修' },
   { href: '/m/attribution', label: '数据', desc: '来源分析' },
   { href: '/m/entry-funnel', label: '痕迹', desc: '入口分流痕迹' },
   { href: '/m/circles', label: '商圈', desc: '商圈双身份' },
   { href: '/m/organization-employees', label: '员工', desc: '员工管理' },
   { href: '/m/employee-process-performance', label: '表现', desc: '员工表现' },
-  { href: '/m/settings', label: '设置', desc: '商家设置' },
+  { href: '/m/settings', label: '设置', desc: '工具设置' },
   { href: '/m/ai-suggestions', label: '建议', desc: '作业建议' },
   { href: '/m/workflows', label: '工作流', desc: '工作流整合（定制）' },
 ] as const;
@@ -76,7 +76,7 @@ export default function ManagementHome() {
       <main className={styles.centered}>
         <AppStatePanel
           kind="loading"
-          title="正在加载商家中心"
+          title="正在加载推广员工具工作台"
           description="正在汇总今日门店、顾客与待办。"
         />
       </main>
@@ -86,7 +86,7 @@ export default function ManagementHome() {
       <main className={styles.centered}>
         <AppStatePanel
           kind="forbidden"
-          title="无法进入商家中心"
+          title="无法进入推广员工具工作台"
           description="请使用具备管理权限的账号登录。"
         />
       </main>
@@ -108,7 +108,7 @@ export default function ManagementHome() {
     <main className={styles.page}>
       <header className={styles.hero}>
         <div>
-          <p>推广员工具 · 商家中心</p>
+          <p>推广员工具 · 管理工作台</p>
           <h1>工作台</h1>
           <span>
             今日概况 · 常用功能 · 待办提醒 · 入口痕迹；不含支付金额与第三方订单履约

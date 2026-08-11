@@ -63,7 +63,7 @@ export function ProcessPage({ data }: { data: ProcessData }) {
       <p className={styles.eyebrow}>推广员工具 · 门店服务过程</p>
       <h1>服务进度查询</h1>
       <p className={styles.disclaimer} role="note">
-        本页仅展示门店侧服务痕迹与咨询进度；不是美团/抖音等第三方订单履约，也不含支付金额。
+        本页仅展示门店侧服务痕迹与咨询进度；不是美团/抖音/扫呗等第三方订单履约，也不含支付金额。
       </p>
       <section className={styles.hero}>
         <span>门店服务编号</span>

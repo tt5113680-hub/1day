@@ -141,7 +141,7 @@ export default function ServicePage({
           </header>
 
           <p className={styles.disclaimer} role="note">
-            本页只做套餐说明与比价；成交经确认页跳转美团/抖音等第三方，不在此下单，也不含支付金额。
+            本页只做套餐说明与比价；成交经确认页跳转美团/抖音/扫呗等第三方，不在此下单，也不含支付金额。
           </p>
           <div className={styles.quickLinks}>
             <a href={storeHref(context, '', 'service_home')}>门店首页</a>

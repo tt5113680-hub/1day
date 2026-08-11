@@ -12,7 +12,7 @@ test('G1-W∞-18: management/platform dashboards + consumer profile densify', ()
   const circleDash = read('apps/platform-web/app/bc/dashboard/page.tsx');
   const profile = read('apps/consumer-web/app/c/profile/profile.tsx');
 
-  assert.match(management, /推广员工具 · 商家中心/);
+  assert.match(management, /推广员工具 · 管理工作台/);
   assert.match(management, /不含支付金额/);
   assert.match(management, /近30日服务档案/);
   assert.match(management, /作业数据/);

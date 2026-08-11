@@ -12,7 +12,7 @@ test('G1-W∞-10: consumer profile + search tool densify', () => {
   assert.match(channel, /推广员入口/);
   assert.match(channel, /\/c\/circles\?tenant=/);
   assert.match(channel, /最近到店服务记录/);
-  assert.match(channel, /不代表美团\/抖音等第三方订单/);
+  assert.match(channel, /不代表美团\/抖音\/扫呗等第三方订单/);
   assert.match(channel, /非本平台下单/);
   assert.doesNotMatch(channel, /最近到店\/订单/);
 

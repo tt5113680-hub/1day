@@ -23,7 +23,7 @@ export function ManagementShell({
 }) {
   const pathname = usePathname();
   const [navigation, setNavigation] = useState(fallbackNavigation);
-  const [contextLabel, setContextLabel] = useState('商家中心');
+  const [contextLabel, setContextLabel] = useState('推广员工具 · 工作台');
 
   useEffect(() => {
     let cancelled = false;
@@ -54,7 +54,7 @@ export function ManagementShell({
   return (
     <AdminShell
       activeHref={pathname}
-      product="商家中心"
+      product="推广员工具"
       context={contextLabel}
       controls={controls}
       navigation={navigation}

@@ -37,18 +37,18 @@
 
 | ID | 美团对标模块（PC） | ONEDAY 现路由（若有） | 状态 | 备注 |
 | -- | ----------------- | --------------------- | ---- | ---- |
-| MPC-01 | 工作台 / 首页概览 | `/m/dashboard` | PARTIAL | W1 首刀；W∞-18 densify 推广员工具 · 商家中心 |
+| MPC-01 | 工作台 / 首页概览 | `/m/dashboard` | PARTIAL | W1 首刀；W∞-18 densify 推广员工具 · 商家中心；W∞-21 改挂 推广员工具 · 管理工作台（sidebar `product="推广员工具"`） |
 | MPC-02 | 门店管理 | `/m/stores` | PARTIAL | W∞-19 推广员工具 · 门店入口；外链仅跳转记录，不代替下单/支付 |
 | MPC-03 | 商品 / 菜品 / 套餐 | `/m/offers` 等 | PARTIAL | W∞-19 推广员工具 · 商品/套餐入口；价格商户登记，不在此售卖下单 |
-| MPC-04 | 订单中心 | — | GAP | 本地试点可先订单壳+状态机；UI 必须美团订单 |
+| MPC-04 | 订单中心 | — | GAP→PARTIAL | 只读档案/痕迹（`/m/orders`）+ 导航改挂「订单痕迹」（W∞-21）；不做本平台成交 |
 | MPC-05 | 评价管理 | — | GAP | |
 | MPC-06 | 顾客 / CRM | `/m/customers` | PARTIAL | 能力在，IA/密度须美团化 |
 | MPC-07 | 营销中心（券/活动） | — / 部分 content | GAP | |
 | MPC-08 | 会员 | `/m/memberships` | PARTIAL | |
 | MPC-09 | 数据 / 经营分析 | 分散 metric | GAP | 禁止假 BI；先美团常见经营日报密度 |
 | MPC-10 | 员工 / 权限 | `/m/organization-employees`, `/m/roles-permissions` | PARTIAL | |
-| MPC-11 | 店铺装修 / 展示 | `/m/page-builder`, `/m/content` | PARTIAL | **壳跟美团**；内容数据仍走 ONEDAY 发布链 |
-| MPC-12 | 设置 | `/m/settings` | PARTIAL | W∞-12 densify 工具链 cross-link |
+| MPC-11 | 店铺装修 / 展示 | `/m/page-builder`, `/m/content` | PARTIAL | **壳跟美团**；内容数据仍走 ONEDAY 发布链；导航「入口页装修」（W∞-21） |
+| MPC-12 | 设置 | `/m/settings` | PARTIAL | W∞-12 densify 工具链 cross-link；导航「工具设置」（W∞-21） |
 | MPC-13 | 消息 / 通知 | — | GAP | |
 | MPC-99 | **工作流整合** | `/m/workflows` | **CUSTOM** | **唯一不复刻美团的定制页** |
 
@@ -138,4 +138,4 @@
 
 **W6 省市区代理（MP-01~03）PASS. W∞-1（省市区代理深层运营：结算/配额/审批, MP-03 深层）PASS** `evidence/G1-MEITUAN-PARITY/WINF/ACCEPTANCE.md`. **W∞-2（Consumer H5 搜索, MH5-02）PASS** `evidence/G1-MEITUAN-PARITY/WINF2/ACCEPTANCE.md`.
 
-**W∞-3（外链 hand-off 确认 densify, MH5-12）PASS** `evidence/G1-MEITUAN-PARITY/WINF3/ACCEPTANCE.md`。**W∞-4（Management attribution 深页）PASS** `evidence/G1-MEITUAN-PARITY/WINF4/ACCEPTANCE.md`。**W∞-5（商圈 C 端 densify, MH5-13）PASS** `evidence/G1-MEITUAN-PARITY/WINF5/ACCEPTANCE.md`。**W∞-6（渠道/代理后台 densify）PASS** `evidence/G1-MEITUAN-PARITY/WINF6/ACCEPTANCE.md`。**W∞-7（分享落地 densify, MH5-11）PASS** `evidence/G1-MEITUAN-PARITY/WINF7/ACCEPTANCE.md`。**W∞-8（员工分享工具 densify）PASS** `evidence/G1-MEITUAN-PARITY/WINF8/ACCEPTANCE.md`。**W∞-9（消费者统一入口 densify）PASS** `evidence/G1-MEITUAN-PARITY/WINF9/ACCEPTANCE.md`。**W∞-10（我的+搜索 densify）PASS** `evidence/G1-MEITUAN-PARITY/WINF10/ACCEPTANCE.md`。**W∞-11（附近 densify, MH5-01）PASS** `evidence/G1-MEITUAN-PARITY/WINF11/ACCEPTANCE.md`。**W∞-12（团购+会员 densify, MH5-04/10 + settings）PASS** `evidence/G1-MEITUAN-PARITY/WINF12/ACCEPTANCE.md`。**W∞-13（菜单+商家入口 densify, MH5-05/03）PASS** `evidence/G1-MEITUAN-PARITY/WINF13/ACCEPTANCE.md`。**W∞-14（套餐详情+门店我的 densify, MH5-12/06）PASS** `evidence/G1-MEITUAN-PARITY/WINF14/ACCEPTANCE.md`。**W∞-15（服务过程+任务路径 densify）PASS** `evidence/G1-MEITUAN-PARITY/WINF15/ACCEPTANCE.md`。**W∞-16（员工面 ME-03..07 densify）PASS** `evidence/G1-MEITUAN-PARITY/WINF16/ACCEPTANCE.md`。**W∞-17（工作台/获客跟进/管理档案 densify）PASS** `evidence/G1-MEITUAN-PARITY/WINF17/ACCEPTANCE.md`。**W∞-18（管理/平台工作台 + C 端资料 densify）PASS** `evidence/G1-MEITUAN-PARITY/WINF18/ACCEPTANCE.md`。**W∞-19（工具路径细部：`/m/offers` + `/m/stores` 改挂推广员工具身份、去美团商家眉标；全仓无残留）PASS** `evidence/G1-MEITUAN-PARITY/WINF19/ACCEPTANCE.md`。**W∞-20（体验对标细部·第三方平台命名一致性：扫呗/外链显式——shared renderer 扫呗 glyph/mark/name + group-buy/menu/service 命名）PASS** `evidence/G1-MEITUAN-PARITY/WINF20/ACCEPTANCE.md`。**下一刀 W∞-21：** 体验对标细部（仍不做本平台下单）。MH5-07/08 保持外链 hand-off GAP。
+**W∞-3（外链 hand-off 确认 densify, MH5-12）PASS** `evidence/G1-MEITUAN-PARITY/WINF3/ACCEPTANCE.md`。**W∞-4（Management attribution 深页）PASS** `evidence/G1-MEITUAN-PARITY/WINF4/ACCEPTANCE.md`。**W∞-5（商圈 C 端 densify, MH5-13）PASS** `evidence/G1-MEITUAN-PARITY/WINF5/ACCEPTANCE.md`。**W∞-6（渠道/代理后台 densify）PASS** `evidence/G1-MEITUAN-PARITY/WINF6/ACCEPTANCE.md`。**W∞-7（分享落地 densify, MH5-11）PASS** `evidence/G1-MEITUAN-PARITY/WINF7/ACCEPTANCE.md`。**W∞-8（员工分享工具 densify）PASS** `evidence/G1-MEITUAN-PARITY/WINF8/ACCEPTANCE.md`。**W∞-9（消费者统一入口 densify）PASS** `evidence/G1-MEITUAN-PARITY/WINF9/ACCEPTANCE.md`。**W∞-10（我的+搜索 densify）PASS** `evidence/G1-MEITUAN-PARITY/WINF10/ACCEPTANCE.md`。**W∞-11（附近 densify, MH5-01）PASS** `evidence/G1-MEITUAN-PARITY/WINF11/ACCEPTANCE.md`。**W∞-12（团购+会员 densify, MH5-04/10 + settings）PASS** `evidence/G1-MEITUAN-PARITY/WINF12/ACCEPTANCE.md`。**W∞-13（菜单+商家入口 densify, MH5-05/03）PASS** `evidence/G1-MEITUAN-PARITY/WINF13/ACCEPTANCE.md`。**W∞-14（套餐详情+门店我的 densify, MH5-12/06）PASS** `evidence/G1-MEITUAN-PARITY/WINF14/ACCEPTANCE.md`。**W∞-15（服务过程+任务路径 densify）PASS** `evidence/G1-MEITUAN-PARITY/WINF15/ACCEPTANCE.md`。**W∞-16（员工面 ME-03..07 densify）PASS** `evidence/G1-MEITUAN-PARITY/WINF16/ACCEPTANCE.md`。**W∞-17（工作台/获客跟进/管理档案 densify）PASS** `evidence/G1-MEITUAN-PARITY/WINF17/ACCEPTANCE.md`。**W∞-18（管理/平台工作台 + C 端资料 densify）PASS** `evidence/G1-MEITUAN-PARITY/WINF18/ACCEPTANCE.md`。**W∞-19（工具路径细部：`/m/offers` + `/m/stores` 改挂推广员工具身份、去美团商家眉标；全仓无残留）PASS** `evidence/G1-MEITUAN-PARITY/WINF19/ACCEPTANCE.md`。**W∞-20（体验对标细部·第三方平台命名一致性：扫呗/外链显式——shared renderer 扫呗 glyph/mark/name + group-buy/menu/service 命名）PASS** `evidence/G1-MEITUAN-PARITY/WINF20/ACCEPTANCE.md`。**W∞-21（体验对标细部·tool-path 工具身份收尾——管理端去「商家中心」侧边/工作台/快捷入口 + 菜单六项改挂入口/痕迹/工作流 + 消费者 扫呗 命名一致性补漏 + 商圈「入口转化」）PASS** `evidence/G1-MEITUAN-PARITY/WINF21/ACCEPTANCE.md`。**下一刀 W∞-22：** 体验对标细部（仍不做本平台下单）。MH5-07/08 保持外链 hand-off GAP。

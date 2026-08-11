@@ -11,7 +11,7 @@ const orphans = [
     href: '/m/employee-process-performance',
     label: '员工表现',
   },
-  { key: 'ai-suggestions', href: '/m/ai-suggestions', label: '经营建议' },
+  { key: 'ai-suggestions', href: '/m/ai-suggestions', label: '作业建议' },
   { key: 'connectors', href: '/m/connectors', label: '连接配置' },
   { key: 'permission-audit', href: '/m/permission-audit', label: '操作审计' },
 ];
