@@ -120,12 +120,12 @@ export default function StoreChannel({
           : '我的服务';
   const subtitle =
     channel === 'group-buy'
-      ? '先比价格，再前往对应平台下单'
+      ? '先比价格，再经确认页前往对应平台（非本平台下单）'
       : channel === 'menu'
         ? '门店已发布的套餐与商品说明'
         : channel === 'membership'
           ? '完成本店入会后，可在「我的」查看会员证明与权益余额'
-          : '入会或跨设备恢复后展示会员码与授权资料；匿名时不暴露隐私'
+          : '会员证明、外链团购与咨询入口；不含第三方订单履约';
 
   return (
     <ConsumerShell context={context} active={channel} tabs={navTabs}>
@@ -438,12 +438,12 @@ function MemberProfileChannel({
     return (
       <section className={styles.stack} aria-label="我的服务">
         <article className={styles.profileHero} data-member-state={state}>
-          <span>我的服务</span>
+          <span>我的服务 · 推广员入口</span>
           <h2>{state === 'forbidden' ? '会员授权已失效' : '尚未完成本店入会'}</h2>
           <p>
             {state === 'forbidden'
               ? '当前会话无法证明会员身份；可用手机号与会员码在本设备恢复，或重新入会。'
-              : '为保护隐私，未授权时不会在此展示手机号、会员码、订单或个人资料。已在其他设备入会的会员可用会员码恢复。'}
+              : '为保护隐私，未授权时不会展示手机号、会员码或个人资料。团购成交在美团/抖音/扫呗等第三方完成。'}
           </p>
         </article>
         <article className={styles.resumeCard} data-testid="member-resume-card" aria-label="跨设备恢复会员">
@@ -505,8 +505,22 @@ function MemberProfileChannel({
           className={styles.profileLink}
           href={storeHref(context, '/group-buy', 'profile_group_buy')}
         >
-          <span>团购比价</span>
-          <b>查看各平台套餐价格 ›</b>
+          <span>全平台团购</span>
+          <b>比价后经确认页跳转 ›</b>
+        </a>
+        <a
+          className={styles.profileLink}
+          href={`/c/circles?tenant=${encodeURIComponent(context.tenant)}`}
+        >
+          <span>商圈联盟</span>
+          <b>附近商圈 · 进圈找店 ›</b>
+        </a>
+        <a
+          className={styles.profileLink}
+          href={`/c/entry?tenant=${encodeURIComponent(context.tenant)}`}
+        >
+          <span>统一入口</span>
+          <b>返回经营首页 ›</b>
         </a>
         {consultActionId ? (
           <a
@@ -535,11 +549,14 @@ function MemberProfileChannel({
   return (
     <section className={styles.stack} aria-label="我的会员" data-member-state="ready">
       <article className={styles.profileHero}>
-        <span>我的会员</span>
+        <span>我的会员 · 推广员入口</span>
         <h2>{profile?.profile.displayName || '本店会员'}</h2>
         <p role="status" data-testid="member-proof">
           已证明本店会员身份。会员码 {wallet?.memberCode}
           {phoneIdentity ? ` · ${phoneIdentity.maskedValue}` : ''}
+        </p>
+        <p className={styles.profileHint}>
+          本页展示入会证明与权益余额；第三方团购成交不在此履约。
         </p>
       </article>
       <article className={styles.benefit} aria-label="会员钱包余额">
@@ -557,8 +574,9 @@ function MemberProfileChannel({
       </article>
       {profile?.history.length ? (
         <article className={styles.benefit} aria-label="最近服务记录">
-          <span>服务记录</span>
-          <h2>最近到店/订单</h2>
+          <span>门店服务痕迹</span>
+          <h2>最近到店服务记录</h2>
+          <p className={styles.profileHint}>以下为门店侧服务痕迹，不代表美团/抖音等第三方订单。</p>
           {profile.history.slice(0, 3).map((item) => (
             <p key={item.orderNumber}>
               {item.orderNumber} · {item.status}
@@ -576,6 +594,13 @@ function MemberProfileChannel({
       >
         <span>会员权益说明</span>
         <b>查看本店可用权益 ›</b>
+      </a>
+      <a
+        className={styles.profileLink}
+        href={storeHref(context, '/group-buy', 'profile_group_buy_member')}
+      >
+        <span>全平台团购</span>
+        <b>比价后经确认页跳转 ›</b>
       </a>
     </section>
   );

@@ -98,9 +98,19 @@ export default function SearchPage({ data }: { data: SearchData }) {
               搜索
             </button>
           </form>
-          <p className={styles.eyebrow}>{data.tenant.name} · 美团 App 发现面 · 搜索</p>
-          <h1 className={styles.title}>“{data.query}”</h1>
-          <p className={styles.intro}>对标美团 App 搜索结果：商家名称、本地试用评分与月售、进店。</p>
+          <p className={styles.eyebrow}>{data.tenant.name} · 推广员工具 · 搜索</p>
+          <h1 className={styles.title}>{data.query ? `“${data.query}”` : '搜索商家'}</h1>
+          <p className={styles.intro}>
+            在本租户已发布商家中检索；评分/月售为本地试用提示，进店后可跳转第三方。
+          </p>
+          <p className={styles.disclaimer} role="note">
+            搜索只做入口分流；不在此下单，成交以美团/抖音/扫呗等页面为准。
+          </p>
+          <div className={styles.quickLinks}>
+            <a href={discoveryHref}>返回发现</a>
+            <a href={`/c/circles?tenant=${tenantQ}`}>商圈联盟</a>
+            <a href={entryHref}>统一入口</a>
+          </div>
           <div className={styles.results}>
             {data.items.length ? (
               data.items.map((item) => (
@@ -129,7 +139,7 @@ export default function SearchPage({ data }: { data: SearchData }) {
                         <span className={styles.rating}>{item.rating} 分</span>
                       ) : null}
                       {item.salesHint != null ? <span>月售 {item.salesHint}+</span> : null}
-                      <span>本地试用</span>
+                      <span>{item.ratingSource === 'local_pilot' ? '本地试用提示' : '本地试用'}</span>
                     </p>
                   </span>
                   {item.distanceKm != null ? (
@@ -139,7 +149,9 @@ export default function SearchPage({ data }: { data: SearchData }) {
               ))
             ) : (
               <div className={styles.empty}>
-                没有找到与「{data.query}」匹配的已发布商家；可换一个关键词，或返回发现页浏览推荐。
+                {data.query
+                  ? `没有找到与「${data.query}」匹配的已发布商家；可换关键词，或去商圈/发现页继续浏览。`
+                  : '输入商家名开始搜索本租户已发布门店。'}
               </div>
             )}
           </div>

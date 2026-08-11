@@ -289,6 +289,13 @@
 .profileHero p {
   color: #d9c7be;
 }
+.profileHint {
+  margin: 8px 0 0;
+  color: #cbb5ab !important;
+  font-size: 12px !important;
+  font-weight: 600 !important;
+  line-height: 1.5;
+}
 .resumeCard {
   display: grid;
   gap: 10px;
