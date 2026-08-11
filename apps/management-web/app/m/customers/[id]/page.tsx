@@ -1,10 +1,8 @@
 'use client';
 import { SessionApiClient } from '@oneday/session-client';
 import {
-  AdminPageHeader,
   AppStatePanel,
   Button,
-  Card,
   StatusBadge,
   businessLabel,
   customerNameCopy,
@@ -237,20 +235,25 @@ export default function ManagementCustomerDetail({ params }: { params: Promise<{
       <Link className={styles.back} href="/m/customers">
         ← 返回客户跟进
       </Link>
-      <AdminPageHeader
-        eyebrow={`推广员工具 · 客户跟进 · ${businessLabel(data.customer.segment)}`}
-        title={customerNameCopy(data.customer.displayName) ?? '客户'}
-        description={`${
-          data.customer.identities
-            .map((item) => `${businessLabel(item.type)}：${item.maskedValue}`)
-            .join(' · ') || '未绑定身份'
-        } · ${data.tags.map((item) => item.label).join(' / ') || '无标签'} · 版本 ${data.customer.version}`}
-        actions={
-          <Button tone="secondary" onClick={() => void load()}>
-            刷新客户
-          </Button>
-        }
-      />
+      <header className={styles.topBar}>
+        <span
+          className={styles.topBarTitle}
+        >{`推广员工具 · 客户跟进 · ${businessLabel(data.customer.segment)}`}</span>
+        <button className={styles.topBarRefresh} type="button" onClick={() => void load()}>
+          刷新客户
+        </button>
+      </header>
+
+      <section className={styles.heroCard} aria-label="客户跟进概况">
+        <h1>{customerNameCopy(data.customer.displayName) ?? '客户'}</h1>
+        <p>
+          {`${
+            data.customer.identities
+              .map((item) => `${businessLabel(item.type)}：${item.maskedValue}`)
+              .join(' · ') || '未绑定身份'
+          } · ${data.tags.map((item) => item.label).join(' / ') || '无标签'} · 版本 ${data.customer.version}`}
+        </p>
+      </section>
       {!writable && (
         <section className={styles.merged} role="status">
           <StatusBadge tone="warning">{businessLabel(data.customer.status)}</StatusBadge>
@@ -280,83 +283,84 @@ export default function ManagementCustomerDetail({ params }: { params: Promise<{
         </section>
       )}
       {writable && (
-        <Card className={styles.ops}>
+        <section className={styles.ops}>
           <div data-testid="customer-ops">
-          <h2>客户合并与归属</h2>
-          <p>
-            写入走既有客户/归因 API：归属变更先审批后生效；合并会把当前客户身份并入目标客户并留下审计。
-          </p>
-          <div className={styles.opsGrid}>
-            <section aria-label="发起归属转移">
-              <h3>发起归属转移</h3>
-              <label>
-                转入员工
-                <select
-                  aria-label="转入员工"
-                  value={assigneeId}
-                  onChange={(event) => setAssigneeId(event.target.value)}
-                >
-                  <option value="">选择转入员工</option>
-                  {assignees.map((person) => (
-                    <option key={person.id} value={person.id}>
-                      {person.displayName}
-                      {person.title ? ` · ${person.title}` : ''}
-                    </option>
-                  ))}
-                </select>
-              </label>
-              <label>
-                转移原因
-                <input
-                  aria-label="转移原因"
-                  value={transferReason}
-                  onChange={(event) => setTransferReason(event.target.value)}
-                />
-              </label>
-              <Button
-                disabled={!assigneeId || busy !== null}
-                loading={busy === 'transfer'}
-                onClick={() => void requestTransfer()}
-              >
-                发起归属审批
-              </Button>
-            </section>
-            <section aria-label="合并到目标客户">
-              <h3>合并到目标客户</h3>
-              <label>
-                目标客户 ID
-                <input
-                  aria-label="目标客户 ID"
-                  value={mergeTargetId}
-                  onChange={(event) => setMergeTargetId(event.target.value)}
-                  placeholder="目标客户 UUID"
-                />
-              </label>
-              <label>
-                合并原因
-                <input
-                  aria-label="合并原因"
-                  value={mergeReason}
-                  onChange={(event) => setMergeReason(event.target.value)}
-                />
-              </label>
-              <Button
-                tone="secondary"
-                disabled={!mergeTargetId.trim() || busy !== null}
-                loading={busy === 'merge'}
-                onClick={() => void mergeIntoTarget()}
-              >
-                合并到目标客户
-              </Button>
-            </section>
-          </div>
-          {notice && (
-            <p className={styles.notice} role="status">
-              {notice}
+            <h2>客户合并与归属</h2>
+            <p>
+              写入走既有客户/归因
+              API：归属变更先审批后生效；合并会把当前客户身份并入目标客户并留下审计。
             </p>
-          )}
+            <div className={styles.opsGrid}>
+              <section aria-label="发起归属转移">
+                <h3>发起归属转移</h3>
+                <label>
+                  转入员工
+                  <select
+                    aria-label="转入员工"
+                    value={assigneeId}
+                    onChange={(event) => setAssigneeId(event.target.value)}
+                  >
+                    <option value="">选择转入员工</option>
+                    {assignees.map((person) => (
+                      <option key={person.id} value={person.id}>
+                        {person.displayName}
+                        {person.title ? ` · ${person.title}` : ''}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+                <label>
+                  转移原因
+                  <input
+                    aria-label="转移原因"
+                    value={transferReason}
+                    onChange={(event) => setTransferReason(event.target.value)}
+                  />
+                </label>
+                <Button
+                  disabled={!assigneeId || busy !== null}
+                  loading={busy === 'transfer'}
+                  onClick={() => void requestTransfer()}
+                >
+                  发起归属审批
+                </Button>
+              </section>
+              <section aria-label="合并到目标客户">
+                <h3>合并到目标客户</h3>
+                <label>
+                  目标客户 ID
+                  <input
+                    aria-label="目标客户 ID"
+                    value={mergeTargetId}
+                    onChange={(event) => setMergeTargetId(event.target.value)}
+                    placeholder="目标客户 UUID"
+                  />
+                </label>
+                <label>
+                  合并原因
+                  <input
+                    aria-label="合并原因"
+                    value={mergeReason}
+                    onChange={(event) => setMergeReason(event.target.value)}
+                  />
+                </label>
+                <Button
+                  tone="secondary"
+                  disabled={!mergeTargetId.trim() || busy !== null}
+                  loading={busy === 'merge'}
+                  onClick={() => void mergeIntoTarget()}
+                >
+                  合并到目标客户
+                </Button>
+              </section>
+            </div>
+            {notice && (
+              <p className={styles.notice} role="status">
+                {notice}
+              </p>
+            )}
           </div>
-        </Card>
+        </section>
       )}
       {!writable && notice && (
         <p className={styles.notice} role="status">
@@ -434,7 +438,7 @@ export default function ManagementCustomerDetail({ params }: { params: Promise<{
           />
         </Panel>
       </section>
-      <Card className={styles.timeline}>
+      <section className={styles.timeline}>
         <h2>可审计时间线</h2>
         {data.timeline.length ? (
           data.timeline.map((item, index) => (
@@ -452,16 +456,16 @@ export default function ManagementCustomerDetail({ params }: { params: Promise<{
         ) : (
           <p>尚无可展示的链路事件。</p>
         )}
-      </Card>
+      </section>
     </main>
   );
 }
 function Panel({ title, children }: { title: string; children: React.ReactNode }) {
   return (
-    <Card className={styles.panel}>
+    <section className={styles.panel}>
       <h2>{title}</h2>
       {children}
-    </Card>
+    </section>
   );
 }
 function List({ items, empty }: { items: { title: string; detail: string }[]; empty: string }) {

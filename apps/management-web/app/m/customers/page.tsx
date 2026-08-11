@@ -1,13 +1,6 @@
 'use client';
 import { SessionApiClient } from '@oneday/session-client';
-import {
-  AdminPageHeader,
-  AppStatePanel,
-  Button,
-  StatusBadge,
-  businessLabel,
-  customerNameCopy,
-} from '@oneday/ui';
+import { AppStatePanel, Button, StatusBadge, businessLabel, customerNameCopy } from '@oneday/ui';
 
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
@@ -168,20 +161,25 @@ export default function ManagementCustomersPage() {
 
   return (
     <main className={styles.page}>
-      <AdminPageHeader
-        eyebrow="推广员工具 · 客户跟进"
-        title="按来源与分层组织推广跟进作业"
-        description="基于已沉淀的来源、标签与归属筛选客户，组织实名授权跟进；导出与归属变更均保留审批和审计记录。"
-        actions={
-          <Button
-            disabled={busy === 'export'}
-            loading={busy === 'export'}
-            onClick={() => void requestExport()}
-          >
-            申请导出
-          </Button>
-        }
-      />
+      <header className={styles.topBar}>
+        <span className={styles.topBarTitle}>推广员工具 · 客户跟进</span>
+        <button
+          className={styles.topBarRefresh}
+          type="button"
+          disabled={busy === 'export'}
+          onClick={() => void requestExport()}
+        >
+          申请导出
+        </button>
+      </header>
+
+      <section className={styles.heroCard} aria-label="客户跟进概览">
+        <h1>按来源与分层组织推广跟进作业</h1>
+        <p>
+          基于已沉淀的来源、标签与归属筛选客户，组织实名授权跟进；导出与归属变更均保留审批和审计记录。
+        </p>
+      </section>
+
       <section className={styles.filters} aria-label="客户筛选">
         <label>
           搜索客户

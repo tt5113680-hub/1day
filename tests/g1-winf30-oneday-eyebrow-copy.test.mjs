@@ -32,8 +32,9 @@ test('W∞-30: management tool pages drop ONEDAY / prefix (align W∞-25 eyebrow
 
 test('W∞-30: management customer detail eyebrow uses 客户跟进 (not 客户跟进全链路 in header)', () => {
   const d = mgCustomerDetail();
-  assert.match(d, /eyebrow=\{\`推广员工具 · 客户跟进 · \$\{businessLabel/);
-  assert.doesNotMatch(d, /eyebrow=\{\`ONEDAY \/ 客户跟进全链路/);
+  assert.match(d, /styles\.topBarTitle/);
+  assert.match(d, /\{`推广员工具 · 客户跟进 · \$\{businessLabel\(data\.customer\.segment\)/);
+  assert.doesNotMatch(d, /eyebrow=\{`ONEDAY \/ 客户跟进全链路/);
 });
 
 test('W∞-30: employee tool pages drop ONEDAY / prefix', () => {

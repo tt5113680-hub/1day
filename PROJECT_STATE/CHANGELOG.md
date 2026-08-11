@@ -1,3 +1,11 @@
+# CHANGELOG
+
+## 2026-08-12 - G1-W∞-40 Management 客户跟进视觉/IA densify（MPC-06）PASS
+
+- `/m/customers` + `/m/customers/[id]`：黄顶栏、灰底白卡、heroCard、白卡面板 densify；移除页面级 AdminPageHeader/Card；工具身份与诚实边界全保留（实名授权跟进/来源分层/归属与导出审批/非本平台下单）。无 schema/DB/API。
+- Gates: g1-winf40 6/6；winf24/28/30 回归；`g1-winf*.test.mjs` 107/107；management typecheck+build PASS（28 routes）；单测 47 passed（2 个 pre-existing token 失败照旧）；eslint + prettier clean。
+- Evidence: `evidence/G1-MEITUAN-PARITY/WINF40/ACCEPTANCE.md`.
+
 ## 2026-08-12 - G1-W∞-39 Management 商品/套餐入口视觉 densify + 6h health
 
 - `/m/offers` 黄顶栏/灰底白卡 densify；诚实边界保留。

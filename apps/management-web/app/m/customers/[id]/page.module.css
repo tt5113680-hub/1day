@@ -1,187 +1,289 @@
 .page {
-  max-width: 1440px;
-  min-height: 100vh;
-  margin: auto;
-  padding: 38px 48px 70px;
-  color: var(--od-ink);
+  display: grid;
+  gap: 12px;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 16px 32px;
+  color: #222;
+  background: #f5f5f5;
 }
+
+.topBar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  min-height: 52px;
+  margin: 0 -16px;
+  padding: 0 20px;
+  background: linear-gradient(180deg, #ffe14d 0%, #ffd100 100%);
+  box-shadow: 0 1px 3px rgb(0 0 0 / 8%);
+}
+
+.topBarTitle {
+  color: #222;
+  font-size: 14px;
+  font-weight: 800;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 .back {
   color: var(--od-brand-700);
   font-weight: 700;
   text-decoration: none;
 }
-.page > :global(.od-page-header) {
-  margin: 26px 0;
+
+.topBarRefresh {
+  min-height: 34px;
+  border: 0;
+  border-radius: 17px;
+  padding: 0 14px;
+  color: #333;
+  background: rgb(255 255 255 / 65%);
+  font: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  flex: 0 0 auto;
 }
+
+.heroCard {
+  display: grid;
+  gap: 6px;
+  border-radius: 12px;
+  padding: 16px 18px;
+  background: #fff;
+  box-shadow: 0 1px 2px rgb(0 0 0 / 4%);
+}
+
+.heroCard h1 {
+  margin: 0;
+  font: 700 24px / 1.2 var(--od-font-display, system-ui);
+  letter-spacing: -0.02em;
+}
+
+.heroCard p {
+  margin: 0;
+  color: #666;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.heroMeta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  align-items: center;
+  color: #999;
+  font-size: 12px;
+}
+
 .merged {
   display: flex;
   flex-wrap: wrap;
   gap: 10px;
   align-items: center;
-  margin-bottom: 16px;
-  padding: 12px 14px;
-  border: 1px solid color-mix(in srgb, var(--od-warning) 28%, var(--od-border));
   border-radius: 10px;
-  background: color-mix(in srgb, var(--od-warning) 8%, var(--od-surface));
-  color: var(--od-text-muted);
+  padding: 12px 14px;
+  background: #fff8e6;
+  color: #b8860b;
 }
+
 .merged a {
   color: var(--od-brand-700);
   font-weight: 700;
 }
+
 .ops {
-  margin-bottom: 16px;
-  padding: 20px;
-  border: 1px solid var(--od-border);
-  border-radius: 14px;
-  background: var(--od-surface);
-  box-shadow: var(--od-shadow-low);
+  display: grid;
+  gap: 4px;
+  border-radius: 12px;
+  padding: 16px 18px;
+  background: #fff;
+  box-shadow: 0 1px 2px rgb(0 0 0 / 4%);
 }
+
 .ops h2 {
-  margin: 0 0 8px;
-  font-size: 18px;
+  margin: 0 0 6px;
+  font-size: 16px;
+  font-weight: 800;
 }
+
 .ops > p {
-  margin: 0 0 16px;
-  color: var(--od-text-muted);
+  margin: 0 0 14px;
+  color: #999;
   line-height: 1.5;
 }
+
 .opsGrid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 18px;
 }
+
 .opsGrid section {
   display: grid;
   gap: 10px;
   align-content: start;
+  border-radius: 10px;
+  padding: 14px;
+  background: #f8f8f8;
 }
+
 .opsGrid h3 {
   margin: 0;
-  font-size: 15px;
+  font-size: 14px;
 }
+
 .opsGrid label {
   display: grid;
   gap: 6px;
-  color: var(--od-text-muted);
+  color: #666;
   font-size: 13px;
 }
+
 .opsGrid input,
 .opsGrid select {
   min-height: 40px;
-  padding: 8px 10px;
-  border: 1px solid var(--od-border);
+  padding: 8px 12px;
+  border: 1px solid #e5e5e5;
   border-radius: 8px;
-  background: var(--od-surface);
-  color: var(--od-ink);
+  background: #fff;
+  color: #222;
+  font: inherit;
 }
+
 .notice {
-  margin: 14px 0 0;
-  color: var(--od-brand-700);
+  margin: 0;
+  border-radius: 10px;
+  padding: 12px 14px;
+  background: #fff9db;
+  color: #b8860b;
   font-weight: 600;
 }
+
 .alerts {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
   gap: 12px;
-  margin-bottom: 16px;
 }
+
 .alerts article {
   display: grid;
   gap: 4px;
-  border: 1px solid color-mix(in srgb, var(--od-warning) 30%, var(--od-border));
-  border-left: 4px solid var(--od-warning);
+  border-left: 4px solid #ffd100;
   border-radius: 10px;
   padding: 13px;
-  background: color-mix(in srgb, var(--od-warning) 8%, var(--od-surface));
+  background: #fff;
+  box-shadow: 0 1px 2px rgb(0 0 0 / 4%);
 }
-.alerts strong {
-  color: var(--od-warning);
-  text-transform: uppercase;
-  font-size: 12px;
+
+.alerts article span {
+  color: #b8860b;
+  font-weight: 600;
 }
+
 .grid {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 16px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
 }
+
 .panel,
 .timeline {
-  border: 1px solid var(--od-border);
-  border-radius: 14px;
-  background: var(--od-surface);
-  box-shadow: var(--od-shadow-low);
-  padding: 20px;
+  border-radius: 12px;
+  background: #fff;
+  box-shadow: 0 1px 2px rgb(0 0 0 / 4%);
+  padding: 16px 18px;
 }
+
 .panel h2,
 .timeline h2 {
   margin: 0 0 12px;
-  font-size: 18px;
+  font-size: 15px;
+  font-weight: 800;
 }
+
 .panel ul {
   padding: 0;
   margin: 0 0 14px;
   list-style: none;
 }
+
 .panel li {
   display: grid;
   gap: 4px;
   padding: 12px 0;
-  border-top: 1px solid var(--od-border);
-  color: var(--od-text-muted);
+  border-top: 1px solid #f0f0f0;
+  color: #999;
   line-height: 1.45;
 }
+
 .panel li strong {
-  color: var(--od-ink);
+  color: #222;
   font-size: 14px;
 }
+
 .panel li span {
-  color: var(--od-text-muted);
+  color: #999;
   font-size: 13px;
 }
+
 .panel li:first-child {
   border-top: 0;
 }
+
 .empty {
-  color: var(--od-text-muted);
+  color: #999;
 }
-.timeline {
-  margin-top: 16px;
-}
+
 .timeline article {
   display: grid;
   grid-template-columns: 175px 110px 1fr;
   gap: 12px;
   padding: 11px 0;
-  border-top: 1px solid var(--od-border);
+  border-top: 1px solid #f0f0f0;
 }
+
 .timeline time,
 .timeline span {
-  color: var(--od-text-muted);
+  color: #999;
   font-size: 13px;
 }
+
 .timeline p {
   margin: 0;
 }
+
 .centered {
   display: grid;
   min-height: 70vh;
   place-items: center;
   text-align: center;
 }
+
 @media (max-width: 800px) {
   .page {
-    padding: 28px 18px;
+    padding: 0 10px 24px;
   }
+
+  .topBar {
+    margin: 0 -10px;
+  }
+
   .grid,
   .opsGrid {
     grid-template-columns: 1fr;
   }
+
   .timeline article {
     grid-template-columns: 1fr;
     gap: 3px;
   }
+
   .page h1 {
-    font-size: 28px;
+    font-size: 22px;
   }
 }
