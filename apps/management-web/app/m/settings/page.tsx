@@ -75,7 +75,7 @@ export default function SettingsPage() {
       if (response.status === 409) return setNote('设置已被其他管理员更新，请刷新后再保存。');
       if (!response.ok) throw Error();
       setSettings((await response.json()).data);
-      setNote('经营设置已保存，并已记录审计与事件。');
+      setNote('工具设置已保存，并已记录审计与事件。');
     } catch {
       setNote('保存失败，请检查输入和权限后重试。');
     } finally {
@@ -117,8 +117,8 @@ export default function SettingsPage() {
       <main className={styles.centered}>
         <AppStatePanel
           kind="loading"
-          title="正在加载经营设置"
-          description="正在校验租户规则、版本与经营权限。"
+          title="正在加载工具设置"
+          description="正在校验租户规则、版本与工具授权。"
         />
       </main>
     );
@@ -127,8 +127,8 @@ export default function SettingsPage() {
       <main className={styles.centered}>
         <AppStatePanel
           kind="forbidden"
-          title="无权查看租户经营设置"
-          description="请使用具备租户经营设置权限的账号。"
+          title="无权查看租户工具设置"
+          description="请使用具备租户工具设置权限的账号。"
         />
       </main>
     );
@@ -137,8 +137,8 @@ export default function SettingsPage() {
       <main className={styles.centered}>
         <AppStatePanel
           kind="error"
-          title="经营设置暂不可用"
-          description="经营规则未能完成加载，请重试。"
+          title="工具设置暂不可用"
+          description="工具规则未能完成加载，请重试。"
           action={<Button onClick={() => void load()}>重新加载</Button>}
         />
       </main>
@@ -153,7 +153,7 @@ export default function SettingsPage() {
     <main className={styles.page}>
       <AdminPageHeader
         eyebrow="推广员工具 · 工具设置"
-        title={`${settings.brand.displayName} 的可审计经营规则`}
+        title={`${settings.brand.displayName} 的可审计工具规则`}
         description="统一工作流规则：提醒、审批、免打扰、标签与全平台可见引流。保存经权限/版本/审计校验；不碰销售成交。"
         actions={
           <Button tone="secondary" onClick={() => void load()}>
@@ -322,7 +322,7 @@ export default function SettingsPage() {
         </fieldset>
       </section>
       <Button className={styles.save} loading={saving} onClick={() => void save()}>
-        保存经营设置
+        保存工具设置
       </Button>
     </main>
   );

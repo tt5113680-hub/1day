@@ -48,7 +48,7 @@
 | MPC-09 | 数据 / 经营分析 | 分散 metric | GAP | 禁止假 BI；先美团常见经营日报密度 |
 | MPC-10 | 员工 / 权限 | `/m/organization-employees`, `/m/roles-permissions` | PARTIAL | W∞-25 眉标 `员工管理`/`角色权限`、`员工表现`/`操作审计` |
 | MPC-11 | 店铺装修 / 展示 | `/m/page-builder`, `/m/content` | PARTIAL | **壳跟美团**；内容数据仍走 ONEDAY 发布链；W∞-25 眉标 `入口页装修`/`营销内容`（对齐导航） |
-| MPC-12 | 设置 | `/m/settings` | PARTIAL | W∞-12 densify 工具链 cross-link；W∞-25 眉标 `工具设置`（对齐导航） |
+| MPC-12 | 设置 | `/m/settings` | PARTIAL | W∞-12 densify 工具链 cross-link；W∞-25 眉标 `工具设置`（对齐导航）；W∞-26 状态口径 `经营设置/经营规则`→`工具设置/工具规则`（title/loading/forbidden/error/保存/成功提示） |
 | MPC-13 | 消息 / 通知 | — | GAP | |
 | MPC-99 | **工作流整合** | `/m/workflows` | **CUSTOM** | **唯一不复刻美团的定制页**；W∞-25 眉标 `工作流整合` |
 
@@ -136,7 +136,7 @@
 
 ## 6. 当前下一刀
 
-**W24 工作台/顾客跟进收尾 PASS.** **W∞-25（管理 13 页眉标统一 `推广员工具 · <菜单label>`，去 merchant/store-ops 眉标；funnel 去「经营漏斗/经营结果」→「来源归因漏斗/入口分流」、ai-suggestions 去「经营判断」、attribution hint 去「经营链路」）PASS** `evidence/G1-MEITUAN-PARITY/WINF25/ACCEPTANCE.md`. **W∞-24（顾客/CRM 去 store-ops 话术 → 客户跟进）PASS** `evidence/G1-MEITUAN-PARITY/WINF24/ACCEPTANCE.md`. **Next: W∞-26（体验对标细部·工具身份收尾）。**
+**W24 工作台/顾客跟进收尾 PASS.** **W∞-26（体验对标细部·工具身份收尾·`/m/settings` 状态口径对齐：title/loading/forbidden/error/保存/成功提示 `经营设置/经营规则/经营权限` → `工具设置/工具规则/工具授权`，对齐菜单「工具设置」；随动更新 management-settings e2e 断言）PASS** `evidence/G1-MEITUAN-PARITY/WINF26/ACCEPTANCE.md`. **W∞-25（管理 13 页眉标统一 `推广员工具 · <菜单label>`，去 merchant/store-ops 眉标；funnel 去「经营漏斗/经营结果」→「来源归因漏斗/入口分流」、ai-suggestions 去「经营判断」、attribution hint 去「经营链路」）PASS** `evidence/G1-MEITUAN-PARITY/WINF25/ACCEPTANCE.md`. **W∞-24（顾客/CRM 去 store-ops 话术 → 客户跟进）PASS** `evidence/G1-MEITUAN-PARITY/WINF24/ACCEPTANCE.md`. **Next: W∞-27（体验对标细部·工具身份收尾，仍不做本平台下单）。**
 
 **W6 省市区代理（MP-01~03）PASS. W∞-1（省市区代理深层运营：结算/配额/审批, MP-03 深层）PASS** `evidence/G1-MEITUAN-PARITY/WINF/ACCEPTANCE.md`. **W∞-2（Consumer H5 搜索, MH5-02）PASS** `evidence/G1-MEITUAN-PARITY/WINF2/ACCEPTANCE.md`.
 

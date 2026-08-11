@@ -26,9 +26,9 @@ test('manager changes persisted tenant operating settings', async ({ page }) => 
     [token, refreshToken],
   );
   await page.goto('/m/settings');
-  await expect(page.getByRole('heading')).toContainText('可审计经营规则');
+  await expect(page.getByRole('heading')).toContainText('可审计工具规则');
   await page.getByLabel('默认时限').fill('18');
-  await page.getByRole('button', { name: '保存经营设置' }).click();
+  await page.getByRole('button', { name: '保存工具设置' }).click();
   await expect(page.getByRole('status')).toContainText('已保存');
   await page.screenshot({
     path: 'evidence/PAGE-M-016/management-settings-desktop.png',

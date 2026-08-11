@@ -1,3 +1,18 @@
+## 2026-08-11 - G1-W∞-26 工具身份收尾·`/m/settings` 状态口径对齐（设置页去 store-ops `经营` 话术）PASS
+
+- `/m/settings`（MPC-12 设置，菜单「工具设置」）状态口径对齐工具身份：title/loading/forbidden/error/保存按钮/成功提示
+  `经营设置/经营规则/经营权限` → `工具设置/工具规则/工具授权`（`可审计经营规则→可审计工具规则`、
+  `正在加载经营设置→工具设置`、`无权查看租户经营设置→工具设置`、`经营设置暂不可用→工具设置暂不可用`、
+  `保存经营设置→保存工具设置`、`经营设置已保存→工具设置已保存`），对齐 W∞-25 眉标 `推广员工具 · 工具设置`
+  与菜单 label「工具设置」。诚实无销售边界全保留（全平台可见引流·不碰销售、不含支付金额与第三方订单成功、不碰销售成交）。
+  Text/copy/aria-only，无 schema/DB/API，不复活本平台下单/收单。
+- 随动更新 dependent e2e 断言：`tests/e2e/management-settings.spec.ts`（heading `可审计工具规则` + 按钮 `保存工具设置`）。
+- Gates: `node --test tests/g1-winf26-settings-tool-state-copy.test.mjs` 4/4；
+  `node --test tests/g1-winf*.test.mjs` 42/42；`node --test tests/g1-winf25-management-tool-eyebrow-alignment.test.mjs` 5/5；
+  `node --test tests/*menu*.test.mjs` 4/4；typecheck+build 20/20（management-web 27 routes）；
+  单测 47 passed / 2 pre-existing token 失败照旧；eslint clean。
+- Not 全部商用 / 未代签 owner UI。Evidence: `evidence/G1-MEITUAN-PARITY/WINF26/ACCEPTANCE.md`.
+
 ## 2026-08-11 - G1-W∞-25 工具身份收尾·管理页眉标对齐（入口/档案/工作流工具身份）PASS
 
 - Management 13 页残留旧 merchant/store-ops 眉标统一改挂 `推广员工具 · <菜单label>`：
