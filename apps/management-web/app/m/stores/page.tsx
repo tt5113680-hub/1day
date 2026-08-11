@@ -1,7 +1,7 @@
 'use client';
 
 import { SessionApiClient } from '@oneday/session-client';
-import { AdminPageHeader, AppStatePanel, Button, StatusBadge } from '@oneday/ui';
+import { AppStatePanel, Button, StatusBadge } from '@oneday/ui';
 import { useCallback, useEffect, useState } from 'react';
 import styles from './page.module.css';
 
@@ -198,34 +198,41 @@ export default function StoresPage() {
     );
   return (
     <main className={styles.page}>
-      <AdminPageHeader
-        eyebrow="推广员工具 · 门店入口"
-        title="门店入口"
-        description="维护门店营业状态、资料、统一入口与负责人；第三方入口仅记录跳转，不代替平台下单/支付，也不含第三方订单履约。"
-        actions={
-          <Button tone="secondary" onClick={() => void load()}>
-            刷新
-          </Button>
-        }
-      />
-      <section className={styles.summaryStrip} aria-label="门店概况">
-        <div>
-          <span>门店数</span>
-          <strong>{stores.length}</strong>
-        </div>
-        <div>
-          <span>营业中</span>
-          <strong>{stores.filter((s) => s.status === 'active').length}</strong>
-        </div>
-        <div>
-          <span>待跟进任务</span>
-          <strong>{stores.reduce((n, s) => n + s.openTasks, 0)}</strong>
-        </div>
-        <div>
-          <span>近30日入口打开</span>
-          <strong>{stores.reduce((n, s) => n + s.entryOpens30d, 0)}</strong>
+      <header className={styles.topBar}>
+        <span className={styles.topBarTitle}>推广员工具 · 门店入口</span>
+        <button className={styles.topBarRefresh} type="button" onClick={() => void load()}>
+          刷新
+        </button>
+      </header>
+
+      <section className={styles.heroCard} aria-label="门店入口概览">
+        <h1>门店入口</h1>
+        <p>
+          维护门店营业状态、资料、统一入口与负责人；第三方入口仅记录跳转，不代替平台下单/支付，也不含第三方订单履约。
+        </p>
+      </section>
+
+      <section className={styles.panel} aria-label="门店概况">
+        <div className={styles.summaryStrip}>
+          <div>
+            <span>门店数</span>
+            <strong>{stores.length}</strong>
+          </div>
+          <div>
+            <span>营业中</span>
+            <strong>{stores.filter((s) => s.status === 'active').length}</strong>
+          </div>
+          <div>
+            <span>待跟进任务</span>
+            <strong>{stores.reduce((n, s) => n + s.openTasks, 0)}</strong>
+          </div>
+          <div>
+            <span>近30日入口打开</span>
+            <strong>{stores.reduce((n, s) => n + s.entryOpens30d, 0)}</strong>
+          </div>
         </div>
       </section>
+
       {note && (
         <p className={styles.notice} role="status">
           {note}

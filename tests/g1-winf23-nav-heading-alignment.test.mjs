@@ -24,8 +24,8 @@ test('W∞-23: /m/offers page heading + states aligned to nav label 商品/套�
 
 test('W∞-23: /m/stores page heading + states aligned to nav label 门店入口', () => {
   const s = stores();
-  assert.match(s, /eyebrow="推广员工具 · 门店入口"/);
-  assert.match(s, /title="门店入口"/);
+  assert.match(s, /推广员工具 · 门店入口/);
+  assert.match(s, /<h1>门店入口<\/h1>/);
   assert.match(s, /正在加载门店入口/);
   assert.match(s, /无权访问门店入口/);
   assert.doesNotMatch(s, /门店管理/);

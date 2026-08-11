@@ -1,3 +1,9 @@
+## 2026-08-11 - G1-W∞-38 Management 门店入口视觉/IA densify（MPC-02）PASS
+
+- `/m/stores`：黄顶栏、灰底白卡、概况条 densify；编辑能力与诚实边界保留。
+- Gates: g1-winf38 3/3；winf19/23/27 回归；management typecheck+build PASS。
+- Evidence: `evidence/G1-MEITUAN-PARITY/WINF38/ACCEPTANCE.md`.
+
 ## 2026-08-11 - G1-W∞-37 Channel/Circle 工作台视觉/IA densify（MP-03/MP-04）PASS
 
 - `/ch/dashboard` + `/bc/dashboard`：黄顶栏、icon 功能格、白卡指标、队列/商圈明细 densify。
