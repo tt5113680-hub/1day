@@ -29,7 +29,7 @@ test('G1-W∞-17: workbench/leads/nurture + commerce + circle detail densify', (
   assert.doesNotMatch(nurture, /复购机会/);
   assert.doesNotMatch(nurture, /把下一次复购/);
 
-  assert.match(orders, /推广员工具 · 订单档案/);
+  assert.match(orders, /推广员工具 · 订单痕迹/);
   assert.match(orders, /非本平台下单/);
   assert.doesNotMatch(orders, /美团商家端 PC · 订单/);
 

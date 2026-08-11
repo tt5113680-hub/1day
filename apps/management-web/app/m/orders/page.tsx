@@ -60,13 +60,13 @@ export default function CommerceOrdersPage() {
   if (state === 'loading')
     return (
       <main className={styles.centered}>
-        <AppStatePanel kind="loading" title="正在加载订单中心" />
+        <AppStatePanel kind="loading" title="正在加载订单痕迹" />
       </main>
     );
   if (state === 'forbidden')
     return (
       <main className={styles.centered}>
-        <AppStatePanel kind="forbidden" title="无权查看订单中心" />
+        <AppStatePanel kind="forbidden" title="无权查看订单痕迹" />
       </main>
     );
   if (state === 'error')
@@ -74,7 +74,7 @@ export default function CommerceOrdersPage() {
       <main className={styles.centered}>
         <AppStatePanel
           kind="error"
-          title="订单数据暂不可用"
+          title="订单痕迹暂不可用"
           action={<Button onClick={() => void load()}>重新加载</Button>}
         />
       </main>
@@ -84,37 +84,37 @@ export default function CommerceOrdersPage() {
   return (
     <main className={styles.page}>
       <AdminPageHeader
-        eyebrow="推广员工具 · 订单档案"
-        title="订单中心"
-        description="本地试点订单与履约档案（租户隔离）。来源如实标注；不宣称美团实时同步，也不含本平台收款。"
+        eyebrow="推广员工具 · 订单痕迹"
+        title="订单痕迹"
+        description="第三方成交/跳转档案（本地试点，租户隔离）。来源如实标注；不宣称美团实时同步，不包含本平台收款，不代表第三方订单履约。"
         actions={
           <Button tone="secondary" onClick={() => void load()}>
             刷新
           </Button>
         }
       />
-      <section className={styles.summaryStrip} aria-label="订单概况">
+      <section className={styles.summaryStrip} aria-label="订单痕迹概况">
         <div>
-          <span>订单数</span>
+          <span>档案记录数</span>
           <strong>{orders.length}</strong>
         </div>
         <div>
-          <span>已支付/核销</span>
+          <span>状态为有效的记录</span>
           <strong>{paidCount}</strong>
         </div>
         <div>
-          <span>本列表金额</span>
+          <span>记录金额参考</span>
           <strong>
             {orders[0]?.currency ?? 'CNY'} {yuan(String(amount))}
           </strong>
         </div>
         <div>
-          <span>门店</span>
+          <span>涉及门店</span>
           <strong>{new Set(orders.map((o) => o.store_id)).size}</strong>
         </div>
       </section>
       <p className={styles.honest}>
-        订单骨架为本地试点数据（source=local）。推广员工具只留档案痕迹；不接美团实时订单，不伪造第三方成交，非本平台下单。
+        订单痕迹为本地试点档案（source=local）。推广员工具只留档案痕迹；不接美团实时订单，不伪造第三方成交，不包含本平台收款，非本平台下单。
       </p>
       <section className={styles.grid}>
         {orders.map((order) => (
@@ -158,8 +158,8 @@ export default function CommerceOrdersPage() {
         {!orders.length && (
           <AppStatePanel
             kind="empty"
-            title="暂无订单"
-            description="本地试点数据为空。接入真实渠道/结算源后可在此聚合订单。"
+            title="暂无订单痕迹"
+            description="本地试点档案为空。接入渠道跳转/结算源后可在此聚合第三方成交痕迹。"
           />
         )}
       </section>
