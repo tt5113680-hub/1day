@@ -10,11 +10,11 @@
 
 - branch: `hardening/COMMERCIAL-COMPLETION`
 - product_bar: **团购推广员工具** — 统一入口/整合/工作流；不碰钱·销售·管理。痕迹 **L0+L1+L2 同批**。
-- last_verified: **2026-08-11** — TOOL-PHASE-0..6 + G1-W∞-3..6 PASS.
+- last_verified: **2026-08-11** — TOOL-PHASE-0..6 + G1-W∞-3..7 PASS.
 - status: Tool-identity construction active. Owner 不用管.
-- blocker: none for engineering (GitHub push may need retry if :443 reset).
-- progress: Next engineering: **W∞-7**（体验对标细部；不做本平台下单）. Owner G1 re-test when ready (not auto-signed).
-- note: Hub http://127.0.0.1:3299/ · 商圈 `/c/circles` · 渠道 `/ch/dashboard` · 代理 `/p/agents`
+- blocker: GitHub `origin` push may be pending (`:443` connect reset). Local commits are on branch; retry `git push origin HEAD`.
+- progress: Next engineering: **W∞-8**（体验对标细部；不做本平台下单）. Owner G1 re-test when ready (not auto-signed).
+- note: Hub http://127.0.0.1:3299/ · 分享 `/c/share/[code]` · 商圈 `/c/circles` · 渠道 `/ch/dashboard`
 
 ### Owner — next actions
 
