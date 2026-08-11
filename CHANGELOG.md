@@ -2,6 +2,8 @@
 
 ## 2026-08-11
 
+- **G1-W∞-19** Management tool-path gap normalization (`G1-R-TOOL-PATH-GAPS`): retired last「美团商家端 PC」eyebrows on `/m/offers`（→ 推广员工具 · 商品/套餐入口）and `/m/stores`（→ 推广员工具 · 门店入口）for consistent promotion-tool identity; honest no-sales boundary. Text-only; no native checkout. Evidence: `evidence/G1-MEITUAN-PARITY/WINF19/ACCEPTANCE.md`. Not owner sign-off.
+- **G1-W∞-18** Admin dashboards + consumer profile densify (`G1-R-ADMIN-DASHBOARDS`): Management /m/dashboard 商家中心 + Platform /p//bc dashboards + Consumer /c/profile tool identity + no-deal disclaimer. Evidence: evidence/G1-MEITUAN-PARITY/WINF18/ACCEPTANCE.md.
 - **G1-W∞-3** External hand-off confirm densify (MH5-12): `/c/actions` platform preview + honest no-deal disclaimer + scene-derived funnel surface. Evidence: evidence/G1-MEITUAN-PARITY/WINF3/ACCEPTANCE.md.
 - **TOOL-PHASE-6** L2 completeness: one-code visit emit, circle invite/apply emit, employee share↔open funnel events + summary sharePairing. Evidence: evidence/TOOL-PHASE-6/ACCEPTANCE.md.
 - **TOOL-PHASE-5** Saved DIY funnel views (`060_entry_funnel_saved_views` + `/m/entry-funnel` save/load/delete). Evidence: evidence/TOOL-PHASE-5/ACCEPTANCE.md.

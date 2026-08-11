@@ -169,9 +169,9 @@ export default function OffersPage() {
   return (
     <main className={styles.page}>
       <AdminPageHeader
-        eyebrow="美团商家端 PC · 商品"
+        eyebrow="推广员工具 · 商品/套餐入口"
         title="商品管理"
-        description="对标美团商家端商品库：维护服务/套餐真源与受控平台价格入口。价格来自商户登记，不宣称第三方实时同步。"
+        description="维护服务/套餐真源与受控平台价格入口，供统一入口展示与比价；价格由商户登记，不宣称第三方实时同步，也不在此售卖下单。"
         actions={
           <Button tone="secondary" onClick={() => void load()}>
             刷新

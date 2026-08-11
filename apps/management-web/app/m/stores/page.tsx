@@ -199,9 +199,9 @@ export default function StoresPage() {
   return (
     <main className={styles.page}>
       <AdminPageHeader
-        eyebrow="美团商家端 PC · 店铺"
+        eyebrow="推广员工具 · 门店入口"
         title="门店管理"
-        description="对标美团商家端门店列表：营业状态、资料、入口与负责人。第三方入口仅记录跳转，不代替平台下单/支付。"
+        description="维护门店营业状态、资料、统一入口与负责人；第三方入口仅记录跳转，不代替平台下单/支付，也不含第三方订单履约。"
         actions={
           <Button tone="secondary" onClick={() => void load()}>
             刷新
