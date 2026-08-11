@@ -27,6 +27,15 @@
   font-size: clamp(25px, 6vw, 42px);
   line-height: 1.1;
 }
+.subhead {
+  margin: 8px 0 0 !important;
+  color: var(--od-text-muted) !important;
+  font-size: 13px !important;
+  font-weight: 600 !important;
+  letter-spacing: 0 !important;
+  max-width: 42rem;
+  line-height: 1.5;
+}
 .hero {
   display: flex;
   align-items: center;

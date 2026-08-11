@@ -171,8 +171,11 @@ export function ShareCodes() {
     <main className={styles.page}>
       <header className={styles.header}>
         <div>
-          <p>ONEDAY / 获客分享</p>
+          <p>ONEDAY / 推广员工具 · 获客分享</p>
           <h1>把每次触达变成可追踪的入口</h1>
+          <p className={styles.subhead}>
+            生成员工/活动/渠道分享码；打开痕迹会进入入口漏斗。不含第三方成交结果。
+          </p>
         </div>
         <Button
           tone="quiet"
@@ -192,7 +195,9 @@ export function ShareCodes() {
         <div>
           <span>可追踪分享</span>
           <h2>员工、活动和渠道，分别归因</h2>
-          <p>二维码打开消费者分享页后，系统会记录来源码、场景和打开次数；失效码将被服务端拒绝。</p>
+          <p>
+            二维码打开消费者分享页后，系统记录来源码、场景与打开次数，并与看板「分享配对」对齐；失效码将被服务端拒绝。不含支付或第三方订单结果。
+          </p>
         </div>
         {qr ? (
           <img className={styles.qr} src={qr} alt="当前分享链接二维码" />
