@@ -1,3 +1,9 @@
+## 2026-08-11 - G1-W∞-36 Platform 总览视觉/IA densify（MP-00 商用完整对标）PASS
+
+- `/p/dashboard`：黄顶栏、icon 功能格、白卡面板、自定义指标、风险/系统面板。
+- Gates: g1-winf36 4/4；winf18 回归；platform typecheck+build PASS。
+- Evidence: `evidence/G1-MEITUAN-PARITY/WINF36/ACCEPTANCE.md`.
+
 ## 2026-08-11 - G1-W∞-35 Management 工作台视觉/IA densify（MPC-01 商用完整对标）PASS
 
 - `/m/dashboard`（home）：黄顶栏、icon 功能格、白卡面板、自定义指标、今日概况黄条。
