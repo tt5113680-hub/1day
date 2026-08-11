@@ -1,7 +1,7 @@
 'use client';
 
 import { SessionApiClient } from '@oneday/session-client';
-import { AdminPageHeader, AppStatePanel, Button, Card, StatusBadge } from '@oneday/ui';
+import { AppStatePanel, Button, StatusBadge } from '@oneday/ui';
 import { useCallback, useEffect, useState } from 'react';
 import styles from './page.module.css';
 
@@ -160,26 +160,42 @@ export default function MembershipsPage() {
 
   return (
     <main className={styles.page} data-testid="management-memberships">
-      <AdminPageHeader
-        eyebrow="推广员工具 · 会员中心"
-        title="会员与权益"
-        description="发放、吊销与时间线共用 member_benefit_ledger；员工按会员码核销。不伪造第三方投放。"
-        actions={
-          <Button tone="secondary" onClick={() => void load()}>
-            刷新
-          </Button>
-        }
-      />
+      <header className={styles.topBar}>
+        <span className={styles.topBarTitle}>推广员工具 · 会员中心</span>
+        <button className={styles.topBarRefresh} type="button" onClick={() => void load()}>
+          刷新
+        </button>
+      </header>
+
+      <section className={styles.heroCard} aria-label="会员与权益概况">
+        <h1>会员与权益</h1>
+        <p>
+          发放、吊销与时间线共用
+          member_benefit_ledger；员工按会员码核销。权益与核销均在推广员工具授权范围内，不伪造第三方投放或本平台成交。
+        </p>
+      </section>
+
       {note ? (
         <p className={styles.notice} role="status">
           {note}
         </p>
       ) : null}
+
+      <section className={styles.summary} aria-label="会员概况">
+        <div>
+          <strong>{data.enrollments.length}</strong>
+          <span>在册会员</span>
+        </div>
+        <div>
+          <strong>{data.benefits.length}</strong>
+          <span>权益项</span>
+        </div>
+      </section>
+
       <section className={styles.list} aria-label="会员列表">
         {data.enrollments.length ? (
           data.enrollments.map((item) => (
-            <div key={item.id} data-testid={`membership-card-${item.id}`}>
-            <Card className={styles.card}>
+            <div key={item.id} className={styles.panel} data-testid={`membership-card-${item.id}`}>
               <div className={styles.title}>
                 <h2>
                   {item.display_name} · {item.member_code}
@@ -193,7 +209,7 @@ export default function MembershipsPage() {
                   {openId === item.id ? '收起时间线' : '发放/吊销时间线'}
                 </Button>
               </div>
-              <p>
+              <p className={styles.sub}>
                 {item.store_name ?? '未绑定门店'} · 入会于{' '}
                 {new Date(item.joined_at).toLocaleString('zh-CN')}
               </p>
@@ -257,7 +273,6 @@ export default function MembershipsPage() {
                   )}
                 </div>
               ) : null}
-            </Card>
             </div>
           ))
         ) : (

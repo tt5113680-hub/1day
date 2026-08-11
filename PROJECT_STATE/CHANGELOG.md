@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## 2026-08-12 - G1-W∞-41 Management 会员中心视觉/IA densify（MPC-08）PASS
+
+- `/m/memberships`：黄顶栏、灰底白卡、heroCard、概况条（在册会员/权益项）、白卡会员卡 panel（发放/吊销时间线 ledger）densify；移除页面级 AdminPageHeader/Card；工具身份与诚实边界全保留（会员码核销/member_benefit_ledger 时间线/不伪造第三方投放或本平台成交/推广员工具授权范围），e2e hooks 全保留。无 schema/DB/API。
+- Gates: g1-winf41 4/4；随动更新 W∞-25（memberships 去 eyebrow 断言，改由顶栏承载）；`g1-winf*.test.mjs` 111/111；management typecheck+build PASS（28 routes）；单测 47 passed（2 个 pre-existing token 失败照旧）；eslint + prettier clean。
+- Evidence: `evidence/G1-MEITUAN-PARITY/WINF41/ACCEPTANCE.md`.
+
 ## 2026-08-12 - G1-W∞-40 Management 客户跟进视觉/IA densify（MPC-06）PASS
 
 - `/m/customers` + `/m/customers/[id]`：黄顶栏、灰底白卡、heroCard、白卡面板 densify；移除页面级 AdminPageHeader/Card；工具身份与诚实边界全保留（实名授权跟进/来源分层/归属与导出审批/非本平台下单）。无 schema/DB/API。

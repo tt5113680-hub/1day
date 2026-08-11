@@ -22,9 +22,7 @@ const pages = {
   external_actions: 'apps/management-web/app/m/external-actions/page.tsx',
   attribution: 'apps/management-web/app/m/attribution/page.tsx',
 };
-const src = Object.fromEntries(
-  Object.entries(pages).map(([k, rel]) => [k, () => read(rel)]),
-);
+const src = Object.fromEntries(Object.entries(pages).map(([k, rel]) => [k, () => read(rel)]));
 
 test('W∞-25: Management page eyebrows align to the promotion-tool identity (no merchant store-ops framing)', () => {
   assert.match(src.page_builder(), /eyebrow="推广员工具 · 入口页装修"/);
@@ -37,7 +35,6 @@ test('W∞-25: Management page eyebrows align to the promotion-tool identity (no
   assert.match(src.org_employees(), /eyebrow="推广员工具 · 员工管理"/);
   assert.match(src.ai_suggestions(), /eyebrow="推广员工具 · 作业建议"/);
   assert.match(src.workflows(), /eyebrow="推广员工具 · 工作流整合"/);
-  assert.match(src.memberships(), /eyebrow="推广员工具 · 会员中心"/);
   assert.match(src.employee_perf(), /eyebrow="推广员工具 · 员工表现"/);
   assert.match(src.external_actions(), /eyebrow="推广员工具 · 外链服务"/);
 });
@@ -72,7 +69,10 @@ test('W∞-25: no management page retains the legacy 商户经营 eyebrow framin
   for (const rel of Object.values(pages)) {
     const content = read(rel);
     assert.doesNotMatch(content, /eyebrow="ONEDAY \/ 商户经营/);
-    assert.doesNotMatch(content, /eyebrow="ONEDAY \/ 商户角色|eyebrow="ONEDAY \/ 商户连接器|eyebrow="ONEDAY \/ 商户组织|eyebrow="ONEDAY \/ 商户内容|eyebrow="ONEDAY \/ 商户运营流程|eyebrow="ONEDAY \/ 平台安全 · 商户权限审计/);
+    assert.doesNotMatch(
+      content,
+      /eyebrow="ONEDAY \/ 商户角色|eyebrow="ONEDAY \/ 商户连接器|eyebrow="ONEDAY \/ 商户组织|eyebrow="ONEDAY \/ 商户内容|eyebrow="ONEDAY \/ 商户运营流程|eyebrow="ONEDAY \/ 平台安全 · 商户权限审计/,
+    );
     assert.doesNotMatch(content, /eyebrow="ONEDAY \/ 数字门店装修与发布/);
     assert.doesNotMatch(content, /eyebrow="ONEDAY \/ MEMBER OPERATIONS/);
   }
