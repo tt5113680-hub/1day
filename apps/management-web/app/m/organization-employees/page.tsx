@@ -256,6 +256,49 @@ export default function OrganizationEmployeesPage() {
       !storeForm.organizationId || merchant.organization_id === storeForm.organizationId,
   );
   const activeEmployees = data.employees.filter((employee) => employee.status === 'active');
+  const loadLabel = (count: number) =>
+    count <= 0 ? '无待办' : count <= 5 ? '轻负载 1-5' : '重负载 6+';
+  const customerLabel = (count: number) =>
+    count <= 0 ? '无客户' : count <= 10 ? '少量客户 1-10' : '大量客户 11+';
+  const employeeStatusCounts = new Map<string, number>();
+  for (const employee of data.employees) {
+    const key = employee.status === 'active' ? '在岗' : '已离岗/停用';
+    employeeStatusCounts.set(key, (employeeStatusCounts.get(key) ?? 0) + 1);
+  }
+  const byEmployeeStatus = [...employeeStatusCounts.entries()].map(([key, value]) => ({
+    key,
+    value,
+  }));
+  const loadCounts = new Map<string, number>();
+  for (const employee of data.employees) {
+    const key = loadLabel(employee.open_task_count);
+    loadCounts.set(key, (loadCounts.get(key) ?? 0) + 1);
+  }
+  const byLoad = [...loadCounts.entries()].map(([key, value]) => ({ key, value }));
+  const customerCounts = new Map<string, number>();
+  for (const employee of data.employees) {
+    const key = customerLabel(employee.active_customer_count);
+    customerCounts.set(key, (customerCounts.get(key) ?? 0) + 1);
+  }
+  const byCustomers = [...customerCounts.entries()].map(([key, value]) => ({ key, value }));
+  const organizationCounts = new Map<string, number>();
+  for (const employee of data.employees) {
+    const org = data.organizations.find(
+      (organization) => organization.id === employee.organization_id,
+    );
+    const key = org?.name ?? '未归属组织';
+    organizationCounts.set(key, (organizationCounts.get(key) ?? 0) + 1);
+  }
+  const byOrganization = [...organizationCounts.entries()].map(([key, value]) => ({ key, value }));
+  const invitationCounts = new Map<string, number>();
+  for (const invitation of data.invitations) {
+    const org = data.organizations.find(
+      (organization) => organization.id === invitation.organization_id,
+    );
+    const key = org?.name ?? '未归属组织';
+    invitationCounts.set(key, (invitationCounts.get(key) ?? 0) + 1);
+  }
+  const byInvitation = [...invitationCounts.entries()].map(([key, value]) => ({ key, value }));
   return (
     <main className={styles.page} data-testid="management-organization-employees">
       <header className={styles.topBar}>
@@ -291,6 +334,113 @@ export default function OrganizationEmployeesPage() {
           <strong>{data.invitations.length}</strong>
         </div>
       </section>
+
+      <section className={styles.distribution} aria-label="员工分布">
+        <div className={styles.panelBlock}>
+          <h2>员工状态分布</h2>
+          <ul className={styles.bars}>
+            {byEmployeeStatus.map((b) => (
+              <li key={b.key} className={styles.barRow}>
+                <span className={styles.barLabel}>{b.key}</span>
+                <span className={styles.barTrack}>
+                  <span
+                    className={styles.barFill}
+                    style={{
+                      width: `${data.employees.length ? (b.value / data.employees.length) * 100 : 0}%`,
+                    }}
+                  />
+                </span>
+                <span className={styles.barValue}>{b.value}</span>
+              </li>
+            ))}
+            {!data.employees.length && <li className={styles.barEmpty}>暂无记录</li>}
+          </ul>
+        </div>
+        <div className={styles.panelBlock}>
+          <h2>组织员工分布</h2>
+          <ul className={styles.bars}>
+            {byOrganization.map((b) => (
+              <li key={b.key} className={styles.barRow}>
+                <span className={styles.barLabel}>{b.key}</span>
+                <span className={styles.barTrack}>
+                  <span
+                    className={styles.barFill}
+                    style={{
+                      width: `${data.employees.length ? (b.value / data.employees.length) * 100 : 0}%`,
+                    }}
+                  />
+                </span>
+                <span className={styles.barValue}>{b.value}</span>
+              </li>
+            ))}
+            {!data.employees.length && <li className={styles.barEmpty}>暂无记录</li>}
+          </ul>
+        </div>
+        <div className={styles.panelBlock}>
+          <h2>待办负载分布</h2>
+          <ul className={styles.bars}>
+            {byLoad.map((b) => (
+              <li key={b.key} className={styles.barRow}>
+                <span className={styles.barLabel}>{b.key}</span>
+                <span className={styles.barTrack}>
+                  <span
+                    className={styles.barFill}
+                    style={{
+                      width: `${data.employees.length ? (b.value / data.employees.length) * 100 : 0}%`,
+                    }}
+                  />
+                </span>
+                <span className={styles.barValue}>{b.value}</span>
+              </li>
+            ))}
+            {!data.employees.length && <li className={styles.barEmpty}>暂无记录</li>}
+          </ul>
+        </div>
+        <div className={styles.panelBlock}>
+          <h2>客户负载分布</h2>
+          <ul className={styles.bars}>
+            {byCustomers.map((b) => (
+              <li key={b.key} className={styles.barRow}>
+                <span className={styles.barLabel}>{b.key}</span>
+                <span className={styles.barTrack}>
+                  <span
+                    className={styles.barFill}
+                    style={{
+                      width: `${data.employees.length ? (b.value / data.employees.length) * 100 : 0}%`,
+                    }}
+                  />
+                </span>
+                <span className={styles.barValue}>{b.value}</span>
+              </li>
+            ))}
+            {!data.employees.length && <li className={styles.barEmpty}>暂无记录</li>}
+          </ul>
+        </div>
+        <div className={styles.panelBlock}>
+          <h2>待接受邀请分布</h2>
+          <ul className={styles.bars}>
+            {byInvitation.map((b) => (
+              <li key={b.key} className={styles.barRow}>
+                <span className={styles.barLabel}>{b.key}</span>
+                <span className={styles.barTrack}>
+                  <span
+                    className={styles.barFill}
+                    style={{
+                      width: `${data.invitations.length ? (b.value / data.invitations.length) * 100 : 0}%`,
+                    }}
+                  />
+                </span>
+                <span className={styles.barValue}>{b.value}</span>
+              </li>
+            ))}
+            {!data.invitations.length && <li className={styles.barEmpty}>暂无记录</li>}
+          </ul>
+        </div>
+      </section>
+
+      <p className={styles.honest}>
+        以上分布全部由已抓取的真实组织与员工档案行现场推导（source=local）：不接美团/抖音实时人事或绩效、不伪造第三方评分或成交、不包含本平台收款、非本平台下单。
+      </p>
 
       {note && (
         <p className={styles.notice} role="status">
