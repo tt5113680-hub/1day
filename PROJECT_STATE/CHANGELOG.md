@@ -1,3 +1,16 @@
+## 2026-08-11 - G1-W∞-24 工具身份收尾·顾客跟进（客户 CRM 去经营/资产话术）PASS
+
+- `/m/customers` + `/m/customers/[id]`（MPC-06 顾客/CRM, 推广员工具）去 store-ops-ownership 话术：
+  eyebrow `客户资产→推广员工具 · 客户跟进`、title `用客户分层驱动每一次经营动作→按来源与分层组织推广跟进作业`、
+  loading/forbidden/error/empty/back-link/aria 全改 `客户跟进`（去掉 `客户资产`/`客户经营链路`/`经营管理权限`），
+  保留实名授权跟进/来源分层/归属与导出审批等工具工作流能力。Text/copy-only，无 schema/DB/API，不复活本平台下单/收单。
+- 随动更新 dependent e2e 断言：`tests/e2e/management-customers.spec.ts`（heading + forbidden）、
+  `tests/e2e/commercial-ui-foundation.spec.ts`（heading）。
+- Gates: `node --test tests/g1-winf24-customer-followup-identity.test.mjs` 3/3；
+  `node --test tests/g1-winf*.test.mjs` 34/34；typecheck+build 20/20（management-web 27 routes）；
+  单测 47 passed / 2 pre-existing token 失败照旧；eslint clean。
+- Not 全部商用 / 未代签 owner UI。Evidence: `evidence/G1-MEITUAN-PARITY/WINF24/ACCEPTANCE.md`.
+
 ## 2026-08-11 - G1-W∞-18 管理/平台工作台 + C 端资料 densify PASS
 
 - Management 工作台：推广员工具 · 商家中心；作业数据/服务档案；去掉美团眉标。

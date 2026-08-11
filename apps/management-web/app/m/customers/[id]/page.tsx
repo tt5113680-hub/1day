@@ -202,7 +202,7 @@ export default function ManagementCustomerDetail({ params }: { params: Promise<{
       <main className={styles.centered}>
         <AppStatePanel
           kind="loading"
-          title="正在加载客户全链路"
+          title="正在加载客户跟进全链路"
           description="正在汇总当前租户的来源、归属、任务与结果证据。"
         />
       </main>
@@ -213,7 +213,7 @@ export default function ManagementCustomerDetail({ params }: { params: Promise<{
         <AppStatePanel
           kind="forbidden"
           title="无权查看客户详情"
-          description="请使用具备经营管理权限的账号。"
+          description="请使用具备客户跟进范围的账号。"
         />
       </main>
     );
@@ -223,7 +223,7 @@ export default function ManagementCustomerDetail({ params }: { params: Promise<{
         <AppStatePanel
           kind="error"
           title="客户详情暂不可用"
-          description="客户经营链路未能完成加载。"
+          description="客户跟进记录未能完成加载。"
           action={<Button onClick={() => void load()}>重新加载</Button>}
         />
       </main>
@@ -235,10 +235,10 @@ export default function ManagementCustomerDetail({ params }: { params: Promise<{
   return (
     <main className={styles.page}>
       <Link className={styles.back} href="/m/customers">
-        ← 返回客户资产
+        ← 返回客户跟进
       </Link>
       <AdminPageHeader
-        eyebrow={`ONEDAY / 客户全链路 · ${businessLabel(data.customer.segment)}`}
+        eyebrow={`ONEDAY / 客户跟进全链路 · ${businessLabel(data.customer.segment)}`}
         title={customerNameCopy(data.customer.displayName) ?? '客户'}
         description={`${
           data.customer.identities

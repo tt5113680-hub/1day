@@ -92,7 +92,7 @@ test('Batch 1 visual foundation captures Management and Platform administration 
   });
   await management.goto(`${applications.management}/m/customers`, { waitUntil: 'networkidle' });
   await expect(
-    management.getByRole('heading', { name: '用客户分层驱动每一次经营动作' }),
+    management.getByRole('heading', { name: '按来源与分层组织推广跟进作业' }),
   ).toBeVisible();
   await expect(management.locator('.od-page-header')).toBeVisible();
   await management.screenshot({

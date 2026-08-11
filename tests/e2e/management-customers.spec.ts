@@ -23,7 +23,7 @@ test('manager filters customer assets and submits an export approval request at 
 }) => {
   await page.addInitScript((value) => sessionStorage.setItem('oneday.accessToken', value), token);
   await page.goto('/m/customers');
-  await expect(page.getByRole('heading', { name: '用客户分层驱动每一次经营动作' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: '按来源与分层组织推广跟进作业' })).toBeVisible();
   await expect(page.locator('table')).toBeVisible();
   await page.getByLabel('标签').fill('VIP');
   await page.getByRole('button', { name: '应用筛选' }).click();
@@ -38,7 +38,7 @@ test('manager filters customer assets and submits an export approval request at 
 
 test('customer assets shows a permission recovery state without a session', async ({ page }) => {
   await page.goto('/m/customers');
-  await expect(page.getByRole('heading', { name: '无权查看客户资产' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: '无权访问客户跟进' })).toBeVisible();
   await page.screenshot({
     path: 'evidence/PAGE-M-003/management-customers-forbidden.png',
     fullPage: true,

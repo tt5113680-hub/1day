@@ -139,8 +139,8 @@ export default function ManagementCustomersPage() {
       <main className={styles.centered}>
         <AppStatePanel
           kind="loading"
-          title="正在加载客户资产"
-          description="正在连接客户、归属与订单数据。"
+          title="正在加载客户跟进"
+          description="正在连接客户、归属与来源数据。"
         />
       </main>
     );
@@ -149,8 +149,8 @@ export default function ManagementCustomersPage() {
       <main className={styles.centered}>
         <AppStatePanel
           kind="forbidden"
-          title="无权查看客户资产"
-          description="请使用具备经营管理权限的账号登录后重试。"
+          title="无权访问客户跟进"
+          description="请使用具备客户跟进范围的账号登录后重试。"
         />
       </main>
     );
@@ -159,7 +159,7 @@ export default function ManagementCustomersPage() {
       <main className={styles.centered}>
         <AppStatePanel
           kind="error"
-          title="客户资产暂不可用"
+          title="客户跟进暂不可用"
           description="请检查网络后重新加载。"
           action={<Button onClick={() => void load()}>重新加载</Button>}
         />
@@ -169,9 +169,9 @@ export default function ManagementCustomersPage() {
   return (
     <main className={styles.page}>
       <AdminPageHeader
-        eyebrow="客户资产"
-        title="用客户分层驱动每一次经营动作"
-        description="基于已沉淀的来源、标签、归属和订单数据筛选；导出与归属变更均保留审批和审计记录。"
+        eyebrow="推广员工具 · 客户跟进"
+        title="按来源与分层组织推广跟进作业"
+        description="基于已沉淀的来源、标签与归属筛选客户，组织实名授权跟进；导出与归属变更均保留审批和审计记录。"
         actions={
           <Button
             disabled={busy === 'export'}
@@ -257,10 +257,10 @@ export default function ManagementCustomersPage() {
       {customers.length === 0 ? (
         <section className={styles.empty}>
           <h2>没有匹配的客户</h2>
-          <p>调整筛选条件，或在客户、来源和员工工作流中沉淀新的客户资产。</p>
+          <p>调整筛选条件，或在客户、来源和员工工作流中沉淀新的客户跟进与归属。</p>
         </section>
       ) : (
-        <section className={styles.tableWrap} aria-label="客户资产列表">
+        <section className={styles.tableWrap} aria-label="客户跟进列表">
           <table>
             <thead>
               <tr>
