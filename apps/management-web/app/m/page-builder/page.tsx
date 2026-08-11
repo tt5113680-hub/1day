@@ -310,6 +310,56 @@ export default function PageBuilder() {
       </main>
     );
   const boundCount = templates.filter((template) => template.live_version_id).length;
+  const targetLabel = (target: string) =>
+    target === 'consumer'
+      ? '消费者'
+      : target === 'employee'
+        ? '员工'
+        : target === 'management'
+          ? '管理'
+          : target;
+  const publishLabel = (template: Template) =>
+    template.live_version_id
+      ? '数字门店已发布'
+      : template.published_version_id
+        ? '模板已发布未绑定'
+        : '尚未发布';
+  const familyLabel = (family?: string) =>
+    family === 'restaurant'
+      ? '餐饮'
+      : family === 'beauty'
+        ? '美业'
+        : family === 'retail'
+          ? '零售'
+          : family || '通用';
+  const targetCounts = new Map<string, number>();
+  const publishCounts = new Map<string, number>();
+  const familyCounts = new Map<string, number>();
+  const storeCounts = new Map<string, number>();
+  for (const template of templates) {
+    const targetKey = targetLabel(template.target);
+    targetCounts.set(targetKey, (targetCounts.get(targetKey) ?? 0) + 1);
+    const publishKey = publishLabel(template);
+    publishCounts.set(publishKey, (publishCounts.get(publishKey) ?? 0) + 1);
+    const familyKey = familyLabel(template.industry_config?.family);
+    familyCounts.set(familyKey, (familyCounts.get(familyKey) ?? 0) + 1);
+    if (template.live_version_id) {
+      const storeKey = template.store_name?.trim() || '未绑定门店';
+      storeCounts.set(storeKey, (storeCounts.get(storeKey) ?? 0) + 1);
+    }
+  }
+  const byTarget = [...targetCounts.entries()].map(([key, value]) => ({ key, value }));
+  const byPublish = [...publishCounts.entries()].map(([key, value]) => ({ key, value }));
+  const byFamily = [...familyCounts.entries()]
+    .map(([key, value]) => ({ key, value }))
+    .sort((a, b) => b.value - a.value);
+  const byStore = [...storeCounts.entries()]
+    .map(([key, value]) => ({ key, value }))
+    .sort((a, b) => b.value - a.value);
+  const templatesTotal = templates.length;
+  const publishTotal = [...publishCounts.values()].reduce((sum, count) => sum + count, 0);
+  const familyTotal = [...familyCounts.values()].reduce((sum, count) => sum + count, 0);
+  const storeTotal = [...storeCounts.values()].reduce((sum, count) => sum + count, 0);
   return (
     <main className={styles.page} data-testid="management-page-builder">
       <header className={styles.topBar}>
@@ -342,6 +392,86 @@ export default function PageBuilder() {
           <strong>同步</strong>
         </div>
       </section>
+
+      <section className={styles.distribution} aria-label="入口页装修分布">
+        <div className={styles.panelBlock}>
+          <h2>模板目标分布</h2>
+          <ul className={styles.bars}>
+            {byTarget.map((b) => (
+              <li key={b.key} className={styles.barRow}>
+                <span className={styles.barLabel}>{b.key}</span>
+                <span className={styles.barTrack}>
+                  <span
+                    className={styles.barFill}
+                    style={{ width: `${templatesTotal ? (b.value / templatesTotal) * 100 : 0}%` }}
+                  />
+                </span>
+                <span className={styles.barValue}>{b.value}</span>
+              </li>
+            ))}
+            {!templatesTotal && <li className={styles.barEmpty}>暂无记录</li>}
+          </ul>
+        </div>
+        <div className={styles.panelBlock}>
+          <h2>发布状态分布</h2>
+          <ul className={styles.bars}>
+            {byPublish.map((b) => (
+              <li key={b.key} className={styles.barRow}>
+                <span className={styles.barLabel}>{b.key}</span>
+                <span className={styles.barTrack}>
+                  <span
+                    className={styles.barFill}
+                    style={{ width: `${publishTotal ? (b.value / publishTotal) * 100 : 0}%` }}
+                  />
+                </span>
+                <span className={styles.barValue}>{b.value}</span>
+              </li>
+            ))}
+            {!publishTotal && <li className={styles.barEmpty}>暂无记录</li>}
+          </ul>
+        </div>
+        <div className={styles.panelBlock}>
+          <h2>行业模板分布</h2>
+          <ul className={styles.bars}>
+            {byFamily.map((b) => (
+              <li key={b.key} className={styles.barRow}>
+                <span className={styles.barLabel}>{b.key}</span>
+                <span className={styles.barTrack}>
+                  <span
+                    className={styles.barFill}
+                    style={{ width: `${familyTotal ? (b.value / familyTotal) * 100 : 0}%` }}
+                  />
+                </span>
+                <span className={styles.barValue}>{b.value}</span>
+              </li>
+            ))}
+            {!familyTotal && <li className={styles.barEmpty}>暂无记录</li>}
+          </ul>
+        </div>
+        <div className={styles.panelBlock}>
+          <h2>发布数字门店分布</h2>
+          <ul className={styles.bars}>
+            {byStore.map((b) => (
+              <li key={b.key} className={styles.barRow}>
+                <span className={styles.barLabel}>{b.key}</span>
+                <span className={styles.barTrack}>
+                  <span
+                    className={styles.barFill}
+                    style={{ width: `${storeTotal ? (b.value / storeTotal) * 100 : 0}%` }}
+                  />
+                </span>
+                <span className={styles.barValue}>{b.value}</span>
+              </li>
+            ))}
+            {!storeTotal && <li className={styles.barEmpty}>暂无记录</li>}
+          </ul>
+        </div>
+      </section>
+
+      <p className={styles.honest}>
+        以上分布全部由已抓取的门店模板真实档案行现场推导（source=local）：模板目标、发布状态、行业模板与已发布数字门店；
+        不接美团/抖音实时投放、不包含本平台收款、非本平台下单。
+      </p>
 
       {note && (
         <p role="status" className={styles.notice}>
