@@ -75,7 +75,14 @@ export function StorefrontQuickActions({ items }: { items: StorefrontQuickAction
     <section className="od-sf-shortcuts" aria-label="门店快捷入口" data-module="quick_actions">
       {items.map((item, index) =>
         item.href ? (
-          <a className="od-sf-shortcut" href={item.href} key={`${item.label}-${index}`}>
+          <a
+            className="od-sf-shortcut"
+            href={item.href}
+            key={`${item.label}-${index}`}
+            onClick={() => {
+              void item.onClick?.();
+            }}
+          >
             <i>{item.icon ?? storefrontActionIcon(index)}</i>
             <span>{item.label}</span>
           </a>
@@ -473,13 +480,22 @@ export function StorefrontHero({
 export function StorefrontFloatingConsult({
   href,
   label,
+  onClick,
 }: {
   href: string;
   label: string;
+  onClick?: () => void;
 }) {
   return (
     <div className="od-sf-floating-consult">
-      <a href={href}>{label}</a>
+      <a
+        href={href}
+        onClick={() => {
+          onClick?.();
+        }}
+      >
+        {label}
+      </a>
     </div>
   );
 }

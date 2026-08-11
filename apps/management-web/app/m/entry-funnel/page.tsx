@@ -12,6 +12,12 @@ import { useCallback, useEffect, useState } from 'react';
 import styles from './page.module.css';
 
 type Bucket = { key: string; count: number };
+type IndustryTemplate = {
+  id: 'restaurant' | 'beauty' | 'retail';
+  label: string;
+  focusModules: string[];
+  insights: string[];
+};
 type Summary = {
   days: number;
   disclaimer: string;
@@ -23,11 +29,15 @@ type Summary = {
     dwells: number;
     shares: number;
     avgDwellMs: number;
+    moduleImpressions?: number;
+    consultClicks?: number;
+    jumpConfirms?: number;
   };
   byEventCode: Bucket[];
   bySurface: Bucket[];
   byModule: Bucket[];
   byTargetPlatform: Bucket[];
+  industryTemplates?: Record<string, IndustryTemplate>;
   generatedAt: string;
 };
 
@@ -62,9 +72,27 @@ const SURFACE_LABEL: Record<string, string> = {
   other: '其它',
 };
 
+const MODULE_LABEL: Record<string, string> = {
+  store_hero: '门店头图',
+  banner_carousel: '活动轮播',
+  quick_actions: '快捷入口',
+  member_entry: '会员入口',
+  member_wallet: '会员卡包',
+  service_catalog: '服务目录',
+  offer_compare: '全平台团购比价',
+  content_feed: '门店活动',
+  store_info: '门店信息',
+  floating_consult: '悬浮咨询',
+  storefront: '店页',
+  circles_home: '商圈首页',
+  circle_card: '商圈卡片',
+  circle_detail: '商圈详情',
+};
+
 export default function EntryFunnelPage() {
   const [state, setState] = useState<'loading' | 'ready' | 'forbidden' | 'error'>('loading');
   const [days, setDays] = useState(7);
+  const [industry, setIndustry] = useState<'restaurant' | 'beauty' | 'retail'>('restaurant');
   const [data, setData] = useState<Summary | null>(null);
   const load = useCallback(async () => {
     if (!(await sessionApi.context())) return setState('forbidden');
@@ -117,6 +145,12 @@ export default function EntryFunnelPage() {
     );
   if (!data) return null;
 
+  const template = data.industryTemplates?.[industry];
+  const focusSet = new Set(template?.focusModules ?? []);
+  const focusModules = data.byModule.filter(
+    (row) => focusSet.has(row.key) || focusSet.size === 0,
+  );
+
   return (
     <main className={styles.page}>
       <AdminPageHeader
@@ -137,6 +171,20 @@ export default function EntryFunnelPage() {
                 <option value={90}>近 90 天</option>
               </select>
             </label>
+            <label className={styles.days}>
+              行业模板
+              <select
+                aria-label="行业分析模板"
+                value={industry}
+                onChange={(e) =>
+                  setIndustry(e.target.value as 'restaurant' | 'beauty' | 'retail')
+                }
+              >
+                <option value="restaurant">餐饮</option>
+                <option value="beauty">美业</option>
+                <option value="retail">零售</option>
+              </select>
+            </label>
             <Button tone="secondary" onClick={() => void load()}>
               刷新
             </Button>
@@ -147,15 +195,47 @@ export default function EntryFunnelPage() {
         <MetricCard label="观看" value={data.totals.impressions} hint="曝光" />
         <MetricCard label="访问" value={data.totals.visits} hint="进页" />
         <MetricCard label="跳转" value={data.totals.jumps} hint="出站（至第三方）" />
-        <MetricCard label="停留事件" value={data.totals.dwells} hint={`均 ${data.totals.avgDwellMs} ms`} />
-        <MetricCard label="分享相关" value={data.totals.shares} hint="发出 + 打开" />
-        <MetricCard label="全部事件" value={data.totals.total} hint={`近 ${data.days} 天`} />
+        <MetricCard
+          label="模块曝光"
+          value={data.totals.moduleImpressions ?? 0}
+          hint="L2 去重可见"
+        />
+        <MetricCard
+          label="咨询点击"
+          value={data.totals.consultClicks ?? 0}
+          hint="站内动作"
+        />
+        <MetricCard
+          label="跳转确认"
+          value={data.totals.jumpConfirms ?? 0}
+          hint="确认页完成"
+        />
       </section>
+
+      {template ? (
+        <Card className={styles.panelWide}>
+          <h2>{template.label}行业模板（只解读痕迹）</h2>
+          <p className={styles.hint}>
+            关注模块：
+            {template.focusModules.map((m) => MODULE_LABEL[m] ?? m).join(' · ')}
+          </p>
+          <ul className={styles.insights}>
+            {template.insights.map((line) => (
+              <li key={line}>{line}</li>
+            ))}
+          </ul>
+          <BucketList
+            rows={focusModules.length ? focusModules : data.byModule.slice(0, 8)}
+            labelOf={(k) => MODULE_LABEL[k] ?? k}
+          />
+        </Card>
+      ) : null}
+
       <div className={styles.grid}>
         <Card className={styles.panel}>
           <h2>按模块名</h2>
           <p className={styles.hint}>看板标题跟租户入口模块走；无模块名归入「未命名模块」。</p>
-          <BucketList rows={data.byModule} labelOf={(k) => k} />
+          <BucketList rows={data.byModule} labelOf={(k) => MODULE_LABEL[k] ?? k} />
         </Card>
         <Card className={styles.panel}>
           <h2>按入口面</h2>

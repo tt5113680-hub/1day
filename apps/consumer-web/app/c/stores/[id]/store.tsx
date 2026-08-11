@@ -321,6 +321,17 @@ export default function StorePage({
             <StorefrontFloatingConsult
               href={actionUrl(consultAction.id, 'storefront_primary_consult')}
               label={consultAction.name}
+              onClick={() => {
+                void trackFunnelEvent(data.tenant.slug, {
+                  eventCode: 'consult_click',
+                  surface: 'store',
+                  moduleKey: 'floating_consult',
+                  targetStoreId: data.store.id,
+                  source: sourceValue,
+                  scene: 'storefront_primary_consult',
+                  shareCode,
+                });
+              }}
             />
           ) : null}
           {notice && (

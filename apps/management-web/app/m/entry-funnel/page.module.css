@@ -25,11 +25,32 @@
   gap: 16px;
 }
 
+.panelWide {
+  padding: 22px;
+  margin: 0 0 16px;
+}
+
+.panelWide h2 {
+  margin: 0 0 8px;
+  font-size: 1.05rem;
+}
+
+.insights {
+  margin: 0 0 14px;
+  padding-left: 18px;
+  color: var(--od-ink);
+}
+
+.insights li {
+  margin: 6px 0;
+}
+
 .panel {
   padding: 22px;
 }
 
-.panel h2 {
+.panel h2,
+.panelWide h2 {
   margin: 0 0 8px;
   font-size: 1.05rem;
 }

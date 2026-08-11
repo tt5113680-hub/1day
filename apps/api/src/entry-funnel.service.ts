@@ -206,7 +206,7 @@ export class EntryFunnelService implements OnModuleDestroy {
           ? Math.max(1, Math.min(90, Number(daysRaw)))
           : 7;
 
-    const [totals, byCode, bySurface, byModule, byPlatform] = await Promise.all([
+    const [totals, byCode, bySurfaceRows, byModuleRows, byPlatform] = await Promise.all([
       this.pool.query(
         `select count(*)::int as total,
                 count(*) filter (where event_code='impression')::int as impressions,
@@ -251,25 +251,93 @@ export class EntryFunnelService implements OnModuleDestroy {
     ]);
 
     const t = totals.rows[0] ?? {};
+    const byEventCode = byCode.rows.map((r) => ({ key: r.key as string, count: Number(r.count) }));
+    const bySurface = bySurfaceRows.rows.map((r) => ({
+      key: r.key as string,
+      count: Number(r.count),
+    }));
+    const byModule = byModuleRows.rows.map((r) => ({ key: r.key as string, count: Number(r.count) }));
+    const byTargetPlatform = byPlatform.rows.map((r) => ({
+      key: r.key as string,
+      count: Number(r.count),
+    }));
+
+    const countOf = (rows: { key: string; count: number }[], key: string) =>
+      rows.find((r) => r.key === key)?.count ?? 0;
+    const moduleCount = (key: string) => countOf(byModule, key);
+    const visits = Number(t.visits ?? 0);
+    const jumps = Number(t.jumps ?? 0);
+    const shares = Number(t.shares ?? 0);
+    const moduleImpressions = countOf(byEventCode, 'module_impression');
+    const consultClicks = countOf(byEventCode, 'consult_click');
+    const jumpConfirms = countOf(byEventCode, 'jump_confirm');
+    const shareOpens = countOf(byEventCode, 'share_open');
+    const circleSurface = countOf(bySurface, 'circle');
+
+    const industryTemplates = {
+      restaurant: {
+        id: 'restaurant' as const,
+        label: '餐饮',
+        focusModules: ['offer_compare', 'banner_carousel', 'quick_actions', 'store_hero'],
+        insights: buildRestaurantInsights({
+          visits,
+          jumps,
+          offerCompare: moduleCount('offer_compare'),
+          moduleImpressions,
+          jumpConfirms,
+          meituanJumps: countOf(byTargetPlatform, 'meituan'),
+          douyinJumps: countOf(byTargetPlatform, 'douyin'),
+        }),
+      },
+      beauty: {
+        id: 'beauty' as const,
+        label: '美业',
+        focusModules: ['member_entry', 'quick_actions', 'consult', 'floating_consult'],
+        insights: buildBeautyInsights({
+          visits,
+          consultClicks,
+          memberEntry: moduleCount('member_entry'),
+          moduleImpressions,
+          avgDwellMs: Number(t.avg_dwell_ms ?? 0),
+        }),
+      },
+      retail: {
+        id: 'retail' as const,
+        label: '零售',
+        focusModules: ['content_feed', 'banner_carousel', 'offer_compare'],
+        insights: buildRetailInsights({
+          visits,
+          jumps,
+          contentFeed: moduleCount('content_feed'),
+          banner: moduleCount('banner_carousel'),
+          shares,
+          shareOpens,
+          circleSurface,
+        }),
+      },
+    };
+
     return {
       days,
-      disclaimer: '仅统计至观看/访问/跳转/停留/分享等入口痕迹；不含支付与成交。',
+      disclaimer:
+        '仅统计至观看/访问/跳转/停留/分享等入口痕迹；不含支付与成交。行业模板只解读已有 L0–L2，不编造成交。',
       totals: {
         total: Number(t.total ?? 0),
         impressions: Number(t.impressions ?? 0),
-        visits: Number(t.visits ?? 0),
-        jumps: Number(t.jumps ?? 0),
+        visits,
+        jumps,
         dwells: Number(t.dwells ?? 0),
-        shares: Number(t.shares ?? 0),
+        shares,
         avgDwellMs: Number(t.avg_dwell_ms ?? 0),
+        moduleImpressions,
+        consultClicks,
+        jumpConfirms,
       },
-      byEventCode: byCode.rows.map((r) => ({ key: r.key as string, count: Number(r.count) })),
-      bySurface: bySurface.rows.map((r) => ({ key: r.key as string, count: Number(r.count) })),
-      byModule: byModule.rows.map((r) => ({ key: r.key as string, count: Number(r.count) })),
-      byTargetPlatform: byPlatform.rows.map((r) => ({
-        key: r.key as string,
-        count: Number(r.count),
-      })),
+      byEventCode,
+      bySurface,
+      byModule,
+      byTargetPlatform,
+      industryTemplates,
       generatedAt: new Date().toISOString(),
     };
   }
@@ -277,4 +345,73 @@ export class EntryFunnelService implements OnModuleDestroy {
   async onModuleDestroy() {
     await this.pool.end();
   }
+}
+
+function buildRestaurantInsights(input: {
+  visits: number;
+  jumps: number;
+  offerCompare: number;
+  moduleImpressions: number;
+  jumpConfirms: number;
+  meituanJumps: number;
+  douyinJumps: number;
+}) {
+  const insights: string[] = [];
+  if (input.visits === 0)
+    insights.push('近窗暂无访问痕迹；先确认店页/附近入口是否在投放。');
+  if (input.offerCompare > 0 && input.jumps === 0)
+    insights.push('「全平台团购比价」有模块曝光，但尚无出站跳转；检查外链是否可达。');
+  if (input.moduleImpressions > 0 && input.jumpConfirms === 0 && input.jumps > 0)
+    insights.push('已有跳转但缺少跳转确认页完成记录；确认动作页是否走确认链路。');
+  if (input.meituanJumps + input.douyinJumps > 0)
+    insights.push(
+      `第三方跳转以美团 ${input.meituanJumps} / 抖音 ${input.douyinJumps} 计至出站（非成交）。`,
+    );
+  if (!insights.length)
+    insights.push('餐饮模板：关注比价模块曝光 → 跳转确认 → 平台出站是否连贯。');
+  return insights;
+}
+
+function buildBeautyInsights(input: {
+  visits: number;
+  consultClicks: number;
+  memberEntry: number;
+  moduleImpressions: number;
+  avgDwellMs: number;
+}) {
+  const insights: string[] = [];
+  if (input.visits > 0 && input.consultClicks === 0)
+    insights.push('有访问但无咨询点击；快捷入口/悬浮咨询是否被遮挡或未配置。');
+  if (input.memberEntry > 0 && input.consultClicks === 0)
+    insights.push('会员入口有曝光，咨询转化痕迹为空；可检查咨询深链。');
+  if (input.avgDwellMs > 0 && input.avgDwellMs < 3000)
+    insights.push(`平均停留约 ${input.avgDwellMs}ms，偏短；可看头图/权益模块是否过早跳出。`);
+  if (input.moduleImpressions === 0 && input.visits > 0)
+    insights.push('有访问但尚无模块曝光；需客户端 IntersectionObserver 上报 L2。');
+  if (!insights.length)
+    insights.push('美业模板：优先看咨询点击与会员入口曝光是否匹配访问量。');
+  return insights;
+}
+
+function buildRetailInsights(input: {
+  visits: number;
+  jumps: number;
+  contentFeed: number;
+  banner: number;
+  shares: number;
+  shareOpens: number;
+  circleSurface: number;
+}) {
+  const insights: string[] = [];
+  if (input.banner + input.contentFeed > 0 && input.jumps === 0)
+    insights.push('内容/轮播有曝光痕迹，但无出站跳转；检查商品卡外链。');
+  if (input.shares > 0 && input.shareOpens === 0)
+    insights.push('有分享发出但未见分享打开；核对分享码落地页是否上报 share_open。');
+  if (input.circleSurface > 0)
+    insights.push(`商圈入口面有 ${input.circleSurface} 条痕迹，可对照圈内进店是否继续跳转。`);
+  if (input.visits === 0)
+    insights.push('零售模板：近窗无访问，先打通发现/搜索/分享入口。');
+  if (!insights.length)
+    insights.push('零售模板：对照轮播/内容曝光与分享打开、出站跳转是否同向。');
+  return insights;
 }

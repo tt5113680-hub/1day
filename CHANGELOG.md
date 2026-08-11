@@ -2,6 +2,9 @@
 
 ## 2026-08-11
 
+- **TOOL-PHASE-3** L2 module_impression + industry templates (restaurant/beauty/retail) on /m/entry-funnel. Evidence: evidence/TOOL-PHASE-3/ACCEPTANCE.md.
+
+
 - **TOOL-PHASE-2** 商圈单独页双身份：/c/circles + /m/circles + invite/apply + geo/public_visible. Evidence: evidence/TOOL-PHASE-2/ACCEPTANCE.md.
 
 

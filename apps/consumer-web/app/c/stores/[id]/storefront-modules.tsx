@@ -20,6 +20,7 @@ import {
 import '@oneday/storefront-renderer/storefront.css';
 import { useEffect, useMemo, useState, type ReactNode } from 'react';
 import { storeHref, type ConsumerContext } from '../../consumer-shell';
+import { observeModuleImpressions, trackFunnelEvent } from '../../entry-funnel-client';
 import { fetchMemberWallet, readMemberAccess } from '../../member-session';
 import styles from './store.module.css';
 import type { StoreDetail } from './store';
@@ -65,6 +66,19 @@ export function StorefrontModules({
     offers: StoreDetail['platformOffers'];
   }[];
 }) {
+  const [mountEl, setMountEl] = useState<HTMLDivElement | null>(null);
+  useEffect(() => {
+    if (!mountEl) return;
+    return observeModuleImpressions({
+      tenantSlug: data.tenant.slug,
+      surface: 'store',
+      root: mountEl,
+      targetStoreId: data.store.id,
+      shareCode,
+      source: sourceValue,
+      scene: 'storefront_modules',
+    });
+  }, [mountEl, data.tenant.slug, data.store.id, shareCode, sourceValue]);
   const effectiveModules = effectiveStorefrontModules(data.storefront?.modules);
   const sectionTypes = SECTION_MODULE_TYPES;
   const renderModule = (module: Module) => {
@@ -189,7 +203,11 @@ export function StorefrontModules({
     }
   }
   flushSections('sections-tail');
-  return <>{nodes}</>;
+  return (
+    <div ref={setMountEl} data-funnel-root="storefront">
+      {nodes}
+    </div>
+  );
 }
 
 function StoreHero({
@@ -337,6 +355,19 @@ function QuickActions({
       icon: '◈',
       href: consultAction ? actionUrl(consultAction.id, 'shortcut_consult') : undefined,
       disabled: !consultAction,
+      onClick: consultAction
+        ? () => {
+            void trackFunnelEvent(data.tenant.slug, {
+              eventCode: 'consult_click',
+              surface: 'store',
+              moduleKey: 'quick_actions',
+              targetStoreId: data.store.id,
+              source: context.source ?? undefined,
+              scene: 'shortcut_consult',
+              shareCode: context.shareCode ?? undefined,
+            });
+          }
+        : undefined,
     },
     appointment: {
       label: '预约',

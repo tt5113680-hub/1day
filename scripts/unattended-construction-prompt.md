@@ -23,7 +23,7 @@ You are the **sole write executor** for this repository turn (Headless CLI, auth
 ## Scope (this turn only)
 
 - Branch: `hardening/COMMERCIAL-COMPLETION`
-- Work: **one** next incomplete TOOL-PHASE slice from TASK_QUEUE (prefer TOOL-PHASE-3 L2 module impression / industry templates)
+- Work: **one** next incomplete TOOL-PHASE slice from TASK_QUEUE (prefer TOOL-PHASE-4 DIY dimensions / AI interpret-only; no sales)
 - Writable root: `D:\ONEDAY_V3` only
 - Do not auto-sign owner acceptance; do not claim 全部商用
 - Do not revive consumer_orders / payment / native checkout

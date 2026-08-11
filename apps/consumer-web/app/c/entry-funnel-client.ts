@@ -171,3 +171,95 @@ export function mapPlatform(
     return value;
   return 'external';
 }
+
+const SEEN_KEY = 'od_funnel_modules_seen';
+
+function readSeen(): Set<string> {
+  if (typeof window === 'undefined') return new Set();
+  try {
+    const raw = window.sessionStorage.getItem(SEEN_KEY);
+    if (!raw) return new Set();
+    const parsed = JSON.parse(raw) as string[];
+    return new Set(Array.isArray(parsed) ? parsed : []);
+  } catch {
+    return new Set();
+  }
+}
+
+function writeSeen(seen: Set<string>) {
+  try {
+    window.sessionStorage.setItem(SEEN_KEY, JSON.stringify([...seen].slice(-200)));
+  } catch {
+    /* ignore quota */
+  }
+}
+
+/**
+ * L2: fire module_impression once per module key per browser session when ≥50% visible.
+ */
+export function observeModuleImpressions(options: {
+  tenantSlug: string;
+  surface: FunnelSurface;
+  root?: ParentNode | null;
+  targetStoreId?: string;
+  shareCode?: string | null;
+  source?: string;
+  scene?: string;
+}): () => void {
+  if (typeof window === 'undefined' || typeof IntersectionObserver === 'undefined')
+    return () => undefined;
+  const root = options.root ?? document;
+  const seen = readSeen();
+  const observer = new IntersectionObserver(
+    (entries) => {
+      const batch: FunnelEventInput[] = [];
+      for (const entry of entries) {
+        if (!entry.isIntersecting || entry.intersectionRatio < 0.5) continue;
+        const el = entry.target as HTMLElement;
+        const moduleKey = (el.getAttribute('data-module') || '').trim().slice(0, 80);
+        if (!moduleKey) continue;
+        const dedupe = `${options.tenantSlug}:${options.surface}:${moduleKey}:${options.targetStoreId ?? ''}`;
+        if (seen.has(dedupe)) continue;
+        seen.add(dedupe);
+        batch.push({
+          eventCode: 'module_impression',
+          surface: options.surface,
+          moduleKey,
+          targetStoreId: options.targetStoreId,
+          shareCode: options.shareCode,
+          source: options.source,
+          scene: options.scene ?? 'module_visible',
+        });
+        observer.unobserve(el);
+      }
+      if (batch.length) {
+        writeSeen(seen);
+        void trackFunnelEvents(options.tenantSlug, batch);
+      }
+    },
+    { threshold: [0.5] },
+  );
+
+  const watch = () => {
+    const nodes = root.querySelectorAll?.('[data-module]');
+    if (!nodes) return;
+    for (const node of nodes) {
+      const moduleKey = (node.getAttribute('data-module') || '').trim();
+      if (!moduleKey) continue;
+      const dedupe = `${options.tenantSlug}:${options.surface}:${moduleKey}:${options.targetStoreId ?? ''}`;
+      if (seen.has(dedupe)) continue;
+      observer.observe(node);
+    }
+  };
+  watch();
+  const mo =
+    typeof MutationObserver !== 'undefined'
+      ? new MutationObserver(() => watch())
+      : null;
+  if (mo && root instanceof Node) mo.observe(root, { childList: true, subtree: true });
+
+  return () => {
+    observer.disconnect();
+    mo?.disconnect();
+  };
+}
