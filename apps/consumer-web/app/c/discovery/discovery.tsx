@@ -286,9 +286,12 @@ export default function DiscoveryPage({ data }: { data: Discovery }) {
                 <p>商家联盟单独页：附近商圈 / 进圈找店。</p>
               </div>
               <a className={styles.badge} href={`/c/circles?tenant=${tenantQ}`}>
-                进入商圈页
+                进入商圈页 ›
               </a>
             </div>
+            <p className={styles.sectionHint}>
+              互助引流只计观看/访问/跳转；成交在第三方完成。
+            </p>
             <div className={styles.collection}>
               {data.circles.length ? (
                 data.circles.map((item) => (

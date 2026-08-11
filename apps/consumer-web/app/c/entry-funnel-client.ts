@@ -103,6 +103,7 @@ export function bindPageFunnel(options: {
   surface: FunnelSurface;
   moduleKey?: string;
   targetStoreId?: string;
+  circleId?: string;
   shareCode?: string | null;
   source?: string;
   scene?: string;
@@ -115,6 +116,7 @@ export function bindPageFunnel(options: {
     surface: options.surface,
     moduleKey: options.moduleKey,
     targetStoreId: options.targetStoreId,
+    circleId: options.circleId,
     shareCode: options.shareCode,
     source: options.source,
     scene: options.scene,
@@ -134,6 +136,7 @@ export function bindPageFunnel(options: {
         surface: options.surface,
         moduleKey: options.moduleKey,
         targetStoreId: options.targetStoreId,
+        circleId: options.circleId,
         shareCode: options.shareCode,
         source: options.source,
         scene: options.scene,
@@ -144,6 +147,7 @@ export function bindPageFunnel(options: {
         surface: options.surface,
         moduleKey: options.moduleKey,
         targetStoreId: options.targetStoreId,
+        circleId: options.circleId,
         shareCode: options.shareCode,
         source: options.source,
         scene: options.scene,

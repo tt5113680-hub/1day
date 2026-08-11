@@ -69,11 +69,101 @@
 }
 
 .intro {
-  margin: 0 0 16px;
+  margin: 0 0 10px;
+}
+
+.disclaimer {
+  margin: 0 0 14px;
+  border-left: 3px solid color-mix(in srgb, var(--od-brand-600) 55%, transparent);
+  padding-left: 10px;
+  color: var(--od-text-muted);
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.5;
 }
 
 .notice {
   margin: 0 0 12px;
+}
+
+.chips {
+  display: flex;
+  flex-wrap: nowrap;
+  gap: 8px;
+  overflow-x: auto;
+  padding: 2px 0 12px;
+  -webkit-overflow-scrolling: touch;
+}
+
+.chip,
+.chipActive,
+.sort,
+.sortActive {
+  flex: 0 0 auto;
+  min-height: 34px;
+  border: 1px solid var(--od-border);
+  border-radius: 999px;
+  padding: 0 12px;
+  color: var(--od-ink);
+  background: var(--od-surface);
+  font: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.chipActive,
+.sortActive {
+  border-color: color-mix(in srgb, var(--od-brand-600) 45%, var(--od-border));
+  color: var(--od-brand-900);
+  background: var(--od-brand-50);
+}
+
+.sortRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.section {
+  margin-bottom: 18px;
+}
+
+.sectionTitle {
+  margin: 0 0 10px;
+  font-size: 15px;
+  font-weight: 800;
+}
+
+.roleChip,
+.roleChipMuted {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 999px;
+  padding: 2px 8px;
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.roleChip {
+  color: var(--od-brand-900);
+  background: var(--od-brand-50);
+}
+
+.roleChipMuted {
+  color: var(--od-text-muted);
+  background: color-mix(in srgb, var(--od-surface) 70%, var(--od-border));
+}
+
+.heroBadges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.merchantName {
+  color: var(--od-ink);
 }
 
 .location {

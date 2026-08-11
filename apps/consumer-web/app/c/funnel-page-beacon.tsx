@@ -9,6 +9,7 @@ export function FunnelPageBeacon(props: {
   surface: FunnelSurface;
   moduleKey?: string;
   targetStoreId?: string;
+  circleId?: string;
   shareCode?: string | null;
   source?: string;
   scene?: string;
@@ -20,6 +21,7 @@ export function FunnelPageBeacon(props: {
         surface: props.surface,
         moduleKey: props.moduleKey,
         targetStoreId: props.targetStoreId,
+        circleId: props.circleId,
         shareCode: props.shareCode,
         source: props.source,
         scene: props.scene,
@@ -29,6 +31,7 @@ export function FunnelPageBeacon(props: {
       props.surface,
       props.moduleKey,
       props.targetStoreId,
+      props.circleId,
       props.shareCode,
       props.source,
       props.scene,

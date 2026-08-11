@@ -43,6 +43,8 @@ export function CircleDetailState({ kind }: { kind: 'forbidden' | 'error' }) {
 
 export default function CircleDetail({ data }: { data: CircleDetailData }) {
   const listHref = `/c/circles?tenant=${encodeURIComponent(data.tenant.slug)}`;
+  const withStore = data.merchants.filter((m) => m.entryUrl).length;
+
   return (
     <MobileShell>
       <FunnelPageBeacon
@@ -50,6 +52,7 @@ export default function CircleDetail({ data }: { data: CircleDetailData }) {
         surface="circle"
         moduleKey="circle_detail"
         scene="circle_detail"
+        circleId={data.circle.id}
       />
       <main className={styles.page}>
         <div className={styles.shell}>
@@ -60,13 +63,30 @@ export default function CircleDetail({ data }: { data: CircleDetailData }) {
             <p className={styles.eyebrow}>
               {data.circle.owner.name} · {data.circle.industryTag ?? '商家联盟'}
             </p>
+            <div className={styles.heroBadges}>
+              {data.circle.ownedByViewer ? (
+                <span className={styles.roleChip}>本店经营</span>
+              ) : (
+                <span className={styles.roleChipMuted}>消费者视角</span>
+              )}
+              {data.circle.publicVisible ? (
+                <span className={styles.roleChipMuted}>公开引流</span>
+              ) : null}
+            </div>
             <h1 className={styles.title}>{data.circle.name}</h1>
             <p className={styles.intro}>
               {data.circle.description ?? '圈内商家互助引流；进店后可跳转第三方平台。'}
             </p>
             {data.circle.address ? <p className={styles.meta}>{data.circle.address}</p> : null}
+            <p className={styles.meta}>
+              {data.merchants.length} 家入驻 · {withStore} 家可进店
+            </p>
+            <p className={styles.disclaimer} role="note">
+              进店后的团购/收银跳转由第三方完成；本页只统计入口痕迹。
+            </p>
           </section>
           <section className={styles.merchants} aria-label="圈内商家">
+            <h2 className={styles.sectionTitle}>圈内商家</h2>
             {data.merchants.length ? (
               data.merchants.map((merchant) =>
                 merchant.entryUrl ? (
@@ -85,12 +105,12 @@ export default function CircleDetail({ data }: { data: CircleDetailData }) {
                       })
                     }
                   >
-                    {merchant.name}
+                    <span className={styles.merchantName}>{merchant.name}</span>
                     <span>进店 ›</span>
                   </a>
                 ) : (
                   <div className={styles.merchant} key={merchant.id}>
-                    {merchant.name}
+                    <span className={styles.merchantName}>{merchant.name}</span>
                     <span>暂无店页</span>
                   </div>
                 ),

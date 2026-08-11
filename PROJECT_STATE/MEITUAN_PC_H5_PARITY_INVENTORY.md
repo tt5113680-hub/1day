@@ -84,7 +84,7 @@
 | MH5-10 | 会员 | `/c/stores/[id]/membership` | PARTIAL | |
 | MH5-11 | 分享落地 | `/c/share/[code]`, `/c/one-code/[code]` | PARTIAL | |
 | MH5-12 | 服务 / 咨询 hand-off | `/c/services/[id]`, `/c/actions/[id]` | PARITY (首刀) | 确认页平台预览+诚实免责+jump_confirm；见 WINF3 |
-| MH5-13 | 美团 App 首页型 → **商圈联盟首页** | 商圈投影 / discovery circles | PARTIAL | 商圈经理+互助推流+引流指标（§C） |
+| MH5-13 | 美团 App 首页型 → **商圈联盟首页** | `/c/circles`, discovery | PARITY (首刀) | 行业 chips+排序+双身份；见 WINF5 |
 
 ---
 
@@ -138,4 +138,4 @@
 
 **W6 省市区代理（MP-01~03）PASS. W∞-1（省市区代理深层运营：结算/配额/审批, MP-03 深层）PASS** `evidence/G1-MEITUAN-PARITY/WINF/ACCEPTANCE.md`. **W∞-2（Consumer H5 搜索, MH5-02）PASS** `evidence/G1-MEITUAN-PARITY/WINF2/ACCEPTANCE.md`.
 
-**W∞-3（外链 hand-off 确认 densify, MH5-12）PASS** `evidence/G1-MEITUAN-PARITY/WINF3/ACCEPTANCE.md`。**W∞-4（Management attribution 深页）PASS** `evidence/G1-MEITUAN-PARITY/WINF4/ACCEPTANCE.md`。**下一刀 W∞-5：** 代理细部 / 体验对标 / 商圈 C 端 densify（仍不做本平台下单）。MH5-07/08 保持外链 hand-off GAP。
+**W∞-3（外链 hand-off 确认 densify, MH5-12）PASS** `evidence/G1-MEITUAN-PARITY/WINF3/ACCEPTANCE.md`。**W∞-4（Management attribution 深页）PASS** `evidence/G1-MEITUAN-PARITY/WINF4/ACCEPTANCE.md`。**W∞-5（商圈 C 端 densify, MH5-13）PASS** `evidence/G1-MEITUAN-PARITY/WINF5/ACCEPTANCE.md`。**下一刀 W∞-6：** 代理细部 / 体验对标（仍不做本平台下单）。MH5-07/08 保持外链 hand-off GAP。
