@@ -98,7 +98,8 @@
 - [x] **G1-W∞-6** `G1-R-CHANNEL-AGENT-DASH` PASS — `/ch/dashboard` filters + agent cross-link. See evidence/G1-MEITUAN-PARITY/WINF6/ACCEPTANCE.md.
 - [x] **G1-W∞-7** `G1-R-SHARE-LANDING` PASS — `/c/share/[code]` densify. See evidence/G1-MEITUAN-PARITY/WINF7/ACCEPTANCE.md.
 - [x] **G1-W∞-8** `G1-R-EMPLOYEE-SHARE` PASS — `/e/share` tool-path densify. See evidence/G1-MEITUAN-PARITY/WINF8/ACCEPTANCE.md.
-- [ ] **NEXT:** W∞-9 tool-path gaps（体验对标细部）— **不做** 本平台下单. Owner G1 re-test when ready.
+- [x] **G1-W∞-9** `G1-R-CONSUMER-ENTRY` PASS — `/c/entry` densify. See evidence/G1-MEITUAN-PARITY/WINF9/ACCEPTANCE.md.
+- [ ] **NEXT:** W∞-10 tool-path gaps（体验对标细部）— **不做** 本平台下单. Owner G1 re-test when ready.
 - [x] **G1-W∞-2** `G1-R-MEITUAN-H5-SEARCH` PASS (首刀) — Consumer H5 搜索（MH5-02）: `ConsumerDiscoveryService.search` + `GET /api/v1/consumer/search?tenant&q`（租户 fail-closed 按名 ILIKE 检索已发布商户，返回 local_pilot 评分/月售/距离 + 进店深链）+ `/c/search` 美团 App 搜索面 + `/c/discovery` 的搜索壳升级为可点击搜索入口。typecheck 20/20、build 20/20（consumer 路由新增 `/c/search`）、page-c-consumer-search L2 PASS、page-c-002 回归 PASS、resolve-consumer-tabs 3/3。见 `evidence/G1-MEITUAN-PARITY/WINF2/ACCEPTANCE.md`。
 - [ ] G1 OWNER GATE — owner signs only after tool-identity + funnel waves pass re-test (`PRODUCT_OWNER_UI_ACCEPTANCE.md`). P1-C still blocked on lifting G + cloud inventory.
 - [ ] HUMAN-PILOT-HANDOFF / product-owner UI acceptance — local sandbox refreshed through migration `054` + consult CTA bindings + walkthrough shots (Playwright 4/4); **human sign-off still required**; not auto-claimed as 全部商用. Phase-1 P1-C blocked until owner lifts G (deploy templates in `infra/deploy/`).

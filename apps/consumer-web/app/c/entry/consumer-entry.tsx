@@ -65,16 +65,18 @@ const iconFor = (action: ConsumerAction) =>
     ? '团'
     : action.platform === 'douyin'
       ? '抖'
-      : action.name.includes('咨询')
-        ? '问'
-        : '享';
+      : action.platform === 'saabei'
+        ? '扫'
+        : action.name.includes('咨询')
+          ? '问'
+          : '享';
 export default function ConsumerEntry({ entry }: { entry: Entry }) {
   const hero = object(entry.modules.find((item) => item.module_type === 'hero')?.config);
   const content = entry.modules
     .filter((item) => item.module_type === 'content')
     .flatMap((item) => cards(object(item.config).cards));
   const title = text(hero.title) || entry.tenant.name,
-    summary = text(hero.summary) || '查看商家已发布的服务、权益与门店信息。';
+    summary = text(hero.summary) || '统一入口：发现门店、商圈与第三方服务；成交在外部平台完成。';
   const entryUrl = `/c/entry?tenant=${encodeURIComponent(entry.tenant.slug)}`;
   const actionUrl = (action: ConsumerAction) =>
     `/c/actions/${action.id}?tenant=${encodeURIComponent(entry.tenant.slug)}&source=consumer:entry&scene=entry_shortcut&returnTo=${encodeURIComponent(entryUrl)}`;
@@ -95,13 +97,15 @@ export default function ConsumerEntry({ entry }: { entry: Entry }) {
               <span className={styles.brandMark}>O</span>
               {entry.tenant.name}
             </span>
-            <span className={styles.status}>已为你匹配</span>
+            <span className={styles.status}>推广员入口</span>
           </div>
           <div className={styles.heroCopy}>
-            <p className={styles.eyebrow}>发现身边好服务</p>
+            <p className={styles.eyebrow}>统一入口 · 统一分流</p>
             <h1>{title}</h1>
             <p>{summary}</p>
-            <span className={styles.heroBadge}>门店信息与经营入口以商家实际配置为准</span>
+            <span className={styles.heroBadge}>
+              门店信息与外链以商家配置为准；确认跳转后只统计至出站
+            </span>
           </div>
         </section>
         <div className={styles.content}>
@@ -118,7 +122,18 @@ export default function ConsumerEntry({ entry }: { entry: Entry }) {
                 <span className={styles.icon}>店</span>
                 <span>
                   <strong>发现门店</strong>
-                  <span>查看附近门店与服务</span>
+                  <span>附近与公开引流商家</span>
+                </span>
+                <b className={styles.arrow}>›</b>
+              </a>
+              <a
+                className={styles.recommendation}
+                href={`/c/circles?tenant=${encodeURIComponent(entry.tenant.slug)}`}
+              >
+                <span className={styles.icon}>圈</span>
+                <span>
+                  <strong>商圈联盟</strong>
+                  <span>进圈找店 · 互助引流</span>
                 </span>
                 <b className={styles.arrow}>›</b>
               </a>
@@ -129,10 +144,12 @@ export default function ConsumerEntry({ entry }: { entry: Entry }) {
                     <strong>{action.name}</strong>
                     <span>
                       {action.platform === 'meituan'
-                        ? '团购与平台入口'
+                        ? '美团入口（经确认页跳转）'
                         : action.platform === 'douyin'
-                          ? '抖音平台入口'
-                          : '打开商家已配置服务'}
+                          ? '抖音入口（经确认页跳转）'
+                          : action.platform === 'saabei'
+                            ? '扫呗入口（经确认页跳转）'
+                            : '打开商家已配置服务（经确认页）'}
                     </span>
                   </span>
                   <b className={styles.arrow}>›</b>
@@ -160,7 +177,7 @@ export default function ConsumerEntry({ entry }: { entry: Entry }) {
           <section className={styles.section} aria-labelledby="actions">
             <div className={styles.sectionHead}>
               <h2 id="actions">立即行动</h2>
-              <p className={styles.sectionHint}>确认后记录行为，再前往对应服务</p>
+              <p className={styles.sectionHint}>先经确认页记录跳转，再前往第三方</p>
             </div>
             <div className={styles.actions}>
               {primary ? (
