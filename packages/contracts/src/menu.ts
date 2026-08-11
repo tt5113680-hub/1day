@@ -133,7 +133,7 @@ export const MANAGEMENT_MENU_CATALOG: MenuCatalogItem[] = [
   {
     key: 'reviews',
     href: '/m/reviews',
-    label: '评价管理',
+    label: '评价档案',
     group: 'customer',
     requireAny: ['tenant.manage', 'tenant.read'],
   },

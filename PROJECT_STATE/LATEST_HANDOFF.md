@@ -10,11 +10,11 @@
 
 - branch: `hardening/COMMERCIAL-COMPLETION`
 - product_bar: **团购推广员工具** — 统一入口/整合/工作流；不碰钱·销售·管理。痕迹 **L0+L1+L2 同批**。
-- last_verified: **2026-08-11** — TOOL-PHASE-0..6 + G1-W∞-3..22 PASS.
+- last_verified: **2026-08-11** — TOOL-PHASE-0..6 + G1-W∞-3..23 PASS.
 - status: Tool-identity construction active. Owner 已授权全自动连续施工.
-- blocker: none outbound — push of prior W∞-20/21 retried and succeeded at 2026-08-11 turn start; origin synced.
-- progress: Next engineering: **W∞-23**（体验对标细部·工具身份收尾；不做本平台下单）. Owner G1 re-test when ready.
-- note: Hub http://127.0.0.1:3299/ · Management/Platform 工作台工具身份（menu 六项改挂入口/痕迹/工作流） · Consumer 第三方命名 美团/抖音/扫呗 一致 · W∞-22 committed local (订单痕迹语裁定档 on /m/orders) pending push this turn. Background daemon touched `evidence/MATRIX-GAP-WAVE-4/recovery-report.json` during the turn; reverted, not committed.
+- blocker: none outbound.
+- progress: Next engineering: **W∞-24**（体验对标细部·工具身份收尾；不做本平台下单）. Owner G1 re-test when ready.
+- note: Hub http://127.0.0.1:3299/ · Management/Platform 工作台工具身份（menu 六项改挂入口/痕迹/工作流） · Consumer 第三方命名 美团/抖音/扫呗 一致 · W∞-23 committed local (入口/档案页标题对齐: /m/offers 商品/套餐入口、/m/stores 门店入口、/m/marketing 营销活动、/m/reviews 评价档案 + menu label) pushed this turn.
 
 ### Owner — next actions
 

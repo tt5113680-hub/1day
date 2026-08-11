@@ -42,13 +42,13 @@ export default function CommerceReviewsPage() {
   if (state === 'loading')
     return (
       <main className={styles.centered}>
-        <AppStatePanel kind="loading" title="正在加载评价管理" />
+        <AppStatePanel kind="loading" title="正在加载评价档案" />
       </main>
     );
   if (state === 'forbidden')
     return (
       <main className={styles.centered}>
-        <AppStatePanel kind="forbidden" title="无权查看评价管理" />
+        <AppStatePanel kind="forbidden" title="无权查看评价档案" />
       </main>
     );
   if (state === 'error')
@@ -67,7 +67,7 @@ export default function CommerceReviewsPage() {
     <main className={styles.page}>
       <AdminPageHeader
         eyebrow="推广员工具 · 评价档案"
-        title="评价管理"
+        title="评价档案"
         description="本地试点评价记录与平均分（租户隔离）。来源如实标注；不接第三方评价流，不伪造评分。"
         actions={
           <Button tone="secondary" onClick={() => void load()}>

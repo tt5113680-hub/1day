@@ -170,7 +170,7 @@ export default function StoresPage() {
       <main className={styles.centered}>
         <AppStatePanel
           kind="loading"
-          title="正在汇总门店经营数据"
+          title="正在加载门店入口"
           description="正在连接门店、员工与外链配置。"
         />
       </main>
@@ -180,7 +180,7 @@ export default function StoresPage() {
       <main className={styles.centered}>
         <AppStatePanel
           kind="forbidden"
-          title="无权查看门店管理"
+          title="无权访问门店入口"
           description="请使用具备经营管理权限的账号登录。"
         />
       </main>
@@ -200,7 +200,7 @@ export default function StoresPage() {
     <main className={styles.page}>
       <AdminPageHeader
         eyebrow="推广员工具 · 门店入口"
-        title="门店管理"
+        title="门店入口"
         description="维护门店营业状态、资料、统一入口与负责人；第三方入口仅记录跳转，不代替平台下单/支付，也不含第三方订单履约。"
         actions={
           <Button tone="secondary" onClick={() => void load()}>

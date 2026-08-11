@@ -29,7 +29,7 @@ test('manager compares store signals at desktop width', async ({ page }) => {
 });
 test('store management recovers without a session', async ({ page }) => {
   await page.goto('/m/stores');
-  await expect(page.getByRole('heading', { name: '无权查看门店管理' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: '无权访问门店入口' })).toBeVisible();
   await page.screenshot({
     path: 'evidence/PAGE-M-007/management-stores-forbidden.png',
     fullPage: true,

@@ -60,13 +60,13 @@ export default function CommerceMarketingPage() {
   if (state === 'loading')
     return (
       <main className={styles.centered}>
-        <AppStatePanel kind="loading" title="正在加载营销中心" />
+        <AppStatePanel kind="loading" title="正在加载营销活动" />
       </main>
     );
   if (state === 'forbidden')
     return (
       <main className={styles.centered}>
-        <AppStatePanel kind="forbidden" title="无权查看营销中心" />
+        <AppStatePanel kind="forbidden" title="无权查看营销活动" />
       </main>
     );
   if (state === 'error')
@@ -84,7 +84,7 @@ export default function CommerceMarketingPage() {
     <main className={styles.page}>
       <AdminPageHeader
         eyebrow="推广员工具 · 营销档案"
-        title="营销中心"
+        title="营销活动"
         description="本地营销活动档案（券/活动/内容窗口）。投放渠道如实标注；不宣称已投第三方渠道，不含支付金额。"
         actions={
           <Button tone="secondary" onClick={() => void load()}>

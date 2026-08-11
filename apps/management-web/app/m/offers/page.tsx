@@ -146,13 +146,13 @@ export default function OffersPage() {
   if (state === 'loading')
     return (
       <main className={styles.centered}>
-        <AppStatePanel kind="loading" title="正在加载商品管理" />
+        <AppStatePanel kind="loading" title="正在加载商品/套餐入口" />
       </main>
     );
   if (state === 'forbidden')
     return (
       <main className={styles.centered}>
-        <AppStatePanel kind="forbidden" title="无权进入商品管理" />
+        <AppStatePanel kind="forbidden" title="无权访问商品/套餐入口" />
       </main>
     );
   if (state === 'error')
@@ -170,7 +170,7 @@ export default function OffersPage() {
     <main className={styles.page}>
       <AdminPageHeader
         eyebrow="推广员工具 · 商品/套餐入口"
-        title="商品管理"
+        title="商品/套餐入口"
         description="维护服务/套餐真源与受控平台价格入口，供统一入口展示与比价；价格由商户登记，不宣称第三方实时同步，也不在此售卖下单。"
         actions={
           <Button tone="secondary" onClick={() => void load()}>
