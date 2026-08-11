@@ -10,10 +10,10 @@
 
 - branch: `hardening/COMMERCIAL-COMPLETION`
 - product_bar: **商用前提 = 四端完整对标美团成熟场景**（消费者/员工/管理/平台）；**唯一例外** `/m/workflows`。团购推广员工具身份 + L0+L1+L2；不碰钱·销售·本平台下单。
-- last_verified: **2026-08-12** — W∞-45 PASS (Management 订单·评价·营销 真实数据深页密度 MPC-04/05/07：`/m/orders` 状态/门店/来源分布 + `/m/reviews` 评分 5★~1★/门店分布 + `/m/marketing` 状态/类型分布，全部由既有 source=local 档案行推导，禁止假 BI.
+- last_verified: **2026-08-12** — W∞-46 PASS (Management 顾客·会员 真实数据深页密度 MPC-06/08：`/m/customers` 分层/归属/标签分布 + `/m/memberships` 门店/入会时间分布，全部由既有 source=local 档案行推导，禁止假 BI.
 - status: Owner 重申完整对标为商用前提（2026-08-11 21:47）。工程继续视觉+IA 完整对标 densify（非仅文案）。全权委托 agent 连续施工。
 - blocker: **none** — `BLOCKED_REPORT` marked RESOLVED 2026-08-12.
-- progress: Next: **W∞-46** 续 Management MPC 深度 densify（W∞-44 经营分析、W∞-45 订单/评价/营销真实数据深页已收；可续顾客/会员等其他真实数据面或平台/员工/商圈缺口）。
+- progress: Next: **W∞-47** 续 Management MPC 深度 densify（W∞-44 经营分析、W∞-45 订单/评价/营销深页、W∞-46 顾客/会员深页已收；续平台/员工/商圈或管理剩余真实数据面缺口）。
 - note: Hub http://127.0.0.1:3299/ · **健康排查：每 6 小时** `pnpm unattended:health`（计划任务 `ONEDAY-V3-Unattended-Health-6h`）；BLOCKED/停摆会写 `logs/unattended/health-latest.json`。daemon 与 IDE 勿并行写同分支。
 
 ### Owner — next actions

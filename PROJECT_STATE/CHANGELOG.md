@@ -1,5 +1,15 @@
 # CHANGELOG
 
+## 2026-08-12 - G1-W∞-46 Management 顾客·会员 真实数据深页密度 densify（MPC-06/08）PASS
+
+- 承接 W∞-45（订单·评价·营销 深页密度），把其余两个真实数据档案面补上「深页密度」(美团商家端成熟场景分布洞察)，全部由已抓取的真实行现场推导，禁止假 BI。
+- `/m/customers`(客户跟进 MPC-06)：新增白卡分布面板 `aria-label="客户跟进分布"`——分层分布（活跃/复购/沉睡，按 segment）、归属分布（按 owner name）、标签分布（跨客户标签频次），宽度百分比 `b.value/customers.length` 由真实行推导，空数据「暂无记录/暂无标签」。分层标签随筛选下拉一致（活跃/复购/沉睡）。
+- `/m/memberships`(会员中心 MPC-08)：新增白卡分布面板 `aria-label="会员分布"`——门店分布（按 store_name，未绑定门店兜底）、入会时间分布（按 joined_at 年月升序），宽度百分比 `b.value/enrollments.length` 由真实行推导，空数据「暂无记录」。
+- 两页各自 `page.module.css` 新增 `.panel/.panelBlock/.bars/.barRow/.barTrack/.barFill/.barValue/.barLabel/.barEmpty` 灰底白卡 + 黄渐变色条（线性 `#ffd100→#f0a500`），≤900px 单列堆叠（与 W∞-45 共享视觉语言）。
+- 诚实边界全保留：全部指标派生自既有真实行（source=local），不接美团实时、不伪造第三方评分/成交、不包含本平台收款、非本平台下单；工具身份眉标 + loading/forbidden/error/empty 全状态 + e2e hooks + 实名授权跟进/归属审批/member_benefit_ledger 时间线全继承。无 schema/DB/API，不复活 consumer_orders / 本平台下单/收单。
+- Gates: g1-winf46 5/5；`g1-winf*.test.mjs` 136/136；management typecheck PASS；`pnpm build` 20/20；单测 47 passed（2 个 pre-existing token 失败照旧）；eslint + prettier clean。
+- Evidence: `evidence/G1-MEITUAN-PARITY/WINF46/ACCEPTANCE.md`.
+
 ## 2026-08-12 - G1-W∞-45 Management 订单·评价·营销 真实数据深页密度 densify（MPC-04/05/07）PASS
 
 - 承接 W∞-42(静态概况+行列表) 与 W∞-44(数据/经营分析)，三页补上「真实数据深页密度」(美团商家端成熟场景分布洞察)，全部由已抓取的真实档案行现场推导，禁止假 BI。

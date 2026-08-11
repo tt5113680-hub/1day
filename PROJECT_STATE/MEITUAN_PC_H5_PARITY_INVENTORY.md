@@ -47,9 +47,9 @@
 | MPC-03 | 商品管理 | `/m/offers` | PARTIAL | W∞-19/23 工具身份；**W∞-39** 视觉/IA densify（黄顶栏+灰底白卡）；toward PARITY；见 WINF39 |
 | MPC-04 | 订单中心 | — | PARTIAL | 只读档案/痕迹（`/m/orders`）+ 导航「订单痕迹」（W∞-21/22）；**W∞-42** 视觉 densify（黄顶栏+灰底白卡+heroCard+概况条+row 列表）；**W∞-45** 真实数据深页分布（状态/门店/来源，source=local 档案行推导，禁止假 BI）；toward PARITY；不做本平台成交；见 WINF42/WINF45 |
 | MPC-05 | 评价管理 | `/m/reviews` | PARTIAL | 诚实档案/答复痕迹；W∞-23 导航+页头 `评价管理→评价档案`；**W∞-42** 视觉 densify（黄顶栏+灰底白卡+heroCard+概况条+row 列表）；**W∞-45** 真实数据深页分布（评分 5★~1★/门店，source=local 推导，禁止假 BI）；toward PARITY；不接第三方评价流；见 WINF42/WINF45 |
-| MPC-06 | 顾客 / CRM | `/m/customers` | PARTIAL | W∞-24 工具身份收尾：`客户资产/驱动每次经营动作/经营管理权限` → `客户跟进`（eyebrow/title/状态/back-link/aria）；保留实名授权跟进/来源分层/归属与导出审批；**W∞-40** 视觉/IA densify（`/m/customers` + `/m/customers/[id]` 黄顶栏+灰底白卡+heroCard+白卡面板）；toward PARITY；见 WINF40 |
+| MPC-06 | 顾客 / CRM | `/m/customers` | PARTIAL | W∞-24 工具身份收尾：`客户资产/驱动每次经营动作/经营管理权限` → `客户跟进`（eyebrow/title/状态/back-link/aria）；保留实名授权跟进/来源分层/归属与导出审批；**W∞-40** 视觉/IA densify（`/m/customers` + `/m/customers/[id]` 黄顶栏+灰底白卡+heroCard+白卡面板）；**W∞-46** 真实数据深页分布（分层/归属/标签，source=local 档案行推导，禁止假 BI）；toward PARITY；见 WINF40/WINF46 |
 | MPC-07 | 营销中心（券/活动） | `/m/marketing` | PARTIAL | 本地营销活动档案；W∞-23 页头 `营销中心→营销活动`（对齐导航）；**W∞-42** 视觉 densify（黄顶栏+灰底白卡+heroCard+概况条+row 列表）；**W∞-45** 真实数据深页分布（状态/类型，source=local 推导，禁止假 BI）；toward PARITY；不接实时投放；见 WINF42/WINF45 |
-| MPC-08 | 会员 | `/m/memberships` | PARTIAL | W∞-25 眉标 `会员中心`；会员码核销/ledger 工具身份；**W∞-41** 视觉/IA densify（黄顶栏+灰底白卡+heroCard+概况条+白卡会员卡+ledger）；toward PARITY；见 WINF41 |
+| MPC-08 | 会员 | `/m/memberships` | PARTIAL | W∞-25 眉标 `会员中心`；会员码核销/ledger 工具身份；**W∞-41** 视觉/IA densify（黄顶栏+灰底白卡+heroCard+概况条+白卡会员卡+ledger）；**W∞-46** 真实数据深页分布（门店/入会时间，source=local 档案行推导，禁止假 BI）；toward PARITY；见 WINF41/WINF46 |
 | MPC-09 | 数据 / 经营分析 | `/m/analytics` | PARTIAL | W∞-44 美团经营日报密度（`GET /api/v1/management/entry-funnel/daily-report` + `/m/analytics`：今日指标+环比+逐日明细，真实 L0–L2，禁止假 BI）；`/m/entry-funnel` `/m/attribution` 互链；toward PARITY；见 WINF44 |
 | MPC-10 | 员工 / 权限 | `/m/organization-employees`, `/m/roles-permissions` | PARTIAL | W∞-25 眉标 `员工管理`/`角色权限`、`员工表现`/`操作审计`；**W∞-43** 视觉/IA densify（`/m/organization-employees` + `/m/roles-permissions` 黄顶栏+灰底白卡+heroCard+概况条+白卡面板）；toward PARITY；见 WINF43 |
 | MPC-11 | 店铺装修 / 展示 | `/m/page-builder`, `/m/content` | PARTIAL | **壳跟美团**；内容数据仍走 ONEDAY 发布链；W∞-25 眉标 `入口页装修`/`营销内容`（对齐导航）；**W∞-43** 视觉/IA densify（`/m/page-builder` + `/m/content` 黄顶栏+灰底白卡+heroCard+概况条+白卡面板）；toward PARITY；见 WINF43 |
@@ -142,7 +142,7 @@
 
 ## 6. 当前下一刀
 
-  > **当前：W∞-45 PASS** — Management 订单·评价·营销 真实数据深页密度（MPC-04/05/07：`/m/orders` 状态/门店/来源分布 + `/m/reviews` 评分 5★~1★/门店分布 + `/m/marketing` 状态/类型分布，全部由既有 `ManagementCommerce` source=local 档案行推导，禁止假 BI）。**下一刀：W∞-46 续 Management MPC 深度 densify**（W∞-44 经营分析、W∞-45 订单/评价/营销真实数据深页已收；可续顾客/会员等其他真实数据面或平台/员工/商圈缺口）。
+  > **当前：W∞-46 PASS** — Management 顾客·会员 真实数据深页密度（MPC-06/08：`/m/customers` 客户跟进 分层/归属/标签分布 + `/m/memberships` 会员中心 门店/入会时间分布，全部由既有 source=local 档案行推导，禁止假 BI）。**下一刀：W∞-47 续 Management MPC 深度 densify**（W∞-44 经营分析、W∞-45 订单/评价/营销深页、W∞-46 顾客/会员深页已收；续平台/员工/商圈或管理剩余真实数据面缺口）。
 
 **历史波（自 W24 起）累计——**
 

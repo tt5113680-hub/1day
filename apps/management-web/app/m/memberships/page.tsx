@@ -158,6 +158,28 @@ export default function MembershipsPage() {
       </main>
     );
 
+  const enrollments = data.enrollments;
+  const storeCounts = new Map<string, number>();
+  for (const item of enrollments) {
+    const store = item.store_name ?? '未绑定门店';
+    storeCounts.set(store, (storeCounts.get(store) ?? 0) + 1);
+  }
+  const byStore = [...storeCounts.entries()].map(([key, value]) => ({ key, value }));
+  const joinCounts = new Map<string, number>();
+  for (const item of enrollments) {
+    const month = new Date(item.joined_at).toLocaleDateString('zh-CN', {
+      year: 'numeric',
+      month: 'short',
+    });
+    joinCounts.set(month, (joinCounts.get(month) ?? 0) + 1);
+  }
+  const byJoin = [...joinCounts.entries()]
+    .sort((a, b) => (a[0] < b[0] ? -1 : 1))
+    .map(([key, value]) => ({
+      key,
+      value,
+    }));
+
   return (
     <main className={styles.page} data-testid="management-memberships">
       <header className={styles.topBar}>
@@ -189,6 +211,49 @@ export default function MembershipsPage() {
         <div>
           <strong>{data.benefits.length}</strong>
           <span>权益项</span>
+        </div>
+      </section>
+
+      <section className={styles.panel} aria-label="会员分布">
+        <div className={styles.panelBlock}>
+          <h2>门店分布</h2>
+          <ul className={styles.bars}>
+            {byStore.map((b) => (
+              <li key={b.key} className={styles.barRow}>
+                <span className={styles.barLabel}>{b.key}</span>
+                <span className={styles.barTrack}>
+                  <span
+                    className={styles.barFill}
+                    style={{
+                      width: `${enrollments.length ? (b.value / enrollments.length) * 100 : 0}%`,
+                    }}
+                  />
+                </span>
+                <span className={styles.barValue}>{b.value}</span>
+              </li>
+            ))}
+            {!enrollments.length && <li className={styles.barEmpty}>暂无记录</li>}
+          </ul>
+        </div>
+        <div className={styles.panelBlock}>
+          <h2>入会时间分布</h2>
+          <ul className={styles.bars}>
+            {byJoin.map((b) => (
+              <li key={b.key} className={styles.barRow}>
+                <span className={styles.barLabel}>{b.key}</span>
+                <span className={styles.barTrack}>
+                  <span
+                    className={styles.barFill}
+                    style={{
+                      width: `${enrollments.length ? (b.value / enrollments.length) * 100 : 0}%`,
+                    }}
+                  />
+                </span>
+                <span className={styles.barValue}>{b.value}</span>
+              </li>
+            ))}
+            {!enrollments.length && <li className={styles.barEmpty}>暂无记录</li>}
+          </ul>
         </div>
       </section>
 

@@ -23,6 +23,11 @@ const sessionApi = new SessionApiClient(api);
 const emptyFilters: Filters = { search: '', tag: '', segment: '', source: '' };
 const ownerNameCopy = (value: string) =>
   value === 'Store Manager' ? '门店负责人' : value === 'Follow-up Employee' ? '跟进员工' : value;
+const segmentCopy: Record<string, string> = {
+  active: '活跃',
+  repurchase: '复购',
+  dormant: '沉睡',
+};
 
 export default function ManagementCustomersPage() {
   const [state, setState] = useState<'loading' | 'ready' | 'forbidden' | 'error'>('loading');
@@ -83,6 +88,25 @@ export default function ManagementCustomersPage() {
     setApplied(filters);
     void load(filters);
   };
+
+  const segmentCounts = new Map<string, number>();
+  for (const c of customers) segmentCounts.set(c.segment, (segmentCounts.get(c.segment) ?? 0) + 1);
+  const bySegment = [...segmentCounts.entries()].map(([key, value]) => ({
+    key: segmentCopy[key] ?? key,
+    value,
+  }));
+  const ownerCounts = new Map<string, number>();
+  for (const c of customers)
+    ownerCounts.set(
+      ownerNameCopy(c.owner.name),
+      (ownerCounts.get(ownerNameCopy(c.owner.name)) ?? 0) + 1,
+    );
+  const byOwner = [...ownerCounts.entries()].map(([key, value]) => ({ key, value }));
+  const tagCounts = new Map<string, number>();
+  for (const c of customers) for (const t of c.tags) tagCounts.set(t, (tagCounts.get(t) ?? 0) + 1);
+  const byTag = [...tagCounts.entries()]
+    .sort((a, b) => b[1] - a[1])
+    .map(([key, value]) => ({ key, value }));
   const requestExport = async () => {
     setBusy('export');
     setNotice('');
@@ -178,6 +202,69 @@ export default function ManagementCustomersPage() {
         <p>
           基于已沉淀的来源、标签与归属筛选客户，组织实名授权跟进；导出与归属变更均保留审批和审计记录。
         </p>
+      </section>
+
+      <section className={styles.panel} aria-label="客户跟进分布">
+        <div className={styles.panelBlock}>
+          <h2>分层分布</h2>
+          <ul className={styles.bars}>
+            {bySegment.map((b) => (
+              <li key={b.key} className={styles.barRow}>
+                <span className={styles.barLabel}>{b.key}</span>
+                <span className={styles.barTrack}>
+                  <span
+                    className={styles.barFill}
+                    style={{
+                      width: `${customers.length ? (b.value / customers.length) * 100 : 0}%`,
+                    }}
+                  />
+                </span>
+                <span className={styles.barValue}>{b.value}</span>
+              </li>
+            ))}
+            {!customers.length && <li className={styles.barEmpty}>暂无记录</li>}
+          </ul>
+        </div>
+        <div className={styles.panelBlock}>
+          <h2>归属分布</h2>
+          <ul className={styles.bars}>
+            {byOwner.map((b) => (
+              <li key={b.key} className={styles.barRow}>
+                <span className={styles.barLabel}>{b.key}</span>
+                <span className={styles.barTrack}>
+                  <span
+                    className={styles.barFill}
+                    style={{
+                      width: `${customers.length ? (b.value / customers.length) * 100 : 0}%`,
+                    }}
+                  />
+                </span>
+                <span className={styles.barValue}>{b.value}</span>
+              </li>
+            ))}
+            {!customers.length && <li className={styles.barEmpty}>暂无记录</li>}
+          </ul>
+        </div>
+        <div className={styles.panelBlock}>
+          <h2>标签分布</h2>
+          <ul className={styles.bars}>
+            {byTag.map((b) => (
+              <li key={b.key} className={styles.barRow}>
+                <span className={styles.barLabel}>{b.key}</span>
+                <span className={styles.barTrack}>
+                  <span
+                    className={styles.barFill}
+                    style={{
+                      width: `${customers.length ? (b.value / customers.length) * 100 : 0}%`,
+                    }}
+                  />
+                </span>
+                <span className={styles.barValue}>{b.value}</span>
+              </li>
+            ))}
+            {!customers.length && <li className={styles.barEmpty}>暂无标签</li>}
+          </ul>
+        </div>
       </section>
 
       <section className={styles.filters} aria-label="客户筛选">
