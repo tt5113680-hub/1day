@@ -1,13 +1,6 @@
 'use client';
 import { SessionApiClient } from '@oneday/session-client';
-import {
-  AdminPageHeader,
-  AppStatePanel,
-  Button,
-  Card,
-  StatusBadge,
-  businessLabel,
-} from '@oneday/ui';
+import { AppStatePanel, Button, Card, StatusBadge, businessLabel } from '@oneday/ui';
 
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import styles from './page.module.css';
@@ -159,11 +152,55 @@ export default function AgentsPage() {
   const agentByRegion = useMemo(() => {
     const map: Record<string, Agent[]> = {};
     for (const agent of data.agents) {
-      // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
       (map[agent.regionId] ??= []).push(agent);
     }
     return map;
   }, [data.agents]);
+
+  const agentLevelCounts = useMemo(() => {
+    const counts = new Map<string, number>();
+    for (const agent of data.agents)
+      counts.set(levelLabel(agent.agentLevel), (counts.get(levelLabel(agent.agentLevel)) ?? 0) + 1);
+    return [...counts.entries()].map(([key, value]) => ({ key, value }));
+  }, [data.agents]);
+  const agentStatusCounts = useMemo(() => {
+    const counts = new Map<string, number>();
+    for (const agent of data.agents)
+      counts.set(
+        agentStatusLabel(agent.status),
+        (counts.get(agentStatusLabel(agent.status)) ?? 0) + 1,
+      );
+    return [...counts.entries()].map(([key, value]) => ({ key, value }));
+  }, [data.agents]);
+  const regionLevelCounts = useMemo(() => {
+    const counts = new Map<string, number>();
+    for (const region of data.regions)
+      counts.set(levelLabel(region.level), (counts.get(levelLabel(region.level)) ?? 0) + 1);
+    return [...counts.entries()].map(([key, value]) => ({ key, value }));
+  }, [data.regions]);
+  const settlementStatusCounts = useMemo(() => {
+    const counts = new Map<string, number>();
+    for (const settlement of data.settlements)
+      counts.set(
+        settlementStatusLabel(settlement.settlementStatus),
+        (counts.get(settlementStatusLabel(settlement.settlementStatus)) ?? 0) + 1,
+      );
+    return [...counts.entries()].map(([key, value]) => ({ key, value }));
+  }, [data.settlements]);
+  const approvalStatusCounts = useMemo(() => {
+    const counts = new Map<string, number>();
+    for (const approval of data.approvals)
+      counts.set(
+        approvalStatusLabel(approval.approvalStatus),
+        (counts.get(approvalStatusLabel(approval.approvalStatus)) ?? 0) + 1,
+      );
+    return [...counts.entries()].map(([key, value]) => ({ key, value }));
+  }, [data.approvals]);
+  const agentTotal = data.agents.length;
+  const regionTotal = data.regions.length;
+  const settlementTotal = data.settlements.length;
+  const approvalTotal = data.approvals.length;
+  const barWidth = (total: number, value: number) => (total ? `${(value / total) * 100}%` : '0%');
 
   const createRegion = async () => {
     setSaving(true);
@@ -179,7 +216,8 @@ export default function AgentsPage() {
       });
       if ([401, 403].includes(response.status)) return setState('forbidden');
       if (response.status === 409) return setNote('该区域编码已存在，请更换。');
-      if (response.status === 400) return setNote('请填写有效的区域信息（省级无需父级，市级/区县需选父级）。');
+      if (response.status === 400)
+        return setNote('请填写有效的区域信息（省级无需父级，市级/区县需选父级）。');
       if (!response.ok) throw Error();
       setNote('区域已建立，已纳入省市区代理树。');
       setRegionForm({ code: '', name: '', level: 'province', parentRegionId: '' });
@@ -256,11 +294,14 @@ export default function AgentsPage() {
     setSaving(true);
     setNote('');
     try {
-      const response = await sessionApi.request(`${api}/api/v1/platform/agents/${quotaAgentId}/quota`, {
-        method: 'POST',
-        headers: { 'content-type': 'application/json', 'x-request-id': crypto.randomUUID() },
-        body: JSON.stringify({ merchantQuota: Number(merchantQuota) }),
-      });
+      const response = await sessionApi.request(
+        `${api}/api/v1/platform/agents/${quotaAgentId}/quota`,
+        {
+          method: 'POST',
+          headers: { 'content-type': 'application/json', 'x-request-id': crypto.randomUUID() },
+          body: JSON.stringify({ merchantQuota: Number(merchantQuota) }),
+        },
+      );
       if ([401, 403].includes(response.status)) return setState('forbidden');
       if (response.status === 400) return setNote('配额需为不小于已用商户数的非负整数。');
       if (!response.ok) throw Error();
@@ -279,11 +320,14 @@ export default function AgentsPage() {
     setSaving(true);
     setNote('');
     try {
-      const response = await sessionApi.request(`${api}/api/v1/platform/agents/${settleAgentId}/settlements`, {
-        method: 'POST',
-        headers: { 'content-type': 'application/json', 'x-request-id': crypto.randomUUID() },
-        body: JSON.stringify({ periodCode, periodStart, periodEnd }),
-      });
+      const response = await sessionApi.request(
+        `${api}/api/v1/platform/agents/${settleAgentId}/settlements`,
+        {
+          method: 'POST',
+          headers: { 'content-type': 'application/json', 'x-request-id': crypto.randomUUID() },
+          body: JSON.stringify({ periodCode, periodStart, periodEnd }),
+        },
+      );
       if ([401, 403].includes(response.status)) return setState('forbidden');
       if (response.status === 409) return setNote('该结算期编码已存在。');
       if (response.status === 400) return setNote('请填写有效的结算期编码（大写字码）与起止日期。');
@@ -330,11 +374,14 @@ export default function AgentsPage() {
     setSaving(true);
     setNote('');
     try {
-      const response = await sessionApi.request(`${api}/api/v1/platform/agents/${approvalAgentId}/approvals`, {
-        method: 'POST',
-        headers: { 'content-type': 'application/json', 'x-request-id': crypto.randomUUID() },
-        body: JSON.stringify({ merchantTenantId: approvalMerchantTenantId }),
-      });
+      const response = await sessionApi.request(
+        `${api}/api/v1/platform/agents/${approvalAgentId}/approvals`,
+        {
+          method: 'POST',
+          headers: { 'content-type': 'application/json', 'x-request-id': crypto.randomUUID() },
+          body: JSON.stringify({ merchantTenantId: approvalMerchantTenantId }),
+        },
+      );
       if ([401, 403].includes(response.status)) return setState('forbidden');
       if (response.status === 409) return setNote('该商户在该代理商下已有审批记录。');
       if (response.status === 400) return setNote('商户不可用或选择无效。');
@@ -365,7 +412,9 @@ export default function AgentsPage() {
       if (response.status === 409) return setNote('该审批已处理，不能重复裁决。');
       if (response.status === 400) return setNote('裁决参数无效。');
       if (!response.ok) throw Error();
-      setNote(decision === 'approved' ? '已通过：商户自动入驻归属到该代理商。' : '已驳回该入驻申请。');
+      setNote(
+        decision === 'approved' ? '已通过：商户自动入驻归属到该代理商。' : '已驳回该入驻申请。',
+      );
       await load();
     } catch {
       setNote('审批裁决失败，请检查后重试。');
@@ -403,27 +452,149 @@ export default function AgentsPage() {
     );
 
   return (
-    <main className={styles.page}>
-      <AdminPageHeader
-        eyebrow="ONEDAY / 推广员工具 · 省市区代理"
-        title="代理树、商户归属与配额结算"
-        description="代理绑定省市区并承接商户开通归属。结算/配额是代理运营账，不是消费者成交；本地试点记录，未接美团实时代理数据。"
-        actions={
-          <>
-            <Button
-              tone="secondary"
-              onClick={() => {
-                window.location.href = '/ch/dashboard';
-              }}
-            >
-              渠道商户队列
-            </Button>
-            <Button tone="secondary" onClick={() => void load()}>
-              刷新
-            </Button>
-          </>
-        }
-      />
+    <main className={styles.page} data-testid="platform-agents">
+      <header className={styles.topBar}>
+        <span className={styles.topBarTitle}>推广员工具 · 省市区代理</span>
+        <span className={styles.topBarActions}>
+          <button
+            className={styles.topBarRefresh}
+            type="button"
+            onClick={() => {
+              window.location.href = '/ch/dashboard';
+            }}
+          >
+            渠道商户队列
+          </button>
+          <button className={styles.topBarRefresh} type="button" onClick={() => void load()}>
+            刷新
+          </button>
+        </span>
+      </header>
+
+      <section className={styles.heroCard} aria-label="省市区代理说明">
+        <h1>代理树、商户归属与配额结算</h1>
+        <p>
+          代理绑定省市区并承接商户开通归属。结算/配额是代理运营账，不是消费者成交；本地试点记录，未接美团实时代理数据。
+        </p>
+      </section>
+
+      <section className={styles.summaryStrip} aria-label="省市区代理概况">
+        <div>
+          <span>区域</span>
+          <strong>{data.regions.length}</strong>
+        </div>
+        <div>
+          <span>代理商</span>
+          <strong>{data.agents.length}</strong>
+        </div>
+        <div>
+          <span>归属商户</span>
+          <strong>{data.affiliations.length}</strong>
+        </div>
+        <div>
+          <span>待审批入驻</span>
+          <strong>{data.approvals.filter((a) => a.approvalStatus === 'pending').length}</strong>
+        </div>
+      </section>
+
+      <section className={styles.distribution} aria-label="代理运营分布">
+        <div className={styles.panelBlock}>
+          <h2>代理层级分布</h2>
+          <ul className={styles.bars}>
+            {agentLevelCounts.map((b) => (
+              <li key={b.key} className={styles.barRow}>
+                <span className={styles.barLabel}>{b.key}</span>
+                <span className={styles.barTrack}>
+                  <span
+                    className={styles.barFill}
+                    style={{ width: barWidth(agentTotal, b.value) }}
+                  />
+                </span>
+                <span className={styles.barValue}>{b.value}</span>
+              </li>
+            ))}
+            {!agentTotal && <li className={styles.barEmpty}>暂无记录</li>}
+          </ul>
+        </div>
+        <div className={styles.panelBlock}>
+          <h2>代理状态分布</h2>
+          <ul className={styles.bars}>
+            {agentStatusCounts.map((b) => (
+              <li key={b.key} className={styles.barRow}>
+                <span className={styles.barLabel}>{b.key}</span>
+                <span className={styles.barTrack}>
+                  <span
+                    className={styles.barFill}
+                    style={{ width: barWidth(agentTotal, b.value) }}
+                  />
+                </span>
+                <span className={styles.barValue}>{b.value}</span>
+              </li>
+            ))}
+            {!agentTotal && <li className={styles.barEmpty}>暂无记录</li>}
+          </ul>
+        </div>
+        <div className={styles.panelBlock}>
+          <h2>区域层级分布</h2>
+          <ul className={styles.bars}>
+            {regionLevelCounts.map((b) => (
+              <li key={b.key} className={styles.barRow}>
+                <span className={styles.barLabel}>{b.key}</span>
+                <span className={styles.barTrack}>
+                  <span
+                    className={styles.barFill}
+                    style={{ width: barWidth(regionTotal, b.value) }}
+                  />
+                </span>
+                <span className={styles.barValue}>{b.value}</span>
+              </li>
+            ))}
+            {!regionTotal && <li className={styles.barEmpty}>暂无记录</li>}
+          </ul>
+        </div>
+        <div className={styles.panelBlock}>
+          <h2>结算状态分布</h2>
+          <ul className={styles.bars}>
+            {settlementStatusCounts.map((b) => (
+              <li key={b.key} className={styles.barRow}>
+                <span className={styles.barLabel}>{b.key}</span>
+                <span className={styles.barTrack}>
+                  <span
+                    className={styles.barFill}
+                    style={{ width: barWidth(settlementTotal, b.value) }}
+                  />
+                </span>
+                <span className={styles.barValue}>{b.value}</span>
+              </li>
+            ))}
+            {!settlementTotal && <li className={styles.barEmpty}>暂无记录</li>}
+          </ul>
+        </div>
+        <div className={styles.panelBlock}>
+          <h2>入驻审批状态分布</h2>
+          <ul className={styles.bars}>
+            {approvalStatusCounts.map((b) => (
+              <li key={b.key} className={styles.barRow}>
+                <span className={styles.barLabel}>{b.key}</span>
+                <span className={styles.barTrack}>
+                  <span
+                    className={styles.barFill}
+                    style={{ width: barWidth(approvalTotal, b.value) }}
+                  />
+                </span>
+                <span className={styles.barValue}>{b.value}</span>
+              </li>
+            ))}
+            {!approvalTotal && <li className={styles.barEmpty}>暂无记录</li>}
+          </ul>
+        </div>
+      </section>
+
+      <p className={styles.honest}>
+        以上分布全部由已抓取的省市区代理真实档案行现场推导（source=local）：代理层级、代理状态、区域层级、结算状态与入驻审批状态；
+        结算/配额是代理运营账，不是消费者成交；本地试点记录，未接美团实时代理数据；不包含本平台收款、非本平台下单。
+      </p>
+
       {note && (
         <p role="status" className={styles.note}>
           {note}
@@ -535,7 +706,9 @@ export default function AgentsPage() {
             <select
               aria-label="上级代理商"
               value={agentForm.parentAgentId}
-              onChange={(event) => setAgentForm({ ...agentForm, parentAgentId: event.target.value })}
+              onChange={(event) =>
+                setAgentForm({ ...agentForm, parentAgentId: event.target.value })
+              }
             >
               <option value="">无</option>
               {data.agents.map((agent) => (
@@ -600,7 +773,9 @@ export default function AgentsPage() {
                     {affiliation.slug} · 归属 {affiliation.agentName}（{affiliation.regionName}）
                   </span>
                 </div>
-                <StatusBadge tone={affiliation.affiliationStatus === 'active' ? 'success' : 'warning'}>
+                <StatusBadge
+                  tone={affiliation.affiliationStatus === 'active' ? 'success' : 'warning'}
+                >
                   {businessLabel(affiliation.affiliationStatus)}
                 </StatusBadge>
               </div>
@@ -694,7 +869,9 @@ export default function AgentsPage() {
               type="number"
               min="0"
               value={(Number(unitCents) / 100).toFixed(2)}
-              onChange={(event) => setUnitCents(String(Math.round(Number(event.target.value) * 100)))}
+              onChange={(event) =>
+                setUnitCents(String(Math.round(Number(event.target.value) * 100)))
+              }
             />
           </label>
           <Button loading={saving} onClick={() => void createSettlement()}>
@@ -754,8 +931,8 @@ export default function AgentsPage() {
                     {settlement.agentName} · {settlement.periodCode}
                   </strong>
                   <span className={styles.agentMeta}>
-                    {settlement.regionName} · {settlement.periodStart} 至 {settlement.periodEnd} · 应收{' '}
-                    {centsToYuan(settlement.amountCents)} 元
+                    {settlement.regionName} · {settlement.periodStart} 至 {settlement.periodEnd} ·
+                    应收 {centsToYuan(settlement.amountCents)} 元
                   </span>
                 </div>
                 <StatusBadge
@@ -835,7 +1012,8 @@ export default function AgentsPage() {
 
   function poolRows(regions: Region[], agentByRegion: Record<string, Agent[]>) {
     const roots = regions.filter((region) => !region.parentRegionId);
-    const nodes = (parentId: string | null): Region[] => regions.filter((r) => r.parentRegionId === parentId);
+    const nodes = (parentId: string | null): Region[] =>
+      regions.filter((r) => r.parentRegionId === parentId);
     const render = (region: Region) => {
       const children = nodes(region.id);
       return (
