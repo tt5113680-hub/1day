@@ -31,18 +31,28 @@
 | Local unattended mode | Headless CLI + Windows Task Scheduler / daemon; no IDE window chaining     |
 | Human gates           | G1 local full test + G2 cloud inventory only; not per construction turn    |
 
-## Resolved (2026-08-10 — product dual-track IA)
+## Resolved (2026-08-11 — system identity: 团购推广员工具)
 
 | Decision | Resolution |
 | -------- | ---------- |
-| Meituan PC + H5 | **四套面 100% 复刻：** Consumer H5→美团 App；Employee H5→美团商家 App；Management PC→美团商家 PC；Platform PC→美团平台/代理 PC。见 `PRODUCT_DUAL_TRACK_STRATEGY.md` + `MEITUAN_PC_H5_PARITY_INVENTORY.md`。 |
-| Sole custom surface | **仅「工作流整合页」单独定制**；其余页面不得以 DIY/自创首页替代美团对应页。 |
-| Prior DIY-home wording | **废止**：消费者/员工/老板「内容 DIY、壳仍美团」的宽口径不再作为产品差异面。 |
-| Channel model | Channels = **美团各级代理**；Platform PC 对标美团平台/代理后台 (geo hierarchy, subordinate management, merchant affiliation). |
-| Platform onboarding | Correct direction to **省市区 / agent-tree tenant open & manage** (Alibaba/Meituan ops), not flat single-merchant wizard only. |
-| Management chrome color | **Meituan yellow default** (token); WeCom blue optional via `data-theme` — not locked. |
-| UI fidelity | 上表四套面与美团一模一样；工作流整合页除外。 |
-| G1 status | **HOLD** until Meituan parity remediations pass owner re-test (`G1_HOLD_FINDINGS.md`). |
+| Who we are | **各大团购平台的推广员** + 自有 **统一入口分流管理平台**；以 **工具** 身份出现。 |
+| Only do | **统一入口**、**统一整合生态**、**统一工作流管理**。 |
+| Never do | **不碰钱、不碰销售、不碰管理**；其它用第三方；与美团/抖音等只助力不竞争。 |
+| 自营 | 第三方；首选 **扫呗小程序 + 收银软件**（入口/外链，非本平台收单）。 |
+| 附近范围 | **全平台**中已开通且选择 **全平台可见引流** 的租户商家。 |
+| 商圈 | **单独页面**；租户双身份（建/管自己的商圈 + 消费者看附近商圈）；经理邀约；商家可申请加入。 |
+| 可抓痕迹 | **L0+L1+L2 同批交付**（观看/访问/跳转/停留/分享 + 来源/入口面/模块位/跳转平台/会话/粗地理/回访 + 滚动深度/模块曝光/分享配对/商圈邀约申请/跳转确认率等）。分析=模块命名+行业模板/自助/AI。**不抓成交金额。** 见策略 §2（2026-08-11 12:04）。 |
+| 微站/官网/C 端首页 | **同一个首页**，仅 UI 模板与功能样式不同。 |
+| Detail | `PRODUCT_DUAL_TRACK_STRATEGY.md`（2026-08-11 11:48）。 |
+
+## Resolved (2026-08-10 — dual-track IA; identity superseded 11:48 where conflicting)
+
+| Decision | Resolution |
+| -------- | ---------- |
+| Chassis / UI habit | 保留 ONEDAY 底盘；入口/LBS/店页/商圈页套用成熟交互习惯。 |
+| Channel / onboarding | 代理层级 + 省市区开通归属。 |
+| Chrome color | 美团黄默认（熟悉度）；可换肤。 |
+| G1 status | 按工具身份与入口/痕迹完整度验收；不自动代签。 |
 
 ## Open (will BLOCKED)
 

@@ -56,6 +56,7 @@ import * as channelPermissions from './migrations/054_channel_permissions.js';
 import * as merchantCommerce from './migrations/055_merchant_commerce.js';
 import * as geoAgentTree from './migrations/056_geo_agent_tree.js';
 import * as agentOperations from './migrations/057_agent_operations.js';
+import * as entryFunnel from './migrations/058_entry_funnel.js';
 import type { Database } from './types.js';
 
 const migrationProvider: MigrationProvider = {
@@ -118,6 +119,7 @@ const migrationProvider: MigrationProvider = {
       '055_merchant_commerce': merchantCommerce,
       '056_geo_agent_tree': geoAgentTree,
       '057_agent_operations': agentOperations,
+      '058_entry_funnel': entryFunnel,
     };
   },
 };

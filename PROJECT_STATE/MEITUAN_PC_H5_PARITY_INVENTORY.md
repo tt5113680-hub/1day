@@ -2,33 +2,32 @@
 
 - created_at: 2026-08-10 23:30 Asia/Shanghai
 - updated_at: 2026-08-10 23:53 Asia/Shanghai
-- authority: 主人裁决 — **不要猜怎么管理，直接复刻美团**；H5 = 美团 App + 商家端；PC = 商家 PC + **平台/代理 PC**；仅「工作流整合页」定制
+- authority: 主人裁决 — **不做美团产品**；学习成熟管理系统/人员/代理/指标/开店链路（客户熟悉→上手快）；底盘仍为 ONEDAY；仅工作流整合页自研差异
 - strategy: `PRODUCT_DUAL_TRACK_STRATEGY.md`
-- rule: **对表施工**。未进本表的「自创管理 IA」一律不作最终产品方向。
+- rule: **对成熟场景施工**。禁止自创陌生管理 IA；也禁止宣称「已是美团」。
 
 ---
 
-## 0. 四套面对齐（主人 2026-08-10 23:53 确认）
+## 0. 四套面对齐（学习源 · 2026-08-11 澄清）
 
-| ONEDAY 终端 | 复刻对象（源真相） | 形态 |
-| ----------- | ------------------ | ---- |
-| `consumer-web` | **美团 App（C 端）** | H5 高保真对齐 App |
-| `employee-web` | **美团商家端 App** | H5 高保真对齐商家 App |
-| `management-web` | **美团商家端 PC** | PC 1:1 |
-| `platform-web`（含 `/ch` `/bc`） | **美团平台端 / 各级代理 PC** | PC 1:1 |
+> **不做美团产品。** 下列是「成熟场景学习源」：管理系统型、人员、代理、指标、开店链路 — 与 ONEDAY 业务重复、客户（美团/抖音/饿了么合伙经验）上手快。底盘仍是 ONEDAY。
 
-说明：主人说的「H5 对标美团 App 和商户端」= 消费者 + 员工/店员移动面都按对应美团 App 做，不是只做 C 端。  
-「还有他们的 PC 平台端」= 平台/渠道后台跟美团代理/平台 PC，不只商家 PC。
+| ONEDAY 终端 | 学习对象（成熟场景） | 形态 |
+| ----------- | -------------------- | ---- |
+| `consumer-web` | 美团 App 等到店浏览习惯 | H5 |
+| `employee-web` | 美团商家端人员作业习惯 | H5 |
+| `management-web` | 美团商家端 PC 管理型 | PC |
+| `platform-web`（含 `/ch` `/bc`） | 美团平台/代理：层级、开通、归属 | PC |
 
 ---
 
 ## 0.1 执行原则
 
-1. **源真相 = 上表四套美团现网**，不是我们脑补的「应该怎么管」。
-2. 每一页验收：对照美团同名/同职责页的 **导航位置、信息密度、主操作、列表/筛/详、空态、关键链路**。
-3. **唯一例外：** Management `/m/workflows`（工作流整合页）→ ONEDAY 定制，不要求仿美团像素。
-4. 诚实边界仍有效：不宣称已接美团实时库存/价格 API；数据可用本地试点，但 **壳与链路必须美团同构**。
-5. 当前仓库大量页 = 过渡实现；状态列 `GAP` / `PARTIAL` / `PARITY` / `CUSTOM`。
+1. **源真相 = 上表成熟场景**，用来降低自创管理难度与客户适应成本；不是做成美团本体。
+2. 每一页验收：导航分区、主操作、列表/筛/详、指标口径、开通链路是否贴近客户已熟悉习惯。
+3. **唯一例外：** Management `/m/workflows`（工作流整合页）→ ONEDAY 定制。
+4. 诚实边界：不宣称已接美团实时库存/价格 API；数据可用本地试点。
+5. 状态列 `GAP` / `PARTIAL` / `PARITY` / `CUSTOM`（PARITY = 场景同构，非「已是美团」）。
 
 ---
 
@@ -69,22 +68,23 @@
 
 ---
 
-## 2. 美团 H5 — 消费者
+## 2. 美团 H5 — 消费者（§A–§C 语义）
 
-| ID | 美团对标（H5） | ONEDAY 现路由 | 状态 | 备注 |
-| -- | -------------- | ------------- | ---- | ---- |
-| MH5-01 | 首页 / 附近 | `/c/discovery` | PARTIAL | 已有附近/好评/人气；须继续美团附近页同构 |
-| MH5-02 | 搜索 | `/c/search` | PARITY (首刀) | `/api/v1/consumer/search` 租户隔离检索；壳与结果链路美团 App 同构 |
-| MH5-03 | 商家页 / 到店主页 | `/c/stores/[id]` | PARTIAL | |
-| MH5-04 | 团购 / 套餐 | `/c/stores/[id]/group-buy` | PARTIAL | |
+| ID | 成熟型（学习源） | ONEDAY 现路由 | 状态 | 备注 |
+| -- | ---------------- | ------------- | ---- | ---- |
+| MH5-01 | 美团 App 外卖 LBS 首页 → **附近** | `/c/discovery` | PARTIAL | 内容=开通客户商家（§B） |
+| MH5-02 | 搜索 | `/c/search` | PARITY (首刀) | `/api/v1/consumer/search` 租户隔离检索 |
+| MH5-03 | 美团商家门店页 → **商家消费者页** | `/c/stores/[id]` | PARTIAL | 第三方商品+多模板/装修（§A） |
+| MH5-04 | 团购 / 套餐（外链聚合） | `/c/stores/[id]/group-buy` | PARTIAL | 美团/抖音/外链，非自有货架 |
 | MH5-05 | 菜单 / 点单 | `/c/stores/[id]/menu` | PARTIAL | |
-| MH5-06 | 商家详情 / 资质评价入口 | `/c/stores/[id]/profile` | PARTIAL | |
-| MH5-07 | 下单 / 提单 | — | GAP | |
+| MH5-06 | 商家详情 | `/c/stores/[id]/profile` | PARTIAL | |
+| MH5-07 | 下单 / 提单 | — | GAP | 主路径为外链 hand-off |
 | MH5-08 | 订单列表 / 详情 | — | GAP | |
 | MH5-09 | 我的 | `/c/profile` | PARTIAL | |
 | MH5-10 | 会员 | `/c/stores/[id]/membership` | PARTIAL | |
-| MH5-11 | 分享落地 | `/c/share/[code]`, `/c/one-code/[code]` | PARTIAL | 保留 ONEDAY 码能力，页壳美团化 |
-| MH5-12 | 服务 / 咨询 hand-off | `/c/services/[id]`, `/c/actions/[id]` | PARTIAL | 诚实 HTTPS hand-off |
+| MH5-11 | 分享落地 | `/c/share/[code]`, `/c/one-code/[code]` | PARTIAL | |
+| MH5-12 | 服务 / 咨询 hand-off | `/c/services/[id]`, `/c/actions/[id]` | PARTIAL | |
+| MH5-13 | 美团 App 首页型 → **商圈联盟首页** | 商圈投影 / discovery circles | PARTIAL | 商圈经理+互助推流+引流指标（§C） |
 
 ---
 

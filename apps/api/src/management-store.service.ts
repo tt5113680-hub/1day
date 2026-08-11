@@ -11,7 +11,7 @@ import { DataScopeService } from './data-scope.service';
 import type { OrganizationContext } from './organization.service';
 
 const UUID = /^[0-9a-f-]{36}$/i;
-const platformTypes = new Set(['meituan', 'douyin', 'external']);
+const platformTypes = new Set(['meituan', 'douyin', 'saabei', 'external']);
 const optionalText = (value: unknown, limit: number) => {
   if (value === undefined || value === null || value === '') return null;
   if (typeof value !== 'string' || value.trim().length > limit)

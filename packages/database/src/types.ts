@@ -8,6 +8,8 @@ export interface TenantsTable {
   name: string;
   status: string;
   auth_epoch: Generated<number>;
+  /** 开通后是否出现在全平台「附近」引流列表 */
+  platform_visible_traffic: Generated<boolean>;
   created_at: Timestamp;
   created_by: string | null;
   updated_at: Timestamp;
@@ -1442,6 +1444,34 @@ export interface AgentOnboardingApprovalsTable {
   version: Generated<number>;
 }
 
+/** TOOL-PHASE-0: L0+L1+L2 entry funnel traces (no payment fields). */
+export interface EntryFunnelEventsTable {
+  id: string;
+  tenant_id: string | null;
+  actor_role: string;
+  event_code: string;
+  surface: string;
+  module_key: string | null;
+  target_platform: string | null;
+  target_url: string | null;
+  target_tenant_id: string | null;
+  target_store_id: string | null;
+  circle_id: string | null;
+  source: string | null;
+  scene: string | null;
+  share_code: string | null;
+  session_id: string | null;
+  device: string | null;
+  geo_city: string | null;
+  geohash: string | null;
+  dwell_ms: number | null;
+  scroll_pct: number | null;
+  share_state: string | null;
+  payload: unknown | null;
+  occurred_at: Timestamp;
+  created_at: Timestamp;
+}
+
 export interface Database {
   tenants: TenantsTable;
   agent_regions: AgentRegionsTable;
@@ -1450,6 +1480,7 @@ export interface Database {
   agent_quotas: AgentQuotasTable;
   agent_settlements: AgentSettlementsTable;
   agent_onboarding_approvals: AgentOnboardingApprovalsTable;
+  entry_funnel_events: EntryFunnelEventsTable;
   sync_notifications: SyncNotificationsTable;
   users: UsersTable;
   memberships: MembershipsTable;

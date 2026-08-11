@@ -93,7 +93,18 @@ export class ConsumerDiscoveryService implements OnModuleDestroy {
         ? []
         : (
             await this.pool.query(
-              "select m.id,m.name,l.latitude,l.longitude,l.address_label,s.id as store_id from merchant_locations l join merchants m on m.id=l.merchant_id and m.tenant_id=l.tenant_id left join lateral (select id from stores s where s.tenant_id=m.tenant_id and s.merchant_id=m.id and s.status='active' and s.deleted_at is null order by s.created_at asc limit 1) s on true where l.tenant_id=$1 and l.status='active' and l.deleted_at is null and m.status='active' and m.deleted_at is null",
+              `select m.id,m.name,t.slug as tenant_slug,l.latitude,l.longitude,l.address_label,s.id as store_id
+               from merchant_locations l
+               join merchants m on m.id=l.merchant_id and m.tenant_id=l.tenant_id
+               join tenants t on t.id=m.tenant_id and t.status='active' and t.deleted_at is null
+               left join lateral (
+                 select id from stores s
+                 where s.tenant_id=m.tenant_id and s.merchant_id=m.id and s.status='active' and s.deleted_at is null
+                 order by s.created_at asc limit 1
+               ) s on true
+               where l.status='active' and l.deleted_at is null
+                 and m.status='active' and m.deleted_at is null
+                 and (l.tenant_id=$1 or t.platform_visible_traffic=true)`,
               [tenant.id],
             )
           ).rows;
@@ -122,7 +133,9 @@ export class ConsumerDiscoveryService implements OnModuleDestroy {
                   id: row.id,
                   name: row.name,
                   address: row.address_label,
-                  entryUrl: row.store_id ? `/c/stores/${row.store_id}?tenant=${tenant.slug}` : null,
+                  entryUrl: row.store_id
+                    ? `/c/stores/${row.store_id}?tenant=${row.tenant_slug}`
+                    : null,
                   distanceKm: distanceKmValue,
                   rating,
                   ratingSource: 'local_pilot' as const,

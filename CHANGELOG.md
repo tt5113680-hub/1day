@@ -11,3 +11,5 @@
 - Pilot logins prefilled (management/employee/platform).
 
 - **G1-W3** Management PC store/goods Meituan IA densify. Evidence: evidence/G1-MEITUAN-PARITY/W3/
+
+- **TOOL-PHASE-0** Entry funnel L0+L1+L2 (entry_funnel_events) + platform_visible_traffic + nearby visibility + saabei platform type. Abandoned consumer_orders WIP (no-sales identity). Evidence: evidence/TOOL-PHASE-0/ACCEPTANCE.md.
