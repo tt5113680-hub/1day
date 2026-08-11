@@ -126,9 +126,19 @@ export default function DiscoveryPage({ data }: { data: Discovery }) {
               <span className={styles.searchBox}>搜索商家 / 品类</span>
             </a>
           </header>
-          <p className={styles.eyebrow}>{data.tenant.name} · 美团 App 发现面</p>
+          <p className={styles.eyebrow}>{data.tenant.name} · 推广员工具 · 附近</p>
           <h1 className={styles.title}>附近</h1>
-          <p className={styles.intro}>对标美团 App：附近商家列表、好评/人气排序；点进商家页。</p>
+          <p className={styles.intro}>
+            全平台可见引流商家的 LBS 列表；点进店页后可经确认跳转第三方。评分/月售为本地试用提示。
+          </p>
+          <p className={styles.disclaimer} role="note">
+            附近只做入口分流与进店；不在此下单，成交以美团/抖音/扫呗等页面为准。
+          </p>
+          <div className={styles.quickLinks}>
+            <a href={entryHref}>统一入口</a>
+            <a href={searchHref}>搜索</a>
+            <a href={`/c/circles?tenant=${tenantQ}`}>商圈页</a>
+          </div>
           <nav className={styles.tabs} aria-label="发现分类">
             <button
               className={`${styles.tab} ${activeTab === 'nearby' ? styles.tabActive : ''}`}
@@ -156,7 +166,7 @@ export default function DiscoveryPage({ data }: { data: Discovery }) {
             <div className={styles.sectionHead}>
               <div>
                 <h2>附近商家</h2>
-                <p>距离 / 好评 / 人气（本地试用评分，非美团实时评价）</p>
+                <p>仅展示开通且允许「全平台可见引流」的商家（距离 / 好评 / 人气）</p>
               </div>
               <span className={styles.badge}>LBS</span>
             </div>
@@ -212,7 +222,9 @@ export default function DiscoveryPage({ data }: { data: Discovery }) {
                             <span className={styles.rating}>{item.rating} 分</span>
                           ) : null}
                           {item.salesHint != null ? <span>月售 {item.salesHint}+</span> : null}
-                          <span>本地试用</span>
+                          <span>
+                            {item.ratingSource === 'local_pilot' ? '本地试用提示' : '本地试用'}
+                          </span>
                         </p>
                       </span>
                       <span className={styles.distance}>{item.distanceKm} km</span>

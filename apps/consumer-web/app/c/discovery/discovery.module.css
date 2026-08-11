@@ -85,6 +85,27 @@
   font-size: 14px;
   line-height: 1.55;
 }
+.disclaimer {
+  margin: 10px 0 0;
+  border-left: 3px solid color-mix(in srgb, var(--od-brand-600) 55%, transparent);
+  padding-left: 10px;
+  color: var(--od-text-muted);
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.5;
+}
+.quickLinks {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: 12px 0 4px;
+}
+.quickLinks a {
+  color: var(--od-brand-800);
+  font-size: 13px;
+  font-weight: 700;
+  text-decoration: none;
+}
 .tabs {
   display: flex;
   gap: 8px;
