@@ -80,6 +80,17 @@ export default function CommerceMarketingPage() {
       </main>
     );
   const live = campaigns.filter((c) => c.status === 'live').length;
+  const campaignBuckets = [
+    { key: '投放中', value: campaigns.filter((c) => c.status === 'live').length },
+    { key: '草稿', value: campaigns.filter((c) => c.status === 'draft').length },
+    { key: '已暂停', value: campaigns.filter((c) => c.status === 'paused').length },
+    { key: '已结束', value: campaigns.filter((c) => c.status === 'ended').length },
+  ];
+  const typeBuckets = [
+    { key: '优惠券', value: campaigns.filter((c) => c.campaign_type === 'coupon').length },
+    { key: '套餐/Offer', value: campaigns.filter((c) => c.campaign_type === 'offer').length },
+    { key: '内容投放', value: campaigns.filter((c) => c.campaign_type === 'content').length },
+  ];
   return (
     <main className={styles.page} data-testid="management-marketing">
       <header className={styles.topBar}>
@@ -116,6 +127,48 @@ export default function CommerceMarketingPage() {
         <div>
           <span>门店</span>
           <strong>{new Set(campaigns.map((c) => c.store_id)).size}</strong>
+        </div>
+      </section>
+      <section className={styles.panel} aria-label="营销分布">
+        <div className={styles.panelBlock}>
+          <h2>状态分布</h2>
+          <ul className={styles.bars}>
+            {campaignBuckets.map((b) => (
+              <li key={b.key} className={styles.barRow}>
+                <span className={styles.barLabel}>{b.key}</span>
+                <span className={styles.barTrack}>
+                  <span
+                    className={styles.barFill}
+                    style={{
+                      width: `${campaigns.length ? (b.value / campaigns.length) * 100 : 0}%`,
+                    }}
+                  />
+                </span>
+                <span className={styles.barValue}>{b.value}</span>
+              </li>
+            ))}
+            {!campaigns.length && <li className={styles.barEmpty}>暂无活动</li>}
+          </ul>
+        </div>
+        <div className={styles.panelBlock}>
+          <h2>类型分布</h2>
+          <ul className={styles.bars}>
+            {typeBuckets.map((b) => (
+              <li key={b.key} className={styles.barRow}>
+                <span className={styles.barLabel}>{b.key}</span>
+                <span className={styles.barTrack}>
+                  <span
+                    className={styles.barFill}
+                    style={{
+                      width: `${campaigns.length ? (b.value / campaigns.length) * 100 : 0}%`,
+                    }}
+                  />
+                </span>
+                <span className={styles.barValue}>{b.value}</span>
+              </li>
+            ))}
+            {!campaigns.length && <li className={styles.barEmpty}>暂无记录</li>}
+          </ul>
         </div>
       </section>
       <section className={styles.grid}>

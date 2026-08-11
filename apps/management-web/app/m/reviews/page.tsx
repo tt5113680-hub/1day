@@ -63,6 +63,13 @@ export default function CommerceReviewsPage() {
     );
   const sum = reviews.reduce((acc, r) => acc + r.rating, 0);
   const avg = reviews.length ? (sum / reviews.length).toFixed(1) : '0';
+  const ratingBuckets = [5, 4, 3, 2, 1].map((star) => ({
+    key: `${star} 星`,
+    value: reviews.filter((r) => r.rating === star).length,
+  }));
+  const reviewScope = new Map<string, number>();
+  for (const r of reviews) reviewScope.set(r.store_name, (reviewScope.get(r.store_name) ?? 0) + 1);
+  const byReviewStore = [...reviewScope.entries()].map(([name, value]) => ({ key: name, value }));
   return (
     <main className={styles.page} data-testid="management-reviews">
       <header className={styles.topBar}>
@@ -97,6 +104,44 @@ export default function CommerceReviewsPage() {
         <div>
           <span>门店</span>
           <strong>{new Set(reviews.map((r) => r.store_id)).size}</strong>
+        </div>
+      </section>
+      <section className={styles.panel} aria-label="评价分布">
+        <div className={styles.panelBlock}>
+          <h2>评分分布</h2>
+          <ul className={styles.bars}>
+            {ratingBuckets.map((b) => (
+              <li key={b.key} className={styles.barRow}>
+                <span className={styles.barLabel}>{b.key}</span>
+                <span className={styles.barTrack}>
+                  <span
+                    className={styles.barFill}
+                    style={{ width: `${reviews.length ? (b.value / reviews.length) * 100 : 0}%` }}
+                  />
+                </span>
+                <span className={styles.barValue}>{b.value}</span>
+              </li>
+            ))}
+            {!reviews.length && <li className={styles.barEmpty}>暂无评价</li>}
+          </ul>
+        </div>
+        <div className={styles.panelBlock}>
+          <h2>门店分布</h2>
+          <ul className={styles.bars}>
+            {byReviewStore.map((b) => (
+              <li key={b.key} className={styles.barRow}>
+                <span className={styles.barLabel}>{b.key}</span>
+                <span className={styles.barTrack}>
+                  <span
+                    className={styles.barFill}
+                    style={{ width: `${reviews.length ? (b.value / reviews.length) * 100 : 0}%` }}
+                  />
+                </span>
+                <span className={styles.barValue}>{b.value}</span>
+              </li>
+            ))}
+            {!reviews.length && <li className={styles.barEmpty}>暂无记录</li>}
+          </ul>
         </div>
       </section>
       <section className={styles.grid}>

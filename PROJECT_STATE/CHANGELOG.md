@@ -1,5 +1,16 @@
 # CHANGELOG
 
+## 2026-08-12 - G1-W∞-45 Management 订单·评价·营销 真实数据深页密度 densify（MPC-04/05/07）PASS
+
+- 承接 W∞-42(静态概况+行列表) 与 W∞-44(数据/经营分析)，三页补上「真实数据深页密度」(美团商家端成熟场景分布洞察)，全部由已抓取的真实档案行现场推导，禁止假 BI。
+- `/m/orders`(订单痕迹 MPC-04)：新增白卡分布面板（状态分布 有效/待支付/已退款/已取消；门店分布 按 store_name；来源分布 按 source），宽度百分比 `b.value/orders.length` 由真实行推导，空数据「暂无记录」。
+- `/m/reviews`(评价档案 MPC-05)：新增「评价分布」面板（评分分布 5★~1★；门店分布 按 store_name），空数据「暂无评价/暂无记录」。
+- `/m/marketing`(营销活动 MPC-07)：新增「营销分布」面板（状态分布 投放中/草稿/已暂停/已结束；类型分布 优惠券/套餐Offer/内容投放），空数据「暂无活动/暂无记录」。
+- 共享 `_commerce.module.css`：新增 `.panel/.panelBlock/.bars/.barRow/.barTrack/.barFill/.barValue/.barLabel/.barEmpty` 灰底白卡 + 黄渐变色条（线性 `#ffd100→#f0a500`），≤900px 单列堆叠。
+- 诚实边界全保留：全部指标派生自既有 `ManagementCommerce` 真实档案行(`source=local`)，不接美团实时、不伪造第三方评分/成交、不包含本平台收款、非本平台下单；`data-testid` + loading/forbidden/error/empty 全状态 + summaryStrip/honest 底注全继承。无 schema/DB/API，不复活 consumer_orders / 本平台下单/收单。
+- Gates: g1-winf45 5/5；`g1-winf*.test.mjs` 131/131；management typecheck PASS；`pnpm build` 20/20（management-web 含 /m/orders /m/reviews /m/marketing /m/analytics）；单测 47 passed（2 pre-existing token 失败照旧）；eslint + prettier clean。
+- Evidence: `evidence/G1-MEITUAN-PARITY/WINF45/ACCEPTANCE.md`.
+
 ## 2026-08-12 - G1-W∞-44 Management 数据/经营分析 视觉/IA densify（MPC-09，美团经营日报密度，禁止假 BI）PASS
 
 - MPC-09 数据/经营分析 GAP close（toward PARITY）：新增 `GET /api/v1/management/entry-funnel/daily-report?days=N`（`entry-funnel.service.ts` + `controller`，`tenant.manage` fail-closed）只读真实 L0–L2 `entry_funnel_events` 返回今日指标卡（观看/访问/跳转/停留/分享 + 模块曝光/咨询点击/跳转确认/分享发出码/进店率/出站率）+ `vsPrior` 今日对比前一窗环比 + `daily[]` 逐日时间序列（`YYYY-MM-DD`）+ 诚实 disclaimer（仅 L0–L2，不含支付/成交/第三方订单）；配套 `/m/analytics` 美团商家端 PC 经营日报密度页（黄顶栏 `推广员工具 · 数据/经营分析` + 窗口选择 + 刷新；灰底白卡 heroCard h1 + 诚实描述；概况条 summaryStrip 今日指标含环比；白卡面板 漏斗 + L2 动作 + 逐日明细表；loading/forbidden/error/empty 全状态；`data-testid="management-analytics"`；honest note + 深链 `/m/entry-funnel` ` /m/attribution`）；菜单新增 `analytics`（`数据/经营分析`，`group: orders`，`requireAny: ['tenant.manage']`）。诚实边界全保留（不接美团实时、不含支付成交、不复活 consumer_orders / 本平台下单/收单）。

@@ -83,6 +83,26 @@ export default function CommerceOrdersPage() {
     ['paid', 'fulfilled', 'active', 'completed'].includes(o.fulfillment_status),
   ).length;
   const amount = orders.reduce((sum, o) => sum + Number(o.amount_cents), 0);
+  const statusBuckets = {
+    valid: orders.filter((o) =>
+      ['active', 'completed', 'fulfilled', 'paid'].includes(o.fulfillment_status),
+    ).length,
+    unpaid: orders.filter((o) => o.fulfillment_status === 'unpaid').length,
+    refunded: orders.filter((o) => o.fulfillment_status === 'refunded').length,
+    void: orders.filter((o) => o.fulfillment_status === 'void').length,
+  };
+  const byStatus = [
+    { key: '有效', value: statusBuckets.valid },
+    { key: '待支付', value: statusBuckets.unpaid },
+    { key: '已退款', value: statusBuckets.refunded },
+    { key: '已取消', value: statusBuckets.void },
+  ];
+  const storeCounts = new Map<string, number>();
+  for (const o of orders) storeCounts.set(o.store_name, (storeCounts.get(o.store_name) ?? 0) + 1);
+  const byStore = [...storeCounts.entries()].map(([name, value]) => ({ key: name, value }));
+  const sourceCounts = new Map<string, number>();
+  for (const o of orders) sourceCounts.set(o.source, (sourceCounts.get(o.source) ?? 0) + 1);
+  const bySource = [...sourceCounts.entries()].map(([key, value]) => ({ key, value }));
   const topBarTitle = '推广员工具 · 订单痕迹';
   return (
     <main className={styles.page} data-testid="management-orders">
@@ -122,6 +142,62 @@ export default function CommerceOrdersPage() {
         <div>
           <span>涉及门店</span>
           <strong>{new Set(orders.map((o) => o.store_id)).size}</strong>
+        </div>
+      </section>
+      <section className={styles.panel} aria-label="订单痕迹分布">
+        <div className={styles.panelBlock}>
+          <h2>状态分布</h2>
+          <ul className={styles.bars}>
+            {byStatus.map((b) => (
+              <li key={b.key} className={styles.barRow}>
+                <span className={styles.barLabel}>{b.key}</span>
+                <span className={styles.barTrack}>
+                  <span
+                    className={styles.barFill}
+                    style={{ width: `${orders.length ? (b.value / orders.length) * 100 : 0}%` }}
+                  />
+                </span>
+                <span className={styles.barValue}>{b.value}</span>
+              </li>
+            ))}
+            {!orders.length && <li className={styles.barEmpty}>暂无记录</li>}
+          </ul>
+        </div>
+        <div className={styles.panelBlock}>
+          <h2>门店分布</h2>
+          <ul className={styles.bars}>
+            {byStore.map((b) => (
+              <li key={b.key} className={styles.barRow}>
+                <span className={styles.barLabel}>{b.key}</span>
+                <span className={styles.barTrack}>
+                  <span
+                    className={styles.barFill}
+                    style={{ width: `${orders.length ? (b.value / orders.length) * 100 : 0}%` }}
+                  />
+                </span>
+                <span className={styles.barValue}>{b.value}</span>
+              </li>
+            ))}
+            {!orders.length && <li className={styles.barEmpty}>暂无记录</li>}
+          </ul>
+        </div>
+        <div className={styles.panelBlock}>
+          <h2>来源分布</h2>
+          <ul className={styles.bars}>
+            {bySource.map((b) => (
+              <li key={b.key} className={styles.barRow}>
+                <span className={styles.barLabel}>{b.key}</span>
+                <span className={styles.barTrack}>
+                  <span
+                    className={styles.barFill}
+                    style={{ width: `${orders.length ? (b.value / orders.length) * 100 : 0}%` }}
+                  />
+                </span>
+                <span className={styles.barValue}>{b.value}</span>
+              </li>
+            ))}
+            {!orders.length && <li className={styles.barEmpty}>暂无记录</li>}
+          </ul>
         </div>
       </section>
       <section className={styles.grid}>

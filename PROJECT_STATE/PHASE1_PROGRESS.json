@@ -1,8 +1,8 @@
 {
-  "recordedAt": "2026-08-12T01:43:00+08:00",
+  "recordedAt": "2026-08-12T04:10:00+08:00",
   "phase": "Meituan full-parity visual densify (commercial premise)",
   "goal": "Four-surface Meituan parity (only /m/workflows custom); promoter-tool identity; L0+L1+L2; no money/sales/native checkout",
-  "currentStep": "W∞-44 PASS (MPC-09 数据/经营分析 美团经营日报密度: GET /api/v1/management/entry-funnel/daily-report + /m/analytics, 只读 L0-L2 禁止假 BI; menu analytics). Next W∞-45 续 Management MPC 深度 densify. Tool-identity alone is NOT commercial complete.",
+  "currentStep": "W∞-45 PASS (MPC-04/05/07 订单/评价/营销 真实数据深页分布面板: 状态/门店/来源 + 评分/门店 + 状态/类型, 由既有 source=local 档案行推导, 禁止假 BI). Next W∞-46 续 Management MPC 深度 densify (可续顾客/会员其他真实数据面或平台/员工/商圈缺口). Tool-identity alone is NOT commercial complete.",
   "milestones": [
     { "id": "p0-sys", "label": "P0 matrix + SYS-1..34", "weight": 10, "status": "pass", "evidence": "TASK_QUEUE SYS-34 PASS" },
     { "id": "p1-a", "label": "P1-A commercial main loop", "weight": 3, "status": "pass", "evidence": "P1_A_COMMERCIAL_CLOSED_LOOP_ACCEPTANCE.md" },
@@ -18,7 +18,7 @@
     { "id": "tool-phase-0-6", "label": "TOOL-PHASE-0..6 entry funnel", "weight": 8, "status": "pass", "evidence": "evidence/TOOL-PHASE-*" },
     { "id": "g1-winf-copy", "label": "W∞-3..31 tool-identity + MPC-13", "weight": 8, "status": "pass", "evidence": "evidence/G1-MEITUAN-PARITY/WINF*" },
     { "id": "g1-winf-visual-32-38", "label": "W∞-32..38 visual/IA densify (4 surfaces entry)", "weight": 12, "status": "pass", "evidence": "evidence/G1-MEITUAN-PARITY/WINF32..38" },
-    { "id": "g1-winf-visual-remain", "label": "W∞-39+ remaining PARTIAL→PARITY pages", "weight": 27, "status": "active", "evidence": "MEITUAN_PC_H5_PARITY_INVENTORY.md next W∞-45" }
+    { "id": "g1-winf-visual-remain", "label": "W∞-39+ remaining PARTIAL→PARITY pages", "weight": 27, "status": "active", "evidence": "MEITUAN_PC_H5_PARITY_INVENTORY.md next W∞-46" }
   ],
   "ownerGates": [
     { "id": "p1-d", "label": "P1-D owner local full test + sign-off", "status": "waiting" },
