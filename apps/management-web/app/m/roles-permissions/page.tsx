@@ -164,7 +164,7 @@ export default function RolesPermissionsPage() {
   return (
     <main className={styles.page}>
       <AdminPageHeader
-        eyebrow="ONEDAY / 商户角色与权限"
+        eyebrow="推广员工具 · 角色权限"
         title="在变更前看清权限范围与成员影响"
         description="可创建角色模板并变更权限；高风险权限必须二次确认；最终校验、版本锁和审计均在服务端执行。"
         actions={

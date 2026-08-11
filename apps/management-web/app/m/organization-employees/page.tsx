@@ -264,7 +264,7 @@ export default function OrganizationEmployeesPage() {
   return (
     <main className={styles.page}>
       <AdminPageHeader
-        eyebrow="ONEDAY / 商户组织与员工"
+        eyebrow="推广员工具 · 员工管理"
         title="让每位员工的归属、待办与离职交接可见"
         description="组织、商户、门店创建与员工邀请均复用既有组织写接口；不另造第二套 API。"
         actions={

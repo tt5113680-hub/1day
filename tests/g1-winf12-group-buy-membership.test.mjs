@@ -23,7 +23,7 @@ test('G1-W∞-12: group-buy + membership densify (MH5-04/10)', () => {
   assert.match(channel, /不替代美团\/抖音\/扫呗会员/);
   assert.doesNotMatch(channel, /(?<!非)本平台下单/);
 
-  assert.match(settings, /推广员工具 · 经营设置/);
+  assert.match(settings, /推广员工具 · 工具设置/);
   assert.match(settings, /\/m\/entry-funnel/);
   assert.match(settings, /\/m\/attribution/);
   assert.match(settings, /不含支付金额与第三方订单成功/);

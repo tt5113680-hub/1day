@@ -226,7 +226,7 @@ export default function ExternalActionsPage() {
   return (
     <main className={styles.page}>
       <AdminPageHeader
-        eyebrow="ONEDAY / 外链动作目录"
+        eyebrow="推广员工具 · 外链服务"
         title="先定义动作，再绑定到门店"
         description="这里维护租户级 external-actions（链接 / 小程序 / 平台入口意图）。支持更新与归档；不会伪造美团或抖音投放；门店启用仍走「门店与外链」。"
         actions={

@@ -54,7 +54,7 @@ export default function ManagementFunnel({ params }: { params: Promise<{ id: str
       <main className={styles.centered}>
         <AppStatePanel
           kind="loading"
-          title="正在汇总经营漏斗"
+          title="正在汇总来源归因漏斗"
           description="正在区分可确认结果与推断信号。"
         />
       </main>
@@ -64,7 +64,7 @@ export default function ManagementFunnel({ params }: { params: Promise<{ id: str
       <main className={styles.centered}>
         <AppStatePanel
           kind="forbidden"
-          title="无法查看经营漏斗"
+          title="无法查看来源归因漏斗"
           description="请使用具备管理权限的账号登录。"
         />
       </main>
@@ -74,7 +74,7 @@ export default function ManagementFunnel({ params }: { params: Promise<{ id: str
       <main className={styles.centered}>
         <AppStatePanel
           kind="error"
-          title="经营漏斗暂不可用"
+          title="来源归因漏斗暂不可用"
           description="漏斗口径与结果数据未能完成加载。"
           action={<Button onClick={() => void load()}>重新加载</Button>}
         />
@@ -86,8 +86,8 @@ export default function ManagementFunnel({ params }: { params: Promise<{ id: str
   return (
     <main className={styles.page}>
       <AdminPageHeader
-        eyebrow="ONEDAY / 商户经营漏斗"
-        title="从来源到复购，确认每一步的经营结果"
+        eyebrow="推广员工具 · 来源归因漏斗"
+        title="从来源到进店承接，跟踪每一步的入口分流"
         description={`漏斗：${data.id}。确认数据与推断数据分开呈现。`}
         actions={
           <Button tone="secondary" onClick={() => void load()}>
@@ -95,7 +95,7 @@ export default function ManagementFunnel({ params }: { params: Promise<{ id: str
           </Button>
         }
       />
-      <section className={styles.funnel} aria-label="经营漏斗">
+      <section className={styles.funnel} aria-label="来源归因漏斗">
         {data.stages.map((stage) => (
           <Card
             className={stage.resultType === 'confirmed' ? styles.confirmed : styles.inferred}
@@ -120,7 +120,7 @@ export default function ManagementFunnel({ params }: { params: Promise<{ id: str
       <Card className={styles.notice}>
         <h2>口径说明</h2>
         <p>
-          “访问”未和来源客户建立持久化关联，因此明确标为推断，避免把不可确认行为当作经营结果。其余阶段均可回溯至来源、客户、任务或订单明细。
+          “访问”未和来源客户建立持久化关联，因此明确标为推断，避免把不可确认行为当作入口分流结果。其余阶段均可回溯至来源、客户、任务或订单明细。
         </p>
       </Card>
     </main>

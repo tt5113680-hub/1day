@@ -165,7 +165,7 @@ export default function PermissionAuditPage() {
   return (
     <main className={styles.page}>
       <AdminPageHeader
-        eyebrow="ONEDAY / 平台安全 · 商户权限审计"
+        eyebrow="推广员工具 · 操作审计"
         title="将权限变更、风险信号与证据链放在同一审计视图"
         description="风险信号需要复核，不等同于已确认的越权；每条记录均可追溯到关联与 trace 标识。"
         actions={

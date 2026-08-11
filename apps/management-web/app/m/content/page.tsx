@@ -179,7 +179,7 @@ export default function ContentPage() {
   return (
     <main className={styles.page}>
       <AdminPageHeader
-        eyebrow="ONEDAY / 商户内容中心"
+        eyebrow="推广员工具 · 营销内容"
         title="让内容生产、审批与渠道连接保持可追溯"
         description="渠道分发只登记待授权请求；没有第三方授权时不会伪造发送结果。"
         actions={

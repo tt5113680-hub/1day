@@ -34,7 +34,7 @@ test('manager confirms an AI suggestion and records traceable feedback', async (
   await page.getByRole('button', { name: '登录' }).click();
   await page.waitForURL('/m/dashboard');
   await page.goto('/m/ai-suggestions');
-  await expect(page.getByRole('heading', { name: '把经营判断变成可确认的下一步' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: '把入口痕迹解读成可确认的下一步' })).toBeVisible();
   const card = page.locator('article', { hasText: title });
   await expect(card.getByText('rule-engine · 2026.08')).toBeVisible();
   await card.getByRole('button', { name: '采纳建议' }).click();
@@ -48,7 +48,7 @@ test('manager confirms an AI suggestion and records traceable feedback', async (
   await card.getByLabel('反馈').fill('Confirmed by management review.');
   await card.getByRole('button', { name: '记录反馈' }).click();
   await expect(page.getByRole('status')).toContainText('反馈已记录');
-  await expect(page.getByRole('heading', { name: '把经营判断变成可确认的下一步' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: '把入口痕迹解读成可确认的下一步' })).toBeVisible();
   await page.screenshot({
     path: 'evidence/PAGE-M-006/management-ai-suggestions-desktop.png',
     fullPage: false,

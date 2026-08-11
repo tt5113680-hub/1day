@@ -319,7 +319,7 @@ export default function PageBuilder() {
   return (
     <main className={styles.page}>
       <AdminPageHeader
-        eyebrow="ONEDAY / 数字门店装修与发布"
+        eyebrow="推广员工具 · 入口页装修"
         title="在固定业务模块内维护模板、预览与版本"
         description="草稿、手机/PC 预览、发布和回滚共用一套 Storefront 绑定；业务对象保持各自唯一真源。"
         actions={

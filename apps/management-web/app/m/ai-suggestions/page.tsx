@@ -132,8 +132,8 @@ export default function AiSuggestions() {
   return (
     <main className={styles.page}>
       <AdminPageHeader
-        eyebrow="ONEDAY / 商户经营智能建议"
-        title="把经营判断变成可确认的下一步"
+        eyebrow="推广员工具 · 作业建议"
+        title="把入口痕迹解读成可确认的下一步"
         description="每条建议保留影响、动作类型、模型名称与版本。只有白名单内的租户本地动作可以执行，其余仍需人工确认。"
         actions={
           <Button tone="secondary" onClick={() => void load()}>

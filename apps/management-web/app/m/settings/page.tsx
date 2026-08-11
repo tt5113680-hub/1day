@@ -152,7 +152,7 @@ export default function SettingsPage() {
   return (
     <main className={styles.page}>
       <AdminPageHeader
-        eyebrow="ONEDAY / 推广员工具 · 经营设置"
+        eyebrow="推广员工具 · 工具设置"
         title={`${settings.brand.displayName} 的可审计经营规则`}
         description="统一工作流规则：提醒、审批、免打扰、标签与全平台可见引流。保存经权限/版本/审计校验；不碰销售成交。"
         actions={

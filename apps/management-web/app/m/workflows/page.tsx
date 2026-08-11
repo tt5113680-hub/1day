@@ -641,7 +641,7 @@ export default function WorkflowsPage() {
   return (
     <main className={styles.page}>
       <AdminPageHeader
-        eyebrow="ONEDAY / 商户运营流程"
+        eyebrow="推广员工具 · 工作流整合"
         title="让每个流程实例都可定位、可推进"
         description="创建并发布模板、克隆新版本、启动实例与审批推进均复用既有流程写接口；不另造第二套 API。"
         actions={

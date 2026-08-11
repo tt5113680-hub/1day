@@ -34,7 +34,7 @@ test('SYS-25 Management can create tenant external-actions from catalog page', a
   );
 
   await page.goto(`${management}/`);
-  const nav = page.getByRole('link', { name: '外链动作目录' });
+  const nav = page.getByRole('link', { name: '外链服务' });
   await expect(nav).toBeVisible({ timeout: 15000 });
   await nav.click();
   await expect(page).toHaveURL(/\/m\/external-actions/);

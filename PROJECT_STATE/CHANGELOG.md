@@ -1,3 +1,20 @@
+## 2026-08-11 - G1-W∞-25 工具身份收尾·管理页眉标对齐（入口/档案/工作流工具身份）PASS
+
+- Management 13 页残留旧 merchant/store-ops 眉标统一改挂 `推广员工具 · <菜单label>`：
+  `/m/page-builder` 入口页装修、`/m/content` 营销内容、`/m/funnels/[id]` 来源归因漏斗、
+  `/m/roles-permissions` 角色权限、`/m/permission-audit` 操作审计、`/m/settings` 工具设置、
+  `/m/connectors` 连接配置、`/m/organization-employees` 员工管理、`/m/ai-suggestions` 作业建议、
+  `/m/workflows` 工作流整合、`/m/memberships` 会员中心、`/m/employee-process-performance` 员工表现、
+  `/m/external-actions` 外链服务。`/m/funnels/[id]` 同去 `经营漏斗/经营结果`（title/加载/拒绝/错误/aria/口径说明），
+  `/m/ai-suggestions` 去 `经营判断`，`/m/attribution` hint 去 `经营链路→入口分流链路`。Text/copy/aria-only，
+  无 schema/DB/API，不复活本平台下单/收单。
+- 随动更新 dependent 断言：`g1-winf12`（settings eyebrow）、`management-ai-suggestions.spec.ts`（heading）、
+  `sys-25-external-actions.spec.ts`（nav label 对齐菜单 `外链服务`）。
+- Gates: `node --test tests/g1-winf25-management-tool-eyebrow-alignment.test.mjs` 5/5；
+  `node --test tests/g1-winf*.test.mjs` 39/39；`node --test tests/*menu*.test.mjs tests/g1-winf*.test.mjs` 41/41；
+  typecheck+build 20/20（management-web 27 routes）；单测 47 passed / 2 pre-existing token 失败照旧；eslint clean。
+- Not 全部商用 / 未代签 owner UI。Evidence: `evidence/G1-MEITUAN-PARITY/WINF25/ACCEPTANCE.md`.
+
 ## 2026-08-11 - G1-W∞-24 工具身份收尾·顾客跟进（客户 CRM 去经营/资产话术）PASS
 
 - `/m/customers` + `/m/customers/[id]`（MPC-06 顾客/CRM, 推广员工具）去 store-ops-ownership 话术：

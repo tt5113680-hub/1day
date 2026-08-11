@@ -161,7 +161,7 @@ export default function MembershipsPage() {
   return (
     <main className={styles.page} data-testid="management-memberships">
       <AdminPageHeader
-        eyebrow="ONEDAY / MEMBER OPERATIONS"
+        eyebrow="推广员工具 · 会员中心"
         title="会员与权益"
         description="发放、吊销与时间线共用 member_benefit_ledger；员工按会员码核销。不伪造第三方投放。"
         actions={

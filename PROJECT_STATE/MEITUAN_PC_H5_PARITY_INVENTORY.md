@@ -44,13 +44,13 @@
 | MPC-05 | 评价管理 | `/m/reviews` | PARTIAL | 诚实档案/答复痕迹；W∞-23 导航+页头 `评价管理→评价档案`；不接第三方评价流 |
 | MPC-06 | 顾客 / CRM | `/m/customers` | PARTIAL | W∞-24 工具身份收尾：`客户资产/驱动每次经营动作/经营管理权限` → `客户跟进`（eyebrow/title/状态/back-link/aria）；保留实名授权跟进/来源分层/归属与导出审批 |
 | MPC-07 | 营销中心（券/活动） | `/m/marketing` | PARTIAL | 本地营销活动档案；W∞-23 页头 `营销中心→营销活动`（对齐导航）；不接实时投放 |
-| MPC-08 | 会员 | `/m/memberships` | PARTIAL | |
+| MPC-08 | 会员 | `/m/memberships` | PARTIAL | W∞-25 眉标 `会员中心`；会员码核销/ledger 工具身份 |
 | MPC-09 | 数据 / 经营分析 | 分散 metric | GAP | 禁止假 BI；先美团常见经营日报密度 |
-| MPC-10 | 员工 / 权限 | `/m/organization-employees`, `/m/roles-permissions` | PARTIAL | |
-| MPC-11 | 店铺装修 / 展示 | `/m/page-builder`, `/m/content` | PARTIAL | **壳跟美团**；内容数据仍走 ONEDAY 发布链；导航「入口页装修」（W∞-21） |
-| MPC-12 | 设置 | `/m/settings` | PARTIAL | W∞-12 densify 工具链 cross-link；导航「工具设置」（W∞-21） |
+| MPC-10 | 员工 / 权限 | `/m/organization-employees`, `/m/roles-permissions` | PARTIAL | W∞-25 眉标 `员工管理`/`角色权限`、`员工表现`/`操作审计` |
+| MPC-11 | 店铺装修 / 展示 | `/m/page-builder`, `/m/content` | PARTIAL | **壳跟美团**；内容数据仍走 ONEDAY 发布链；W∞-25 眉标 `入口页装修`/`营销内容`（对齐导航） |
+| MPC-12 | 设置 | `/m/settings` | PARTIAL | W∞-12 densify 工具链 cross-link；W∞-25 眉标 `工具设置`（对齐导航） |
 | MPC-13 | 消息 / 通知 | — | GAP | |
-| MPC-99 | **工作流整合** | `/m/workflows` | **CUSTOM** | **唯一不复刻美团的定制页** |
+| MPC-99 | **工作流整合** | `/m/workflows` | **CUSTOM** | **唯一不复刻美团的定制页**；W∞-25 眉标 `工作流整合` |
 
 ### PC 现有但须降级/改挂的 ONEDAY 页
 
@@ -135,6 +135,8 @@
 ---
 
 ## 6. 当前下一刀
+
+**W24 工作台/顾客跟进收尾 PASS.** **W∞-25（管理 13 页眉标统一 `推广员工具 · <菜单label>`，去 merchant/store-ops 眉标；funnel 去「经营漏斗/经营结果」→「来源归因漏斗/入口分流」、ai-suggestions 去「经营判断」、attribution hint 去「经营链路」）PASS** `evidence/G1-MEITUAN-PARITY/WINF25/ACCEPTANCE.md`. **W∞-24（顾客/CRM 去 store-ops 话术 → 客户跟进）PASS** `evidence/G1-MEITUAN-PARITY/WINF24/ACCEPTANCE.md`. **Next: W∞-26（体验对标细部·工具身份收尾）。**
 
 **W6 省市区代理（MP-01~03）PASS. W∞-1（省市区代理深层运营：结算/配额/审批, MP-03 深层）PASS** `evidence/G1-MEITUAN-PARITY/WINF/ACCEPTANCE.md`. **W∞-2（Consumer H5 搜索, MH5-02）PASS** `evidence/G1-MEITUAN-PARITY/WINF2/ACCEPTANCE.md`.
 

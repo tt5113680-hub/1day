@@ -74,7 +74,7 @@ export default function EmployeeProcessPerformancePage() {
   return (
     <main className={styles.page}>
       <AdminPageHeader
-        eyebrow="ONEDAY / 员工过程绩效"
+        eyebrow="推广员工具 · 员工表现"
         title="用任务、跟进、证据与贡献过程支持辅导"
         description="参与客户成交来自已确认贡献关联的订单，不表示个人成交额，也不作为唯一绩效结论。"
         actions={

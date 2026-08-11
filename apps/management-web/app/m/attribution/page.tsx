@@ -133,7 +133,7 @@ export default function AttributionPage() {
         归因阶段（首次/当前/最终）描述入口与经营承接，不是销售漏斗成交阶段。
       </p>
       <section className={styles.cards}>
-        <MetricCard label="首次来源" value={data.summary.first} hint="初次进入经营链路" />
+        <MetricCard label="首次来源" value={data.summary.first} hint="初次进入入口分流链路" />
         <MetricCard label="当前来源" value={data.summary.current} hint="当前承接来源" />
         <MetricCard label="最终来源" value={data.summary.final} hint="结果归因（非成交）" />
       </section>
@@ -201,7 +201,7 @@ export default function AttributionPage() {
           <AppStatePanel
             kind="empty"
             title="当前筛选下没有归因记录"
-            description="切换归因阶段或来源类型，或等待新的入口经营链路形成。"
+            description="切换归因阶段或来源类型，或等待新的入口分流链路形成。"
           />
         )}
       </Card>

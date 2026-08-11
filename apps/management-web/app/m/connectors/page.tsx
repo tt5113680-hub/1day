@@ -128,7 +128,7 @@ export default function ConnectorPage() {
   return (
     <main className={styles.page}>
       <AdminPageHeader
-        eyebrow="ONEDAY / 商户连接器授权"
+        eyebrow="推广员工具 · 连接配置"
         title="连接器授权与运行状态保持可验证"
         description="仅登记授权意图与状态；密钥不落明文，未完成授权时不会伪造外部执行结果。"
         actions={
