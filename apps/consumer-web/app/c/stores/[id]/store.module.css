@@ -40,7 +40,11 @@
   align-items: center;
   min-height: 46px;
   padding: 0 8px;
-  background: linear-gradient(180deg, #ffe14d 0%, #ffd100 100%);
+  background: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--od-brand-700) 93%, var(--od-sf-surface)) 0%,
+    var(--od-brand-700) 100%
+  );
   box-shadow: 0 1px 3px rgb(0 0 0 / 8%);
 }
 .backLink,
@@ -51,15 +55,15 @@
   height: 34px;
   border: 0;
   border-radius: 999px;
-  color: #333;
-  background: rgb(255 255 255 / 60%);
+  color: var(--od-sf-ink);
+  background: color-mix(in srgb, var(--od-sf-white) 60%, transparent);
   font-size: 20px;
   font-weight: 700;
   text-decoration: none;
 }
 .storeTopTitle {
   overflow: hidden;
-  color: #222;
+  color: var(--od-sf-ink);
   font-size: 15px;
   font-weight: 700;
   text-align: center;
@@ -73,13 +77,17 @@
 .storeHeader {
   position: relative;
   padding: 0 0 14px;
-  background: #fff;
+  background: var(--od-sf-white);
 }
 .storeCover {
   position: relative;
   height: 118px;
   overflow: hidden;
-  background: linear-gradient(145deg, #ffb400, #ff7a00);
+  background: linear-gradient(
+    145deg,
+    color-mix(in srgb, var(--od-warning) 85%, var(--od-brand-700)),
+    var(--od-warning)
+  );
 }
 .storeCover img {
   width: 100%;
@@ -129,8 +137,8 @@
 .storeOpen {
   border-radius: 4px;
   padding: 1px 6px;
-  color: #fff;
-  background: #3dbd7d;
+  color: var(--od-sf-white);
+  background: var(--od-success);
   font-size: 11px;
   font-weight: 700;
 }
@@ -156,7 +164,7 @@
   min-height: 58px;
   border: 0;
   border-radius: 10px;
-  color: #444;
+  color: var(--od-sf-ink);
   background: transparent;
   font: inherit;
   font-size: 11px;
@@ -176,9 +184,9 @@
   gap: 4px;
   overflow-x: auto;
   padding: 0 12px;
-  border-top: 1px solid #f0f0f0;
-  border-bottom: 1px solid #ebebeb;
-  background: #fff;
+  border-top: 1px solid var(--od-border);
+  border-bottom: 1px solid var(--od-border);
+  background: var(--od-sf-white);
   -webkit-overflow-scrolling: touch;
 }
 .storeSubTabs a {
@@ -186,14 +194,14 @@
   flex: 0 0 auto;
   min-height: 44px;
   padding: 0 14px;
-  color: #666;
+  color: var(--od-text-muted);
   font-size: 14px;
   font-weight: 600;
   line-height: 44px;
   text-decoration: none;
 }
 .storeSubTabs a:first-child {
-  color: #222;
+  color: var(--od-sf-ink);
   font-weight: 800;
 }
 .storeSubTabs a:first-child::after {
@@ -203,7 +211,7 @@
   left: 14px;
   height: 3px;
   border-radius: 3px 3px 0 0;
-  background: #ffd100;
+  background: var(--od-brand-700);
   content: '';
 }
 .section {

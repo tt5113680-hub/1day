@@ -1,166 +1,29 @@
 {
-    "recordedAt":  "2026-08-11T21:20:00+08:00",
-    "phase":  "Promoter-tool entry funnel (post Meituan waves)",
-    "goal":  "Unified entry / ecosystem / workflow; L0+L1+L2 traces; no money/sales/store-ops",
-    "currentStep": "TOOL-PHASE-0..6 + G1-W∞-3..30 + W∞-31(MPC-13 通知中心) PASS. Tool-identity plateau + MPC-13 通知中心 closed; owner G1 re-test when ready.",
-    "milestones":  [
-                       {
-                           "id":  "p0-sys",
-                           "label":  "P0 matrix + SYS-1..34",
-                           "weight":  20,
-                           "status":  "pass",
-                           "evidence":  "TASK_QUEUE SYS-34 PASS"
-                       },
-                       {
-                           "id":  "p1-a",
-                           "label":  "P1-A commercial main loop",
-                           "weight":  5,
-                           "status":  "pass",
-                           "evidence":  "P1_A_COMMERCIAL_CLOSED_LOOP_ACCEPTANCE.md"
-                       },
-                       {
-                           "id":  "p1-b",
-                           "label":  "P1-B shells + ui-kit + sync",
-                           "weight":  10,
-                           "status":  "pass",
-                           "evidence":  "evidence/P1-B-*"
-                       },
-                       {
-                           "id":  "p1-g1-packaging",
-                           "label":  "G1 packaging (boot + runbook)",
-                           "weight":  5,
-                           "status":  "pass",
-                           "evidence":  "evidence/G1-PACKAGING/ACCEPTANCE.md"
-                       },
-                       {
-                           "id":  "g1-w0-inventory",
-                           "label":  "W0 Meituan PC/H5 inventory",
-                           "weight":  5,
-                           "status":  "pass",
-                           "evidence":  "MEITUAN_PC_H5_PARITY_INVENTORY.md"
-                       },
-                       {
-                           "id":  "g1-w1-pc-nav-home",
-                           "label":  "W1 Management PC nav + 商家中心",
-                           "weight":  8,
-                           "status":  "pass",
-                           "evidence":  "evidence/G1-MEITUAN-PARITY/W1/"
-                       },
-                       {
-                           "id":  "g1-w2-h5-nearby-store",
-                           "label":  "W2 Consumer H5 nearby + merchant",
-                           "weight":  8,
-                           "status":  "pass",
-                           "evidence":  "evidence/G1-MEITUAN-PARITY/W2/"
-                       },
-                       {
-                           "id":  "g1-w3-pc-store-goods",
-                           "label":  "W3 Management PC 门店+商品",
-                           "weight":  8,
-                           "status":  "pass",
-                           "evidence":  "evidence/G1-MEITUAN-PARITY/W3/"
-                       },
-                       {
-                           "id":  "g1-w4-emp-app",
-                           "label":  "W4 Employee 美团商家 App",
-                           "weight":  6,
-                           "status":  "pass",
-                           "evidence":  "evidence/G1-MEITUAN-PARITY/W4/ACCEPTANCE.md"
-                       },
-                       {
-                           "id":  "g1-w5-orders-marketing",
-                           "label":  "W5 订单/评价/营销骨架",
-                           "weight":  5,
-                           "status":  "pass",
-                           "evidence":  "evidence/G1-MEITUAN-PARITY/W5/ACCEPTANCE.md"
-                       },
-                       {
-                           "id":  "g1-w6-platform-agent",
-                           "label":  "W6 平台/代理省市区",
-                           "weight":  5,
-                           "status":  "pass",
-                           "evidence":  "evidence/G1-MEITUAN-PARITY/W6/ACCEPTANCE.md"
-                       },
-                       {
-                           "id":  "tool-phase-0",
-                           "label":  "TOOL-PHASE-0 entry funnel contract",
-                           "weight":  7,
-                           "status":  "pass",
-                           "evidence":  "evidence/TOOL-PHASE-0/ACCEPTANCE.md"
-                       },
-                       {
-                           "id":  "tool-phase-1",
-                           "label":  "TOOL-PHASE-1 client emit + board",
-                           "weight":  8,
-                           "status":  "pass",
-                           "evidence":  "evidence/TOOL-PHASE-1/ACCEPTANCE.md"
-                       },
-                       {
-                           "id":  "tool-phase-2",
-                           "label":  "TOOL-PHASE-2 circle dual-identity",
-                           "weight":  8,
-                           "status":  "pass",
-                           "evidence":  "evidence/TOOL-PHASE-2/ACCEPTANCE.md"
-                       },
-                       {
-                           "id":  "tool-phase-3",
-                           "label":  "TOOL-PHASE-3 L2 + industry templates",
-                           "weight":  7,
-                           "status":  "pass",
-                           "evidence":  "evidence/TOOL-PHASE-3/ACCEPTANCE.md"
-                       },
-                       {
-                           "id":  "tool-phase-4",
-                           "label":  "TOOL-PHASE-4 DIY + interpret-only",
-                           "weight":  7,
-                           "status":  "pass",
-                           "evidence":  "evidence/TOOL-PHASE-4/ACCEPTANCE.md"
-                       },
-                       {
-                           "id":  "tool-phase-5",
-                           "label":  "TOOL-PHASE-5 saved DIY views",
-                           "weight":  5,
-                           "status":  "pass",
-                           "evidence":  "evidence/TOOL-PHASE-5/ACCEPTANCE.md"
-                       },
-                       {
-                           "id":  "tool-phase-6",
-                           "label":  "TOOL-PHASE-6 L2 completeness",
-                           "weight":  6,
-                           "status":  "pass",
-                           "evidence":  "evidence/TOOL-PHASE-6/ACCEPTANCE.md"
-                       },
-                        {
-                            "id":  "g1-winf3-handoff",
-                            "label":  "W∞-3 hand-off confirm densify",
-                            "weight":  5,
-                            "status":  "pass",
-                            "evidence":  "evidence/G1-MEITUAN-PARITY/WINF3/ACCEPTANCE.md"
-                        },
-                        {
-                            "id":  "g1-winf31-notifications",
-                            "label":  "W∞-31 MPC-13 管理通知中心",
-                            "weight":  4,
-                            "status":  "pass",
-                            "evidence":  "evidence/G1-MEITUAN-PARITY/WINF31/ACCEPTANCE.md"
-                        }
-                   ],
-    "ownerGates":  [
-                       {
-                           "id":  "p1-d",
-                           "label":  "P1-D owner local full test + sign-off",
-                           "status":  "waiting"
-                       },
-                       {
-                           "id":  "p1-c-live",
-                           "label":  "P1-C public HTTPS (needs G + domain/server)",
-                           "status":  "blocked"
-                       },
-                       {
-                           "id":  "p1-e",
-                           "label":  "P1-E external controlled trial claim",
-                           "status":  "waiting"
-                       }
-                   ],
-    "notes":  "Promoter-tool identity locked 2026-08-11. Do not revive consumer_orders. Do not auto-sign PRODUCT_OWNER_UI_ACCEPTANCE.md. Update this file each TOOL-PHASE."
+  "recordedAt": "2026-08-12T01:43:00+08:00",
+  "phase": "Meituan full-parity visual densify (commercial premise)",
+  "goal": "Four-surface Meituan parity (only /m/workflows custom); promoter-tool identity; L0+L1+L2; no money/sales/native checkout",
+  "currentStep": "W∞-32..38 PASS. Next W∞-39 Management offers visual densify (MPC-03). Tool-identity alone is NOT commercial complete.",
+  "milestones": [
+    { "id": "p0-sys", "label": "P0 matrix + SYS-1..34", "weight": 10, "status": "pass", "evidence": "TASK_QUEUE SYS-34 PASS" },
+    { "id": "p1-a", "label": "P1-A commercial main loop", "weight": 3, "status": "pass", "evidence": "P1_A_COMMERCIAL_CLOSED_LOOP_ACCEPTANCE.md" },
+    { "id": "p1-b", "label": "P1-B shells + ui-kit + sync", "weight": 5, "status": "pass", "evidence": "evidence/P1-B-*" },
+    { "id": "p1-g1-packaging", "label": "G1 packaging (boot + runbook)", "weight": 3, "status": "pass", "evidence": "evidence/G1-PACKAGING/ACCEPTANCE.md" },
+    { "id": "g1-w0-inventory", "label": "W0 Meituan PC/H5 inventory", "weight": 3, "status": "pass", "evidence": "MEITUAN_PC_H5_PARITY_INVENTORY.md" },
+    { "id": "g1-w1-pc-nav-home", "label": "W1 Management PC nav + home", "weight": 4, "status": "pass", "evidence": "evidence/G1-MEITUAN-PARITY/W1/" },
+    { "id": "g1-w2-h5-nearby-store", "label": "W2 Consumer H5 nearby + merchant", "weight": 4, "status": "pass", "evidence": "evidence/G1-MEITUAN-PARITY/W2/" },
+    { "id": "g1-w3-pc-store-goods", "label": "W3 Management PC 门店+商品", "weight": 4, "status": "pass", "evidence": "evidence/G1-MEITUAN-PARITY/W3/" },
+    { "id": "g1-w4-emp-app", "label": "W4 Employee 美团商家 App", "weight": 3, "status": "pass", "evidence": "evidence/G1-MEITUAN-PARITY/W4/ACCEPTANCE.md" },
+    { "id": "g1-w5-orders-marketing", "label": "W5 订单/评价/营销骨架", "weight": 3, "status": "pass", "evidence": "evidence/G1-MEITUAN-PARITY/W5/ACCEPTANCE.md" },
+    { "id": "g1-w6-platform-agent", "label": "W6 平台/代理省市区", "weight": 3, "status": "pass", "evidence": "evidence/G1-MEITUAN-PARITY/W6/ACCEPTANCE.md" },
+    { "id": "tool-phase-0-6", "label": "TOOL-PHASE-0..6 entry funnel", "weight": 8, "status": "pass", "evidence": "evidence/TOOL-PHASE-*" },
+    { "id": "g1-winf-copy", "label": "W∞-3..31 tool-identity + MPC-13", "weight": 8, "status": "pass", "evidence": "evidence/G1-MEITUAN-PARITY/WINF*" },
+    { "id": "g1-winf-visual-32-38", "label": "W∞-32..38 visual/IA densify (4 surfaces entry)", "weight": 12, "status": "pass", "evidence": "evidence/G1-MEITUAN-PARITY/WINF32..38" },
+    { "id": "g1-winf-visual-remain", "label": "W∞-39+ remaining PARTIAL→PARITY pages", "weight": 27, "status": "active", "evidence": "MEITUAN_PC_H5_PARITY_INVENTORY.md next W∞-39" }
+  ],
+  "ownerGates": [
+    { "id": "p1-d", "label": "P1-D owner local full test + sign-off", "status": "waiting" },
+    { "id": "p1-c-live", "label": "P1-C public HTTPS (needs G + domain/server)", "status": "blocked" },
+    { "id": "p1-e", "label": "P1-E external controlled trial claim", "status": "waiting" }
+  ],
+  "notes": "Commercial premise 2026-08-11: full Meituan parity required. Do not claim 100%/G1 complete while inventory PARTIAL remains. Do not auto-sign PRODUCT_OWNER_UI_ACCEPTANCE.md."
 }
