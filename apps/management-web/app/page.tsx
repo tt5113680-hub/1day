@@ -1,7 +1,7 @@
 'use client';
 import { SessionApiClient } from '@oneday/session-client';
 import { useTenantSync } from '@oneday/sync-client';
-import { AppStatePanel, Button, MetricCard, taskTitleCopy } from '@oneday/ui';
+import { AppStatePanel, Button, taskTitleCopy } from '@oneday/ui';
 import { useCallback, useEffect, useState } from 'react';
 import styles from './page.module.css';
 
@@ -42,6 +42,23 @@ const SHORTCUTS = [
   { href: '/m/ai-suggestions', label: '建议', desc: '作业建议' },
   { href: '/m/workflows', label: '工作流', desc: '工作流整合（定制）' },
 ] as const;
+
+const SHORTCUT_ICONS: Record<string, string> = {
+  门店: '店',
+  商品: '品',
+  客户: '客',
+  会员: '会',
+  营销: '营',
+  装修: '装',
+  数据: '数',
+  痕迹: '迹',
+  商圈: '圈',
+  员工: '员',
+  表现: '绩',
+  设置: '设',
+  建议: '议',
+  工作流: '流',
+};
 
 export default function ManagementHome() {
   const [state, setState] = useState<'loading' | 'ready' | 'forbidden' | 'error'>('loading');
@@ -104,56 +121,73 @@ export default function ManagementHome() {
     );
   if (!data) return null;
   const m = data.metrics;
+  const metricCards = [
+    { label: '客户总数', value: m.customers, hint: '客户总量' },
+    { label: '近30日服务档案', value: m.orders30d, hint: '本地试点，非本平台下单' },
+    { label: '近30日完成', value: m.completedTasks30d, hint: '近 30 天完成任务' },
+    { label: '待推进任务', value: m.openTasks, hint: '全部未完成任务' },
+  ] as const;
   return (
     <main className={styles.page}>
-      <header className={styles.hero}>
-        <div>
-          <p>推广员工具 · 管理工作台</p>
-          <h1>工作台</h1>
-          <span>
-            今日概况 · 常用功能 · 待办提醒 · 入口痕迹；不含支付金额与第三方订单履约
-          </span>
-        </div>
-        <Button tone="secondary" onClick={() => void load()}>
+      <header className={styles.topBar}>
+        <span className={styles.topBarTitle}>推广员工具 · 管理工作台</span>
+        <button className={styles.topBarRefresh} type="button" onClick={() => void load()}>
           刷新
-        </Button>
+        </button>
       </header>
 
-      <section className={styles.todayStrip} aria-label="今日概况">
-        <div className={styles.todayItem}>
-          <span>今日客户</span>
-          <strong>{m.customersToday}</strong>
+      <section className={styles.heroCard} aria-label="工作台概览">
+        <h1>工作台</h1>
+        <p>
+          今日概况 · 常用功能 · 待办提醒 · 入口痕迹；不含支付金额与第三方订单履约
+        </p>
+      </section>
+
+      <section className={styles.panel} aria-label="今日概况">
+        <div className={styles.panelHead}>
+          <span>今日概况</span>
         </div>
-        <div className={styles.todayItem}>
-          <span>今日待办</span>
-          <strong>{m.openTasksToday}</strong>
-        </div>
-        <div className={styles.todayItem}>
-          <span>今日完成</span>
-          <strong>{m.completedTasksToday}</strong>
-        </div>
-        <div className={styles.todayItem}>
-          <span>逾期</span>
-          <strong className={m.overdueTasks > 0 ? styles.danger : undefined}>{m.overdueTasks}</strong>
-        </div>
-        <div className={styles.todayItem}>
-          <span>门店</span>
-          <strong>{m.stores}</strong>
-        </div>
-        <div className={styles.todayItem}>
-          <span>在岗跟进</span>
-          <strong>{m.activeAssignees}</strong>
+        <div className={styles.todayStrip}>
+          <div className={styles.todayItem}>
+            <span>今日客户</span>
+            <strong>{m.customersToday}</strong>
+          </div>
+          <div className={styles.todayItem}>
+            <span>今日待办</span>
+            <strong>{m.openTasksToday}</strong>
+          </div>
+          <div className={styles.todayItem}>
+            <span>今日完成</span>
+            <strong>{m.completedTasksToday}</strong>
+          </div>
+          <div className={styles.todayItem}>
+            <span>逾期</span>
+            <strong className={m.overdueTasks > 0 ? styles.danger : undefined}>
+              {m.overdueTasks}
+            </strong>
+          </div>
+          <div className={styles.todayItem}>
+            <span>门店</span>
+            <strong>{m.stores}</strong>
+          </div>
+          <div className={styles.todayItem}>
+            <span>在岗跟进</span>
+            <strong>{m.activeAssignees}</strong>
+          </div>
         </div>
       </section>
 
-      <section className={styles.section} aria-label="常用功能">
-        <div className={styles.sectionHead}>
+      <section className={styles.panel} aria-label="常用功能">
+        <div className={styles.panelHead}>
           <h2>常用功能</h2>
-          <span>推广员工具快捷入口</span>
+          <span className={styles.panelMeta}>推广员工具快捷入口</span>
         </div>
-        <div className={styles.shortcuts}>
+        <div className={styles.functions}>
           {SHORTCUTS.map((item) => (
-            <a className={styles.shortcut} href={item.href} key={item.href}>
+            <a className={styles.function} href={item.href} key={item.href}>
+              <span className={styles.functionIcon} aria-hidden>
+                {SHORTCUT_ICONS[item.label] ?? '·'}
+              </span>
               <strong>{item.label}</strong>
               <span>{item.desc}</span>
             </a>
@@ -161,26 +195,29 @@ export default function ManagementHome() {
         </div>
       </section>
 
-      <section className={styles.section} aria-label="作业数据">
-        <div className={styles.sectionHead}>
+      <section className={styles.panel} aria-label="作业数据">
+        <div className={styles.panelHead}>
           <h2>作业数据</h2>
           <a className={styles.link} href="/m/customers">
             客户跟进 →
           </a>
         </div>
         <div className={styles.metrics}>
-          <MetricCard hint="客户总量" label="客户总数" value={m.customers} />
-          <MetricCard hint="近 30 天服务档案（本地试点，非本平台下单）" label="近30日服务档案" value={m.orders30d} />
-          <MetricCard hint="近 30 天完成任务" label="近30日完成" value={m.completedTasks30d} />
-          <MetricCard hint="全部未完成任务" label="待推进任务" value={m.openTasks} />
+          {metricCards.map((item) => (
+            <article className={styles.metric} key={item.label}>
+              <strong>{item.value}</strong>
+              <span>{item.label}</span>
+              <small>{item.hint}</small>
+            </article>
+          ))}
         </div>
       </section>
 
-      <section className={styles.grid}>
-        <div className={styles.panel}>
+      <div className={styles.grid}>
+        <section className={styles.panel} aria-label="待办与异常">
           <div className={styles.head}>
             <h2>待办与异常</h2>
-            <span>{data.anomalies.length} 项</span>
+            <span className={styles.panelMeta}>{data.anomalies.length} 项</span>
           </div>
           {data.anomalies.length ? (
             data.anomalies.map((item) => (
@@ -195,21 +232,25 @@ export default function ManagementHome() {
           ) : (
             <div className={styles.empty}>当前没有待处理异常。</div>
           )}
-        </div>
-        <div className={styles.panel}>
+        </section>
+        <section className={styles.panel} aria-label="作业提醒">
           <div className={styles.head}>
             <h2>作业提醒</h2>
-            <span>可解释</span>
+            <span className={styles.panelMeta}>可解释</span>
           </div>
-          {data.suggestions.map((item) => (
-            <article className={styles.ai} key={item.id}>
-              <strong>{item.title}</strong>
-              <p>{item.reason}</p>
-              <a href={item.deepLink}>去处理 →</a>
-            </article>
-          ))}
-        </div>
-      </section>
+          {data.suggestions.length ? (
+            data.suggestions.map((item) => (
+              <article className={styles.ai} key={item.id}>
+                <strong>{item.title}</strong>
+                <p>{item.reason}</p>
+                <a href={item.deepLink}>去处理 →</a>
+              </article>
+            ))
+          ) : (
+            <div className={styles.empty}>暂无作业提醒。</div>
+          )}
+        </section>
+      </div>
     </main>
   );
 }

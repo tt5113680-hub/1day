@@ -1,3 +1,9 @@
+## 2026-08-11 - G1-W∞-35 Management 工作台视觉/IA densify（MPC-01 商用完整对标）PASS
+
+- `/m/dashboard`（home）：黄顶栏、icon 功能格、白卡面板、自定义指标、今日概况黄条。
+- Gates: g1-winf35 4/4；winf18/21/29 回归；management typecheck+build PASS。
+- Evidence: `evidence/G1-MEITUAN-PARITY/WINF35/ACCEPTANCE.md`.
+
 ## 2026-08-11 - G1-W∞-34 Employee 工作台视觉/IA densify（ME-01 商用完整对标）PASS
 
 - `/e/workbench`：黄顶栏、头像 hero、icon 功能格、白卡面板、紧凑任务列表。

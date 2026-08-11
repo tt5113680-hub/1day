@@ -124,7 +124,8 @@
 - [x] **G1-W∞-32** `G1-R-MEITUAN-H5-NEARBY-STORE` PASS — Consumer H5 发现页视觉/IA densify toward 美团 App（sticky 黄顶栏定位+搜索、下划线 Tab、72px 商家卡列表、灰底白卡密度）；诚实边界保留。tests/g1-winf32 3/3。见 `evidence/G1-MEITUAN-PARITY/WINF32/ACCEPTANCE.md`。
 - [x] **G1-W∞-33** `G1-R-MEITUAN-H5-NEARBY-STORE` PASS — Consumer H5 门店页视觉/IA densify toward 美团 App（sticky 黄顶栏+封面 hero+营业中+导航/电话/分享+sticky 分区 Tab 锚点 storefront modules）；诚实边界保留。tests/g1-winf33 4/4。见 `evidence/G1-MEITUAN-PARITY/WINF33/ACCEPTANCE.md`。
 - [x] **G1-W∞-34** `G1-R-EMPLOYEE-WORKBENCH` PASS — Employee H5 工作台视觉/IA densify toward 美团商家端（sticky 黄顶栏+头像 hero+icon 功能格+白卡面板+紧凑任务列表）；诚实边界保留。tests/g1-winf34 4/4。见 `evidence/G1-MEITUAN-PARITY/WINF34/ACCEPTANCE.md`。
-- [ ] **NEXT:** **W∞-35** Management PC 工作台视觉 densify（MPC-01）— 商用前提完整对标.
+- [x] **G1-W∞-35** `G1-R-MANAGEMENT-WORKBENCH` PASS — Management PC 工作台视觉/IA densify toward 美团商家端 PC（黄顶栏+icon 功能格+白卡面板+自定义指标）；诚实边界保留。tests/g1-winf35 4/4。见 `evidence/G1-MEITUAN-PARITY/WINF35/ACCEPTANCE.md`。
+- [ ] **NEXT:** **W∞-36** Platform PC 总览视觉 densify — 商用前提完整对标.
 - [x] **G1-W∞-2** `G1-R-MEITUAN-H5-SEARCH` PASS (首刀) — Consumer H5 搜索（MH5-02）: `ConsumerDiscoveryService.search` + `GET /api/v1/consumer/search?tenant&q`（租户 fail-closed 按名 ILIKE 检索已发布商户，返回 local_pilot 评分/月售/距离 + 进店深链）+ `/c/search` 美团 App 搜索面 + `/c/discovery` 的搜索壳升级为可点击搜索入口。typecheck 20/20、build 20/20（consumer 路由新增 `/c/search`）、page-c-consumer-search L2 PASS、page-c-002 回归 PASS、resolve-consumer-tabs 3/3。见 `evidence/G1-MEITUAN-PARITY/WINF2/ACCEPTANCE.md`。
 - [ ] G1 OWNER GATE — owner signs only after tool-identity + funnel waves pass re-test (`PRODUCT_OWNER_UI_ACCEPTANCE.md`). P1-C still blocked on lifting G + cloud inventory.
 - [ ] HUMAN-PILOT-HANDOFF / product-owner UI acceptance — local sandbox refreshed through migration `054` + consult CTA bindings + walkthrough shots (Playwright 4/4); **human sign-off still required**; not auto-claimed as 全部商用. Phase-1 P1-C blocked until owner lifts G (deploy templates in `infra/deploy/`).
