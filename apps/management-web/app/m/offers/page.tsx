@@ -1,7 +1,7 @@
 'use client';
 
 import { SessionApiClient } from '@oneday/session-client';
-import { AdminPageHeader, AppStatePanel, Button, Card, StatusBadge } from '@oneday/ui';
+import { AppStatePanel, Button, StatusBadge } from '@oneday/ui';
 import { useCallback, useEffect, useState } from 'react';
 import styles from './page.module.css';
 
@@ -168,23 +168,28 @@ export default function OffersPage() {
   const currentStore = stores.find((store) => store.id === selectedStore);
   return (
     <main className={styles.page}>
-      <AdminPageHeader
-        eyebrow="推广员工具 · 商品/套餐入口"
-        title="商品/套餐入口"
-        description="维护服务/套餐真源与受控平台价格入口，供统一入口展示与比价；价格由商户登记，不宣称第三方实时同步，也不在此售卖下单。"
-        actions={
-          <Button tone="secondary" onClick={() => void load()}>
-            刷新
-          </Button>
-        }
-      />
+      <header className={styles.topBar}>
+        <span className={styles.topBarTitle}>推广员工具 · 商品/套餐入口</span>
+        <button className={styles.topBarRefresh} type="button" onClick={() => void load()}>
+          刷新
+        </button>
+      </header>
+
+      <section className={styles.heroCard} aria-label="商品套餐概览">
+        <h1>商品/套餐入口</h1>
+        <p>
+          维护服务/套餐真源与受控平台价格入口，供统一入口展示与比价；价格由商户登记，不宣称第三方实时同步，也不在此售卖下单。
+        </p>
+      </section>
+
       {note ? (
         <p className={styles.notice} role="status">
           {note}
         </p>
       ) : null}
-      <Card className={styles.create}>
+      <section className={styles.panel} aria-label="新建商品套餐">
         <h2>新建商品/套餐</h2>
+        <div className={styles.create}>
         <label>
           门店
           <select
@@ -235,12 +240,13 @@ export default function OffersPage() {
         <Button loading={saving} onClick={() => void createService()}>
           创建套餐
         </Button>
-      </Card>
+        </div>
+      </section>
       <section className={styles.catalog}>
         {currentStore?.services.map((item) => {
           const draft = offerDrafts[item.id] ?? {};
           return (
-            <Card key={item.id} className={styles.service}>
+            <article key={item.id} className={styles.service}>
               <header>
                 <div>
                   <h2>{item.name}</h2>
@@ -344,7 +350,7 @@ export default function OffersPage() {
                   />
                 )}
               </div>
-            </Card>
+            </article>
           );
         })}
       </section>

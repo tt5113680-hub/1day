@@ -1,3 +1,9 @@
+## 2026-08-12 - G1-W∞-39 Management 商品/套餐入口视觉 densify + 6h health
+
+- `/m/offers` 黄顶栏/灰底白卡 densify；诚实边界保留。
+- Ops: `pnpm unattended:health` + 计划任务每 6 小时排查 BLOCKED/停摆。
+- Evidence: `evidence/G1-MEITUAN-PARITY/WINF39/ACCEPTANCE.md`.
+
 ## 2026-08-11 - G1-W∞-38 Management 门店入口视觉/IA densify（MPC-02）PASS
 
 - `/m/stores`：黄顶栏、灰底白卡、概况条 densify；编辑能力与诚实边界保留。

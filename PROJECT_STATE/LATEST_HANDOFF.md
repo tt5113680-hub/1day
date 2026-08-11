@@ -10,11 +10,11 @@
 
 - branch: `hardening/COMMERCIAL-COMPLETION`
 - product_bar: **商用前提 = 四端完整对标美团成熟场景**（消费者/员工/管理/平台）；**唯一例外** `/m/workflows`。团购推广员工具身份 + L0+L1+L2；不碰钱·销售·本平台下单。
-- last_verified: **2026-08-11** — W∞-32..38 visual densify waves PASS.
+- last_verified: **2026-08-12** — W∞-39 PASS + 6h health check installed.
 - status: Owner 重申完整对标为商用前提（2026-08-11 21:47）。工程下一刀 = **视觉+IA 完整对标 densify**（非仅文案）。全权委托 agent 连续施工。
 - blocker: **none** — `BLOCKED_REPORT` marked RESOLVED 2026-08-12 (stale parallel-writer stop had paused DeepSeek/OpenCode since 22:19).
-- progress: Next: **W∞-39** Management 商品/套餐入口视觉 densify（MPC-03）。
-- note: Hub http://127.0.0.1:3299/ · daemon may resume OpenCode/DeepSeek after RESOLVED; IDE Agent also continues W∞-39+
+- progress: Next: **W∞-40** Management 客户跟进视觉 densify（MPC-06）。
+- note: Hub http://127.0.0.1:3299/ · **健康排查：每 6 小时** `pnpm unattended:health`（计划任务 `ONEDAY-V3-Unattended-Health-6h`）；BLOCKED/停摆会写 `logs/unattended/health-latest.json`。daemon 与 IDE 勿并行写同分支。
 
 ### Owner — next actions
 
@@ -22,6 +22,14 @@
 
 需要时本地验收后签 `PRODUCT_OWNER_UI_ACCEPTANCE.md`（不得由 agent 代签）。
 
+### Ops — 6h health
+
+```powershell
+pnpm unattended:health
+pnpm unattended:health:install   # once: register 6h scheduled task
+```
+
+告警口径：`BLOCKED_REPORT` 未 RESOLVED、>6h 无成功施工、daemon.log 静默、lock 卡住 ≥3h。
 ### Headless turn prompt
 
 `scripts/unattended-construction-prompt.md`

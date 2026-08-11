@@ -31,6 +31,8 @@
     "unattended:status": "powershell -ExecutionPolicy Bypass -File scripts/unattended-status.ps1",
     "unattended:dashboard": "powershell -ExecutionPolicy Bypass -File scripts/unattended-dashboard.ps1",
     "unattended:progress": "powershell -ExecutionPolicy Bypass -File scripts/unattended-progress.ps1",
+    "unattended:health": "powershell -ExecutionPolicy Bypass -File scripts/unattended-health-check.ps1",
+    "unattended:health:install": "powershell -ExecutionPolicy Bypass -File scripts/install-unattended-health-task.ps1",
     "fixtures:generate": "node scripts/generate-commercial-fixtures.mjs",
     "test:unit": "vitest run",
     "test:e2e": "playwright test",

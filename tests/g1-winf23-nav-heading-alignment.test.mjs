@@ -14,8 +14,8 @@ const menu = () => read('packages/contracts/src/menu.ts');
 
 test('W∞-23: /m/offers page heading + states aligned to nav label 商品/套餐入口', () => {
   const o = offers();
-  assert.match(o, /eyebrow="推广员工具 · 商品\/套餐入口"/);
-  assert.match(o, /title="商品\/套餐入口"/);
+  assert.match(o, /推广员工具 · 商品\/套餐入口/);
+  assert.match(o, /<h1>商品\/套餐入口<\/h1>/);
   assert.match(o, /正在加载商品\/套餐入口/);
   assert.match(o, /无权访问商品\/套餐入口/);
   assert.doesNotMatch(o, /商品管理/);
