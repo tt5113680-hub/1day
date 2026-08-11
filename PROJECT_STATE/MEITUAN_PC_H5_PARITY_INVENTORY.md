@@ -50,7 +50,7 @@
 | MPC-06 | 顾客 / CRM | `/m/customers` | PARTIAL | W∞-24 工具身份收尾：`客户资产/驱动每次经营动作/经营管理权限` → `客户跟进`（eyebrow/title/状态/back-link/aria）；保留实名授权跟进/来源分层/归属与导出审批；**W∞-40** 视觉/IA densify（`/m/customers` + `/m/customers/[id]` 黄顶栏+灰底白卡+heroCard+白卡面板）；toward PARITY；见 WINF40 |
 | MPC-07 | 营销中心（券/活动） | `/m/marketing` | PARTIAL | 本地营销活动档案；W∞-23 页头 `营销中心→营销活动`（对齐导航）；不接实时投放 |
 | MPC-08 | 会员 | `/m/memberships` | PARTIAL | W∞-25 眉标 `会员中心`；会员码核销/ledger 工具身份；**W∞-41** 视觉/IA densify（黄顶栏+灰底白卡+heroCard+概况条+白卡会员卡+ledger）；toward PARITY；见 WINF41 |
-| MPC-09 | 数据 / 经营分析 | 分散 metric | GAP | 禁止假 BI；先美团常见经营日报密度 |
+| MPC-09 | 数据 / 经营分析 | `/m/analytics` | PARTIAL | W∞-44 美团经营日报密度（`GET /api/v1/management/entry-funnel/daily-report` + `/m/analytics`：今日指标+环比+逐日明细，真实 L0–L2，禁止假 BI）；`/m/entry-funnel` `/m/attribution` 互链；toward PARITY；见 WINF44 |
 | MPC-10 | 员工 / 权限 | `/m/organization-employees`, `/m/roles-permissions` | PARTIAL | W∞-25 眉标 `员工管理`/`角色权限`、`员工表现`/`操作审计`；**W∞-43** 视觉/IA densify（`/m/organization-employees` + `/m/roles-permissions` 黄顶栏+灰底白卡+heroCard+概况条+白卡面板）；toward PARITY；见 WINF43 |
 | MPC-11 | 店铺装修 / 展示 | `/m/page-builder`, `/m/content` | PARTIAL | **壳跟美团**；内容数据仍走 ONEDAY 发布链；W∞-25 眉标 `入口页装修`/`营销内容`（对齐导航）；**W∞-43** 视觉/IA densify（`/m/page-builder` + `/m/content` 黄顶栏+灰底白卡+heroCard+概况条+白卡面板）；toward PARITY；见 WINF43 |
 | MPC-12 | 设置 | `/m/settings` | PARTIAL | W∞-12 densify 工具链 cross-link；W∞-25 眉标 `工具设置`（对齐导航）；W∞-26 状态口径 `经营设置/经营规则`→`工具设置/工具规则`（title/loading/forbidden/error/保存/成功提示）；**W∞-43** 视觉/IA densify（`/m/settings` 黄顶栏+灰底白卡+heroCard+白卡 fieldset 面板）；toward PARITY；见 WINF43 |
@@ -142,7 +142,7 @@
 
 ## 6. 当前下一刀
 
-> **当前：W∞-43 PASS** — Management 员工·权限（MPC-10）/ 营销内容·入口页装修（MPC-11）/ 工具设置（MPC-12）视觉/IA densify（`/m/organization-employees`, `/m/roles-permissions`, `/m/content`, `/m/page-builder`, `/m/settings` 黄顶栏+灰底白卡+heroCard+概况条+白卡面板）`evidence/G1-MEITUAN-PARITY/WINF43/ACCEPTANCE.md`. **下一刀：W∞-44 MPC-09 数据/经营分析（本地试点指标密度，禁止假 BI；美团常见经营日报密度）**.
+> **当前：W∞-44 PASS** — Management 数据/经营分析（MPC-09）美团经营日报密度（`GET /api/v1/management/entry-funnel/daily-report` + `/m/analytics`：今日指标卡+环比+逐日明细，只读真实 L0–L2，禁止假 BI；`/m/entry-funnel` `/m/attribution` 互链；菜单 `analytics` `数据/经营分析`）`evidence/G1-MEITUAN-PARITY/WINF44/ACCEPTANCE.md`. **下一刀：W∞-45 续 Management MPC 深度 densify**.
 
 **历史波（自 W24 起）累计——**
 

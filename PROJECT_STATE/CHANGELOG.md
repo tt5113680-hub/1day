@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## 2026-08-12 - G1-W∞-44 Management 数据/经营分析 视觉/IA densify（MPC-09，美团经营日报密度，禁止假 BI）PASS
+
+- MPC-09 数据/经营分析 GAP close（toward PARITY）：新增 `GET /api/v1/management/entry-funnel/daily-report?days=N`（`entry-funnel.service.ts` + `controller`，`tenant.manage` fail-closed）只读真实 L0–L2 `entry_funnel_events` 返回今日指标卡（观看/访问/跳转/停留/分享 + 模块曝光/咨询点击/跳转确认/分享发出码/进店率/出站率）+ `vsPrior` 今日对比前一窗环比 + `daily[]` 逐日时间序列（`YYYY-MM-DD`）+ 诚实 disclaimer（仅 L0–L2，不含支付/成交/第三方订单）；配套 `/m/analytics` 美团商家端 PC 经营日报密度页（黄顶栏 `推广员工具 · 数据/经营分析` + 窗口选择 + 刷新；灰底白卡 heroCard h1 + 诚实描述；概况条 summaryStrip 今日指标含环比；白卡面板 漏斗 + L2 动作 + 逐日明细表；loading/forbidden/error/empty 全状态；`data-testid="management-analytics"`；honest note + 深链 `/m/entry-funnel` ` /m/attribution`）；菜单新增 `analytics`（`数据/经营分析`，`group: orders`，`requireAny: ['tenant.manage']`）。诚实边界全保留（不接美团实时、不含支付成交、不复活 consumer_orders / 本平台下单/收单）。
+- Gates: g1-winf44 6/6；`g1-winf*.test.mjs` 126/126；menu 相关（sys-29 + sys-6-menu-dto + W∞-44）11/11；api/contracts/management-web typecheck PASS；`pnpm build` 20/20（management-web 29 routes 含 `/m/analytics`）；单测 47 passed（2 个 pre-existing token 失败照旧）；eslint + prettier clean；随动更新 `tests/menu-dto.vitest.ts`（tenant.manage 列表加入 analytics）。
+- Evidence: `evidence/G1-MEITUAN-PARITY/WINF44/ACCEPTANCE.md`.
+
 ## 2026-08-12 - G1-W∞-43 Management 员工·权限 / 入口页装修·营销内容·工具设置 视觉/IA densify（MPC-10/11/12）PASS
 
 - `/m/organization-employees`（员工管理 MPC-10）+ `/m/roles-permissions`（角色权限 MPC-10）+ `/m/content`（营销内容 MPC-11）+ `/m/page-builder`（入口页装修 MPC-11）+ `/m/settings`（工具设置 MPC-12）：由旧 `AdminPageHeader` + `Card` 品牌渐变改为美团商家端 PC 黄顶栏（`推广员工具 · <label>` + 刷新）+ 灰底白卡（heroCard h1 + 诚实描述）+ 白卡概况条（数据列表页）+ 白卡面板；移除页面级 AdminPageHeader/Card/eyebrow=。工具身份与诚实边界全保留（不另造第二套 API、高风险权限二次确认、渠道无授权不伪造发送、共用一套 Storefront 绑定、不碰销售成交、不含支付金额与第三方订单成功），e2e hooks 与关键交互全保留。无 schema/DB/API，不复活本平台下单/收单。

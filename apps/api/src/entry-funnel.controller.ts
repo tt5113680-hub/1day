@@ -66,6 +66,23 @@ export class EntryFunnelController {
     };
   }
 
+  /** Meituan daily-report-density: per-day L0–L2 entry-trace time series + today vs prior-window. */
+  @Get('management/entry-funnel/daily-report')
+  async dailyReport(
+    @Headers('authorization') authorization: string | undefined,
+    @Headers('x-tenant-context') tenant: string | undefined,
+    @Headers('x-request-id') requestId: string | undefined,
+    @Query('days') days: string | undefined,
+  ) {
+    if (!requestId?.trim()) throw new BadRequestException('VALIDATION_ERROR');
+    const context = await this.auth.require(authorization, 'tenant.manage', tenant);
+    return {
+      data: await this.funnel.dailyReport(context.tenantId, days),
+      meta: { requestId },
+      error: null,
+    };
+  }
+
   /** DIY dimension pivot over entry_funnel_events. */
   @Get('management/entry-funnel/query')
   async query(

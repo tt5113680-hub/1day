@@ -10,10 +10,10 @@
 
 - branch: `hardening/COMMERCIAL-COMPLETION`
 - product_bar: **商用前提 = 四端完整对标美团成熟场景**（消费者/员工/管理/平台）；**唯一例外** `/m/workflows`。团购推广员工具身份 + L0+L1+L2；不碰钱·销售·本平台下单。
-- last_verified: **2026-08-12** — W∞-43 PASS (Management 员工·权限 MPC-10 / 入口页装修·营销内容 MPC-11 / 工具设置 MPC-12 visual densify).
+- last_verified: **2026-08-12** — W∞-44 PASS (Management 数据/经营分析 MPC-09 daily-report density：`GET /api/v1/management/entry-funnel/daily-report` + `/m/analytics`.
 - status: Owner 重申完整对标为商用前提（2026-08-11 21:47）。工程继续视觉+IA 完整对标 densify（非仅文案）。全权委托 agent 连续施工。
 - blocker: **none** — `BLOCKED_REPORT` marked RESOLVED 2026-08-12.
-- progress: Next: **W∞-44** MPC-09 数据/经营分析（本地试点指标密度，禁止假 BI；美团常见经营日报密度）。
+- progress: Next: **W∞-45** 续 Management MPC 深度 densify（美团经营日报/数据分析已收）。
 - note: Hub http://127.0.0.1:3299/ · **健康排查：每 6 小时** `pnpm unattended:health`（计划任务 `ONEDAY-V3-Unattended-Health-6h`）；BLOCKED/停摆会写 `logs/unattended/health-latest.json`。daemon 与 IDE 勿并行写同分支。
 
 ### Owner — next actions

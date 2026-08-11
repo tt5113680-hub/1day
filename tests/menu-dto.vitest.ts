@@ -35,6 +35,7 @@ describe('menu DTO catalog filter', () => {
       'external-actions',
       'offers',
       'orders',
+      'analytics',
       'customers',
       'reviews',
       'attribution',

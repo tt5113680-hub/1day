@@ -384,6 +384,117 @@ export class EntryFunnelService implements OnModuleDestroy {
     };
   }
 
+  /** Meituan daily-report-density: per-day L0–L2 entry-trace time series + today vs prior-window deltas. */
+  async dailyReport(tenantId: string, daysRaw: unknown) {
+    const days = parseDays(daysRaw);
+
+    const [dailyRows, todayRows] = await Promise.all([
+      this.pool.query(
+        `select to_char(occurred_at at time zone 'Asia/Shanghai', 'YYYY-MM-DD') as day,
+                count(*) filter (where event_code='impression')::int as impressions,
+                count(*) filter (where event_code='visit')::int as visits,
+                count(*) filter (where event_code='jump')::int as jumps,
+                count(*) filter (where event_code='dwell')::int as dwells,
+                count(*) filter (where event_code in ('share','share_open'))::int as shares,
+                count(*) filter (where event_code='module_impression')::int as module_impressions,
+                count(*) filter (where event_code='consult_click')::int as consult_clicks,
+                count(*) filter (where event_code='jump_confirm')::int as jump_confirms
+         from entry_funnel_events
+         where tenant_id=$1 and occurred_at >= now() - make_interval(days => $2)
+           and occurred_at < date_trunc('day', now() at time zone 'Asia/Shanghai') + interval '1 day'
+         group by 1
+         order by 1 asc`,
+        [tenantId, days],
+      ),
+      this.pool.query(
+        `select count(*) filter (where event_code='impression')::int as impressions,
+                count(*) filter (where event_code='visit')::int as visits,
+                count(*) filter (where event_code='jump')::int as jumps,
+                count(*) filter (where event_code='dwell')::int as dwells,
+                count(*) filter (where event_code in ('share','share_open'))::int as shares,
+                count(*) filter (where event_code='module_impression')::int as module_impressions,
+                count(*) filter (where event_code='consult_click')::int as consult_clicks,
+                count(*) filter (where event_code='jump_confirm')::int as jump_confirms,
+                count(distinct share_code) filter (where event_code='share' and share_code is not null)::int as sent_codes
+         from entry_funnel_events
+         where tenant_id=$1 and occurred_at >= now() - make_interval(days => $2)
+           and occurred_at >= date_trunc('day', now() at time zone 'Asia/Shanghai')`,
+        [tenantId, days],
+      ),
+    ]);
+
+    const today = todayRows.rows[0] ?? {};
+    const todayImpressions = Number(today.impressions ?? 0);
+    const todayVisits = Number(today.visits ?? 0);
+    const todayJumps = Number(today.jumps ?? 0);
+    const todayDwells = Number(today.dwells ?? 0);
+    const todayShares = Number(today.shares ?? 0);
+    const todayModuleImpressions = Number(today.module_impressions ?? 0);
+    const todayConsultClicks = Number(today.consult_clicks ?? 0);
+    const todayJumpConfirms = Number(today.jump_confirms ?? 0);
+    const todaySentCodes = Number(today.sent_codes ?? 0);
+
+    const daily = dailyRows.rows.map((row) => {
+      const impressions = Number(row.impressions ?? 0);
+      const visits = Number(row.visits ?? 0);
+      const jumps = Number(row.jumps ?? 0);
+      return {
+        day: row.day as string,
+        impressions,
+        visits,
+        jumps,
+        dwells: Number(row.dwells ?? 0),
+        shares: Number(row.shares ?? 0),
+        moduleImpressions: Number(row.module_impressions ?? 0),
+        consultClicks: Number(row.consult_clicks ?? 0),
+        jumpConfirms: Number(row.jump_confirms ?? 0),
+        visitRate: impressions > 0 ? Number((visits / impressions).toFixed(2)) : 0,
+        jumpRate: visits > 0 ? Number((jumps / visits).toFixed(2)) : 0,
+      };
+    });
+
+    const sum = (pick: (row: (typeof daily)[number]) => number) =>
+      daily.reduce((acc, row) => acc + pick(row), 0);
+    const totalImpressions = sum((r) => r.impressions);
+    const totalVisits = sum((r) => r.visits);
+    const totalJumps = sum((r) => r.jumps);
+
+    const vsPrior = {
+      impressions:
+        totalImpressions > 0
+          ? Number((((todayImpressions - totalImpressions) / totalImpressions) * 100).toFixed(1))
+          : 0,
+      visits:
+        totalVisits > 0
+          ? Number((((todayVisits - totalVisits) / totalVisits) * 100).toFixed(1))
+          : 0,
+      jumps:
+        totalJumps > 0 ? Number((((todayJumps - totalJumps) / totalJumps) * 100).toFixed(1)) : 0,
+    };
+
+    return {
+      days,
+      disclaimer:
+        '美团式经营日报密度，但数据仅为入口痕迹（观看/访问/跳转/停留/分享，含 L2 模块曝光/咨询/跳转确认）。不含支付、成交或第三方订单数据。',
+      today: {
+        impressions: todayImpressions,
+        visits: todayVisits,
+        jumps: todayJumps,
+        dwells: todayDwells,
+        shares: todayShares,
+        moduleImpressions: todayModuleImpressions,
+        consultClicks: todayConsultClicks,
+        jumpConfirms: todayJumpConfirms,
+        sentCodes: todaySentCodes,
+        visitRate: todayImpressions > 0 ? Number((todayVisits / todayImpressions).toFixed(2)) : 0,
+        jumpRate: todayVisits > 0 ? Number((todayJumps / todayVisits).toFixed(2)) : 0,
+      },
+      vsPrior,
+      daily,
+      generatedAt: new Date().toISOString(),
+    };
+  }
+
   /** DIY: group entry traces by chosen dimension with optional filters (no payment fields). */
   async query(tenantId: string, params: Record<string, unknown>) {
     const days = parseDays(params.days);

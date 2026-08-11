@@ -131,6 +131,13 @@ export const MANAGEMENT_MENU_CATALOG: MenuCatalogItem[] = [
     requireAny: ['tenant.manage', 'tenant.read'],
   },
   {
+    key: 'analytics',
+    href: '/m/analytics',
+    label: '数据/经营分析',
+    group: 'orders',
+    requireAny: ['tenant.manage'],
+  },
+  {
     key: 'customers',
     href: '/m/customers',
     label: '客户跟进',
