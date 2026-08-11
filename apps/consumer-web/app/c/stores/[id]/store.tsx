@@ -1,10 +1,11 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { StorefrontFloatingConsult } from '@oneday/storefront-renderer';
 import { useStorefrontSync } from '@oneday/sync-client';
 import { AppStatePanel, Button } from '@oneday/ui';
+import { bindPageFunnel, trackFunnelEvent } from '../../entry-funnel-client';
 import { ConsumerShell, resolveConsumerTabs } from '../../consumer-shell';
 import { StorefrontModules } from './storefront-modules';
 import styles from './store.module.css';
@@ -62,7 +63,7 @@ export type StoreDetail = {
     linkId: string;
     title: string;
     description: string | null;
-    platformType: 'meituan' | 'douyin' | 'external';
+    platformType: 'meituan' | 'douyin' | 'saabei' | 'external';
     targetUrl: string;
     actionType: string;
   }[];
@@ -73,7 +74,7 @@ export type StoreDetail = {
     serviceName: string;
     servicePriceLabel: string | null;
     title: string;
-    platformType: 'meituan' | 'douyin' | 'external';
+    platformType: 'meituan' | 'douyin' | 'saabei' | 'external';
     offerPrice: number;
     marketPrice: number | null;
     currency: string;
@@ -139,6 +140,19 @@ export default function StorePage({
     scene: scene ?? 'storefront',
     shareCode,
   };
+  useEffect(
+    () =>
+      bindPageFunnel({
+        tenantSlug: data.tenant.slug,
+        surface: 'store',
+        moduleKey: 'storefront',
+        targetStoreId: data.store.id,
+        shareCode,
+        source: sourceValue,
+        scene: scene ?? 'storefront',
+      }),
+    [data.tenant.slug, data.store.id, shareCode, sourceValue, scene],
+  );
   useStorefrontSync(apiBase, data.tenant.slug, data.store.id, () => {
     setNotice('门店内容已更新，正在同步最新装修…');
     router.refresh();
@@ -181,6 +195,17 @@ export default function StorePage({
         : null;
 
   const outbound = async (outboundType: 'navigation' | 'phone', targetUrl: string) => {
+    void trackFunnelEvent(data.tenant.slug, {
+      eventCode: 'jump',
+      surface: 'store',
+      moduleKey: outboundType === 'navigation' ? 'store_navigation' : 'store_phone',
+      targetUrl,
+      targetStoreId: data.store.id,
+      targetPlatform: 'external',
+      source: sourceValue,
+      scene: 'storefront',
+      shareCode,
+    });
     const response = await fetch(
       `${apiBase}/api/v1/consumer/stores/${data.store.id}/outbound?tenant=${encodeURIComponent(data.tenant.slug)}`,
       {
@@ -224,6 +249,17 @@ export default function StorePage({
         await navigator.clipboard.writeText(url);
         setNotice('门店链接已复制，可发送给朋友。');
       }
+      void trackFunnelEvent(data.tenant.slug, {
+        eventCode: 'share',
+        surface: 'store',
+        moduleKey: 'store_share',
+        targetStoreId: data.store.id,
+        targetUrl: url,
+        source: sourceValue,
+        scene: 'storefront',
+        shareCode,
+        shareState: 'sent',
+      });
     } catch {
       /* user cancelled share */
     }

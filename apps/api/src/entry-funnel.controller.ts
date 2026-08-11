@@ -1,4 +1,13 @@
-import { BadRequestException, Body, Controller, Headers, Post, Put, Query } from '@nestjs/common';
+import {
+  BadRequestException,
+  Body,
+  Controller,
+  Get,
+  Headers,
+  Post,
+  Put,
+  Query,
+} from '@nestjs/common';
 import { AuthorizationService } from './authorization.service';
 import { EntryFunnelService } from './entry-funnel.service';
 
@@ -18,6 +27,38 @@ export class EntryFunnelController {
     return {
       data: await this.funnel.ingest(tenant ?? '', body ?? {}),
       meta: { public: true },
+      error: null,
+    };
+  }
+
+  /** Module-named entry-trace board for management. */
+  @Get('management/entry-funnel/summary')
+  async summary(
+    @Headers('authorization') authorization: string | undefined,
+    @Headers('x-tenant-context') tenant: string | undefined,
+    @Headers('x-request-id') requestId: string | undefined,
+    @Query('days') days: string | undefined,
+  ) {
+    if (!requestId?.trim()) throw new BadRequestException('VALIDATION_ERROR');
+    const context = await this.auth.require(authorization, 'tenant.manage', tenant);
+    return {
+      data: await this.funnel.summary(context.tenantId, days),
+      meta: { requestId },
+      error: null,
+    };
+  }
+
+  @Get('management/tenant/platform-visibility')
+  async getVisibility(
+    @Headers('authorization') authorization: string | undefined,
+    @Headers('x-tenant-context') tenant: string | undefined,
+    @Headers('x-request-id') requestId: string | undefined,
+  ) {
+    if (!requestId?.trim()) throw new BadRequestException('VALIDATION_ERROR');
+    const context = await this.auth.require(authorization, 'tenant.manage', tenant);
+    return {
+      data: await this.funnel.getPlatformVisibleTrafficById(context.tenantId),
+      meta: { requestId },
       error: null,
     };
   }

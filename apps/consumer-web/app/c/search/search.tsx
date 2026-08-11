@@ -1,10 +1,11 @@
 'use client';
 
-import { FormEvent, useState } from 'react';
+import { FormEvent, useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { ConsumerStorefrontNav } from '@oneday/storefront-renderer';
 import '@oneday/storefront-renderer/storefront.css';
 import { AppStatePanel, Button, MobileShell } from '@oneday/ui';
+import { bindPageFunnel, trackFunnelEvent } from '../entry-funnel-client';
 import { FALLBACK_CONSUMER_TABS } from '../resolve-consumer-tabs';
 import styles from './search.module.css';
 
@@ -46,6 +47,16 @@ export function SearchState({ kind }: { kind: 'forbidden' | 'error' }) {
 export default function SearchPage({ data }: { data: SearchData }) {
   const router = useRouter();
   const [term, setTerm] = useState(data.query);
+  useEffect(
+    () =>
+      bindPageFunnel({
+        tenantSlug: data.tenant.slug,
+        surface: 'search',
+        moduleKey: 'consumer_search',
+        scene: data.query ? 'search_results' : 'search_empty',
+      }),
+    [data.tenant.slug, data.query],
+  );
   const tenantQ = encodeURIComponent(data.tenant.slug);
   const entryHref = `/c/entry?tenant=${tenantQ}`;
   const discoveryHref = `/c/discovery?tenant=${tenantQ}`;
@@ -93,7 +104,20 @@ export default function SearchPage({ data }: { data: SearchData }) {
           <div className={styles.results}>
             {data.items.length ? (
               data.items.map((item) => (
-                <a className={styles.resultLink} href={item.entryUrl ?? undefined} key={item.id}>
+                <a
+                  className={styles.resultLink}
+                  href={item.entryUrl ?? undefined}
+                  key={item.id}
+                  onClick={() =>
+                    void trackFunnelEvent(data.tenant.slug, {
+                      eventCode: 'impression',
+                      surface: 'search',
+                      moduleKey: 'search_result_card',
+                      scene: 'search_open_store',
+                      payload: { storeName: item.name },
+                    })
+                  }
+                >
                   <span className={styles.thumb} aria-hidden>
                     店
                   </span>

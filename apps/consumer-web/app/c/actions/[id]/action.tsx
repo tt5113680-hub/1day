@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { AppStatePanel, Button } from '@oneday/ui';
+import { mapPlatform, trackFunnelEvent } from '../../entry-funnel-client';
 import { ConsumerShell } from '../../consumer-shell';
 import styles from './action.module.css';
 
@@ -64,6 +65,18 @@ export function ActionPage({
   const confirm = async () => {
     setStatus('submitting');
     try {
+      void trackFunnelEvent(tenant, {
+        eventCode: 'jump_confirm',
+        surface: 'store',
+        moduleKey: 'external_action_confirm',
+        targetStoreId: storeId,
+        targetPlatform: mapPlatform(action.platform),
+        targetUrl: action.targetUrl ?? undefined,
+        source,
+        scene: scene ?? 'action_confirm',
+        shareCode,
+        payload: { actionId: action.id, actionType: action.actionType },
+      });
       const response = await fetch(
         `${api}/api/v1/consumer/actions/${encodeURIComponent(action.id)}/confirm?tenant=${encodeURIComponent(tenant)}`,
         {
@@ -75,6 +88,17 @@ export function ActionPage({
       const payload = (await response.json()) as { data?: { destination?: string | null } };
       if (!response.ok) throw new Error('confirm failed');
       if (payload.data?.destination) {
+        void trackFunnelEvent(tenant, {
+          eventCode: 'jump',
+          surface: 'store',
+          moduleKey: action.name || 'external_jump',
+          targetStoreId: storeId,
+          targetPlatform: mapPlatform(action.platform),
+          targetUrl: payload.data.destination,
+          source,
+          scene: scene ?? 'action_jump',
+          shareCode,
+        });
         window.location.assign(payload.data.destination);
         return;
       }

@@ -2,6 +2,7 @@
 
 import { useParams, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
+import { trackFunnelEvent } from '../../entry-funnel-client';
 
 const api = process.env.NEXT_PUBLIC_API_BASE_URL ?? 'http://127.0.0.1:3001';
 
@@ -22,6 +23,14 @@ export function ShareLanding() {
           tenant: string;
           code: string;
         };
+        void trackFunnelEvent(share.tenant, {
+          eventCode: 'share_open',
+          surface: 'share',
+          moduleKey: 'employee_share_landing',
+          shareCode: share.code,
+          scene: 'share_open',
+          shareState: 'opened',
+        });
         const target = new URL(share.targetPath, window.location.origin);
         target.searchParams.set('tenant', share.tenant);
         target.searchParams.set('shareCode', share.code);

@@ -1,4 +1,5 @@
 import { AppStatePanel, Button } from '@oneday/ui';
+import { FunnelPageBeacon } from '../funnel-page-beacon';
 import styles from './consumer-entry.module.css';
 
 export type ConsumerAction = {
@@ -81,6 +82,12 @@ export default function ConsumerEntry({ entry }: { entry: Entry }) {
   if (!entry.template) return <EntryState kind="empty" />;
   return (
     <main id="top" className={styles.page}>
+      <FunnelPageBeacon
+        tenantSlug={entry.tenant.slug}
+        surface="entry"
+        moduleKey="consumer_entry"
+        scene="entry"
+      />
       <div className={styles.shell}>
         <section className={styles.hero}>
           <div className={styles.topbar}>

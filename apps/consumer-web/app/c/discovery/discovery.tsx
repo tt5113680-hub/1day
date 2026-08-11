@@ -1,9 +1,10 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { ConsumerStorefrontNav } from '@oneday/storefront-renderer';
 import '@oneday/storefront-renderer/storefront.css';
 import { AppStatePanel, Button, MobileShell } from '@oneday/ui';
+import { bindPageFunnel, trackFunnelEvent } from '../entry-funnel-client';
 import { FALLBACK_CONSUMER_TABS } from '../resolve-consumer-tabs';
 import styles from './discovery.module.css';
 
@@ -53,6 +54,25 @@ export default function DiscoveryPage({ data }: { data: Discovery }) {
   const [notice, setNotice] = useState('');
   const [activeTab, setActiveTab] = useState<'nearby' | 'channels' | 'circles'>('nearby');
   const [nearbySort, setNearbySort] = useState<'distance' | 'rating' | 'sales'>('distance');
+  useEffect(
+    () =>
+      bindPageFunnel({
+        tenantSlug: data.tenant.slug,
+        surface: 'nearby',
+        moduleKey: 'discovery_nearby',
+        scene: 'discovery',
+      }),
+    [data.tenant.slug],
+  );
+  const trackMerchantOpen = (moduleKey: string, storeName: string) => {
+    void trackFunnelEvent(data.tenant.slug, {
+      eventCode: 'impression',
+      surface: activeTab === 'nearby' ? 'nearby' : activeTab === 'circles' ? 'circle' : 'nearby',
+      moduleKey,
+      scene: 'discovery_merchant_open',
+      payload: { storeName },
+    });
+  };
   const tenantQ = encodeURIComponent(data.tenant.slug);
   const discoveryHref = `/c/discovery?tenant=${tenantQ}`;
   const entryHref = `/c/entry?tenant=${tenantQ}`;
@@ -199,7 +219,12 @@ export default function DiscoveryPage({ data }: { data: Discovery }) {
                     </>
                   );
                   return item.entryUrl ? (
-                    <a className={styles.nearbyLink} href={item.entryUrl} key={item.id}>
+                    <a
+                      className={styles.nearbyLink}
+                      href={item.entryUrl}
+                      key={item.id}
+                      onClick={() => trackMerchantOpen('nearby_merchant_card', item.name)}
+                    >
                       {content}
                     </a>
                   ) : (
@@ -236,6 +261,7 @@ export default function DiscoveryPage({ data }: { data: Discovery }) {
                             className={styles.merchantLink}
                             href={merchant.entryUrl}
                             key={merchant.id}
+                            onClick={() => trackMerchantOpen('channel_merchant', merchant.name)}
                           >
                             {merchant.name}
                           </a>
@@ -274,6 +300,7 @@ export default function DiscoveryPage({ data }: { data: Discovery }) {
                             className={styles.merchantLink}
                             href={merchant.entryUrl}
                             key={merchant.id}
+                            onClick={() => trackMerchantOpen('circle_merchant', merchant.name)}
                           >
                             {merchant.name}
                           </a>

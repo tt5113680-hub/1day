@@ -184,6 +184,96 @@ export class EntryFunnelService implements OnModuleDestroy {
     };
   }
 
+  async getPlatformVisibleTrafficById(tenantId: string) {
+    const result = await this.pool.query(
+      `select slug, platform_visible_traffic from tenants
+       where id=$1 and status='active' and deleted_at is null`,
+      [tenantId],
+    );
+    if (!result.rows[0]) throw new BadRequestException('VALIDATION_ERROR');
+    return {
+      tenantSlug: result.rows[0].slug as string,
+      platformVisibleTraffic: Boolean(result.rows[0].platform_visible_traffic),
+    };
+  }
+
+  /** Module-named entry-trace board (no payment / deal metrics). */
+  async summary(tenantId: string, daysRaw: unknown) {
+    const days =
+      typeof daysRaw === 'number'
+        ? Math.max(1, Math.min(90, Math.floor(daysRaw)))
+        : typeof daysRaw === 'string' && /^\d{1,2}$/.test(daysRaw)
+          ? Math.max(1, Math.min(90, Number(daysRaw)))
+          : 7;
+
+    const [totals, byCode, bySurface, byModule, byPlatform] = await Promise.all([
+      this.pool.query(
+        `select count(*)::int as total,
+                count(*) filter (where event_code='impression')::int as impressions,
+                count(*) filter (where event_code='visit')::int as visits,
+                count(*) filter (where event_code='jump')::int as jumps,
+                count(*) filter (where event_code='dwell')::int as dwells,
+                count(*) filter (where event_code in ('share','share_open'))::int as shares,
+                coalesce(avg(dwell_ms) filter (where event_code='dwell'), 0)::int as avg_dwell_ms
+         from entry_funnel_events
+         where tenant_id=$1 and occurred_at >= now() - make_interval(days => $2)`,
+        [tenantId, days],
+      ),
+      this.pool.query(
+        `select event_code as key, count(*)::int as count
+         from entry_funnel_events
+         where tenant_id=$1 and occurred_at >= now() - make_interval(days => $2)
+         group by event_code order by count desc`,
+        [tenantId, days],
+      ),
+      this.pool.query(
+        `select surface as key, count(*)::int as count
+         from entry_funnel_events
+         where tenant_id=$1 and occurred_at >= now() - make_interval(days => $2)
+         group by surface order by count desc`,
+        [tenantId, days],
+      ),
+      this.pool.query(
+        `select coalesce(nullif(module_key,''), '(未命名模块)') as key, count(*)::int as count
+         from entry_funnel_events
+         where tenant_id=$1 and occurred_at >= now() - make_interval(days => $2)
+         group by 1 order by count desc limit 40`,
+        [tenantId, days],
+      ),
+      this.pool.query(
+        `select coalesce(target_platform, '(站内)') as key, count(*)::int as count
+         from entry_funnel_events
+         where tenant_id=$1 and occurred_at >= now() - make_interval(days => $2)
+           and event_code in ('jump','jump_confirm')
+         group by 1 order by count desc`,
+        [tenantId, days],
+      ),
+    ]);
+
+    const t = totals.rows[0] ?? {};
+    return {
+      days,
+      disclaimer: '仅统计至观看/访问/跳转/停留/分享等入口痕迹；不含支付与成交。',
+      totals: {
+        total: Number(t.total ?? 0),
+        impressions: Number(t.impressions ?? 0),
+        visits: Number(t.visits ?? 0),
+        jumps: Number(t.jumps ?? 0),
+        dwells: Number(t.dwells ?? 0),
+        shares: Number(t.shares ?? 0),
+        avgDwellMs: Number(t.avg_dwell_ms ?? 0),
+      },
+      byEventCode: byCode.rows.map((r) => ({ key: r.key as string, count: Number(r.count) })),
+      bySurface: bySurface.rows.map((r) => ({ key: r.key as string, count: Number(r.count) })),
+      byModule: byModule.rows.map((r) => ({ key: r.key as string, count: Number(r.count) })),
+      byTargetPlatform: byPlatform.rows.map((r) => ({
+        key: r.key as string,
+        count: Number(r.count),
+      })),
+      generatedAt: new Date().toISOString(),
+    };
+  }
+
   async onModuleDestroy() {
     await this.pool.end();
   }

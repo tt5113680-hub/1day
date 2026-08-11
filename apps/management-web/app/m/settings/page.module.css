@@ -15,6 +15,13 @@
   font-weight: 700;
 }
 
+.hint {
+  margin: 0;
+  color: var(--od-text-muted);
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
 .grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);

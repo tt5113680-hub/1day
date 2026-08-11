@@ -1,8 +1,8 @@
 ﻿{
-    "recordedAt":  "2026-08-11T01:06:00+08:00",
-    "phase":  "Meituan PC/H5 parity (post G1 packaging)",
-    "goal":  "Four-surface Meituan copy; only /m/workflows custom; owner G1 sign later",
-    "currentStep":  "W0–W6 PASS. NEXT W∞ Meituan parity per inventory. Owner hands-off.",
+    "recordedAt":  "2026-08-11T12:40:00+08:00",
+    "phase":  "Promoter-tool entry funnel (post Meituan waves)",
+    "goal":  "Unified entry / ecosystem / workflow; L0+L1+L2 traces; no money/sales/store-ops",
+    "currentStep":  "TOOL-PHASE-0+1 PASS. NEXT TOOL-PHASE-2 circle standalone dual-identity. Owner hands-off.",
     "milestones":  [
                        {
                            "id":  "p0-sys",
@@ -42,44 +42,58 @@
                        {
                            "id":  "g1-w1-pc-nav-home",
                            "label":  "W1 Management PC nav + 商家中心",
-                           "weight":  10,
+                           "weight":  8,
                            "status":  "pass",
                            "evidence":  "evidence/G1-MEITUAN-PARITY/W1/"
                        },
                        {
                            "id":  "g1-w2-h5-nearby-store",
                            "label":  "W2 Consumer H5 nearby + merchant",
-                           "weight":  10,
+                           "weight":  8,
                            "status":  "pass",
                            "evidence":  "evidence/G1-MEITUAN-PARITY/W2/"
                        },
                        {
                            "id":  "g1-w3-pc-store-goods",
                            "label":  "W3 Management PC 门店+商品",
-                           "weight":  12,
+                           "weight":  8,
                            "status":  "pass",
                            "evidence":  "evidence/G1-MEITUAN-PARITY/W3/"
                        },
                        {
                            "id":  "g1-w4-emp-app",
                            "label":  "W4 Employee 美团商家 App",
-                           "weight":  8,
+                           "weight":  6,
                            "status":  "pass",
                            "evidence":  "evidence/G1-MEITUAN-PARITY/W4/ACCEPTANCE.md"
                        },
                        {
                            "id":  "g1-w5-orders-marketing",
                            "label":  "W5 订单/评价/营销骨架",
-                           "weight":  8,
+                           "weight":  5,
                            "status":  "pass",
                            "evidence":  "evidence/G1-MEITUAN-PARITY/W5/ACCEPTANCE.md"
                        },
                        {
                            "id":  "g1-w6-platform-agent",
                            "label":  "W6 平台/代理省市区",
-                           "weight":  7,
+                           "weight":  5,
                            "status":  "pass",
                            "evidence":  "evidence/G1-MEITUAN-PARITY/W6/ACCEPTANCE.md"
+                       },
+                       {
+                           "id":  "tool-phase-0",
+                           "label":  "TOOL-PHASE-0 entry funnel contract",
+                           "weight":  7,
+                           "status":  "pass",
+                           "evidence":  "evidence/TOOL-PHASE-0/ACCEPTANCE.md"
+                       },
+                       {
+                           "id":  "tool-phase-1",
+                           "label":  "TOOL-PHASE-1 client emit + board",
+                           "weight":  8,
+                           "status":  "pass",
+                           "evidence":  "evidence/TOOL-PHASE-1/ACCEPTANCE.md"
                        }
                    ],
     "ownerGates":  [
@@ -99,5 +113,5 @@
                            "status":  "waiting"
                        }
                    ],
-    "notes":  "Owner authorized 全自动施工 2026-08-10/11 — no babysitting. Do not auto-sign PRODUCT_OWNER_UI_ACCEPTANCE.md. Do not claim 已全量复刻美团. Update this file each wave."
+    "notes":  "Promoter-tool identity locked 2026-08-11. Do not revive consumer_orders. Do not auto-sign PRODUCT_OWNER_UI_ACCEPTANCE.md. Update this file each TOOL-PHASE."
 }

@@ -23,6 +23,8 @@ export default function SettingsPage() {
   const [settings, setSettings] = useState<Settings | null>(null);
   const [note, setNote] = useState('');
   const [saving, setSaving] = useState(false);
+  const [platformVisible, setPlatformVisible] = useState(false);
+  const [visibilitySaving, setVisibilitySaving] = useState(false);
   const headers = () => ({});
   const load = useCallback(async () => {
     if (!(await sessionApi.context())) return setState('forbidden');
@@ -34,6 +36,14 @@ export default function SettingsPage() {
       if ([401, 403].includes(response.status)) return setState('forbidden');
       if (!response.ok) throw Error();
       setSettings((await response.json()).data);
+      const visibility = await sessionApi.request(
+        `${api}/api/v1/management/tenant/platform-visibility`,
+        { headers: headers() },
+      );
+      if (visibility.ok) {
+        const body = (await visibility.json()).data as { platformVisibleTraffic?: boolean };
+        setPlatformVisible(Boolean(body.platformVisibleTraffic));
+      }
       setState('ready');
     } catch {
       setState('error');
@@ -70,6 +80,36 @@ export default function SettingsPage() {
       setNote('保存失败，请检查输入和权限后重试。');
     } finally {
       setSaving(false);
+    }
+  };
+  const saveVisibility = async (enabled: boolean) => {
+    setVisibilitySaving(true);
+    setPlatformVisible(enabled);
+    try {
+      const response = await sessionApi.request(
+        `${api}/api/v1/management/tenant/platform-visibility`,
+        {
+          method: 'PUT',
+          headers: {
+            ...headers(),
+            'content-type': 'application/json',
+          },
+          body: JSON.stringify({ platformVisibleTraffic: enabled }),
+        },
+      );
+      if (!response.ok) throw Error();
+      const body = (await response.json()).data as { platformVisibleTraffic?: boolean };
+      setPlatformVisible(Boolean(body.platformVisibleTraffic));
+      setNote(
+        enabled
+          ? '已开通全平台可见引流：本店可出现在其它租户「附近」列表（仅引流，不碰销售）。'
+          : '已关闭全平台可见引流。',
+      );
+    } catch {
+      setPlatformVisible(!enabled);
+      setNote('全平台可见引流开关保存失败，请检查权限后重试。');
+    } finally {
+      setVisibilitySaving(false);
     }
   };
   if (state === 'loading')
@@ -236,6 +276,21 @@ export default function SettingsPage() {
               <option value="round_robin">轮转分配</option>
             </select>
           </label>
+        </fieldset>
+        <fieldset>
+          <legend>全平台可见引流</legend>
+          <label>
+            <input
+              type="checkbox"
+              checked={platformVisible}
+              disabled={visibilitySaving}
+              onChange={(e) => void saveVisibility(e.target.checked)}
+            />{' '}
+            出现在全平台「附近」引流列表（推广员工具 · 不碰销售）
+          </label>
+          <p className={styles.hint}>
+            开启后，其它租户消费者在附近页可能看到本店入口；仅观看/访问/跳转痕迹，不含成交。
+          </p>
         </fieldset>
         <fieldset>
           <legend>品牌规则</legend>
