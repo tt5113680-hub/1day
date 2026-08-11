@@ -69,10 +69,11 @@ export class ConsumerDiscoveryService implements OnModuleDestroy {
     ).rows;
     const circleRows = (
       await this.pool.query(
-        `select c.id as collection_id,c.name as collection_name,c.description,m.id as merchant_id,m.name as merchant_name,null as merchant_slug,s.id as store_id
+        `select c.id as collection_id,c.name as collection_name,c.description,m.id as merchant_id,m.name as merchant_name,mt.slug as merchant_slug,s.id as store_id
          from business_circles c
          join business_circle_merchants cm on cm.business_circle_id=c.id and cm.tenant_id=c.tenant_id and cm.status='active' and cm.deleted_at is null
-         join merchants m on m.id=cm.merchant_id and m.tenant_id=cm.tenant_id and m.status='active' and m.deleted_at is null
+         join merchants m on m.id=cm.merchant_id and m.status='active' and m.deleted_at is null
+         join tenants mt on mt.id=m.tenant_id and mt.status='active' and mt.deleted_at is null
          left join lateral (select id from stores s where s.tenant_id=m.tenant_id and s.merchant_id=m.id and s.status='active' and s.deleted_at is null order by s.created_at asc limit 1) s on true
          where c.tenant_id=$1 and c.status='active' and c.deleted_at is null
          union all

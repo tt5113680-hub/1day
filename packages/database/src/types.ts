@@ -1136,6 +1136,11 @@ export interface BusinessCirclesTable {
   name: string;
   description: string | null;
   rank: number;
+  latitude: string | null;
+  longitude: string | null;
+  address_label: string | null;
+  industry_tag: string | null;
+  public_visible: boolean;
   status: string;
   created_at: Timestamp;
   created_by: string | null;
@@ -1151,6 +1156,24 @@ export interface BusinessCircleMerchantsTable {
   merchant_id: string;
   rank: number;
   status: string;
+  created_at: Timestamp;
+  created_by: string | null;
+  updated_at: Timestamp;
+  updated_by: string | null;
+  deleted_at: Timestamp | null;
+  version: Generated<number>;
+}
+/** TOOL-PHASE-2: invite / apply between circle owner and merchant tenants. */
+export interface BusinessCircleApplicationsTable {
+  id: string;
+  tenant_id: string;
+  business_circle_id: string;
+  applicant_tenant_id: string;
+  source: string;
+  status: string;
+  note: string | null;
+  decided_by: string | null;
+  decided_at: Timestamp | null;
   created_at: Timestamp;
   created_by: string | null;
   updated_at: Timestamp;
@@ -1551,6 +1574,7 @@ export interface Database {
   discovery_channel_merchants: DiscoveryChannelMerchantsTable;
   business_circles: BusinessCirclesTable;
   business_circle_merchants: BusinessCircleMerchantsTable;
+  business_circle_applications: BusinessCircleApplicationsTable;
   merchant_locations: MerchantLocationsTable;
   store_services: StoreServicesTable;
   store_benefits: StoreBenefitsTable;

@@ -1,0 +1,163 @@
+.page {
+  min-height: 100svh;
+  background: var(--od-background);
+  color: var(--od-ink);
+  padding: 22px 16px 96px;
+}
+
+.shell {
+  max-width: 520px;
+  margin: 0 auto;
+}
+
+.message {
+  min-height: 100svh;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+}
+
+.appHeader {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: center;
+  margin-bottom: 14px;
+}
+
+.locateChip,
+.back,
+.location {
+  min-height: 40px;
+  border: 1px solid color-mix(in srgb, var(--od-brand-600) 35%, var(--od-border));
+  border-radius: 999px;
+  padding: 0 14px;
+  color: var(--od-brand-800);
+  background: var(--od-brand-50);
+  font: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  cursor: pointer;
+}
+
+.back {
+  background: var(--od-surface);
+  color: var(--od-ink);
+}
+
+.eyebrow {
+  margin: 0;
+  color: var(--od-text-muted);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.title {
+  margin: 6px 0 8px;
+  font-size: 1.8rem;
+  line-height: 1.15;
+}
+
+.intro,
+.meta,
+.notice,
+.empty {
+  color: var(--od-text-muted);
+}
+
+.intro {
+  margin: 0 0 16px;
+}
+
+.notice {
+  margin: 0 0 12px;
+}
+
+.location {
+  width: 100%;
+  justify-content: center;
+  margin-bottom: 16px;
+  border-radius: 14px;
+}
+
+.list {
+  display: grid;
+  gap: 12px;
+}
+
+.card {
+  display: grid;
+  gap: 6px;
+  padding: 16px;
+  border: 1px solid var(--od-border);
+  border-radius: 16px;
+  background: var(--od-surface);
+  color: inherit;
+  text-decoration: none;
+}
+
+.cardTop {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: baseline;
+}
+
+.card p {
+  margin: 0;
+}
+
+.distance,
+.badge {
+  font-size: 12px;
+  font-weight: 800;
+  color: var(--od-brand-800);
+}
+
+.meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  font-size: 12px;
+}
+
+.empty {
+  padding: 28px 16px;
+  border: 1px dashed var(--od-border);
+  border-radius: 16px;
+  text-align: center;
+}
+
+.detailHero {
+  display: grid;
+  gap: 8px;
+  margin-bottom: 18px;
+}
+
+.merchants {
+  display: grid;
+  gap: 10px;
+}
+
+.merchant {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: center;
+  padding: 14px 16px;
+  border: 1px solid var(--od-border);
+  border-radius: 14px;
+  background: var(--od-surface);
+  color: inherit;
+  text-decoration: none;
+  font-weight: 700;
+}
+
+.merchant span {
+  color: var(--od-text-muted);
+  font-weight: 600;
+  font-size: 13px;
+}

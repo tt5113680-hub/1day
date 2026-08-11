@@ -35,6 +35,7 @@ const SHORTCUTS = [
   { href: '/m/page-builder', label: '装修', desc: '店铺装修' },
   { href: '/m/attribution', label: '数据', desc: '来源分析' },
   { href: '/m/entry-funnel', label: '痕迹', desc: '入口分流痕迹' },
+  { href: '/m/circles', label: '商圈', desc: '商圈双身份' },
   { href: '/m/organization-employees', label: '员工', desc: '员工管理' },
   { href: '/m/employee-process-performance', label: '表现', desc: '员工表现' },
   { href: '/m/settings', label: '设置', desc: '商家设置' },

@@ -2,6 +2,9 @@
 
 ## 2026-08-11
 
+- **TOOL-PHASE-2** 商圈单独页双身份：/c/circles + /m/circles + invite/apply + geo/public_visible. Evidence: evidence/TOOL-PHASE-2/ACCEPTANCE.md.
+
+
 - **TOOL-PHASE-1** Consumer funnel client emit (visit/dwell/jump/share) + Management /m/entry-funnel module-named board + settings「全平台可见引流」. Evidence: evidence/TOOL-PHASE-1/ACCEPTANCE.md.
 
 

@@ -57,6 +57,7 @@ import * as merchantCommerce from './migrations/055_merchant_commerce.js';
 import * as geoAgentTree from './migrations/056_geo_agent_tree.js';
 import * as agentOperations from './migrations/057_agent_operations.js';
 import * as entryFunnel from './migrations/058_entry_funnel.js';
+import * as tenantCircles from './migrations/059_tenant_circles.js';
 import type { Database } from './types.js';
 
 const migrationProvider: MigrationProvider = {
@@ -120,6 +121,7 @@ const migrationProvider: MigrationProvider = {
       '056_geo_agent_tree': geoAgentTree,
       '057_agent_operations': agentOperations,
       '058_entry_funnel': entryFunnel,
+      '059_tenant_circles': tenantCircles,
     };
   },
 };

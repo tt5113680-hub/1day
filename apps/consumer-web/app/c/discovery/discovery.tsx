@@ -283,9 +283,11 @@ export default function DiscoveryPage({ data }: { data: Discovery }) {
             <div className={styles.sectionHead}>
               <div>
                 <h2>商圈</h2>
-                <p>商家主动加入的服务圈，不等同于地理附近。</p>
+                <p>商家联盟单独页：附近商圈 / 进圈找店。</p>
               </div>
-              <span className={styles.badge}>商圈</span>
+              <a className={styles.badge} href={`/c/circles?tenant=${tenantQ}`}>
+                进入商圈页
+              </a>
             </div>
             <div className={styles.collection}>
               {data.circles.length ? (

@@ -31,6 +31,8 @@ import { ConsumerDiscoveryController } from './consumer-discovery.controller';
 import { ConsumerDiscoveryService } from './consumer-discovery.service';
 import { EntryFunnelController } from './entry-funnel.controller';
 import { EntryFunnelService } from './entry-funnel.service';
+import { TenantCircleController } from './tenant-circle.controller';
+import { TenantCircleService } from './tenant-circle.service';
 import { ConsumerStoreController } from './consumer-store.controller';
 import { ConsumerStoreService } from './consumer-store.service';
 import { ConsumerServiceController } from './consumer-service.controller';
@@ -143,6 +145,7 @@ import { EmployeeManagedStoresController } from './employee-managed-stores.contr
     ConsumerEntryController,
     ConsumerDiscoveryController,
     EntryFunnelController,
+    TenantCircleController,
     ConsumerStoreController,
     ConsumerServiceController,
     ConsumerActionController,
@@ -209,6 +212,7 @@ import { EmployeeManagedStoresController } from './employee-managed-stores.contr
     ConsumerEntryService,
     ConsumerDiscoveryService,
     EntryFunnelService,
+    TenantCircleService,
     ConsumerStoreService,
     ConsumerActionService,
     ConsumerOperatingOrchestrator,
