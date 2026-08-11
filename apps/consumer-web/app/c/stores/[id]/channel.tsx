@@ -120,12 +120,16 @@ export default function StoreChannel({
           : '我的服务';
   const subtitle =
     channel === 'group-buy'
-      ? '先比价格，再经确认页前往对应平台（非本平台下单）'
+      ? '推广员工具 · 比价聚合后经确认页跳转美团/抖音等（不在此下单）'
       : channel === 'menu'
         ? '门店已发布的套餐与商品说明'
         : channel === 'membership'
-          ? '完成本店入会后，可在「我的」查看会员证明与权益余额'
+          ? '本店入会与权益说明 · 推广员工具留痕；不含第三方成交'
           : '会员证明、外链团购与咨询入口；不含第三方订单履约';
+  const platformTypes = useMemo(() => {
+    const set = new Set(data.platformOffers.map((item) => item.platformType));
+    return [...set];
+  }, [data.platformOffers]);
 
   return (
     <ConsumerShell context={context} active={channel} tabs={navTabs}>
@@ -135,6 +139,7 @@ export default function StoreChannel({
             <a href={storeHref(context, '', 'channel_back')}>‹ 返回门店</a>
             <p>
               {data.store.merchant} · {data.store.name}
+              {channel === 'group-buy' || channel === 'membership' ? ' · 推广员工具' : ''}
             </p>
             <h1>{title}</h1>
             <span>{subtitle}</span>
@@ -142,13 +147,35 @@ export default function StoreChannel({
 
           {channel === 'group-buy' && (
             <section className={styles.section} aria-label="全平台团购价格">
+              <p className={styles.disclaimer} role="note">
+                团购频道只做比价与确认跳转；成交、库存、核销以第三方平台页面为准。不在此下单。
+              </p>
+              <div className={styles.quickLinks}>
+                <a href={storeHref(context, '', 'group_buy_home')}>门店首页</a>
+                <a href={storeHref(context, '/menu', 'group_buy_menu')}>门店菜单</a>
+                <a href={storeHref(context, '/membership', 'group_buy_membership')}>会员权益</a>
+              </div>
+              {platformTypes.length > 0 && (
+                <ul className={styles.platformLegend} aria-label="已配置平台">
+                  {platformTypes.map((platform) => (
+                    <li key={platform}>
+                      <span
+                        className={`${styles.platformBadge} ${styles[`platform${platform}`]}`}
+                      >
+                        {platform === 'meituan' ? '团' : platform === 'douyin' ? '抖' : '选'}
+                      </span>
+                      {platformName(platform)}
+                    </li>
+                  ))}
+                </ul>
+              )}
               {groups.length ? (
                 groups.map((group) => {
                   const lowest = Math.min(...group.offers.map((item) => item.offerPrice));
                   return (
                     <article className={styles.package} key={group.name}>
                       <header>
-                        <span>门店推荐套餐</span>
+                        <span>门店推荐套餐 · 外链比价</span>
                         <strong>{group.name}</strong>
                         {group.price && <small>门店参考价 {group.price}</small>}
                       </header>
@@ -175,8 +202,8 @@ export default function StoreChannel({
                             <strong>{offer.title || platformName(offer.platformType)}</strong>
                             <small>
                               {offer.marketPrice
-                                ? `划线价 ${money(offer.marketPrice)}`
-                                : '平台套餐入口'}
+                                ? `划线价 ${money(offer.marketPrice)} · 经确认前往`
+                                : '平台套餐入口 · 经确认前往'}
                             </small>
                           </span>
                           <b>
@@ -191,7 +218,9 @@ export default function StoreChannel({
               ) : (
                 <Empty>门店暂未配置可前往的团购入口。</Empty>
               )}
-              <p className={styles.disclaimer}>价格、库存和最终优惠以第三方平台实际页面为准。</p>
+              <p className={styles.disclaimer}>
+                价格、库存和最终优惠以第三方平台实际页面为准；本页不含支付金额与订单成功态。
+              </p>
             </section>
           )}
 
@@ -237,10 +266,20 @@ export default function StoreChannel({
 
           {channel === 'membership' && (
             <section className={styles.stack} aria-label="会员权益">
+              <p className={styles.disclaimer} role="note">
+                会员频道服务本店身份与权益说明；不替代美团/抖音会员，也不在此成交。
+              </p>
+              <div className={styles.quickLinks}>
+                <a href={storeHref(context, '/profile', 'membership_profile')}>我的会员</a>
+                <a href={storeHref(context, '/group-buy', 'membership_group_buy')}>全平台团购</a>
+                <a href={storeHref(context, '', 'membership_home')}>门店首页</a>
+              </div>
               <article className={styles.memberHero}>
-                <span>ONEDAY 会员</span>
+                <span>本店会员 · 推广员工具</span>
                 <h2>加入会员，获取本店专属服务</h2>
-                <p>提交手机号与隐私授权后生成本店会员身份；入会成功后可在「我的」查看会员证明。</p>
+                <p>
+                  提交手机号与隐私授权后生成本店会员身份；入会成功后可在「我的」查看会员证明。痕迹仅留观看/访问/入会，不含支付金额。
+                </p>
                 <label>
                   手机号
                   <input
@@ -280,7 +319,7 @@ export default function StoreChannel({
               {data.benefits.length ? (
                 data.benefits.map((benefit) => (
                   <article className={styles.benefit} key={benefit.id}>
-                    <span>门店权益</span>
+                    <span>门店权益 · 可咨询</span>
                     <h2>{benefit.title}</h2>
                     <p>{benefit.description ?? '以门店实际说明为准。'}</p>
                     {consultAction ? (

@@ -22,6 +22,30 @@
   font-weight: 500;
 }
 
+.toolLinks {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin: 18px 0 0;
+}
+
+.toolLinks a {
+  color: var(--od-brand-800);
+  font-size: 0.95rem;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.toolHint {
+  margin: 10px 0 0;
+  border-left: 3px solid color-mix(in srgb, var(--od-brand-600) 55%, transparent);
+  padding-left: 10px;
+  color: var(--od-text-muted);
+  font-size: 0.9rem;
+  font-weight: 600;
+  line-height: 1.5;
+}
+
 .grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);

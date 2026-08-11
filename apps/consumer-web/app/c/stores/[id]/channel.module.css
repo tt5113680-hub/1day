@@ -133,9 +133,49 @@
 }
 .disclaimer {
   margin: 10px 3px;
+  border-left: 3px solid color-mix(in srgb, #a84331 55%, transparent);
+  padding-left: 10px;
   color: #9c857a;
-  font-size: 10px;
+  font-size: 12px;
+  font-weight: 600;
   line-height: 1.5;
+}
+.quickLinks {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: 0 0 14px;
+}
+.quickLinks a {
+  color: #a84331;
+  font-size: 13px;
+  font-weight: 700;
+  text-decoration: none;
+}
+.platformLegend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 0 0 14px;
+  padding: 0;
+  list-style: none;
+}
+.platformLegend li {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 10px;
+  border: 1px solid #efdcd2;
+  border-radius: 999px;
+  background: #fff;
+  color: #826c64;
+  font-size: 12px;
+  font-weight: 700;
+}
+.platformLegend .platformBadge {
+  width: 22px;
+  height: 22px;
+  font-size: 11px;
 }
 .menu {
   display: grid;

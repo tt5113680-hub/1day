@@ -152,9 +152,9 @@ export default function SettingsPage() {
   return (
     <main className={styles.page}>
       <AdminPageHeader
-        eyebrow="ONEDAY / 商户经营设置"
+        eyebrow="ONEDAY / 推广员工具 · 经营设置"
         title={`${settings.brand.displayName} 的可审计经营规则`}
-        description="保存需经过服务端权限、版本、审计和事件校验；员工个人免打扰偏好不会被覆盖。"
+        description="统一工作流规则：提醒、审批、免打扰、标签与全平台可见引流。保存经权限/版本/审计校验；不碰销售成交。"
         actions={
           <Button tone="secondary" onClick={() => void load()}>
             刷新设置
@@ -166,6 +166,14 @@ export default function SettingsPage() {
           {note}
         </p>
       )}
+      <nav className={styles.toolLinks} aria-label="推广员工具相关">
+        <a href="/m/entry-funnel">入口漏斗</a>
+        <a href="/m/attribution">归因深页</a>
+        <a href="/m/external-actions">外链动作</a>
+      </nav>
+      <p className={styles.toolHint} role="note">
+        全平台可见引流只影响「附近」列表曝光；痕迹为观看/访问/跳转，不含支付金额与第三方订单成功。
+      </p>
       <section className={styles.grid}>
         <fieldset>
           <legend>提醒与升级</legend>

@@ -1,3 +1,12 @@
+## 2026-08-11 - G1-W∞-12 团购/会员 densify + 经营设置工具链 PASS
+
+- Consumer `/c/stores/[id]/group-buy`: 推广员工具文案、平台图例、快捷链、不在此下单免责。
+- Consumer `/c/stores/[id]/membership`: 本店会员工具身份、快捷链、不含支付金额说明。
+- Management `/m/settings`: 工具身份头 + 入口漏斗/归因/外链动作 cross-link。
+- Gates: `node --test tests/g1-winf12-group-buy-membership.test.mjs` 1/1；consumer+management typecheck+build PASS。
+- Not 全部商用 / 未代签 owner UI。Next: W∞-13。
+- Evidence: `evidence/G1-MEITUAN-PARITY/WINF12/ACCEPTANCE.md`.
+
 # CHANGELOG
 
 ## 2026-08-11 - G1-W∞ agent 深层运营（结算 / 配额 / 审批）PASS
