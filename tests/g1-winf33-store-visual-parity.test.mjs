@@ -18,7 +18,8 @@ test('W∞-33: store page chrome is Meituan store-top-bar (back + store name + s
   assert.match(p, /\/c\/discovery\?tenant=/);
   assert.match(p, /\/c\/search\?tenant=/);
   assert.match(c, /position:\s*sticky/);
-  assert.match(c, /#ffd100|#ffe14d/);
+  assert.match(c, /var\(--od-brand-700\)/);
+  assert.doesNotMatch(c, /#[0-9a-fA-F]{3,8}\b/);
 });
 
 test('W∞-33: store identity + actions row (导航/电话/分享) + open state', () => {
