@@ -10,11 +10,11 @@
 
 - branch: `hardening/COMMERCIAL-COMPLETION`
 - product_bar: **商用前提 = 四端完整对标美团成熟场景**（消费者/员工/管理/平台）；**唯一例外** `/m/workflows`。团购推广员工具身份 + L0+L1+L2；不碰钱·销售·本平台下单。
-- last_verified: **2026-08-11** — 商用完整对标前提锁定 + W∞-32 discovery visual densify PASS.
+- last_verified: **2026-08-11** — W∞-32 discovery + W∞-33 store visual densify PASS.
 - status: Owner 重申完整对标为商用前提（2026-08-11 21:47）。工程下一刀 = **视觉+IA 完整对标 densify**（非仅文案）。全权委托 agent 连续施工。
 - blocker: none outbound.
-- progress: Next: **W∞-33** Consumer 门店页视觉 densify（MH5-03）。Owner G1 only after four-surface PARITY.
-- note: Hub http://127.0.0.1:3299/ · 商用前提已锁定 · **W∞-32** 发现页视觉 densify · 刷新/重建 Docker consumer 后可见
+- progress: Next: **W∞-34** Employee 工作台视觉 densify（ME-01）。
+- note: Hub http://127.0.0.1:3299/ · **W∞-33** 门店页视觉 densify · 重建 Docker consumer 后可见
 
 ### Owner — next actions
 

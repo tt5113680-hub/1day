@@ -1,3 +1,10 @@
+## 2026-08-11 - G1-W∞-33 Consumer 门店页视觉/IA densify（MH5-03 商用完整对标）PASS
+
+- `/c/stores/[id]`：sticky 黄顶栏、封面 hero、营业中 badge、导航/电话/分享、sticky 分区 Tab（推荐/比价/活动/门店信息）。
+- 诚实边界保留（不在此下单 / 推广员工具 · 商家入口页）。
+- Gates: g1-winf33 4/4；winf13 回归；consumer typecheck+build PASS。
+- Evidence: `evidence/G1-MEITUAN-PARITY/WINF33/ACCEPTANCE.md`.
+
 ## 2026-08-11 - G1-W∞-32 Consumer 发现页视觉/IA densify（商用完整对标前提）PASS
 
 - Owner 重申：四端完整对标美团是商用前提；唯一例外 `/m/workflows`。

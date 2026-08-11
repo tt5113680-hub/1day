@@ -31,18 +31,77 @@
   overflow: hidden;
   background: var(--od-sf-canvas);
 }
-.merchantBar {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 12px;
-  padding: 14px 16px 12px;
-  border-bottom: 1px solid var(--od-sf-line, var(--od-border));
-  background: linear-gradient(
-    180deg,
-    color-mix(in srgb, var(--od-brand-100) 80%, var(--od-sf-canvas)) 0%,
-    var(--od-sf-canvas) 100%
-  );
+.storeTopBar {
+  position: sticky;
+  z-index: 20;
+  top: 0;
+  display: grid;
+  grid-template-columns: 40px minmax(0, 1fr) 40px;
+  align-items: center;
+  min-height: 46px;
+  padding: 0 8px;
+  background: linear-gradient(180deg, #ffe14d 0%, #ffd100 100%);
+  box-shadow: 0 1px 3px rgb(0 0 0 / 8%);
+}
+.backLink,
+.storeSearchPill {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border: 0;
+  border-radius: 999px;
+  color: #333;
+  background: rgb(255 255 255 / 60%);
+  font-size: 20px;
+  font-weight: 700;
+  text-decoration: none;
+}
+.storeTopTitle {
+  overflow: hidden;
+  color: #222;
+  font-size: 15px;
+  font-weight: 700;
+  text-align: center;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.storeSearchPill {
+  justify-self: end;
+  font-size: 18px;
+}
+.storeHeader {
+  position: relative;
+  padding: 0 0 14px;
+  background: #fff;
+}
+.storeCover {
+  position: relative;
+  height: 118px;
+  overflow: hidden;
+  background: linear-gradient(145deg, #ffb400, #ff7a00);
+}
+.storeCover img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.storeCoverGlyph {
+  display: grid;
+  width: 100%;
+  height: 100%;
+  place-items: center;
+  color: rgb(255 255 255 / 92%);
+  font-size: 56px;
+  font-weight: 900;
+}
+.storeCoverShade {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgb(0 0 0 / 0%) 40%, rgb(0 0 0 / 22%) 100%);
+}
+.storeIdentity {
+  padding: 12px 16px 8px;
 }
 .merchantEyebrow {
   margin: 0;
@@ -58,13 +117,25 @@
   letter-spacing: -0.03em;
 }
 .merchantMeta {
-  margin: 6px 0 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  align-items: baseline;
+  margin: 8px 0 0;
   color: var(--od-sf-muted-soft, var(--od-text-muted));
   font-size: 12px;
   line-height: 1.45;
 }
+.storeOpen {
+  border-radius: 4px;
+  padding: 1px 6px;
+  color: #fff;
+  background: #3dbd7d;
+  font-size: 11px;
+  font-weight: 700;
+}
 .merchantToolNote {
-  margin: 8px 0 0;
+  margin: 10px 0 0;
   border-left: 3px solid color-mix(in srgb, var(--od-brand-600) 55%, transparent);
   padding-left: 10px;
   color: var(--od-text-muted);
@@ -72,23 +143,68 @@
   font-weight: 600;
   line-height: 1.5;
 }
-.merchantActions {
+.storeActions {
   display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  justify-content: flex-end;
+  gap: 0;
+  margin: 8px 16px 0;
 }
-.merchantActions button {
-  min-height: 32px;
-  border: 1px solid color-mix(in srgb, var(--od-brand-600) 40%, var(--od-border));
-  border-radius: 999px;
-  padding: 0 12px;
-  color: var(--od-brand-800);
-  background: var(--od-brand-50);
+.storeActions button {
+  display: grid;
+  flex: 1 1 0;
+  gap: 3px;
+  place-items: center;
+  min-height: 58px;
+  border: 0;
+  border-radius: 10px;
+  color: #444;
+  background: transparent;
   font: inherit;
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 700;
   cursor: pointer;
+}
+.storeActions button i {
+  font-style: normal;
+  font-size: 18px;
+  line-height: 1;
+}
+.storeSubTabs {
+  position: sticky;
+  z-index: 18;
+  top: 46px;
+  display: flex;
+  gap: 4px;
+  overflow-x: auto;
+  padding: 0 12px;
+  border-top: 1px solid #f0f0f0;
+  border-bottom: 1px solid #ebebeb;
+  background: #fff;
+  -webkit-overflow-scrolling: touch;
+}
+.storeSubTabs a {
+  position: relative;
+  flex: 0 0 auto;
+  min-height: 44px;
+  padding: 0 14px;
+  color: #666;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 44px;
+  text-decoration: none;
+}
+.storeSubTabs a:first-child {
+  color: #222;
+  font-weight: 800;
+}
+.storeSubTabs a:first-child::after {
+  position: absolute;
+  right: 14px;
+  bottom: 0;
+  left: 14px;
+  height: 3px;
+  border-radius: 3px 3px 0 0;
+  background: #ffd100;
+  content: '';
 }
 .section {
   padding: 16px;

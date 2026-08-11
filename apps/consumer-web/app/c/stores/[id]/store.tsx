@@ -2,7 +2,11 @@
 
 import { useRouter } from 'next/navigation';
 import { useEffect, useMemo, useState } from 'react';
-import { StorefrontFloatingConsult } from '@oneday/storefront-renderer';
+import {
+  effectiveStorefrontModules,
+  normalizeModuleType,
+  StorefrontFloatingConsult,
+} from '@oneday/storefront-renderer';
 import { useStorefrontSync } from '@oneday/sync-client';
 import { AppStatePanel, Button } from '@oneday/ui';
 import { bindPageFunnel, trackFunnelEvent } from '../../entry-funnel-client';
@@ -161,6 +165,21 @@ export default function StorePage({
     data.storefront?.modules,
     data.storefront?.industry?.channels,
   );
+  const sectionTypes = new Set(
+    effectiveStorefrontModules(data.storefront?.modules).map((item) =>
+      normalizeModuleType(item.module_type),
+    ),
+  );
+  const sectionTabs: { anchor: string; label: string }[] = [];
+  const sectionHub: { id: string; label: string; type: string }[] = [
+    { id: 'offers', label: '推荐', type: 'service_catalog' },
+    { id: 'platforms', label: '比价', type: 'offer_compare' },
+    { id: 'updates', label: '活动', type: 'content_feed' },
+    { id: 'store-info', label: '门店信息', type: 'store_info' },
+  ];
+  for (const item of sectionHub) {
+    if (sectionTypes.has(item.type)) sectionTabs.push({ anchor: item.id, label: item.label });
+  }
   const industry = data.storefront?.industry.family ?? 'restaurant';
   const returnTo = `/c/stores/${data.store.id}?${query(data, sourceValue, 'storefront', shareCode).toString()}`;
   const actionUrl = (actionId: string, sceneName: string) =>
@@ -275,11 +294,37 @@ export default function StorePage({
       <main id="top" className={`${styles.page} od-sf-theme`} data-industry={industry}>
         <div className={styles.shell}>
           <h1 className={styles.visuallyHidden}>{data.store.name}</h1>
-          <header className={styles.merchantBar}>
-            <div>
+          <header className={styles.storeTopBar}>
+            <a
+              className={styles.backLink}
+              href={`/c/discovery?tenant=${encodeURIComponent(data.tenant.slug)}`}
+              aria-label="返回附近门店"
+            >
+              ‹
+            </a>
+            <span className={styles.storeTopTitle}>{data.store.name}</span>
+            <a
+              className={styles.storeSearchPill}
+              href={`/c/search?tenant=${encodeURIComponent(data.tenant.slug)}`}
+              aria-label="搜索商家"
+            >
+              ⌕
+            </a>
+          </header>
+          <section className={styles.storeHeader} aria-label="门店概览">
+            <div className={styles.storeCover}>
+              {data.store.imageUrl ? (
+                <img src={data.store.imageUrl} alt="" />
+              ) : (
+                <span className={styles.storeCoverGlyph}>{data.store.name.slice(0, 1)}</span>
+              )}
+              <span className={styles.storeCoverShade} />
+            </div>
+            <div className={styles.storeIdentity}>
               <p className={styles.merchantEyebrow}>推广员工具 · 商家入口页</p>
               <strong className={styles.merchantName}>{data.store.name}</strong>
               <p className={styles.merchantMeta}>
+                <span className={styles.storeOpen}>营业中</span>
                 {data.store.address ?? '地址待补充'}
                 {' · '}
                 {data.store.businessHours ?? '营业时间待补充'}
@@ -288,22 +333,34 @@ export default function StorePage({
                 统一进店后可看团购比价/菜单/会员；成交经确认跳转第三方，不在此下单。
               </p>
             </div>
-            <div className={styles.merchantActions}>
+            <div className={styles.storeActions} role="toolbar" aria-label="门店操作">
               {navigationUrl ? (
                 <button type="button" onClick={() => void openNavigation()}>
-                  导航
+                  <i>⌖</i>
+                  <span>导航</span>
                 </button>
               ) : null}
               {data.store.phone ? (
                 <button type="button" onClick={() => void call()}>
-                  电话
+                  <i>⌁</i>
+                  <span>电话</span>
                 </button>
               ) : null}
               <button type="button" onClick={() => void share()}>
-                分享
+                <i>↗</i>
+                <span>分享</span>
               </button>
             </div>
-          </header>
+          </section>
+          {sectionTabs.length ? (
+            <nav className={styles.storeSubTabs} aria-label="门店内容分区">
+              {sectionTabs.map((tab) => (
+                <a href={`#${tab.anchor}`} key={tab.anchor}>
+                  {tab.label}
+                </a>
+              ))}
+            </nav>
+          ) : null}
           <StorefrontModules
             data={data}
             context={context}
