@@ -93,7 +93,7 @@
 | ID | 美团对标 | ONEDAY 现路由 | 状态 |
 | -- | -------- | ------------- | ---- |
 | ME-01 | 商家 App 工作台 | `/e/workbench` | PARTIAL |
-| ME-02 | 订单 / 待办 | `/e/tasks` | PARTIAL |
+| ME-02 | 订单 / 待办 | `/e/tasks` | PARTIAL | W∞-15 densify 任务待办/收件箱工具身份；非第三方订单履约 |
 | ME-03 | 顾客 | `/e/customers` | PARTIAL |
 | ME-04 | 门店 | `/e/store` | PARTIAL |
 | ME-05 | 核销 / 会员 | `/e/memberships` | PARTIAL |
@@ -138,4 +138,4 @@
 
 **W6 省市区代理（MP-01~03）PASS. W∞-1（省市区代理深层运营：结算/配额/审批, MP-03 深层）PASS** `evidence/G1-MEITUAN-PARITY/WINF/ACCEPTANCE.md`. **W∞-2（Consumer H5 搜索, MH5-02）PASS** `evidence/G1-MEITUAN-PARITY/WINF2/ACCEPTANCE.md`.
 
-**W∞-3（外链 hand-off 确认 densify, MH5-12）PASS** `evidence/G1-MEITUAN-PARITY/WINF3/ACCEPTANCE.md`。**W∞-4（Management attribution 深页）PASS** `evidence/G1-MEITUAN-PARITY/WINF4/ACCEPTANCE.md`。**W∞-5（商圈 C 端 densify, MH5-13）PASS** `evidence/G1-MEITUAN-PARITY/WINF5/ACCEPTANCE.md`。**W∞-6（渠道/代理后台 densify）PASS** `evidence/G1-MEITUAN-PARITY/WINF6/ACCEPTANCE.md`。**W∞-7（分享落地 densify, MH5-11）PASS** `evidence/G1-MEITUAN-PARITY/WINF7/ACCEPTANCE.md`。**W∞-8（员工分享工具 densify）PASS** `evidence/G1-MEITUAN-PARITY/WINF8/ACCEPTANCE.md`。**W∞-9（消费者统一入口 densify）PASS** `evidence/G1-MEITUAN-PARITY/WINF9/ACCEPTANCE.md`。**W∞-10（我的+搜索 densify）PASS** `evidence/G1-MEITUAN-PARITY/WINF10/ACCEPTANCE.md`。**W∞-11（附近 densify, MH5-01）PASS** `evidence/G1-MEITUAN-PARITY/WINF11/ACCEPTANCE.md`。**W∞-12（团购+会员 densify, MH5-04/10 + settings）PASS** `evidence/G1-MEITUAN-PARITY/WINF12/ACCEPTANCE.md`。**W∞-13（菜单+商家入口 densify, MH5-05/03）PASS** `evidence/G1-MEITUAN-PARITY/WINF13/ACCEPTANCE.md`。**W∞-14（套餐详情+门店我的 densify, MH5-12/06）PASS** `evidence/G1-MEITUAN-PARITY/WINF14/ACCEPTANCE.md`。**下一刀 W∞-15：** 体验对标细部（仍不做本平台下单）。MH5-07/08 保持外链 hand-off GAP。
+**W∞-3（外链 hand-off 确认 densify, MH5-12）PASS** `evidence/G1-MEITUAN-PARITY/WINF3/ACCEPTANCE.md`。**W∞-4（Management attribution 深页）PASS** `evidence/G1-MEITUAN-PARITY/WINF4/ACCEPTANCE.md`。**W∞-5（商圈 C 端 densify, MH5-13）PASS** `evidence/G1-MEITUAN-PARITY/WINF5/ACCEPTANCE.md`。**W∞-6（渠道/代理后台 densify）PASS** `evidence/G1-MEITUAN-PARITY/WINF6/ACCEPTANCE.md`。**W∞-7（分享落地 densify, MH5-11）PASS** `evidence/G1-MEITUAN-PARITY/WINF7/ACCEPTANCE.md`。**W∞-8（员工分享工具 densify）PASS** `evidence/G1-MEITUAN-PARITY/WINF8/ACCEPTANCE.md`。**W∞-9（消费者统一入口 densify）PASS** `evidence/G1-MEITUAN-PARITY/WINF9/ACCEPTANCE.md`。**W∞-10（我的+搜索 densify）PASS** `evidence/G1-MEITUAN-PARITY/WINF10/ACCEPTANCE.md`。**W∞-11（附近 densify, MH5-01）PASS** `evidence/G1-MEITUAN-PARITY/WINF11/ACCEPTANCE.md`。**W∞-12（团购+会员 densify, MH5-04/10 + settings）PASS** `evidence/G1-MEITUAN-PARITY/WINF12/ACCEPTANCE.md`。**W∞-13（菜单+商家入口 densify, MH5-05/03）PASS** `evidence/G1-MEITUAN-PARITY/WINF13/ACCEPTANCE.md`。**W∞-14（套餐详情+门店我的 densify, MH5-12/06）PASS** `evidence/G1-MEITUAN-PARITY/WINF14/ACCEPTANCE.md`。**W∞-15（服务过程+任务路径 densify）PASS** `evidence/G1-MEITUAN-PARITY/WINF15/ACCEPTANCE.md`。**下一刀 W∞-16：** 体验对标细部（仍不做本平台下单）。MH5-07/08 保持外链 hand-off GAP。

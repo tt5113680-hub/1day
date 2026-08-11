@@ -603,7 +603,7 @@ function OfferCompare({
   return (
     <StorefrontSection
       title="全平台团购比价"
-      hint="选好平台再前往下单"
+      hint="选好平台后经确认页跳转（不在此下单）"
       anchor="platforms"
       moduleType="offer_compare"
     >
@@ -664,7 +664,7 @@ function ContentFeed({ data }: { data: StoreDetail }) {
             eyebrow: item.content_type === 'story' ? '门店动态' : '今日推荐',
             title: item.title,
             summary: item.summary ?? '门店正在分享最新消息。',
-            meta: 'LOCAL HUMAN PILOT · TEST ONLY',
+            meta: '本地试用 · 推广员入口',
             imageUrl: data.store.imageUrl,
             imagePosition: index ? '40% 65%' : '75% 45%',
           }))}

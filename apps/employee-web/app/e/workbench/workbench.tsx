@@ -127,7 +127,7 @@ export function Workbench() {
     { label: '行动机会', value: data.opportunities.length, hint: '时限信号' },
   ] as const;
   const functions = [
-    { href: '/e/tasks', label: '订单待办', desc: '今日任务' },
+    { href: '/e/tasks', label: '任务待办', desc: '今日任务' },
     { href: '/e/customers', label: '顾客', desc: '客户档案' },
     { href: '/e/memberships', label: '会员核销', desc: '权益核销' },
     { href: '/e/leads', label: '获客线索', desc: '线索池' },

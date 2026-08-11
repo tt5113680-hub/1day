@@ -23,7 +23,7 @@ You are the **sole write executor** for this repository turn (Headless CLI, auth
 ## Scope (this turn only)
 
 - Branch: `hardening/COMMERCIAL-COMPLETION`
-- Work: **one** next incomplete slice from TASK_QUEUE — prefer **W∞-15** (experience parity polish); retry git push if ahead of origin; never revive consumer_orders / native checkout
+- Work: **one** next incomplete slice from TASK_QUEUE — prefer **W∞-16** (experience parity polish); retry git push if ahead of origin; never revive consumer_orders / native checkout
 - Writable root: `D:\ONEDAY_V3` only
 - Do not auto-sign owner acceptance; do not claim 全部商用
 - Do not revive consumer_orders / payment / native checkout

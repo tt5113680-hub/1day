@@ -1,3 +1,12 @@
+## 2026-08-11 - G1-W∞-15 服务过程/任务路径 densify PASS
+
+- Consumer `/c/processes/[id]`: 门店服务过程工具身份；服务编号/已登记；非第三方订单履约免责。
+- Store `offer_compare` hint: 经确认页跳转（不在此下单）；content meta 本地试用。
+- Employee `/e/workbench`「任务待办」+ `/e/tasks` 推广员工具 densify；`/c/one-code` loading 不在此下单。
+- Gates: `node --test tests/g1-winf15-process-task-path.test.mjs` 1/1；consumer+employee typecheck+build PASS。
+- Not 全部商用 / 未代签 owner UI。Next: W∞-16。
+- Evidence: `evidence/G1-MEITUAN-PARITY/WINF15/ACCEPTANCE.md`.
+
 ## 2026-08-11 - G1-W∞-14 套餐详情/门店「我的」densify PASS
 
 - Consumer `/c/services/[id]`: 推广员工具文案、快捷链、不在此下单免责；CTA「确认前往…」替换「去购买」；外链须知替换购买须知。

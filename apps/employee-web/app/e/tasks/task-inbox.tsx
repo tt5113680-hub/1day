@@ -133,10 +133,10 @@ export function TaskInbox() {
   return (
     <main className={styles.page}>
       <header className={styles.header}>
-        <p className={styles.eyebrow}>Employee · 任务收件箱</p>
+        <p className={styles.eyebrow}>推广员工具 · 任务收件箱</p>
         <h1>任务收件箱</h1>
         <p>
-          {data?.employee.displayName ?? '员工'} · 仅显示你范围内的待办与客户提醒（复用工作台 API）
+          {data?.employee.displayName ?? '员工'} · 仅显示你范围内的待办与客户提醒；不含第三方订单履约。
         </p>
         <Button tone="quiet" onClick={() => void load()}>
           刷新
@@ -215,7 +215,7 @@ export function TaskInbox() {
         </>
       )}
       <p className={styles.note}>
-        SYS-30 任务收件箱：菜单「任务」进入 `/e/tasks`，不新增第二套任务 API。
+        推广员工具任务收件箱：菜单「任务」进入 `/e/tasks`；跟进门店服务痕迹，不代履约美团/抖音订单。
       </p>
     </main>
   );

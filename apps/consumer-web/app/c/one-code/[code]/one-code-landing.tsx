@@ -111,7 +111,7 @@ export function OneCodeLanding() {
       <AppStatePanel
         kind="loading"
         title="正在进入商家入口…"
-        description="系统正在解析 ONE-CODE 并带入来源标记。本地测试入口，不宣称第三方平台已对接。"
+        description="推广员工具：正在解析 ONE-CODE 并带入来源标记。本地试用入口，不在此下单，也不宣称第三方平台已对接。"
       />
     </main>
   );

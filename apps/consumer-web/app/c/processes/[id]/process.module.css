@@ -15,9 +15,18 @@
   color: #4f46e5;
   font-weight: 700;
 }
+.disclaimer {
+  margin: 0 0 16px;
+  border-left: 3px solid #6366f1;
+  padding-left: 10px;
+  color: #64748b;
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.5;
+}
 .page h1 {
   font-size: 30px;
-  margin: 0 0 20px;
+  margin: 0 0 12px;
 }
 .hero,
 .section,

@@ -46,7 +46,7 @@ export function ProcessState({ kind }: { kind: 'forbidden' | 'error' }) {
 
 export function ProcessPage({ data }: { data: ProcessData }) {
   const stages = [
-    ['订单已创建', data.order.occurredAt],
+    ['服务已登记', data.order.occurredAt],
     ['咨询进度', data.process.consultationStatus === 'completed' ? '已完成' : '顾问处理中'],
     ['预约安排', stamp(data.process.appointmentAt)],
     [
@@ -60,10 +60,13 @@ export function ProcessPage({ data }: { data: ProcessData }) {
   ];
   return (
     <main className={styles.page}>
-      <p className={styles.eyebrow}>订单过程查询</p>
-      <h1>服务正在为你推进</h1>
+      <p className={styles.eyebrow}>推广员工具 · 门店服务过程</p>
+      <h1>服务进度查询</h1>
+      <p className={styles.disclaimer} role="note">
+        本页仅展示门店侧服务痕迹与咨询进度；不是美团/抖音等第三方订单履约，也不含支付金额。
+      </p>
       <section className={styles.hero}>
-        <span>订单号</span>
+        <span>门店服务编号</span>
         <strong>{data.order.number}</strong>
         <p>当前状态：{data.process.status}</p>
       </section>
@@ -99,7 +102,9 @@ export function ProcessPage({ data }: { data: ProcessData }) {
           <p>{data.process.exceptionFeedback}</p>
         </section>
       )}
-      <p className={styles.foot}>此页面不展示身份信息；请勿转发专属查询链接。</p>
+      <p className={styles.foot}>
+        此页面不展示身份信息；请勿转发专属查询链接。非本平台下单，第三方成交结果不在此回写。
+      </p>
     </main>
   );
 }
