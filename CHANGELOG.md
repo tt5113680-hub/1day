@@ -2,6 +2,9 @@
 
 ## 2026-08-11
 
+- **TOOL-PHASE-4** DIY entry-funnel query + interpret-only insights on /m/entry-funnel (no deal fabrication). Evidence: evidence/TOOL-PHASE-4/ACCEPTANCE.md.
+
+
 - **TOOL-PHASE-3** L2 module_impression + industry templates (restaurant/beauty/retail) on /m/entry-funnel. Evidence: evidence/TOOL-PHASE-3/ACCEPTANCE.md.
 
 

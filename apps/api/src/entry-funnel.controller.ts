@@ -48,6 +48,52 @@ export class EntryFunnelController {
     };
   }
 
+  /** DIY dimension pivot over entry_funnel_events. */
+  @Get('management/entry-funnel/query')
+  async query(
+    @Headers('authorization') authorization: string | undefined,
+    @Headers('x-tenant-context') tenant: string | undefined,
+    @Headers('x-request-id') requestId: string | undefined,
+    @Query('days') days: string | undefined,
+    @Query('groupBy') groupBy: string | undefined,
+    @Query('surface') surface: string | undefined,
+    @Query('moduleKey') moduleKey: string | undefined,
+    @Query('targetPlatform') targetPlatform: string | undefined,
+    @Query('eventCode') eventCode: string | undefined,
+  ) {
+    if (!requestId?.trim()) throw new BadRequestException('VALIDATION_ERROR');
+    const context = await this.auth.require(authorization, 'tenant.manage', tenant);
+    return {
+      data: await this.funnel.query(context.tenantId, {
+        days,
+        groupBy,
+        surface,
+        moduleKey,
+        targetPlatform,
+        eventCode,
+      }),
+      meta: { requestId },
+      error: null,
+    };
+  }
+
+  /** Interpret-only assist: rule insights from L0–L2; never invent deals. */
+  @Post('management/entry-funnel/interpret')
+  async interpret(
+    @Headers('authorization') authorization: string | undefined,
+    @Headers('x-tenant-context') tenant: string | undefined,
+    @Headers('x-request-id') requestId: string | undefined,
+    @Body() body: Record<string, unknown>,
+  ) {
+    if (!requestId?.trim()) throw new BadRequestException('VALIDATION_ERROR');
+    const context = await this.auth.require(authorization, 'tenant.manage', tenant);
+    return {
+      data: await this.funnel.interpret(context.tenantId, body ?? {}),
+      meta: { requestId },
+      error: null,
+    };
+  }
+
   @Get('management/tenant/platform-visibility')
   async getVisibility(
     @Headers('authorization') authorization: string | undefined,

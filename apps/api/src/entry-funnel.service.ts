@@ -342,9 +342,213 @@ export class EntryFunnelService implements OnModuleDestroy {
     };
   }
 
+  /** DIY: group entry traces by chosen dimension with optional filters (no payment fields). */
+  async query(tenantId: string, params: Record<string, unknown>) {
+    const days = parseDays(params.days);
+    const groupBy = textOpt(params.groupBy ?? params.group_by, 32) ?? 'surface';
+    const allowedGroup = new Set([
+      'surface',
+      'module_key',
+      'target_platform',
+      'event_code',
+      'day',
+    ]);
+    if (!allowedGroup.has(groupBy)) throw new BadRequestException('VALIDATION_ERROR');
+
+    const surface = textOpt(params.surface, 48);
+    const moduleKey = textOpt(params.moduleKey ?? params.module_key, 80);
+    const targetPlatform = textOpt(params.targetPlatform ?? params.target_platform, 32);
+    const eventCode = textOpt(params.eventCode ?? params.event_code, 48);
+    if (surface && !SURFACES.has(surface)) throw new BadRequestException('VALIDATION_ERROR');
+    if (targetPlatform && !PLATFORMS.has(targetPlatform))
+      throw new BadRequestException('VALIDATION_ERROR');
+    if (eventCode && !EVENT_CODES.has(eventCode)) throw new BadRequestException('VALIDATION_ERROR');
+
+    const filters: string[] = ['tenant_id=$1', 'occurred_at >= now() - make_interval(days => $2)'];
+    const values: unknown[] = [tenantId, days];
+    const add = (clause: string, value: string) => {
+      values.push(value);
+      filters.push(clause.replace('$N', `$${values.length}`));
+    };
+    if (surface) add('surface=$N', surface);
+    if (moduleKey) add('module_key=$N', moduleKey);
+    if (targetPlatform) add('target_platform=$N', targetPlatform);
+    if (eventCode) add('event_code=$N', eventCode);
+
+    const dimExpr =
+      groupBy === 'day'
+        ? `to_char(occurred_at at time zone 'Asia/Shanghai', 'YYYY-MM-DD')`
+        : groupBy === 'module_key'
+          ? `coalesce(nullif(module_key,''), '(未命名模块)')`
+          : groupBy === 'target_platform'
+            ? `coalesce(target_platform, '(站内)')`
+            : groupBy;
+
+    const result = await this.pool.query(
+      `select ${dimExpr} as key, count(*)::int as count
+       from entry_funnel_events
+       where ${filters.join(' and ')}
+       group by 1
+       order by count desc, key asc
+       limit 80`,
+      values,
+    );
+
+    return {
+      days,
+      groupBy,
+      filters: {
+        surface,
+        moduleKey,
+        targetPlatform,
+        eventCode,
+      },
+      rows: result.rows.map((r) => ({ key: String(r.key), count: Number(r.count) })),
+      disclaimer: '自助分析仅聚合入口痕迹；不含支付与成交。',
+      generatedAt: new Date().toISOString(),
+    };
+  }
+
+  /** AI-assist style interpret: rule engine over L0–L2 only; never invent deals. */
+  async interpret(tenantId: string, body: Record<string, unknown>) {
+    const days = parseDays(body.days);
+    const summary = await this.summary(tenantId, days);
+    const query = await this.query(tenantId, {
+      days,
+      groupBy: body.groupBy ?? body.group_by ?? 'module_key',
+      surface: body.surface,
+      moduleKey: body.moduleKey ?? body.module_key,
+      targetPlatform: body.targetPlatform ?? body.target_platform,
+      eventCode: body.eventCode ?? body.event_code,
+    });
+
+    const prev = await this.pool.query(
+      `select count(*)::int as total,
+              count(*) filter (where event_code='visit')::int as visits,
+              count(*) filter (where event_code='jump')::int as jumps,
+              count(*) filter (where event_code in ('share','share_open'))::int as shares
+       from entry_funnel_events
+       where tenant_id=$1
+         and occurred_at >= now() - make_interval(days => $2)
+         and occurred_at < now() - make_interval(days => $3)`,
+      [tenantId, days * 2, days],
+    );
+    const prior = prev.rows[0] ?? {};
+    const priorVisits = Number(prior.visits ?? 0);
+    const priorJumps = Number(prior.jumps ?? 0);
+    const curVisits = summary.totals.visits;
+    const curJumps = summary.totals.jumps;
+
+    const insights = buildInterpretInsights({
+      days,
+      visits: curVisits,
+      priorVisits,
+      jumps: curJumps,
+      priorJumps,
+      shares: summary.totals.shares,
+      shareOpens: summary.byEventCode.find((r) => r.key === 'share_open')?.count ?? 0,
+      moduleImpressions: summary.totals.moduleImpressions ?? 0,
+      consultClicks: summary.totals.consultClicks ?? 0,
+      topModules: query.rows.slice(0, 5),
+      topSurfaces: summary.bySurface.slice(0, 5),
+      jumpConfirms: summary.totals.jumpConfirms ?? 0,
+    });
+
+    return {
+      days,
+      mode: 'interpret_only',
+      disclaimer:
+        'AI 辅助只解读已有观看/访问/跳转/停留/分享/模块曝光等痕迹；禁止编造成交、支付或第三方订单结果。',
+      insights,
+      comparedToPriorWindow: {
+        priorDays: days,
+        visitsDelta: curVisits - priorVisits,
+        jumpsDelta: curJumps - priorJumps,
+      },
+      queryPreview: query.rows.slice(0, 12),
+      generatedAt: new Date().toISOString(),
+    };
+  }
+
   async onModuleDestroy() {
     await this.pool.end();
   }
+}
+
+const parseDays = (daysRaw: unknown) => {
+  if (typeof daysRaw === 'number') return Math.max(1, Math.min(90, Math.floor(daysRaw)));
+  if (typeof daysRaw === 'string' && /^\d{1,2}$/.test(daysRaw))
+    return Math.max(1, Math.min(90, Number(daysRaw)));
+  return 7;
+};
+
+const textOpt = (value: unknown, max: number) => {
+  if (value === undefined || value === null || value === '') return null;
+  if (typeof value !== 'string') throw new BadRequestException('VALIDATION_ERROR');
+  const trimmed = value.trim();
+  if (!trimmed) return null;
+  return trimmed.slice(0, max);
+};
+
+function buildInterpretInsights(input: {
+  days: number;
+  visits: number;
+  priorVisits: number;
+  jumps: number;
+  priorJumps: number;
+  shares: number;
+  shareOpens: number;
+  moduleImpressions: number;
+  consultClicks: number;
+  topModules: { key: string; count: number }[];
+  topSurfaces: { key: string; count: number }[];
+  jumpConfirms: number;
+}) {
+  const insights: string[] = [];
+  if (input.priorVisits > 0) {
+    const pct = Math.round(((input.visits - input.priorVisits) / input.priorVisits) * 100);
+    if (Math.abs(pct) >= 20)
+      insights.push(
+        `访问较上一窗（同 ${input.days} 天）${pct > 0 ? '上升' : '下降'}约 ${Math.abs(pct)}%（${input.priorVisits}→${input.visits}）。`,
+      );
+  } else if (input.visits > 0) {
+    insights.push(`近 ${input.days} 天开始出现访问痕迹（上一窗为 0）。`);
+  }
+
+  if (input.priorJumps > 0) {
+    const pct = Math.round(((input.jumps - input.priorJumps) / input.priorJumps) * 100);
+    if (Math.abs(pct) >= 20)
+      insights.push(
+        `出站跳转较上一窗${pct > 0 ? '上升' : '下降'}约 ${Math.abs(pct)}%（仅计至跳转，非成交）。`,
+      );
+  }
+
+  if (input.visits > 0 && input.jumps === 0)
+    insights.push('有访问无跳转：入口进得来，但第三方出站链路可能未点亮。');
+  if (input.moduleImpressions === 0 && input.visits > 0)
+    insights.push('有访问但无模块曝光：店页模块 L2 观察器可能未触发或模块未配置 data-module。');
+  if (input.shares > 0 && input.shareOpens === 0)
+    insights.push('有分享发出未见分享打开：分享落地是否上报 share_open。');
+  if (input.consultClicks === 0 && input.visits > 5)
+    insights.push('访问已积累但咨询点击为 0：检查快捷/悬浮咨询入口。');
+  if (input.jumps > 0 && input.jumpConfirms === 0)
+    insights.push('有跳转但无跳转确认：确认页完成率无法衡量，建议走确认链路。');
+
+  const weak = input.topModules.filter((m) => m.count > 0).slice(-1)[0];
+  const strong = input.topModules[0];
+  if (strong)
+    insights.push(`当前维度下最热模块/维度是「${strong.key}」（${strong.count}）；可对照装修位是否匹配目标引流。`);
+  if (weak && strong && weak.key !== strong.key)
+    insights.push(`相对偏弱的一项是「${weak.key}」（${weak.count}）；可检查是否曝光不足或入口弱。`);
+
+  const topSurface = input.topSurfaces[0];
+  if (topSurface)
+    insights.push(`入口面主力在「${topSurface.key}」（${topSurface.count} 条痕迹）。`);
+
+  if (!insights.length)
+    insights.push('近窗痕迹不足以下结论；继续投放入口并保持 L0–L2 上报后可再解读。');
+  insights.push('以上结论均未使用支付/成交数据，也不推断第三方是否成交。');
+  return insights;
 }
 
 function buildRestaurantInsights(input: {

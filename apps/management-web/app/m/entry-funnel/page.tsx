@@ -41,6 +41,21 @@ type Summary = {
   generatedAt: string;
 };
 
+type QueryResult = {
+  days: number;
+  groupBy: string;
+  rows: Bucket[];
+  disclaimer: string;
+};
+type InterpretResult = {
+  days: number;
+  mode: string;
+  disclaimer: string;
+  insights: string[];
+  comparedToPriorWindow: { priorDays: number; visitsDelta: number; jumpsDelta: number };
+  queryPreview: Bucket[];
+};
+
 const api = process.env.NEXT_PUBLIC_API_BASE_URL ?? 'http://127.0.0.1:3001';
 const sessionApi = new SessionApiClient(api);
 
@@ -94,6 +109,14 @@ export default function EntryFunnelPage() {
   const [days, setDays] = useState(7);
   const [industry, setIndustry] = useState<'restaurant' | 'beauty' | 'retail'>('restaurant');
   const [data, setData] = useState<Summary | null>(null);
+  const [groupBy, setGroupBy] = useState('module_key');
+  const [filterSurface, setFilterSurface] = useState('');
+  const [filterPlatform, setFilterPlatform] = useState('');
+  const [filterEvent, setFilterEvent] = useState('');
+  const [diy, setDiy] = useState<QueryResult | null>(null);
+  const [diyLoading, setDiyLoading] = useState(false);
+  const [interpret, setInterpret] = useState<InterpretResult | null>(null);
+  const [interpretLoading, setInterpretLoading] = useState(false);
   const load = useCallback(async () => {
     if (!(await sessionApi.context())) return setState('forbidden');
     setState('loading');
@@ -111,6 +134,49 @@ export default function EntryFunnelPage() {
     }
   }, [days]);
   useEffect(() => void load(), [load]);
+
+  const runDiy = async () => {
+    setDiyLoading(true);
+    try {
+      const q = new URLSearchParams({ days: String(days), groupBy });
+      if (filterSurface) q.set('surface', filterSurface);
+      if (filterPlatform) q.set('targetPlatform', filterPlatform);
+      if (filterEvent) q.set('eventCode', filterEvent);
+      const r = await sessionApi.request(
+        `${api}/api/v1/management/entry-funnel/query?${q}`,
+        { headers: {} },
+      );
+      if (!r.ok) throw Error();
+      setDiy((await r.json()).data as QueryResult);
+    } catch {
+      setDiy(null);
+    } finally {
+      setDiyLoading(false);
+    }
+  };
+
+  const runInterpret = async () => {
+    setInterpretLoading(true);
+    try {
+      const r = await sessionApi.request(`${api}/api/v1/management/entry-funnel/interpret`, {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({
+          days,
+          groupBy,
+          surface: filterSurface || undefined,
+          targetPlatform: filterPlatform || undefined,
+          eventCode: filterEvent || undefined,
+        }),
+      });
+      if (!r.ok) throw Error();
+      setInterpret((await r.json()).data as InterpretResult);
+    } catch {
+      setInterpret(null);
+    } finally {
+      setInterpretLoading(false);
+    }
+  };
 
   if (state === 'loading')
     return (
@@ -230,6 +296,109 @@ export default function EntryFunnelPage() {
           />
         </Card>
       ) : null}
+
+      <Card className={styles.panelWide}>
+        <h2>自助分析（DIY 维度）</h2>
+        <p className={styles.hint}>拖选维度与过滤条件，只聚合 L0–L2 痕迹表。</p>
+        <div className={styles.diyRow}>
+          <label>
+            分组
+            <select
+              aria-label="分组维度"
+              value={groupBy}
+              onChange={(e) => setGroupBy(e.target.value)}
+            >
+              <option value="module_key">模块</option>
+              <option value="surface">入口面</option>
+              <option value="target_platform">目标平台</option>
+              <option value="event_code">事件</option>
+              <option value="day">按日</option>
+            </select>
+          </label>
+          <label>
+            入口面
+            <select
+              aria-label="过滤入口面"
+              value={filterSurface}
+              onChange={(e) => setFilterSurface(e.target.value)}
+            >
+              <option value="">全部</option>
+              {Object.entries(SURFACE_LABEL).map(([k, v]) => (
+                <option key={k} value={k}>
+                  {v}
+                </option>
+              ))}
+            </select>
+          </label>
+          <label>
+            平台
+            <select
+              aria-label="过滤平台"
+              value={filterPlatform}
+              onChange={(e) => setFilterPlatform(e.target.value)}
+            >
+              <option value="">全部</option>
+              <option value="meituan">meituan</option>
+              <option value="douyin">douyin</option>
+              <option value="saabei">saabei</option>
+              <option value="external">external</option>
+            </select>
+          </label>
+          <label>
+            事件
+            <select
+              aria-label="过滤事件"
+              value={filterEvent}
+              onChange={(e) => setFilterEvent(e.target.value)}
+            >
+              <option value="">全部</option>
+              {Object.keys(EVENT_LABEL).map((k) => (
+                <option key={k} value={k}>
+                  {EVENT_LABEL[k]}
+                </option>
+              ))}
+            </select>
+          </label>
+          <Button loading={diyLoading} onClick={() => void runDiy()}>
+            查询
+          </Button>
+          <Button tone="secondary" loading={interpretLoading} onClick={() => void runInterpret()}>
+            AI 解读（只读痕迹）
+          </Button>
+        </div>
+        {diy ? (
+          <>
+            <p className={styles.hint}>{diy.disclaimer}</p>
+            <BucketList
+              rows={diy.rows}
+              labelOf={(k) =>
+                groupBy === 'surface'
+                  ? (SURFACE_LABEL[k] ?? k)
+                  : groupBy === 'event_code'
+                    ? (EVENT_LABEL[k] ?? k)
+                    : groupBy === 'module_key'
+                      ? (MODULE_LABEL[k] ?? k)
+                      : k
+              }
+            />
+          </>
+        ) : null}
+        {interpret ? (
+          <div className={styles.interpretBox}>
+            <h3>解读结果</h3>
+            <p className={styles.hint}>{interpret.disclaimer}</p>
+            <p className={styles.hint}>
+              较上一窗：访问 Δ{interpret.comparedToPriorWindow.visitsDelta} · 跳转 Δ
+              {interpret.comparedToPriorWindow.jumpsDelta}
+            </p>
+            <ul className={styles.insights}>
+              {interpret.insights.map((line) => (
+                <li key={line}>{line}</li>
+              ))}
+            </ul>
+          </div>
+        ) : null}
+      </Card>
 
       <div className={styles.grid}>
         <Card className={styles.panel}>
