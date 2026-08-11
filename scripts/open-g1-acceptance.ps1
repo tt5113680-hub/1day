@@ -28,9 +28,9 @@ Start-Process $url
 Start-Process 'http://127.0.0.1:3200/api/v1/health'
 Start-Process 'http://127.0.0.1:3201/c/stores/30000000-0000-4000-8000-000000000021?tenant=luckin-oneday-human-pilot'
 Start-Process 'http://127.0.0.1:3201/c/discovery?tenant=luckin-oneday-human-pilot&latitude=39.9087&longitude=116.4619'
-Start-Process 'http://127.0.0.1:3202/e/login'
-Start-Process 'http://127.0.0.1:3203/login'
-Start-Process 'http://127.0.0.1:3204/login'
+Start-Process 'http://127.0.0.1:3202/e/login?tenant=luckin-oneday-human-pilot&email=pilot.storemanager@oneday.local&password=OnedayHumanPilot!2026'
+Start-Process 'http://127.0.0.1:3203/login?tenant=luckin-oneday-human-pilot&email=pilot.owner@oneday.local&password=OnedayHumanPilot!2026'
+Start-Process 'http://127.0.0.1:3204/login?tenant=system&email=pilot.platform@oneday.local&password=OnedayHumanPilot!2026'
 
 $body = Get-Content -Path $html -Raw -Encoding UTF8
 # Rewrite relative md links to file explorer hints (keep http buttons as-is)

@@ -6,56 +6,80 @@
   <title>ONEDAY G1 一键验收</title>
   <style>
     body { margin:0; font-family:"Microsoft YaHei",sans-serif; background:#f5f5f5; color:#1a1a1a; padding:24px; }
-    main { max-width:720px; margin:0 auto; }
+    main { max-width:820px; margin:0 auto; }
     h1 { margin:0 0 8px; }
-    .sub { color:#666; margin:0 0 20px; }
+    .sub { color:#666; margin:0 0 16px; line-height:1.6; }
+    .note { background:#fff3cd; border:1px solid #ffe08a; border-radius:10px; padding:12px 14px; margin:0 0 16px; font-size:14px; line-height:1.7; }
     .card { background:#fff; border:1px solid #e8e8e8; border-radius:12px; padding:16px; margin:0 0 12px; }
     .card h2 { margin:0 0 8px; font-size:18px; }
-    .creds { background:#fffbea; border-radius:8px; padding:10px; margin:0 0 12px; font-size:14px; line-height:1.6; }
+    .creds { background:#fffbea; border-radius:8px; padding:10px; margin:0 0 12px; font-size:14px; line-height:1.7; }
+    table { width:100%; border-collapse:collapse; font-size:13px; margin:8px 0 12px; }
+    th, td { border:1px solid #eee; padding:8px; text-align:left; vertical-align:top; }
+    th { background:#fafafa; }
     a.btn { display:inline-block; background:#ffd100; color:#1a1a1a; text-decoration:none; font-weight:700; padding:12px 18px; border-radius:10px; margin:0 8px 8px 0; }
-    a.btn.sec { background:#fff; border:1px solid #e8e8e8; }
+    a.btn.sec { background:#fff; border:1px solid #e8e8e8; font-weight:600; }
     .ok { color:#00b578; font-weight:700; }
+    code { background:#f6f6f6; padding:1px 4px; border-radius:4px; }
   </style>
 </head>
 <body>
   <main>
-    <p class="ok">点黄按钮即可。登录页已预填账号密码，打开后直接点「登录」。</p>
-    <h1>ONEDAY G1 一键验收</h1>
-    <p class="sub">统一密码已预填：OnedayHumanPilot!2026</p>
+    <p class="ok">统一密码：<code>OnedayHumanPilot!2026</code> · 黄按钮一键打开 · 登录页已预填，直接点「登录」</p>
+    <h1>ONEDAY G1 本地验收</h1>
+    <p class="sub">推广员工具本地沙盒（human-pilot，端口 3200–3204）。消费者为匿名入口，无需账号。</p>
 
-    <div class="card">
-      <h2>0 · 健康检查</h2>
-      <a class="btn" href="http://127.0.0.1:3200/api/v1/health" target="_blank">打开 API 健康检查</a>
+    <div class="note">
+      <strong>UI 说明（请先看）：</strong>当前验收环境展示的是<strong>工具身份 + 场景同构</strong>（文案/导航/边界对齐美团商家习惯），
+      <strong>不是</strong>美团 App/商家后台的像素级克隆。清单里多数页面状态为 <code>PARTIAL</code>（消费者发现/门店、管理/员工/平台工作台等）——链接能点、流程能走，但版式仍是 ONEDAY 设计体系。
+      若 Docker 镜像较旧，请先运行 <code>pnpm human-pilot:start</code> 重建后再看。
     </div>
 
     <div class="card">
-      <h2>A · 消费者门店</h2>
-      <a class="btn" href="http://127.0.0.1:3201/c/stores/30000000-0000-4000-8000-000000000021?tenant=luckin-oneday-human-pilot" target="_blank">打开门店首页</a>
+      <h2>试用账号（LOCAL ONLY）</h2>
+      <table>
+        <tr><th>端</th><th>租户标识</th><th>邮箱</th><th>角色</th></tr>
+        <tr><td>员工</td><td><code>luckin-oneday-human-pilot</code></td><td><code>pilot.storemanager@oneday.local</code></td><td>店长</td></tr>
+        <tr><td>管理/老板</td><td><code>luckin-oneday-human-pilot</code></td><td><code>pilot.owner@oneday.local</code></td><td>租户所有者</td></tr>
+        <tr><td>平台</td><td><code>system</code></td><td><code>pilot.platform@oneday.local</code></td><td>平台管理员</td></tr>
+      </table>
+      <div class="creds">更多账号见 <code>PROJECT_STATE/LOCAL_HUMAN_PILOT_ACCOUNTS.md</code></div>
+    </div>
+
+    <div class="card">
+      <h2>0 · 健康检查</h2>
+      <a class="btn" href="http://127.0.0.1:3200/api/v1/health" target="_blank">API 健康检查</a>
+    </div>
+
+    <div class="card">
+      <h2>A · 消费者门店（匿名，无需登录）</h2>
+      <p class="sub">MH5 状态 PARTIAL：能进店、看团购/菜单/会员，版式非美团像素克隆。</p>
+      <a class="btn" href="http://127.0.0.1:3201/c/stores/30000000-0000-4000-8000-000000000021?tenant=luckin-oneday-human-pilot" target="_blank">门店首页</a>
     </div>
 
     <div class="card">
       <h2>B · 发现页（附近 / 好评 / 人气）</h2>
-      <a class="btn" href="http://127.0.0.1:3201/c/discovery?tenant=luckin-oneday-human-pilot&latitude=39.9087&longitude=116.4619" target="_blank">打开发现页（已带定位）</a>
+      <p class="sub">MH5-01 PARITY 首刀+：LBS 发现壳同构，视觉仍是 ONEDAY 令牌。</p>
+      <a class="btn" href="http://127.0.0.1:3201/c/discovery?tenant=luckin-oneday-human-pilot&latitude=39.9087&longitude=116.4619" target="_blank">发现页（已带定位）</a>
     </div>
 
     <div class="card">
-      <h2>D · 员工端（已预填店长账号）</h2>
-      <div class="creds">打开后直接点登录即可，无需手填</div>
-      <a class="btn" href="http://127.0.0.1:3202/e/login" target="_blank">打开员工登录（已预填）</a>
-      <a class="btn sec" href="http://127.0.0.1:3202/e/workbench" target="_blank">打开员工工作台</a>
+      <h2>D · 员工端</h2>
+      <div class="creds">租户 <code>luckin-oneday-human-pilot</code> · <code>pilot.storemanager@oneday.local</code></div>
+      <a class="btn" href="http://127.0.0.1:3202/e/login?tenant=luckin-oneday-human-pilot&email=pilot.storemanager@oneday.local&password=OnedayHumanPilot!2026" target="_blank">员工登录（预填）</a>
+      <a class="btn sec" href="http://127.0.0.1:3202/e/workbench" target="_blank">员工工作台（需先登录）</a>
     </div>
 
     <div class="card">
-      <h2>E · 老板端（已预填老板账号）</h2>
-      <div class="creds">打开后直接点登录即可，无需手填</div>
-      <a class="btn" href="http://127.0.0.1:3203/login" target="_blank">打开管理登录（已预填）</a>
-      <a class="btn sec" href="http://127.0.0.1:3203/" target="_blank">打开老板工作台</a>
+      <h2>E · 管理/老板端</h2>
+      <div class="creds">租户 <code>luckin-oneday-human-pilot</code> · <code>pilot.owner@oneday.local</code></div>
+      <a class="btn" href="http://127.0.0.1:3203/login?tenant=luckin-oneday-human-pilot&email=pilot.owner@oneday.local&password=OnedayHumanPilot!2026" target="_blank">管理登录（预填）</a>
+      <a class="btn sec" href="http://127.0.0.1:3203/" target="_blank">管理工作台（需先登录）</a>
     </div>
 
     <div class="card">
-      <h2>F · 平台端（已预填平台账号）</h2>
-      <div class="creds">打开后直接点登录即可，无需手填</div>
-      <a class="btn" href="http://127.0.0.1:3204/login" target="_blank">打开平台登录（已预填）</a>
+      <h2>F · 平台端</h2>
+      <div class="creds">租户 <code>system</code> · <code>pilot.platform@oneday.local</code></div>
+      <a class="btn" href="http://127.0.0.1:3204/login?tenant=system&email=pilot.platform@oneday.local&password=OnedayHumanPilot!2026" target="_blank">平台登录（预填）</a>
     </div>
   </main>
 </body>

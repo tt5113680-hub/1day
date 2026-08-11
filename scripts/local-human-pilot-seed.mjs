@@ -191,10 +191,12 @@ try {
   const latestMigration = await pool.query(
     'select name from kysely_migration order by name desc limit 1',
   );
-  assert.equal(
-    latestMigration.rows[0]?.name,
-    '054_channel_permissions',
-    'Human-pilot DB must be migrated through 054_channel_permissions before provisioning',
+  assert.ok(
+    ['054_channel_permissions', '060_entry_funnel_saved_views'].includes(
+      latestMigration.rows[0]?.name,
+    ) ||
+      (latestMigration.rows[0]?.name ?? '').localeCompare('054_channel_permissions') > 0,
+    `Human-pilot DB must be migrated through 054_channel_permissions before provisioning (latest=${latestMigration.rows[0]?.name})`,
   );
   const passwordHash = `scrypt$oneday-human-pilot$${scryptSync(humanPilot.password, 'oneday-human-pilot', 64).toString('base64url')}`;
 

@@ -1,7 +1,7 @@
 'use client';
 
 import type { FormEvent, ReactNode } from 'react';
-import { useEffect, useState } from 'react';
+import { useEffect, useLayoutEffect, useState } from 'react';
 import { AppStatePanel, Button, FormField, Input } from '@oneday/ui';
 import { BrowserSession } from './index.js';
 
@@ -119,17 +119,21 @@ export function SessionGuard({
   loginPath: string;
   children: ReactNode;
 }) {
-  const [ready, setReady] = useState(false);
-  useEffect(() => {
-    if (window.location.pathname === loginPath) return setReady(true);
+  const [mode, setMode] = useState<'pending' | 'login' | 'ready'>('pending');
+
+  useLayoutEffect(() => {
+    if (window.location.pathname === loginPath) {
+      setMode('login');
+      return;
+    }
     void new BrowserSession(apiBase).accessToken().then((token) => {
       if (!token) return window.location.replace(loginPath);
-      setReady(true);
+      setMode('ready');
     });
   }, [apiBase, loginPath]);
-  return ready ? (
-    <>{children}</>
-  ) : (
+
+  if (mode === 'login' || mode === 'ready') return <>{children}</>;
+  return (
     <main className="od-session-recovery">
       <AppStatePanel kind="loading" title="正在恢复安全会话" description="请稍候…" />
     </main>
