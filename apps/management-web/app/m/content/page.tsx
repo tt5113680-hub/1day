@@ -171,6 +171,45 @@ export default function ContentPage() {
     );
   const approvedCount = items.filter((item) => item.status === 'approved').length;
   const placedCount = items.filter((item) => item.placements?.length > 0).length;
+  const statusLabel = (status: string) =>
+    status === 'approved' ? '已审批' : status === 'draft' ? '草稿' : '已发布';
+  const kindLabel = (kind: string) =>
+    kind === 'article' ? '图文' : kind === 'notice' ? '公告' : kind || '未分类';
+  const channelLabel: Record<string, string> = {
+    wechat: '微信',
+    douyin: '抖音',
+    meituan: '美团',
+    internal: '内部渠道',
+  };
+  const statusCounts = new Map<string, number>();
+  const kindCounts = new Map<string, number>();
+  const channelCounts = new Map<string, number>();
+  const storeCounts = new Map<string, number>();
+  for (const item of items) {
+    const statusKey = statusLabel(item.status);
+    statusCounts.set(statusKey, (statusCounts.get(statusKey) ?? 0) + 1);
+    const kindKey = kindLabel(item.kind);
+    kindCounts.set(kindKey, (kindCounts.get(kindKey) ?? 0) + 1);
+    for (const channel of item.channels ?? []) {
+      const channelKey = channelLabel[channel] || channel;
+      channelCounts.set(channelKey, (channelCounts.get(channelKey) ?? 0) + 1);
+    }
+    for (const placement of item.placements ?? []) {
+      const storeKey = placement.storeName?.trim() || '未绑定门店';
+      storeCounts.set(storeKey, (storeCounts.get(storeKey) ?? 0) + 1);
+    }
+  }
+  const byStatus = [...statusCounts.entries()].map(([key, value]) => ({ key, value }));
+  const byKind = [...kindCounts.entries()].map(([key, value]) => ({ key, value }));
+  const byChannel = [...channelCounts.entries()]
+    .map(([key, value]) => ({ key, value }))
+    .sort((a, b) => b.value - a.value);
+  const byStore = [...storeCounts.entries()]
+    .map(([key, value]) => ({ key, value }))
+    .sort((a, b) => b.value - a.value);
+  const itemsTotal = items.length;
+  const channelTotal = [...channelCounts.values()].reduce((sum, count) => sum + count, 0);
+  const storeTotal = [...storeCounts.values()].reduce((sum, count) => sum + count, 0);
   return (
     <main className={styles.page} data-testid="management-content">
       <header className={styles.topBar}>
@@ -206,6 +245,85 @@ export default function ContentPage() {
           <strong>{stores.length}</strong>
         </div>
       </section>
+
+      <section className={styles.distribution} aria-label="营销内容分布">
+        <div className={styles.panelBlock}>
+          <h2>内容状态分布</h2>
+          <ul className={styles.bars}>
+            {byStatus.map((b) => (
+              <li key={b.key} className={styles.barRow}>
+                <span className={styles.barLabel}>{b.key}</span>
+                <span className={styles.barTrack}>
+                  <span
+                    className={styles.barFill}
+                    style={{ width: `${itemsTotal ? (b.value / itemsTotal) * 100 : 0}%` }}
+                  />
+                </span>
+                <span className={styles.barValue}>{b.value}</span>
+              </li>
+            ))}
+            {!itemsTotal && <li className={styles.barEmpty}>暂无记录</li>}
+          </ul>
+        </div>
+        <div className={styles.panelBlock}>
+          <h2>内容类型分布</h2>
+          <ul className={styles.bars}>
+            {byKind.map((b) => (
+              <li key={b.key} className={styles.barRow}>
+                <span className={styles.barLabel}>{b.key}</span>
+                <span className={styles.barTrack}>
+                  <span
+                    className={styles.barFill}
+                    style={{ width: `${itemsTotal ? (b.value / itemsTotal) * 100 : 0}%` }}
+                  />
+                </span>
+                <span className={styles.barValue}>{b.value}</span>
+              </li>
+            ))}
+            {!itemsTotal && <li className={styles.barEmpty}>暂无记录</li>}
+          </ul>
+        </div>
+        <div className={styles.panelBlock}>
+          <h2>渠道分发登记分布</h2>
+          <ul className={styles.bars}>
+            {byChannel.map((b) => (
+              <li key={b.key} className={styles.barRow}>
+                <span className={styles.barLabel}>{b.key}</span>
+                <span className={styles.barTrack}>
+                  <span
+                    className={styles.barFill}
+                    style={{ width: `${channelTotal ? (b.value / channelTotal) * 100 : 0}%` }}
+                  />
+                </span>
+                <span className={styles.barValue}>{b.value}</span>
+              </li>
+            ))}
+            {!channelTotal && <li className={styles.barEmpty}>暂无登记</li>}
+          </ul>
+        </div>
+        <div className={styles.panelBlock}>
+          <h2>投放门店分布</h2>
+          <ul className={styles.bars}>
+            {byStore.map((b) => (
+              <li key={b.key} className={styles.barRow}>
+                <span className={styles.barLabel}>{b.key}</span>
+                <span className={styles.barTrack}>
+                  <span
+                    className={styles.barFill}
+                    style={{ width: `${storeTotal ? (b.value / storeTotal) * 100 : 0}%` }}
+                  />
+                </span>
+                <span className={styles.barValue}>{b.value}</span>
+              </li>
+            ))}
+            {!storeTotal && <li className={styles.barEmpty}>暂无投放</li>}
+          </ul>
+        </div>
+      </section>
+
+      <p className={styles.honest}>
+        以上分布全部由已抓取的真实内容、渠道登记与门店投放档案行现场推导（source=local）：渠道分发仅登记待授权请求，未经第三方授权不伪造发送；不接美团/抖音实时投放、不包含本平台收款、非本平台下单。
+      </p>
 
       <div className={styles.create}>
         <label>
