@@ -51,9 +51,9 @@
 | MPC-07 | 营销中心（券/活动） | `/m/marketing` | PARTIAL | 本地营销活动档案；W∞-23 页头 `营销中心→营销活动`（对齐导航）；不接实时投放 |
 | MPC-08 | 会员 | `/m/memberships` | PARTIAL | W∞-25 眉标 `会员中心`；会员码核销/ledger 工具身份；**W∞-41** 视觉/IA densify（黄顶栏+灰底白卡+heroCard+概况条+白卡会员卡+ledger）；toward PARITY；见 WINF41 |
 | MPC-09 | 数据 / 经营分析 | 分散 metric | GAP | 禁止假 BI；先美团常见经营日报密度 |
-| MPC-10 | 员工 / 权限 | `/m/organization-employees`, `/m/roles-permissions` | PARTIAL | W∞-25 眉标 `员工管理`/`角色权限`、`员工表现`/`操作审计` |
-| MPC-11 | 店铺装修 / 展示 | `/m/page-builder`, `/m/content` | PARTIAL | **壳跟美团**；内容数据仍走 ONEDAY 发布链；W∞-25 眉标 `入口页装修`/`营销内容`（对齐导航） |
-| MPC-12 | 设置 | `/m/settings` | PARTIAL | W∞-12 densify 工具链 cross-link；W∞-25 眉标 `工具设置`（对齐导航）；W∞-26 状态口径 `经营设置/经营规则`→`工具设置/工具规则`（title/loading/forbidden/error/保存/成功提示） |
+| MPC-10 | 员工 / 权限 | `/m/organization-employees`, `/m/roles-permissions` | PARTIAL | W∞-25 眉标 `员工管理`/`角色权限`、`员工表现`/`操作审计`；**W∞-43** 视觉/IA densify（`/m/organization-employees` + `/m/roles-permissions` 黄顶栏+灰底白卡+heroCard+概况条+白卡面板）；toward PARITY；见 WINF43 |
+| MPC-11 | 店铺装修 / 展示 | `/m/page-builder`, `/m/content` | PARTIAL | **壳跟美团**；内容数据仍走 ONEDAY 发布链；W∞-25 眉标 `入口页装修`/`营销内容`（对齐导航）；**W∞-43** 视觉/IA densify（`/m/page-builder` + `/m/content` 黄顶栏+灰底白卡+heroCard+概况条+白卡面板）；toward PARITY；见 WINF43 |
+| MPC-12 | 设置 | `/m/settings` | PARTIAL | W∞-12 densify 工具链 cross-link；W∞-25 眉标 `工具设置`（对齐导航）；W∞-26 状态口径 `经营设置/经营规则`→`工具设置/工具规则`（title/loading/forbidden/error/保存/成功提示）；**W∞-43** 视觉/IA densify（`/m/settings` 黄顶栏+灰底白卡+heroCard+白卡 fieldset 面板）；toward PARITY；见 WINF43 |
 | MPC-13 | 消息 / 通知 | `/m/notifications` | PARTIAL | W∞-31 送「统一工作流」管理通知中心：只读聚合租户范围内待推进（跟进异常/待审批/进行中工作流）deepLink → `/m/customers` `/m/workflows`；无 schema/DB 变更 |
 | MPC-99 | **工作流整合** | `/m/workflows` | **CUSTOM** | **唯一不复刻美团的定制页**；W∞-25 眉标 `工作流整合` |
 
@@ -141,6 +141,10 @@
 ---
 
 ## 6. 当前下一刀
+
+> **当前：W∞-43 PASS** — Management 员工·权限（MPC-10）/ 营销内容·入口页装修（MPC-11）/ 工具设置（MPC-12）视觉/IA densify（`/m/organization-employees`, `/m/roles-permissions`, `/m/content`, `/m/page-builder`, `/m/settings` 黄顶栏+灰底白卡+heroCard+概况条+白卡面板）`evidence/G1-MEITUAN-PARITY/WINF43/ACCEPTANCE.md`. **下一刀：W∞-44 MPC-09 数据/经营分析（本地试点指标密度，禁止假 BI；美团常见经营日报密度）**.
+
+**历史波（自 W24 起）累计——**
 
 **W24 工作台/顾客跟进收尾 PASS.** **W∞-28（体验对标细部·工具身份收尾·残留 `经营` store-ops 语裁定档：管理/员工工具身份面 `经营` 店务话术统一推广员工具——`/m` 404 `工具页面/推广员工具功能`、attribution `入口证据/入口分流与承接`、ai-suggestions `入口异常`、page-builder `入口频道`、offers `商户后台登记`、roles-permissions/employee-profile `查看/管理租户工具`、customers `跟进异常`、员工 loading `推广员工具工作台`、nurture `客户跟进队列`、notification `工具提醒`、share `工具入口/消费者入口`、`/e/store` `门店入口首页`；商圈/渠道网络身份 `经营` 保留）PASS** `evidence/G1-MEITUAN-PARITY/WINF28/ACCEPTANCE.md`. **W∞-27（管理/员工「经营管理」状态口径对齐）PASS** `evidence/G1-MEITUAN-PARITY/WINF27/ACCEPTANCE.md`. **W∞-29（残留 顾客→客户/客户跟进 nav+工作台）PASS** evidence/G1-MEITUAN-PARITY/WINF29/ACCEPTANCE.md. **W∞-30（管理/员工 ONEDAY / 眉标前缀去除，对齐 W∞-25 推广员工具 · 模式）PASS** evidence/G1-MEITUAN-PARITY/WINF30/ACCEPTANCE.md. **W∞-31（MPC-13 消息/通知→管理通知中心，`/m/notifications` 只读聚合 + `GET /api/v1/management/notifications`）PASS** `evidence/G1-MEITUAN-PARITY/WINF31/ACCEPTANCE.md`. **W∞-32（Consumer 发现页视觉/IA densify toward PARITY）PASS** `evidence/G1-MEITUAN-PARITY/WINF32/ACCEPTANCE.md`. **W∞-33（Consumer 门店页视觉/IA densify toward PARITY）PASS** `evidence/G1-MEITUAN-PARITY/WINF33/ACCEPTANCE.md`. **W∞-34（Employee 工作台视觉/IA densify toward PARITY）PASS** `evidence/G1-MEITUAN-PARITY/WINF34/ACCEPTANCE.md`. **W∞-35（Management PC 工作台视觉/IA densify toward PARITY）PASS** `evidence/G1-MEITUAN-PARITY/WINF35/ACCEPTANCE.md`. **W∞-36（Platform PC 总览视觉/IA densify toward PARITY）PASS** `evidence/G1-MEITUAN-PARITY/WINF36/ACCEPTANCE.md`. **W∞-37（Channel/Circle dashboard 视觉/IA densify toward PARITY）PASS** `evidence/G1-MEITUAN-PARITY/WINF37/ACCEPTANCE.md`. **W∞-38（Management 门店入口视觉/IA densify toward PARITY）PASS** `evidence/G1-MEITUAN-PARITY/WINF38/ACCEPTANCE.md`. **W∞-39（Management 商品/套餐入口视觉 densify）PASS** `evidence/G1-MEITUAN-PARITY/WINF39/ACCEPTANCE.md`. **W∞-40（Management 客户跟进视觉/IA densify，MPC-06：`/m/customers` + `/m/customers/[id]` 黄顶栏+灰底白卡+heroCard+白卡面板）PASS** `evidence/G1-MEITUAN-PARITY/WINF40/ACCEPTANCE.md`. **W∞-41（Management 会员中心视觉/IA densify，MPC-08：`/m/memberships` 黄顶栏+灰底白卡+heroCard+概况条+白卡会员卡+ledger）PASS** `evidence/G1-MEITUAN-PARITY/WINF41/ACCEPTANCE.md`. **下一刀 W∞-42：剩余 MPC 页 densify（订单痕迹 / 评价档案 / 营销活动 / 员工·权限 / 入口页装修·营销内容·工具设置 等 PARTIAL 页）。**
 

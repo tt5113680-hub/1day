@@ -1,14 +1,7 @@
 'use client';
 import { SessionApiClient } from '@oneday/session-client';
 import { useTenantSync } from '@oneday/sync-client';
-import {
-  AdminPageHeader,
-  AppStatePanel,
-  businessLabel,
-  Button,
-  Card,
-  StatusBadge,
-} from '@oneday/ui';
+import { AppStatePanel, businessLabel, Button, StatusBadge } from '@oneday/ui';
 import { useCallback, useEffect, useState } from 'react';
 import styles from './page.module.css';
 type Item = {
@@ -176,19 +169,45 @@ export default function ContentPage() {
         />
       </main>
     );
+  const approvedCount = items.filter((item) => item.status === 'approved').length;
+  const placedCount = items.filter((item) => item.placements?.length > 0).length;
   return (
-    <main className={styles.page}>
-      <AdminPageHeader
-        eyebrow="推广员工具 · 营销内容"
-        title="让内容生产、审批与渠道连接保持可追溯"
-        description="渠道分发只登记待授权请求；没有第三方授权时不会伪造发送结果。"
-        actions={
-          <Button tone="secondary" onClick={() => void load()}>
-            刷新内容
-          </Button>
-        }
-      />
-      <Card className={styles.create}>
+    <main className={styles.page} data-testid="management-content">
+      <header className={styles.topBar}>
+        <span className={styles.topBarTitle}>推广员工具 · 营销内容</span>
+        <button className={styles.topBarRefresh} type="button" onClick={() => void load()}>
+          刷新内容
+        </button>
+      </header>
+
+      <section className={styles.heroCard} aria-label="营销内容说明">
+        <h1>让内容生产、审批与渠道连接保持可追溯</h1>
+        <p>
+          渠道分发只登记待授权请求；没有第三方授权时不会伪造发送结果。消费者展示走 ONEDAY
+          发布链；痕迹为观看/访问/跳转。
+        </p>
+      </section>
+
+      <section className={styles.summaryStrip} aria-label="营销内容概况">
+        <div>
+          <span>内容</span>
+          <strong>{items.length}</strong>
+        </div>
+        <div>
+          <span>已审批</span>
+          <strong>{approvedCount}</strong>
+        </div>
+        <div>
+          <span>已投放门店</span>
+          <strong>{placedCount}</strong>
+        </div>
+        <div>
+          <span>可投放门店</span>
+          <strong>{stores.length}</strong>
+        </div>
+      </section>
+
+      <div className={styles.create}>
         <label>
           文章标题
           <input
@@ -200,12 +219,12 @@ export default function ContentPage() {
         </label>
         <Button onClick={() => void create()}>创建草稿</Button>
         {note && <p role="status">{note}</p>}
-      </Card>
+      </div>
       <section className={styles.grid}>
         {items.length ? (
           items.map((x) => (
             <article key={x.id}>
-              <Card className={styles.contentCard}>
+              <div className={styles.contentCard}>
                 <div className={styles.contentMeta}>
                   <StatusBadge tone="info">{businessLabel(x.kind)}</StatusBadge>
                   <StatusBadge tone={x.status === 'approved' ? 'success' : 'warning'}>
@@ -308,7 +327,7 @@ export default function ContentPage() {
                     </Button>
                   </div>
                 )}
-              </Card>
+              </div>
             </article>
           ))
         ) : (

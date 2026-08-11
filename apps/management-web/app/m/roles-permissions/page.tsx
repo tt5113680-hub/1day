@@ -1,6 +1,6 @@
 'use client';
 import { SessionApiClient } from '@oneday/session-client';
-import { AdminPageHeader, AppStatePanel, Button, Card, StatusBadge } from '@oneday/ui';
+import { AppStatePanel, Button, StatusBadge } from '@oneday/ui';
 import { useCallback, useEffect, useState } from 'react';
 import styles from './page.module.css';
 type Role = {
@@ -161,24 +161,48 @@ export default function RolesPermissionsPage() {
         />
       </main>
     );
+  const affectedMembers = roles.reduce((sum, role) => sum + role.member_count, 0);
   return (
-    <main className={styles.page}>
-      <AdminPageHeader
-        eyebrow="推广员工具 · 角色权限"
-        title="在变更前看清权限范围与成员影响"
-        description="可创建角色模板并变更权限；高风险权限必须二次确认；最终校验、版本锁和审计均在服务端执行。"
-        actions={
-          <Button tone="secondary" onClick={() => void load()}>
-            刷新权限
-          </Button>
-        }
-      />
+    <main className={styles.page} data-testid="management-roles-permissions">
+      <header className={styles.topBar}>
+        <span className={styles.topBarTitle}>推广员工具 · 角色权限</span>
+        <button className={styles.topBarRefresh} type="button" onClick={() => void load()}>
+          刷新权限
+        </button>
+      </header>
+
+      <section className={styles.heroCard} aria-label="角色权限说明">
+        <h1>在变更前看清权限范围与成员影响</h1>
+        <p>
+          可创建角色模板并变更权限；高风险权限必须二次确认；最终校验、版本锁和审计均在服务端执行。
+        </p>
+      </section>
+
+      <section className={styles.summaryStrip} aria-label="角色权限概况">
+        <div>
+          <span>角色模板</span>
+          <strong>{roles.length}</strong>
+        </div>
+        <div>
+          <span>受影响的成员</span>
+          <strong>{affectedMembers}</strong>
+        </div>
+        <div>
+          <span>权限项</span>
+          <strong>{permissions.length}</strong>
+        </div>
+        <div>
+          <span>高风险权限</span>
+          <strong>{sensitive.size}</strong>
+        </div>
+      </section>
+
       {note && (
         <p role="status" className={styles.notice}>
           {note}
         </p>
       )}
-      <Card className={styles.create}>
+      <article className={styles.create}>
         <h2>创建角色</h2>
         <div className={styles.createForm}>
           <label>
@@ -203,9 +227,9 @@ export default function RolesPermissionsPage() {
             创建角色
           </Button>
         </div>
-      </Card>
+      </article>
       <section className={styles.grid}>
-        <Card className={styles.panel}>
+        <article className={styles.panel}>
           <h2>角色模板</h2>
           {roles.length ? (
             roles.map((role) => (
@@ -233,9 +257,9 @@ export default function RolesPermissionsPage() {
           ) : (
             <AppStatePanel kind="empty" title="暂无角色" />
           )}
-        </Card>
+        </article>
         {selected ? (
-          <Card className={styles.panel}>
+          <article className={styles.panel}>
             <h2>变更 {selected.name}</h2>
             <p>
               <StatusBadge tone={selected.member_count ? 'warning' : 'neutral'}>
@@ -281,12 +305,12 @@ export default function RolesPermissionsPage() {
               </Button>
               <Button onClick={() => void save()}>确认权限变更</Button>
             </div>
-          </Card>
+          </article>
         ) : (
-          <Card className={styles.panel}>
+          <article className={styles.panel}>
             <h2>影响预览</h2>
             <p>选择角色即可审查权限范围、受影响成员数与高风险权限提示。</p>
-          </Card>
+          </article>
         )}
       </section>
     </main>

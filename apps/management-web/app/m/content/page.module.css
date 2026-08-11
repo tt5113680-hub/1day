@@ -1,35 +1,122 @@
 .page {
-  width: min(100%, 1400px);
-  min-height: 100vh;
+  display: grid;
+  gap: 12px;
+  max-width: 1200px;
   margin: 0 auto;
-  padding: 48px;
+  padding: 0 16px 32px;
+  color: #222;
+  background: #f5f5f5;
+}
+
+.topBar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  min-height: 52px;
+  margin: 0 -16px;
+  padding: 0 20px;
+  background: linear-gradient(180deg, #ffe14d 0%, #ffd100 100%);
+  box-shadow: 0 1px 3px rgb(0 0 0 / 8%);
+}
+
+.topBarTitle {
+  color: #222;
+  font-size: 16px;
+  font-weight: 800;
+}
+
+.topBarRefresh {
+  min-height: 34px;
+  border: 0;
+  border-radius: 17px;
+  padding: 0 14px;
+  color: #333;
+  background: rgb(255 255 255 / 65%);
+  font: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.heroCard {
+  display: grid;
+  gap: 6px;
+  border-radius: 12px;
+  padding: 16px 18px;
+  background: #fff;
+  box-shadow: 0 1px 2px rgb(0 0 0 / 4%);
+}
+
+.heroCard h1 {
+  margin: 0;
+  font: 700 24px / 1.2 var(--od-font-display, system-ui);
+  letter-spacing: -0.02em;
+}
+
+.heroCard p {
+  margin: 0;
+  color: #666;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.summaryStrip {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.summaryStrip > div {
+  display: grid;
+  gap: 4px;
+  border-radius: 12px;
+  padding: 14px 18px;
+  background: #fff;
+  box-shadow: 0 1px 2px rgb(0 0 0 / 4%);
+}
+
+.summaryStrip span {
+  color: #999;
+  font-size: 13px;
+}
+
+.summaryStrip strong {
+  font: 700 24px / 1.2 var(--od-font-display, system-ui);
+  color: #222;
 }
 
 .create {
   display: flex;
   align-items: end;
   gap: 12px;
-  margin: 30px 0 18px;
-  padding: 18px;
+  border-radius: 12px;
+  padding: 16px 18px;
+  background: #fff;
+  box-shadow: 0 1px 2px rgb(0 0 0 / 4%);
 }
 
 .create label {
   display: grid;
   gap: 6px;
+  color: #666;
+  font-size: 13px;
   font-weight: 700;
   min-width: 360px;
 }
 
+.create input,
 .page input {
   min-height: 42px;
-  border: 1px solid var(--od-border);
-  border-radius: var(--od-radius-sm);
+  border: 1px solid #e5e5e5;
+  border-radius: 8px;
   padding: 10px 14px;
-  color: var(--od-ink);
-  background: var(--od-surface);
+  color: #222;
+  background: #f8f8f8;
   font: inherit;
 }
 
+.create input:focus-visible,
 .page input:focus-visible {
   outline: 3px solid color-mix(in srgb, var(--od-brand-600) 32%, transparent);
   outline-offset: 1px;
@@ -37,20 +124,25 @@
 
 .create p {
   margin: 0;
-  color: var(--od-success);
+  color: #2e7d32;
   font-weight: 700;
 }
 
 .grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 16px;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  margin-top: 2px;
 }
 
 .contentCard {
   display: grid;
   gap: 10px;
-  padding: 20px;
+  height: 100%;
+  border-radius: 12px;
+  padding: 18px;
+  background: #fff;
+  box-shadow: 0 1px 2px rgb(0 0 0 / 4%);
 }
 
 .contentMeta {
@@ -59,13 +151,13 @@
   justify-content: space-between;
 }
 
-.grid p {
-  margin: 0;
-  color: var(--od-text-muted);
+.contentCard p,
+.contentCard small {
+  color: #666;
 }
 
-.grid small {
-  color: var(--od-text-muted);
+.contentCard strong {
+  font-size: 16px;
 }
 
 .convergence {
@@ -79,29 +171,34 @@
   gap: 8px;
   align-items: end;
   padding-top: 6px;
-  border-top: 1px solid var(--od-border);
+  border-top: 1px solid #f0f0f0;
 }
 
 .placement label {
   display: grid;
   gap: 5px;
-  color: var(--od-text-muted);
+  color: #666;
   font-size: 13px;
   font-weight: 700;
 }
 
-.placement select {
+.placement select,
+.placement input {
   min-height: 42px;
-  border: 1px solid var(--od-border);
-  border-radius: var(--od-radius-sm);
+  border: 1px solid #e5e5e5;
+  border-radius: 8px;
   padding: 8px 10px;
-  color: var(--od-ink);
-  background: var(--od-surface);
+  color: #222;
+  background: #f8f8f8;
   font: inherit;
 }
 
 .empty {
   grid-column: 1/-1;
+  border-radius: 12px;
+  padding: 40px;
+  background: #fff;
+  text-align: center;
 }
 
 .centered {
@@ -114,17 +211,32 @@
 
 @media (max-width: 900px) {
   .page {
-    padding: 28px 18px;
+    padding-right: 10px;
+    padding-left: 10px;
   }
+
+  .topBar {
+    margin-right: -10px;
+    margin-left: -10px;
+  }
+
+  .summaryStrip {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
   .create {
     display: grid;
+    justify-items: stretch;
   }
+
   .create label {
     min-width: 0;
   }
+
   .grid {
     grid-template-columns: 1fr;
   }
+
   .placement {
     grid-template-columns: 1fr;
   }

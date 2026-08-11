@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## 2026-08-12 - G1-W∞-43 Management 员工·权限 / 入口页装修·营销内容·工具设置 视觉/IA densify（MPC-10/11/12）PASS
+
+- `/m/organization-employees`（员工管理 MPC-10）+ `/m/roles-permissions`（角色权限 MPC-10）+ `/m/content`（营销内容 MPC-11）+ `/m/page-builder`（入口页装修 MPC-11）+ `/m/settings`（工具设置 MPC-12）：由旧 `AdminPageHeader` + `Card` 品牌渐变改为美团商家端 PC 黄顶栏（`推广员工具 · <label>` + 刷新）+ 灰底白卡（heroCard h1 + 诚实描述）+ 白卡概况条（数据列表页）+ 白卡面板；移除页面级 AdminPageHeader/Card/eyebrow=。工具身份与诚实边界全保留（不另造第二套 API、高风险权限二次确认、渠道无授权不伪造发送、共用一套 Storefront 绑定、不碰销售成交、不含支付金额与第三方订单成功），e2e hooks 与关键交互全保留。无 schema/DB/API，不复活本平台下单/收单。
+- Gates: g1-winf43 5/5；随动更新 W∞-25（org/roles/content/builder/settings 去 `eyebrow=` 断言）+ W∞-26（settings `eyebrow=` prop → `topBarTitle` + `<h1>` 断言）；`g1-winf*.test.mjs` 120/120；management typecheck+build PASS（28 routes）；`pnpm build` 20/20；单测 47 passed（2 个 pre-existing token 失败照旧）；eslint + prettier clean。
+- Evidence: `evidence/G1-MEITUAN-PARITY/WINF43/ACCEPTANCE.md`.
+
 ## 2026-08-12 - G1-W∞-42 Management 订单痕迹 / 评价档案 / 营销活动 视觉/IA densify（MPC-04/05/07）PASS
 
 - `/m/orders` + `/m/reviews` + `/m/marketing`：由旧 `AdminPageHeader` + 品牌渐变概况条改为美团商家端 PC 黄顶栏（承载既有 eyebrow + 刷新）+ 灰底白卡（heroCard h1 + 诚实描述）+ 白卡概况条 + 白卡 row 列表；移除页面级 AdminPageHeader/eyebrow=；工具身份与诚实边界全保留，继承 W∞-22/23 语裁定档，新增 e2e `data-testid`。无 schema/DB/API，不复活本平台下单/收单。

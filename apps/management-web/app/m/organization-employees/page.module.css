@@ -1,61 +1,158 @@
 .page {
-  width: min(100%, 1400px);
-  min-height: 100vh;
+  display: grid;
+  gap: 12px;
+  max-width: 1200px;
   margin: 0 auto;
-  padding: 48px;
+  padding: 0 16px 32px;
+  color: #222;
+  background: #f5f5f5;
+}
+
+.topBar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  min-height: 52px;
+  margin: 0 -16px;
+  padding: 0 20px;
+  background: linear-gradient(180deg, #ffe14d 0%, #ffd100 100%);
+  box-shadow: 0 1px 3px rgb(0 0 0 / 8%);
+}
+
+.topBarTitle {
+  color: #222;
+  font-size: 16px;
+  font-weight: 800;
+}
+
+.topBarRefresh {
+  min-height: 34px;
+  border: 0;
+  border-radius: 17px;
+  padding: 0 14px;
+  color: #333;
+  background: rgb(255 255 255 / 65%);
+  font: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.heroCard {
+  display: grid;
+  gap: 6px;
+  border-radius: 12px;
+  padding: 16px 18px;
+  background: #fff;
+  box-shadow: 0 1px 2px rgb(0 0 0 / 4%);
+}
+
+.heroCard h1 {
+  margin: 0;
+  font: 700 24px / 1.2 var(--od-font-display, system-ui);
+  letter-spacing: -0.02em;
+}
+
+.heroCard p {
+  margin: 0;
+  color: #666;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.summaryStrip {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.summaryStrip > div {
+  display: grid;
+  gap: 4px;
+  border-radius: 12px;
+  padding: 14px 18px;
+  background: #fff;
+  box-shadow: 0 1px 2px rgb(0 0 0 / 4%);
+}
+
+.summaryStrip span {
+  color: #999;
+  font-size: 13px;
+}
+
+.summaryStrip strong {
+  font: 700 24px / 1.2 var(--od-font-display, system-ui);
+  color: #222;
 }
 
 .notice {
-  margin: 24px 0 0;
+  margin: 0;
+  border-radius: 10px;
   padding: 12px 14px;
-  border: 1px solid color-mix(in srgb, var(--od-brand-600) 25%, var(--od-border));
-  border-radius: var(--od-radius-sm);
-  color: var(--od-brand-800);
-  background: var(--od-brand-50);
-  font-weight: 700;
-}
-
-.grid {
-  display: grid;
-  grid-template-columns: 0.8fr 1.2fr;
-  gap: 18px;
-  margin-top: 30px;
+  background: #fff9db;
+  color: #b8860b;
+  font-weight: 600;
 }
 
 .createGrid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 18px;
-  margin-top: 30px;
+  gap: 12px;
+  margin-top: 2px;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: 0.8fr 1.2fr;
+  gap: 12px;
+  margin-top: 2px;
 }
 
 .panel {
-  margin-top: 18px;
-  padding: 22px;
+  display: grid;
+  gap: 14px;
+  align-content: start;
+  border-radius: 12px;
+  padding: 18px;
+  background: #fff;
+  box-shadow: 0 1px 2px rgb(0 0 0 / 4%);
 }
 
 .grid .panel {
   height: 100%;
-  margin-top: 0;
 }
 
-.panel h2 {
-  margin: 0 0 16px;
+.grid aside {
+  display: grid;
+}
+
+.panel h2,
+.panel h3 {
+  margin: 0;
+  color: #222;
+  font-size: 17px;
+}
+
+.panel h3 {
+  margin-top: 6px;
+  font-size: 15px;
 }
 
 .panel p,
-.employee span,
+.panel span,
 .employee small,
 .org span,
-.org small {
-  color: var(--od-text-muted);
+.org small,
+.form label {
+  color: #666;
 }
 
 .org {
   display: grid;
   gap: 5px;
-  padding: 14px 0;
-  border-bottom: 1px solid var(--od-border);
+  padding: 12px 0;
+  border-top: 1px solid #f0f0f0;
 }
 
 .org span,
@@ -80,10 +177,10 @@
 .form select {
   min-height: 42px;
   padding: 10px;
-  border: 1px solid var(--od-border);
-  border-radius: var(--od-radius-sm);
-  color: var(--od-ink);
-  background: var(--od-surface);
+  border: 1px solid #e5e5e5;
+  border-radius: 8px;
+  color: #222;
+  background: #f8f8f8;
   font: inherit;
 }
 
@@ -100,12 +197,15 @@
 
 .fieldError {
   margin: 0;
-  color: var(--od-danger);
+  color: #c00;
 }
 
 .invite {
+  margin: 0;
   padding: 8px 0;
-  border-top: 1px solid var(--od-border);
+  border-top: 1px solid #f0f0f0;
+  color: #666;
+  font-size: 13px;
 }
 
 .table {
@@ -118,7 +218,7 @@
   align-items: center;
   gap: 20px;
   padding: 16px 0;
-  border-top: 1px solid var(--od-border);
+  border-top: 1px solid #f0f0f0;
 }
 
 .employee div {
@@ -145,13 +245,20 @@
 
 @media (max-width: 900px) {
   .page {
-    padding: 28px 18px;
+    padding-right: 10px;
+    padding-left: 10px;
   }
 
-  .grid {
-    grid-template-columns: 1fr;
+  .topBar {
+    margin-right: -10px;
+    margin-left: -10px;
   }
 
+  .summaryStrip {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .grid,
   .createGrid {
     grid-template-columns: 1fr;
   }

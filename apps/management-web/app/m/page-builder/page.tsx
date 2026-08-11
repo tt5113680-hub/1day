@@ -4,14 +4,7 @@ import { SessionApiClient } from '@oneday/session-client';
 import { StorefrontModuleOutline } from '@oneday/storefront-renderer';
 import '@oneday/storefront-renderer/outline.css';
 import '@oneday/storefront-renderer/storefront.css';
-import {
-  AdminPageHeader,
-  AppStatePanel,
-  businessLabel,
-  Button,
-  Card,
-  StatusBadge,
-} from '@oneday/ui';
+import { AppStatePanel, businessLabel, Button, StatusBadge } from '@oneday/ui';
 import { useCallback, useEffect, useState } from 'react';
 import styles from './page.module.css';
 
@@ -316,25 +309,47 @@ export default function PageBuilder() {
         />
       </main>
     );
+  const boundCount = templates.filter((template) => template.live_version_id).length;
   return (
-    <main className={styles.page}>
-      <AdminPageHeader
-        eyebrow="推广员工具 · 入口页装修"
-        title="在固定业务模块内维护模板、预览与版本"
-        description="草稿、手机/PC 预览、发布和回滚共用一套 Storefront 绑定；业务对象保持各自唯一真源。"
-        actions={
-          <Button tone="secondary" onClick={() => void load()}>
-            刷新模板
-          </Button>
-        }
-      />
+    <main className={styles.page} data-testid="management-page-builder">
+      <header className={styles.topBar}>
+        <span className={styles.topBarTitle}>推广员工具 · 入口页装修</span>
+        <button className={styles.topBarRefresh} type="button" onClick={() => void load()}>
+          刷新模板
+        </button>
+      </header>
+
+      <section className={styles.heroCard} aria-label="入口页装修说明">
+        <h1>在固定业务模块内维护模板、预览与版本</h1>
+        <p>草稿、手机/PC 预览、发布和回滚共用一套 Storefront 绑定；业务对象保持各自唯一真源。</p>
+      </section>
+
+      <section className={styles.summaryStrip} aria-label="入口页装修概况">
+        <div>
+          <span>门店模板</span>
+          <strong>{templates.length}</strong>
+        </div>
+        <div>
+          <span>已发布数字门店</span>
+          <strong>{boundCount}</strong>
+        </div>
+        <div>
+          <span>模块契约</span>
+          <strong>固定白名单</strong>
+        </div>
+        <div>
+          <span>同渲染器预览</span>
+          <strong>同步</strong>
+        </div>
+      </section>
+
       {note && (
         <p role="status" className={styles.notice}>
           {note}
         </p>
       )}
       <section className={styles.layout}>
-        <Card className={styles.panel}>
+        <aside className={styles.panel}>
           <h2>门店模板</h2>
           {templates.length ? (
             templates.map((template) => (
@@ -371,8 +386,8 @@ export default function PageBuilder() {
               description="请先从平台目录实例化一个受控模板。"
             />
           )}
-        </Card>
-        <Card className={styles.panel}>
+        </aside>
+        <div className={styles.panel}>
           <h2>装修与同渲染器预览</h2>
           {selected ? (
             <>
@@ -555,7 +570,7 @@ export default function PageBuilder() {
               description="绑定门店会显示草稿、发布状态和可回滚历史。"
             />
           )}
-        </Card>
+        </div>
       </section>
     </main>
   );

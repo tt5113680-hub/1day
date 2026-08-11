@@ -1,6 +1,6 @@
 'use client';
 import { SessionApiClient } from '@oneday/session-client';
-import { AdminPageHeader, AppStatePanel, Button } from '@oneday/ui';
+import { AppStatePanel, Button } from '@oneday/ui';
 
 import { useCallback, useEffect, useState } from 'react';
 import styles from './page.module.css';
@@ -150,17 +150,21 @@ export default function SettingsPage() {
       </main>
     );
   return (
-    <main className={styles.page}>
-      <AdminPageHeader
-        eyebrow="推广员工具 · 工具设置"
-        title={`${settings.brand.displayName} 的可审计工具规则`}
-        description="统一工作流规则：提醒、审批、免打扰、标签与全平台可见引流。保存经权限/版本/审计校验；不碰销售成交。"
-        actions={
-          <Button tone="secondary" onClick={() => void load()}>
-            刷新设置
-          </Button>
-        }
-      />
+    <main className={styles.page} data-testid="management-settings">
+      <header className={styles.topBar}>
+        <span className={styles.topBarTitle}>推广员工具 · 工具设置</span>
+        <button className={styles.topBarRefresh} type="button" onClick={() => void load()}>
+          刷新设置
+        </button>
+      </header>
+
+      <section className={styles.heroCard} aria-label="工具设置说明">
+        <h1>{settings.brand.displayName} 的可审计工具规则</h1>
+        <p>
+          统一工作流规则：提醒、审批、免打扰、标签与全平台可见引流。保存经权限/版本/审计校验；不碰销售成交。
+        </p>
+      </section>
+
       {note && (
         <p role="status" className={styles.notice}>
           {note}

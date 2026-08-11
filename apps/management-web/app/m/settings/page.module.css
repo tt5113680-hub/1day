@@ -1,23 +1,78 @@
 .page {
-  width: min(100%, 1400px);
-  min-height: 100vh;
+  display: grid;
+  gap: 12px;
+  max-width: 1200px;
   margin: 0 auto;
-  padding: 48px;
+  padding: 0 16px 32px;
+  color: #222;
+  background: #f5f5f5;
+}
+
+.topBar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  min-height: 52px;
+  margin: 0 -16px;
+  padding: 0 20px;
+  background: linear-gradient(180deg, #ffe14d 0%, #ffd100 100%);
+  box-shadow: 0 1px 3px rgb(0 0 0 / 8%);
+}
+
+.topBarTitle {
+  color: #222;
+  font-size: 16px;
+  font-weight: 800;
+}
+
+.topBarRefresh {
+  min-height: 34px;
+  border: 0;
+  border-radius: 17px;
+  padding: 0 14px;
+  color: #333;
+  background: rgb(255 255 255 / 65%);
+  font: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.heroCard {
+  display: grid;
+  gap: 6px;
+  border-radius: 12px;
+  padding: 16px 18px;
+  background: #fff;
+  box-shadow: 0 1px 2px rgb(0 0 0 / 4%);
+}
+
+.heroCard h1 {
+  margin: 0;
+  font: 700 24px / 1.2 var(--od-font-display, system-ui);
+  letter-spacing: -0.02em;
+}
+
+.heroCard p {
+  margin: 0;
+  color: #666;
+  font-size: 13px;
+  line-height: 1.5;
 }
 
 .notice {
-  margin: 24px 0 0;
+  margin: 0;
+  border-radius: 10px;
   padding: 12px 14px;
-  border: 1px solid color-mix(in srgb, var(--od-brand-600) 25%, var(--od-border));
-  border-radius: var(--od-radius-sm);
-  color: var(--od-success);
-  background: var(--od-surface-subtle);
-  font-weight: 700;
+  background: #e8f5e9;
+  color: #2e7d32;
+  font-weight: 600;
 }
 
 .hint {
   margin: 0;
-  color: var(--od-text-muted);
+  color: #666;
   font-size: 0.9rem;
   font-weight: 500;
 }
@@ -26,7 +81,6 @@
   display: flex;
   flex-wrap: wrap;
   gap: 12px;
-  margin: 18px 0 0;
 }
 
 .toolLinks a {
@@ -37,10 +91,10 @@
 }
 
 .toolHint {
-  margin: 10px 0 0;
+  margin: 0;
   border-left: 3px solid color-mix(in srgb, var(--od-brand-600) 55%, transparent);
   padding-left: 10px;
-  color: var(--od-text-muted);
+  color: #666;
   font-size: 0.9rem;
   font-weight: 600;
   line-height: 1.5;
@@ -48,25 +102,27 @@
 
 .grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 18px;
-  margin: 30px 0 18px;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  margin-top: 2px;
 }
 
 .grid fieldset {
   display: grid;
+  align-content: start;
   gap: 12px;
   min-width: 0;
-  padding: 20px;
-  border: 1px solid var(--od-border);
-  border-radius: var(--od-radius-lg);
-  background: var(--od-surface);
-  box-shadow: var(--od-shadow-low);
+  margin: 0;
+  padding: 18px;
+  border: 0;
+  border-radius: 12px;
+  background: #fff;
+  box-shadow: 0 1px 2px rgb(0 0 0 / 4%);
 }
 
 .grid legend {
-  padding: 0 6px;
-  color: var(--od-ink);
+  padding: 0;
+  color: #222;
   font-size: 17px;
   font-weight: 800;
 }
@@ -74,6 +130,8 @@
 .grid label {
   display: grid;
   gap: 6px;
+  color: #666;
+  font-size: 13px;
   font-weight: 700;
 }
 
@@ -85,11 +143,11 @@
 .grid input,
 .grid select {
   min-height: 42px;
-  border: 1px solid var(--od-border);
-  border-radius: var(--od-radius-sm);
+  border: 1px solid #e5e5e5;
+  border-radius: 8px;
   padding: 10px 12px;
-  color: var(--od-ink);
-  background: var(--od-surface);
+  color: #222;
+  background: #f8f8f8;
   font: inherit;
 }
 
@@ -104,6 +162,8 @@
   min-height: 18px;
   height: 18px;
   padding: 0;
+  border: 1px solid #999;
+  background: #fff;
 }
 
 .save {
@@ -120,7 +180,13 @@
 
 @media (max-width: 900px) {
   .page {
-    padding: 28px 18px;
+    padding-right: 10px;
+    padding-left: 10px;
+  }
+
+  .topBar {
+    margin-right: -10px;
+    margin-left: -10px;
   }
 
   .grid {

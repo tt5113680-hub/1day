@@ -1,13 +1,6 @@
 'use client';
 import { SessionApiClient } from '@oneday/session-client';
-import {
-  AdminPageHeader,
-  AppStatePanel,
-  businessLabel,
-  Button,
-  Card,
-  StatusBadge,
-} from '@oneday/ui';
+import { AppStatePanel, businessLabel, Button, StatusBadge } from '@oneday/ui';
 
 import { useCallback, useEffect, useState } from 'react';
 import styles from './page.module.css';
@@ -259,27 +252,53 @@ export default function OrganizationEmployeesPage() {
     );
   if (!data) return null;
   const merchantsForStore = data.merchants.filter(
-    (merchant) => !storeForm.organizationId || merchant.organization_id === storeForm.organizationId,
+    (merchant) =>
+      !storeForm.organizationId || merchant.organization_id === storeForm.organizationId,
   );
+  const activeEmployees = data.employees.filter((employee) => employee.status === 'active');
   return (
-    <main className={styles.page}>
-      <AdminPageHeader
-        eyebrow="推广员工具 · 员工管理"
-        title="让每位员工的归属、待办与离职交接可见"
-        description="组织、商户、门店创建与员工邀请均复用既有组织写接口；不另造第二套 API。"
-        actions={
-          <Button tone="secondary" onClick={() => void load()}>
-            刷新组织
-          </Button>
-        }
-      />
+    <main className={styles.page} data-testid="management-organization-employees">
+      <header className={styles.topBar}>
+        <span className={styles.topBarTitle}>推广员工具 · 员工管理</span>
+        <button className={styles.topBarRefresh} type="button" onClick={() => void load()}>
+          刷新组织
+        </button>
+      </header>
+
+      <section className={styles.heroCard} aria-label="员工管理说明">
+        <h1>让每位员工的归属、待办与离职交接可见</h1>
+        <p>
+          组织、商户、门店创建与员工邀请均复用既有组织写接口；不另造第二套
+          API。员工表现、交接风险与受控离职均在租户工具授权范围内。
+        </p>
+      </section>
+
+      <section className={styles.summaryStrip} aria-label="员工管理概况">
+        <div>
+          <span>组织</span>
+          <strong>{data.organizations.length}</strong>
+        </div>
+        <div>
+          <span>商户</span>
+          <strong>{data.merchants.length}</strong>
+        </div>
+        <div>
+          <span>在岗员工</span>
+          <strong>{activeEmployees.length}</strong>
+        </div>
+        <div>
+          <span>待接受邀请</span>
+          <strong>{data.invitations.length}</strong>
+        </div>
+      </section>
+
       {note && (
         <p className={styles.notice} role="status">
           {note}
         </p>
       )}
       <section className={styles.createGrid}>
-        <Card className={styles.panel}>
+        <article className={styles.panel}>
           <h2>创建组织</h2>
           <div className={styles.form}>
             <label>
@@ -316,8 +335,8 @@ export default function OrganizationEmployeesPage() {
               创建组织
             </Button>
           </div>
-        </Card>
-        <Card className={styles.panel}>
+        </article>
+        <article className={styles.panel}>
           <h2>创建商户</h2>
           <div className={styles.form}>
             <label>
@@ -356,8 +375,8 @@ export default function OrganizationEmployeesPage() {
               创建商户
             </Button>
           </div>
-        </Card>
-        <Card className={styles.panel}>
+        </article>
+        <article className={styles.panel}>
           <h2>创建门店</h2>
           <div className={styles.form}>
             <label>
@@ -422,12 +441,12 @@ export default function OrganizationEmployeesPage() {
               创建门店
             </Button>
           </div>
-        </Card>
+        </article>
       </section>
       {fieldError && <p className={styles.fieldError}>{fieldError}</p>}
       <section className={styles.grid}>
         <aside>
-          <Card className={styles.panel}>
+          <article className={styles.panel}>
             <h2>组织树</h2>
             {data.organizations.length ? (
               data.organizations.map((organization) => (
@@ -453,9 +472,9 @@ export default function OrganizationEmployeesPage() {
             ) : (
               <p>暂无商户。</p>
             )}
-          </Card>
+          </article>
         </aside>
-        <Card className={styles.panel}>
+        <article className={styles.panel}>
           <h2>邀请员工</h2>
           <div className={styles.form}>
             <label>
@@ -505,9 +524,9 @@ export default function OrganizationEmployeesPage() {
           ) : (
             <p>暂无待接受邀请。</p>
           )}
-        </Card>
+        </article>
       </section>
-      <Card className={styles.panel}>
+      <article className={styles.panel}>
         <h2>员工与交接风险</h2>
         {data.employees.length ? (
           <div className={styles.table}>
@@ -544,7 +563,7 @@ export default function OrganizationEmployeesPage() {
         ) : (
           <AppStatePanel kind="empty" title="暂无员工" description="创建邀请以添加首位员工。" />
         )}
-      </Card>
+      </article>
     </main>
   );
 }

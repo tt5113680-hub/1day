@@ -2,7 +2,7 @@
   "recordedAt": "2026-08-12T01:43:00+08:00",
   "phase": "Meituan full-parity visual densify (commercial premise)",
   "goal": "Four-surface Meituan parity (only /m/workflows custom); promoter-tool identity; L0+L1+L2; no money/sales/native checkout",
-  "currentStep": "W∞-39..41 PASS (offers + customers MPC-06 + memberships MPC-08 densify). Next W∞-42 remaining MANAGEMENT MPC PARTIAL pages densify. Tool-identity alone is NOT commercial complete.",
+  "currentStep": "W∞-39..43 PASS (offers + customers MPC-06 + memberships MPC-08 + orders/reviews/marketing MPC-04/05/07 + employees/roles MPC-10 + content/page-builder MPC-11 + settings MPC-12 densify). Next W∞-44 MPC-09 数据/经营分析. Tool-identity alone is NOT commercial complete.",
   "milestones": [
     { "id": "p0-sys", "label": "P0 matrix + SYS-1..34", "weight": 10, "status": "pass", "evidence": "TASK_QUEUE SYS-34 PASS" },
     { "id": "p1-a", "label": "P1-A commercial main loop", "weight": 3, "status": "pass", "evidence": "P1_A_COMMERCIAL_CLOSED_LOOP_ACCEPTANCE.md" },
@@ -18,7 +18,7 @@
     { "id": "tool-phase-0-6", "label": "TOOL-PHASE-0..6 entry funnel", "weight": 8, "status": "pass", "evidence": "evidence/TOOL-PHASE-*" },
     { "id": "g1-winf-copy", "label": "W∞-3..31 tool-identity + MPC-13", "weight": 8, "status": "pass", "evidence": "evidence/G1-MEITUAN-PARITY/WINF*" },
     { "id": "g1-winf-visual-32-38", "label": "W∞-32..38 visual/IA densify (4 surfaces entry)", "weight": 12, "status": "pass", "evidence": "evidence/G1-MEITUAN-PARITY/WINF32..38" },
-    { "id": "g1-winf-visual-remain", "label": "W∞-39+ remaining PARTIAL→PARITY pages", "weight": 27, "status": "active", "evidence": "MEITUAN_PC_H5_PARITY_INVENTORY.md next W∞-39" }
+    { "id": "g1-winf-visual-remain", "label": "W∞-39+ remaining PARTIAL→PARITY pages", "weight": 27, "status": "active", "evidence": "MEITUAN_PC_H5_PARITY_INVENTORY.md next W∞-44" }
   ],
   "ownerGates": [
     { "id": "p1-d", "label": "P1-D owner local full test + sign-off", "status": "waiting" },

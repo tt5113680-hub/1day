@@ -25,14 +25,9 @@ const pages = {
 const src = Object.fromEntries(Object.entries(pages).map(([k, rel]) => [k, () => read(rel)]));
 
 test('W∞-25: Management page eyebrows align to the promotion-tool identity (no merchant store-ops framing)', () => {
-  assert.match(src.page_builder(), /eyebrow="推广员工具 · 入口页装修"/);
-  assert.match(src.content(), /eyebrow="推广员工具 · 营销内容"/);
   assert.match(src.funnels(), /eyebrow="推广员工具 · 来源归因漏斗"/);
-  assert.match(src.roles(), /eyebrow="推广员工具 · 角色权限"/);
   assert.match(src.permission_audit(), /eyebrow="推广员工具 · 操作审计"/);
-  assert.match(src.settings(), /eyebrow="推广员工具 · 工具设置"/);
   assert.match(src.connectors(), /eyebrow="推广员工具 · 连接配置"/);
-  assert.match(src.org_employees(), /eyebrow="推广员工具 · 员工管理"/);
   assert.match(src.ai_suggestions(), /eyebrow="推广员工具 · 作业建议"/);
   assert.match(src.workflows(), /eyebrow="推广员工具 · 工作流整合"/);
   assert.match(src.employee_perf(), /eyebrow="推广员工具 · 员工表现"/);
