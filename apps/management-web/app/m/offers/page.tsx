@@ -38,6 +38,13 @@ type Store = {
 const api = process.env.NEXT_PUBLIC_API_BASE_URL ?? 'http://127.0.0.1:3001';
 const sessionApi = new SessionApiClient(api);
 const initialService = { code: '', name: '', description: '', priceLabel: '', rank: 100 };
+const platformCopy: Record<string, string> = {
+  meituan: '美团',
+  douyin: '抖音',
+  saabei: '扫呗',
+  external: '直接外链',
+};
+const priceBand = (value: number) => (value < 100 ? '¥0-100' : value <= 300 ? '¥100-300' : '¥300+');
 
 export default function OffersPage() {
   const [state, setState] = useState<'loading' | 'ready' | 'forbidden' | 'error'>('loading'),
@@ -166,6 +173,37 @@ export default function OffersPage() {
       </main>
     );
   const currentStore = stores.find((store) => store.id === selectedStore);
+  const allServices = stores.flatMap((store) => store.services);
+  const allOffers = allServices.flatMap((item) => item.offers);
+  const serviceStatusCounts = new Map<string, number>();
+  for (const item of allServices) {
+    const key = item.status === 'active' ? 'Consumer 可见' : '已停用';
+    serviceStatusCounts.set(key, (serviceStatusCounts.get(key) ?? 0) + 1);
+  }
+  const byServiceStatus = [...serviceStatusCounts.entries()].map(([key, value]) => ({
+    key,
+    value,
+  }));
+  const platformCounts = new Map<string, number>();
+  for (const offer of allOffers) {
+    const key = platformCopy[offer.platform] ?? offer.platform;
+    platformCounts.set(key, (platformCounts.get(key) ?? 0) + 1);
+  }
+  const byPlatform = [...platformCounts.entries()].map(([key, value]) => ({ key, value }));
+  const offerStatusCounts = new Map<string, number>();
+  for (const offer of allOffers) {
+    const key = offer.status === 'active' ? '展示中' : '已停用';
+    offerStatusCounts.set(key, (offerStatusCounts.get(key) ?? 0) + 1);
+  }
+  const byOfferStatus = [...offerStatusCounts.entries()].map(([key, value]) => ({ key, value }));
+  const bandCounts = new Map<string, number>();
+  for (const offer of allOffers) {
+    const band = priceBand(Number(offer.offerPrice));
+    bandCounts.set(band, (bandCounts.get(band) ?? 0) + 1);
+  }
+  const byBand = [...bandCounts.entries()]
+    .sort((a, b) => b[1] - a[1])
+    .map(([key, value]) => ({ key, value }));
   return (
     <main className={styles.page}>
       <header className={styles.topBar}>
@@ -182,6 +220,114 @@ export default function OffersPage() {
         </p>
       </section>
 
+      <section className={styles.distribution} aria-label="商品套餐分布">
+        <div className={styles.panelBlock}>
+          <h2>套餐可见分布</h2>
+          <ul className={styles.bars}>
+            {byServiceStatus.map((b) => (
+              <li key={b.key} className={styles.barRow}>
+                <span className={styles.barLabel}>{b.key}</span>
+                <span className={styles.barTrack}>
+                  <span
+                    className={styles.barFill}
+                    style={{
+                      width: `${allServices.length ? (b.value / allServices.length) * 100 : 0}%`,
+                    }}
+                  />
+                </span>
+                <span className={styles.barValue}>{b.value}</span>
+              </li>
+            ))}
+            {!allServices.length && <li className={styles.barEmpty}>暂无记录</li>}
+          </ul>
+        </div>
+        <div className={styles.panelBlock}>
+          <h2>门店分布</h2>
+          <ul className={styles.bars}>
+            {stores.map((b) => (
+              <li key={b.id} className={styles.barRow}>
+                <span className={styles.barLabel}>{b.name}</span>
+                <span className={styles.barTrack}>
+                  <span
+                    className={styles.barFill}
+                    style={{
+                      width: `${allServices.length ? (b.services.length / allServices.length) * 100 : 0}%`,
+                    }}
+                  />
+                </span>
+                <span className={styles.barValue}>{b.services.length}</span>
+              </li>
+            ))}
+            {!allServices.length && <li className={styles.barEmpty}>暂无记录</li>}
+          </ul>
+        </div>
+        <div className={styles.panelBlock}>
+          <h2>平台入口分布</h2>
+          <ul className={styles.bars}>
+            {byPlatform.map((b) => (
+              <li key={b.key} className={styles.barRow}>
+                <span className={styles.barLabel}>{b.key}</span>
+                <span className={styles.barTrack}>
+                  <span
+                    className={styles.barFill}
+                    style={{
+                      width: `${allOffers.length ? (b.value / allOffers.length) * 100 : 0}%`,
+                    }}
+                  />
+                </span>
+                <span className={styles.barValue}>{b.value}</span>
+              </li>
+            ))}
+            {!allOffers.length && <li className={styles.barEmpty}>暂无记录</li>}
+          </ul>
+        </div>
+        <div className={styles.panelBlock}>
+          <h2>Offer 状态分布</h2>
+          <ul className={styles.bars}>
+            {byOfferStatus.map((b) => (
+              <li key={b.key} className={styles.barRow}>
+                <span className={styles.barLabel}>{b.key}</span>
+                <span className={styles.barTrack}>
+                  <span
+                    className={styles.barFill}
+                    style={{
+                      width: `${allOffers.length ? (b.value / allOffers.length) * 100 : 0}%`,
+                    }}
+                  />
+                </span>
+                <span className={styles.barValue}>{b.value}</span>
+              </li>
+            ))}
+            {!allOffers.length && <li className={styles.barEmpty}>暂无记录</li>}
+          </ul>
+        </div>
+        <div className={styles.panelBlock}>
+          <h2>价格带分布</h2>
+          <ul className={styles.bars}>
+            {byBand.map((b) => (
+              <li key={b.key} className={styles.barRow}>
+                <span className={styles.barLabel}>{b.key}</span>
+                <span className={styles.barTrack}>
+                  <span
+                    className={styles.barFill}
+                    style={{
+                      width: `${allOffers.length ? (b.value / allOffers.length) * 100 : 0}%`,
+                    }}
+                  />
+                </span>
+                <span className={styles.barValue}>{b.value}</span>
+              </li>
+            ))}
+            {!allOffers.length && <li className={styles.barEmpty}>暂无记录</li>}
+          </ul>
+        </div>
+      </section>
+
+      <p className={styles.honest}>
+        以上分布全部由商户登记的既有套餐/Offer
+        档案行实时推导（source=local）：不接美团/抖音实时价格、不伪造第三方评分或成交、不包含本平台收款、非本平台下单。
+      </p>
+
       {note ? (
         <p className={styles.notice} role="status">
           {note}
@@ -190,56 +336,56 @@ export default function OffersPage() {
       <section className={styles.panel} aria-label="新建商品套餐">
         <h2>新建商品/套餐</h2>
         <div className={styles.create}>
-        <label>
-          门店
-          <select
-            aria-label="套餐所属门店"
-            value={selectedStore}
-            onChange={(event) => setSelectedStore(event.target.value)}
-          >
-            {stores.map((store) => (
-              <option key={store.id} value={store.id}>
-                {store.name}
-              </option>
-            ))}
-          </select>
-        </label>
-        <label>
-          内部编码
-          <input
-            aria-label="套餐编码"
-            value={service.code}
-            onChange={(event) => setService({ ...service, code: event.target.value })}
-          />
-        </label>
-        <label>
-          套餐名称
-          <input
-            aria-label="套餐名称"
-            value={service.name}
-            onChange={(event) => setService({ ...service, name: event.target.value })}
-          />
-        </label>
-        <label>
-          价格说明
-          <input
-            aria-label="价格说明"
-            value={service.priceLabel}
-            onChange={(event) => setService({ ...service, priceLabel: event.target.value })}
-            placeholder="例如：价格请咨询门店"
-          />
-        </label>
-        <label className={styles.wide}>
-          套餐说明
-          <input
-            aria-label="套餐说明"
-            value={service.description}
-            onChange={(event) => setService({ ...service, description: event.target.value })}
-          />
-        </label>
-        <Button loading={saving} onClick={() => void createService()}>
-          创建套餐
-        </Button>
+          <label>
+            门店
+            <select
+              aria-label="套餐所属门店"
+              value={selectedStore}
+              onChange={(event) => setSelectedStore(event.target.value)}
+            >
+              {stores.map((store) => (
+                <option key={store.id} value={store.id}>
+                  {store.name}
+                </option>
+              ))}
+            </select>
+          </label>
+          <label>
+            内部编码
+            <input
+              aria-label="套餐编码"
+              value={service.code}
+              onChange={(event) => setService({ ...service, code: event.target.value })}
+            />
+          </label>
+          <label>
+            套餐名称
+            <input
+              aria-label="套餐名称"
+              value={service.name}
+              onChange={(event) => setService({ ...service, name: event.target.value })}
+            />
+          </label>
+          <label>
+            价格说明
+            <input
+              aria-label="价格说明"
+              value={service.priceLabel}
+              onChange={(event) => setService({ ...service, priceLabel: event.target.value })}
+              placeholder="例如：价格请咨询门店"
+            />
+          </label>
+          <label className={styles.wide}>
+            套餐说明
+            <input
+              aria-label="套餐说明"
+              value={service.description}
+              onChange={(event) => setService({ ...service, description: event.target.value })}
+            />
+          </label>
+          <Button loading={saving} onClick={() => void createService()}>
+            创建套餐
+          </Button>
         </div>
       </section>
       <section className={styles.catalog}>

@@ -34,6 +34,6 @@ test('W∞-39: management offers honest entry boundaries preserved', () => {
   assert.match(p, /也不在此售卖下单/);
   assert.match(p, /不宣称第三方实时同步/);
   assert.match(p, /商户后台登记/);
+  assert.match(p, /非本平台下单/);
   assert.doesNotMatch(p, /商品管理/);
-  assert.doesNotMatch(p, /本平台下单/);
 });

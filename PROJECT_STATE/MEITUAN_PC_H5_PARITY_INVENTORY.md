@@ -44,7 +44,7 @@
 | -- | ----------------- | --------------------- | ---- | ---- |
 | MPC-01 | 工作台 / 首页概览 | `/m/dashboard` | PARTIAL | W1 首刀；W∞-18/21 工具身份；**W∞-35** 视觉/IA densify（黄顶栏+icon 功能格+白卡面板+自定义指标）；toward PARITY；见 WINF35 |
 | MPC-02 | 门店管理 | `/m/stores` | PARTIAL | W∞-19/23 工具身份；**W∞-38** 视觉/IA densify（黄顶栏+灰底白卡+概况条）；toward PARITY；见 WINF38 |
-| MPC-03 | 商品管理 | `/m/offers` | PARTIAL | W∞-19/23 工具身份；**W∞-39** 视觉/IA densify（黄顶栏+灰底白卡）；toward PARITY；见 WINF39 |
+| MPC-03 | 商品管理 | `/m/offers` | PARTIAL | W∞-19/23 工具身份；**W∞-39** 视觉/IA densify（黄顶栏+灰底白卡）；**W∞-47** 真实数据深页分布（套餐可见/门店/平台入口/Offer 状态/价格带，source=local 档案行推导，禁止假 BI）；toward PARITY；见 WINF39/WINF47 |
 | MPC-04 | 订单中心 | — | PARTIAL | 只读档案/痕迹（`/m/orders`）+ 导航「订单痕迹」（W∞-21/22）；**W∞-42** 视觉 densify（黄顶栏+灰底白卡+heroCard+概况条+row 列表）；**W∞-45** 真实数据深页分布（状态/门店/来源，source=local 档案行推导，禁止假 BI）；toward PARITY；不做本平台成交；见 WINF42/WINF45 |
 | MPC-05 | 评价管理 | `/m/reviews` | PARTIAL | 诚实档案/答复痕迹；W∞-23 导航+页头 `评价管理→评价档案`；**W∞-42** 视觉 densify（黄顶栏+灰底白卡+heroCard+概况条+row 列表）；**W∞-45** 真实数据深页分布（评分 5★~1★/门店，source=local 推导，禁止假 BI）；toward PARITY；不接第三方评价流；见 WINF42/WINF45 |
 | MPC-06 | 顾客 / CRM | `/m/customers` | PARTIAL | W∞-24 工具身份收尾：`客户资产/驱动每次经营动作/经营管理权限` → `客户跟进`（eyebrow/title/状态/back-link/aria）；保留实名授权跟进/来源分层/归属与导出审批；**W∞-40** 视觉/IA densify（`/m/customers` + `/m/customers/[id]` 黄顶栏+灰底白卡+heroCard+白卡面板）；**W∞-46** 真实数据深页分布（分层/归属/标签，source=local 档案行推导，禁止假 BI）；toward PARITY；见 WINF40/WINF46 |
@@ -142,7 +142,7 @@
 
 ## 6. 当前下一刀
 
-  > **当前：W∞-46 PASS** — Management 顾客·会员 真实数据深页密度（MPC-06/08：`/m/customers` 客户跟进 分层/归属/标签分布 + `/m/memberships` 会员中心 门店/入会时间分布，全部由既有 source=local 档案行推导，禁止假 BI）。**下一刀：W∞-47 续 Management MPC 深度 densify**（W∞-44 经营分析、W∞-45 订单/评价/营销深页、W∞-46 顾客/会员深页已收；续平台/员工/商圈或管理剩余真实数据面缺口）。
+  > **当前：W∞-47 PASS** — Management 商品/套餐入口 真实数据深页密度（MPC-03：`/m/offers` 商品套餐分布面板 套餐可见/门店/平台入口/Offer 状态/价格带，全部由既有 source=local 档案行推导，禁止假 BI）。**下一刀：W∞-48 续 Management MPC 深度 densify**（W∞-44 经营分析、W∞-45 订单/评价/营销深页、W∞-46 顾客/会员深页、W∞-47 商品/套餐入口深页已收；续员工/平台/商圈或管理剩余真实数据面缺口，如 MPC-10 员工/权限 或 MPC-13 通知中心真实数据深页密度）。
 
 **历史波（自 W24 起）累计——**
 
