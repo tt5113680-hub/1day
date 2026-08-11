@@ -117,28 +117,38 @@ export default function DiscoveryPage({ data }: { data: Discovery }) {
       />
       <main className={styles.page}>
         <div className={styles.shell}>
-          <header className={styles.appHeader}>
+          <header className={styles.stickyBar}>
             <button className={styles.locateChip} type="button" onClick={locate}>
-              {data.locationRequired ? '开启定位' : '当前位置附近'}
+              <span className={styles.locatePin} aria-hidden>
+                ⌖
+              </span>
+              <span className={styles.locateText}>
+                {data.locationRequired ? '开启定位' : '当前位置附近'}
+              </span>
+              <span className={styles.locateCaret} aria-hidden>
+                ▾
+              </span>
             </button>
-            <a className={styles.search} href={searchHref} aria-label="搜索商家（美团 App 同构入口）">
-              <span className={styles.srOnly}>搜索商家</span>
-              <span className={styles.searchBox}>搜索商家 / 品类</span>
+            <a
+              className={styles.searchBox}
+              href={searchHref}
+              aria-label="搜索商家（美团 App 同构入口）"
+            >
+              <span className={styles.searchIcon} aria-hidden>
+                ⌕
+              </span>
+              <span>搜索商家 / 品类</span>
             </a>
           </header>
-          <p className={styles.eyebrow}>{data.tenant.name} · 推广员工具 · 附近</p>
-          <h1 className={styles.title}>附近</h1>
-          <p className={styles.intro}>
-            全平台可见引流商家的 LBS 列表；点进店页后可经确认跳转第三方。评分/月售为本地试用提示。
+
+          <p className={styles.eyebrow}>
+            {data.tenant.name} · 推广员工具 · 附近
           </p>
-          <p className={styles.disclaimer} role="note">
-            附近只做入口分流与进店；不在此下单，成交以美团/抖音/扫呗等页面为准。
+          <h1 className={styles.srOnly}>附近</h1>
+          <p className={styles.compactNote} role="note">
+            全平台可见引流商家 · 不在此下单 · 评分/月售为本地试用提示 · 成交以美团/抖音/扫呗等为准
           </p>
-          <div className={styles.quickLinks}>
-            <a href={entryHref}>统一入口</a>
-            <a href={searchHref}>搜索</a>
-            <a href={`/c/circles?tenant=${tenantQ}`}>商圈页</a>
-          </div>
+
           <nav className={styles.tabs} aria-label="发现分类">
             <button
               className={`${styles.tab} ${activeTab === 'nearby' ? styles.tabActive : ''}`}
@@ -162,14 +172,8 @@ export default function DiscoveryPage({ data }: { data: Discovery }) {
               商圈
             </button>
           </nav>
-          <section id="nearby" className={styles.section}>
-            <div className={styles.sectionHead}>
-              <div>
-                <h2>附近商家</h2>
-                <p>仅展示开通且允许「全平台可见引流」的商家（距离 / 好评 / 人气）</p>
-              </div>
-              <span className={styles.badge}>LBS</span>
-            </div>
+
+          <section id="nearby" className={styles.section} hidden={activeTab !== 'nearby'}>
             {!data.locationRequired ? (
               <div className={styles.sortBar} role="toolbar" aria-label="附近排序">
                 <button
@@ -177,7 +181,7 @@ export default function DiscoveryPage({ data }: { data: Discovery }) {
                   className={nearbySort === 'distance' ? styles.sortActive : styles.sortChip}
                   onClick={() => setNearbySort('distance')}
                 >
-                  附近
+                  距离
                 </button>
                 <button
                   type="button"
@@ -195,39 +199,44 @@ export default function DiscoveryPage({ data }: { data: Discovery }) {
                 </button>
               </div>
             ) : null}
+
             {data.locationRequired ? (
-              <>
+              <div className={styles.locatePanel}>
+                <p>开启定位后展示附近全平台可见引流商家</p>
                 <button className={styles.location} type="button" onClick={locate}>
                   使用当前位置发现附近商家
                 </button>
-                {notice && (
+                {notice ? (
                   <p className={styles.notice} role="status">
                     {notice}
                   </p>
-                )}
-              </>
+                ) : null}
+              </div>
             ) : nearbySorted.length ? (
               <div className={styles.nearby}>
                 {nearbySorted.map((item) => {
                   const content = (
                     <>
                       <span className={styles.thumb} aria-hidden>
-                        店
+                        {item.name.slice(0, 1)}
                       </span>
-                      <span>
-                        <strong>{item.name}</strong>
-                        <p>{item.address ?? '地址待商家补充'}</p>
-                        <p className={styles.meta}>
+                      <span className={styles.cardBody}>
+                        <strong className={styles.storeName}>{item.name}</strong>
+                        <span className={styles.meta}>
                           {item.rating != null ? (
-                            <span className={styles.rating}>{item.rating} 分</span>
-                          ) : null}
-                          {item.salesHint != null ? <span>月售 {item.salesHint}+</span> : null}
-                          <span>
-                            {item.ratingSource === 'local_pilot' ? '本地试用提示' : '本地试用'}
-                          </span>
-                        </p>
+                            <span className={styles.rating}>{item.rating.toFixed(1)}</span>
+                          ) : (
+                            <span className={styles.ratingMuted}>暂无评分</span>
+                          )}
+                          {item.salesHint != null ? <span>月售{item.salesHint}+</span> : null}
+                          <span className={styles.distance}>{item.distanceKm}km</span>
+                        </span>
+                        <span className={styles.address}>{item.address ?? '地址待商家补充'}</span>
+                        <span className={styles.tags}>
+                          <span>本地试用提示</span>
+                          <span>入口分流</span>
+                        </span>
                       </span>
-                      <span className={styles.distance}>{item.distanceKm} km</span>
                     </>
                   );
                   return item.entryUrl ? (
@@ -247,25 +256,17 @@ export default function DiscoveryPage({ data }: { data: Discovery }) {
                 })}
               </div>
             ) : (
-              <div className={styles.empty}>
-                当前位置 20 公里内暂无已发布的商家；可浏览推荐和商圈。
-              </div>
+              <div className={styles.empty}>当前位置 20 公里内暂无已发布的商家；可切换推荐/商圈。</div>
             )}
           </section>
-          <section id="channels" className={styles.section}>
-            <div className={styles.sectionHead}>
-              <div>
-                <h2>推荐</h2>
-                <p>渠道推荐内容，不基于距离排序。</p>
-              </div>
-              <span className={styles.badge}>推荐</span>
-            </div>
+
+          <section id="channels" className={styles.section} hidden={activeTab !== 'channels'}>
             <div className={styles.collection}>
               {data.channels.length ? (
                 data.channels.map((item) => (
                   <article className={styles.collectionCard} key={item.id}>
                     <strong>{item.name}</strong>
-                    {item.description && <p>{item.description}</p>}
+                    {item.description ? <p>{item.description}</p> : null}
                     <div className={styles.merchantList}>
                       {item.merchants.map((merchant) =>
                         merchant.entryUrl ? (
@@ -291,25 +292,19 @@ export default function DiscoveryPage({ data }: { data: Discovery }) {
               )}
             </div>
           </section>
-          <section id="circles" className={styles.section}>
-            <div className={styles.sectionHead}>
-              <div>
-                <h2>商圈</h2>
-                <p>商家联盟单独页：附近商圈 / 进圈找店。</p>
-              </div>
-              <a className={styles.badge} href={`/c/circles?tenant=${tenantQ}`}>
-                进入商圈页 ›
-              </a>
+
+          <section id="circles" className={styles.section} hidden={activeTab !== 'circles'}>
+            <div className={styles.circleHead}>
+              <p>商家联盟单独页：附近商圈 / 进圈找店。</p>
+              <a href={`/c/circles?tenant=${tenantQ}`}>进入商圈页 ›</a>
             </div>
-            <p className={styles.sectionHint}>
-              互助引流只计观看/访问/跳转；成交在第三方完成。
-            </p>
+            <p className={styles.sectionHint}>互助引流只计观看/访问/跳转；成交在第三方完成。</p>
             <div className={styles.collection}>
               {data.circles.length ? (
                 data.circles.map((item) => (
                   <article className={styles.collectionCard} key={item.id}>
                     <strong>{item.name}</strong>
-                    {item.description && <p>{item.description}</p>}
+                    {item.description ? <p>{item.description}</p> : null}
                     <div className={styles.merchantList}>
                       {item.merchants.map((merchant) =>
                         merchant.entryUrl ? (

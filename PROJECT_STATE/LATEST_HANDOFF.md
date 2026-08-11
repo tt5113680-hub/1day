@@ -9,12 +9,12 @@
 ## Current task — promoter-tool phases
 
 - branch: `hardening/COMMERCIAL-COMPLETION`
-- product_bar: **团购推广员工具** — 统一入口/整合/工作流；不碰钱·销售·管理。痕迹 **L0+L1+L2 同批**。
-- last_verified: **2026-08-11** — TOOL-PHASE-0..6 + G1-W∞-3..30 + W∞-31(MPC-13 通知中心) PASS.
-- status: Tool-identity construction **plateau** (W∞-3..30 PASS) + **MPC-13 通知中心 closed** (W∞-31). **Owner 2026-08-11 全权委托 agent 施工，无需逐轮管理**；有问题 agent 主动提醒。
+- product_bar: **商用前提 = 四端完整对标美团成熟场景**（消费者/员工/管理/平台）；**唯一例外** `/m/workflows`。团购推广员工具身份 + L0+L1+L2；不碰钱·销售·本平台下单。
+- last_verified: **2026-08-11** — 商用完整对标前提锁定 + W∞-32 discovery visual densify PASS.
+- status: Owner 重申完整对标为商用前提（2026-08-11 21:47）。工程下一刀 = **视觉+IA 完整对标 densify**（非仅文案）。全权委托 agent 连续施工。
 - blocker: none outbound.
-- progress: Tool-identity construction **plateau** (W∞-3..30 PASS) + MPC-13 通知中心 (W∞-31) closed. Owner G1 re-test when ready.
-- note: Hub http://127.0.0.1:3299/ · **W∞-31** 管理通知中心 `/m/notifications` + `GET /api/v1/management/notifications`（tenant.manage，只读聚合跟进异常/待审批/进行中工作流，deepLink → /m/customers /m/workflows）· MPC-13 消息/通知 GAP→PARTIAL · **W∞-29** 顾客→客户/客户跟进 nav+工作台对齐 · **W∞-30** 管理/员工 ONEDAY / 眉标去除（7 页）· Platform/Consumer ONEDAY / 按边界保留 · 无 schema/DB migration
+- progress: Next: **W∞-33** Consumer 门店页视觉 densify（MH5-03）。Owner G1 only after four-surface PARITY.
+- note: Hub http://127.0.0.1:3299/ · 商用前提已锁定 · **W∞-32** 发现页视觉 densify · 刷新/重建 Docker consumer 后可见
 
 ### Owner — next actions
 

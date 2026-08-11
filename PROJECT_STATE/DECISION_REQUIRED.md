@@ -45,6 +45,25 @@
 | 微站/官网/C 端首页 | **同一个首页**，仅 UI 模板与功能样式不同。 |
 | Detail | `PRODUCT_DUAL_TRACK_STRATEGY.md`（2026-08-11 11:48）。 |
 
+## Resolved (2026-08-11 — commercial Meituan full-parity premise)
+
+Owner reconfirmed (2026-08-11 ~21:47): **完整对标是商用前提，不是可选 polish。**
+
+| Surface | Learning source | Bar |
+| ------- | --------------- | --- |
+| Consumer H5 | 美团 App 到店浏览 | **完整对标** |
+| Employee H5 | 美团商家端人员作业 | **完整对标** |
+| Management/Owner PC | 美团商家端 PC | **完整对标** |
+| Platform/Channel/Circle PC | 美团平台/代理后台 | **完整对标** |
+| `/m/workflows` | — | **唯一例外：ONEDAY 定制，不做美团** |
+
+Rules:
+
+1. Cannot claim 商用 / G1 complete until four surfaces reach inventory `PARITY` (or `CUSTOM` for workflows only).
+2. Tool-identity copy waves (W∞-*) are necessary but **not sufficient** for the commercial bar.
+3. Agent must continue visual + IA densify toward Meituan mature scenes; do not reframe the bar as 「文案收尾即可」.
+4. Still: 不做美团产品本体；不碰钱/销售/本平台下单；底盘仍是 ONEDAY.
+
 ## Resolved (2026-08-10 — dual-track IA; identity superseded 11:48 where conflicting)
 
 | Decision | Resolution |

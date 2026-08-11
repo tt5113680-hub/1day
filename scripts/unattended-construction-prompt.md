@@ -23,7 +23,7 @@ You are the **sole write executor** for this repository turn (Headless CLI, auth
 ## Scope (this turn only)
 
 - Branch: `hardening/COMMERCIAL-COMPLETION`
-- Work: **one** next incomplete slice from TASK_QUEUE — tool-identity W∞-3..30 plateau reached; prefer owner G1 re-test prep or inventory PARTIAL/GAP slices from `MEITUAN_PC_H5_PARITY_INVENTORY.md`; retry git push if ahead of origin; never revive consumer_orders / native checkout
+- Work: **one** next incomplete slice from TASK_QUEUE — prefer **W∞-32+ visual/IA full Meituan parity densify** (commercial premise: four surfaces complete parity; only `/m/workflows` custom). Tool-identity copy alone is NOT enough. Never revive consumer_orders / native checkout
 - Owner authorized continuous auto-run without per-turn confirmation (2026-08-11)
 - Writable root: `D:\ONEDAY_V3` only
 - Do not auto-sign owner acceptance; do not claim 全部商用

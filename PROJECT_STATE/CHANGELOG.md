@@ -1,3 +1,11 @@
+## 2026-08-11 - G1-W∞-32 Consumer 发现页视觉/IA densify（商用完整对标前提）PASS
+
+- Owner 重申：四端完整对标美团是商用前提；唯一例外 `/m/workflows`。
+- `/c/discovery`：sticky 黄顶栏（定位+搜索）、下划线 Tab、72px 商家卡、灰底白卡列表密度；去掉 oversized H1。
+- 诚实边界保留（不在此下单 / 全平台可见引流 / 本地试用提示）。
+- Gates: g1-winf32 3/3；winf11/winf5 回归；consumer typecheck+build PASS。
+- Evidence: `evidence/G1-MEITUAN-PARITY/WINF32/ACCEPTANCE.md`.
+
 ## 2026-08-11 - G1-W∞-30 工具身份收尾·管理/员工 ONEDAY / 眉标前缀去除 PASS
 
 - 7 页 management/employee tool surfaces 去除 `ONEDAY /` 眉标/hero 前缀，统一 `推广员工具 ·` 模式（对齐 W∞-25）：

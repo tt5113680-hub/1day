@@ -29,9 +29,9 @@
     <p class="sub">推广员工具本地沙盒（human-pilot，端口 3200–3204）。消费者为匿名入口，无需账号。</p>
 
     <div class="note">
-      <strong>UI 说明（请先看）：</strong>当前验收环境展示的是<strong>工具身份 + 场景同构</strong>（文案/导航/边界对齐美团商家习惯），
-      <strong>不是</strong>美团 App/商家后台的像素级克隆。清单里多数页面状态为 <code>PARTIAL</code>（消费者发现/门店、管理/员工/平台工作台等）——链接能点、流程能走，但版式仍是 ONEDAY 设计体系。
-      若 Docker 镜像较旧，请先运行 <code>pnpm human-pilot:start</code> 重建后再看。
+      <strong>商用前提（主人锁定）：</strong>消费者 H5 / 员工 H5 / 管理 PC / 平台·渠道·商圈 PC 必须<strong>完整对标</strong>美团对应成熟场景；
+      <strong>唯一例外</strong> <code>/m/workflows</code> = ONEDAY 定制。当前多数页仍为 <code>PARTIAL</code>，正在视觉+IA densify；文案收尾不等于商用完成。
+      发现页已开始 W∞-32 视觉 densify——请 <strong>硬刷新</strong> 或重建 Docker consumer 后再看。
     </div>
 
     <div class="card">

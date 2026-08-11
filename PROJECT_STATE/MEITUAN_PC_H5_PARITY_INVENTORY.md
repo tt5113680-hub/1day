@@ -1,12 +1,17 @@
 # 美团 PC / H5 复刻清单（施工权威）
 
 - created_at: 2026-08-10 23:30 Asia/Shanghai
-- updated_at: 2026-08-10 23:53 Asia/Shanghai
+- updated_at: 2026-08-11 21:47 Asia/Shanghai
 - authority: 主人裁决 — **不做美团产品**；学习成熟管理系统/人员/代理/指标/开店链路（客户熟悉→上手快）；底盘仍为 ONEDAY；仅工作流整合页自研差异
 - strategy: `PRODUCT_DUAL_TRACK_STRATEGY.md`
 - rule: **对成熟场景施工**。禁止自创陌生管理 IA；也禁止宣称「已是美团」。
 
 ---
+
+## 0.0 商用前提（主人 2026-08-11 21:47 重申）
+
+> **完整对标是商用前提。** 四端（消费者 H5 / 员工 H5 / 管理 PC / 平台·渠道·商圈 PC）必须达到美团对应成熟场景的完整对标；**唯一例外** `/m/workflows` = ONEDAY 定制。
+> 工具身份文案收尾 **不等于** 商用完成。状态列未到 `PARITY` 的页面不得宣称可商用。
 
 ## 0. 四套面对齐（学习源 · 2026-08-11 澄清）
 
@@ -27,7 +32,7 @@
 2. 每一页验收：导航分区、主操作、列表/筛/详、指标口径、开通链路是否贴近客户已熟悉习惯。
 3. **唯一例外：** Management `/m/workflows`（工作流整合页）→ ONEDAY 定制。
 4. 诚实边界：不宣称已接美团实时库存/价格 API；数据可用本地试点。
-5. 状态列 `GAP` / `PARTIAL` / `PARITY` / `CUSTOM`（PARITY = 场景同构，非「已是美团」）。
+5. 状态列 `GAP` / `PARTIAL` / `PARITY` / `CUSTOM`。**PARITY = 导航/主操作/列表筛详/指标口径/视觉密度达到商用可试用的完整对标**（仍诚实声明非美团本体、不接实时美团 API）。`PARTIAL` = 未达商用前提。
 
 ---
 
@@ -72,7 +77,7 @@
 
 | ID | 成熟型（学习源） | ONEDAY 现路由 | 状态 | 备注 |
 | -- | ---------------- | ------------- | ---- | ---- |
-| MH5-01 | 美团 App 外卖 LBS 首页 → **附近** | `/c/discovery` | PARITY (首刀+) | 全平台可见引流 + 诚实试用提示；见 W2/WINF11 |
+| MH5-01 | 美团 App 外卖 LBS 首页 → **附近** | `/c/discovery` | PARTIAL | W2/W∞-11 壳+工具身份；**W∞-32** 视觉/IA densify（sticky 黄顶栏+下划线 Tab+72px 商家卡）；toward PARITY；见 WINF32 |
 | MH5-02 | 搜索 | `/c/search` | PARITY | 检索+诚实试用提示+无下单免责；见 WINF2/WINF10 |
 | MH5-03 | 美团商家门店页 → **商家消费者页** | `/c/stores/[id]` | PARTIAL | 第三方商品+多模板/装修（§A）；W∞-13 工具身份 merchant bar |
 | MH5-04 | 团购 / 套餐（外链聚合） | `/c/stores/[id]/group-buy` | PARTIAL | 美团/抖音/外链，非自有货架；W∞-12 densify 工具身份+平台图例 |
@@ -136,7 +141,7 @@
 
 ## 6. 当前下一刀
 
-**W24 工作台/顾客跟进收尾 PASS.** **W∞-28（体验对标细部·工具身份收尾·残留 `经营` store-ops 语裁定档：管理/员工工具身份面 `经营` 店务话术统一推广员工具——`/m` 404 `工具页面/推广员工具功能`、attribution `入口证据/入口分流与承接`、ai-suggestions `入口异常`、page-builder `入口频道`、offers `商户后台登记`、roles-permissions/employee-profile `查看/管理租户工具`、customers `跟进异常`、员工 loading `推广员工具工作台`、nurture `客户跟进队列`、notification `工具提醒`、share `工具入口/消费者入口`、`/e/store` `门店入口首页`；商圈/渠道网络身份 `经营` 保留）PASS** `evidence/G1-MEITUAN-PARITY/WINF28/ACCEPTANCE.md`. **W∞-27（管理/员工「经营管理」状态口径对齐）PASS** `evidence/G1-MEITUAN-PARITY/WINF27/ACCEPTANCE.md`. **W∞-29（残留 顾客→客户/客户跟进 nav+工作台）PASS** evidence/G1-MEITUAN-PARITY/WINF29/ACCEPTANCE.md. **W∞-30（管理/员工 ONEDAY / 眉标前缀去除，对齐 W∞-25 推广员工具 · 模式）PASS** evidence/G1-MEITUAN-PARITY/WINF30/ACCEPTANCE.md. **W∞-31（MPC-13 消息/通知→管理通知中心，`/m/notifications` 只读聚合 + `GET /api/v1/management/notifications`）PASS** `evidence/G1-MEITUAN-PARITY/WINF31/ACCEPTANCE.md`. **Next: owner G1 re-test; engineering tool-identity + MPC-13 通知中心 close.**
+**W24 工作台/顾客跟进收尾 PASS.** **W∞-28（体验对标细部·工具身份收尾·残留 `经营` store-ops 语裁定档：管理/员工工具身份面 `经营` 店务话术统一推广员工具——`/m` 404 `工具页面/推广员工具功能`、attribution `入口证据/入口分流与承接`、ai-suggestions `入口异常`、page-builder `入口频道`、offers `商户后台登记`、roles-permissions/employee-profile `查看/管理租户工具`、customers `跟进异常`、员工 loading `推广员工具工作台`、nurture `客户跟进队列`、notification `工具提醒`、share `工具入口/消费者入口`、`/e/store` `门店入口首页`；商圈/渠道网络身份 `经营` 保留）PASS** `evidence/G1-MEITUAN-PARITY/WINF28/ACCEPTANCE.md`. **W∞-27（管理/员工「经营管理」状态口径对齐）PASS** `evidence/G1-MEITUAN-PARITY/WINF27/ACCEPTANCE.md`. **W∞-29（残留 顾客→客户/客户跟进 nav+工作台）PASS** evidence/G1-MEITUAN-PARITY/WINF29/ACCEPTANCE.md. **W∞-30（管理/员工 ONEDAY / 眉标前缀去除，对齐 W∞-25 推广员工具 · 模式）PASS** evidence/G1-MEITUAN-PARITY/WINF30/ACCEPTANCE.md. **W∞-31（MPC-13 消息/通知→管理通知中心，`/m/notifications` 只读聚合 + `GET /api/v1/management/notifications`）PASS** `evidence/G1-MEITUAN-PARITY/WINF31/ACCEPTANCE.md`. **W∞-32（Consumer 发现页视觉/IA densify toward PARITY）PASS** `evidence/G1-MEITUAN-PARITY/WINF32/ACCEPTANCE.md`. **Next: W∞-33 Consumer 门店页视觉 densify (MH5-03)；商用前提=四端完整对标。**
 
 **W6 省市区代理（MP-01~03）PASS. W∞-1（省市区代理深层运营：结算/配额/审批, MP-03 深层）PASS** `evidence/G1-MEITUAN-PARITY/WINF/ACCEPTANCE.md`. **W∞-2（Consumer H5 搜索, MH5-02）PASS** `evidence/G1-MEITUAN-PARITY/WINF2/ACCEPTANCE.md`.
 
