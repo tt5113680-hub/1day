@@ -405,13 +405,23 @@ export default function AgentsPage() {
   return (
     <main className={styles.page}>
       <AdminPageHeader
-        eyebrow="ONEDAY / 平台代理管理"
-        title="省市区代理树、商户入驻与归属"
-        description="代理绑定省市区区域；商户入驻归属到具体代理商。本地试点记录，未接美团实时代理数据。"
+        eyebrow="ONEDAY / 推广员工具 · 省市区代理"
+        title="代理树、商户归属与配额结算"
+        description="代理绑定省市区并承接商户开通归属。结算/配额是代理运营账，不是消费者成交；本地试点记录，未接美团实时代理数据。"
         actions={
-          <Button tone="secondary" onClick={() => void load()}>
-            刷新
-          </Button>
+          <>
+            <Button
+              tone="secondary"
+              onClick={() => {
+                window.location.href = '/ch/dashboard';
+              }}
+            >
+              渠道商户队列
+            </Button>
+            <Button tone="secondary" onClick={() => void load()}>
+              刷新
+            </Button>
+          </>
         }
       />
       {note && (
