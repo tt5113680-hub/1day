@@ -277,12 +277,15 @@ export default function StorePage({
           <h1 className={styles.visuallyHidden}>{data.store.name}</h1>
           <header className={styles.merchantBar}>
             <div>
-              <p className={styles.merchantEyebrow}>美团 App · 商家页</p>
+              <p className={styles.merchantEyebrow}>推广员工具 · 商家入口页</p>
               <strong className={styles.merchantName}>{data.store.name}</strong>
               <p className={styles.merchantMeta}>
                 {data.store.address ?? '地址待补充'}
                 {' · '}
                 {data.store.businessHours ?? '营业时间待补充'}
+              </p>
+              <p className={styles.merchantToolNote} role="note">
+                统一进店后可看团购比价/菜单/会员；成交经确认跳转第三方，不在此下单。
               </p>
             </div>
             <div className={styles.merchantActions}>

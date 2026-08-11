@@ -10,11 +10,11 @@
 
 - branch: `hardening/COMMERCIAL-COMPLETION`
 - product_bar: **团购推广员工具** — 统一入口/整合/工作流；不碰钱·销售·管理。痕迹 **L0+L1+L2 同批**。
-- last_verified: **2026-08-11** — TOOL-PHASE-0..6 + G1-W∞-3..12 PASS.
+- last_verified: **2026-08-11** — TOOL-PHASE-0..6 + G1-W∞-3..13 PASS.
 - status: Tool-identity construction active. Owner 不用管.
-- blocker: none for engineering; **local commits ahead of origin** (GitHub :443 refused — retry `git push origin HEAD`).
-- progress: Next engineering: **W∞-13**（体验对标细部；不做本平台下单）. Owner G1 re-test when ready (not auto-signed).
-- note: Hub http://127.0.0.1:3299/ · 团购/会员频道 densify · 经营设置工具链
+- blocker: none for engineering; **retry `git push origin HEAD`** if GitHub :443 flaps (local may be ahead).
+- progress: Next engineering: **W∞-14**（体验对标细部；不做本平台下单）. Owner G1 re-test when ready (not auto-signed).
+- note: Hub http://127.0.0.1:3299/ · 菜单频道 densify · 商家入口页工具身份
 
 ### Owner — next actions
 

@@ -1,3 +1,11 @@
+## 2026-08-11 - G1-W∞-13 菜单/商家入口 densify PASS
+
+- Consumer `/c/stores/[id]/menu`: 推广员工具文案、快捷链、不在此下单免责。
+- Consumer `/c/stores/[id]` merchant bar: 工具身份 eyebrow + 不在此下单说明（替换「美团 App · 商家页」误导）。
+- Gates: `node --test tests/g1-winf13-menu-store-home.test.mjs` 1/1；consumer typecheck+build PASS。
+- Not 全部商用 / 未代签 owner UI。Next: W∞-14。
+- Evidence: `evidence/G1-MEITUAN-PARITY/WINF13/ACCEPTANCE.md`.
+
 ## 2026-08-11 - G1-W∞-12 团购/会员 densify + 经营设置工具链 PASS
 
 - Consumer `/c/stores/[id]/group-buy`: 推广员工具文案、平台图例、快捷链、不在此下单免责。

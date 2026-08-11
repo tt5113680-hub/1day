@@ -122,7 +122,7 @@ export default function StoreChannel({
     channel === 'group-buy'
       ? '推广员工具 · 比价聚合后经确认页跳转美团/抖音等（不在此下单）'
       : channel === 'menu'
-        ? '门店已发布的套餐与商品说明'
+        ? '推广员工具 · 门店套餐说明；成交经确认跳转第三方（不在此下单）'
         : channel === 'membership'
           ? '本店入会与权益说明 · 推广员工具留痕；不含第三方成交'
           : '会员证明、外链团购与咨询入口；不含第三方订单履约';
@@ -139,7 +139,9 @@ export default function StoreChannel({
             <a href={storeHref(context, '', 'channel_back')}>‹ 返回门店</a>
             <p>
               {data.store.merchant} · {data.store.name}
-              {channel === 'group-buy' || channel === 'membership' ? ' · 推广员工具' : ''}
+              {channel === 'group-buy' || channel === 'membership' || channel === 'menu'
+                ? ' · 推广员工具'
+                : ''}
             </p>
             <h1>{title}</h1>
             <span>{subtitle}</span>
@@ -226,6 +228,14 @@ export default function StoreChannel({
 
           {channel === 'menu' && (
             <section className={styles.menu} aria-label="门店菜单">
+              <p className={styles.disclaimer} role="note">
+                菜单频道展示门店已发布套餐说明；下单请经确认页前往美团/抖音等，不在此下单。
+              </p>
+              <div className={styles.quickLinks}>
+                <a href={storeHref(context, '', 'menu_home')}>门店首页</a>
+                <a href={storeHref(context, '/group-buy', 'menu_group_buy')}>全平台团购</a>
+                <a href={storeHref(context, '/membership', 'menu_membership')}>会员权益</a>
+              </div>
               {data.services.length ? (
                 data.services.map((service, index) => (
                   <a
@@ -245,9 +255,12 @@ export default function StoreChannel({
                       <span className={styles.menuImage}>套餐</span>
                     )}
                     <span>
-                      <em>{index === 0 ? '门店推荐' : '到店自取'}</em>
+                      <em>{index === 0 ? '门店推荐 · 可进详情' : '到店自取 · 可进详情'}</em>
                       <strong>{service.name}</strong>
-                      <p>{service.description ?? '查看套餐内容、使用规则和平台价格。'}</p>
+                      <p>
+                        {service.description ??
+                          '查看套餐内容与使用规则；成交以第三方平台为准。'}
+                      </p>
                       <small>
                         {service.duration_minutes
                           ? `预计 ${service.duration_minutes} 分钟`
@@ -261,6 +274,9 @@ export default function StoreChannel({
               ) : (
                 <Empty>门店正在完善菜单内容。</Empty>
               )}
+              <p className={styles.disclaimer}>
+                菜单价格为门店参考；最终优惠与履约以第三方页面为准，本页不含支付金额。
+              </p>
             </section>
           )}
 

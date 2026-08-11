@@ -63,6 +63,15 @@
   font-size: 12px;
   line-height: 1.45;
 }
+.merchantToolNote {
+  margin: 8px 0 0;
+  border-left: 3px solid color-mix(in srgb, var(--od-brand-600) 55%, transparent);
+  padding-left: 10px;
+  color: var(--od-text-muted);
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.5;
+}
 .merchantActions {
   display: flex;
   flex-wrap: wrap;
