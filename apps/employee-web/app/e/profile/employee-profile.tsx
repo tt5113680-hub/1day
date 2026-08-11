@@ -49,8 +49,8 @@ const permissionNames: Record<string, string> = {
   'platform.read': '查看平台治理',
   'task.manage': '管理任务',
   'task.read': '查看任务',
-  'tenant.manage': '管理租户经营',
-  'tenant.read': '查看租户经营',
+  'tenant.manage': '管理租户工具',
+  'tenant.read': '查看租户工具',
   'workflow.manage': '管理运营流程',
   'workflow.read': '查看运营流程',
 };

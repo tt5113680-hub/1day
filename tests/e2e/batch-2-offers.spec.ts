@@ -112,7 +112,7 @@ test('merchant creates a truthful Offer and Consumer reads the same source', asy
     page.getByText('Offer 已关联到受控 HTTPS 入口；Consumer 会显示来源与更新时间。'),
   ).toBeVisible();
   await expect(page.getByText('¥99.00')).toBeVisible();
-  await expect(page.getByText(/商户经营后台登记/)).toBeVisible();
+  await expect(page.getByText(/商户后台登记/)).toBeVisible();
   await page.screenshot({
     path: 'evidence/BATCH-2-OFFERS/management-offers-desktop.png',
     fullPage: true,

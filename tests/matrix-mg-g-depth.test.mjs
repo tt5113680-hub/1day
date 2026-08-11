@@ -151,7 +151,7 @@ test('M-02 management CRUD package projects to Consumer with audit/outbox eviden
           externalActionId,
           offerPrice: 88,
           marketPrice: 128,
-          priceSource: '商户经营后台登记',
+          priceSource: '商户后台登记',
           sourceUpdatedAt: new Date().toISOString(),
           sortOrder: 1,
         }),

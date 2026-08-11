@@ -108,7 +108,7 @@ export function StoreHome() {
         <AppStatePanel
           kind="empty"
           title="尚未任命门店"
-          description="当前账号没有 data_scopes / store_managers 门店范围。店长经营能力需要门店任命后才会出现。"
+          description="当前账号没有 data_scopes / store_managers 门店范围。店长入口能力需要门店任命后才会出现。"
           action={<a href="/e/workbench">返回工作台</a>}
         />
       </main>
@@ -119,7 +119,7 @@ export function StoreHome() {
     <main className={styles.page}>
       <header className={styles.header}>
         <p className={styles.eyebrow}>推广员工具 · 店长模式</p>
-        <h1>门店经营首页</h1>
+        <h1>门店入口首页</h1>
         <p>
           {context} · 统一入口与工作流；不碰钱、不碰销售、不代履约第三方订单。
         </p>
@@ -132,7 +132,7 @@ export function StoreHome() {
         </div>
       </header>
 
-      <section className={styles.package} aria-label="店长经营能力包">
+      <section className={styles.package} aria-label="店长入口能力包">
         <h2>店长能力包</h2>
         <p>
           任务、线索、核销与分享复用员工端既有路由；写动作仍由服务端 scope 校验。本页不含支付金额。

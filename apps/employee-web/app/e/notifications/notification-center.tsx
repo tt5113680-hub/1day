@@ -78,7 +78,7 @@ export function NotificationCenter() {
         <AppStatePanel
           kind="loading"
           title="正在整理你的通知"
-          description="正在同步当前员工的任务与经营提醒。"
+          description="正在同步当前员工的任务与工具提醒。"
         />
       </main>
     );

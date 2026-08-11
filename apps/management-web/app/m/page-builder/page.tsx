@@ -429,7 +429,7 @@ export default function PageBuilder() {
                           if (module.module_type === 'operating_channels') {
                             return (
                               <fieldset className={styles.configFieldset}>
-                                <legend>经营频道（最多 3 个）</legend>
+                                <legend>入口频道（最多 3 个）</legend>
                                 {CHANNEL_OPTIONS.map((option) => {
                                   const selectedCodes = readChannelCodes(module.config);
                                   const checked = selectedCodes.includes(option.code);

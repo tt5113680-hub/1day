@@ -5,8 +5,8 @@ export default function NotFound() {
     <main className="od-route-state">
       <AppStatePanel
         kind="empty"
-        title="没有找到经营页面"
-        description="请从左侧导航返回当前租户可用的经营功能。"
+        title="没有找到工具页面"
+        description="请从左侧导航返回当前租户可用的推广员工具功能。"
       />
     </main>
   );

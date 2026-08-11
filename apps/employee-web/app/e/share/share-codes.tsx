@@ -116,7 +116,7 @@ export function ShareCodes() {
         },
       );
       if (!response.ok) throw new Error('REVOKE_FAILED');
-      setMessage('分享码已失效，后续扫码不会进入经营入口。');
+      setMessage('分享码已失效，后续扫码不会进入工具入口。');
       await load();
     } catch {
       setMessage('失效操作未完成，请刷新后重试。');
@@ -208,7 +208,7 @@ export function ShareCodes() {
       <Card className={styles.create}>
         <div>
           <h2>新建分享码</h2>
-          <p>默认进入消费者经营入口，可选设置自动失效时间。</p>
+          <p>默认进入消费者入口，可选设置自动失效时间。</p>
         </div>
         <div className={styles.controls}>
           <label>

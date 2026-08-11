@@ -270,7 +270,7 @@ export default function ManagementCustomerDetail({ params }: { params: Promise<{
         </section>
       )}
       {data.anomalies.length > 0 && (
-        <section className={styles.alerts} aria-label="经营异常">
+        <section className={styles.alerts} aria-label="跟进异常">
           {data.anomalies.map((item) => (
             <article key={`${item.type}-${item.title}`}>
               <StatusBadge tone="warning">{businessLabel(item.type)}</StatusBadge>

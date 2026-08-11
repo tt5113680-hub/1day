@@ -213,7 +213,7 @@ export default function AiSuggestions() {
             <AppStatePanel
               kind="empty"
               title="暂无建议"
-              description="当经营异常或可优化信号进入系统后，建议会在此处出现。"
+              description="当入口异常或可优化信号进入系统后，建议会在此处出现。"
             />
           </div>
         )}

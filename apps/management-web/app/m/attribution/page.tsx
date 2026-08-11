@@ -74,7 +74,7 @@ export default function AttributionPage() {
         <AppStatePanel
           kind="loading"
           title="正在汇总来源归因链"
-          description="正在关联入口来源、员工贡献与经营证据（不含第三方成交）。"
+          description="正在关联入口来源、员工贡献与入口证据（不含第三方成交）。"
         />
       </main>
     );
@@ -130,7 +130,7 @@ export default function AttributionPage() {
         }
       />
       <p className={styles.disclaimer} role="note">
-        归因阶段（首次/当前/最终）描述入口与经营承接，不是销售漏斗成交阶段。
+        归因阶段（首次/当前/最终）描述入口分流与承接，不是销售漏斗成交阶段。
       </p>
       <section className={styles.cards}>
         <MetricCard label="首次来源" value={data.summary.first} hint="初次进入入口分流链路" />

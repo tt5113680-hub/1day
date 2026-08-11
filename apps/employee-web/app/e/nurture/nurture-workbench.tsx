@@ -100,7 +100,7 @@ export function NurtureWorkbench() {
         <AppStatePanel
           kind="error"
           title="养客工作台暂不可用"
-          description="客户经营队列未能完成加载。"
+          description="客户跟进队列未能完成加载。"
           action={<Button onClick={() => void load()}>重新加载</Button>}
         />
       </main>

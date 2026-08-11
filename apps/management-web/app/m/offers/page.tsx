@@ -103,7 +103,7 @@ export default function OffersPage() {
           externalActionId: draft.externalActionId,
           offerPrice: draft.offerPrice,
           marketPrice: draft.marketPrice || null,
-          priceSource: draft.priceSource || '商户经营后台登记',
+          priceSource: draft.priceSource || '商户后台登记',
           sourceUpdatedAt: new Date().toISOString(),
           sortOrder: 0,
         },

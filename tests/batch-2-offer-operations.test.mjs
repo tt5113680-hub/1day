@@ -141,7 +141,7 @@ test('merchant operates a service and truthful platform Offer visible to Consume
         externalActionId,
         offerPrice: 129,
         marketPrice: 99,
-        priceSource: '商户经营后台登记',
+        priceSource: '商户后台登记',
         sourceUpdatedAt: new Date().toISOString(),
       }),
     },
@@ -156,7 +156,7 @@ test('merchant operates a service and truthful platform Offer visible to Consume
         externalActionId,
         offerPrice: 99,
         marketPrice: 129,
-        priceSource: '商户经营后台登记',
+        priceSource: '商户后台登记',
         sourceUpdatedAt: new Date().toISOString(),
         sortOrder: 1,
       }),
@@ -173,7 +173,7 @@ test('merchant operates a service and truthful platform Offer visible to Consume
   const publicOffer = publicData.platformOffers.find((item) => item.offerId === offer.id);
   assert.equal(publicOffer.offerPrice, 99);
   assert.equal(publicOffer.marketPrice, 129);
-  assert.equal(publicOffer.priceSource, '商户经营后台登记');
+  assert.equal(publicOffer.priceSource, '商户后台登记');
   assert.ok(publicOffer.sourceUpdatedAt);
 
   const disable = await fetch(`${base}/api/v1/management/catalog/offers/${offer.id}`, {
@@ -182,7 +182,7 @@ test('merchant operates a service and truthful platform Offer visible to Consume
     body: JSON.stringify({
       offerPrice: 99,
       marketPrice: 129,
-      priceSource: '商户经营后台登记',
+      priceSource: '商户后台登记',
       sourceUpdatedAt: new Date().toISOString(),
       sortOrder: 1,
       status: 'inactive',

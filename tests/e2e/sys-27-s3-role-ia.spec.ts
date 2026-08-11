@@ -154,7 +154,7 @@ test('SYS-27 Platform product homes and Employee store-manager chrome', async ({
     [employeeTokens.accessToken, employeeTokens.refreshToken],
   );
   await employeePage.goto(`${employee}/e/store`);
-  await expect(employeePage.getByRole('heading', { name: '门店经营首页' })).toBeVisible({
+  await expect(employeePage.getByRole('heading', { name: '门店入口首页' })).toBeVisible({
     timeout: 20000,
   });
   await expect(employeePage.getByRole('heading', { name: '店长能力包' })).toBeVisible();

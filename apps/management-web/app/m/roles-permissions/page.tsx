@@ -16,8 +16,8 @@ const api = process.env.NEXT_PUBLIC_API_BASE_URL ?? 'http://127.0.0.1:3001';
 const sessionApi = new SessionApiClient(api);
 const sensitive = new Set(['tenant.manage', 'organization.manage', 'employee.manage']);
 const permissionNames: Record<string, string> = {
-  'tenant.read': '查看租户经营',
-  'tenant.manage': '管理租户经营',
+  'tenant.read': '查看租户工具',
+  'tenant.manage': '管理租户工具',
   'organization.read': '查看组织',
   'organization.manage': '管理组织',
   'employee.read': '查看员工',
