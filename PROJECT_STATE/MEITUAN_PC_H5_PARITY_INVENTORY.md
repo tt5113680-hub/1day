@@ -64,11 +64,11 @@
 | 现路由 | 处置 |
 | ------ | ---- |
 | `/m/attribution` | 并入顾客/经营分析美团同构区 |
-| `/m/ai-suggestions` | 并入工作台建议或设置；禁止独立「AI 产品首页」感 |
-| `/m/connectors` | 设置/对接意图；诚实边界 |
-| `/m/external-actions` | 外链动作 → 美团「外链/活动」同类入口 |
-| `/m/permission-audit` | 设置/安全审计 |
-| `/m/employee-process-performance` | 员工绩效 → 美团人力/门店员工区 |
+| `/m/ai-suggestions` | 并入工作台建议或设置；禁止独立「AI 产品首页」感；**W∞-84** 真实数据深页分布（`作业建议分布`：处理状态/动作类型/建议来源模型/执行状态，由真实 items[] 推导，禁止假 BI） |
+| `/m/connectors` | 设置/对接意图；诚实边界；**W∞-84** 真实数据深页分布（`连接配置分布`：连接器平台/授权状态/运行日志状态，由真实 connectors[]+logs[] 推导，禁止假 BI） |
+| `/m/external-actions` | 外链动作 → 美团「外链/活动」同类入口；**W∞-84** 真实数据深页分布（`外链服务分布`：动作类型/平台命名/状态，由真实 actions[] 推导，禁止假 BI） |
+| `/m/permission-audit` | 设置/安全审计；**W∞-84** 真实数据深页分布（`操作审计分布`：类型/资源类型/操作人，由真实 records[] 推导，禁止假 BI） |
+| `/m/employee-process-performance` | 员工绩效 → 美团人力/门店员工区；**W∞-83** 真实数据深页分布（`员工表现分布`，由真实 employees[] 推导，禁止假 BI） |
 | `/m/funnels/[id]` | 并入顾客漏斗/经营 |
 
 ---
@@ -142,7 +142,7 @@
 
 ## 6. 当前下一刀
 
-  > **当前：W∞-83 PASS** — W∞-82 收束后补上 Management MPC-10 员工/人力区最后仍停留在旧 `AdminPageHeader`+`Card` chrome 的 `/m/employee-process-performance`（员工表现）真实数据深页分布（黄顶栏+灰底白卡 heroCard+概况条 `员工概况`+分布面板 `员工表现分布`，由真实 employees[] 行推导，禁止假 BI）。Management MPC 真实数据深页分布已全部闭合。**下一刀：** W∞ 收束其余仍停留在旧 chrome 的 MPC 零星面（`/m/permission-audit`、`/m/connectors`、`/m/external-actions`、`/m/ai-suggestions` 等），或 inventory `PARITY` 关断复核。
+  > **当前：W∞-84 PASS** — Management 剩余 MPC 零星面（`/m/permission-audit` 操作审计、`/m/connectors` 连接配置、`/m/external-actions` 外链服务、`/m/ai-suggestions` 作业建议）一次性改挂黄顶栏+灰底白卡+heroCard+概况条+分布洞察+honest 边界（禁止假 BI），收束 Management 全部旧 `AdminPageHeader`+`Card` chrome。Management MPC 真实数据深页分布已全部闭合。**下一刀：** inventory `PARITY` 关断复核（`MEITUAN_PC_H5_PARITY_INVENTORY.md` 状态列逐面复审 toward PARITY），或推进未闭合项（HUMAN-PILOT-HANDOFF / G1 OWNER GATE）。
 
 **历史波（自 W24 起）累计——**
 

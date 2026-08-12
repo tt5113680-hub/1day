@@ -1,15 +1,8 @@
 'use client';
 import { SessionApiClient } from '@oneday/session-client';
-import {
-  AdminPageHeader,
-  AppStatePanel,
-  businessLabel,
-  Button,
-  Card,
-  StatusBadge,
-} from '@oneday/ui';
+import { AppStatePanel, Button, StatusBadge, businessLabel } from '@oneday/ui';
 
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import styles from './page.module.css';
 
 type Suggestion = {
@@ -28,6 +21,11 @@ type Suggestion = {
   version: number;
 };
 
+const statusLabels: Record<string, string> = {
+  pending: '待处理',
+  accepted: '已采纳',
+  feedback: '已反馈',
+};
 const executionCopy = (item: Suggestion) => {
   const command = item.execution_result?.command;
   if (item.execution_status === 'executed' && command === 'create_task') {
@@ -40,6 +38,38 @@ const executionCopy = (item: Suggestion) => {
 
 const api = process.env.NEXT_PUBLIC_API_BASE_URL ?? 'http://127.0.0.1:3001';
 const sessionApi = new SessionApiClient(api);
+const barWidth = (total: number, value: number) =>
+  total ? `${Math.max(2, (value / total) * 100)}%` : '0%';
+const countBy = <T,>(rows: T[], key: (row: T) => string) => {
+  const acc: Record<string, number> = {};
+  for (const row of rows) {
+    const k = key(row);
+    acc[k] = (acc[k] ?? 0) + 1;
+  }
+  return Object.entries(acc)
+    .map(([label, value]) => ({ label, value }))
+    .sort((a, b) => b.value - a.value);
+};
+const renderBars = (
+  items: { label: string; value: number }[],
+  total: number,
+  empty = <p className={styles.barEmpty}>暂无记录</p>,
+) =>
+  items.length ? (
+    <ul className={styles.bars}>
+      {items.map((item) => (
+        <li className={styles.barRow} key={item.label}>
+          <span className={styles.barLabel}>{item.label}</span>
+          <span className={styles.barTrack}>
+            <span className={styles.barFill} style={{ width: barWidth(total, item.value) }} />
+          </span>
+          <span className={styles.barValue}>{item.value}</span>
+        </li>
+      ))}
+    </ul>
+  ) : (
+    empty
+  );
 
 export default function AiSuggestions() {
   const [state, setState] = useState<'loading' | 'ready' | 'forbidden' | 'error'>('loading');
@@ -65,6 +95,17 @@ export default function AiSuggestions() {
   }, []);
 
   useEffect(() => void load(), [load]);
+
+  const statusDist = useMemo(
+    () => countBy(items, (s) => statusLabels[s.status] ?? businessLabel(s.status)),
+    [items],
+  );
+  const actionDist = useMemo(() => countBy(items, (s) => businessLabel(s.action_type)), [items]);
+  const modelDist = useMemo(() => countBy(items, (s) => s.model_name), [items]);
+  const execDist = useMemo(() => countBy(items, (s) => businessLabel(s.execution_status)), [items]);
+  const pendingCount = items.filter((s) => s.status === 'pending').length;
+  const acceptedCount = items.filter((s) => s.status === 'accepted').length;
+  const manualRequiredCount = items.filter((s) => s.execution_status === 'manual_required').length;
 
   const update = async (item: Suggestion, mode: 'accept' | 'feedback') => {
     const feedbackValue = feedback[item.id]?.trim() ?? '';
@@ -130,17 +171,67 @@ export default function AiSuggestions() {
     );
   }
   return (
-    <main className={styles.page}>
-      <AdminPageHeader
-        eyebrow="推广员工具 · 作业建议"
-        title="把入口痕迹解读成可确认的下一步"
-        description="每条建议保留影响、动作类型、模型名称与版本。只有白名单内的租户本地动作可以执行，其余仍需人工确认。"
-        actions={
-          <Button tone="secondary" onClick={() => void load()}>
-            刷新建议
-          </Button>
-        }
-      />
+    <main className={styles.page} data-testid="management-ai-suggestions">
+      <div className={styles.topBar}>
+        <span className={styles.topBarTitle}>推广员工具 · 作业建议</span>
+        <button type="button" className={styles.topBarRefresh} onClick={() => void load()}>
+          刷新建议
+        </button>
+      </div>
+      <section className={styles.heroCard} aria-label="作业建议概况">
+        <h1>把入口痕迹解读成可确认的下一步</h1>
+        <p>
+          每条建议保留影响、动作类型、模型名称与版本。只有白名单内的租户本地动作可以执行，其余仍需人工确认。
+        </p>
+      </section>
+      <section className={styles.panel}>
+        <div className={styles.summaryStrip} aria-label="作业建议概况">
+          <div>
+            <span>建议</span>
+            <strong>{items.length}</strong>
+          </div>
+          <div>
+            <span>待处理</span>
+            <strong>{pendingCount}</strong>
+          </div>
+          <div>
+            <span>已采纳</span>
+            <strong>{acceptedCount}</strong>
+          </div>
+          <div>
+            <span>待人工执行</span>
+            <strong>{manualRequiredCount}</strong>
+          </div>
+        </div>
+      </section>
+      <section className={styles.panel}>
+        <div className={styles.panelHead}>
+          <h2>作业建议分布</h2>
+          <span className={styles.panelMeta}>由当前租户建议档案行现场推导</span>
+        </div>
+        <div className={styles.distribution} aria-label="作业建议分布">
+          <div className={styles.panelBlock}>
+            <h3>处理状态分布</h3>
+            {renderBars(statusDist, items.length)}
+          </div>
+          <div className={styles.panelBlock}>
+            <h3>动作类型分布</h3>
+            {renderBars(actionDist, items.length)}
+          </div>
+          <div className={styles.panelBlock}>
+            <h3>建议来源模型分布</h3>
+            {renderBars(modelDist, items.length)}
+          </div>
+          <div className={styles.panelBlock}>
+            <h3>执行状态分布</h3>
+            {renderBars(execDist, items.length)}
+          </div>
+        </div>
+        <p className={styles.honest}>
+          来源 source=local：分布全部由已抓取建议档案行现场推导，AI
+          仅解读既有入口痕迹，不编造成交、不接第三方实时投放、只记录本地建议与执行意图，不包含本平台收款，非本平台下单。
+        </p>
+      </section>
       {note && (
         <p className={styles.notice} role="status">
           {note}
@@ -150,7 +241,7 @@ export default function AiSuggestions() {
         {items.length ? (
           items.map((item) => (
             <article className={styles.card} key={item.id}>
-              <Card className={styles.cardBody}>
+              <div className={styles.cardBody}>
                 <div className={styles.top}>
                   <StatusBadge tone={item.status === 'accepted' ? 'success' : 'info'}>
                     {businessLabel(item.status)}
@@ -205,7 +296,7 @@ export default function AiSuggestions() {
                     记录反馈
                   </Button>
                 </footer>
-              </Card>
+              </div>
             </article>
           ))
         ) : (

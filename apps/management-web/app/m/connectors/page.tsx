@@ -1,15 +1,8 @@
 'use client';
 import { SessionApiClient } from '@oneday/session-client';
-import {
-  AdminPageHeader,
-  AppStatePanel,
-  businessLabel,
-  Button,
-  Card,
-  StatusBadge,
-} from '@oneday/ui';
+import { AppStatePanel, Button, StatusBadge, businessLabel } from '@oneday/ui';
 
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import styles from './page.module.css';
 
 type Connector = {
@@ -39,6 +32,38 @@ const logCopy = (value: string) =>
   value === 'Authorization requested; no external call has been made.'
     ? '授权请求已登记，尚未执行外部调用。'
     : value;
+const barWidth = (total: number, value: number) =>
+  total ? `${Math.max(2, (value / total) * 100)}%` : '0%';
+const countBy = <T,>(rows: T[], key: (row: T) => string) => {
+  const acc: Record<string, number> = {};
+  for (const row of rows) {
+    const k = key(row);
+    acc[k] = (acc[k] ?? 0) + 1;
+  }
+  return Object.entries(acc)
+    .map(([label, value]) => ({ label, value }))
+    .sort((a, b) => b.value - a.value);
+};
+const renderBars = (
+  items: { label: string; value: number }[],
+  total: number,
+  empty = <p className={styles.barEmpty}>暂无记录</p>,
+) =>
+  items.length ? (
+    <ul className={styles.bars}>
+      {items.map((item) => (
+        <li className={styles.barRow} key={item.label}>
+          <span className={styles.barLabel}>{item.label}</span>
+          <span className={styles.barTrack}>
+            <span className={styles.barFill} style={{ width: barWidth(total, item.value) }} />
+          </span>
+          <span className={styles.barValue}>{item.value}</span>
+        </li>
+      ))}
+    </ul>
+  ) : (
+    empty
+  );
 
 export default function ConnectorPage() {
   const [state, setState] = useState<'loading' | 'ready' | 'forbidden' | 'error'>('loading');
@@ -65,6 +90,26 @@ export default function ConnectorPage() {
     }
   }, []);
   useEffect(() => void load(), [load]);
+
+  const platformDist = useMemo(
+    () => countBy(connectors, (c) => labels[c.code] ?? c.code),
+    [connectors],
+  );
+  const statusDist = useMemo(
+    () => countBy(connectors, (c) => businessLabel(c.status)),
+    [connectors],
+  );
+  const logStatusDist = useMemo(
+    () =>
+      countBy(
+        connectors.flatMap((c) => c.logs),
+        (l) => businessLabel(l.status),
+      ),
+    [connectors],
+  );
+  const activeCount = connectors.filter((c) => c.status === 'authorized').length;
+  const pendingCount = connectors.filter((c) => c.status === 'pending_authorization').length;
+  const logTotal = connectors.reduce((acc, c) => acc + c.logs.length, 0);
 
   const requestAuthorization = async () => {
     if (!secret.trim()) return setNote('请输入授权密钥。');
@@ -126,19 +171,63 @@ export default function ConnectorPage() {
     );
 
   return (
-    <main className={styles.page}>
-      <AdminPageHeader
-        eyebrow="推广员工具 · 连接配置"
-        title="连接器授权与运行状态保持可验证"
-        description="仅登记授权意图与状态；密钥不落明文，未完成授权时不会伪造外部执行结果。"
-        actions={
-          <Button tone="secondary" onClick={() => void load()}>
-            刷新连接器
-          </Button>
-        }
-      />
+    <main className={styles.page} data-testid="management-connectors">
+      <div className={styles.topBar}>
+        <span className={styles.topBarTitle}>推广员工具 · 连接配置</span>
+        <button type="button" className={styles.topBarRefresh} onClick={() => void load()}>
+          刷新连接器
+        </button>
+      </div>
+      <section className={styles.heroCard} aria-label="连接配置概况">
+        <h1>连接器授权与运行状态保持可验证</h1>
+        <p>仅登记授权意图与状态；密钥不落明文，未完成授权时不会伪造外部执行结果。</p>
+      </section>
+      <section className={styles.panel}>
+        <div className={styles.summaryStrip} aria-label="连接器概况">
+          <div>
+            <span>连接器</span>
+            <strong>{connectors.length}</strong>
+          </div>
+          <div>
+            <span>已授权</span>
+            <strong>{activeCount}</strong>
+          </div>
+          <div>
+            <span>待授权</span>
+            <strong>{pendingCount}</strong>
+          </div>
+          <div>
+            <span>运行日志</span>
+            <strong>{logTotal}</strong>
+          </div>
+        </div>
+      </section>
+      <section className={styles.panel}>
+        <div className={styles.panelHead}>
+          <h2>连接配置分布</h2>
+          <span className={styles.panelMeta}>由当前租户连接器档案行现场推导</span>
+        </div>
+        <div className={styles.distribution} aria-label="连接配置分布">
+          <div className={styles.panelBlock}>
+            <h3>连接器平台分布</h3>
+            {renderBars(platformDist, connectors.length)}
+          </div>
+          <div className={styles.panelBlock}>
+            <h3>授权状态分布</h3>
+            {renderBars(statusDist, connectors.length)}
+          </div>
+          <div className={styles.panelBlock}>
+            <h3>运行日志状态分布</h3>
+            {renderBars(logStatusDist, logTotal)}
+          </div>
+        </div>
+        <p className={styles.honest}>
+          来源
+          source=local：分布全部由已抓取连接器档案行现场推导；连接器仅记录授权意图与本地运行记录，授权未完成时不会调用美团/抖音等外部平台，不包含本平台收款，非本平台下单。
+        </p>
+      </section>
 
-      <Card className={styles.request}>
+      <article className={styles.panel + ' ' + styles.request}>
         <label>
           连接器
           <select
@@ -167,7 +256,7 @@ export default function ConnectorPage() {
         <Button loading={submitting} onClick={() => void requestAuthorization()}>
           登记授权请求
         </Button>
-      </Card>
+      </article>
       {note && (
         <p role="status" className={styles.notice}>
           {note}
@@ -177,36 +266,34 @@ export default function ConnectorPage() {
       <section className={styles.grid} aria-label="连接器列表">
         {connectors.length ? (
           connectors.map((connector) => (
-            <article key={connector.id}>
-              <Card className={styles.connectorCard}>
-                <div className={styles.title}>
-                  <strong>{labels[connector.code] ?? connector.code}</strong>
-                  <StatusBadge tone={connector.status === 'authorized' ? 'success' : 'warning'}>
-                    {businessLabel(connector.status)}
-                  </StatusBadge>
-                </div>
-                <p>密钥摘要：{connector.secret_fingerprint ?? '尚未登记'}</p>
-                <small>
-                  版本 {connector.version} · 最近更新{' '}
-                  {new Date(connector.updated_at).toLocaleString('zh-CN', { hour12: false })}
-                </small>
-                <p data-testid="connector-delivery-boundary">
-                  外部投递：{businessLabel(connector.capability.externalDelivery)}；所需证据：
-                  {businessLabel(connector.capability.requiredEvidence)}
-                </p>
-                <div className={styles.logs}>
-                  <h2>最近运行日志</h2>
-                  {connector.logs.length ? (
-                    connector.logs.map((log, index) => (
-                      <p key={`${log.createdAt}-${index}`}>
-                        <b>{businessLabel(log.status)}</b> · {logCopy(log.message)}
-                      </p>
-                    ))
-                  ) : (
-                    <p>暂无日志</p>
-                  )}
-                </div>
-              </Card>
+            <article key={connector.id} className={styles.connectorCard}>
+              <div className={styles.title}>
+                <strong>{labels[connector.code] ?? connector.code}</strong>
+                <StatusBadge tone={connector.status === 'authorized' ? 'success' : 'warning'}>
+                  {businessLabel(connector.status)}
+                </StatusBadge>
+              </div>
+              <small>
+                版本 {connector.version} · 最近更新{' '}
+                {new Date(connector.updated_at).toLocaleString('zh-CN', { hour12: false })}
+              </small>
+              <p>密钥摘要：{connector.secret_fingerprint ?? '尚未登记'}</p>
+              <p data-testid="connector-delivery-boundary">
+                外部投递：{businessLabel(connector.capability.externalDelivery)}；所需证据：
+                {businessLabel(connector.capability.requiredEvidence)}
+              </p>
+              <div className={styles.logs}>
+                <h2>最近运行日志</h2>
+                {connector.logs.length ? (
+                  connector.logs.map((log, index) => (
+                    <p key={`${log.createdAt}-${index}`}>
+                      <b>{businessLabel(log.status)}</b> · {logCopy(log.message)}
+                    </p>
+                  ))
+                ) : (
+                  <p>暂无日志</p>
+                )}
+              </div>
             </article>
           ))
         ) : (

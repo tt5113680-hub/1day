@@ -26,13 +26,17 @@ const src = Object.fromEntries(Object.entries(pages).map(([k, rel]) => [k, () =>
 
 test('W∞-25: Management page eyebrows align to the promotion-tool identity (no merchant store-ops framing)', () => {
   assert.match(src.funnels(), /eyebrow="推广员工具 · 来源归因漏斗"/);
-  assert.match(src.permission_audit(), /eyebrow="推广员工具 · 操作审计"/);
-  assert.match(src.connectors(), /eyebrow="推广员工具 · 连接配置"/);
-  assert.match(src.ai_suggestions(), /eyebrow="推广员工具 · 作业建议"/);
+  assert.match(src.permission_audit(), /topBarTitle}>推广员工具 · 操作审计<\/span>/);
+  assert.doesNotMatch(src.permission_audit(), /eyebrow="推广员工具 · 操作审计"/);
+  assert.match(src.connectors(), /topBarTitle}>推广员工具 · 连接配置<\/span>/);
+  assert.doesNotMatch(src.connectors(), /eyebrow="推广员工具 · 连接配置"/);
+  assert.match(src.ai_suggestions(), /topBarTitle}>推广员工具 · 作业建议<\/span>/);
+  assert.doesNotMatch(src.ai_suggestions(), /eyebrow="推广员工具 · 作业建议"/);
   assert.match(src.workflows(), /eyebrow="推广员工具 · 工作流整合"/);
   assert.match(src.employee_perf(), /topBarTitle}>推广员工具 · 员工表现<\/span>/);
   assert.doesNotMatch(src.employee_perf(), /eyebrow="推广员工具 · 员工表现"/);
-  assert.match(src.external_actions(), /eyebrow="推广员工具 · 外链服务"/);
+  assert.match(src.external_actions(), /topBarTitle}>推广员工具 · 外链服务<\/span>/);
+  assert.doesNotMatch(src.external_actions(), /eyebrow="推广员工具 · 外链服务"/);
 });
 
 test('W∞-25: funnels/[id] states + title reframed from 经营漏斗 to 来源归因漏斗', () => {
@@ -49,7 +53,7 @@ test('W∞-25: funnels/[id] states + title reframed from 经营漏斗 to 来源�
 
 test('W∞-25: ai-suggestions reframes 经营判断 overclaim to entry-trace interpretation', () => {
   const a = src.ai_suggestions();
-  assert.match(a, /title="把入口痕迹解读成可确认的下一步"/);
+  assert.match(a, /<h1>把入口痕迹解读成可确认的下一步<\/h1>/);
   assert.doesNotMatch(a, /把经营判断变成可确认的下一步/);
 });
 

@@ -1,15 +1,8 @@
 'use client';
 
 import { SessionApiClient } from '@oneday/session-client';
-import {
-  AdminPageHeader,
-  AppStatePanel,
-  Button,
-  Card,
-  StatusBadge,
-  businessLabel,
-} from '@oneday/ui';
-import { useCallback, useEffect, useState } from 'react';
+import { AppStatePanel, Button, StatusBadge, businessLabel } from '@oneday/ui';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import styles from './page.module.css';
 
 type ActionType = 'link' | 'mini_program' | 'platform_entry';
@@ -44,6 +37,11 @@ type EditDraft = {
 
 const api = process.env.NEXT_PUBLIC_API_BASE_URL ?? 'http://127.0.0.1:3001';
 const sessionApi = new SessionApiClient(api);
+const actionLabels: Record<ActionType, string> = {
+  link: '链接 hand-off',
+  mini_program: '小程序入口',
+  platform_entry: '平台入口意图',
+};
 const blank = (): Draft => ({
   code: '',
   name: '',
@@ -60,6 +58,38 @@ const editFrom = (action: Action): EditDraft => ({
   miniProgramPath: action.mini_program_path ?? '/',
   platform: action.platform ?? '',
 });
+const barWidth = (total: number, value: number) =>
+  total ? `${Math.max(2, (value / total) * 100)}%` : '0%';
+const countBy = <T,>(rows: T[], key: (row: T) => string) => {
+  const acc: Record<string, number> = {};
+  for (const row of rows) {
+    const k = key(row);
+    acc[k] = (acc[k] ?? 0) + 1;
+  }
+  return Object.entries(acc)
+    .map(([label, value]) => ({ label, value }))
+    .sort((a, b) => b.value - a.value);
+};
+const renderBars = (
+  items: { label: string; value: number }[],
+  total: number,
+  empty = <p className={styles.barEmpty}>暂无记录</p>,
+) =>
+  items.length ? (
+    <ul className={styles.bars}>
+      {items.map((item) => (
+        <li className={styles.barRow} key={item.label}>
+          <span className={styles.barLabel}>{item.label}</span>
+          <span className={styles.barTrack}>
+            <span className={styles.barFill} style={{ width: barWidth(total, item.value) }} />
+          </span>
+          <span className={styles.barValue}>{item.value}</span>
+        </li>
+      ))}
+    </ul>
+  ) : (
+    empty
+  );
 
 export default function ExternalActionsPage() {
   const [state, setState] = useState<'loading' | 'ready' | 'forbidden' | 'error'>('loading');
@@ -87,6 +117,22 @@ export default function ExternalActionsPage() {
   useEffect(() => {
     void load();
   }, [load]);
+
+  const typeDist = useMemo(() => countBy(actions, (a) => actionLabels[a.action_type]), [actions]);
+  const platformDist = useMemo(
+    () =>
+      actions.filter((a) => a.platform).length
+        ? countBy(
+            actions.filter((a) => a.platform),
+            (a) => a.platform as string,
+          )
+        : [],
+    [actions],
+  );
+  const statusDist = useMemo(() => countBy(actions, (a) => businessLabel(a.status)), [actions]);
+  const miniCount = actions.filter((a) => a.action_type === 'mini_program').length;
+  const platformEntryCount = actions.filter((a) => a.action_type === 'platform_entry').length;
+  const linkCount = actions.filter((a) => a.action_type === 'link').length;
 
   const create = async () => {
     setBusy(true);
@@ -224,22 +270,77 @@ export default function ExternalActionsPage() {
     );
 
   return (
-    <main className={styles.page}>
-      <AdminPageHeader
-        eyebrow="推广员工具 · 外链服务"
-        title="先定义动作，再绑定到门店"
-        description="这里维护租户级 external-actions（链接 / 小程序 / 平台入口意图）。支持更新与归档；不会伪造美团或抖音投放；门店启用仍走「门店与外链」。"
-        actions={
-          <Button tone="secondary" onClick={() => void load()}>
-            刷新目录
-          </Button>
-        }
-      />
-      <Card className={styles.form}>
+    <main className={styles.page} data-testid="management-external-actions">
+      <div className={styles.topBar}>
+        <span className={styles.topBarTitle}>推广员工具 · 外链服务</span>
+        <button type="button" className={styles.topBarRefresh} onClick={() => void load()}>
+          刷新目录
+        </button>
+      </div>
+      <section className={styles.heroCard} aria-label="外链服务概况">
+        <h1>先定义动作，再绑定到门店</h1>
+        <p>
+          这里维护租户级 external-actions（链接 / 小程序 /
+          平台入口意图）。支持更新与归档；不会伪造美团或抖音投放；门店启用仍走「门店与外链」。
+        </p>
+      </section>
+      <section className={styles.panel}>
+        <div className={styles.summaryStrip} aria-label="外链服务概况">
+          <div>
+            <span>外链动作</span>
+            <strong>{actions.length}</strong>
+          </div>
+          <div>
+            <span>链接 hand-off</span>
+            <strong>{linkCount}</strong>
+          </div>
+          <div>
+            <span>小程序入口</span>
+            <strong>{miniCount}</strong>
+          </div>
+          <div>
+            <span>平台入口意图</span>
+            <strong>{platformEntryCount}</strong>
+          </div>
+        </div>
+      </section>
+      <section className={styles.panel}>
+        <div className={styles.panelHead}>
+          <h2>外链服务分布</h2>
+          <span className={styles.panelMeta}>由当前租户外链动作档案行现场推导</span>
+        </div>
+        <div className={styles.distribution} aria-label="外链服务分布">
+          <div className={styles.panelBlock}>
+            <h3>动作类型分布</h3>
+            {renderBars(typeDist, actions.length)}
+          </div>
+          <div className={styles.panelBlock}>
+            <h3>平台命名分布</h3>
+            {renderBars(
+              platformDist,
+              platformDist.reduce((acc, i) => acc + i.value, 0),
+              <p className={styles.barEmpty}>暂无已命名平台入口</p>,
+            )}
+          </div>
+          <div className={styles.panelBlock}>
+            <h3>状态分布</h3>
+            {renderBars(statusDist, actions.length)}
+          </div>
+        </div>
+        <p className={styles.honest}>
+          来源
+          source=local：分布全部由已抓取外链动作档案行现场推导；仅登记渠道分发待授权请求，未经第三方授权不伪造发送、不接美团/抖音实时投放，不包含本平台收款，非本平台下单。
+        </p>
+      </section>
+
+      <section className={styles.panel}>
         <div data-testid="external-action-create">
           <div>
-            <h2>新建外链动作</h2>
-            <p>写入 `POST /api/v1/external-actions`；创建后可在门店外链与 Offer 中引用。</p>
+            <div className={styles.panelHead}>
+              <h2>新建外链动作</h2>
+              <span className={styles.panelMeta}>写入 `POST /api/v1/external-actions`</span>
+            </div>
+            <p className={styles.panelMeta}>创建后可在门店外链与 Offer 中引用。</p>
           </div>
           <div className={styles.fields}>
             <label>
@@ -318,154 +419,160 @@ export default function ExternalActionsPage() {
               </>
             ) : null}
           </div>
-          <Button
-            disabled={busy || !draft.code.trim() || !draft.name.trim()}
-            loading={busy}
-            onClick={() => void create()}
-          >
-            创建外链动作
-          </Button>
+          <div className={styles.cardActions}>
+            <Button
+              disabled={busy || !draft.code.trim() || !draft.name.trim()}
+              loading={busy}
+              onClick={() => void create()}
+            >
+              创建外链动作
+            </Button>
+          </div>
           {notice ? (
             <p className={styles.notice} role="status">
               {notice}
             </p>
           ) : null}
         </div>
-      </Card>
-      <section className={styles.grid} aria-label="外链动作列表" data-testid="external-actions-catalog">
+      </section>
+      <section
+        className={styles.grid}
+        aria-label="外链动作列表"
+        data-testid="external-actions-catalog"
+      >
         {actions.length === 0 ? (
-          <Card className={styles.empty}>
+          <div className={styles.empty}>
             <h2>目录为空</h2>
             <p>创建第一条租户级动作后，再在门店页完成启用与排序。</p>
-          </Card>
+          </div>
         ) : (
           actions.map((action) => {
             const editing = editingId === action.id && editDraft;
             return (
               <div key={action.id} data-testid={`external-action-card-${action.id}`}>
-              <Card className={styles.card}>
-                <div className={styles.title}>
-                  <strong>{action.name}</strong>
-                  <StatusBadge tone="success">{businessLabel(action.status)}</StatusBadge>
-                </div>
-                <p>
-                  {action.code} · {businessLabel(action.action_type)}
-                  {action.platform ? ` · ${action.platform}` : ''}
-                </p>
-                {action.target_url ? <small>{action.target_url}</small> : null}
-                {action.mini_program_app_id ? (
-                  <small>
-                    {action.mini_program_app_id}
-                    {action.mini_program_path}
-                  </small>
-                ) : null}
-                {editing ? (
-                  <div className={styles.editPanel} data-testid="external-action-edit">
-                    <div className={styles.fields}>
-                      <label className={styles.wide}>
-                        名称
-                        <input
-                          aria-label="编辑动作名称"
-                          value={editDraft.name}
-                          onChange={(event) =>
-                            setEditDraft({ ...editDraft, name: event.target.value })
-                          }
-                        />
-                      </label>
-                      <label>
-                        平台标识
-                        <input
-                          aria-label="编辑平台标识"
-                          value={editDraft.platform}
-                          onChange={(event) =>
-                            setEditDraft({ ...editDraft, platform: event.target.value })
-                          }
-                        />
-                      </label>
-                      {action.action_type === 'link' ? (
+                <article className={styles.card}>
+                  <div className={styles.title}>
+                    <strong>{action.name}</strong>
+                    <StatusBadge tone="success">{businessLabel(action.status)}</StatusBadge>
+                  </div>
+                  <p>
+                    {action.code} · {businessLabel(action.action_type)}
+                    {action.platform ? ` · ${action.platform}` : ''}
+                  </p>
+                  {action.target_url ? <small>{action.target_url}</small> : null}
+                  {action.mini_program_app_id ? (
+                    <small>
+                      {action.mini_program_app_id}
+                      {action.mini_program_path}
+                    </small>
+                  ) : null}
+                  {editing ? (
+                    <div className={styles.editPanel} data-testid="external-action-edit">
+                      <div className={styles.fields}>
                         <label className={styles.wide}>
-                          目标 URL
+                          名称
                           <input
-                            aria-label="编辑目标 URL"
-                            value={editDraft.targetUrl}
+                            aria-label="编辑动作名称"
+                            value={editDraft.name}
                             onChange={(event) =>
-                              setEditDraft({ ...editDraft, targetUrl: event.target.value })
+                              setEditDraft({ ...editDraft, name: event.target.value })
                             }
                           />
                         </label>
-                      ) : null}
-                      {action.action_type === 'mini_program' ? (
-                        <>
-                          <label>
-                            小程序 AppId
+                        <label>
+                          平台标识
+                          <input
+                            aria-label="编辑平台标识"
+                            value={editDraft.platform}
+                            onChange={(event) =>
+                              setEditDraft({ ...editDraft, platform: event.target.value })
+                            }
+                          />
+                        </label>
+                        {action.action_type === 'link' ? (
+                          <label className={styles.wide}>
+                            目标 URL
                             <input
-                              aria-label="编辑小程序 AppId"
-                              value={editDraft.miniProgramAppId}
+                              aria-label="编辑目标 URL"
+                              value={editDraft.targetUrl}
                               onChange={(event) =>
-                                setEditDraft({
-                                  ...editDraft,
-                                  miniProgramAppId: event.target.value,
-                                })
+                                setEditDraft({ ...editDraft, targetUrl: event.target.value })
                               }
                             />
                           </label>
-                          <label>
-                            小程序 Path
-                            <input
-                              aria-label="编辑小程序 Path"
-                              value={editDraft.miniProgramPath}
-                              onChange={(event) =>
-                                setEditDraft({
-                                  ...editDraft,
-                                  miniProgramPath: event.target.value,
-                                })
-                              }
-                            />
-                          </label>
-                        </>
-                      ) : null}
+                        ) : null}
+                        {action.action_type === 'mini_program' ? (
+                          <>
+                            <label>
+                              小程序 AppId
+                              <input
+                                aria-label="编辑小程序 AppId"
+                                value={editDraft.miniProgramAppId}
+                                onChange={(event) =>
+                                  setEditDraft({
+                                    ...editDraft,
+                                    miniProgramAppId: event.target.value,
+                                  })
+                                }
+                              />
+                            </label>
+                            <label>
+                              小程序 Path
+                              <input
+                                aria-label="编辑小程序 Path"
+                                value={editDraft.miniProgramPath}
+                                onChange={(event) =>
+                                  setEditDraft({
+                                    ...editDraft,
+                                    miniProgramPath: event.target.value,
+                                  })
+                                }
+                              />
+                            </label>
+                          </>
+                        ) : null}
+                      </div>
+                      <div className={styles.cardActions}>
+                        <Button
+                          disabled={busy || !editDraft.name.trim()}
+                          loading={busy}
+                          onClick={() => void saveEdit(action)}
+                        >
+                          保存更新
+                        </Button>
+                        <Button
+                          tone="secondary"
+                          disabled={busy}
+                          onClick={() => {
+                            setEditingId(null);
+                            setEditDraft(null);
+                          }}
+                        >
+                          取消
+                        </Button>
+                      </div>
                     </div>
+                  ) : (
                     <div className={styles.cardActions}>
                       <Button
-                        disabled={busy || !editDraft.name.trim()}
-                        loading={busy}
-                        onClick={() => void saveEdit(action)}
+                        tone="secondary"
+                        disabled={busy}
+                        data-testid={`external-action-edit-btn-${action.id}`}
+                        onClick={() => startEdit(action)}
                       >
-                        保存更新
+                        编辑
                       </Button>
                       <Button
                         tone="secondary"
                         disabled={busy}
-                        onClick={() => {
-                          setEditingId(null);
-                          setEditDraft(null);
-                        }}
+                        data-testid={`external-action-archive-btn-${action.id}`}
+                        onClick={() => void archive(action)}
                       >
-                        取消
+                        归档
                       </Button>
                     </div>
-                  </div>
-                ) : (
-                  <div className={styles.cardActions}>
-                    <Button
-                      tone="secondary"
-                      disabled={busy}
-                      data-testid={`external-action-edit-btn-${action.id}`}
-                      onClick={() => startEdit(action)}
-                    >
-                      编辑
-                    </Button>
-                    <Button
-                      tone="secondary"
-                      disabled={busy}
-                      data-testid={`external-action-archive-btn-${action.id}`}
-                      onClick={() => void archive(action)}
-                    >
-                      归档
-                    </Button>
-                  </div>
-                )}
-              </Card>
+                  )}
+                </article>
               </div>
             );
           })

@@ -1,17 +1,15 @@
 'use client';
 import { SessionApiClient } from '@oneday/session-client';
 import {
-  AdminPageHeader,
   AppStatePanel,
   Button,
-  Card,
   Modal,
   StatusBadge,
   Table,
   businessLabel,
   type TableColumn,
 } from '@oneday/ui';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import styles from './page.module.css';
 
 type AuditRecord = {
@@ -51,6 +49,18 @@ const filterLabels: Record<Filter, string> = {
   export: '数据导出',
   risk: '风险信号',
 };
+const barWidth = (total: number, value: number) =>
+  total ? `${Math.max(2, (value / total) * 100)}%` : '0%';
+const countBy = <T,>(rows: T[], key: (row: T) => string) => {
+  const acc: Record<string, number> = {};
+  for (const row of rows) {
+    const k = key(row);
+    acc[k] = (acc[k] ?? 0) + 1;
+  }
+  return Object.entries(acc)
+    .map(([label, value]) => ({ label, value }))
+    .sort((a, b) => b.value - a.value);
+};
 
 export default function PermissionAuditPage() {
   const [state, setState] = useState<'loading' | 'ready' | 'forbidden' | 'error'>('loading');
@@ -87,6 +97,16 @@ export default function PermissionAuditPage() {
     record.kind.includes('privilege') || record.kind.includes('unattributed');
 
   const openRecord = data?.records.find((record) => record.id === open) ?? null;
+
+  const kindDist = useMemo(
+    () => (data ? countBy(data.records, (r) => labels[r.kind]) : []),
+    [data],
+  );
+  const resourceDist = useMemo(
+    () => (data ? countBy(data.records, (r) => businessLabel(r.resource.type)) : []),
+    [data],
+  );
+  const actorDist = useMemo(() => (data ? countBy(data.records, (r) => r.actorName) : []), [data]);
 
   const auditColumns: TableColumn<AuditRecord>[] = [
     {
@@ -129,6 +149,29 @@ export default function PermissionAuditPage() {
     },
   ];
 
+  const renderBars = (items: { label: string; value: number }[], total: number) => {
+    if (!items.length)
+      return (
+        <>
+          <p className={styles.barEmpty}>当前筛选下暂无审计分布记录。</p>
+          <p className={styles.barEmpty}>暂无记录</p>
+        </>
+      );
+    return (
+      <ul className={styles.bars}>
+        {items.map((item) => (
+          <li className={styles.barRow} key={item.label}>
+            <span className={styles.barLabel}>{item.label}</span>
+            <span className={styles.barTrack}>
+              <span className={styles.barFill} style={{ width: barWidth(total, item.value) }} />
+            </span>
+            <span className={styles.barValue}>{item.value}</span>
+          </li>
+        ))}
+      </ul>
+    );
+  };
+
   if (state === 'loading')
     return (
       <main className={styles.centered}>
@@ -162,41 +205,72 @@ export default function PermissionAuditPage() {
     );
   if (!data) return null;
 
+  const recordsTotal = data.records.length;
+
   return (
-    <main className={styles.page}>
-      <AdminPageHeader
-        eyebrow="推广员工具 · 操作审计"
-        title="将权限变更、风险信号与证据链放在同一审计视图"
-        description="风险信号需要复核，不等同于已确认的越权；每条记录均可追溯到关联与 trace 标识。"
-        actions={
-          <Button tone="secondary" onClick={() => void load()}>
-            刷新记录
-          </Button>
-        }
-      />
-      <section className={styles.metrics} aria-label="审计摘要">
-        <Card className={styles.metric}>
-          <span>权限变更</span>
-          <strong>{data.summary.changes}</strong>
-          <small>已写入变更证据</small>
-        </Card>
-        <Card className={styles.metric}>
-          <span>数据导出</span>
-          <strong>{data.summary.exports}</strong>
-          <small>当前租户导出记录</small>
-        </Card>
-        <Card className={styles.metric}>
-          <span>风险信号</span>
-          <strong>{data.summary.risks}</strong>
-          <small>需要人工复核</small>
-        </Card>
+    <main className={styles.page} data-testid="management-permission-audit">
+      <div className={styles.topBar}>
+        <span className={styles.topBarTitle}>推广员工具 · 操作审计</span>
+        <button type="button" className={styles.topBarRefresh} onClick={() => void load()}>
+          刷新记录
+        </button>
+      </div>
+      <section className={styles.heroCard} aria-label="操作审计概况">
+        <h1>将权限变更、风险信号与证据链放在同一审计视图</h1>
+        <p>风险信号需要复核，不等同于已确认的越权；每条记录均可追溯到关联与 trace 标识。</p>
       </section>
-      <Card className={styles.panel}>
+      <section className={styles.panel}>
+        <div className={styles.summaryStrip} aria-label="审计摘要">
+          <div>
+            <span>审计记录</span>
+            <strong>{recordsTotal}</strong>
+          </div>
+          <div>
+            <span>权限变更</span>
+            <strong>{data.summary.changes}</strong>
+          </div>
+          <div>
+            <span>数据导出</span>
+            <strong>{data.summary.exports}</strong>
+          </div>
+          <div>
+            <span>风险信号</span>
+            <strong>{data.summary.risks}</strong>
+          </div>
+        </div>
+      </section>
+      <section className={styles.panel}>
+        <div className={styles.panelHead}>
+          <h2>操作审计分布</h2>
+          <span className={styles.panelMeta}>由当前租户保留的审计档案行现场推导</span>
+        </div>
+        <div className={styles.distribution} aria-label="操作审计分布">
+          <div className={styles.panelBlock}>
+            <h3>类型分布</h3>
+            {renderBars(kindDist, recordsTotal)}
+          </div>
+          <div className={styles.panelBlock}>
+            <h3>资源类型分布</h3>
+            {renderBars(resourceDist, recordsTotal)}
+          </div>
+          <div className={styles.panelBlock}>
+            <h3>操作人分布</h3>
+            {renderBars(actorDist, recordsTotal)}
+          </div>
+        </div>
+        <p className={styles.honest}>
+          来源
+          source=local：分布全部由已抓取的租户审计档案行现场推导，仅记录本地可追溯安全证据，不接美团/抖音实时，不包含本平台收款，非本平台下单。
+        </p>
+      </section>
+      <section className={styles.panel}>
         <div className={styles.controls}>
           <div>
-            <div className={styles.panelEyebrow}>SECURITY REVIEW</div>
-            <h2>审计记录</h2>
-            <p>仅显示当前租户保留的可追溯记录，原始关联标识仅在展开证据时呈现。</p>
+            <div className={styles.panelHead}>
+              <h2>审计记录</h2>
+              <span className={styles.panelMeta}>仅显示当前租户保留的可追溯记录</span>
+            </div>
+            <p>原始关联标识仅在展开证据时呈现。</p>
           </div>
           <label>
             筛选类型
@@ -226,13 +300,15 @@ export default function PermissionAuditPage() {
             data-testid="permission-audit-table"
           />
         ) : (
-          <AppStatePanel
-            kind="empty"
-            title="当前筛选下没有审计记录"
-            description="调整筛选条件后可继续查看租户安全证据。"
-          />
+          <div className={styles.recordList}>
+            <AppStatePanel
+              kind="empty"
+              title="当前筛选下没有审计记录"
+              description="调整筛选条件后可继续查看租户安全证据。"
+            />
+          </div>
         )}
-      </Card>
+      </section>
       <Modal
         open={openRecord !== null}
         title="审计证据"
