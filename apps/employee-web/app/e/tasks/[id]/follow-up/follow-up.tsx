@@ -1,6 +1,6 @@
 'use client';
 import { SessionApiClient } from '@oneday/session-client';
-import { AppStatePanel, Button, StatusBadge, businessLabel } from '@oneday/ui';
+import { AppStatePanel, Button, businessLabel } from '@oneday/ui';
 import { useParams } from 'next/navigation';
 import { useCallback, useEffect, useState } from 'react';
 import styles from '../task-detail.module.css';
@@ -118,27 +118,22 @@ export function FollowUp() {
       </main>
     );
   return (
-    <main className={styles.page}>
-      <header className={styles.header}>
-        <Button className={styles.back} tone="quiet" onClick={() => history.back()}>
-          ←
-        </Button>
-        <div>
-          <p>推广员工具 · 任务跟进</p>
-          <h1>记录本次进展</h1>
-        </div>
-        <StatusBadge tone="info">可编辑总结</StatusBadge>
+    <main className={styles.page} data-testid="employee-follow-up">
+      <header className={styles.topBar}>
+        <span className={styles.topBarTitle}>推广员工具 · 任务跟进</span>
+        <button className={styles.topBarRefresh} type="button" onClick={() => history.back()}>
+          返回
+        </button>
       </header>
+      <section className={styles.heroCard} aria-label="记录本次进展">
+        <h1>记录本任务进展</h1>
+        <p>先保留原始动作、文字与语音转写；总结可编辑，原始记录将与任务一同保存。</p>
+      </section>
       {message && (
         <p className={styles.feedback} role="status">
           {message}
         </p>
       )}
-      <section className={styles.hero}>
-        <span>先保留原始信息</span>
-        <strong>动作、文字与语音转写</strong>
-        <p>总结可编辑，原始记录将与任务一同保存。</p>
-      </section>
       <section className={styles.section}>
         <h2>本次动作</h2>
         <div className={styles.card}>
@@ -218,6 +213,10 @@ export function FollowUp() {
           <p className={styles.empty}>尚无跟进记录。</p>
         )}
       </section>
+      <p className={styles.honest} role="note">
+        跟进记录与原始档案保存于推广员工具的任务痕迹(source=local)。动作、文字与语音转写用于整理跟进过程，
+        不代履约美团/抖音订单，非本平台下单，不含第三方订单履约与支付金额。
+      </p>
       <footer className={styles.footer}>
         <Button className={styles.complete} loading={busy} onClick={() => void submit()}>
           保存跟进
