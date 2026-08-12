@@ -183,6 +183,39 @@
   gap: 12px;
 }
 
+.distributionPanel {
+  display: grid;
+  gap: 12px;
+  border-radius: 12px;
+  padding: 18px;
+  background: #fff;
+  box-shadow: 0 1px 2px rgb(0 0 0 / 4%);
+}
+
+.panelHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.panelHead h2 {
+  margin: 0;
+  font-size: 17px;
+  color: #222;
+}
+
+.panelMeta {
+  color: #999;
+  font-size: 12px;
+}
+
+.distribution {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+
 .panelBlock {
   display: grid;
   gap: 10px;
@@ -263,6 +296,10 @@
   }
 
   .panel {
+    grid-template-columns: 1fr;
+  }
+
+  .distribution {
     grid-template-columns: 1fr;
   }
 

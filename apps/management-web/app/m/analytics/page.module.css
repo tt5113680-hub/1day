@@ -141,6 +141,118 @@
   font-size: 17px;
 }
 
+.distributionPanel {
+  display: grid;
+  gap: 12px;
+  border-radius: 12px;
+  padding: 18px;
+  background: #fff;
+  box-shadow: 0 1px 2px rgb(0 0 0 / 4%);
+}
+
+.distributionPanel h2 {
+  margin: 0;
+  color: #222;
+  font-size: 17px;
+}
+
+.panelHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.panelHead h2 {
+  margin: 0;
+}
+
+.panelMeta {
+  color: #999;
+  font-size: 12px;
+}
+
+.distribution {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.panelBlock {
+  display: grid;
+  gap: 10px;
+  border-radius: 12px;
+  padding: 14px 16px;
+  background: #fafafa;
+}
+
+.panelBlock h3 {
+  margin: 0;
+  font-size: 13px;
+  color: #333;
+}
+
+.bars {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.barRow {
+  display: grid;
+  grid-template-columns: 72px minmax(0, 1fr) 30px;
+  align-items: center;
+  gap: 8px;
+}
+
+.barLabel {
+  overflow: hidden;
+  color: #666;
+  font-size: 12px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.barTrack {
+  height: 8px;
+  border-radius: 5px;
+  overflow: hidden;
+  background: #f0f0f0;
+}
+
+.barFill {
+  display: block;
+  height: 100%;
+  border-radius: 5px;
+  background: linear-gradient(90deg, #ffd100, #f0a500);
+}
+
+.barValue {
+  color: #222;
+  font-size: 12px;
+  font-weight: 700;
+  text-align: right;
+}
+
+.barEmpty {
+  margin: 0;
+  color: #999;
+  font-size: 12px;
+}
+
+.honest {
+  margin: 0;
+  border-radius: 10px;
+  padding: 12px 14px;
+  background: #f8f8f8;
+  color: #666;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+
 .funnel {
   display: grid;
   gap: 8px;
@@ -243,6 +355,10 @@
   }
 
   .rateStrip {
+    grid-template-columns: 1fr;
+  }
+
+  .distribution {
     grid-template-columns: 1fr;
   }
 }

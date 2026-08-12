@@ -3,7 +3,7 @@
 import { SessionApiClient } from '@oneday/session-client';
 import { AppStatePanel, Button } from '@oneday/ui';
 
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import styles from './page.module.css';
 
 type DayRow = {
@@ -44,6 +44,12 @@ const api = process.env.NEXT_PUBLIC_API_BASE_URL ?? 'http://127.0.0.1:3001';
 const sessionApi = new SessionApiClient(api);
 
 const pct = (value: number) => (value > 0 ? `+${value}%` : `${value}%`);
+type Bucket = { label: string; value: number };
+const barWidth = (total: number, value: number) => (total ? `${(value / total) * 100}%` : '0%');
+const buckets = (items: [string, number][]) =>
+  items
+    .map(([label, value]) => ({ label, value }))
+    .sort((a, b) => b.value - a.value || a.label.localeCompare(b.label, 'zh'));
 
 export default function AnalyticsPage() {
   const [state, setState] = useState<'loading' | 'ready' | 'forbidden' | 'error'>('loading');
@@ -66,6 +72,46 @@ export default function AnalyticsPage() {
     }
   }, [days]);
   useEffect(() => void load(), [load]);
+
+  const funnelDist = useMemo<Bucket[]>(() => {
+    if (!data) return [];
+    const t = data.today;
+    return buckets([
+      ['观看', t.impressions],
+      ['访问', t.visits],
+      ['跳转', t.jumps],
+      ['停留', t.dwells],
+      ['分享', t.shares],
+    ]);
+  }, [data]);
+
+  const actionDist = useMemo<Bucket[]>(() => {
+    if (!data) return [];
+    const t = data.today;
+    return buckets([
+      ['模块曝光', t.moduleImpressions],
+      ['咨询点击', t.consultClicks],
+      ['跳转确认', t.jumpConfirms],
+      ['分享发出码', t.sentCodes],
+    ]);
+  }, [data]);
+
+  const dayDist = useMemo<Bucket[]>(() => {
+    if (!data) return [];
+    const rows = data.daily.map((row) => ({
+      label: row.day,
+      value: row.impressions + row.visits + row.jumps,
+    }));
+    return rows.sort((a, b) => b.value - a.value || a.label.localeCompare(b.label)).slice(0, 10);
+  }, [data]);
+
+  const funnelTotal = data?.today
+    ? data.today.impressions +
+      data.today.visits +
+      data.today.jumps +
+      data.today.dwells +
+      data.today.shares
+    : 0;
 
   if (state === 'loading')
     return (
@@ -164,6 +210,56 @@ export default function AnalyticsPage() {
         </div>
       </section>
 
+      <section className={styles.distributionPanel} aria-label="经营分析分布">
+        <div className={styles.panelHead}>
+          <h2>经营分析分布</h2>
+          <span className={styles.panelMeta}>由真实 L0–L2 痕迹行推导</span>
+        </div>
+        <div className={styles.distribution}>
+          <div className={styles.panelBlock}>
+            <h3>今日漏斗分布</h3>
+            {data.today.impressions > 0 ? (
+              <BarList items={funnelDist} total={funnelTotal} />
+            ) : (
+              <p className={styles.barEmpty}>暂无记录</p>
+            )}
+          </div>
+          <div className={styles.panelBlock}>
+            <h3>今日 L2 动作分布</h3>
+            {data.today.moduleImpressions +
+              data.today.consultClicks +
+              data.today.jumpConfirms +
+              data.today.sentCodes >
+            0 ? (
+              <BarList
+                items={actionDist}
+                total={
+                  data.today.moduleImpressions +
+                  data.today.consultClicks +
+                  data.today.jumpConfirms +
+                  data.today.sentCodes
+                }
+              />
+            ) : (
+              <p className={styles.barEmpty}>暂无记录</p>
+            )}
+          </div>
+          <div className={styles.panelBlock}>
+            <h3>逐日流量分布（近 {data.days} 天）</h3>
+            {dayDist.length ? (
+              <BarList items={dayDist} total={dayDist.reduce((n, b) => n + b.value, 0)} />
+            ) : (
+              <p className={styles.barEmpty}>暂无记录</p>
+            )}
+          </div>
+        </div>
+        <p className={styles.honest} role="note">
+          以上分布全部由已抓取入口痕迹行现场推导(source=local)：今日漏斗分布、今日 L2
+          动作分布与逐日流量分布均按真实 L0–L2
+          计数。仅统计观看/访问/跳转/停留/分享等入口痕迹，不含支付、成交或第三方订单数据。
+        </p>
+      </section>
+
       <section className={styles.rateStrip} aria-label="转化与 L2 痕迹">
         <article className={styles.panel}>
           <h2>漏斗（今日）</h2>
@@ -257,5 +353,21 @@ export default function AnalyticsPage() {
         <a href="/m/attribution">来源分析</a>
       </p>
     </main>
+  );
+}
+function BarList({ items, total }: { items: Bucket[]; total: number }) {
+  if (!items.length) return <p className={styles.barEmpty}>暂无记录</p>;
+  return (
+    <ul className={styles.bars}>
+      {items.map((item) => (
+        <li key={item.label} className={styles.barRow}>
+          <span className={styles.barLabel}>{item.label}</span>
+          <span className={styles.barTrack}>
+            <span className={styles.barFill} style={{ width: barWidth(total, item.value) }} />
+          </span>
+          <span className={styles.barValue}>{item.value}</span>
+        </li>
+      ))}
+    </ul>
   );
 }
