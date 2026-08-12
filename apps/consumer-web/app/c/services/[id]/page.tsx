@@ -5,9 +5,9 @@ export default async function Page({
   searchParams,
 }: {
   params: Promise<{ id: string }>;
-  searchParams: Promise<{ tenant?: string; source?: string; shareCode?: string }>;
+  searchParams: Promise<{ tenant?: string; source?: string; shareCode?: string; scene?: string }>;
 }) {
-  const [{ id }, { tenant, source, shareCode }] = await Promise.all([params, searchParams]);
+  const [{ id }, { tenant, source, shareCode, scene }] = await Promise.all([params, searchParams]);
   if (!tenant) return <ServiceState kind="forbidden" />;
   try {
     const r = await fetch(
@@ -21,6 +21,7 @@ export default async function Page({
         data={((await r.json()) as { data: ServiceDetail }).data}
         source={source ?? null}
         shareCode={shareCode ?? null}
+        scene={scene ?? null}
       />
     );
   } catch {

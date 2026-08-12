@@ -26,7 +26,8 @@ const service = new Set(['pending', 'ready', 'degraded', 'blocked']);
 export class PlatformChannelService implements OnModuleDestroy {
   private readonly pool = createApiPool();
 
-  async list(context: OrganizationContext) {
+  async list(context: OrganizationContext, channelIds: string[] | null = null) {
+    const scoped = channelIds !== null;
     const [channels, merchantPool] = await Promise.all([
       this.pool.query(
         `select c.id,c.code,c.name,c.status,c.onboarding_status,c.service_status,c.version,
@@ -34,9 +35,9 @@ export class PlatformChannelService implements OnModuleDestroy {
          from platform_channels c
          left join platform_channel_merchants m on m.channel_id=c.id and m.tenant_id=c.tenant_id and m.deleted_at is null
          left join tenants t on t.id=m.merchant_tenant_id and t.deleted_at is null
-         where c.tenant_id=$1 and c.deleted_at is null
+         where c.tenant_id=$1 and c.deleted_at is null${scoped ? ' and c.id = any($2::uuid[])' : ''}
          group by c.id order by c.created_at`,
-        [context.tenantId],
+        scoped ? [context.tenantId, channelIds] : [context.tenantId],
       ),
       this.pool.query(
         "select id,slug,name,status from tenants where id<>$1 and status='active' and deleted_at is null order by created_at desc",

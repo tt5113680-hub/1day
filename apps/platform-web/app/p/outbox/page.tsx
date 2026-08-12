@@ -3,6 +3,7 @@
 import { SessionApiClient } from '@oneday/session-client';
 import { AppStatePanel, Button, StatusBadge } from '@oneday/ui';
 import { useCallback, useEffect, useMemo, useState } from 'react';
+import { PlatformOperationalKpi } from '../../platform-workbench-kpi';
 import styles from './page.module.css';
 
 type DeadLetter = {
@@ -171,6 +172,8 @@ export default function PlatformOutboxPage() {
           是平台投递与同步队列，不涉及本平台收款、非本平台下单。
         </p>
       </section>
+
+      <PlatformOperationalKpi page="outbox" />
 
       <section className={styles.summaryStrip} aria-label="平台投递概况">
         <div>

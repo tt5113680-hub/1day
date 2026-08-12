@@ -59,6 +59,7 @@ import * as agentOperations from './migrations/057_agent_operations.js';
 import * as entryFunnel from './migrations/058_entry_funnel.js';
 import * as tenantCircles from './migrations/059_tenant_circles.js';
 import * as entryFunnelSavedViews from './migrations/060_entry_funnel_saved_views.js';
+import * as portalBindings from './migrations/061_portal_bindings.js';
 import type { Database } from './types.js';
 
 const migrationProvider: MigrationProvider = {
@@ -124,6 +125,7 @@ const migrationProvider: MigrationProvider = {
       '058_entry_funnel': entryFunnel,
       '059_tenant_circles': tenantCircles,
       '060_entry_funnel_saved_views': entryFunnelSavedViews,
+      '061_portal_bindings': portalBindings,
     };
   },
 };

@@ -4,6 +4,7 @@ import { SessionApiClient } from '@oneday/session-client';
 import { AppStatePanel, Button } from '@oneday/ui';
 
 import { useCallback, useEffect, useMemo, useState } from 'react';
+import { ManagementEarlyMeetingKpi } from '../management-early-meeting-kpi';
 import styles from './page.module.css';
 
 type DayRow = {
@@ -177,7 +178,9 @@ export default function AnalyticsPage() {
         </p>
       </section>
 
-      <section className={styles.summaryStrip} aria-label="今日经营概况">
+      <ManagementEarlyMeetingKpi page="analytics" />
+
+      <section className={styles.summaryStrip} aria-label="入口痕迹日报（L0–L2）">
         <div>
           <span>今日观看</span>
           <strong>{data.today.impressions}</strong>

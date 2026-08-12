@@ -206,6 +206,7 @@ export type StorefrontComparePackage = {
   key: string;
   serviceName: string;
   servicePriceLabel?: string | null;
+  detailHref?: string;
   rows: StorefrontComparePriceRow[];
 };
 
@@ -235,7 +236,14 @@ export function StorefrontOfferCompare({
         <article className="od-sf-compare" key={group.key}>
           <header>
             <span>门店推荐套餐</span>
-            <strong>{group.serviceName}</strong>
+            {group.detailHref ? (
+              <a className="od-sf-compare__title" href={group.detailHref}>
+                <strong>{group.serviceName}</strong>
+                <small>查看套餐详情 ›</small>
+              </a>
+            ) : (
+              <strong>{group.serviceName}</strong>
+            )}
             {group.servicePriceLabel ? <small>门店标价 {group.servicePriceLabel}</small> : null}
           </header>
           <div className="od-sf-compare__rows">

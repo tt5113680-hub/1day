@@ -24,9 +24,30 @@ type Channel = {
   merchants: Merchant[];
 };
 type Data = { channels: Channel[]; merchantPool: Merchant[] };
+type AgentRegion = {
+  id: string;
+  code: string;
+  name: string;
+  level: 'province' | 'city' | 'district';
+  parentRegionId: string | null;
+  agentCount: number;
+};
+type AgentRow = {
+  id: string;
+  name: string;
+  code: string;
+  regionId: string;
+  agentLevel: string;
+  status: string;
+  merchantCount: number;
+};
+type AgentSnapshot = { regions: AgentRegion[]; agents: AgentRow[] };
 
 const api = process.env.NEXT_PUBLIC_API_BASE_URL ?? 'http://127.0.0.1:3001';
 const sessionApi = new SessionApiClient(api);
+const levelLabel = (level: string) =>
+  ({ province: '省级', city: '市级', district: '区县' })[level] ?? level;
+const agentStatusLabel = (status: string) => (status === 'active' ? '正常' : '已暂停');
 
 const channelStatusLabel = (value: string | undefined) =>
   ({ open: '渠道开放' })[value ?? ''] ?? businessLabel(value ?? '');
@@ -41,6 +62,7 @@ const barWidth = (total: number, value: number) => (total ? `${(value / total) *
 export default function ChannelsPage() {
   const [state, setState] = useState<'loading' | 'ready' | 'forbidden' | 'error'>('loading');
   const [data, setData] = useState<Data>({ channels: [], merchantPool: [] });
+  const [agentTree, setAgentTree] = useState<AgentSnapshot>({ regions: [], agents: [] });
   const [form, setForm] = useState({
     code: '',
     name: '',
@@ -55,12 +77,19 @@ export default function ChannelsPage() {
     if (!(await sessionApi.context())) return setState('forbidden');
     setState('loading');
     try {
-      const response = await sessionApi.request(`${api}/api/v1/platform/channels`, {
-        headers: headers(),
-      });
-      if ([401, 403].includes(response.status)) return setState('forbidden');
-      if (!response.ok) throw Error();
-      setData((await response.json()).data);
+      const [channelsResponse, agentsResponse] = await Promise.all([
+        sessionApi.request(`${api}/api/v1/platform/channels`, { headers: headers() }),
+        sessionApi.request(`${api}/api/v1/platform/agents`, { headers: headers() }),
+      ]);
+      if ([401, 403].includes(channelsResponse.status)) return setState('forbidden');
+      if (!channelsResponse.ok) throw Error();
+      setData((await channelsResponse.json()).data);
+      if (agentsResponse.ok) {
+        const payload = (await agentsResponse.json()).data;
+        setAgentTree({ regions: payload.regions ?? [], agents: payload.agents ?? [] });
+      } else {
+        setAgentTree({ regions: [], agents: [] });
+      }
       setState('ready');
     } catch {
       setState('error');
@@ -145,6 +174,20 @@ export default function ChannelsPage() {
     () => data.channels.reduce((sum, x) => sum + x.merchants.length, 0),
     [data.channels],
   );
+  const agentByRegion = useMemo(() => {
+    const map: Record<string, AgentRow[]> = {};
+    for (const agent of agentTree.agents) {
+      (map[agent.regionId] ??= []).push(agent);
+    }
+    return map;
+  }, [agentTree.agents]);
+  const regionLevelCounts = useMemo(() => {
+    const counts = new Map<string, number>();
+    for (const region of agentTree.regions) {
+      counts.set(levelLabel(region.level), (counts.get(levelLabel(region.level)) ?? 0) + 1);
+    }
+    return [...counts.entries()].map(([key, value]) => ({ key, value }));
+  }, [agentTree.regions]);
   if (state === 'loading')
     return (
       <main className={styles.centered}>
@@ -177,6 +220,9 @@ export default function ChannelsPage() {
       <header className={styles.topBar}>
         <span className={styles.topBarTitle}>推广员工具 · 平台渠道管理</span>
         <span className={styles.topBarActions}>
+          <a className={styles.topBarLink} href="/p/agents">
+            省市区代理
+          </a>
           <button className={styles.topBarRefresh} type="button" onClick={() => void load()}>
             刷新
           </button>
@@ -307,6 +353,63 @@ export default function ChannelsPage() {
         渠道是工具开通与整合网络，不包含本平台收款、非本平台下单；本地试点记录，未接美团实时商户数据。
       </p>
 
+      <section className={styles.summaryStrip} aria-label="省市区代理树概况">
+        <div>
+          <span>省级区域</span>
+          <strong>{agentTree.regions.filter((r) => r.level === 'province').length}</strong>
+        </div>
+        <div>
+          <span>市级区域</span>
+          <strong>{agentTree.regions.filter((r) => r.level === 'city').length}</strong>
+        </div>
+        <div>
+          <span>区县区域</span>
+          <strong>{agentTree.regions.filter((r) => r.level === 'district').length}</strong>
+        </div>
+        <div>
+          <span>代理商</span>
+          <strong>{agentTree.agents.length}</strong>
+        </div>
+      </section>
+
+      <section className={styles.geoTree} aria-label="省市区代理树">
+        <div className={styles.panelHead}>
+          <h2>省市区代理树</h2>
+          <a className={styles.geoTreeLink} href="/p/agents">
+            在代理后台维护
+          </a>
+        </div>
+        {agentTree.regions.length ? (
+          <div className={styles.geoTreeBody}>
+            {renderGeoTree(agentTree.regions, agentByRegion)}
+          </div>
+        ) : (
+          <p className={styles.geoTreeEmpty}>
+            尚未建立省市区区域。请前往 <a href="/p/agents">省市区代理</a>{' '}
+            建立区域并绑定代理商，渠道商户可再归属到代理树。
+          </p>
+        )}
+        {regionLevelCounts.length ? (
+          <ul className={styles.bars}>
+            {regionLevelCounts.map((b) => (
+              <li key={b.key} className={styles.barRow}>
+                <span className={styles.barLabel}>{b.key}</span>
+                <span className={styles.barTrack}>
+                  <span
+                    className={styles.barFill}
+                    style={{ width: barWidth(agentTree.regions.length, b.value) }}
+                  />
+                </span>
+                <span className={styles.barValue}>{b.value}</span>
+              </li>
+            ))}
+          </ul>
+        ) : null}
+        <p className={styles.honest}>
+          代理树数据来自已加载的省市区代理档案（source=local）；结算/配额是代理运营账，不是消费者成交；不包含本平台收款、非本平台下单。
+        </p>
+      </section>
+
       {note && (
         <p role="status" className={styles.note}>
           {note}
@@ -434,4 +537,40 @@ export default function ChannelsPage() {
       </section>
     </main>
   );
+
+  function renderGeoTree(regions: AgentRegion[], agentsByRegion: Record<string, AgentRow[]>) {
+    const roots = regions.filter((region) => !region.parentRegionId);
+    const nodes = (parentId: string | null) =>
+      regions.filter((region) => region.parentRegionId === parentId);
+    const render = (region: AgentRegion) => {
+      const children = nodes(region.id);
+      return (
+        <article key={region.id} className={styles.geoRegion}>
+          <div className={styles.geoRegionRow}>
+            <div>
+              <strong>{region.name}</strong>
+              <span className={styles.geoMeta}>
+                {levelLabel(region.level)} · {region.code}
+              </span>
+            </div>
+            <span>代理商 {region.agentCount}</span>
+          </div>
+          <div className={styles.geoRegionChildren}>
+            {(agentsByRegion[region.id] ?? []).map((agent) => (
+              <div className={styles.geoAgent} key={agent.id}>
+                <strong>{agent.name}</strong>
+                <span className={styles.geoMeta}>
+                  {agent.code} · {levelLabel(agent.agentLevel)}代理 ·{' '}
+                  {agentStatusLabel(agent.status)}
+                </span>
+                <span className={styles.geoMeta}>归属商户 {agent.merchantCount} 家</span>
+              </div>
+            ))}
+            {children.length ? children.map(render) : null}
+          </div>
+        </article>
+      );
+    };
+    return roots.map(render);
+  }
 }

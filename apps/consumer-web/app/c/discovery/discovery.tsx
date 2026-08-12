@@ -25,8 +25,9 @@ export type Discovery = {
     distanceKm: number;
     entryUrl: string | null;
     rating?: number;
-    ratingSource?: 'local_pilot';
+    ratingSource?: 'store_reviews' | 'local_pilot';
     salesHint?: number;
+    salesSource?: 'entry_visits_30d' | 'local_pilot';
   }[];
   locationRequired: boolean;
 };
@@ -50,6 +51,14 @@ export function DiscoveryState({ kind }: { kind: 'forbidden' | 'error' }) {
     </main>
   );
 }
+const ratingTag = (source?: Discovery['nearby'][number]['ratingSource']) =>
+  source === 'store_reviews' ? '档案评价' : '试用分';
+const salesLabel = (
+  hint?: number,
+  source?: Discovery['nearby'][number]['salesSource'],
+) =>
+  source === 'entry_visits_30d' ? `30日入口${hint ?? 0}` : hint != null ? `月售${hint}+（试用）` : null;
+
 export default function DiscoveryPage({ data }: { data: Discovery }) {
   const [notice, setNotice] = useState('');
   const [activeTab, setActiveTab] = useState<'nearby' | 'channels' | 'circles'>('nearby');
@@ -188,7 +197,7 @@ export default function DiscoveryPage({ data }: { data: Discovery }) {
           <p className={styles.eyebrow}>{data.tenant.name} · 推广员工具 · 附近</p>
           <h1 className={styles.srOnly}>附近</h1>
           <p className={styles.compactNote} role="note">
-            全平台可见引流商家 · 不在此下单 · 评分/月售为本地试用提示 · 成交以美团/抖音/扫呗等为准
+            全平台可见引流商家 · 不在此下单 · 有档案时显示「档案评价/30日入口」，无则「试用分/试用月售（试用）」
           </p>
 
           <section className={styles.heroCard} aria-label="附近概况">
@@ -221,7 +230,7 @@ export default function DiscoveryPage({ data }: { data: Discovery }) {
           <section className={styles.distribution} aria-label="附近商家分布">
             <header className={styles.panelHead}>
               <h3>附近商家分布</h3>
-              <p>分布由已抓取附近商家档案行现场推导 · 仅统计观看/跳转与入口，不涉及成交</p>
+              <p>分布由已抓取附近商家档案行现场推导 · 评分优先档案评价，人气优先 30 日入口痕迹</p>
             </header>
             <div className={styles.panelBlock}>
               <span className={styles.barLabel}>评分分布</span>
@@ -397,17 +406,26 @@ export default function DiscoveryPage({ data }: { data: Discovery }) {
                         <strong className={styles.storeName}>{item.name}</strong>
                         <span className={styles.meta}>
                           {item.rating != null ? (
-                            <span className={styles.rating}>{item.rating.toFixed(1)}</span>
+                            <span className={styles.rating}>
+                              {item.rating.toFixed(1)}
+                              <small> {ratingTag(item.ratingSource)}</small>
+                            </span>
                           ) : (
                             <span className={styles.ratingMuted}>暂无评分</span>
                           )}
-                          {item.salesHint != null ? <span>月售{item.salesHint}+</span> : null}
+                          {salesLabel(item.salesHint, item.salesSource) ? (
+                            <span>{salesLabel(item.salesHint, item.salesSource)}</span>
+                          ) : null}
                           <span className={styles.distance}>{item.distanceKm}km</span>
                         </span>
                         <span className={styles.address}>{item.address ?? '地址待商家补充'}</span>
                         <span className={styles.tags}>
-                          <span>本地试用提示</span>
-                          <span>入口分流</span>
+                          <span>
+                            {item.ratingSource === 'store_reviews' ? '档案评价' : '试用分'}
+                          </span>
+                          <span>
+                            {item.salesSource === 'entry_visits_30d' ? '30日入口' : '试用月售'}
+                          </span>
                         </span>
                       </span>
                     </>

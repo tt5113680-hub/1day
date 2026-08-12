@@ -8,7 +8,8 @@ describe('design tokens', () => {
       'utf8',
     );
     expect(css).toContain(`--od-brand-700: ${designTokens.color.brand};`);
-    expect(css).toContain(`--od-brand-800: ${designTokens.color.brandStrong};`);
+    expect(css).toContain(`--od-brand-800: #c49200;`);
+    expect(designTokens.color.brandStrong).toBe('#ffc300');
     expect(css).toContain(`--od-brand-50: ${designTokens.color.brand50};`);
     expect(css).toContain(`--od-background: ${designTokens.color.canvas};`);
     expect(css).toContain(`--od-radius-card: ${designTokens.radius.card}px;`);

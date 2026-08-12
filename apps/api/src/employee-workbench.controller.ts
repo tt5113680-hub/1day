@@ -1,4 +1,4 @@
-import { BadRequestException, Body, Controller, Get, Headers, Param, Post } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Get, Headers, Param, Post, Query } from '@nestjs/common';
 import { AuthorizationService } from './authorization.service';
 import { EmployeeWorkbenchService } from './employee-workbench.service';
 
@@ -19,9 +19,14 @@ export class EmployeeWorkbenchController {
     @Headers('authorization') authorization: string | undefined,
     @Headers('x-tenant-context') tenant: string | undefined,
     @Headers('x-request-id') requestId: string | undefined,
+    @Query('preview') preview?: string,
   ) {
     const context = await this.authorization.require(authorization, 'task.read', tenant);
-    return { data: await this.workbench.overview(context), meta: meta(requestId), error: null };
+    return {
+      data: await this.workbench.overview(context, preview),
+      meta: meta(requestId),
+      error: null,
+    };
   }
 
   @Post('tasks/:id/complete')

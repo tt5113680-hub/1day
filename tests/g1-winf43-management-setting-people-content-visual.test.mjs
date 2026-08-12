@@ -61,7 +61,7 @@ test('W∞-43: honest promotion-tool / no-native-sales boundaries retained', () 
   assert.match(page(pages.org), /租户工具授权范围/);
   assert.match(page(pages.roles), /高风险权限必须二次确认/);
   assert.match(page(pages.content), /没有第三方授权时不会伪造发送结果/);
-  assert.match(page(pages.builder), /共用一套 Storefront 绑定/);
+  assert.match(page(pages.builder), /共用一套绑定/);
   assert.match(page(pages.settings), /不碰销售成交/);
   assert.match(page(pages.settings), /不含支付金额与第三方订单成功/);
 });

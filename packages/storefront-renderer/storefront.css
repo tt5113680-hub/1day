@@ -506,6 +506,23 @@
   font-size: 11px;
 }
 
+.od-sf-compare__title {
+  display: block;
+  color: inherit;
+  text-decoration: none;
+}
+
+.od-sf-compare__title strong {
+  color: var(--od-sf-offer-ink);
+  font-size: 15px;
+}
+
+.od-sf-compare__title small {
+  color: var(--od-sf-accent-warm);
+  font-size: 11px;
+  font-weight: 700;
+}
+
 .od-sf-compare__rows {
   display: grid;
 }

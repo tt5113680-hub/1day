@@ -3,6 +3,7 @@ import { SessionApiClient } from '@oneday/session-client';
 import { AppStatePanel, Button, StatusBadge, businessLabel } from '@oneday/ui';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import styles from './lead-pool.module.css';
+import { EmployeeWorkbenchKpi } from '../employee-workbench-kpi';
 
 type Lead = {
   id: string;
@@ -204,6 +205,8 @@ export function LeadPool() {
           领取后可转入跟进任务或养客队列；审计留痕不含支付金额与第三方订单结果，非本平台下单。
         </p>
       </section>
+
+      <EmployeeWorkbenchKpi page="leads" />
 
       {message ? (
         <p className={styles.feedback} role="status">

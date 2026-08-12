@@ -4,6 +4,7 @@ import { AppStatePanel, Button, StatusBadge } from '@oneday/ui';
 
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { PlatformProductHome } from '../../platform-product-home';
+import { ChannelOperationalQueues, PlatformOperationalKpi } from '../../platform-workbench-kpi';
 import styles from './page.module.css';
 
 type Merchant = {
@@ -29,6 +30,24 @@ type Data = {
     renewal_opportunity_count: number;
   };
   merchants: Merchant[];
+  queues: {
+    renewal: {
+      membershipId: string;
+      tenantId: string;
+      name: string;
+      channelName: string;
+      signal: string | null;
+      deepLink: string;
+    }[];
+    onboarding: {
+      membershipId: string;
+      tenantId: string;
+      name: string;
+      channelName: string;
+      onboardingStatus: string;
+      deepLink: string;
+    }[];
+  };
 };
 const api = process.env.NEXT_PUBLIC_API_BASE_URL ?? 'http://127.0.0.1:3001';
 const sessionApi = new SessionApiClient(api);
@@ -234,6 +253,17 @@ export default function ChannelDashboardPage() {
         </p>
       </section>
 
+      <PlatformOperationalKpi page="channel" />
+
+      {data?.queues ? (
+        <section className={styles.panel} aria-label="渠道待办队列">
+          <ChannelOperationalQueues
+            renewal={data.queues.renewal}
+            onboarding={data.queues.onboarding}
+          />
+        </section>
+      ) : null}
+
       <section className={styles.summaryStrip} aria-label="渠道概况">
         <div>
           <span>渠道商户</span>
@@ -309,7 +339,7 @@ export default function ChannelDashboardPage() {
           </ul>
         </div>
         <div className={styles.panelBlock}>
-          <h2>归属区域分布</h2>
+          <h2>省市区代理树 · 归属区域分布</h2>
           <ul className={styles.bars}>
             {regionCounts.map((b) => (
               <li key={b.key} className={styles.barRow}>

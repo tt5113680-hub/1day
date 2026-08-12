@@ -69,6 +69,14 @@ const platformLabel = (type: PlatformOffer['platformType']) =>
         ? '扫呗平台'
         : '其他平台·外链';
 
+const isGroupBuyScene = (scene: string | null) =>
+  Boolean(
+    scene &&
+      (scene.includes('group_buy') ||
+        scene.startsWith('storefront_group_buy') ||
+        scene.startsWith('banner_group_buy')),
+  );
+
 export function ServiceState({ kind }: { kind: 'error' | 'forbidden' }) {
   const forbidden = kind === 'forbidden';
   return (
@@ -90,16 +98,19 @@ export default function ServicePage({
   data,
   source,
   shareCode,
+  scene,
 }: {
   data: ServiceDetail;
   source: string | null;
   shareCode?: string | null;
+  scene?: string | null;
 }) {
+  const fromGroupBuy = isGroupBuyScene(scene ?? null);
   const context = {
     tenant: data.tenant.slug,
     storeId: data.store.id,
     source: source ?? 'consumer:service-detail',
-    scene: 'service_detail',
+    scene: scene ?? 'service_detail',
     shareCode: shareCode ?? null,
   };
   const lowestOfferId = useMemo(
@@ -168,18 +179,24 @@ export default function ServicePage({
   };
 
   return (
-    <ConsumerShell context={context} active="menu">
+    <ConsumerShell context={context} active={fromGroupBuy ? 'group-buy' : 'menu'}>
       <main className={`${styles.page} od-sf-theme`}>
         <div className={styles.shell}>
           <header className={styles.topBar}>
             <a
               className={styles.backLink}
-              href={storeHref(context, '/menu', 'service_back')}
-              aria-label="返回菜单"
+              href={storeHref(
+                context,
+                fromGroupBuy ? '/group-buy' : '/menu',
+                'service_back',
+              )}
+              aria-label={fromGroupBuy ? '返回团购' : '返回菜单'}
             >
               ‹
             </a>
-            <span className={styles.topTitle}>套餐详情</span>
+            <span className={styles.topTitle}>
+              {fromGroupBuy ? '团购套餐详情' : '套餐详情'}
+            </span>
             <span className={styles.topMark}>推广员工具</span>
           </header>
 
@@ -348,7 +365,7 @@ export default function ServicePage({
             {data.platformOffers.length ? (
               <div className={styles.offerList}>
                 {data.platformOffers.map((offer) => (
-                  <article className={styles.offer} key={offer.offerId}>
+                  <article className={styles.offer} id={`offer-${offer.offerId}`} key={offer.offerId}>
                     <div className={styles.offerMeta}>
                       <span className={styles.platformMark}>
                         {platformLabel(offer.platformType)}

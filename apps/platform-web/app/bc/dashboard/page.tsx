@@ -4,6 +4,7 @@ import { AppStatePanel, Button } from '@oneday/ui';
 
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { PlatformProductHome } from '../../platform-product-home';
+import { PlatformOperationalKpi } from '../../platform-workbench-kpi';
 import styles from './page.module.css';
 
 type Merchant = {
@@ -30,6 +31,18 @@ type Data = {
     conversion_orders: number;
   };
   circles: Circle[];
+  queues: {
+    trafficWithoutConversion: {
+      circleId: string;
+      circleName: string;
+      tenantId: string;
+      name: string;
+      slug: string;
+      trafficEvents: number;
+      conversionOrders: number;
+      deepLink: string;
+    }[];
+  };
 };
 const api = process.env.NEXT_PUBLIC_API_BASE_URL ?? 'http://127.0.0.1:3001';
 const sessionApi = new SessionApiClient(api);
@@ -168,6 +181,8 @@ export default function BusinessCircleDashboard() {
           仅展示平台已批准的固定商圈成员；商户数据仍归属各租户。本页只呈现聚合入口痕迹，非本平台下单。
         </p>
       </section>
+
+      <PlatformOperationalKpi page="circle" />
 
       <section className={styles.summaryStrip} aria-label="商圈联盟概况">
         <div>
@@ -318,6 +333,25 @@ export default function BusinessCircleDashboard() {
         内容密度、流量行为与入口转化；商圈是商家联盟整合网络，仅呈现聚合入口痕迹，不包含本平台收款、
         非本平台下单；本地试点记录，未接美团实时商户数据。
       </p>
+
+      <section className={styles.panel} aria-label="流量未转化队列">
+        <div className={styles.panelHead}>
+          <h2>流量未转化队列</h2>
+          <span className={styles.panelMeta}>有访问无转化档案</span>
+        </div>
+        {data?.queues.trafficWithoutConversion.length ? (
+          data.queues.trafficWithoutConversion.map((item) => (
+            <a className={styles.queueRow} href={item.deepLink} key={item.tenantId}>
+              <strong>{item.name}</strong>
+              <span>
+                {item.circleName} · 访问 {item.trafficEvents} · 转化 {item.conversionOrders}
+              </span>
+            </a>
+          ))
+        ) : (
+          <p className={styles.empty}>当前没有「有流量无转化」的商户信号。</p>
+        )}
+      </section>
 
       <section className={styles.panel} aria-label="固定商圈联盟明细">
         <div className={styles.panelHead}>

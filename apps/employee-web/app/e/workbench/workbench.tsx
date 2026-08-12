@@ -4,7 +4,10 @@ import { useTenantSync } from '@oneday/sync-client';
 import { AppStatePanel, Button, StatusBadge } from '@oneday/ui';
 
 import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useSearchParams } from 'next/navigation';
 import styles from './workbench.module.css';
+import { EmployeeDeepPageNav, EmployeeWorkbenchKpiStrip } from '../employee-workbench-kpi';
+import { PortalWorkbenchLayout } from './workbench-layout-modules';
 
 type Task = {
   id: string;
@@ -20,7 +23,30 @@ type Data = {
   tasks: Task[];
   customerReminders: Task[];
   opportunities: { taskId: string; title: string; reason: string; source: string }[];
+  stats: {
+    allOpenTasks: number;
+    overdueTasks: number;
+    claimedLeads: number;
+    poolLeads: number;
+    activeShareCodes: number;
+    shareOpensToday: number;
+    redemptionsToday: number;
+  };
+  queues: {
+    leads: { id: string; title: string; status: string; occurredAt: string; deepLink: string }[];
+    shareCodes: {
+      id: string;
+      title: string;
+      scenario: string;
+      expiresAt: string | null;
+      deepLink: string;
+    }[];
+  };
   generatedAt: string;
+  layout: {
+    mode: 'published' | 'preview';
+    modules: { id: string; module_type: string; position: number; config: Record<string, unknown> }[];
+  } | null;
 };
 type State = 'loading' | 'ready' | 'forbidden' | 'error';
 
@@ -83,11 +109,15 @@ const FUNCTION_ICONS: Record<string, string> = {
   客户: '客',
   会员核销: '会',
   获客线索: '线',
+  分享推广: '享',
+  客户跟进: '跟',
   门店: '店',
   消息: '讯',
 };
 
 export function Workbench() {
+  const searchParams = useSearchParams();
+  const previewToken = searchParams.get('preview') ?? undefined;
   const [state, setState] = useState<State>('loading');
   const [data, setData] = useState<Data | null>(null);
   const [message, setMessage] = useState('');
@@ -103,7 +133,8 @@ export function Workbench() {
     if (mode === 'full') setState('loading');
     if (!preserveMessage && mode === 'full') setMessage('');
     try {
-      const response = await sessionApi.request(`${api}/api/v1/employee/workbench`, {
+      const previewQuery = previewToken ? `?preview=${encodeURIComponent(previewToken)}` : '';
+      const response = await sessionApi.request(`${api}/api/v1/employee/workbench${previewQuery}`, {
         headers: headers(),
       });
       if (response.status === 401 || response.status === 403) {
@@ -116,7 +147,7 @@ export function Workbench() {
     } catch {
       if (mode === 'full') setState('error');
     }
-  }, []);
+  }, [previewToken]);
   useEffect(() => {
     void load();
   }, [load]);
@@ -160,8 +191,7 @@ export function Workbench() {
     [allRows],
   );
   const customerDist = useMemo(
-    () =>
-      countBy(allRows.map((task) => (task.customer?.displayName ? '关联客户' : '内部执行'))),
+    () => countBy(allRows.map((task) => (task.customer?.displayName ? '关联客户' : '内部执行'))),
     [allRows],
   );
   const dueDist = useMemo(
@@ -181,7 +211,22 @@ export function Workbench() {
     () => countBy(opportunities.map((item) => item.source || '时限信号')),
     [opportunities],
   );
-  const overdueCount = allRows.filter((task) => task.status === 'overdue').length;
+  const leadDist = useMemo(
+    () =>
+      [
+        { label: '已认领线索', value: data?.stats.claimedLeads ?? 0 },
+        { label: '线索池', value: data?.stats.poolLeads ?? 0 },
+      ].filter((item) => item.value > 0),
+    [data?.stats],
+  );
+  const shareDist = useMemo(
+    () =>
+      [
+        { label: '活跃分享码', value: data?.stats.activeShareCodes ?? 0 },
+        { label: '今日打开', value: data?.stats.shareOpensToday ?? 0 },
+      ].filter((item) => item.value > 0),
+    [data?.stats],
+  );
   if (state === 'loading')
     return (
       <main className={styles.centered}>
@@ -214,20 +259,25 @@ export function Workbench() {
       </main>
     );
   if (!data) return null;
+  const stats = data.stats;
   const overview = [
-    { label: '今日任务', value: data.tasks.length, hint: '项待推进' },
-    { label: '客户提醒', value: data.customerReminders.length, hint: '与你有关' },
-    { label: '行动机会', value: data.opportunities.length, hint: '时限信号' },
+    { label: '全部待办', value: stats.allOpenTasks, hint: '未完成任务' },
+    { label: '已认领线索', value: stats.claimedLeads, hint: '跟进中' },
+    { label: '分享打开', value: stats.shareOpensToday, hint: '今日' },
+    { label: '今日核销', value: stats.redemptionsToday, hint: '权益核销' },
   ] as const;
   const functions = [
     { href: '/e/tasks', label: '任务待办', desc: '今日任务' },
     { href: '/e/customers', label: '客户', desc: '客户档案' },
+    { href: '/e/share', label: '分享推广', desc: '分享码' },
+    { href: '/e/nurture', label: '客户跟进', desc: '跟进队列' },
     { href: '/e/memberships', label: '会员核销', desc: '权益核销' },
     { href: '/e/leads', label: '获客线索', desc: '线索池' },
     { href: '/e/store', label: '门店', desc: '店长工作台' },
     { href: '/e/notifications', label: '消息', desc: '通知提醒' },
   ] as const;
   const initial = data.employee.displayName.slice(0, 1);
+  const useLayout = Boolean(data.layout?.modules?.length);
   return (
     <main className={styles.page}>
       <header className={styles.topBar}>
@@ -237,17 +287,44 @@ export function Workbench() {
         </button>
       </header>
 
+      {useLayout ? (
+        <>
+          {message ? (
+            <p className={styles.feedback} role="status">
+              {message}
+            </p>
+          ) : null}
+          <PortalWorkbenchLayout
+            data={data}
+            distribution={{
+              statusDist,
+              escalationDist,
+              customerDist,
+              dueDist,
+              sourceDist,
+              opportunityDist,
+              leadDist,
+              shareDist,
+              allRows,
+              opportunities,
+            }}
+            busy={busy}
+            complete={(task) => void complete(task)}
+          />
+        </>
+      ) : (
+        <>
       <section className={styles.heroCard} aria-label="员工概览">
         <span className={styles.avatar} aria-hidden>
           {initial}
         </span>
         <div className={styles.heroCopy}>
           <h1>你好，{data.employee.displayName}</h1>
-          <p>
-            {data.employee.title ?? '员工'} · 仅显示你的任务与客户范围 · 不含第三方订单履约
-          </p>
+          <p>{data.employee.title ?? '员工'} · 仅显示你的任务与客户范围 · 不含第三方订单履约</p>
         </div>
       </section>
+
+      <EmployeeDeepPageNav page="workbench" />
 
       {message ? (
         <p className={styles.feedback} role="status">
@@ -260,28 +337,7 @@ export function Workbench() {
           <span id="overview-title">今日作业概览</span>
           <span className={styles.panelMeta}>{time(data.generatedAt)} 更新</span>
         </div>
-        <div className={styles.summaryStrip} aria-label="工作台数据概况">
-          <div>
-            <span>全部待办</span>
-            <strong>{allRows.length}</strong>
-          </div>
-          <div>
-            <span>今日任务</span>
-            <strong>{openTasks.length}</strong>
-          </div>
-          <div>
-            <span>客户提醒</span>
-            <strong>{reminders.length}</strong>
-          </div>
-          <div>
-            <span>行动机会</span>
-            <strong>{opportunities.length}</strong>
-          </div>
-          <div>
-            <span>已逾期</span>
-            <strong>{overdueCount}</strong>
-          </div>
-        </div>
+        <EmployeeWorkbenchKpiStrip page="workbench" stats={stats} state="ready" />
         <div className={styles.metrics}>
           {overview.map((item) => (
             <article className={styles.metric} key={item.label}>
@@ -322,6 +378,14 @@ export function Workbench() {
           <div className={styles.panelBlock}>
             <h3>行动机会分布</h3>
             <Bars items={opportunityDist} total={opportunities.length} />
+          </div>
+          <div className={styles.panelBlock}>
+            <h3>线索分布</h3>
+            <Bars items={leadDist} total={stats.claimedLeads + stats.poolLeads} />
+          </div>
+          <div className={styles.panelBlock}>
+            <h3>分享分布</h3>
+            <Bars items={shareDist} total={stats.activeShareCodes + stats.shareOpensToday} />
           </div>
         </div>
       </section>
@@ -424,9 +488,61 @@ export function Workbench() {
         )}
       </section>
 
+      <section className={styles.panel} aria-labelledby="lead-queue-title">
+        <div className={styles.panelHead}>
+          <h2 id="lead-queue-title">线索队列</h2>
+          <a href="/e/leads">全部 →</a>
+        </div>
+        {data.queues.leads.length === 0 ? (
+          <div className={styles.empty}>
+            <strong>暂无线索</strong>
+            <p>线索池有新条目时会在这里提示。</p>
+          </div>
+        ) : (
+          data.queues.leads.map((item) => (
+            <a className={styles.reminder} href={item.deepLink} key={item.id}>
+              <div>
+                <strong>{item.title}</strong>
+                <p>{item.status === 'open' ? '待认领' : '已认领'}</p>
+              </div>
+              <span>{new Date(item.occurredAt).toLocaleDateString()}</span>
+            </a>
+          ))
+        )}
+      </section>
+
+      <section className={styles.panel} aria-labelledby="share-queue-title">
+        <div className={styles.panelHead}>
+          <h2 id="share-queue-title">分享码</h2>
+          <a href="/e/share">管理 →</a>
+        </div>
+        {data.queues.shareCodes.length === 0 ? (
+          <div className={styles.empty}>
+            <strong>暂无活跃分享码</strong>
+            <p>创建分享码后可追踪打开次数。</p>
+          </div>
+        ) : (
+          data.queues.shareCodes.map((item) => (
+            <a className={styles.reminder} href={item.deepLink} key={item.id}>
+              <div>
+                <strong>{item.title}</strong>
+                <p>
+                  {item.scenario}
+                  {item.expiresAt ? ` · 到期 ${new Date(item.expiresAt).toLocaleDateString()}` : ''}
+                </p>
+              </div>
+              <span>活跃</span>
+            </a>
+          ))
+        )}
+      </section>
+        </>
+      )}
+
       <p className={styles.honest} role="note">
         以上分布全部由已抓取工作台档案行现场推导(source=local)：状态/升级/客户关联/到期窗口/来源均由真实
-        tasks 与 customerReminders 行统计；行动机会由 opportunities 行 source 字段统计。推广员工具工作台跟进门店服务痕迹，不含第三方订单履约，不代履约美团/抖音订单，非本平台下单。
+        tasks 与 customerReminders 行统计；线索与分享 KPI 来自 stats 与 queues
+        真实字段。推广员工具工作台跟进门店服务痕迹，不含第三方订单履约，不代履约美团/抖音订单，非本平台下单。
       </p>
     </main>
   );

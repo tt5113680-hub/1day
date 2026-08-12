@@ -286,6 +286,19 @@
   color: #222;
 }
 
+.riskRow {
+  display: block;
+  color: inherit;
+  text-decoration: none;
+}
+
+.link {
+  color: #b8860b;
+  font-size: 13px;
+  font-weight: 700;
+  text-decoration: none;
+}
+
 .empty {
   padding: 16px 0;
   color: #999;

@@ -1,21 +1,21 @@
 {
-  "recorded_at": "2026-08-09T21:40:56.544Z",
+  "recorded_at": "2026-08-12T14:34:02.904Z",
   "result": "PASS",
   "matrix_id": "RC-01",
   "sourceDatabase": "oneday_v3_test",
-  "targetDatabase": "oneday_v3_test_rc01_1786311656394",
+  "targetDatabase": "oneday_v3_test_rc01_1786545242334",
   "tables": {
-    "tenants": 328,
-    "tenant_operating_settings": 209,
+    "tenants": 4595,
+    "tenant_operating_settings": 2092,
     "connector_configs": 1,
-    "evidence_files": 27,
-    "tenant_provisioning_runs": 219,
-    "storefront_bindings": 208,
-    "member_benefit_ledger": 54,
-    "outbox_events": 1906,
-    "content_items": 241,
-    "content_store_placements": 234,
-    "membership_enrollments": 38,
-    "sync_notifications": 48
+    "evidence_files": 252,
+    "tenant_provisioning_runs": 2339,
+    "storefront_bindings": 2091,
+    "member_benefit_ledger": 972,
+    "outbox_events": 22635,
+    "content_items": 2869,
+    "content_store_placements": 2739,
+    "membership_enrollments": 850,
+    "sync_notifications": 612
   }
 }

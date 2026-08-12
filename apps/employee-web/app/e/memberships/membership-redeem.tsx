@@ -5,6 +5,7 @@ import { SessionApiClient } from '@oneday/session-client';
 import { useTenantSync } from '@oneday/sync-client';
 import { AppStatePanel, Button } from '@oneday/ui';
 import styles from './membership-redeem.module.css';
+import { EmployeeWorkbenchKpi } from '../employee-workbench-kpi';
 
 type Benefit = { id: string; title: string };
 type LedgerRow = {
@@ -227,6 +228,8 @@ export function MembershipRedeem() {
           也不含支付金额与第三方订单结果状态断言。
         </p>
       </section>
+
+      <EmployeeWorkbenchKpi page="memberships" />
 
       {message ? (
         <p className={styles.feedback} role="status">

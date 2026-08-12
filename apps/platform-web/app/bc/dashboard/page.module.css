@@ -363,3 +363,25 @@
     grid-template-columns: 1fr;
   }
 }
+
+.queueRow {
+  display: grid;
+  gap: 4px;
+  padding: 10px 0;
+  border-bottom: 1px solid #eee;
+  color: inherit;
+  text-decoration: none;
+  font-size: 13px;
+}
+
+.queueRow:last-child {
+  border-bottom: 0;
+}
+
+.queueRow strong {
+  color: #222;
+}
+
+.queueRow span {
+  color: #666;
+}

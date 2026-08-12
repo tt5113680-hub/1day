@@ -15,8 +15,9 @@ export type SearchResult = {
   address: string | null;
   entryUrl: string | null;
   rating?: number;
-  ratingSource?: 'local_pilot';
+  ratingSource?: 'store_reviews' | 'local_pilot';
   salesHint?: number;
+  salesSource?: 'entry_visits_30d' | 'local_pilot';
   distanceKm: number | null;
 };
 export type SearchData = {
@@ -37,6 +38,11 @@ const countBy = (rows: string[]) => {
 };
 const barWidth = (total: number, value: number) =>
   total === 0 ? 0 : Math.round((value / total) * 100);
+const ratingTag = (source?: SearchResult['ratingSource']) =>
+  source === 'store_reviews' ? '档案评价' : '试用分';
+const salesLabel = (hint?: number, source?: SearchResult['salesSource']) =>
+  source === 'entry_visits_30d' ? `30日入口${hint ?? 0}` : hint != null ? `月售${hint}+（试用）` : null;
+
 export function SearchState({ kind }: { kind: 'forbidden' | 'error' }) {
   const copy: readonly [string, string] =
     kind === 'forbidden'
@@ -137,7 +143,7 @@ export default function SearchPage({ data }: { data: SearchData }) {
           <p className={styles.eyebrow}>{data.tenant.name} · 推广员工具 · 搜索</p>
           <h1 className={styles.title}>{data.query ? `“${data.query}”` : '搜索商家'}</h1>
           <p className={styles.intro}>
-            在本租户已发布商家中检索；评分/月售为本地试用提示，进店后可跳转第三方。
+            在本租户已发布商家中检索；评分优先档案评价，无则试用提示；人气优先 30 日入口痕迹。
           </p>
           <p className={styles.disclaimer} role="note">
             搜索只做入口分流；不在此下单，成交以美团/抖音/扫呗等页面为准。
@@ -282,12 +288,13 @@ export default function SearchPage({ data }: { data: SearchData }) {
                     {item.address && <p className={styles.resultAddress}>{item.address}</p>}
                     <p className={styles.resultMeta}>
                       {item.rating != null ? (
-                        <span className={styles.rating}>{item.rating} 分</span>
+                        <span className={styles.rating}>
+                          {item.rating} 分 <small>{ratingTag(item.ratingSource)}</small>
+                        </span>
                       ) : null}
-                      {item.salesHint != null ? <span>月售 {item.salesHint}+</span> : null}
-                      <span>
-                        {item.ratingSource === 'local_pilot' ? '本地试用提示' : '本地试用'}
-                      </span>
+                      {salesLabel(item.salesHint, item.salesSource) ? (
+                        <span>{salesLabel(item.salesHint, item.salesSource)}</span>
+                      ) : null}
                     </p>
                   </span>
                   {item.distanceKm != null ? (

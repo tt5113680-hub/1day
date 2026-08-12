@@ -4,6 +4,7 @@ import { SessionApiClient } from '@oneday/session-client';
 import { AppStatePanel, Button, StatusBadge } from '@oneday/ui';
 import { useCallback, useEffect, useState } from 'react';
 import styles from '../_commerce.module.css';
+import { ManagementEarlyMeetingKpi } from '../management-early-meeting-kpi';
 
 type OrderRow = {
   id: string;
@@ -119,6 +120,8 @@ export default function CommerceOrdersPage() {
           第三方成交/跳转档案（本地试点，租户隔离）。来源如实标注；不宣称美团实时同步，不包含本平台收款，不代表第三方订单履约。
         </p>
       </section>
+
+      <ManagementEarlyMeetingKpi page="orders" />
 
       <p className={styles.honest} role="status">
         订单痕迹为本地试点档案（source=local）。推广员工具只留档案痕迹；不接美团实时订单，不伪造第三方成交，不包含本平台收款，非本平台下单。

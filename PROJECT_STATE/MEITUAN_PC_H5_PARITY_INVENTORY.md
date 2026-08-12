@@ -1,7 +1,7 @@
 # 美团 PC / H5 复刻清单（施工权威）
 
 - created_at: 2026-08-10 23:30 Asia/Shanghai
-- updated_at: 2026-08-12 (W∞-92 Employee 员工任务详情 `/e/tasks/[id]` ME-02 详情 全标对概况条 + 真实数据分布 densify) Asia/Shanghai
+- updated_at: 2026-08-12 (W∞-99 six-terminal workbench real-data product depth densify) Asia/Shanghai
 - authority: 主人裁决 — **不做美团产品**；学习成熟管理系统/人员/代理/指标/开店链路（客户熟悉→上手快）；底盘仍为 ONEDAY；仅工作流整合页自研差异
 - strategy: `PRODUCT_DUAL_TRACK_STRATEGY.md`
 - rule: **对成熟场景施工**。禁止自创陌生管理 IA；也禁止宣称「已是美团」。
@@ -33,6 +33,15 @@
 3. **唯一例外：** Management `/m/workflows`（工作流整合页）→ ONEDAY 定制。
 4. 诚实边界：不宣称已接美团实时库存/价格 API；数据可用本地试点。
 5. 状态列 `GAP` / `PARTIAL` / `PARITY` / `CUSTOM`。**PARITY = 导航/主操作/列表筛详/指标口径/视觉密度达到商用可试用的完整对标**（仍诚实声明非美团本体、不接实时美团 API）。`PARTIAL` = 未达商用前提。
+
+## 0.2 工程对标 vs 商用 PARITY（W∞-97 关断）
+
+| 层 | 含义 | 谁判定 |
+| -- | ---- | ------ |
+| **工程对标 PASS** | W∞ densify 完成：topBar/heroCard/summaryStrip/distribution/honest + g1-winf* 守卫；**31 个 inventory `PARTIAL` 行均已 engineering-complete** | Headless / IDE Agent + 测试 |
+| **商用 PARITY** | 主人本地 G1 验收 + `PRODUCT_OWNER_UI_ACCEPTANCE.md` 签字后，inventory 行才可升为 `PARITY` | **仅 product owner** |
+
+> **31 个 PARTIAL ≠ 施工停滞。** 表示「工程已对标、商用签字未完成」。不得由 agent 代签或将 PARTIAL 批量改为 PARITY。
 
 ---
 
@@ -114,7 +123,7 @@
 | ID | 美团对标 | ONEDAY 现路由 | 状态 |
 | -- | -------- | ------------- | ---- |
 | MP-00 | 平台总览 | `/p/dashboard` | PARTIAL | W∞-18 工具身份；**W∞-36** 视觉/IA densify（黄顶栏+icon 功能格+白卡面板+自定义指标）；toward PARITY；见 WINF36 |
-| MP-01 | 省市区代理树 | `/p/channels`, `/ch/*` | GAP |
+| MP-01 | 省市区代理树 | `/p/channels`, `/ch/*`, `/p/agents` | PARTIAL | **W6/W∞-6** 首刀在 `/p/agents`；**W∞-98** 渠道面 `/p/channels` 嵌入只读省市区代理树（并行加载 `/api/v1/platform/agents` + `省市区代理树概况` summaryStrip + `aria-label="省市区代理树"` 层级展示 + 深链 `/p/agents` 维护）；`/ch/dashboard` 保留归属区域分布与 `/p/agents` 互链；toward PARITY；见 WINF6/WINF98 |
 | MP-02 | 商户入驻开通 | `/p/tenants`, `/ch/merchants/new` | PARTIAL | **W∞-70** `/ch/merchants/new` 真实数据深页 densify；**W∞-85** `/p/tenants/new` 商户开通向导收束旧 chrome（黄顶栏 `推广员工具 · 商户开通` + 白卡 heroCard h1 一次提交，生成可登录、可访问的 READY 商户 + 白卡表单 + `开通步骤分布` 按真实 run.steps[] 推导，禁止假 BI）；toward PARITY；见 WINF70/WINF85 |
 | MP-03 | 代理商管理后台 | `/ch/dashboard` | PARTIAL | W∞-6 densify；**W∞-37** 视觉/IA densify（黄顶栏+icon 功能格+白卡指标+商户队列卡）；toward PARITY；见 WINF37 |
 | MP-04 | 商圈 / 运营集合 | `/p/business-circles`, `/bc/*` | PARTIAL | **W∞-37** `/bc/dashboard` 视觉/IA densify（黄顶栏+icon 功能格+白卡指标+商圈明细）；toward PARITY；见 WINF37 |
@@ -142,7 +151,11 @@
 
 ## 6. 当前下一刀
 
-  > **当前：W∞-95 PASS** — Employee 客户跟进队列 `/e/nurture`（客户跟进队列）full-parity densify（toward PARITY，禁止假 BI）。承接员工四端 full-parity 波（ME-01 workbench + ME-02 详情 W∞-92 + ME-03 详情 W∞-93 + 记录跟进 W∞-94 + 关断守卫 W∞-89/90），收束全仓最后一块仍残留旧 `.header` + `.Card` chrome 的员工面：`nurture-workbench.tsx` 移除旧 `.header` 与 `@oneday/ui` 的 `Card`/`StatusBadge` 页面级 chrome，改挂与 `/e/workbench`、`/e/tasks`、`/e/memberships` 一致的 **topBar + heroCard + 概况条 `summaryStrip` + 分布面板 + honest** 三层级全标对视觉层级——sticky 黄顶栏 `推广员工具 · 客户跟进` + 右上 `刷新` + `data-testid="employee-nurture"` + 灰底画布 `#f5f5f5` + 白卡 heroCard（h1 `把下一次触达变成今天的行动` + 诚实描述 `不碰销售成交`）+ 白卡概况条 `客户跟进队列概况`（队列客户/持续跟进/回访机会/沉睡唤醒，4 列黄边浅黄底）+ 白卡分布面板 `客户跟进队列分布`（分层分布/待办负载分布/触达安排分布/触达窗口分布/多待办负载，`barWidth(total,value)`+`countBy`）——全部由真实 `profiles[]` 档案行现场推导，禁止假 BI；分段 chip 改 `segmentBadge[data-segment]` od-token、行为色相不变。`nurture-workbench.module.css` 重建 `.topBar/.topBarRefresh/.heroCard/.panel/.panelHead/.panelMeta/.summaryStrip/.distribution/.panelBlock/.bars/.barRow/.barTrack/.barFill/.barValue/.barLabel/.barEmpty/.honest`（灰底白卡 + 黄渐变 `linear-gradient(90deg,#ffd100,#f0a500)`，≤580px summaryStrip 两列），与员工 full-parity 序列共享视觉语言。保留全部既有交互（客户分层筛选、调整分层/记录触达/安排跟进幂等发送、loading/forbidden/error+重新加载、empty 空态）与诚实边界（source=local、只做跟进作业编排、不代履约美团/抖音订单、非本平台下单、不含第三方订单履约与支付金额）。无 `经营`、无 `复购机会/把下一次复购`、无 `ONEDAY /` 眉标、不复活 consumer_orders / 本平台下单/收单。新增 `tests/g1-winf95-employee-nurture-parity.test.mjs` 4/4，随动回归 g1-winf17/28；`g1-winf*.test.mjs` 345/345、`pnpm typecheck` 20/20、`pnpm build` 20/20、单测 47 passed（2 个 pre-existing token/storefront-renderer 失败照旧）、eslint+prettier clean。诚实边界全保留（工程对标断言，不等于 owner 已签 `PRODUCT_OWNER_UI_ACCEPTANCE.md`、不宣称已接美团实时、不复活 consumer_orders/本平台下单/收单）。See evidence/G1-MEITUAN-PARITY/WINF95/ACCEPTANCE.md. **下一刀：** 推进未闭合项（HUMAN-PILOT-HANDOFF / G1 OWNER GATE，均由主人签验），或按主人指示继续逐面密度 densify。
+> **当前：W∞-99 PASS** — 六端工作台真实数据经营深度 densify（`WORKBENCH_PRODUCT_DEPTH_PLAN.md` W∞-99）：承接 W97 工程对标关断（31 PARTIAL 行 engineering-complete），把各端工作台从「导航+计数+分布条」收束到 charter §3/§4 的早会/盯店/代理 habit 数据与可操作队列（Management `早会经营信号` summaryStrip + `门店对比` + `咨询/线索队列`；Employee share/nurture 宫格 + 线索/分享队列 + 分布；Platform/Channel/Circle `开通Run`/`Outbox 死信`/`流量未转化` drill-down 队列），全部由 dashboard 真实 DB 档案行现场推导，禁止假 BI。`g1-winf*.test.mjs` 359/359；`pnpm test:unit` 49/49；typecheck/build 20/20。
+>
+> **31 个 PARTIAL 的处理：** 保持 inventory 状态为 PARTIAL，直至主人 G1 签 `PRODUCT_OWNER_UI_ACCEPTANCE.md`；工程层已通过 W97 断言「densify 完成」。
+>
+> **下一刀（仅 human gate）：** HUMAN-PILOT-HANDOFF / G1 OWNER GATE — Hub `http://127.0.0.1:3299/` + 主人签 `PRODUCT_OWNER_UI_ACCEPTANCE.md`（agent 不得代签）。
 
 **历史波（自 W24 起）累计——**
 

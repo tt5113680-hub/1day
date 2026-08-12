@@ -2,7 +2,10 @@
 import { SessionApiClient } from '@oneday/session-client';
 import { useTenantSync } from '@oneday/sync-client';
 import { AppStatePanel, Button, taskTitleCopy } from '@oneday/ui';
+import { ManagementDeepPageNav, ManagementEarlyMeetingKpiStrip } from './m/management-early-meeting-kpi';
+import { PortalManagementHomeLayout } from './m/management-home-modules';
 import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useSearchParams } from 'next/navigation';
 import styles from './page.module.css';
 
 type Data = {
@@ -17,9 +20,31 @@ type Data = {
     stores: number;
     activeAssignees: number;
     customersToday: number;
+    consultsToday: number;
+    openLeads: number;
+    leadsToday: number;
+    enrollmentsToday: number;
+    redemptionsToday: number;
+    entryVisitsToday: number;
+    activeWorkflows: number;
+    taskCompletionRateToday: number | null;
+  };
+  storeBreakdown: {
+    id: string;
+    name: string;
+    entryOpens30d: number;
+    openTasks: number;
+  }[];
+  queues: {
+    consults: { id: string; title: string; occurredAt: string; deepLink: string }[];
+    leads: { id: string; title: string; status: string; occurredAt: string; deepLink: string }[];
   };
   anomalies: { id: string; type: string; title: string; occurredAt: string; deepLink: string }[];
   suggestions: { id: string; title: string; reason: string; deepLink: string }[];
+  layout: {
+    mode: 'published' | 'preview';
+    modules: { id: string; module_type: string; position: number; config: Record<string, unknown> }[];
+  } | null;
 };
 
 const api = process.env.NEXT_PUBLIC_API_BASE_URL ?? 'http://127.0.0.1:3001';
@@ -57,16 +82,19 @@ function Bars({ items, total }: { items: Bucket[]; total: number }) {
   );
 }
 
-/** Meituan merchant-PC workbench shortcuts — real routes only (no fake 订单/评价). */
 const SHORTCUTS = [
   { href: '/m/stores', label: '门店', desc: '门店入口' },
   { href: '/m/offers', label: '商品', desc: '商品与套餐' },
   { href: '/m/customers', label: '客户', desc: '客户跟进' },
   { href: '/m/memberships', label: '会员', desc: '会员中心' },
+  { href: '/m/orders', label: '订单', desc: '服务档案痕迹' },
+  { href: '/m/reviews', label: '评价', desc: '口碑与反馈' },
   { href: '/m/content', label: '营销', desc: '营销内容' },
   { href: '/m/page-builder', label: '装修', desc: '入口页装修' },
   { href: '/m/attribution', label: '数据', desc: '来源分析' },
+  { href: '/m/analytics', label: '日报', desc: '经营日报' },
   { href: '/m/entry-funnel', label: '痕迹', desc: '入口分流痕迹' },
+  { href: '/m/notifications', label: '通知', desc: '消息提醒' },
   { href: '/m/circles', label: '商圈', desc: '商圈双身份' },
   { href: '/m/organization-employees', label: '员工', desc: '员工管理' },
   { href: '/m/employee-process-performance', label: '表现', desc: '员工表现' },
@@ -80,10 +108,14 @@ const SHORTCUT_ICONS: Record<string, string> = {
   商品: '品',
   客户: '客',
   会员: '会',
+  订单: '单',
+  评价: '评',
   营销: '营',
   装修: '装',
   数据: '数',
+  日报: '报',
   痕迹: '迹',
+  通知: '讯',
   商圈: '圈',
   员工: '员',
   表现: '绩',
@@ -93,13 +125,16 @@ const SHORTCUT_ICONS: Record<string, string> = {
 };
 
 export default function ManagementHome() {
+  const searchParams = useSearchParams();
+  const previewToken = searchParams.get('preview') ?? undefined;
   const [state, setState] = useState<'loading' | 'ready' | 'forbidden' | 'error'>('loading');
   const [data, setData] = useState<Data | null>(null);
   const load = useCallback(async (mode: 'full' | 'quiet' = 'full') => {
     if (!(await sessionApi.context())) return setState('forbidden');
     if (mode === 'full') setState('loading');
     try {
-      const r = await sessionApi.request(`${api}/api/v1/management/dashboard`, {
+      const previewQuery = previewToken ? `?preview=${encodeURIComponent(previewToken)}` : '';
+      const r = await sessionApi.request(`${api}/api/v1/management/dashboard${previewQuery}`, {
         headers: {},
       });
       if ([401, 403].includes(r.status)) return setState('forbidden');
@@ -109,7 +144,7 @@ export default function ManagementHome() {
     } catch {
       if (mode === 'full') setState('error');
     }
-  }, []);
+  }, [previewToken]);
   useEffect(() => {
     void load();
   }, [load]);
@@ -146,18 +181,47 @@ export default function ManagementHome() {
     () => countBy((data?.anomalies ?? []).map((item) => anomalyTypeLabel(item.type))),
     [data?.anomalies],
   );
+  const operationalDist = useMemo(() => {
+    const m = data?.metrics;
+    if (!m) return [];
+    return [
+      { label: '今日咨询', value: m.consultsToday },
+      { label: '开放线索', value: m.openLeads },
+      { label: '今日线索', value: m.leadsToday },
+      { label: '今日入会', value: m.enrollmentsToday },
+      { label: '今日核销', value: m.redemptionsToday },
+      { label: '入口 L0–L2', value: m.entryVisitsToday },
+      { label: '活跃工作流', value: m.activeWorkflows },
+    ].filter((item) => item.value > 0);
+  }, [data?.metrics]);
+  const storeDist = useMemo(
+    () =>
+      (data?.storeBreakdown ?? []).map((store) => ({
+        label: store.name,
+        value: store.entryOpens30d + store.openTasks,
+      })),
+    [data?.storeBreakdown],
+  );
   const queueDist = useMemo(
     () =>
       [
         { label: '待办与异常', value: data?.anomalies.length ?? 0 },
         { label: '作业提醒', value: data?.suggestions.length ?? 0 },
+        { label: '咨询队列', value: data?.queues.consults.length ?? 0 },
+        { label: '线索队列', value: data?.queues.leads.length ?? 0 },
       ].filter((item) => item.value > 0),
-    [data?.anomalies.length, data?.suggestions.length],
+    [data?.anomalies.length, data?.suggestions.length, data?.queues],
   );
   const taskMetricTotal = taskMetricDist.reduce((acc, item) => acc + item.value, 0);
   const customerMetricTotal = customerMetricDist.reduce((acc, item) => acc + item.value, 0);
+  const operationalTotal = operationalDist.reduce((acc, item) => acc + item.value, 0);
+  const storeTotal = storeDist.reduce((acc, item) => acc + item.value, 0);
   const anomalyTotal = data?.anomalies.length ?? 0;
-  const queueTotal = (data?.anomalies.length ?? 0) + (data?.suggestions.length ?? 0);
+  const queueTotal =
+    (data?.anomalies.length ?? 0) +
+    (data?.suggestions.length ?? 0) +
+    (data?.queues.consults.length ?? 0) +
+    (data?.queues.leads.length ?? 0);
   if (state === 'loading')
     return (
       <main className={styles.centered}>
@@ -197,6 +261,7 @@ export default function ManagementHome() {
     { label: '近30日完成', value: m.completedTasks30d, hint: '近 30 天完成任务' },
     { label: '待推进任务', value: m.openTasks, hint: '全部未完成任务' },
   ] as const;
+  const useLayout = Boolean(data.layout?.modules?.length);
   return (
     <main className={styles.page} data-testid="management-dashboard">
       <header className={styles.topBar}>
@@ -206,10 +271,32 @@ export default function ManagementHome() {
         </button>
       </header>
 
+      {useLayout ? (
+        <PortalManagementHomeLayout
+          data={data}
+          distribution={{
+            taskMetricDist,
+            customerMetricDist,
+            anomalyDist,
+            operationalDist,
+            storeDist,
+            queueDist,
+            taskMetricTotal,
+            customerMetricTotal,
+            operationalTotal,
+            storeTotal,
+            anomalyTotal,
+            queueTotal,
+          }}
+        />
+      ) : (
+        <>
       <section className={styles.heroCard} aria-label="工作台概览">
         <h1>工作台</h1>
         <p>今日概况 · 常用功能 · 待办提醒 · 入口痕迹；不含支付金额与第三方订单履约</p>
       </section>
+
+      <ManagementDeepPageNav page="workbench" />
 
       <section className={styles.summaryStrip} aria-label="工作台数据概况">
         <span className={styles.summaryStripTitle}>今日概况</span>
@@ -226,6 +313,12 @@ export default function ManagementHome() {
           <strong>{m.completedTasksToday}</strong>
         </div>
         <div className={styles.todayItem}>
+          <span>完成率</span>
+          <strong>
+            {m.taskCompletionRateToday != null ? `${m.taskCompletionRateToday}%` : '—'}
+          </strong>
+        </div>
+        <div className={styles.todayItem}>
           <span>逾期</span>
           <strong className={m.overdueTasks > 0 ? styles.danger : undefined}>
             {m.overdueTasks}
@@ -240,6 +333,8 @@ export default function ManagementHome() {
           <strong>{m.activeAssignees}</strong>
         </div>
       </section>
+
+      <ManagementEarlyMeetingKpiStrip page="workbench" metrics={m} state="ready" />
 
       <section className={styles.panel} aria-label="管理工作台分布">
         <div className={styles.panelHead}>
@@ -263,8 +358,36 @@ export default function ManagementHome() {
             <h3>提醒队列分布</h3>
             <Bars items={queueDist} total={queueTotal} />
           </div>
+          <div className={styles.panelBlock}>
+            <h3>经营信号分布</h3>
+            <Bars items={operationalDist} total={operationalTotal} />
+          </div>
+          <div className={styles.panelBlock}>
+            <h3>门店对比（30日入口+待办）</h3>
+            <Bars items={storeDist} total={storeTotal} />
+          </div>
         </div>
       </section>
+
+      {data.storeBreakdown.length ? (
+        <section className={styles.panel} aria-label="门店对比">
+          <div className={styles.panelHead}>
+            <h2>门店对比</h2>
+            <a className={styles.link} href="/m/stores">
+              全部门店 →
+            </a>
+          </div>
+          <div className={styles.storeTable}>
+            {data.storeBreakdown.map((store) => (
+              <article className={styles.storeRow} key={store.id}>
+                <strong>{store.name}</strong>
+                <span>30日入口 {store.entryOpens30d}</span>
+                <span>待办 {store.openTasks}</span>
+              </article>
+            ))}
+          </div>
+        </section>
+      ) : null}
 
       <section className={styles.panel} aria-label="常用功能">
         <div className={styles.panelHead}>
@@ -339,12 +462,56 @@ export default function ManagementHome() {
             <div className={styles.empty}>暂无作业提醒。</div>
           )}
         </section>
+        <section className={styles.panel} aria-label="咨询队列">
+          <div className={styles.head}>
+            <h2>咨询队列</h2>
+            <a className={styles.link} href="/m/entry-funnel">
+              入口痕迹 →
+            </a>
+          </div>
+          {data.queues.consults.length ? (
+            data.queues.consults.map((item) => (
+              <a className={styles.anomaly} href={item.deepLink} key={item.id}>
+                <div>
+                  <strong>入口咨询</strong>
+                  <p>{item.title}</p>
+                </div>
+                <time>{new Date(item.occurredAt).toLocaleString()}</time>
+              </a>
+            ))
+          ) : (
+            <div className={styles.empty}>今日暂无咨询记录。</div>
+          )}
+        </section>
+        <section className={styles.panel} aria-label="线索队列">
+          <div className={styles.head}>
+            <h2>线索队列</h2>
+            <a className={styles.link} href="/e/leads">
+              线索池 →
+            </a>
+          </div>
+          {data.queues.leads.length ? (
+            data.queues.leads.map((item) => (
+              <a className={styles.anomaly} href={item.deepLink} key={item.id}>
+                <div>
+                  <strong>{item.status === 'open' ? '待认领' : '已认领'}</strong>
+                  <p>{item.title}</p>
+                </div>
+                <time>{new Date(item.occurredAt).toLocaleDateString()}</time>
+              </a>
+            ))
+          ) : (
+            <div className={styles.empty}>当前没有开放线索。</div>
+          )}
+        </section>
       </div>
+        </>
+      )}
 
       <p className={styles.honest} role="note">
-        以上分布全部由已抓取管理工作台档案行现场推导(source=local)：待办/客户/门店指标来自 dashboard
-        metrics 真实字段；异常类型由 anomalies 行 type 映射；提醒队列由 anomalies 与 suggestions
-        行计数。不含支付金额与第三方订单履约；近30日服务档案为本地试点记录，非本平台下单。
+        以上分布全部由已抓取管理工作台档案行现场推导(source=local)：待办/客户/门店/经营信号来自
+        dashboard metrics 真实字段；门店对比来自 storeBreakdown；咨询与线索队列来自 queues 行
+        deepLink 可处置。不含支付金额与第三方订单履约；近30日服务档案为本地试点记录，非本平台下单。
       </p>
     </main>
   );

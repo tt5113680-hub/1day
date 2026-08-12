@@ -4,6 +4,7 @@ import { SessionApiClient } from '@oneday/session-client';
 import { AppStatePanel, Button, StatusBadge } from '@oneday/ui';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import styles from '../_commerce.module.css';
+import { ManagementEarlyMeetingKpi } from '../management-early-meeting-kpi';
 
 type NotificationRow = {
   category: 'anomaly' | 'approval' | 'workflow';
@@ -122,7 +123,7 @@ export default function ManagementNotificationsPage() {
   const { items, counts } = data;
   const total = counts.anomaly + counts.approval + counts.workflow;
   return (
-    <main className={styles.page}>
+    <main className={styles.page} data-testid="management-notifications">
       <header className={styles.topBar}>
         <span className={styles.topBarTitle}>推广员工具 · 通知中心</span>
         <button className={styles.topBarRefresh} type="button" onClick={() => void load()}>
@@ -137,6 +138,8 @@ export default function ManagementNotificationsPage() {
           不含支付金额与第三方订单履约态。
         </p>
       </section>
+
+      <ManagementEarlyMeetingKpi page="notifications" />
 
       <section className={styles.summaryStrip} aria-label="通知概况">
         <div>

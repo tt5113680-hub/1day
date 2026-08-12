@@ -3,6 +3,7 @@ import { SessionApiClient } from '@oneday/session-client';
 import { AppStatePanel, Button, businessLabel } from '@oneday/ui';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { PlatformProductHome } from '../../platform-product-home';
+import { PlatformOperationalKpi } from '../../platform-workbench-kpi';
 import styles from './page.module.css';
 
 type Metric = { tenants: number; channels: number; activeTenants: number; pendingEvents: number };
@@ -11,6 +12,16 @@ type TenantRow = { status: string; plan: string; riskLevel: string };
 type ChannelRow = { platform: string; status: string };
 type OutboxRow = { eventType: string; aggregateType: string; attempts: number; tenantId: string };
 type SignalRow = { key: string; count: number };
+type ProvisioningRun = {
+  id: string;
+  tenantId: string | null;
+  state: string;
+  requestSlug: string;
+  updatedAt: string;
+  errorCode: string | null;
+  failedSteps: number;
+  deepLink: string;
+};
 type Data = {
   metrics: Metric;
   risks: Risk[];
@@ -18,6 +29,7 @@ type Data = {
   channels: ChannelRow[];
   outbox: OutboxRow[];
   signals: SignalRow[];
+  provisioningRuns: ProvisioningRun[];
   system: { database: string; checkedAt: string; databaseName: string };
 };
 
@@ -65,6 +77,20 @@ const eventLabel = (key: string) =>
   })[key] ?? key;
 const attemptBuckets = (n: number) =>
   n <= 1 ? '首次失败 1' : n <= 5 ? '多次重试 2-5' : '已达上限 6+';
+const provisioningStateLabel = (state: string) =>
+  ({
+    validating: '校验中',
+    provisioning: '开通中',
+    failed: '失败',
+    ready: '已完成',
+    draft: '草稿',
+  })[state] ?? state;
+const riskDeepLink = (type: string) =>
+  ({
+    overdue_task: '/p/tenants',
+    ownership_approval: '/p/tenants',
+    connector_attention: '/p/connectors',
+  })[type] ?? '/p/security-audit';
 
 export default function PlatformDashboard() {
   const [state, setState] = useState<'loading' | 'ready' | 'forbidden' | 'error'>('loading');
@@ -219,6 +245,8 @@ export default function PlatformDashboard() {
         </p>
       </section>
 
+      <PlatformOperationalKpi page="platform" />
+
       <section className={styles.summaryStrip} aria-label="平台概况">
         <div>
           <span>租户</span>
@@ -235,6 +263,10 @@ export default function PlatformDashboard() {
         <div>
           <span>Outbox 死信</span>
           <strong>{outboxTotal}</strong>
+        </div>
+        <div>
+          <span>开通 Run</span>
+          <strong>{data.provisioningRuns.length}</strong>
         </div>
       </section>
 
@@ -408,15 +440,51 @@ export default function PlatformDashboard() {
       </section>
 
       <div className={styles.grid}>
+        <section className={styles.panel} aria-label="开通 Run 队列">
+          <div className={styles.panelHead}>
+            <h2>开通 Run 队列</h2>
+            <a className={styles.link} href="/p/tenants/new">
+              新建开通 →
+            </a>
+          </div>
+          {data.provisioningRuns.length ? (
+            data.provisioningRuns.map((run) => (
+              <a className={styles.riskRow} href={run.deepLink} key={run.id}>
+                <b>{provisioningStateLabel(run.state)}</b> · {run.requestSlug}
+                {run.failedSteps ? ` · ${run.failedSteps} 步失败` : ''}
+                {run.errorCode ? ` · ${run.errorCode}` : ''}
+              </a>
+            ))
+          ) : (
+            <p className={styles.empty}>当前没有进行中的开通 Run。</p>
+          )}
+        </section>
+        <section className={styles.panel} aria-label="Outbox 死信队列">
+          <div className={styles.panelHead}>
+            <h2>Outbox 死信</h2>
+            <a className={styles.link} href="/p/outbox">
+              全部 →
+            </a>
+          </div>
+          {data.outbox.length ? (
+            data.outbox.slice(0, 8).map((row, index) => (
+              <a className={styles.riskRow} href="/p/outbox" key={`${row.eventType}-${index}`}>
+                <b>{row.eventType || '未分类'}</b> · {row.aggregateType} · 重试 {row.attempts}
+              </a>
+            ))
+          ) : (
+            <p className={styles.empty}>当前没有待处理死信。</p>
+          )}
+        </section>
         <section className={styles.panel} aria-label="风险队列">
           <div className={styles.panelHead}>
             <h2>风险队列</h2>
           </div>
           {data.risks.length ? (
             data.risks.map((risk) => (
-              <p className={styles.riskRow} key={risk.type}>
+              <a className={styles.riskRow} href={riskDeepLink(risk.type)} key={risk.type}>
                 <b>{risk.count}</b> · {businessLabel(risk.type)}
-              </p>
+              </a>
             ))
           ) : (
             <p className={styles.empty}>当前没有可归类的平台风险。</p>

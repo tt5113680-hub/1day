@@ -1,5 +1,35 @@
 # CHANGELOG
 
+## 2026-08-12 - G1-W∞-104 员工 H5 + 管理 PC 自定义装修（portal_bindings 全链路）PASS
+
+- **W104** `portal_bindings` + `portal_preview_tokens`（migration `061_portal_bindings`）+ page-template service portal preview（`target=employee|management`）+ `/m/page-builder` 员工/管理 模板发布与「在员工 H5 / 管理工作台打开安全预览」；员工 `/e/workbench` 与管理 `/` 按已发布 layout modules 渲染（`workbench-layout-modules.tsx` / `management-home-modules.tsx` / `portal-layout.service.ts`）；human-pilot seed 默认员工/管理 portal 模板。
+- 本刀基线回归修复：`/m/page-builder` hero 文案由「共用一套 Storefront 绑定」收敛为「共用一套绑定；消费者数字门店、员工 H5 与管理工作台均可装修」，随动更新 `g1-winf43` 断言 → `/共用一套绑定/`，使关闭批次 372/372 全绿（此前因 W104 改写复制而未同步改断言导致 1 失败）。这是关闭 W97~W104 已验证未提交批次的必要完成闸。
+- **W97** engineering PARITY gate：inventory §0.2 工程对标 vs 商用 PARITY 双轨，31 PARTIAL 行 engineering-complete；`g1-winf97` 2/2。
+- **W105/106 关闭回归**：`g1-winf105` 消费者团购/套餐详情链接（storefront group-buy → `/c/services/[id]` 团购套餐详情，compare detailHref）6/6；`g1-winf106` human-pilot seed data_scopes（channel/circle）+ platform-channel `channel.read` 4/4。
+- `g1-winf*.test.mjs` **372/372**；`pnpm typecheck` 20/20、`pnpm build` 20/20（20/20）、`pnpm test:unit` **49/49**；变更 TS/test eslint+prettier clean。`portal_bindings` 全链路无 consumer_orders / 本平台下单 / 收单。Not owner sign-off（G1 人工验签仍开放）。See evidence/G1-MEITUAN-PARITY/WINF104/ACCEPTANCE.md.
+
+## 2026-08-12 - G1-W∞-100~103 工作台产品深度收束（深页 KPI 互链 + 平台运营队列 + 消费者诚实信号）PASS
+
+- 承接 `WORKBENCH_PRODUCT_DEPTH_PLAN.md` W∞-100~103，在 W∞-99 六端工作台经营深度基础上补齐深页互链与消费者诚实标注（真实 DB/API，禁止假 BI；不碰 GMV/支付/第三方履约）：
+  - **W∞-100 Management 深页 KPI 同源**：新增 `management-early-meeting-kpi.tsx`，拉 `/api/v1/management/dashboard`，嵌入 `/m/orders|reviews|notifications|analytics`；工作台仅保留 `ManagementDeepPageNav` 避免重复 fetch。`g1-winf100` 4/4。
+  - **W∞-101 Employee 深页 KPI 同源**：新增 `employee-workbench-kpi.tsx`，拉 workbench `stats`，嵌入 `/e/share|nurture|leads|memberships`。`g1-winf101` 2/2。
+  - **W∞-102 Platform/Channel/Circle 运营 KPI + 队列**：新增 `platform-workbench-kpi.tsx`（`PlatformOperationalKpi` + `ChannelOperationalQueues` + `PlatformDeepPageNav`），挂 `/p/dashboard` `/ch/dashboard` `/bc/dashboard` `/p/outbox`；渠道 renewal/onboarding 队列 UI 与 API `queues` 对齐。`g1-winf102` 2/2。
+  - **W∞-103 Consumer discovery 诚实信号**：`consumer-discovery.service.ts` SQL join `store_reviews`（档案评价）与 `entry_funnel_events`（30 日入口 visit/view）；无数据时 fallback `local_pilot` 并 UI 标注「试用分/试用月售」；`/c/discovery` + `/c/search` 卡片标签同步。`g1-winf103` 2/2。
+- `g1-winf99~103` 合计 13/13；`pnpm typecheck` 20/20、`pnpm build` 20/20。Not owner sign-off（G1 人工验签仍开放）。
+
+## 2026-08-12 - G1-W∞-99 六端工作台真实数据经营深度 densify（工作台产品深度 W∞-99，禁止假 BI）PASS
+
+- 承接 `WORKBENCH_PRODUCT_DEPTH_PLAN.md` W∞-99，把各端工作台从「导航 + 计数 + 分布条」收束到 charter §3/§4 的 **早会/盯店/代理 habit 数据** 与 **可操作队列**（真实 DB/API 可查，禁止假 BI；不碰钱、非本平台下单）：
+  - **共享组件收束**：Management 新增 `apps/management-web/app/m/management-early-meeting-kpi.tsx`（`ManagementDeepPageNav` 工作台/经营日报/订单痕迹/评价/通知 互链 + `ManagementEarlyMeetingKpiStrip` `aria-label="早会经营信号（与工作台同源）"` + `ManagementEarlyMeetingKpi` 深页自治版）；Employee 新增 `apps/employee-web/app/e/employee-workbench-kpi.tsx`（`EmployeeDeepPageNav` 工作台/分享/跟进/线索/核销 互链 + `EmployeeWorkbenchKpiStrip` `aria-label="今日作业 KPI（与工作台同源）"` + `EmployeeWorkbenchKpi`）；工作台与深页 KPI 同源统一（条 A 固定口径，无 GMV/GMV 诚实说明），触发 stale 测试对齐：`g1-winf89` analytics 概况条 `今日经营概况`→`入口痕迹日报（L0–L2）`、`g1-winf78` 员工工作台 `summaryStrip`→共享 `EmployeeWorkbenchKpiStrip`。
+  - **Management `/m`**：`management-dashboard.service.ts` 新增 `consultsToday`（`consumer_action_events`+`consumer_action_redirect_events` 今日）/`openLeads`·`leadsToday`（`employee_lead_pool_entries`）/`enrollmentsToday`（`membership_enrollments`）/`redemptionsToday`（`member_benefit_ledger` redeem）/`entryVisitsToday`（`entry_funnel_events`）/`activeWorkflows`（`workflow_instances`）/`taskCompletionRateToday`/`storeBreakdown`（每门店 30 日入口 + 待办）/`queues.consults`·`queues.leads`（真实行，deepLink→/m/entry-funnel · /e/leads）。`page.tsx` 工作台由共享 `ManagementEarlyMeetingKpiStrip` 承接早会 KPI + `门店对比` 白卡分面 + `咨询队列`/`线索队列` 白卡队列（deepLink 可处置）+ 经营信号分布/门店对比分布；`/m/orders|reviews|notifications|analytics` 已入常用功能宫格；honest 底注 source=local、不含支付金额与第三方订单履约、近30日服务档案为本地试点、非本平台下单。
+  - **Employee `/e`**：`employee-workbench.service.ts` 新增 `activeShareCodes`/`queues`；`workbench.tsx` 首页由共享 `EmployeeWorkbenchKpiStrip` 承接今日作业 KPI + 宫格新增 分享推广→`/e/share`、客户跟进→`/e/nurture` + `lead-queue-title` 线索队列 / `share-queue-title` 分享队列 + 线索分布/分享分布（`stats.shareOpensToday`/`stats.redemptionsToday` 真实，禁止假 BI）；移除未用 `overdueCount` 保持 eslint clean。
+  - **平台 `/p` · 渠道 `/ch` · 商圈 `/bc`**：`platform-dashboard.service.ts` 新增 `provisioningRuns`（真实 provisioning 行含 `request_slug`/`state`/`error_code`，可 drill-down）+ `Outbox 死信` 队列；`channel-dashboard.service.ts` 新增 `queues.renewal`（`renewalSignal` 跟进信号队列）+ onboarding 队列；`circle-dashboard.service.ts` 新增 `queues.trafficWithoutConversion`（流量未转化队列）；三端仪表页新增 开通 Run 队列 / Outbox 死信 / 流量未转化 drill-down 队列。
+- 全部由已抓取 dashboard 真实 DB 档案行现场推导，无 schema/DB/API，不复活 consumer_orders / 本平台下单/收单；诚实边界全保留（仅统计观看/访问/跳转/停留/分享入口痕迹、不含支付金额与第三方订单履约、非本平台下单、不代履约美团/抖音订单）。新增 `tests/g1-winf99-workbench-product-depth.test.mjs` 3/3（`doesNotMatch` 防 假 BI/mockMetrics/Math.random）；`g1-winf*.test.mjs` 369/369（含 W97/98/99）；`pnpm test:unit` 49/49；`pnpm typecheck` 20/20、`pnpm build` 20/20；变更工作台/深页源码 eslint+prettier clean。See evidence/G1-MEITUAN-PARITY/WINF99/ACCEPTANCE.md. Not owner sign-off（G1 人工验签仍开放）。
+
+## 2026-08-12 - G1-W∞-98 closeout（W89 expand + MP-01 + tokens + agents polish）PASS
+
+- W96 `/e/share` full-parity committed; W89 guard expanded (nurture/share/employee details/funnels/employee-perf + channels geo-tree); W97 engineering PARITY gate documents 31 PARTIAL rows as engineering-complete; W98 fixes token vitest 49/49 and removes page-level Card from `/p/agents`; MP-01 `/p/channels` embeds read-only 省市区代理树. `g1-winf*.test.mjs` 356/356. Not owner sign-off — G1 human gate remains.
+
 ## 2026-08-12 - G1-W∞-95 Employee `/e/nurture` 客户跟进队列 full-parity densify（员工面 PARITY, toward Meituan 商家端）PASS
 
 - 收束全仓最后一块仍残留旧 `.header` + `.Card` chrome 的员工面——`/e/nurture`（客户跟进队列，`e/nurture`）从「推广员工具 · 客户跟进 文案 + 旧 Card 列表」改挂与现代员工面 full-parity 完全一致的 **topBar + heroCard + summaryStrip + distribution + honest** 三层级（与 `/e/workbench`、`/e/tasks`、`/e/memberships` 一致）：

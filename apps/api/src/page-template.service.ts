@@ -53,10 +53,14 @@ export class PageTemplateService implements OnModuleDestroy {
     return (
       await this.pool.query(
         `select pt.id,pt.code,pt.name,pt.target,pt.industry_config,pt.published_version_id,pt.status,pt.version,
-                sb.id as binding_id,sb.store_id,s.name as store_name,sb.draft_version_id,sb.live_version_id,
-                sb.version as binding_version,sb.published_at
+                coalesce(sb.id,pb.id) as binding_id,sb.store_id,s.name as store_name,
+                coalesce(sb.draft_version_id,pb.draft_version_id) as draft_version_id,
+                coalesce(sb.live_version_id,pb.live_version_id) as live_version_id,
+                coalesce(sb.version,pb.version) as binding_version,
+                coalesce(sb.published_at,pb.published_at) as published_at
          from page_templates pt
          left join storefront_bindings sb on sb.template_id=pt.id and sb.tenant_id=pt.tenant_id and sb.deleted_at is null
+         left join portal_bindings pb on pb.template_id=pt.id and pb.tenant_id=pt.tenant_id and pb.deleted_at is null
          left join stores s on s.id=sb.store_id and s.tenant_id=sb.tenant_id and s.deleted_at is null
          where pt.tenant_id=$1 and pt.deleted_at is null order by pt.created_at desc`,
         [c.tenantId],
@@ -68,10 +72,14 @@ export class PageTemplateService implements OnModuleDestroy {
       throw new BadRequestException('VALIDATION_ERROR');
     const template = (
       await this.pool.query(
-        `select pt.*,sb.id as binding_id,sb.store_id,sb.draft_version_id,sb.live_version_id,
-                sb.version as binding_version,sb.published_at,s.name as store_name
+        `select pt.*,coalesce(sb.id,pb.id) as binding_id,sb.store_id,
+                coalesce(sb.draft_version_id,pb.draft_version_id) as draft_version_id,
+                coalesce(sb.live_version_id,pb.live_version_id) as live_version_id,
+                coalesce(sb.version,pb.version) as binding_version,
+                coalesce(sb.published_at,pb.published_at) as published_at,s.name as store_name
          from page_templates pt
          left join storefront_bindings sb on sb.template_id=pt.id and sb.tenant_id=pt.tenant_id and sb.deleted_at is null
+         left join portal_bindings pb on pb.template_id=pt.id and pb.tenant_id=pt.tenant_id and pb.deleted_at is null
          left join stores s on s.id=sb.store_id and s.tenant_id=sb.tenant_id and s.deleted_at is null
          where pt.id=$1 and pt.tenant_id=$2 and pt.deleted_at is null`,
         [id, c.tenantId],
@@ -150,6 +158,12 @@ export class PageTemplateService implements OnModuleDestroy {
         [vid, c.tenantId, id, c.userId],
       );
       await this.insertModules(q, c, vid, input.modules);
+      if (target === 'employee' || target === 'management') {
+        await q.query(
+          'insert into portal_bindings(id,tenant_id,target,template_id,draft_version_id,status,created_by,updated_by) values($1,$2,$3,$4,$5,$6,$7,$7)',
+          [randomUUID(), c.tenantId, target, id, vid, 'active', c.userId],
+        );
+      }
       const data = { ...row, draftVersionId: vid };
       await this.audit(q, c, 'page.template_created', id, r, data);
       await this.event(q, c, 'page.template.created.v1', id, r, data);
@@ -186,8 +200,10 @@ export class PageTemplateService implements OnModuleDestroy {
       await q.query('begin');
       const template = (
         await q.query(
-          `select pt.id,sb.id as binding_id from page_templates pt
+          `select pt.id,sb.id as binding_id,pb.id as portal_binding_id
+           from page_templates pt
            left join storefront_bindings sb on sb.template_id=pt.id and sb.tenant_id=pt.tenant_id and sb.deleted_at is null
+           left join portal_bindings pb on pb.template_id=pt.id and pb.tenant_id=pt.tenant_id and pb.deleted_at is null
            where pt.id=$1 and pt.tenant_id=$2 and pt.deleted_at is null for update of pt`,
           [id, c.tenantId],
         )
@@ -232,6 +248,11 @@ export class PageTemplateService implements OnModuleDestroy {
         await q.query(
           'update storefront_bindings set draft_version_id=$1,updated_at=now(),updated_by=$2,version=version+1 where id=$3 and tenant_id=$4',
           [versionId, c.userId, template.binding_id, c.tenantId],
+        );
+      if (template.portal_binding_id)
+        await q.query(
+          'update portal_bindings set draft_version_id=$1,updated_at=now(),updated_by=$2,version=version+1 where id=$3 and tenant_id=$4',
+          [versionId, c.userId, template.portal_binding_id, c.tenantId],
         );
       const data = { id: versionId, sequence, status: 'draft' };
       await this.audit(q, c, 'page.template_draft_created', id, r, data);
@@ -297,7 +318,7 @@ export class PageTemplateService implements OnModuleDestroy {
       throw new BadRequestException('VALIDATION_ERROR');
     const binding = (
       await this.pool.query(
-        `select sb.id,sb.store_id,t.slug
+        `select sb.id,sb.store_id,t.slug,'consumer'::text as target
          from storefront_bindings sb
          join page_templates pt on pt.id=sb.template_id and pt.tenant_id=sb.tenant_id and pt.deleted_at is null
          join page_template_versions pv on pv.id=$3 and pv.template_id=pt.id and pv.tenant_id=pt.tenant_id and pv.deleted_at is null
@@ -306,21 +327,61 @@ export class PageTemplateService implements OnModuleDestroy {
         [id, c.tenantId, body.versionId],
       )
     ).rows[0];
-    if (!binding) throw new NotFoundException('NOT_FOUND');
+    const portal = binding
+      ? null
+      : (
+          await this.pool.query(
+            `select pb.id,pb.target
+             from portal_bindings pb
+             join page_templates pt on pt.id=pb.template_id and pt.tenant_id=pb.tenant_id and pt.deleted_at is null
+             join page_template_versions pv on pv.id=$3 and pv.template_id=pt.id and pv.tenant_id=pt.tenant_id and pv.deleted_at is null
+             where pt.id=$1 and pb.tenant_id=$2 and pb.status='active' and pb.deleted_at is null`,
+            [id, c.tenantId, body.versionId],
+          )
+        ).rows[0];
+    if (!binding && !portal) throw new NotFoundException('NOT_FOUND');
     const token = randomBytes(24).toString('base64url');
-    await this.pool.query(
-      "insert into storefront_preview_tokens(id,tenant_id,store_id,template_version_id,token_hash,expires_at,status,created_by,updated_by) values($1,$2,$3,$4,$5,now()+interval '30 minutes','active',$6,$6)",
-      [randomUUID(), c.tenantId, binding.store_id, body.versionId, this.tokenHash(token), c.userId],
-    );
-    const data = {
-      expiresInSeconds: 1800,
-      path: `/c/stores/${binding.store_id}?tenant=${encodeURIComponent(binding.slug)}&preview=${encodeURIComponent(token)}&scene=storefront_preview`,
-    };
-    await this.audit(this.pool, c, 'storefront.preview_created', binding.id, r, {
-      versionId: body.versionId,
-      expiresInSeconds: data.expiresInSeconds,
-    });
-    return data;
+    let path: string;
+    if (binding) {
+      await this.pool.query(
+        "insert into storefront_preview_tokens(id,tenant_id,store_id,template_version_id,token_hash,expires_at,status,created_by,updated_by) values($1,$2,$3,$4,$5,now()+interval '30 minutes','active',$6,$6)",
+        [
+          randomUUID(),
+          c.tenantId,
+          binding.store_id,
+          body.versionId,
+          this.tokenHash(token),
+          c.userId,
+        ],
+      );
+      path = `/c/stores/${binding.store_id}?tenant=${encodeURIComponent(binding.slug)}&preview=${encodeURIComponent(token)}&scene=storefront_preview`;
+      await this.audit(this.pool, c, 'storefront.preview_created', binding.id, r, {
+        versionId: body.versionId,
+        expiresInSeconds: 1800,
+      });
+    } else {
+      await this.pool.query(
+        "insert into portal_preview_tokens(id,tenant_id,target,template_version_id,token_hash,expires_at,status,created_by,updated_by) values($1,$2,$3,$4,$5,now()+interval '30 minutes','active',$6,$6)",
+        [
+          randomUUID(),
+          c.tenantId,
+          portal.target,
+          body.versionId,
+          this.tokenHash(token),
+          c.userId,
+        ],
+      );
+      path =
+        portal.target === 'employee'
+          ? `/e/workbench?preview=${encodeURIComponent(token)}`
+          : `/?preview=${encodeURIComponent(token)}`;
+      await this.audit(this.pool, c, 'portal.preview_created', portal.id, r, {
+        versionId: body.versionId,
+        target: portal.target,
+        expiresInSeconds: 1800,
+      });
+    }
+    return { expiresInSeconds: 1800, path, target: binding ? 'consumer' : portal!.target };
   }
   private async switch(
     c: OrganizationContext,
@@ -356,10 +417,25 @@ export class PageTemplateService implements OnModuleDestroy {
           [id, c.tenantId],
         )
       ).rows[0];
+      const portalBinding = binding
+        ? null
+        : (
+            await q.query(
+              "select id,target,version from portal_bindings where template_id=$1 and tenant_id=$2 and status='active' and deleted_at is null for update",
+              [id, c.tenantId],
+            )
+          ).rows[0];
       if (binding) {
         if (body.bindingVersion !== undefined && binding.version !== version(body.bindingVersion))
           throw new ConflictException('CONFLICT');
         await this.validateStorefront(q, c, t, v.id);
+      } else if (portalBinding) {
+        if (
+          body.bindingVersion !== undefined &&
+          portalBinding.version !== version(body.bindingVersion)
+        )
+          throw new ConflictException('CONFLICT');
+        await this.validatePortal(q, c, v.id);
       }
       await q.query(
         "update page_template_versions set status='archived',updated_at=now(),updated_by=$1 where template_id=$2 and tenant_id=$3 and status='published'",
@@ -408,6 +484,23 @@ export class PageTemplateService implements OnModuleDestroy {
           c,
           publicationType === 'rollback' ? 'storefront.rolled_back.v1' : 'storefront.published.v1',
           binding.id,
+          r,
+          { ...bindingData, templateId: id },
+        );
+      } else if (portalBinding) {
+        const bindingData = (
+          await q.query(
+            'update portal_bindings set live_version_id=$1,draft_version_id=$1,published_at=now(),version=version+1,updated_at=now(),updated_by=$2 where id=$3 returning id,target,draft_version_id,live_version_id,published_at,version',
+            [v.id, c.userId, portalBinding.id],
+          )
+        ).rows[0];
+        const publicationType = action.includes('rolled_back') ? 'rollback' : 'publish';
+        Object.assign(data, { binding: bindingData, publicationType, target: portalBinding.target });
+        await this.event(
+          q,
+          c,
+          publicationType === 'rollback' ? 'portal.rolled_back.v1' : 'portal.published.v1',
+          portalBinding.id,
           r,
           { ...bindingData, templateId: id },
         );
@@ -468,10 +561,17 @@ export class PageTemplateService implements OnModuleDestroy {
   }
   private binding(t: Record<string, unknown>) {
     if (!t.binding_id) return null;
+    const target = String(t.target ?? '');
+    const isPortal = target === 'employee' || target === 'management';
     return {
       id: t.binding_id,
-      storeId: t.store_id,
-      storeName: t.store_name,
+      storeId: isPortal ? null : t.store_id,
+      storeName: isPortal
+        ? target === 'employee'
+          ? '员工工作台'
+          : '管理工作台'
+        : t.store_name,
+      target,
       draftVersionId: t.draft_version_id,
       liveVersionId: t.live_version_id,
       publishedAt: t.published_at,
@@ -506,6 +606,19 @@ export class PageTemplateService implements OnModuleDestroy {
           throw new BadRequestException('STOREFRONT_CHANNEL_LIMIT');
       }
     }
+  }
+  private async validatePortal(q: PoolClient, c: OrganizationContext, versionId: string) {
+    const modules = (
+      await q.query(
+        "select module_type,config from page_modules where template_version_id=$1 and tenant_id=$2 and status='active' and deleted_at is null order by position",
+        [versionId, c.tenantId],
+      )
+    ).rows as { module_type: string; config: unknown }[];
+    if (!modules.length || modules.length > 20) throw new BadRequestException('VALIDATION_ERROR');
+    const types = new Set(modules.map((module) => module.module_type));
+    const hasGrid = types.has('action_grid') || types.has('quick_actions');
+    if (!types.has('hero') || !hasGrid)
+      throw new BadRequestException('PORTAL_REQUIRED_MODULE_MISSING');
   }
   private async idempotent(
     c: OrganizationContext,

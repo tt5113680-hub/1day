@@ -159,6 +159,8 @@ export function StorefrontModules({
             actionUrl={actionUrl}
             money={money}
             groupedPlatformOffers={groupedPlatformOffers}
+            sourceValue={sourceValue}
+            shareCode={shareCode}
           />
         );
       case 'content_feed':
@@ -285,7 +287,7 @@ function BannerCarousel({
         eyebrow: '全平台比价',
         title: offer.title,
         copy: '价格、库存与最终优惠以第三方实际页面为准。',
-        href: storeHref(context, '/group-buy', 'banner_group_buy'),
+        href: `/c/services/${offer.serviceId}?tenant=${encodeURIComponent(data.tenant.slug)}&source=${encodeURIComponent(sourceValue)}&scene=banner_group_buy_offer${shareCode ? `&shareCode=${encodeURIComponent(shareCode)}` : ''}&storeId=${encodeURIComponent(data.store.id)}`,
       });
     }
     for (const item of data.content) {
@@ -590,6 +592,8 @@ function OfferCompare({
   actionUrl,
   money,
   groupedPlatformOffers,
+  sourceValue,
+  shareCode,
 }: {
   data: StoreDetail;
   actionUrl: (actionId: string, scene: string) => string;
@@ -599,7 +603,19 @@ function OfferCompare({
     servicePriceLabel: string | null;
     offers: StoreDetail['platformOffers'];
   }[];
+  sourceValue: string;
+  shareCode: string | null;
 }) {
+  const serviceDetailUrl = (serviceId: string, scene: string) => {
+    const params = new URLSearchParams({
+      tenant: data.tenant.slug,
+      source: sourceValue,
+      scene,
+      storeId: data.store.id,
+    });
+    if (shareCode) params.set('shareCode', shareCode);
+    return `/c/services/${serviceId}?${params.toString()}`;
+  };
   return (
     <StorefrontSection
       title="全平台团购比价"
@@ -610,17 +626,21 @@ function OfferCompare({
       {data.platformOffers.length || data.externalLinks.length ? (
         <StorefrontOfferCompare
           packages={groupedPlatformOffers.map((group) => {
+            const serviceId = group.offers[0]?.serviceId;
             const lowest = Math.min(...group.offers.map((item) => item.offerPrice));
             return {
-              key: group.offers[0]?.serviceId ?? group.serviceName,
+              key: serviceId ?? group.serviceName,
               serviceName: group.serviceName,
               servicePriceLabel: group.servicePriceLabel,
+              detailHref: serviceId
+                ? serviceDetailUrl(serviceId, 'storefront_group_buy_detail')
+                : undefined,
               rows: group.offers.map((item) => ({
                 key: item.offerId,
-                href: actionUrl(item.id, 'platform_compare_price'),
+                href: `${serviceDetailUrl(item.serviceId, 'storefront_group_buy_offer')}#offer-${item.offerId}`,
                 platformType: item.platformType,
                 title: item.title,
-                meta: `${item.marketPrice ? `划线价 ${money(item.marketPrice)}` : '平台推荐套餐'} · 商家登记于 ${new Date(item.sourceUpdatedAt).toLocaleDateString('zh-CN')}`,
+                meta: `${item.marketPrice ? `划线价 ${money(item.marketPrice)}` : '平台推荐套餐'} · 查看套餐详情 · 商家登记于 ${new Date(item.sourceUpdatedAt).toLocaleDateString('zh-CN')}`,
                 priceLabel: `团购价 ${money(item.offerPrice)}`,
                 lowest: item.offerPrice === lowest,
               })),

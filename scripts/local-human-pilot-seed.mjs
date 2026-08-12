@@ -41,6 +41,12 @@ const ids = {
   stores: [id(21), id(22), id(23)],
   template: id(31),
   templateVersion: id(32),
+  employeeTemplate: id(33),
+  employeeTemplateVersion: id(34),
+  employeePortalBinding: id(35),
+  managementTemplate: id(36),
+  managementTemplateVersion: id(37),
+  managementPortalBinding: id(38),
   action: id(41),
   meituanAction: id(42),
   douyinAction: id(43),
@@ -486,6 +492,78 @@ try {
       ],
     );
   }
+  await upsert(
+    `insert into page_templates(id,tenant_id,code,name,target,published_version_id,status,industry_config) values($1,$2,'employee-workbench','本地真人试用员工工作台','employee',$3,'active',$4)
+     on conflict (id) do update set code=excluded.code,name=excluded.name,published_version_id=excluded.published_version_id,target='employee',status='active',deleted_at=null`,
+    [ids.employeeTemplate, humanPilot.tenantA.id, ids.employeeTemplateVersion, {}],
+  );
+  await upsert(
+    `insert into page_template_versions(id,tenant_id,template_id,sequence,status) values($1,$2,$3,1,'published')
+     on conflict (id) do update set status='published',deleted_at=null`,
+    [ids.employeeTemplateVersion, humanPilot.tenantA.id, ids.employeeTemplate],
+  );
+  for (const [moduleId, type, position, config] of [
+    [id(811), 'hero', 1, {}],
+    [id(812), 'content', 2, { section: 'deep_nav' }],
+    [id(813), 'content', 3, { section: 'kpi' }],
+    [id(814), 'action_grid', 4, {}],
+    [id(815), 'result_list', 5, { queue: 'tasks' }],
+    [id(816), 'result_list', 6, { queue: 'leads' }],
+  ])
+    await upsert(
+      `insert into page_modules(id,tenant_id,template_version_id,module_type,position,config,status) values($1,$2,$3,$4,$5,$6,'active')
+       on conflict (id) do update set module_type=excluded.module_type,position=excluded.position,config=excluded.config,status='active',deleted_at=null`,
+      [moduleId, humanPilot.tenantA.id, ids.employeeTemplateVersion, type, position, config],
+    );
+  await upsert(
+    `insert into portal_bindings(id,tenant_id,target,template_id,draft_version_id,live_version_id,status,published_at,created_by,updated_by)
+     values($1,$2,'employee',$3,$4,$4,'active',now(),$5,$5)
+     on conflict (tenant_id,target) do update set template_id=excluded.template_id,draft_version_id=excluded.draft_version_id,live_version_id=excluded.live_version_id,status='active',published_at=now(),deleted_at=null,updated_by=excluded.updated_by,updated_at=now()`,
+    [
+      ids.employeePortalBinding,
+      humanPilot.tenantA.id,
+      ids.employeeTemplate,
+      ids.employeeTemplateVersion,
+      ownerUserId,
+    ],
+  );
+  await upsert(
+    `insert into page_templates(id,tenant_id,code,name,target,published_version_id,status,industry_config) values($1,$2,'management-home','本地真人试用管理工作台','management',$3,'active',$4)
+     on conflict (id) do update set code=excluded.code,name=excluded.name,published_version_id=excluded.published_version_id,target='management',status='active',deleted_at=null`,
+    [ids.managementTemplate, humanPilot.tenantA.id, ids.managementTemplateVersion, {}],
+  );
+  await upsert(
+    `insert into page_template_versions(id,tenant_id,template_id,sequence,status) values($1,$2,$3,1,'published')
+     on conflict (id) do update set status='published',deleted_at=null`,
+    [ids.managementTemplateVersion, humanPilot.tenantA.id, ids.managementTemplate],
+  );
+  for (const [moduleId, type, position, config] of [
+    [id(821), 'hero', 1, {}],
+    [id(822), 'content', 2, { section: 'deep_nav' }],
+    [id(823), 'content', 3, { section: 'summary_strip' }],
+    [id(824), 'content', 4, { section: 'kpi' }],
+    [id(825), 'action_grid', 5, {}],
+    [id(826), 'content', 6, { section: 'distribution' }],
+    [id(827), 'result_list', 7, { queue: 'anomalies' }],
+    [id(828), 'result_list', 8, { queue: 'consults' }],
+  ])
+    await upsert(
+      `insert into page_modules(id,tenant_id,template_version_id,module_type,position,config,status) values($1,$2,$3,$4,$5,$6,'active')
+       on conflict (id) do update set module_type=excluded.module_type,position=excluded.position,config=excluded.config,status='active',deleted_at=null`,
+      [moduleId, humanPilot.tenantA.id, ids.managementTemplateVersion, type, position, config],
+    );
+  await upsert(
+    `insert into portal_bindings(id,tenant_id,target,template_id,draft_version_id,live_version_id,status,published_at,created_by,updated_by)
+     values($1,$2,'management',$3,$4,$4,'active',now(),$5,$5)
+     on conflict (tenant_id,target) do update set template_id=excluded.template_id,draft_version_id=excluded.draft_version_id,live_version_id=excluded.live_version_id,status='active',published_at=now(),deleted_at=null,updated_by=excluded.updated_by,updated_at=now()`,
+    [
+      ids.managementPortalBinding,
+      humanPilot.tenantA.id,
+      ids.managementTemplate,
+      ids.managementTemplateVersion,
+      ownerUserId,
+    ],
+  );
   const storefrontContent = [
     {
       service: ['生椰拿铁双杯', '生椰拿铁 × 2，到店自取', '¥38', '¥18.80'],
@@ -625,6 +703,18 @@ try {
       { visible: true, sortOrder: 1 },
     ],
   );
+  // Channel/circle operators need scoped data_scopes or merchant-onboarding writes return 403.
+  for (const [scopeId, accountKey, scopeType, scopeValue] of [
+    [id(900), 'channel', 'channel', ids.channel],
+    [id(901), 'circle', 'circle', ids.circle],
+  ]) {
+    const entry = account(accountKey);
+    await upsert(
+      `insert into data_scopes(id,tenant_id,membership_id,scope_type,scope_value,status) values($1,$2,$3,$4,$5,'active')
+       on conflict (membership_id,scope_type,scope_value) do update set status='active',deleted_at=null`,
+      [scopeId, systemTenant, entry.membershipId, scopeType, scopeValue],
+    );
+  }
   await pool.query('commit');
   globalThis.console.log(
     JSON.stringify(

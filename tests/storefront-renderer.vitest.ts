@@ -49,7 +49,7 @@ describe('storefront-renderer module contract', () => {
 
 describe('design token completeness', () => {
   it('exposes brand-50 and mirrored CSS var names', () => {
-    expect(designTokens.color.brand50).toBe('#f3f8f4');
+    expect(designTokens.color.brand50).toBe('#fffbea');
     expect(designTokenCssVars.brand50).toBe('--od-brand-50');
     expect(designTokens.font.display).toContain('Avenir Next');
   });

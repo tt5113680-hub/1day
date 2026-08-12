@@ -106,6 +106,17 @@ export default function StoreChannel({
     if (context.shareCode) params.set('shareCode', context.shareCode);
     return `/c/actions/${actionId}?${params.toString()}`;
   };
+  const serviceDetailHref = (serviceId: string, scene: string, offerId?: string) => {
+    const params = new URLSearchParams({
+      tenant: context.tenant,
+      source: context.source ?? 'consumer:storefront',
+      scene,
+      storeId: context.storeId,
+    });
+    if (context.shareCode) params.set('shareCode', context.shareCode);
+    const base = `/c/services/${serviceId}?${params.toString()}`;
+    return offerId ? `${base}#offer-${offerId}` : base;
+  };
   const enroll = async () => {
     setJoining(true);
     setMembershipNote('');
@@ -504,21 +515,32 @@ export default function StoreChannel({
               )}
               {groups.length ? (
                 groups.map((group) => {
+                  const serviceId = group.offers[0]?.serviceId;
                   const lowest = Math.min(...group.offers.map((item) => item.offerPrice));
                   return (
                     <article className={styles.package} key={group.name}>
                       <header>
                         <span>门店推荐套餐 · 外链比价</span>
-                        <strong>{group.name}</strong>
+                        {serviceId ? (
+                          <a
+                            className={styles.packageTitle}
+                            href={serviceDetailHref(serviceId, 'group_buy_package_detail')}
+                          >
+                            <strong>{group.name}</strong>
+                            <small>查看套餐详情 ›</small>
+                          </a>
+                        ) : (
+                          <strong>{group.name}</strong>
+                        )}
                         {group.price && <small>门店参考价 {group.price}</small>}
                       </header>
                       {group.offers.map((offer) => (
                         <a
                           className={styles.platformRow}
-                          href={actionHref(
-                            offer.id,
-                            'group_buy_compare',
-                            storeHref(context, '/group-buy', 'tab_group-buy'),
+                          href={serviceDetailHref(
+                            offer.serviceId,
+                            'group_buy_offer_detail',
+                            offer.offerId,
                           )}
                           key={offer.offerId}
                         >
@@ -537,8 +559,8 @@ export default function StoreChannel({
                             <strong>{offer.title || platformName(offer.platformType)}</strong>
                             <small>
                               {offer.marketPrice
-                                ? `划线价 ${money(offer.marketPrice)} · 经确认前往`
-                                : '平台套餐入口 · 经确认前往'}
+                                ? `划线价 ${money(offer.marketPrice)} · 查看套餐详情`
+                                : '平台套餐 · 查看套餐详情'}
                             </small>
                           </span>
                           <b>

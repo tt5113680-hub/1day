@@ -22,7 +22,7 @@ test('W∞-78: employee workbench adds real-data distribution panel', () => {
   assert.match(p, /到期窗口分布/);
   assert.match(p, /来源分布/);
   assert.match(p, /行动机会分布/);
-  assert.match(p, /summaryStrip/);
+  assert.match(p, /EmployeeWorkbenchKpiStrip/);
   assert.match(p, /barWidth\(/);
   assert.match(p, /countBy\(/);
   assert.match(c, /\.distribution/);

@@ -69,7 +69,33 @@ export class ChannelDashboardService implements OnModuleDestroy {
         renewalSignal,
       };
     });
-    return { metrics: metrics.rows[0], merchants };
+    const renewalQueue = merchants
+      .filter((m) => m.renewalSignal)
+      .slice(0, 8)
+      .map((m) => ({
+        membershipId: m.membershipId,
+        tenantId: m.tenantId,
+        name: m.name,
+        channelName: m.channelName,
+        signal: m.renewalSignal,
+        deepLink: `/p/tenants/${m.tenantId}`,
+      }));
+    const onboardingQueue = merchants
+      .filter((m) => m.onboardingStatus === 'invited' || m.onboardingStatus === 'onboarding')
+      .slice(0, 8)
+      .map((m) => ({
+        membershipId: m.membershipId,
+        tenantId: m.tenantId,
+        name: m.name,
+        channelName: m.channelName,
+        onboardingStatus: m.onboardingStatus,
+        deepLink: `/ch/merchants/new?tenant=${m.tenantId}`,
+      }));
+    return {
+      metrics: metrics.rows[0],
+      merchants,
+      queues: { renewal: renewalQueue, onboarding: onboardingQueue },
+    };
   }
 
   async onModuleDestroy() {

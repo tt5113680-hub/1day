@@ -42,8 +42,9 @@ type Preview = {
   };
   binding: {
     id: string;
-    storeId: string;
+    storeId: string | null;
     storeName: string;
+    target?: string;
     draftVersionId: string;
     liveVersionId: string;
     version: number;
@@ -55,6 +56,8 @@ type Preview = {
 
 const api = process.env.NEXT_PUBLIC_API_BASE_URL ?? 'http://127.0.0.1:3001';
 const consumer = process.env.NEXT_PUBLIC_CONSUMER_BASE_URL ?? 'http://localhost:3002';
+const employee = process.env.NEXT_PUBLIC_EMPLOYEE_BASE_URL ?? 'http://localhost:3003';
+const managementHome = process.env.NEXT_PUBLIC_MANAGEMENT_BASE_URL ?? 'http://localhost:3004';
 const sessionApi = new SessionApiClient(api);
 
 const CHANNEL_OPTIONS = [
@@ -105,6 +108,7 @@ export default function PageBuilder() {
     [selected, setSelected] = useState<Preview | null>(null),
     [modules, setModules] = useState<Module[]>([]),
     [previewPath, setPreviewPath] = useState(''),
+    [previewTarget, setPreviewTarget] = useState('consumer'),
     [note, setNote] = useState(''),
     [saving, setSaving] = useState(false);
   const headers = () => ({ 'content-type': 'application/json' });
@@ -135,6 +139,7 @@ export default function PageBuilder() {
     setSelected(data);
     setModules(data.modules);
     setPreviewPath('');
+    setPreviewTarget('consumer');
   };
   const createDraft = async () => {
     if (!selected?.version) return;
@@ -244,8 +249,13 @@ export default function PageBuilder() {
       },
     );
     if (!response.ok) return setNote('无法生成安全预览链接。');
-    setPreviewPath((await response.json()).data.path);
-    setNote('30 分钟安全预览已生成；页面使用与正式数字门店相同的消费者渲染器。');
+    const payload = (await response.json()).data as {
+      path: string;
+      target?: string;
+    };
+    setPreviewPath(payload.path);
+    setPreviewTarget(payload.target ?? selected.template.target ?? 'consumer');
+    setNote('30 分钟安全预览已生成；页面使用与正式端相同的渲染器。');
   };
   const switchVersion = async (versionId: string, mode: 'publish' | 'rollback') => {
     if (!selected) return;
@@ -320,7 +330,11 @@ export default function PageBuilder() {
           : target;
   const publishLabel = (template: Template) =>
     template.live_version_id
-      ? '数字门店已发布'
+      ? template.target === 'employee'
+        ? '员工工作台已发布'
+        : template.target === 'management'
+          ? '管理工作台已发布'
+          : '数字门店已发布'
       : template.published_version_id
         ? '模板已发布未绑定'
         : '尚未发布';
@@ -344,7 +358,12 @@ export default function PageBuilder() {
     const familyKey = familyLabel(template.industry_config?.family);
     familyCounts.set(familyKey, (familyCounts.get(familyKey) ?? 0) + 1);
     if (template.live_version_id) {
-      const storeKey = template.store_name?.trim() || '未绑定门店';
+      const storeKey =
+        template.target === 'employee'
+          ? '员工工作台'
+          : template.target === 'management'
+            ? '管理工作台'
+            : template.store_name?.trim() || '未绑定门店';
       storeCounts.set(storeKey, (storeCounts.get(storeKey) ?? 0) + 1);
     }
   }
@@ -371,7 +390,7 @@ export default function PageBuilder() {
 
       <section className={styles.heroCard} aria-label="入口页装修说明">
         <h1>在固定业务模块内维护模板、预览与版本</h1>
-        <p>草稿、手机/PC 预览、发布和回滚共用一套 Storefront 绑定；业务对象保持各自唯一真源。</p>
+        <p>草稿、手机/PC 预览、发布和回滚共用一套绑定；消费者数字门店、员工 H5 与管理工作台均可装修。</p>
       </section>
 
       <section className={styles.summaryStrip} aria-label="入口页装修概况">
@@ -668,11 +687,15 @@ export default function PageBuilder() {
               {previewPath ? (
                 <a
                   className={styles.previewLink}
-                  href={`${consumer}${previewPath}`}
+                  href={`${previewTarget === 'employee' ? employee : previewTarget === 'management' ? managementHome : consumer}${previewPath}`}
                   target="_blank"
                   rel="noreferrer"
                 >
-                  在消费者渲染器打开安全预览
+                  {previewTarget === 'employee'
+                    ? '在员工 H5 打开安全预览'
+                    : previewTarget === 'management'
+                      ? '在管理工作台打开安全预览'
+                      : '在消费者渲染器打开安全预览'}
                 </a>
               ) : null}
               {selected.binding &&

@@ -4,6 +4,7 @@ import { SessionApiClient } from '@oneday/session-client';
 import { AppStatePanel, Button, StatusBadge } from '@oneday/ui';
 import { useCallback, useEffect, useState } from 'react';
 import styles from '../_commerce.module.css';
+import { ManagementEarlyMeetingKpi } from '../management-early-meeting-kpi';
 
 type ReviewRow = {
   id: string;
@@ -83,6 +84,8 @@ export default function CommerceReviewsPage() {
         <h1>评价档案</h1>
         <p>本地试点评价记录与平均分（租户隔离）。来源如实标注；不接第三方评价流，不伪造评分。</p>
       </section>
+
+      <ManagementEarlyMeetingKpi page="reviews" />
 
       <p className={styles.honest} role="status">
         评价骨架为本地试点数据（source=local）。推广员工具只做档案与回复痕迹；不接美团评价接口，不伪造第三方评价分。

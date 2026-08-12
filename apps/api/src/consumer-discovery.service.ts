@@ -94,7 +94,13 @@ export class ConsumerDiscoveryService implements OnModuleDestroy {
         ? []
         : (
             await this.pool.query(
-              `select m.id,m.name,t.slug as tenant_slug,l.latitude,l.longitude,l.address_label,s.id as store_id
+              `select m.id,m.name,t.slug as tenant_slug,l.latitude,l.longitude,l.address_label,s.id as store_id,
+                (select round(avg(r.rating)::numeric,1) from store_reviews r
+                   where r.store_id=s.id and r.tenant_id=m.tenant_id and r.status='active' and r.deleted_at is null) as review_avg,
+                (select count(*)::int from entry_funnel_events e
+                   where e.target_store_id=s.id and e.deleted_at is null
+                     and e.event_code in ('visit','view')
+                     and e.occurred_at>=now()-interval '30 days') as entry_visits_30d
                from merchant_locations l
                join merchants m on m.id=l.merchant_id and m.tenant_id=l.tenant_id
                join tenants t on t.id=m.tenant_id and t.status='active' and t.deleted_at is null
@@ -126,10 +132,11 @@ export class ConsumerDiscoveryService implements OnModuleDestroy {
                     Number(row.longitude),
                   ).toFixed(1),
                 );
-                // Local pilot display scores only — not third-party review claims.
-                const seed = [...String(row.id)].reduce((sum, ch) => sum + ch.charCodeAt(0), 0);
-                const rating = Number((4.2 + (seed % 8) / 10).toFixed(1));
-                const salesHint = 80 + (seed % 420);
+                const signals = this.storeSignals(
+                  String(row.id),
+                  row.review_avg,
+                  Number(row.entry_visits_30d ?? 0),
+                );
                 return {
                   id: row.id,
                   name: row.name,
@@ -138,9 +145,7 @@ export class ConsumerDiscoveryService implements OnModuleDestroy {
                     ? `/c/stores/${row.store_id}?tenant=${row.tenant_slug}`
                     : null,
                   distanceKm: distanceKmValue,
-                  rating,
-                  ratingSource: 'local_pilot' as const,
-                  salesHint,
+                  ...signals,
                 };
               })
               .filter((row) => row.distanceKm <= 20)
@@ -173,7 +178,13 @@ export class ConsumerDiscoveryService implements OnModuleDestroy {
     const pattern = `%${term.replace(/[%_]/g, '\\$&')}%`;
     const rows = (
       await this.pool.query(
-        `select m.id,m.name,s.id as store_id,l.latitude,l.longitude,l.address_label
+        `select m.id,m.name,s.id as store_id,l.latitude,l.longitude,l.address_label,
+          (select round(avg(r.rating)::numeric,1) from store_reviews r
+             where r.store_id=s.id and r.tenant_id=m.tenant_id and r.status='active' and r.deleted_at is null) as review_avg,
+          (select count(*)::int from entry_funnel_events e
+             where e.target_store_id=s.id and e.deleted_at is null
+               and e.event_code in ('visit','view')
+               and e.occurred_at>=now()-interval '30 days') as entry_visits_30d
          from merchants m
          join lateral (
            select id from stores s
@@ -189,9 +200,11 @@ export class ConsumerDiscoveryService implements OnModuleDestroy {
       )
     ).rows;
     const items = rows.map((row) => {
-      const seed = [...String(row.id)].reduce((sum, ch) => sum + ch.charCodeAt(0), 0);
-      const rating = Number((4.2 + (seed % 8) / 10).toFixed(1));
-      const salesHint = 80 + (seed % 420);
+      const signals = this.storeSignals(
+        String(row.id),
+        row.review_avg,
+        Number(row.entry_visits_30d ?? 0),
+      );
       let distanceKmValue: number | null = null;
       if (latitude !== undefined && typeof row.latitude === 'number') {
         distanceKmValue = Number(
@@ -208,16 +221,44 @@ export class ConsumerDiscoveryService implements OnModuleDestroy {
         name: row.name,
         address: typeof row.address_label === 'string' ? row.address_label : null,
         entryUrl: `/c/stores/${row.store_id}?tenant=${tenant.slug}`,
-        rating,
-        ratingSource: 'local_pilot' as const,
-        salesHint,
         distanceKm: distanceKmValue,
+        ...signals,
       };
     });
     return {
       tenant: { slug: tenant.slug, name: tenant.name },
       query: term,
       items,
+    };
+  }
+
+  private pilotDisplay(id: string) {
+    const seed = [...String(id)].reduce((sum, ch) => sum + ch.charCodeAt(0), 0);
+    return {
+      rating: Number((4.2 + (seed % 8) / 10).toFixed(1)),
+      salesHint: 80 + (seed % 420),
+    };
+  }
+
+  private storeSignals(merchantId: string, reviewAvg: unknown, entryVisits30d: number) {
+    const pilot = this.pilotDisplay(merchantId);
+    const avg = reviewAvg != null ? Number(reviewAvg) : null;
+    const salesSource: 'entry_visits_30d' | 'local_pilot' =
+      entryVisits30d > 0 ? 'entry_visits_30d' : 'local_pilot';
+    const salesHint = entryVisits30d > 0 ? entryVisits30d : pilot.salesHint;
+    if (avg != null && avg > 0) {
+      return {
+        rating: avg,
+        ratingSource: 'store_reviews' as const,
+        salesHint,
+        salesSource,
+      };
+    }
+    return {
+      rating: pilot.rating,
+      ratingSource: 'local_pilot' as const,
+      salesHint,
+      salesSource,
     };
   }
 

@@ -20,6 +20,7 @@ import { ResultEvidenceController } from './result-evidence.controller';
 import { ResultEvidenceService } from './result-evidence.service';
 import { PageTemplateController } from './page-template.controller';
 import { PageTemplateService } from './page-template.service';
+import { PortalLayoutService } from './portal-layout.service';
 import { ExternalActionController } from './external-action.controller';
 import { ExternalActionService } from './external-action.service';
 import { WorkflowController } from './workflow.controller';
@@ -210,6 +211,7 @@ import { EmployeeManagedStoresController } from './employee-managed-stores.contr
     TaskService,
     ResultEvidenceService,
     PageTemplateService,
+    PortalLayoutService,
     ExternalActionService,
     WorkflowService,
     ConsumerEntryService,

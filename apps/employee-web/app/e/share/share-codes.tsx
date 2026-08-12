@@ -5,6 +5,7 @@ import { AppStatePanel, Button } from '@oneday/ui';
 import QRCode from 'qrcode';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import styles from './share.module.css';
+import { EmployeeWorkbenchKpi } from '../employee-workbench-kpi';
 
 type ShareCode = {
   id: string;
@@ -211,6 +212,9 @@ export function ShareCodes() {
           生成员工、活动、渠道分享码；消费者打开后的观看/访问/跳转痕迹会进入入口漏斗。记录来源码、场景与打开次数，并与看板「分享配对」对齐；失效码将被服务端拒绝。不含第三方成交结果。
         </p>
       </section>
+
+      <EmployeeWorkbenchKpi page="share" />
+
       <section className={styles.panel}>
         <div className={styles.panelHead}>
           <h2>分享数据概况</h2>

@@ -35,15 +35,41 @@ export class CircleDashboardService implements OnModuleDestroy {
         params,
       ),
     ]);
+    const circleList = circles.rows.map((row) => ({
+      id: row.id,
+      code: row.code,
+      name: row.name,
+      description: row.description,
+      merchants: row.merchants,
+    }));
+    const merchantQueue = circleList
+      .flatMap((circle) =>
+        (
+          circle.merchants as Array<{
+            merchantTenantId: string;
+            name: string;
+            slug: string;
+            trafficEvents: number;
+            conversionOrders: number;
+          }>
+        ).map((merchant) => ({
+          circleId: circle.id,
+          circleName: circle.name,
+          tenantId: merchant.merchantTenantId,
+          name: merchant.name,
+          slug: merchant.slug,
+          trafficEvents: merchant.trafficEvents,
+          conversionOrders: merchant.conversionOrders,
+          deepLink: `/bc/merchants?tenant=${merchant.merchantTenantId}`,
+        })),
+      )
+      .filter((m) => m.trafficEvents > 0 && m.conversionOrders === 0)
+      .sort((a, b) => b.trafficEvents - a.trafficEvents)
+      .slice(0, 8);
     return {
       metrics: metrics.rows[0],
-      circles: circles.rows.map((row) => ({
-        id: row.id,
-        code: row.code,
-        name: row.name,
-        description: row.description,
-        merchants: row.merchants,
-      })),
+      circles: circleList,
+      queues: { trafficWithoutConversion: merchantQueue },
     };
   }
 

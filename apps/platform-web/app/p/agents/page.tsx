@@ -1,6 +1,6 @@
 'use client';
 import { SessionApiClient } from '@oneday/session-client';
-import { AppStatePanel, Button, Card, StatusBadge, businessLabel } from '@oneday/ui';
+import { AppStatePanel, Button, StatusBadge, businessLabel } from '@oneday/ui';
 
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import styles from './page.module.css';
@@ -601,7 +601,7 @@ export default function AgentsPage() {
         </p>
       )}
       <section className={styles.grid}>
-        <Card className={styles.panel}>
+        <section className={styles.panel}>
           <h2>建立区域</h2>
           <label>
             区域编码
@@ -654,8 +654,8 @@ export default function AgentsPage() {
           <Button loading={saving} onClick={() => void createRegion()}>
             建立区域
           </Button>
-        </Card>
-        <Card className={styles.panel}>
+        </section>
+        <section className={styles.panel}>
           <h2>绑定代理商到区域</h2>
           <label>
             区域
@@ -721,9 +721,9 @@ export default function AgentsPage() {
           <Button loading={saving} onClick={() => void createAgent()}>
             绑定代理商
           </Button>
-        </Card>
+        </section>
       </section>
-      <Card className={styles.affiliatePanel}>
+      <section className={styles.affiliatePanel}>
         <h2>商户入驻开通 · 归属到代理商</h2>
         <select
           aria-label="选择代理商"
@@ -756,12 +756,12 @@ export default function AgentsPage() {
         >
           商户入驻归属
         </Button>
-      </Card>
-      <Card className={styles.tree}>
+      </section>
+      <section className={styles.tree}>
         <h2>省市区代理树</h2>
         {poolRows(data.regions, agentByRegion)}
-      </Card>
-      <Card className={styles.tree}>
+      </section>
+      <section className={styles.tree}>
         <h2>商户归属记录</h2>
         {data.affiliations.length ? (
           <div className={styles.affiliations}>
@@ -784,11 +784,11 @@ export default function AgentsPage() {
         ) : (
           <p className={styles.empty}>尚未归属任何商户。开通并归属后，代理商后台可见商户池。</p>
         )}
-      </Card>
+      </section>
 
       <h2 className={styles.opsHeading}>代理商深层运营</h2>
       <section className={styles.opsGrid}>
-        <Card className={styles.panel}>
+        <section className={styles.panel}>
           <h2>入驻配额</h2>
           <label>
             代理商
@@ -818,8 +818,8 @@ export default function AgentsPage() {
           <Button loading={saving} onClick={() => void setQuota()}>
             保存配额
           </Button>
-        </Card>
-        <Card className={styles.panel}>
+        </section>
+        <section className={styles.panel}>
           <h2>周期结算</h2>
           <label>
             代理商
@@ -877,8 +877,8 @@ export default function AgentsPage() {
           <Button loading={saving} onClick={() => void createSettlement()}>
             开启结算期
           </Button>
-        </Card>
-        <Card className={styles.panel}>
+        </section>
+        <section className={styles.panel}>
           <h2>入驻开通审批</h2>
           <label>
             代理商
@@ -917,10 +917,10 @@ export default function AgentsPage() {
           >
             发起入驻开通审批
           </Button>
-        </Card>
+        </section>
       </section>
 
-      <Card className={styles.tree}>
+      <section className={styles.tree}>
         <h2>结算记录</h2>
         {data.settlements.length ? (
           <div className={styles.affiliations}>
@@ -955,9 +955,9 @@ export default function AgentsPage() {
         ) : (
           <p className={styles.empty}>尚无结算记录。开启结算期后，可在此按归属商户数结算。</p>
         )}
-      </Card>
+      </section>
 
-      <Card className={styles.tree}>
+      <section className={styles.tree}>
         <h2>入驻开通审批记录</h2>
         {data.approvals.length ? (
           <div className={styles.affiliations}>
@@ -1006,7 +1006,7 @@ export default function AgentsPage() {
         ) : (
           <p className={styles.empty}>尚无入驻审批。通过后商户自动归属该代理商。</p>
         )}
-      </Card>
+      </section>
     </main>
   );
 

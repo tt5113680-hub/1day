@@ -10,6 +10,7 @@ import { randomUUID } from 'node:crypto';
 import { type PoolClient } from 'pg';
 import { createApiPool } from './database-pool';
 import type { OrganizationContext } from './organization.service';
+import { PortalLayoutService } from './portal-layout.service';
 
 const UUID = /^[0-9a-f-]{36}$/i;
 const trace = 'page-e-001';
@@ -18,18 +19,52 @@ const trace = 'page-e-001';
 export class EmployeeWorkbenchService implements OnModuleDestroy {
   private readonly pool = createApiPool();
 
-  async overview(context: OrganizationContext) {
+  constructor(private readonly portalLayout: PortalLayoutService) {}
+
+  async overview(context: OrganizationContext, previewToken?: string) {
     const employee = await this.employee(context);
-    const result = await this.pool.query(
-      `select t.id,t.title,t.due_at,t.status,t.escalation_level,t.version,
+    const [result, statsRow, leadRows, shareRows] = await Promise.all([
+      this.pool.query(
+        `select t.id,t.title,t.due_at,t.status,t.escalation_level,t.version,
               c.id as customer_id,c.display_name as customer_name
        from tasks t
        left join customers c on c.id=t.customer_id and c.tenant_id=t.tenant_id and c.deleted_at is null
        where t.tenant_id=$1 and t.assignee_employee_id=$2 and t.deleted_at is null
          and t.status in ('open','overdue')
        order by case when t.status='overdue' then 0 else 1 end,t.due_at asc`,
-      [context.tenantId, employee.id],
-    );
+        [context.tenantId, employee.id],
+      ),
+      this.pool.query(
+        `select
+          (select count(*)::int from tasks where tenant_id=$1 and assignee_employee_id=$2 and deleted_at is null and status in ('open','overdue')) as all_open_tasks,
+          (select count(*)::int from tasks where tenant_id=$1 and assignee_employee_id=$2 and deleted_at is null and status='overdue') as overdue_tasks,
+          (select count(*)::int from employee_lead_pool_entries where tenant_id=$1 and assignee_employee_id=$2 and deleted_at is null and status='claimed') as claimed_leads,
+          (select count(*)::int from employee_lead_pool_entries where tenant_id=$1 and deleted_at is null and status='open') as pool_leads,
+          (select count(*)::int from employee_share_codes where tenant_id=$1 and employee_id=$2 and deleted_at is null and status='active') as active_share_codes,
+          (select count(*)::int from employee_share_code_events e
+             join employee_share_codes s on s.id=e.share_code_id and s.tenant_id=e.tenant_id
+             where s.tenant_id=$1 and s.employee_id=$2 and e.deleted_at is null and e.event_type='opened' and e.created_at::date=current_date) as share_opens_today,
+          (select count(*)::int from member_benefit_ledger l
+             where l.tenant_id=$1 and l.deleted_at is null and l.entry_type='redeem' and l.created_at::date=current_date
+               and l.created_by=$3) as redemptions_today`,
+        [context.tenantId, employee.id, context.userId],
+      ),
+      this.pool.query(
+        `select l.id, c.display_name, l.status, l.created_at
+         from employee_lead_pool_entries l
+         join customers c on c.id=l.customer_id and c.tenant_id=l.tenant_id and c.deleted_at is null
+         where l.tenant_id=$1 and l.deleted_at is null and (l.status='open' or l.assignee_employee_id=$2)
+         order by l.created_at desc limit 6`,
+        [context.tenantId, employee.id],
+      ),
+      this.pool.query(
+        `select s.id, s.code, s.scenario, s.expires_at, s.status
+         from employee_share_codes s
+         where s.tenant_id=$1 and s.employee_id=$2 and s.deleted_at is null and s.status='active'
+         order by s.created_at desc limit 6`,
+        [context.tenantId, employee.id],
+      ),
+    ]);
     const tasks = result.rows.map((row) => ({
       id: row.id,
       title: row.title,
@@ -54,7 +89,33 @@ export class EmployeeWorkbenchService implements OnModuleDestroy {
             : '来源：今日待办时限信号，建议在到期前完成客户动作。',
         source: 'task_due_signal',
       })),
+      stats: {
+        allOpenTasks: statsRow.rows[0].all_open_tasks,
+        overdueTasks: statsRow.rows[0].overdue_tasks,
+        claimedLeads: statsRow.rows[0].claimed_leads,
+        poolLeads: statsRow.rows[0].pool_leads,
+        activeShareCodes: statsRow.rows[0].active_share_codes,
+        shareOpensToday: statsRow.rows[0].share_opens_today,
+        redemptionsToday: statsRow.rows[0].redemptions_today,
+      },
+      queues: {
+        leads: leadRows.rows.map((row) => ({
+          id: row.id,
+          title: row.display_name,
+          status: row.status,
+          occurredAt: row.created_at,
+          deepLink: '/e/leads',
+        })),
+        shareCodes: shareRows.rows.map((row) => ({
+          id: row.id,
+          title: row.code,
+          scenario: row.scenario,
+          expiresAt: row.expires_at,
+          deepLink: '/e/share',
+        })),
+      },
       generatedAt: new Date().toISOString(),
+      layout: await this.portalLayout.resolve(context.tenantId, 'employee', previewToken),
     };
   }
 

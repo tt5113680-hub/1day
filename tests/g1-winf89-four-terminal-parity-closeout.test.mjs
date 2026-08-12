@@ -24,7 +24,7 @@ const mgmtMain = [
   ['orders', 'orders', '订单痕迹', '订单痕迹概况'],
   ['reviews', 'reviews', '评价档案', '评价概况'],
   ['marketing', 'marketing', '营销档案', '营销概况'],
-  ['analytics', 'analytics', '数据/经营分析', '今日经营概况'],
+  ['analytics', 'analytics', '数据/经营分析', '入口痕迹日报（L0–L2）'],
   ['employee-management', 'organization-employees', '员工管理', '员工管理概况'],
   ['roles-permissions', 'roles-permissions', '角色权限', '角色权限概况'],
   ['content', 'content', '营销内容', '营销内容概况'],
@@ -38,7 +38,10 @@ const mgmtMain = [
   ['orphan-ai', 'ai-suggestions', '作业建议', '作业建议概况'],
   ['orphan-permission-audit', 'permission-audit', '操作审计', '审计摘要'],
   ['orphan-circles', 'circles', '商圈双身份', '商圈概况'],
+  ['employee-process-performance', 'employee-process-performance', '员工表现', '员工概况'],
 ];
+
+const mgmtDeep = (route) => read(`apps/management-web/app/m/${route}/page.tsx`);
 
 test('G1-W∞-89: every Management MPC main surface carries tool-identity topbar + summaryStrip + honest no-native-checkout boundary', () => {
   for (const [name, route, topbarLabel, stripLabel] of mgmtMain) {
@@ -88,21 +91,35 @@ test('G1-W∞-89: /m/dashboard + /m/stores + /m/offers + /m/customers + /m/membe
 const employeeMain = [
   ['workbench', 'workbench/workbench.tsx', '工作台', '', ''],
   ['task-inbox', 'tasks/task-inbox.tsx', '任务收件箱', '', ''],
-  ['customer-directory', 'customers/customer-directory.tsx', '客户档案', '客户跟进分布', ''],
-  ['store-home', 'store/store-home.tsx', '门店入口', '', ''],
+  ['customer-directory', 'customers/customer-directory.tsx', '客户目录', '客户跟进分布', ''],
+  ['nurture', 'nurture/nurture-workbench.tsx', '客户跟进', '客户跟进队列概况', ''],
+  ['share', 'share/share-codes.tsx', '获客分享', '分享数据概况', ''],
+  ['store-home', 'store/store-home.tsx', '店长模式', '', ''],
   ['membership-redeem', 'memberships/membership-redeem.tsx', '会员核销', '会员核销分布', ''],
   ['notification-center', 'notifications/notification-center.tsx', '执行提醒', '', ''],
   ['employee-profile', 'profile/employee-profile.tsx', '我的', '', ''],
   ['lead-pool', 'leads/lead-pool.tsx', '获客池', '', ''],
 ];
 
+const employeeDeep = [
+  ['task-detail', 'tasks/[id]/task-detail.tsx', '任务详情', '任务详情概况'],
+  ['customer-detail', 'customers/[id]/customer-detail.tsx', '客户详情', '客户详情概况'],
+  ['follow-up', 'tasks/[id]/follow-up/follow-up.tsx', '任务跟进', ''],
+];
+
 test('G1-W∞-89: every Employee ME main surface carries tool identity + real-data summary/hero + honest boundary', () => {
-  for (const [name, file, , stripMarker] of employeeMain) {
+  for (const [name, file, topbarLabel, stripMarker] of employeeMain) {
     const page = employee(file);
     assert.ok(
       new RegExp('推广员工具').test(page),
       `Employee ${name} should carry tool-identity mark`,
     );
+    if (topbarLabel) {
+      assert.ok(
+        new RegExp(`推广员工具 · ${topbarLabel}`).test(page),
+        `Employee ${name} should carry 推广员工具 · ${topbarLabel} topbar`,
+      );
+    }
     assert.match(
       page,
       /summaryStrip|heroCard/,
@@ -120,6 +137,42 @@ test('G1-W∞-89: every Employee ME main surface carries tool identity + real-da
       `Employee ${name} should keep honest no-native-checkout boundary`,
     );
   }
+});
+
+test('G1-W∞-89: employee detail and follow-up surfaces keep full-parity chrome + honest boundary', () => {
+  for (const [name, file, topbarLabel, stripMarker] of employeeDeep) {
+    const page = employee(file);
+    assert.ok(
+      new RegExp(`推广员工具 · ${topbarLabel}`).test(page),
+      `Employee ${name} should carry 推广员工具 · ${topbarLabel} topbar`,
+    );
+    assert.match(page, /styles\.topBar/, `Employee ${name} should use topBar chrome`);
+    assert.match(page, /styles\.heroCard/, `Employee ${name} should use heroCard chrome`);
+    if (stripMarker) {
+      assert.ok(
+        new RegExp(`aria-label="${stripMarker}"`).test(page),
+        `Employee ${name} should carry ${stripMarker}`,
+      );
+    }
+    assert.match(
+      page,
+      /非本平台下单|不代履约美团|source=local|不包含本平台收款/,
+      `Employee ${name} should keep honest boundary`,
+    );
+  }
+});
+
+test('G1-W∞-89: management deep surfaces employee-process-performance and funnels detail stay guarded', () => {
+  const employeePerf = mgmtDeep('employee-process-performance');
+  assert.match(employeePerf, /推广员工具 · 员工表现/);
+  assert.match(employeePerf, /summaryStrip/);
+  assert.match(employeePerf, /aria-label="员工概况"/);
+  assert.match(employeePerf, /非本平台下单/);
+
+  const funnel = mgmtDeep('funnels/[id]');
+  assert.match(funnel, /推广员工具 · 来源归因漏斗/);
+  assert.match(funnel, /summaryStrip/);
+  assert.match(funnel, /非本平台下单/);
 });
 
 const consumerMain = [
@@ -186,6 +239,15 @@ test('G1-W∞-89: every Platform/Channel/Circle main surface carries tool identi
       `Platform ${name} should keep honest no-native-checkout boundary`,
     );
   }
+});
+
+test('G1-W∞-89: platform channels embeds read-only geo agent tree for MP-01 channel parity', () => {
+  const page = read('apps/platform-web/app/p/channels/page.tsx');
+  assert.match(page, /aria-label="省市区代理树"/);
+  assert.match(page, /aria-label="省市区代理树概况"/);
+  assert.match(page, /\/api\/v1\/platform\/agents/);
+  assert.match(page, /\/p\/agents/);
+  assert.match(page, /renderGeoTree/);
 });
 
 test('G1-W∞-89: /m/workflows remains the sole ONEDAY-custom page (no Meituan parity claim)', () => {

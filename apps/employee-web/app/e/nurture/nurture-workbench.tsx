@@ -4,6 +4,7 @@ import { AppStatePanel, Button } from '@oneday/ui';
 
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import styles from './nurture-workbench.module.css';
+import { EmployeeWorkbenchKpi } from '../employee-workbench-kpi';
 
 type Profile = {
   customerId: string;
@@ -197,6 +198,8 @@ export function NurtureWorkbench() {
           不碰销售成交、不含支付金额与第三方订单结果状态断言。
         </p>
       </section>
+
+      <EmployeeWorkbenchKpi page="nurture" />
 
       {message ? (
         <p className={styles.feedback} role="status">
