@@ -1,6 +1,6 @@
 'use client';
 import { SessionApiClient } from '@oneday/session-client';
-import { AppStatePanel, Button, Card, StatusBadge } from '@oneday/ui';
+import { AppStatePanel, Button } from '@oneday/ui';
 
 import QRCode from 'qrcode';
 import { useCallback, useEffect, useMemo, useState } from 'react';
@@ -21,6 +21,25 @@ type ShareCode = {
 const api = process.env.NEXT_PUBLIC_API_BASE_URL ?? 'http://127.0.0.1:3001';
 const sessionApi = new SessionApiClient(api);
 const labels = { employee: '员工码', campaign: '活动码', channel: '渠道码' };
+const statusLabels = {
+  active: '进行中',
+  expired: '已过期',
+  revoked: '已失效',
+};
+
+const barWidth = (total: number, value: number) =>
+  total > 0 ? `${Math.max(3, Math.round((value / total) * 100))}%` : '0%';
+
+const countBy = (items: ShareCode[], keyOf: (item: ShareCode) => string) => {
+  const buckets = new Map<string, number>();
+  for (const item of items) {
+    const key = keyOf(item);
+    buckets.set(key, (buckets.get(key) ?? 0) + 1);
+  }
+  return [...buckets.entries()]
+    .map(([label, value]) => ({ label, value }))
+    .sort((a, b) => b.value - a.value);
+};
 
 export function ShareCodes() {
   const [state, setState] = useState<'loading' | 'ready' | 'forbidden' | 'error'>('loading');
@@ -167,49 +186,112 @@ export function ShareCodes() {
       </main>
     );
 
+  const scenarioRows = countBy(codes, (item) => labels[item.scenario]);
+  const statusRows = countBy(codes, (item) => statusLabels[item.status] ?? '未分类');
+  const total = codes.length;
+
   return (
-    <main className={styles.page}>
-      <header className={styles.header}>
-        <div>
-          <p>推广员工具 · 获客分享</p>
-          <h1>把每次触达变成可追踪的入口</h1>
-          <p className={styles.subhead}>
-            生成员工/活动/渠道分享码；打开痕迹会进入入口漏斗。不含第三方成交结果。
-          </p>
+    <main className={styles.page} data-testid="employee-share">
+      <header className={styles.topBar}>
+        <span className={styles.topBarTitle}>推广员工具 · 获客分享</span>
+        <div className={styles.topBarActions}>
+          <a className={styles.topBarRefresh} href="/e/workbench">
+            工作台
+          </a>
         </div>
-        <Button
-          tone="quiet"
-          onClick={() => {
-            window.location.href = '/e/workbench';
-          }}
-        >
-          工作台
-        </Button>
       </header>
       {message && (
         <p className={styles.feedback} role="status">
           {message}
         </p>
       )}
-      <section className={styles.hero}>
-        <div>
-          <span>可追踪分享</span>
-          <h2>员工、活动和渠道，分别归因</h2>
-          <p>
-            二维码打开消费者分享页后，系统记录来源码、场景与打开次数，并与看板「分享配对」对齐；失效码将被服务端拒绝。不含支付或第三方订单结果。
-          </p>
-        </div>
-        {qr ? (
-          <img className={styles.qr} src={qr} alt="当前分享链接二维码" />
-        ) : (
-          <div className={styles.qrPlaceholder}>生成二维码</div>
-        )}
+      <section className={styles.heroCard} aria-label="分享工具概述">
+        <h1>把每次触达变成可追踪的入口</h1>
+        <p>
+          生成员工、活动、渠道分享码；消费者打开后的观看/访问/跳转痕迹会进入入口漏斗。记录来源码、场景与打开次数，并与看板「分享配对」对齐；失效码将被服务端拒绝。不含第三方成交结果。
+        </p>
       </section>
-      <Card className={styles.create}>
-        <div>
-          <h2>新建分享码</h2>
-          <p>默认进入消费者入口，可选设置自动失效时间。</p>
+      <section className={styles.panel}>
+        <div className={styles.panelHead}>
+          <h2>分享数据概况</h2>
+          <span className={styles.panelMeta}>source=local</span>
         </div>
+        <div className={styles.summaryStrip} aria-label="分享数据概况">
+          <div>
+            <span>分享码</span>
+            <strong>{total}</strong>
+          </div>
+          <div>
+            <span>员工码</span>
+            <strong>{codes.filter((item) => item.scenario === 'employee').length}</strong>
+          </div>
+          <div>
+            <span>活动码</span>
+            <strong>{codes.filter((item) => item.scenario === 'campaign').length}</strong>
+          </div>
+          <div>
+            <span>渠道码</span>
+            <strong>{codes.filter((item) => item.scenario === 'channel').length}</strong>
+          </div>
+        </div>
+      </section>
+      <section className={styles.panel}>
+        <div className={styles.panelHead}>
+          <h2>分享分布</h2>
+          <span className={styles.panelMeta}>分享码按真实档案行现场归类</span>
+        </div>
+        <div className={styles.distribution} aria-label="分享分布">
+          <div className={styles.panelBlock}>
+            <h3>分享场景分布</h3>
+            {scenarioRows.length ? (
+              <div className={styles.bars}>
+                {scenarioRows.map((row) => (
+                  <div className={styles.barRow} key={row.label}>
+                    <span className={styles.barLabel}>{row.label}</span>
+                    <span className={styles.barTrack}>
+                      <span
+                        className={styles.barFill}
+                        data-testid="share-scenario-bar"
+                        style={{ width: barWidth(total, row.value) }}
+                      />
+                    </span>
+                    <span className={styles.barValue}>{row.value}</span>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <p className={styles.barEmpty}>暂无记录</p>
+            )}
+          </div>
+          <div className={styles.panelBlock}>
+            <h3>分享状态分布</h3>
+            {statusRows.length ? (
+              <div className={styles.bars}>
+                {statusRows.map((row) => (
+                  <div className={styles.barRow} key={row.label}>
+                    <span className={styles.barLabel}>{row.label}</span>
+                    <span className={styles.barTrack}>
+                      <span
+                        className={styles.barFill}
+                        data-testid="share-status-bar"
+                        style={{ width: barWidth(total, row.value) }}
+                      />
+                    </span>
+                    <span className={styles.barValue}>{row.value}</span>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <p className={styles.barEmpty}>暂无记录</p>
+            )}
+          </div>
+        </div>
+      </section>
+      <section className={styles.panel}>
+        <div className={styles.panelHead}>
+          <h2>新建分享码</h2>
+        </div>
+        <p className={styles.createHint}>默认进入消费者入口，可选设置自动失效时间。</p>
         <div className={styles.controls}>
           <label>
             场景
@@ -238,11 +320,11 @@ export function ShareCodes() {
             生成分享码
           </Button>
         </div>
-      </Card>
-      <Card className={styles.section}>
-        <div className={styles.sectionTitle}>
+      </section>
+      <section className={styles.panel}>
+        <div className={styles.panelHead}>
           <h2>我的分享码</h2>
-          <StatusBadge tone="info">{codes.length} 个</StatusBadge>
+          <span className={styles.panelMeta}>{codes.length} 个</span>
         </div>
         {codes.length ? (
           <div className={styles.list}>
@@ -282,16 +364,27 @@ export function ShareCodes() {
             description="创建一个用于本次客户触达。"
           />
         )}
-      </Card>
+      </section>
       {selected && (
-        <Card className={styles.linkPanel}>
-          <div>
+        <section className={styles.panel} data-testid="share-link-panel">
+          <div className={styles.panelHead}>
             <h2>{labels[selected.scenario]}链接</h2>
-            <p>{link}</p>
           </div>
-          <Button onClick={() => void copy()}>复制链接</Button>
-        </Card>
+          {qr ? (
+            <div className={styles.qrRow}>
+              <img className={styles.qr} src={qr} alt="当前分享链接二维码" />
+              <span className={styles.qrHint}>扫码进入消费者分享页，打开痕迹计入入口漏斗。</span>
+            </div>
+          ) : null}
+          <p className={styles.linkText}>{link}</p>
+          <div className={styles.linkActions}>
+            <Button onClick={() => void copy()}>复制链接</Button>
+          </div>
+        </section>
       )}
+      <p className={styles.honest}>
+        分享码打开痕迹保存于推广员工具（source=local）。分布按已抓取分享码档案行现场归类，仅统计观看/访问/跳转入口痕迹与打开次数，不含支付金额、不含第三方订单履约、不代履约美团/抖音订单、不代表第三方成交、非本平台下单。
+      </p>
     </main>
   );
 }
