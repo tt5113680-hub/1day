@@ -22,7 +22,7 @@ test('platform admin defines connector and records health observation', async ({
     [token, refreshToken],
   );
   await page.goto('/p/connectors');
-  await expect(page.getByRole('heading', { name: /定义、租户授权/ })).toBeVisible();
+  await expect(page.getByRole('heading', { name: '连接器目录、租户授权与健康观察' })).toBeVisible();
   const connectorCode = `browser-connector-${Date.now()}`;
   await page.locator('input').nth(0).fill(connectorCode);
   await page.locator('input').nth(1).fill('Browser Connector');

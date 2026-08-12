@@ -1,15 +1,8 @@
 'use client';
 import { SessionApiClient } from '@oneday/session-client';
-import {
-  AdminPageHeader,
-  AppStatePanel,
-  businessLabel,
-  Button,
-  Card,
-  StatusBadge,
-} from '@oneday/ui';
+import { AppStatePanel, businessLabel, Button, StatusBadge } from '@oneday/ui';
 
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import styles from './page.module.css';
 
 type Connector = {
@@ -32,6 +25,7 @@ type Connector = {
 };
 const api = process.env.NEXT_PUBLIC_API_BASE_URL ?? 'http://127.0.0.1:3001';
 const sessionApi = new SessionApiClient(api);
+const barWidth = (total: number, value: number) => (total ? `${(value / total) * 100}%` : '0%');
 const observationCopy = (value?: string) =>
   value === 'Platform observation recorded; no external call was performed.'
     ? '平台健康观察已记录，未执行外部调用。'
@@ -120,6 +114,72 @@ export default function PlatformConnectorsPage() {
       setSaving(false);
     }
   };
+
+  const authModeCounts = useMemo(() => {
+    const map = new Map<string, number>();
+    for (const item of items) {
+      const key = businessLabel(item.auth_mode || '未分类');
+      map.set(key, (map.get(key) ?? 0) + 1);
+    }
+    const list = [...map.entries()].map(([key, value]) => ({ key, value }));
+    list.sort((a, b) => b.value - a.value || a.key.localeCompare(b.key));
+    return list;
+  }, [items]);
+
+  const healthCounts = useMemo(() => {
+    const map = new Map<string, number>();
+    for (const item of items) {
+      const key = businessLabel(item.health_status || 'unknown');
+      map.set(key, (map.get(key) ?? 0) + 1);
+    }
+    const list = [...map.entries()].map(([key, value]) => ({ key, value }));
+    list.sort((a, b) => b.value - a.value || a.key.localeCompare(b.key));
+    return list;
+  }, [items]);
+
+  const authCounts = useMemo(() => {
+    const map = new Map<string, number>();
+    let total = 0;
+    for (const item of items) {
+      for (const auth of item.authorizations) {
+        const key = businessLabel(auth.status || '未分类');
+        total += auth.count;
+        map.set(key, (map.get(key) ?? 0) + auth.count);
+      }
+    }
+    const list = [...map.entries()].map(([key, value]) => ({ key, value }));
+    list.sort((a, b) => b.value - a.value || a.key.localeCompare(b.key));
+    return { total, list };
+  }, [items]);
+
+  const rateCounts = useMemo(() => {
+    const buckets = new Map<string, number>();
+    for (const item of items) {
+      const n = item.rate_limit_per_minute ?? 0;
+      const key = n <= 120 ? '基础带宽 ≤120' : n <= 600 ? '标准带宽 121-600' : '高频带宽 601+';
+      buckets.set(key, (buckets.get(key) ?? 0) + 1);
+    }
+    return [...buckets.entries()].map(([key, value]) => ({ key, value }));
+  }, [items]);
+
+  const logCounts = useMemo(() => {
+    const map = new Map<string, number>();
+    for (const item of items) {
+      for (const log of item.logs) {
+        const key = businessLabel(log.status || '未分类');
+        map.set(key, (map.get(key) ?? 0) + 1);
+      }
+    }
+    const list = [...map.entries()].map(([key, value]) => ({ key, value }));
+    list.sort((a, b) => b.value - a.value || a.key.localeCompare(b.key));
+    return list;
+  }, [items]);
+
+  const totalLogs = items.reduce((acc, item) => acc + item.logs.length, 0);
+  const connectedCount = items.filter((item) =>
+    item.authorizations.some((a) => a.status === 'authorized'),
+  ).length;
+
   if (state === 'loading')
     return (
       <main className={styles.centered}>
@@ -152,24 +212,150 @@ export default function PlatformConnectorsPage() {
       </main>
     );
   return (
-    <main className={styles.page}>
-      <AdminPageHeader
-        eyebrow="ONEDAY / 平台连接器治理"
-        title="定义、租户授权、健康、限流与日志"
-        description="密钥不在平台页面读取；状态来自持久化授权与可审计观察。当前连接器仅声明意图边界，外部调用必须另行授权。"
-        actions={
-          <Button tone="secondary" onClick={() => void load()}>
+    <main className={styles.page} data-testid="platform-connectors">
+      <header className={styles.topBar}>
+        <span className={styles.topBarTitle}>推广员工具 · 平台连接器</span>
+        <span className={styles.topBarActions}>
+          <button className={styles.topBarRefresh} type="button" onClick={() => void load()}>
             刷新目录
-          </Button>
-        }
-      />
+          </button>
+        </span>
+      </header>
+
+      <section className={styles.heroCard} aria-label="平台连接器说明">
+        <h1>连接器目录、租户授权与健康观察</h1>
+        <p>
+          定义、租户授权、健康、限流与日志。密钥不在平台页面读取；状态来自持久化授权与可审计观察。
+          当前连接器仅声明意图边界，外部调用必须另行授权；不包含本平台收款、非本平台下单。
+        </p>
+      </section>
+
+      <section className={styles.summaryStrip} aria-label="平台连接器概况">
+        <div>
+          <span>连接器</span>
+          <strong>{items.length}</strong>
+        </div>
+        <div>
+          <span>运行正常</span>
+          <strong>{items.filter((item) => item.health_status === 'healthy').length}</strong>
+        </div>
+        <div>
+          <span>已授权租户</span>
+          <strong>{connectedCount}</strong>
+        </div>
+        <div>
+          <span>健康观察</span>
+          <strong>{totalLogs}</strong>
+        </div>
+      </section>
+
+      <section className={styles.distribution} aria-label="平台连接器分布">
+        <div className={styles.panelBlock}>
+          <h2>授权方式分布</h2>
+          <ul className={styles.bars}>
+            {authModeCounts.map((b) => (
+              <li key={b.key} className={styles.barRow}>
+                <span className={styles.barLabel}>{b.key}</span>
+                <span className={styles.barTrack}>
+                  <span
+                    className={styles.barFill}
+                    style={{ width: barWidth(items.length, b.value) }}
+                  />
+                </span>
+                <span className={styles.barValue}>{b.value}</span>
+              </li>
+            ))}
+            {!items.length && <li className={styles.barEmpty}>暂无记录</li>}
+          </ul>
+        </div>
+        <div className={styles.panelBlock}>
+          <h2>健康状态分布</h2>
+          <ul className={styles.bars}>
+            {healthCounts.map((b) => (
+              <li key={b.key} className={styles.barRow}>
+                <span className={styles.barLabel}>{b.key}</span>
+                <span className={styles.barTrack}>
+                  <span
+                    className={styles.barFill}
+                    style={{ width: barWidth(items.length, b.value) }}
+                  />
+                </span>
+                <span className={styles.barValue}>{b.value}</span>
+              </li>
+            ))}
+            {!items.length && <li className={styles.barEmpty}>暂无记录</li>}
+          </ul>
+        </div>
+        <div className={styles.panelBlock}>
+          <h2>租户授权分布</h2>
+          <ul className={styles.bars}>
+            {authCounts.list.map((b) => (
+              <li key={b.key} className={styles.barRow}>
+                <span className={styles.barLabel}>{b.key}</span>
+                <span className={styles.barTrack}>
+                  <span
+                    className={styles.barFill}
+                    style={{ width: barWidth(authCounts.total, b.value) }}
+                  />
+                </span>
+                <span className={styles.barValue}>{b.value}</span>
+              </li>
+            ))}
+            {!authCounts.total && <li className={styles.barEmpty}>暂无授权</li>}
+          </ul>
+        </div>
+        <div className={styles.panelBlock}>
+          <h2>限流带宽分布</h2>
+          <ul className={styles.bars}>
+            {rateCounts.map((b) => (
+              <li key={b.key} className={styles.barRow}>
+                <span className={styles.barLabel}>{b.key}</span>
+                <span className={styles.barTrack}>
+                  <span
+                    className={styles.barFill}
+                    style={{ width: barWidth(items.length, b.value) }}
+                  />
+                </span>
+                <span className={styles.barValue}>{b.value}</span>
+              </li>
+            ))}
+            {!items.length && <li className={styles.barEmpty}>暂无记录</li>}
+          </ul>
+        </div>
+        <div className={styles.panelBlock}>
+          <h2>健康日志状态分布</h2>
+          <ul className={styles.bars}>
+            {logCounts.map((b) => (
+              <li key={b.key} className={styles.barRow}>
+                <span className={styles.barLabel}>{b.key}</span>
+                <span className={styles.barTrack}>
+                  <span
+                    className={styles.barFill}
+                    style={{ width: barWidth(totalLogs, b.value) }}
+                  />
+                </span>
+                <span className={styles.barValue}>{b.value}</span>
+              </li>
+            ))}
+            {!totalLogs && <li className={styles.barEmpty}>暂无记录</li>}
+          </ul>
+        </div>
+      </section>
+
+      <p className={styles.honest}>
+        以上分布全部由已抓取平台连接器档案行现场推导（source=local）：授权方式、健康状态、租户授权、
+        限流带宽与健康日志状态；连接器仅记录意图与健康观察，观察不会调用美团/抖音等外部平台；
+        不包含本平台收款、非本平台下单；本地试点记录。
+      </p>
+
       {note && (
         <p role="status" className={styles.notice}>
           {note}
         </p>
       )}
-      <section className={styles.grid}>
-        <Card className={styles.panel}>
+
+      <section className={styles.layout}>
+        <section className={styles.panel}>
           <h2>定义连接器</h2>
           <label>
             连接器编码
@@ -212,9 +398,14 @@ export default function PlatformConnectorsPage() {
           <Button className={styles.submit} loading={saving} onClick={() => void create()}>
             保存连接器定义
           </Button>
-        </Card>
-        <Card className={styles.panel}>
-          <h2>已定义连接器</h2>
+        </section>
+        <section className={styles.panel}>
+          <div className={styles.head}>
+            <h2>已定义连接器</h2>
+            <StatusBadge tone={items.length ? 'success' : 'neutral'}>
+              {items.length ? `${items.length} 个目录项` : '暂无连接器'}
+            </StatusBadge>
+          </div>
           {items.length ? (
             items.map((item) => (
               <article key={item.id}>
@@ -252,7 +443,7 @@ export default function PlatformConnectorsPage() {
               description="在左侧登记第一个受控连接器定义。"
             />
           )}
-        </Card>
+        </section>
       </section>
     </main>
   );

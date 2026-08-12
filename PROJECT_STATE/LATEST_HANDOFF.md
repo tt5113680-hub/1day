@@ -10,10 +10,10 @@
 
 - branch: `hardening/COMMERCIAL-COMPLETION`
 - product_bar: **商用前提 = 四端完整对标美团成熟场景**（消费者/员工/管理/平台）；**唯一例外** `/m/workflows`。团购推广员工具身份 + L0+L1+L2；不碰钱·销售·本平台下单。
-- last_verified: **2026-08-12** — W∞-57: Platform 平台安全审计 真实数据深页密度 densify（平台面，禁止假 BI）：`/p/security-audit` 移除页面级 AdminPageHeader/Card/ONEDAY 眉标，新增黄顶栏 `推广员工具 · 平台安全审计`+灰底白卡画布+heroCard+summaryStrip（风险信号/待处置/已确认处置/最高风险）+白卡分布面板 `aria-label="平台安全分布"`（严重度/风险类型/处置状态/事件类型/资源类型，全部由已抓取真实平台安全审计档案行 risk.severity/risk.kind/risk.review_status/event.action/event.resource_type 推导，禁止假 BI，处置仅记录本地审计与事件、连接器观察不调美团/抖音实时）。
+- last_verified: **2026-08-12** — W∞-58: Platform 平台连接器 真实数据深页密度 densify（平台面 PAGE-P-007，禁止假 BI）：`/p/connectors` 移除页面级 AdminPageHeader/Card/ONEDAY 眉标，新增黄顶栏 `推广员工具 · 平台连接器`+灰底白卡画布+heroCard+summaryStrip（连接器/运行正常/已授权租户/健康观察）+白卡分布面板 `aria-label="平台连接器分布"`（授权方式分布/健康状态分布/租户授权分布/限流带宽分布/健康日志状态分布，全部由已抓取真实平台连接器档案行 auth_mode/health_status/authorizations[].status+count/rate_limit_per_minute/logs[].status 推导，观察不调美团/抖音实时，禁止假 BI，处置仅记录本地意图与健康观察）。
 - status: Owner 重申完整对标为商用前提（2026-08-11 21:47）。工程继续视觉+IA 完整对标 densify（非仅文案）。全权委托 agent 连续施工。
 - blocker: **none** — `BLOCKED_REPORT` marked RESOLVED 2026-08-12.
-- progress: Next: **W∞-58** 续 Management/平台/商圈/员工 深度 densify（真实数据深页已收 Management MPC 全序列 W∞-45~51 + 平台面 `/p/agents` W∞-52 + `/p/tenants` W∞-53 + `/p/channels` W∞-54 + `/p/business-circles` W∞-55 + `/p/outbox` W∞-56 + `/p/security-audit` W∞-57；续平台 `/p/connectors` `/p/templates` `/p/dashboard` 真实数据深页密度 或 商圈 `/bc/*` / 员工 `/e/*` 剩余真实数据面下一处缺口）。
+- progress: Next: **W∞-59** 续 Management/平台/商圈/员工 深度 densify（真实数据深页已收 Management MPC 全序列 W∞-45~51 + 平台面 `/p/agents` W∞-52 + `/p/tenants` W∞-53 + `/p/channels` W∞-54 + `/p/business-circles` W∞-55 + `/p/outbox` W∞-56 + `/p/security-audit` W∞-57 + `/p/connectors` W∞-58；续平台 `/p/templates` `/p/dashboard` 真实数据深页密度 或 商圈 `/bc/*` / 员工 `/e/*` 剩余真实数据面下一处缺口）。
 - note: Hub http://127.0.0.1:3299/ · **健康排查：每 6 小时** `pnpm unattended:health`（计划任务 `ONEDAY-V3-Unattended-Health-6h`）；BLOCKED/停摆会写 `logs/unattended/health-latest.json`。daemon 与 IDE 勿并行写同分支。
 
 ### Owner — next actions
