@@ -27,7 +27,7 @@ test('circle manager sees prepared invitations and approval controls', async ({ 
     sessionStorage.setItem('oneday.accessExpiresAt', value.expiresAt);
   }, session);
   await page.goto('/bc/merchants');
-  await expect(page.locator('h1')).toContainText('邀请、审核并展示');
+  await expect(page.locator('h1')).toContainText('邀请、双重审批并展示已批准商户');
   await expect(page.getByText('商户审核队列')).toBeVisible();
   await page.screenshot({
     path: 'evidence/CIRCLE-002/business-circle-merchants-desktop-v2.png',
