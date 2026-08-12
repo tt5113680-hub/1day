@@ -151,11 +151,13 @@
 
 ## 6. 当前下一刀
 
-> **当前：W∞-99 PASS** — 六端工作台真实数据经营深度 densify（`WORKBENCH_PRODUCT_DEPTH_PLAN.md` W∞-99）：承接 W97 工程对标关断（31 PARTIAL 行 engineering-complete），把各端工作台从「导航+计数+分布条」收束到 charter §3/§4 的早会/盯店/代理 habit 数据与可操作队列（Management `早会经营信号` summaryStrip + `门店对比` + `咨询/线索队列`；Employee share/nurture 宫格 + 线索/分享队列 + 分布；Platform/Channel/Circle `开通Run`/`Outbox 死信`/`流量未转化` drill-down 队列），全部由 dashboard 真实 DB 档案行现场推导，禁止假 BI。`g1-winf*.test.mjs` 359/359；`pnpm test:unit` 49/49；typecheck/build 20/20。
+> **权威深度计划：** `MEITUAN_DEPTH_OPTIMIZATION_PLAN.md`（主人 2026-08-12：深度 100%、SaaS 最强、**§5 READY 先不做**、DeepSeek 无人值守）。
 >
-> **31 个 PARTIAL 的处理：** 保持 inventory 状态为 PARTIAL，直至主人 G1 签 `PRODUCT_OWNER_UI_ACCEPTANCE.md`；工程层已通过 W97 断言「densify 完成」。
+> **当前 NEXT：W∞-107** — 工作台队列一键处置（MPC-01）。后续 W∞-108..110 Phase1；W∞-111..117 Phase2；W∞-118..124 Phase3 SaaS。
 >
-> **下一刀（仅 human gate）：** HUMAN-PILOT-HANDOFF / G1 OWNER GATE — Hub `http://127.0.0.1:3299/` + 主人签 `PRODUCT_OWNER_UI_ACCEPTANCE.md`（agent 不得代签）。
+> **壳层 densify W3..106 PASS**（含 W∞-99 工作台深度）。31 inventory PARTIAL = engineering-complete；商用 PARITY 仍待主人 G1 签（不阻塞深度刀）。
+>
+> **DEFERRED：** §5 开通 READY 全编排 — 待主人「开始第五节」。
 
 **历史波（自 W24 起）累计——**
 

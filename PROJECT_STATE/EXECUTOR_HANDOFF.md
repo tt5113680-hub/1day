@@ -33,15 +33,17 @@
 
 ## Current engineering focus
 
-**Phase-1 — local unattended (authorization I):**
+**Depth 100% — local unattended (authorization I / Plan B DeepSeek):**
 
-- **Constitution (must not deviate):** `PROJECT_STATE/COMMERCIAL_EXECUTION_CHARTER.md`
-- Primary: Headless CLI + 10min chain — `PROJECT_STATE/LOCAL_UNATTENDED_SETUP.md`
-- Progress: `pnpm unattended:dashboard`
+- **Constitution:** `PROJECT_STATE/COMMERCIAL_EXECUTION_CHARTER.md`
+- **Depth plan (owner 2026-08-12):** `PROJECT_STATE/MEITUAN_DEPTH_OPTIMIZATION_PLAN.md`
+- Primary executor: OpenCode + DeepSeek — `PROJECT_STATE/EXECUTOR_PLAN_B_API_AGENT.md` + `LOCAL_UNATTENDED_SETUP.md`
+- Progress: `pnpm unattended:dashboard` / `PHASE1_PROGRESS.json`
+- **NEXT slice:** W∞-107 workbench queue disposition（跳过 §5 READY）
 - P1-C prep in `infra/deploy/`; live deploy blocked until G lifted
 - Human UI sign-off must not auto-PASS
 
-**IDE sessions:** 90–95% then new window. Headless turns are independent sessions.
+**IDE sessions:** review/验收 only while DeepSeek writes; 90–95% then new window.
 
 ## Secrets and cloud
 

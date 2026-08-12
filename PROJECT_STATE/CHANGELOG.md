@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## 2026-08-12 - 主人深度裁决落地：MEITUAN_DEPTH_OPTIMIZATION_PLAN + 重开 W∞-107+（跳过 §5 READY）
+
+- 写入权威计划 `PROJECT_STATE/MEITUAN_DEPTH_OPTIMIZATION_PLAN.md`：§2–4 目标深度/底座产品/对标 **100%**；§5 开通 READY **DEFERRED**；§6 SaaS **最强**；§7 Phase1–3 落地切片；§8–10 按原方案。
+- `DECISION_REQUIRED.md` 增加 2026-08-12 决议；`TASK_QUEUE` 下一刀 **W∞-107** 工作台队列一键处置，排队 108–124。
+- 无人值守 prompt / LATEST_HANDOFF / EXECUTOR_HANDOFF / PHASE1_PROGRESS / inventory §6 对齐 DeepSeek Plan B；IDE 禁止并行写入。
+
 ## 2026-08-12 - G1-W∞-103 消费者诚实信号：entry_funnel_events 过滤列修正（提交关闭）PASS
 
 - 关闭 W∞-103 已验证但未提交的正确性修正：`consumer-discovery.service.ts` 的 `discovery` 与 `search` 两处 `entry_visits_30d` 子查询原带 `and e.deleted_at is null`，而 `entry_funnel_events` 表（migration `058_entry_funnel`）**没有 `deleted_at` 列**，真实执行会抛「column does not exist」，导致附近/搜索入口访问数跑不出正确值——已移除该不存在的过滤，保留 `target_store_id` + `event_code in ('visit','view')` + 30 天窗口。

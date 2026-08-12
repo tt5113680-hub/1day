@@ -92,6 +92,21 @@ Cloud account/domain/cert may have been shared in prior chats — **nothing is i
 - Agent must front-load all owner cooperation questions at session start / before long runs.
 - Owner keeps machine awake, Cursor open, and Agent Auto-run enabled during autonomous work (authorization H).
 
+## Resolved (2026-08-12 — Meituan depth plan owner adjustments)
+
+Owner accepted IDE depth plan with these hard overrides (see `MEITUAN_DEPTH_OPTIMIZATION_PLAN.md`):
+
+| Item | Resolution |
+| ---- | ---------- |
+| §2 可深度建设 | **必须达到目标深度**（作业闭环，不得停在壳/分布条） |
+| §3 底座+产品深度 | **目标 100%**（Blueprint / 各端产品深度拉满） |
+| §4 对标深度模型 | **继续做到 100%**（列表→筛→详→操作→审计） |
+| §5 开通 READY 工程 | **DEFERRED — 先不要做**；待主人明确「开始第五节」再开；可修现有开通壳 bug |
+| §6 多租户 SaaS | **补到最强**（配额拦截/会话即时失效/审计导出/Outbox/scope/同步） |
+| §7 分阶段路线 | **必须落地**；Phase 1 跳过 1.1 READY，从 W∞-107 起切 |
+| §8–10 | 按方案（测试策略/指标/对应关系）；指标按 100% 拉满 |
+| 执行器 | 与 **DeepSeek Plan B** 无人值守配合；IDE 不并行写入 |
+
 ## Current blockers
 
-None.
+None (engineering). Human G1 UI sign-off still open; does not block W∞-107+ depth slices.
