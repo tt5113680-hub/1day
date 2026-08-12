@@ -24,7 +24,7 @@ test('G1-W∞-20: third-party platform-naming consistency (saabei/external) acro
   // channel group-buy naming + glyphs now explicit for saabei / external
   assert.match(channel, /platform === 'saabei'\s*\n\s*\?\s*'扫呗平台'\s*\n\s*:\s*'其他平台·外链'/);
   assert.match(channel, /platformType === 'saabei'\s*\n\s*\?\s*'扫'\s*\n\s*:\s*'选'/);
-  assert.match(channel, /platform === 'saabei' \? '扫' : '选'/);
+  assert.match(channel, /platform === 'saabei'\s*\n\s*\?\s*'扫'\s*\n\s*:\s*'选'/);
 
   // service detail accepts and names saabei
   assert.match(service, /'saabei' \| 'external'/);

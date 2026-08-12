@@ -80,13 +80,13 @@
 | MH5-01 | 美团 App 外卖 LBS 首页 → **附近** | `/c/discovery` | PARTIAL | W2/W∞-11 壳+工具身份；**W∞-32** 视觉/IA densify（sticky 黄顶栏+下划线 Tab+72px 商家卡）；toward PARITY；见 WINF32 |
 | MH5-02 | 搜索 | `/c/search` | PARITY | 检索+诚实试用提示+无下单免责；见 WINF2/WINF10 |
 | MH5-03 | 美团商家门店页 → **商家消费者页** | `/c/stores/[id]` | PARTIAL | W2/W∞-13 工具身份；**W∞-33** 视觉/IA densify（黄顶栏+封面+导航电话分享+sticky 分区 Tab）；toward PARITY；见 WINF33 |
-| MH5-04 | 团购 / 套餐（外链聚合） | `/c/stores/[id]/group-buy` | PARTIAL | 美团/抖音/外链，非自有货架；W∞-12 densify 工具身份+平台图例 |
-| MH5-05 | 菜单 / 点单 | `/c/stores/[id]/menu` | PARTIAL | W∞-13 densify 工具身份；仍外链成交 |
-| MH5-06 | 商家详情 | `/c/stores/[id]/profile` | PARTIAL | W∞-14 densify 工具身份+快捷链；非本平台下单 |
+| MH5-04 | 团购 / 套餐（外链聚合） | `/c/stores/[id]/group-buy` | PARTIAL | 美团/抖音/外链，非自有货架；W∞-12 densify 工具身份+平台图例；**W∞-71** 消费者频道深页 densify（黄顶栏+灰底白卡+summaryStrip+团购比价分布，真实 platformOffers 推导）；toward PARITY；见 WINF71 |
+| MH5-05 | 菜单 / 点单 | `/c/stores/[id]/menu` | PARTIAL | W∞-13 densify 工具身份；仍外链成交；**W∞-71** 菜单分布 densify（服务类型/价格说明，真实 services 推导）；toward PARITY；见 WINF71 |
+| MH5-06 | 商家详情 | `/c/stores/[id]/profile` | PARTIAL | W∞-14 densify 工具身份+快捷链；非本平台下单；**W∞-71** 消费者深页 densify；toward PARITY；见 WINF71 |
 | MH5-07 | 下单 / 提单 | — | GAP (外链 only) | **不做本平台成交**；统一走 `/c/actions` 确认后 hand-off |
 | MH5-08 | 订单列表 / 详情 | — | GAP (外链 only) | **不做本平台订单履约**；第三方结果不回传则不写「已成交」 |
 | MH5-09 | 我的 | store `/profile` + `/c/profile` | PARITY (首刀) | 会员证明/外链入口；服务痕迹≠第三方订单；见 WINF10 |
-| MH5-10 | 会员 | `/c/stores/[id]/membership` | PARTIAL | W∞-12 densify 本店会员工具身份 |
+| MH5-10 | 会员 | `/c/stores/[id]/membership` | PARTIAL | W∞-12 densify 本店会员工具身份；**W∞-71** 消费者频道深页 densify（权益分布，真实 benefits 推导）；toward PARITY；见 WINF71 |
 | MH5-11 | 分享落地 | `/c/share/[code]`, `/c/one-code/[code]` | PARITY (首刀) | share landing densify; 见 WINF7 |
 | MH5-12 | 服务 / 咨询 hand-off | `/c/services/[id]`, `/c/actions/[id]` | PARITY (首刀+) | 确认页 WINF3；套餐详情 WINF14「确认前往」 |
 | MH5-13 | 美团 App 首页型 → **商圈联盟首页** | `/c/circles`, discovery | PARITY (首刀) | 行业 chips+排序+双身份；见 WINF5 |
@@ -142,7 +142,7 @@
 
 ## 6. 当前下一刀
 
-  > **当前：W∞-47 PASS** — Management 商品/套餐入口 真实数据深页密度（MPC-03：`/m/offers` 商品套餐分布面板 套餐可见/门店/平台入口/Offer 状态/价格带，全部由既有 source=local 档案行推导，禁止假 BI）。**下一刀：W∞-48 续 Management MPC 深度 densify**（W∞-44 经营分析、W∞-45 订单/评价/营销深页、W∞-46 顾客/会员深页、W∞-47 商品/套餐入口深页已收；续员工/平台/商圈或管理剩余真实数据面缺口，如 MPC-10 员工/权限 或 MPC-13 通知中心真实数据深页密度）。
+  > **当前：W∞-71 PASS** — 消费者频道深页（团购/菜单/会员/我的，MH5-04/05/06/10）真实数据深页密度 densify（黄顶栏+灰底白卡+summaryStrip+团购比价分布/菜单分布/权益分布，全部由既有 StoreDetail 真实档案行推导，禁止假 BI）。**下一刀：W∞-72** 消费者深页真实数据密度续（service/menu/entry 等剩余 PARTIAL）或平台剩余 PARTIAL densify。
 
 **历史波（自 W24 起）累计——**
 

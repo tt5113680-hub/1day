@@ -1,3 +1,14 @@
+# CHANGELOG
+
+## 2026-08-12 - G1-W∞-71 消费者深页 densify（MH5-04/05/06/10）PASS
+
+- 消费者 H5 频道深页 `/c/stores/[id]/group-buy` · `menu` · `membership` · `profile`（团购/菜单/会员/我的）从旧暖色白板视觉 densify 到美团 App 到店浏览视觉/IA（承接 discovery W∞-32 / store W∞-33 视觉语言 + W∞-45+ 深页分布波）。
+- `channel.tsx`：`<main className={`${styles.page} od-sf-theme`}>` 挂 storefront token 作用域；sticky 黄顶栏 `topBar`（返回+居中频道名+推广员工具 mark）+ 灰底画布（--od-sf-canvas）+ 白卡 heroCard（h1+诚实描述）+ 白卡概况条 `summaryStrip`（频道数据概况）+ 白卡分布面板——`团购比价分布`（平台入口分布 `[].platformType`/价格带分布 `offerPrice` 分桶/每套餐比价深度 `groups`）+ `菜单分布`（服务类型 `duration_minutes`/价格说明 `price_label`）+ `权益分布`（`benefits[]`），全部由既有 `StoreDetail` 真实档案行现场推导，宽度 `barWidth(total, value)`，空数据「暂无记录」，禁止假 BI。
+- `channel.module.css`：灰底白卡+黄渐变条 `linear-gradient(90deg,var(--od-brand-700),var(--od-brand-600))`，≤900px 单列；全部 token 化、**零 raw hex**（与 W∞-45+ 深页波共享视觉语言）。
+- 工具身份与诚实边界全保留：source=local、成交/库存/核销以美团/抖音/扫呗等第三方实际为准、不包含本平台收款、非本平台下单、不含支付金额、不替代美团/抖音/扫呗会员；全部原交互（入会/跨设备恢复/平台行比价/菜单卡/快捷链/反馈）继承。无 schema/DB/API，不复活 consumer_orders / 本平台下单/收单。
+- 随动更新 tests/g1-winf20（platformLegend saabei 字形断言 → densify 后 multiline 对齐）。
+- 新增 tests/g1-winf71-consumer-deep-densify.test.mjs 4/4；`g1-winf*.test.mjs` 237/237；consumer typecheck+build PASS；`pnpm build` 20/20；单测 47 passed（2 个 pre-existing token 失败照旧）；eslint + prettier clean。See evidence/G1-MEITUAN-PARITY/WINF71/ACCEPTANCE.md.
+
 ## 2026-08-12 - G1-W∞-70 Channel 商户开通 真实数据深页 densify（MP-02）PASS
 
 - `/ch/merchants/new` 黄顶栏+开通分布（邀请/交付/套餐/模板/渠道）。See WINF70.

@@ -32,6 +32,26 @@ const platformName = (platform: StoreDetail['platformOffers'][number]['platformT
       : platform === 'saabei'
         ? '扫呗平台'
         : '其他平台·外链';
+const shortPlatform = (platform: StoreDetail['platformOffers'][number]['platformType']) =>
+  platform === 'meituan'
+    ? '美团'
+    : platform === 'douyin'
+      ? '抖音'
+      : platform === 'saabei'
+        ? '扫呗平台'
+        : '外链';
+
+const countBy = (rows: string[]) => {
+  const buckets = new Map<string, number>();
+  for (const row of rows) {
+    buckets.set(row, (buckets.get(row) ?? 0) + 1);
+  }
+  return [...buckets.entries()]
+    .map(([label, value]) => ({ label, value }))
+    .sort((a, b) => b.value - a.value);
+};
+const barWidth = (total: number, value: number) =>
+  total === 0 ? 0 : Math.round((value / total) * 100);
 
 export default function StoreChannel({
   data,
@@ -124,37 +144,314 @@ export default function StoreChannel({
         : channel === 'membership'
           ? '会员权益'
           : '我的服务';
-  const subtitle =
+  const heroNote =
     channel === 'group-buy'
-      ? '推广员工具 · 比价聚合后经确认页跳转美团/抖音/扫呗等（不在此下单）'
+      ? '推广员工具 · 比价聚合后前往/跳转美团/抖音/扫呗等（不在此下单）'
       : channel === 'menu'
-        ? '推广员工具 · 门店套餐说明；成交经确认跳转第三方（不在此下单）'
+        ? '门店套餐说明；成交经确认跳转美团/抖音/扫呗第三方（不在此下单）'
         : channel === 'membership'
           ? '本店入会与权益说明 · 推广员工具留痕；不含第三方成交'
-          : '推广员工具 · 会员证明与外链入口；非本平台下单，不含第三方订单履约';
+          : '推广员工具 · 会员证明与外链入口；「我的」仅展示本店会员证明';
+  const eyebrow =
+    channel === 'group-buy'
+      ? '推广员工具 · 比价聚合'
+      : channel === 'menu'
+        ? '推广员工具 · 门店套餐说明'
+        : channel === 'membership'
+          ? '推广员工具 · 本店会员'
+          : '推广员工具 · 我的服务';
   const platformTypes = useMemo(() => {
     const set = new Set(data.platformOffers.map((item) => item.platformType));
     return [...set];
   }, [data.platformOffers]);
 
+  const platformDist = useMemo(
+    () => countBy(data.platformOffers.map((item) => shortPlatform(item.platformType))),
+    [data.platformOffers],
+  );
+  const priceBandDist = useMemo(() => {
+    const buckets = new Map<string, number>();
+    for (const offer of data.platformOffers) {
+      const key =
+        offer.offerPrice <= 100 ? '¥0-100' : offer.offerPrice <= 200 ? '¥100-200' : '¥200+';
+      buckets.set(key, (buckets.get(key) ?? 0) + 1);
+    }
+    return [...buckets.entries()]
+      .map(([label, value]) => ({ label, value }))
+      .sort(
+        (a, b) => Number(a.label.replace(/[^\d-+]/g, '')) - Number(b.label.replace(/[^\d-+]/g, '')),
+      );
+  }, [data.platformOffers]);
+  const compareDepthDist = useMemo(
+    () =>
+      groups.map((group) => ({
+        label:
+          group.offers.length >= 3
+            ? '三平台以上'
+            : group.offers.length === 2
+              ? '双平台比价'
+              : '单平台',
+        value: 1,
+      })),
+    [groups],
+  );
+  const menuTypeDist = useMemo(
+    () =>
+      countBy(data.services.map((service) => (service.duration_minutes ? '定时服务' : '到店自取'))),
+    [data.services],
+  );
+  const servicePriceDist = useMemo(() => {
+    const buckets = new Map<string, number>();
+    for (const service of data.services) {
+      const key = service.price_label ? '已标价' : '到店询价';
+      buckets.set(key, (buckets.get(key) ?? 0) + 1);
+    }
+    return [...buckets.entries()]
+      .map(([label, value]) => ({ label, value }))
+      .sort((a, b) => b.value - a.value);
+  }, [data.services]);
+  const benefitDist = useMemo(
+    () =>
+      data.benefits.map((benefit) => ({
+        label: benefit.title,
+        value: 1,
+      })),
+    [data.benefits],
+  );
+
+  const offerCount = data.platformOffers.length;
+  const groupCount = groups.length;
+
   return (
     <ConsumerShell context={context} active={channel} tabs={navTabs}>
-      <main className={styles.page}>
+      <main id="top" className={`${styles.page} ${styles.main} od-sf-theme`}>
         <div className={styles.shell}>
-          <header className={styles.header}>
-            <a href={storeHref(context, '', 'channel_back')}>‹ 返回门店</a>
-            <p>
-              {data.store.merchant} · {data.store.name}
-              {channel === 'group-buy' ||
-              channel === 'membership' ||
-              channel === 'menu' ||
-              channel === 'profile'
-                ? ' · 推广员工具'
-                : ''}
-            </p>
-            <h1>{title}</h1>
-            <span>{subtitle}</span>
+          <h1 className={styles.visuallyHidden}>{title}</h1>
+          <header className={styles.topBar}>
+            <a
+              className={styles.backLink}
+              href={storeHref(context, '', 'channel_back')}
+              aria-label="返回门店"
+            >
+              ‹
+            </a>
+            <span className={styles.topTitle}>{title}</span>
+            <span className={styles.topMark}>推广员工具</span>
           </header>
+
+          <section className={styles.heroCard} aria-label="频道概况">
+            <header className={styles.heroHead}>
+              <span>
+                {data.store.name} · {eyebrow}
+              </span>
+              <h2>{title}</h2>
+              <p role="note">{heroNote}</p>
+            </header>
+            <div className={styles.summaryStrip} aria-label="频道数据概况">
+              <dl>
+                <dt>
+                  {channel === 'group-buy'
+                    ? '推荐套餐'
+                    : channel === 'menu'
+                      ? '菜单项目'
+                      : channel === 'membership'
+                        ? '在册权益'
+                        : '会员入口'}
+                </dt>
+                <dd>
+                  {channel === 'group-buy'
+                    ? groupCount
+                    : channel === 'menu'
+                      ? data.services.length
+                      : channel === 'membership'
+                        ? data.benefits.length
+                        : member
+                          ? '已生效'
+                          : '待入会'}
+                </dd>
+              </dl>
+              <dl>
+                <dt>
+                  {channel === 'group-buy'
+                    ? '比价入口'
+                    : channel === 'menu'
+                      ? '到店自取'
+                      : channel === 'membership'
+                        ? '可咨询'
+                        : '外链入口'}
+                </dt>
+                <dd>
+                  {channel === 'group-buy'
+                    ? offerCount
+                    : channel === 'menu'
+                      ? (menuTypeDist.find((item) => item.label === '到店自取')?.value ?? 0)
+                      : channel === 'membership'
+                        ? consultAction
+                          ? '开放'
+                          : '未开放'
+                        : data.externalLinks.length}
+                </dd>
+              </dl>
+              <dl>
+                <dt>
+                  {channel === 'group-buy'
+                    ? '覆盖平台'
+                    : channel === 'menu'
+                      ? '定时服务'
+                      : channel === 'membership'
+                        ? '覆盖门店'
+                        : '服务记录'}
+                </dt>
+                <dd>
+                  {channel === 'group-buy'
+                    ? platformTypes.length
+                    : channel === 'menu'
+                      ? (menuTypeDist.find((item) => item.label === '定时服务')?.value ?? 0)
+                      : channel === 'membership'
+                        ? data.stores.length
+                        : data.stores.length}
+                </dd>
+              </dl>
+            </div>
+          </section>
+
+          {channel === 'group-buy' && (
+            <section className={styles.distribution} aria-label="团购比价分布">
+              <header className={styles.panelHead}>
+                <h3>团购比价分布</h3>
+                <p>分布由本店已抓取团购入口档案行现场推导</p>
+              </header>
+              <div className={styles.panelBlock}>
+                <span className={styles.barLabel}>平台入口分布</span>
+                <div className={styles.bars} role="list">
+                  {platformDist.length ? (
+                    platformDist.map((bar) => (
+                      <div className={styles.barRow} role="listitem" key={bar.label}>
+                        <span>{bar.label}</span>
+                        <b>
+                          <i style={{ width: `${barWidth(offerCount, bar.value)}%` }} />
+                        </b>
+                        <em>{bar.value}</em>
+                      </div>
+                    ))
+                  ) : (
+                    <span className={styles.barEmpty}>暂无记录</span>
+                  )}
+                </div>
+              </div>
+              <div className={styles.panelBlock}>
+                <span className={styles.barLabel}>价格带分布</span>
+                <div className={styles.bars} role="list">
+                  {priceBandDist.length ? (
+                    priceBandDist.map((bar) => (
+                      <div className={styles.barRow} role="listitem" key={bar.label}>
+                        <span>{bar.label}</span>
+                        <b>
+                          <i style={{ width: `${barWidth(offerCount, bar.value)}%` }} />
+                        </b>
+                        <em>{bar.value}</em>
+                      </div>
+                    ))
+                  ) : (
+                    <span className={styles.barEmpty}>暂无记录</span>
+                  )}
+                </div>
+              </div>
+              {compareDepthDist.length ? (
+                <div className={styles.panelBlock}>
+                  <span className={styles.barLabel}>每套餐比价深度</span>
+                  <div className={styles.bars} role="list">
+                    {compareDepthDist.map((bar, index) => (
+                      <div className={styles.barRow} role="listitem" key={`${bar.label}-${index}`}>
+                        <span>{bar.label}</span>
+                        <b>
+                          <i style={{ width: `${barWidth(groupCount, bar.value)}%` }} />
+                        </b>
+                        <em>{bar.value}</em>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ) : null}
+            </section>
+          )}
+
+          {channel === 'menu' && (
+            <section className={styles.distribution} aria-label="菜单分布">
+              <header className={styles.panelHead}>
+                <h3>菜单分布</h3>
+                <p>分布由门店已发布菜单档案行现场推导</p>
+              </header>
+              <div className={styles.panelBlock}>
+                <span className={styles.barLabel}>服务类型分布</span>
+                <div className={styles.bars} role="list">
+                  {menuTypeDist.length ? (
+                    menuTypeDist.map((bar) => (
+                      <div className={styles.barRow} role="listitem" key={bar.label}>
+                        <span>{bar.label}</span>
+                        <b>
+                          <i style={{ width: `${barWidth(data.services.length, bar.value)}%` }} />
+                        </b>
+                        <em>{bar.value}</em>
+                      </div>
+                    ))
+                  ) : (
+                    <span className={styles.barEmpty}>暂无记录</span>
+                  )}
+                </div>
+              </div>
+              <div className={styles.panelBlock}>
+                <span className={styles.barLabel}>价格说明分布</span>
+                <div className={styles.bars} role="list">
+                  {servicePriceDist.length ? (
+                    servicePriceDist.map((bar) => (
+                      <div className={styles.barRow} role="listitem" key={bar.label}>
+                        <span>{bar.label}</span>
+                        <b>
+                          <i style={{ width: `${barWidth(data.services.length, bar.value)}%` }} />
+                        </b>
+                        <em>{bar.value}</em>
+                      </div>
+                    ))
+                  ) : (
+                    <span className={styles.barEmpty}>暂无记录</span>
+                  )}
+                </div>
+              </div>
+            </section>
+          )}
+
+          {channel === 'membership' && (
+            <section className={styles.distribution} aria-label="权益分布">
+              <header className={styles.panelHead}>
+                <h3>权益分布</h3>
+                <p>分布由本店已配置权益档案行现场推导</p>
+              </header>
+              <div className={styles.panelBlock}>
+                <span className={styles.barLabel}>在册权益</span>
+                <div className={styles.bars} role="list">
+                  {benefitDist.length ? (
+                    benefitDist.map((bar, index) => (
+                      <div className={styles.barRow} role="listitem" key={`${bar.label}-${index}`}>
+                        <span>{bar.label}</span>
+                        <b>
+                          <i style={{ width: `${barWidth(data.benefits.length, bar.value)}%` }} />
+                        </b>
+                        <em>{bar.value}</em>
+                      </div>
+                    ))
+                  ) : (
+                    <span className={styles.barEmpty}>暂无记录</span>
+                  )}
+                </div>
+              </div>
+            </section>
+          )}
+
+          <p className={styles.honest} role="note">
+            以上分布全部由本店档案行现场推导，源 source=local；
+            成交/库存/核销以美团/抖音/扫呗等第三方平台实际为准； 不包含本平台收款 · 非本平台下单。
+          </p>
 
           {channel === 'group-buy' && (
             <section className={styles.section} aria-label="全平台团购价格">
@@ -170,10 +467,14 @@ export default function StoreChannel({
                 <ul className={styles.platformLegend} aria-label="已配置平台">
                   {platformTypes.map((platform) => (
                     <li key={platform}>
-                      <span
-                        className={`${styles.platformBadge} ${styles[`platform${platform}`]}`}
-                      >
-                        {platform === 'meituan' ? '团' : platform === 'douyin' ? '抖' : platform === 'saabei' ? '扫' : '选'}
+                      <span className={`${styles.platformBadge} ${styles[`platform${platform}`]}`}>
+                        {platform === 'meituan'
+                          ? '团'
+                          : platform === 'douyin'
+                            ? '抖'
+                            : platform === 'saabei'
+                              ? '扫'
+                              : '选'}
                       </span>
                       {platformName(platform)}
                     </li>
@@ -231,14 +532,11 @@ export default function StoreChannel({
               ) : (
                 <Empty>门店暂未配置可前往的团购入口。</Empty>
               )}
-              <p className={styles.disclaimer}>
-                价格、库存和最终优惠以第三方平台实际页面为准；本页不含支付金额与订单成功态。
-              </p>
             </section>
           )}
 
           {channel === 'menu' && (
-            <section className={styles.menu} aria-label="门店菜单">
+            <section className={styles.section} aria-label="门店菜单">
               <p className={styles.disclaimer} role="note">
                 菜单频道展示门店已发布套餐说明；下单请经确认页前往美团/抖音/扫呗等，不在此下单。
               </p>
@@ -269,8 +567,7 @@ export default function StoreChannel({
                       <em>{index === 0 ? '门店推荐 · 可进详情' : '到店自取 · 可进详情'}</em>
                       <strong>{service.name}</strong>
                       <p>
-                        {service.description ??
-                          '查看套餐内容与使用规则；成交以第三方平台为准。'}
+                        {service.description ?? '查看套餐内容与使用规则；成交以第三方平台为准。'}
                       </p>
                       <small>
                         {service.duration_minutes
@@ -285,17 +582,12 @@ export default function StoreChannel({
               ) : (
                 <Empty>门店正在完善菜单内容。</Empty>
               )}
-              <p className={styles.disclaimer}>
-                菜单价格为门店参考；最终优惠与履约以第三方页面为准，本页不含支付金额。
-              </p>
+              <p className={styles.disclaimer}>本页不含支付金额。</p>
             </section>
           )}
 
           {channel === 'membership' && (
             <section className={styles.stack} aria-label="会员权益">
-              <p className={styles.disclaimer} role="note">
-                会员频道服务本店身份与权益说明；不替代美团/抖音/扫呗会员，也不在此成交。
-              </p>
               <div className={styles.quickLinks}>
                 <a href={storeHref(context, '/profile', 'membership_profile')}>我的会员</a>
                 <a href={storeHref(context, '/group-buy', 'membership_group_buy')}>全平台团购</a>
@@ -305,7 +597,7 @@ export default function StoreChannel({
                 <span>本店会员 · 推广员工具</span>
                 <h2>加入会员，获取本店专属服务</h2>
                 <p>
-                  提交手机号与隐私授权后生成本店会员身份；入会成功后可在「我的」查看会员证明。痕迹仅留观看/访问/入会，不含支付金额。
+                  提交手机号与隐私授权后生成本店会员身份；入会成功后可在「我的」查看会员证明。不替代美团/抖音/扫呗会员，痕迹仅留观看/访问/入会，不含支付金额。
                 </p>
                 <label>
                   手机号
@@ -372,17 +664,10 @@ export default function StoreChannel({
 
           {channel === 'profile' && (
             <>
-              <p className={styles.disclaimer} role="note">
-                「我的」仅展示本店会员证明与外链入口；团购成交在第三方完成，非本平台下单。
-              </p>
               <div className={styles.quickLinks}>
                 <a href={storeHref(context, '', 'profile_home')}>门店首页</a>
-                <a href={storeHref(context, '/membership', 'profile_tab_membership')}>
-                  会员权益
-                </a>
-                <a href={storeHref(context, '/group-buy', 'profile_tab_group_buy')}>
-                  全平台团购
-                </a>
+                <a href={storeHref(context, '/membership', 'profile_tab_membership')}>会员权益</a>
+                <a href={storeHref(context, '/group-buy', 'profile_tab_group_buy')}>全平台团购</a>
               </div>
               <MemberProfileChannel
                 context={context}
@@ -526,7 +811,11 @@ function MemberProfileChannel({
               : '为保护隐私，未授权时不会展示手机号、会员码或个人资料。团购成交在美团/抖音/扫呗等第三方完成。'}
           </p>
         </article>
-        <article className={styles.resumeCard} data-testid="member-resume-card" aria-label="跨设备恢复会员">
+        <article
+          className={styles.resumeCard}
+          data-testid="member-resume-card"
+          aria-label="跨设备恢复会员"
+        >
           <span>跨设备恢复</span>
           <h2>用手机号与会员码恢复本店会员</h2>
           <p>需已存在入会记录；本阶段不发送短信验证码，仅校验手机号、12 位会员码与授权同意。</p>
@@ -656,7 +945,9 @@ function MemberProfileChannel({
         <article className={styles.benefit} aria-label="最近服务记录">
           <span>门店服务痕迹</span>
           <h2>最近到店服务记录</h2>
-          <p className={styles.profileHint}>以下为门店侧服务痕迹，不代表美团/抖音/扫呗等第三方订单。</p>
+          <p className={styles.profileHint}>
+            以下为门店侧服务痕迹，不代表美团/抖音/扫呗等第三方订单。
+          </p>
           {profile.history.slice(0, 3).map((item) => (
             <p key={item.orderNumber}>
               {item.orderNumber} · {item.status}
