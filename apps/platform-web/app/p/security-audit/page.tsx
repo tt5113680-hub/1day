@@ -1,14 +1,7 @@
 'use client';
 import { SessionApiClient } from '@oneday/session-client';
-import {
-  AdminPageHeader,
-  AppStatePanel,
-  businessLabel,
-  Button,
-  Card,
-  StatusBadge,
-} from '@oneday/ui';
-import { useCallback, useEffect, useState } from 'react';
+import { AppStatePanel, Button, businessLabel, StatusBadge } from '@oneday/ui';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import styles from './page.module.css';
 type Risk = {
   risk_key: string;
@@ -29,6 +22,7 @@ type Event = {
 };
 const api = process.env.NEXT_PUBLIC_API_BASE_URL ?? 'http://127.0.0.1:3001';
 const sessionApi = new SessionApiClient(api);
+const barWidth = (total: number, value: number) => (total ? `${(value / total) * 100}%` : '0%');
 const detailCopy = (value: string) =>
   ({
     'Connector health observation requires review.': '连接器健康观察需要平台复核。',
@@ -108,6 +102,59 @@ export default function SecurityAudit() {
       setSaving(false);
     }
   };
+  const severityCounts = useMemo(() => {
+    const map = new Map<string, number>();
+    for (const item of risks) {
+      const key = businessLabel(item.severity || '未知');
+      map.set(key, (map.get(key) ?? 0) + 1);
+    }
+    const list = [...map.entries()].map(([key, value]) => ({ key, value }));
+    list.sort((a, b) => b.value - a.value || a.key.localeCompare(b.key));
+    return list;
+  }, [risks]);
+  const kindCounts = useMemo(() => {
+    const map = new Map<string, number>();
+    for (const item of risks) {
+      const key = businessLabel(item.kind || '未分类');
+      map.set(key, (map.get(key) ?? 0) + 1);
+    }
+    const list = [...map.entries()].map(([key, value]) => ({ key, value }));
+    list.sort((a, b) => b.value - a.value || a.key.localeCompare(b.key));
+    return list;
+  }, [risks]);
+  const reviewCounts = useMemo(() => {
+    const map = new Map<string, number>();
+    for (const item of risks) {
+      const key = item.review_status ? businessLabel(item.review_status) : '待处置';
+      map.set(key, (map.get(key) ?? 0) + 1);
+    }
+    const list = [...map.entries()].map(([key, value]) => ({ key, value }));
+    list.sort((a, b) => b.value - a.value || a.key.localeCompare(b.key));
+    return list;
+  }, [risks]);
+  const eventCounts = useMemo(() => {
+    const map = new Map<string, number>();
+    for (const event of events) {
+      const key = eventCopy(event.action);
+      map.set(key, (map.get(key) ?? 0) + 1);
+    }
+    const list = [...map.entries()].map(([key, value]) => ({ key, value }));
+    list.sort((a, b) => b.value - a.value || a.key.localeCompare(b.key));
+    return list;
+  }, [events]);
+  const resourceCounts = useMemo(() => {
+    const map = new Map<string, number>();
+    for (const event of events) {
+      const key = businessLabel(event.resource_type || '未分类');
+      map.set(key, (map.get(key) ?? 0) + 1);
+    }
+    const list = [...map.entries()].map(([key, value]) => ({ key, value }));
+    list.sort((a, b) => b.value - a.value || a.key.localeCompare(b.key));
+    return list;
+  }, [events]);
+  const openRisks = risks.filter((r) => !r.review_status).length;
+  const acknowledgedRisks = risks.length - openRisks;
+  const criticalRisks = risks.filter((r) => r.severity === 'unavailable').length;
   if (state === 'loading')
     return (
       <main className={styles.centered}>
@@ -140,25 +187,156 @@ export default function SecurityAudit() {
       </main>
     );
   return (
-    <main className={styles.page}>
-      <AdminPageHeader
-        eyebrow="ONEDAY / 平台安全治理"
-        title="风险信号、越权审计、连接器与安全事件"
-        description="风险是可核查信号，不是未经证实的入侵结论。每次处置都会保留责任、理由与事件链。"
-        actions={
-          <Button tone="secondary" onClick={() => void load()}>
+    <main className={styles.page} data-testid="platform-security-audit">
+      <header className={styles.topBar}>
+        <span className={styles.topBarTitle}>推广员工具 · 平台安全审计</span>
+        <span className={styles.topBarActions}>
+          <button className={styles.topBarRefresh} type="button" onClick={() => void load()}>
             刷新审计
-          </Button>
-        }
-      />
+          </button>
+        </span>
+      </header>
+
+      <section className={styles.heroCard} aria-label="平台安全审计说明">
+        <h1>风险信号、越权审计、连接器与安全事件</h1>
+        <p>
+          风险是可核查信号，不是未经证实的入侵结论。每次处置都会保留责任、理由与事件链； Outbox
+          重放与连接器观察不会调用美团/抖音等外部平台。
+        </p>
+      </section>
+
+      <section className={styles.summaryStrip} aria-label="平台安全概况">
+        <div>
+          <span>风险信号</span>
+          <strong>{risks.length}</strong>
+        </div>
+        <div>
+          <span>待处置</span>
+          <strong>{openRisks}</strong>
+        </div>
+        <div>
+          <span>已确认处置</span>
+          <strong>{acknowledgedRisks}</strong>
+        </div>
+        <div>
+          <span>最高风险</span>
+          <strong>{criticalRisks}</strong>
+        </div>
+      </section>
+
+      <section className={styles.distribution} aria-label="平台安全分布">
+        <div className={styles.panelBlock}>
+          <h2>严重度分布</h2>
+          <ul className={styles.bars}>
+            {severityCounts.map((b) => (
+              <li key={b.key} className={styles.barRow}>
+                <span className={styles.barLabel}>{b.key}</span>
+                <span className={styles.barTrack}>
+                  <span
+                    className={styles.barFill}
+                    style={{ width: barWidth(risks.length, b.value) }}
+                  />
+                </span>
+                <span className={styles.barValue}>{b.value}</span>
+              </li>
+            ))}
+            {!risks.length && <li className={styles.barEmpty}>暂无记录</li>}
+          </ul>
+        </div>
+        <div className={styles.panelBlock}>
+          <h2>风险类型分布</h2>
+          <ul className={styles.bars}>
+            {kindCounts.map((b) => (
+              <li key={b.key} className={styles.barRow}>
+                <span className={styles.barLabel}>{b.key}</span>
+                <span className={styles.barTrack}>
+                  <span
+                    className={styles.barFill}
+                    style={{ width: barWidth(risks.length, b.value) }}
+                  />
+                </span>
+                <span className={styles.barValue}>{b.value}</span>
+              </li>
+            ))}
+            {!risks.length && <li className={styles.barEmpty}>暂无记录</li>}
+          </ul>
+        </div>
+        <div className={styles.panelBlock}>
+          <h2>处置状态分布</h2>
+          <ul className={styles.bars}>
+            {reviewCounts.map((b) => (
+              <li key={b.key} className={styles.barRow}>
+                <span className={styles.barLabel}>{b.key}</span>
+                <span className={styles.barTrack}>
+                  <span
+                    className={styles.barFill}
+                    style={{ width: barWidth(risks.length, b.value) }}
+                  />
+                </span>
+                <span className={styles.barValue}>{b.value}</span>
+              </li>
+            ))}
+            {!risks.length && <li className={styles.barEmpty}>暂无记录</li>}
+          </ul>
+        </div>
+        <div className={styles.panelBlock}>
+          <h2>事件类型分布</h2>
+          <ul className={styles.bars}>
+            {eventCounts.map((b) => (
+              <li key={b.key} className={styles.barRow}>
+                <span className={styles.barLabel}>{b.key}</span>
+                <span className={styles.barTrack}>
+                  <span
+                    className={styles.barFill}
+                    style={{ width: barWidth(events.length, b.value) }}
+                  />
+                </span>
+                <span className={styles.barValue}>{b.value}</span>
+              </li>
+            ))}
+            {!events.length && <li className={styles.barEmpty}>暂无记录</li>}
+          </ul>
+        </div>
+        <div className={styles.panelBlock}>
+          <h2>资源类型分布</h2>
+          <ul className={styles.bars}>
+            {resourceCounts.map((b) => (
+              <li key={b.key} className={styles.barRow}>
+                <span className={styles.barLabel}>{b.key}</span>
+                <span className={styles.barTrack}>
+                  <span
+                    className={styles.barFill}
+                    style={{ width: barWidth(events.length, b.value) }}
+                  />
+                </span>
+                <span className={styles.barValue}>{b.value}</span>
+              </li>
+            ))}
+            {!events.length && <li className={styles.barEmpty}>暂无记录</li>}
+          </ul>
+        </div>
+      </section>
+
+      <p className={styles.honest}>
+        以上分布全部由已抓取平台安全审计档案行现场推导（source=local）：风险严重度、风险类型、
+        处置状态、安全事件类型与资源类型；处置仅记录本地审计与事件，连接器观察不会调用
+        美团/抖音等外部平台；不包含本平台收款、 非本平台下单。
+      </p>
+
       {note && (
-        <p role="status" className={styles.note}>
+        <p role="status" className={styles.notice}>
           {note}
         </p>
       )}
+
       <section className={styles.grid}>
-        <Card className={styles.panel}>
-          <h2>待审查风险信号</h2>
+        <section className={styles.panel}>
+          <div className={styles.head}>
+            <h2>待审查风险信号</h2>
+            <StatusBadge tone={risks.length ? 'warning' : 'success'}>
+              {risks.length ? `${openRisks} 条待处置` : '当前无风险信号'}
+            </StatusBadge>
+          </div>
           {risks.length ? (
             risks.map((r) => (
               <article key={r.risk_key}>
@@ -190,8 +368,8 @@ export default function SecurityAudit() {
               description="新的连接器健康、授权或特权配置风险会显示在这里。"
             />
           )}
-        </Card>
-        <Card className={styles.panel}>
+        </section>
+        <section className={styles.panel}>
           <h2>安全事件链</h2>
           {events.length ? (
             events.map((e, i) => (
@@ -213,7 +391,16 @@ export default function SecurityAudit() {
               description="平台、连接器、权限与登录安全事件会保留在这里。"
             />
           )}
-        </Card>
+        </section>
+      </section>
+
+      <section className={styles.panel}>
+        <h2>安全边际</h2>
+        <ul className={styles.boundaries}>
+          <li>事件链来自真实审计与 Outbox 档案，分布全部由实数据推导，禁止假 BI。</li>
+          <li>连接器观察不会调用美团/抖音等外部平台，仅记录本地健康观察。</li>
+          <li>平台安全事件不包含本平台收款、不涉及本平台下单。</li>
+        </ul>
       </section>
     </main>
   );
