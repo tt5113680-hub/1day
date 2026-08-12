@@ -12,7 +12,8 @@
 - last_verified: **2026-08-12** — **W∞-104 员工 H5 + 管理 PC 自定义装修 PASS**（portal_bindings 全链路）
   - **W99~103** 工作台产品深度（见 CHANGELOG）
   - **W104** `portal_bindings` + page-builder 员工/管理发布预览 + workbench/dashboard layout 渲染 + seed + g1-winf104 7/7
-- tests: `g1-winf104` **7/7**；`pnpm typecheck` + `pnpm build` **20/20**
+- committed: **head `16ea7f7`**（W97~104 关闭批次已提交并 push `origin/hardening/COMMERCIAL-COMPLETION`；此前该批次已验证但未提交）
+- tests: **`g1-winf*.test.mjs` 372/372**（含 W43 page-builder 复制断言随 W104 收敛）/ `pnpm typecheck` + `pnpm build` **20/20** / `pnpm test:unit` **49/49**
 - next_wave: **主人 UI 验收** — 含 `/m/page-builder` 员工/管理端装修与预览
 - blocker: **none (engineering)** — **human gate open**
 
