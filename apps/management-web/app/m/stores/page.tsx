@@ -2,7 +2,7 @@
 
 import { SessionApiClient } from '@oneday/session-client';
 import { AppStatePanel, Button, StatusBadge } from '@oneday/ui';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import styles from './page.module.css';
 
 type Link = {
@@ -49,6 +49,35 @@ type LinkDraft = {
 };
 const api = process.env.NEXT_PUBLIC_API_BASE_URL ?? 'http://127.0.0.1:3001';
 const sessionApi = new SessionApiClient(api);
+type Bucket = { label: string; value: number };
+const barWidth = (total: number, value: number) => (total ? `${(value / total) * 100}%` : '0%');
+const countBy = (items: string[]) => {
+  const map = new Map<string, number>();
+  for (const item of items) map.set(item, (map.get(item) ?? 0) + 1);
+  return [...map.entries()]
+    .map(([label, value]) => ({ label, value }))
+    .sort((a, b) => b.value - a.value || a.label.localeCompare(b.label, 'zh'));
+};
+const entryBuckets = (count: number) => {
+  if (!count) return '无启用入口 0';
+  if (count === 1) return '单一入口 1';
+  return '多入口 2+';
+};
+const servicesBuckets = (count: number) => {
+  if (!count) return '无可用服务 0';
+  if (count <= 3) return '基础服务 1-3';
+  return '丰富服务 4+';
+};
+const opensBuckets = (count: number) => {
+  if (!count) return '近30日无打开 0';
+  if (count <= 10) return '低活跃 1-10';
+  return '活跃 11+';
+};
+const tasksBuckets = (count: number) => {
+  if (!count) return '无待跟进 0';
+  if (count <= 2) return '轻负载 1-2';
+  return '重负载 3+';
+};
 const blankLink = (): LinkDraft => ({
   title: '',
   description: '',
@@ -95,6 +124,30 @@ export default function StoresPage() {
   useEffect(() => {
     void load();
   }, [load]);
+  const statusDist = useMemo(
+    () => countBy(stores.map((store) => (store.status === 'active' ? '营业中' : '已停用'))),
+    [stores],
+  );
+  const ownerDist = useMemo(
+    () => countBy(stores.map((store) => (store.managers.length ? '已指派负责人' : '未指派负责人'))),
+    [stores],
+  );
+  const entryDist = useMemo(
+    () => countBy(stores.map((store) => entryBuckets(store.entryCount))),
+    [stores],
+  );
+  const servicesDist = useMemo(
+    () => countBy(stores.map((store) => servicesBuckets(store.activeServices))),
+    [stores],
+  );
+  const opensDist = useMemo(
+    () => countBy(stores.map((store) => opensBuckets(store.entryOpens30d))),
+    [stores],
+  );
+  const tasksDist = useMemo(
+    () => countBy(stores.map((store) => tasksBuckets(store.openTasks))),
+    [stores],
+  );
   const request = (url: string, method: 'POST' | 'PATCH' | 'PUT', body: unknown) =>
     sessionApi.request(url, {
       method,
@@ -231,6 +284,45 @@ export default function StoresPage() {
             <strong>{stores.reduce((n, s) => n + s.entryOpens30d, 0)}</strong>
           </div>
         </div>
+      </section>
+
+      <section className={styles.panel} aria-label="门店入口分布">
+        <div className={styles.panelHead}>
+          <h2>门店入口分布</h2>
+          <span className={styles.panelMeta}>由真实门店档案行推导</span>
+        </div>
+        <div className={styles.distribution}>
+          <div className={styles.panelBlock}>
+            <h3>营业状态分布</h3>
+            <BarList items={statusDist} total={stores.length} />
+          </div>
+          <div className={styles.panelBlock}>
+            <h3>负责人指派分布</h3>
+            <BarList items={ownerDist} total={stores.length} />
+          </div>
+          <div className={styles.panelBlock}>
+            <h3>启用平台入口分布</h3>
+            <BarList items={entryDist} total={stores.length} />
+          </div>
+          <div className={styles.panelBlock}>
+            <h3>服务覆盖分布</h3>
+            <BarList items={servicesDist} total={stores.length} />
+          </div>
+          <div className={styles.panelBlock}>
+            <h3>近30日入口打开分布</h3>
+            <BarList items={opensDist} total={stores.length} />
+          </div>
+          <div className={styles.panelBlock}>
+            <h3>待跟进负载分布</h3>
+            <BarList items={tasksDist} total={stores.length} />
+          </div>
+        </div>
+        <p className={styles.honest} role="note">
+          以上分布全部由已抓取门店档案行现场推导(source=local)：营业状态、负责人指派、启用平台入口、
+          可用服务、近 30
+          日入口打开与待跟进负载均按真实门店行统计。第三方入口仅记录跳转，不包含本平台收款、
+          非本平台下单，不代替平台成交。
+        </p>
       </section>
 
       {note && (
@@ -421,6 +513,22 @@ export default function StoresPage() {
         ))}
       </section>
     </main>
+  );
+}
+function BarList({ items, total }: { items: Bucket[]; total: number }) {
+  if (!items.length) return <p className={styles.barEmpty}>暂无记录</p>;
+  return (
+    <ul className={styles.bars}>
+      {items.map((item) => (
+        <li key={item.label} className={styles.barRow}>
+          <span className={styles.barLabel}>{item.label}</span>
+          <span className={styles.barTrack}>
+            <span className={styles.barFill} style={{ width: barWidth(total, item.value) }} />
+          </span>
+          <span className={styles.barValue}>{item.value}</span>
+        </li>
+      ))}
+    </ul>
   );
 }
 function LinkEditor({

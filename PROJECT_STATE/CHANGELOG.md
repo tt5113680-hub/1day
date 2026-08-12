@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 2026-08-12 - G1-W∞-80 Management `/m/stores` 门店入口真实数据深页 densify（MPC-02）PASS
+
+- Management 门店管理（MPC-02）承接 W∞-38 视觉/IA densify，补上「真实数据深页」缺口：新增白卡分布面板 `aria-label="门店入口分布"`——营业状态/负责人指派/启用平台入口/服务覆盖/近30日入口打开/待跟进负载，全部由真实 `stores[]` 档案行现场推导（禁止假 BI）；`page.module.css` 新增 `.panelHead/.panelMeta/.distribution/.panelBlock/.bars/.barRow/.barTrack/.barFill/.barValue/.barLabel/.barEmpty/.honest` 灰底白卡+黄渐变条（`linear-gradient(90deg,#ffd100,#f0a500)`），≤900px 单列堆叠（与 Management MPC 深页序列共享视觉语言）；honest 底注 source=local、第三方入口仅记录跳转、不包含本平台收款、非本平台下单。无 schema/DB/API，不复活 consumer_orders / 本平台下单/收单。新增 tests/g1-winf80-management-stores-deep.test.mjs 4/4，随动更新 g1-winf38（honest 边界断言 `本平台下单`→`非本平台下单`）；`g1-winf*.test.mjs` 277/277；management typecheck+build PASS（29 routes 含 /m/stores）；`pnpm typecheck` 20/20、`pnpm build` 20/20；eslint+prettier clean。See evidence/G1-MEITUAN-PARITY/WINF80/ACCEPTANCE.md.
+
 ## 2026-08-12 - G1-W∞-79 Employee `/e/leads` 获客池真实数据深页 densify PASS
 
 - 黄顶栏+灰底白卡+summaryStrip+分布面板；移除 Card。tests/g1-winf79 4/4。See WINF79.

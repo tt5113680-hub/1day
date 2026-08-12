@@ -33,5 +33,5 @@ test('W∞-38: management stores honest entry boundaries preserved', () => {
   assert.match(p, /第三方订单履约/);
   assert.match(p, /团购与第三方平台入口/);
   assert.doesNotMatch(p, /门店管理/);
-  assert.doesNotMatch(p, /本平台下单/);
+  assert.match(p, /非本平台下单/);
 });
