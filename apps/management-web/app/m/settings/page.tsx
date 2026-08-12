@@ -2,7 +2,7 @@
 import { SessionApiClient } from '@oneday/session-client';
 import { AppStatePanel, Button } from '@oneday/ui';
 
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import styles from './page.module.css';
 
 type Settings = {
@@ -15,6 +15,30 @@ type Settings = {
   brand: { displayName: string; primaryColor: string };
 };
 
+type Bucket = { label: string; value: number };
+const barWidth = (total: number, value: number) => (total ? `${(value / total) * 100}%` : '0%');
+const countBy = (items: string[]) => {
+  const map = new Map<string, number>();
+  for (const item of items) map.set(item, (map.get(item) ?? 0) + 1);
+  return [...map.entries()]
+    .map(([label, value]) => ({ label, value }))
+    .sort((a, b) => b.value - a.value || a.label.localeCompare(b.label, 'zh'));
+};
+const hoursBuckets = (count: number) => {
+  if (count <= 12) return '短时限 ≤12h';
+  if (count <= 72) return '常规时限 13-72h';
+  return '长时限 73h+';
+};
+const tagsBuckets = (count: number) => {
+  if (count <= 5) return '少量标签 1-5';
+  if (count <= 15) return '常规标签 6-15';
+  return '较多标签 16+';
+};
+const approvalBuckets = (count: number) => {
+  if (count >= 2) return '两项审批开 2';
+  if (count === 1) return '单项审批开 1';
+  return '未开审批 0';
+};
 const api = process.env.NEXT_PUBLIC_API_BASE_URL ?? 'http://127.0.0.1:3001';
 const sessionApi = new SessionApiClient(api);
 
@@ -112,6 +136,56 @@ export default function SettingsPage() {
       setVisibilitySaving(false);
     }
   };
+  const approvalDist = useMemo(
+    () =>
+      countBy([
+        approvalBuckets(
+          [
+            settings?.approvals.requireOwnershipTransfer,
+            settings?.approvals.requireContentApproval,
+          ].filter(Boolean).length,
+        ),
+      ]),
+    [settings],
+  );
+  const hoursDist = useMemo(
+    () =>
+      countBy(
+        settings
+          ? [settings.reminders.defaultDueHours, settings.reminders.escalationHours].map(
+              hoursBuckets,
+            )
+          : [],
+      ),
+    [settings],
+  );
+  const dndDist = useMemo(
+    () => countBy(settings ? [settings.doNotDisturb.enabled ? '已开免打扰' : '未开免打扰'] : []),
+    [settings],
+  );
+  const tagsDist = useMemo(
+    () =>
+      countBy(
+        settings
+          ? [
+              settings.tags.allowCustom ? '允许自定义标签' : '固定标签',
+              tagsBuckets(settings.tags.maxPerCustomer),
+            ]
+          : [],
+      ),
+    [settings],
+  );
+  const allocDist = useMemo(
+    () =>
+      countBy(
+        settings ? [settings.ownership.allocation === 'round_robin' ? '轮转分配' : '人工分配'] : [],
+      ),
+    [settings],
+  );
+  const visibilityDist = useMemo(
+    () => countBy([platformVisible ? '已开通引流' : '未开通引流']),
+    [platformVisible],
+  );
   if (state === 'loading')
     return (
       <main className={styles.centered}>
@@ -170,6 +244,69 @@ export default function SettingsPage() {
           {note}
         </p>
       )}
+      <section className={styles.panel} aria-label="工具规则概况">
+        <div className={styles.summaryStrip}>
+          <div>
+            <span>审批开关</span>
+            <strong>
+              {approvalDist.find((b) => b.value === 2)?.value ?? approvalDist[0]?.value ?? 0}
+            </strong>
+          </div>
+          <div>
+            <span>默认时限</span>
+            <strong>{settings.reminders.defaultDueHours}h</strong>
+          </div>
+          <div>
+            <span>归属分配</span>
+            <strong>{settings.ownership.allocation === 'round_robin' ? '轮转' : '人工'}</strong>
+          </div>
+          <div>
+            <span>全平台可见</span>
+            <strong>{platformVisible ? '已开通' : '未开通'}</strong>
+          </div>
+        </div>
+      </section>
+
+      <section className={styles.panel} aria-label="工具规则分布">
+        <div className={styles.panelHead}>
+          <h2>工具规则分布</h2>
+          <span className={styles.panelMeta}>由当前工具规则档现场推导</span>
+        </div>
+        <div className={styles.distribution}>
+          <div className={styles.panelBlock}>
+            <h3>审批开关分布</h3>
+            <BarList items={approvalDist} total={approvalDist.reduce((n, b) => n + b.value, 0)} />
+          </div>
+          <div className={styles.panelBlock}>
+            <h3>提醒时限分布</h3>
+            <BarList items={hoursDist} total={hoursDist.reduce((n, b) => n + b.value, 0)} />
+          </div>
+          <div className={styles.panelBlock}>
+            <h3>免打扰分布</h3>
+            <BarList items={dndDist} total={dndDist.reduce((n, b) => n + b.value, 0)} />
+          </div>
+          <div className={styles.panelBlock}>
+            <h3>标签规则分布</h3>
+            <BarList items={tagsDist} total={tagsDist.reduce((n, b) => n + b.value, 0)} />
+          </div>
+          <div className={styles.panelBlock}>
+            <h3>归属分配分布</h3>
+            <BarList items={allocDist} total={allocDist.reduce((n, b) => n + b.value, 0)} />
+          </div>
+          <div className={styles.panelBlock}>
+            <h3>全平台可见引流分布</h3>
+            <BarList
+              items={visibilityDist}
+              total={visibilityDist.reduce((n, b) => n + b.value, 0)}
+            />
+          </div>
+        </div>
+        <p className={styles.honest} role="note">
+          以上分布全部由当前已加载工具规则档现场推导(source=local)：审批开关、提醒时限、免打扰、
+          标签规则、归属分配与全平台可见引流均按本租户真实规则字段统计；全平台可见只影响入口曝光，
+          痕迹为观看/访问/跳转，不含支付金额与第三方订单成功，不包含本平台收款、非本平台下单。
+        </p>
+      </section>
       <nav className={styles.toolLinks} aria-label="推广员工具相关">
         <a href="/m/entry-funnel">入口漏斗</a>
         <a href="/m/attribution">归因深页</a>
@@ -329,5 +466,21 @@ export default function SettingsPage() {
         保存工具设置
       </Button>
     </main>
+  );
+}
+function BarList({ items, total }: { items: Bucket[]; total: number }) {
+  if (!items.length) return <p className={styles.barEmpty}>暂无记录</p>;
+  return (
+    <ul className={styles.bars}>
+      {items.map((item) => (
+        <li key={item.label} className={styles.barRow}>
+          <span className={styles.barLabel}>{item.label}</span>
+          <span className={styles.barTrack}>
+            <span className={styles.barFill} style={{ width: barWidth(total, item.value) }} />
+          </span>
+          <span className={styles.barValue}>{item.value}</span>
+        </li>
+      ))}
+    </ul>
   );
 }
