@@ -1,9 +1,23 @@
 'use client';
 
+import { useMemo } from 'react';
 import { AppStatePanel, Button, MobileShell } from '@oneday/ui';
 import { FunnelPageBeacon } from '../../funnel-page-beacon';
 import { trackFunnelEvent } from '../../entry-funnel-client';
 import styles from '../circles.module.css';
+
+const countBy = (rows: string[]) => {
+  const buckets = new Map<string, number>();
+  for (const row of rows) {
+    const label = row || '未分类';
+    buckets.set(label, (buckets.get(label) ?? 0) + 1);
+  }
+  return [...buckets.entries()]
+    .map(([label, value]) => ({ label, value }))
+    .sort((a, b) => b.value - a.value);
+};
+const barWidth = (total: number, value: number) =>
+  total === 0 ? 0 : Math.round((value / total) * 100);
 
 export type CircleDetailData = {
   tenant: { slug: string; name: string };
@@ -44,6 +58,21 @@ export function CircleDetailState({ kind }: { kind: 'forbidden' | 'error' }) {
 export default function CircleDetail({ data }: { data: CircleDetailData }) {
   const listHref = `/c/circles?tenant=${encodeURIComponent(data.tenant.slug)}`;
   const withStore = data.merchants.filter((m) => m.entryUrl).length;
+  const merchantsTotal = data.merchants.length;
+
+  const entranceDist = useMemo(
+    () => countBy(data.merchants.map((m) => (m.entryUrl ? '可进店' : '暂无店页'))),
+    [data.merchants],
+  );
+  const identityDist = useMemo(
+    () =>
+      countBy([
+        data.circle.ownedByViewer ? '本店经营' : '消费者视角',
+        data.circle.publicVisible ? '公开引流' : '定向可见',
+      ]),
+    [data.circle.ownedByViewer, data.circle.publicVisible],
+  );
+  const ownerDist = useMemo(() => countBy(data.merchants.map((m) => m.name)), [data.merchants]);
 
   return (
     <MobileShell>
@@ -80,12 +109,100 @@ export default function CircleDetail({ data }: { data: CircleDetailData }) {
             </p>
             {data.circle.address ? <p className={styles.meta}>{data.circle.address}</p> : null}
             <p className={styles.meta}>
-              {data.merchants.length} 家入驻 · {withStore} 家可进店
+              {merchantsTotal} 家入驻 · {withStore} 家可进店
             </p>
             <p className={styles.disclaimer} role="note">
               进店后的团购/收银跳转由第三方完成；本页只统计入口痕迹，不在此下单，也不含支付金额。
             </p>
           </section>
+
+          <section className={styles.heroCard} aria-label="商圈详情概况">
+            <header className={styles.heroHead}>
+              <span>推广员工具 · 商圈详情 · {data.circle.name}</span>
+              <h2>{data.circle.name}</h2>
+              <p role="note">
+                按真实商圈档案汇总：入驻商户、进店入口与公开可见，仅供入口分流参考。
+              </p>
+            </header>
+            <div className={styles.summaryStrip} aria-label="商圈详情数据概况">
+              <dl>
+                <dt>入驻商户</dt>
+                <dd>{merchantsTotal}</dd>
+              </dl>
+              <dl>
+                <dt>可进店</dt>
+                <dd>{withStore}</dd>
+              </dl>
+              <dl>
+                <dt>商圈身份</dt>
+                <dd>{data.circle.ownedByViewer ? '本店经营' : '消费者视角'}</dd>
+              </dl>
+            </div>
+          </section>
+
+          <section className={styles.distribution} aria-label="商圈详情分布">
+            <header className={styles.panelHead}>
+              <h3>商圈详情分布</h3>
+              <p>分布由已抓取商圈详情档案行现场推导 · 仅统计入口痕迹与商家发现，不涉及成交</p>
+            </header>
+            <div className={styles.panelBlock}>
+              <span className={styles.barLabel}>商户可进店分布</span>
+              <div className={styles.bars} role="list">
+                {entranceDist.length ? (
+                  entranceDist.map((bar) => (
+                    <div className={styles.barRow} role="listitem" key={bar.label}>
+                      <span>{bar.label}</span>
+                      <b>
+                        <i style={{ width: `${barWidth(merchantsTotal, bar.value)}%` }} />
+                      </b>
+                      <em>{bar.value}</em>
+                    </div>
+                  ))
+                ) : (
+                  <span className={styles.barEmpty}>暂无商户记录</span>
+                )}
+              </div>
+            </div>
+            <div className={styles.panelBlock}>
+              <span className={styles.barLabel}>商圈身份分布</span>
+              <div className={styles.bars} role="list">
+                {identityDist.map((bar) => (
+                  <div className={styles.barRow} role="listitem" key={bar.label}>
+                    <span>{bar.label}</span>
+                    <b>
+                      <i style={{ width: `${barWidth(2, bar.value)}%` }} />
+                    </b>
+                    <em>{bar.value}</em>
+                  </div>
+                ))}
+              </div>
+            </div>
+            <div className={styles.panelBlock}>
+              <span className={styles.barLabel}>入驻商户分布</span>
+              <div className={styles.bars} role="list">
+                {ownerDist.length ? (
+                  ownerDist.map((bar) => (
+                    <div className={styles.barRow} role="listitem" key={bar.label}>
+                      <span>{bar.label}</span>
+                      <b>
+                        <i style={{ width: `${barWidth(merchantsTotal, bar.value)}%` }} />
+                      </b>
+                      <em>{bar.value}</em>
+                    </div>
+                  ))
+                ) : (
+                  <span className={styles.barEmpty}>暂无商户记录</span>
+                )}
+              </div>
+            </div>
+          </section>
+
+          <p className={styles.honest} role="note">
+            以上分布全部由已抓取商圈详情档案行现场推导，源 source=local；
+            商圈互助是入口引流与商家发现，进店后的团购/收银跳转由美团/抖音/扫呗等外部平台完成；
+            仅统计观看/访问/跳转/停留/分享入口痕迹，不含支付金额。不在此下单，非本平台下单。
+          </p>
+
           <section className={styles.merchants} aria-label="圈内商家">
             <h2 className={styles.sectionTitle}>圈内商家</h2>
             {data.merchants.length ? (

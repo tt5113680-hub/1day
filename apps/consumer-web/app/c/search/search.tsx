@@ -1,6 +1,6 @@
 'use client';
 
-import { FormEvent, useEffect, useState } from 'react';
+import { FormEvent, useEffect, useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { ConsumerStorefrontNav } from '@oneday/storefront-renderer';
 import '@oneday/storefront-renderer/storefront.css';
@@ -24,6 +24,19 @@ export type SearchData = {
   query: string;
   items: SearchResult[];
 };
+
+const countBy = (rows: string[]) => {
+  const buckets = new Map<string, number>();
+  for (const row of rows) {
+    const label = row || '未分类';
+    buckets.set(label, (buckets.get(label) ?? 0) + 1);
+  }
+  return [...buckets.entries()]
+    .map(([label, value]) => ({ label, value }))
+    .sort((a, b) => b.value - a.value);
+};
+const barWidth = (total: number, value: number) =>
+  total === 0 ? 0 : Math.round((value / total) * 100);
 export function SearchState({ kind }: { kind: 'forbidden' | 'error' }) {
   const copy: readonly [string, string] =
     kind === 'forbidden'
@@ -66,6 +79,29 @@ export default function SearchPage({ data }: { data: SearchData }) {
     if (!trimmed) return;
     router.push(`/c/search?tenant=${tenantQ}&q=${encodeURIComponent(trimmed)}`);
   };
+  const itemsTotal = data.items.length;
+  const ratingBucket = (v: number | undefined) =>
+    v == null ? '暂无评分' : v < 3.6 ? '低分 3.5 及以下' : v <= 4.2 ? '中等 3.6-4.2' : '高评 4.3+';
+  const distanceBucket = (v: number | null) =>
+    v == null ? '未定位距离' : v <= 1 ? '1km 内' : v <= 3 ? '1-3km' : v <= 5 ? '3-5km' : '5km 外';
+  const salesBucket = (v: number | undefined) =>
+    v == null ? '暂无人气' : v <= 100 ? '低 100 及以下' : v <= 500 ? '中 101-500' : '高 501+';
+  const ratingDist = useMemo(
+    () => countBy(data.items.map((item) => ratingBucket(item.rating))),
+    [data.items],
+  );
+  const distanceDist = useMemo(
+    () => countBy(data.items.map((item) => distanceBucket(item.distanceKm))),
+    [data.items],
+  );
+  const entranceDist = useMemo(
+    () => countBy(data.items.map((item) => (item.entryUrl ? '可直接跳转' : '待商家补充入口'))),
+    [data.items],
+  );
+  const salesDist = useMemo(
+    () => countBy(data.items.map((item) => salesBucket(item.salesHint))),
+    [data.items],
+  );
   return (
     <MobileShell>
       <ConsumerStorefrontNav
@@ -111,6 +147,116 @@ export default function SearchPage({ data }: { data: SearchData }) {
             <a href={`/c/circles?tenant=${tenantQ}`}>商圈联盟</a>
             <a href={entryHref}>统一入口</a>
           </div>
+
+          <section className={styles.heroCard} aria-label="搜索结果概况">
+            <header className={styles.heroHead}>
+              <span>{data.tenant.name} · 推广员工具 · 搜索</span>
+              <h2>{data.query ? `“${data.query}”` : '搜索商家'}</h2>
+              <p role="note">
+                按真实搜索结果档案汇总：评分带、距离带、入口可用性与人气带，仅供入口分流参考。
+              </p>
+            </header>
+            <div className={styles.summaryStrip} aria-label="搜索数据概况">
+              <dl>
+                <dt>匹配商家</dt>
+                <dd>{itemsTotal}</dd>
+              </dl>
+              <dl>
+                <dt>可直接跳转</dt>
+                <dd>{data.items.filter((item) => item.entryUrl).length}</dd>
+              </dl>
+              <dl>
+                <dt>有评分</dt>
+                <dd>{data.items.filter((item) => item.rating != null).length}</dd>
+              </dl>
+            </div>
+          </section>
+
+          <section className={styles.distribution} aria-label="搜索结果分布">
+            <header className={styles.panelHead}>
+              <h3>搜索结果分布</h3>
+              <p>分布由已抓取搜索结果档案行现场推导 · 评分/月售为本地试用提示，不涉及成交</p>
+            </header>
+            <div className={styles.panelBlock}>
+              <span className={styles.barLabel}>评分分布</span>
+              <div className={styles.bars} role="list">
+                {ratingDist.length ? (
+                  ratingDist.map((bar) => (
+                    <div className={styles.barRow} role="listitem" key={bar.label}>
+                      <span>{bar.label}</span>
+                      <b>
+                        <i style={{ width: `${barWidth(itemsTotal, bar.value)}%` }} />
+                      </b>
+                      <em>{bar.value}</em>
+                    </div>
+                  ))
+                ) : (
+                  <span className={styles.barEmpty}>暂无搜索结果</span>
+                )}
+              </div>
+            </div>
+            <div className={styles.panelBlock}>
+              <span className={styles.barLabel}>距离带分布</span>
+              <div className={styles.bars} role="list">
+                {distanceDist.length ? (
+                  distanceDist.map((bar) => (
+                    <div className={styles.barRow} role="listitem" key={bar.label}>
+                      <span>{bar.label}</span>
+                      <b>
+                        <i style={{ width: `${barWidth(itemsTotal, bar.value)}%` }} />
+                      </b>
+                      <em>{bar.value}</em>
+                    </div>
+                  ))
+                ) : (
+                  <span className={styles.barEmpty}>暂无搜索结果</span>
+                )}
+              </div>
+            </div>
+            <div className={styles.panelBlock}>
+              <span className={styles.barLabel}>入口可用性分布</span>
+              <div className={styles.bars} role="list">
+                {entranceDist.length ? (
+                  entranceDist.map((bar) => (
+                    <div className={styles.barRow} role="listitem" key={bar.label}>
+                      <span>{bar.label}</span>
+                      <b>
+                        <i style={{ width: `${barWidth(itemsTotal, bar.value)}%` }} />
+                      </b>
+                      <em>{bar.value}</em>
+                    </div>
+                  ))
+                ) : (
+                  <span className={styles.barEmpty}>暂无搜索结果</span>
+                )}
+              </div>
+            </div>
+            <div className={styles.panelBlock}>
+              <span className={styles.barLabel}>人气带分布</span>
+              <div className={styles.bars} role="list">
+                {salesDist.length ? (
+                  salesDist.map((bar) => (
+                    <div className={styles.barRow} role="listitem" key={bar.label}>
+                      <span>{bar.label}</span>
+                      <b>
+                        <i style={{ width: `${barWidth(itemsTotal, bar.value)}%` }} />
+                      </b>
+                      <em>{bar.value}</em>
+                    </div>
+                  ))
+                ) : (
+                  <span className={styles.barEmpty}>暂无搜索结果</span>
+                )}
+              </div>
+            </div>
+          </section>
+
+          <p className={styles.honest} role="note">
+            以上分布全部由已抓取搜索结果档案行现场推导，源 source=local；
+            评分与月售为本地试用提示，进店与成交以美团/抖音/扫呗等外部平台为准；
+            仅统计观看/访问/跳转/停留/分享入口痕迹，不含支付金额。不在此下单，非本平台下单。
+          </p>
+
           <div className={styles.results}>
             {data.items.length ? (
               data.items.map((item) => (
@@ -139,7 +285,9 @@ export default function SearchPage({ data }: { data: SearchData }) {
                         <span className={styles.rating}>{item.rating} 分</span>
                       ) : null}
                       {item.salesHint != null ? <span>月售 {item.salesHint}+</span> : null}
-                      <span>{item.ratingSource === 'local_pilot' ? '本地试用提示' : '本地试用'}</span>
+                      <span>
+                        {item.ratingSource === 'local_pilot' ? '本地试用提示' : '本地试用'}
+                      </span>
                     </p>
                   </span>
                   {item.distanceKm != null ? (
