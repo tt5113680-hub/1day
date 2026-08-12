@@ -2,7 +2,7 @@
 import { SessionApiClient } from '@oneday/session-client';
 import { AppStatePanel, Button } from '@oneday/ui';
 
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { PlatformProductHome } from '../../platform-product-home';
 import styles from './page.module.css';
 
@@ -48,6 +48,18 @@ const SHORTCUT_ICONS: Record<string, string> = {
   代理: '代',
 };
 
+const barWidth = (total: number, value: number) => (total ? `${(value / total) * 100}%` : '0%');
+const circleScaleLabel = (n: number) =>
+  n <= 0 ? '未收拢商户 0' : n <= 5 ? '精简联盟 1-5' : n <= 15 ? '中型联盟 6-15' : '规模联盟 16+';
+const merchantBenefitLabel = (n: number) =>
+  n <= 0 ? '未配置权益 0' : n <= 4 ? '基础权益 1-4' : '丰富权益 5+';
+const contentDensityLabel = (n: number) =>
+  n <= 0 ? '未投内容 0' : n <= 5 ? '轻度内容 1-5' : '丰富内容 6+';
+const trafficDensityLabel = (n: number) =>
+  n <= 0 ? '尚无行为 0' : n < 10 ? '低活跃 1-9' : n < 100 ? '中活跃 10-99' : '高活跃 100+';
+const conversionDensityLabel = (n: number) =>
+  n <= 0 ? '未转化 0' : n < 10 ? '少量转化 1-9' : '高转化 10+';
+
 export default function BusinessCircleDashboard() {
   const [state, setState] = useState<'loading' | 'ready' | 'forbidden' | 'error'>('loading');
   const [data, setData] = useState<Data | null>(null);
@@ -68,6 +80,51 @@ export default function BusinessCircleDashboard() {
     }
   }, []);
   useEffect(() => void load(), [load]);
+  const circleScaleCounts = useMemo(() => {
+    const map = new Map<string, number>();
+    for (const circle of data?.circles ?? []) {
+      const key = circleScaleLabel(circle.merchants.length);
+      map.set(key, (map.get(key) ?? 0) + 1);
+    }
+    return [...map.entries()].map(([key, value]) => ({ key, value }));
+  }, [data]);
+  const merchantTotal = (data?.circles ?? []).reduce(
+    (acc, circle) => acc + circle.merchants.length,
+    0,
+  );
+  const allMerchants = (data?.circles ?? []).flatMap((circle) => circle.merchants);
+  const merchantBenefitCounts = useMemo(() => {
+    const map = new Map<string, number>();
+    for (const merchant of allMerchants) {
+      const key = merchantBenefitLabel(merchant.benefits?.length ?? 0);
+      map.set(key, (map.get(key) ?? 0) + 1);
+    }
+    return [...map.entries()].map(([key, value]) => ({ key, value }));
+  }, [allMerchants]);
+  const contentDensityCounts = useMemo(() => {
+    const map = new Map<string, number>();
+    for (const merchant of allMerchants) {
+      const key = contentDensityLabel(merchant.contentCount ?? 0);
+      map.set(key, (map.get(key) ?? 0) + 1);
+    }
+    return [...map.entries()].map(([key, value]) => ({ key, value }));
+  }, [allMerchants]);
+  const trafficDensityCounts = useMemo(() => {
+    const map = new Map<string, number>();
+    for (const merchant of allMerchants) {
+      const key = trafficDensityLabel(merchant.trafficEvents ?? 0);
+      map.set(key, (map.get(key) ?? 0) + 1);
+    }
+    return [...map.entries()].map(([key, value]) => ({ key, value }));
+  }, [allMerchants]);
+  const conversionDensityCounts = useMemo(() => {
+    const map = new Map<string, number>();
+    for (const merchant of allMerchants) {
+      const key = conversionDensityLabel(merchant.conversionOrders ?? 0);
+      map.set(key, (map.get(key) ?? 0) + 1);
+    }
+    return [...map.entries()].map(([key, value]) => ({ key, value }));
+  }, [allMerchants]);
   if (state !== 'ready')
     return (
       <main className={styles.centered}>
@@ -112,6 +169,25 @@ export default function BusinessCircleDashboard() {
         </p>
       </section>
 
+      <section className={styles.summaryStrip} aria-label="商圈联盟概况">
+        <div>
+          <span>固定商圈</span>
+          <strong>{metrics?.circle_count ?? 0}</strong>
+        </div>
+        <div>
+          <span>已批准商户</span>
+          <strong>{merchantTotal}</strong>
+        </div>
+        <div>
+          <span>访问行为</span>
+          <strong>{metrics?.traffic_events ?? 0}</strong>
+        </div>
+        <div>
+          <span>入口转化</span>
+          <strong>{metrics?.conversion_orders ?? 0}</strong>
+        </div>
+      </section>
+
       <section className={styles.panel} aria-label="常用功能">
         <div className={styles.panelHead}>
           <h2>常用功能</h2>
@@ -143,6 +219,105 @@ export default function BusinessCircleDashboard() {
           ))}
         </div>
       </section>
+
+      <section className={styles.distribution} aria-label="商圈联盟分布">
+        <div className={styles.panelBlock}>
+          <h2>联盟规模分布</h2>
+          <ul className={styles.bars}>
+            {circleScaleCounts.map((b) => (
+              <li key={b.key} className={styles.barRow}>
+                <span className={styles.barLabel}>{b.key}</span>
+                <span className={styles.barTrack}>
+                  <span
+                    className={styles.barFill}
+                    style={{ width: barWidth(data?.circles.length ?? 0, b.value) }}
+                  />
+                </span>
+                <span className={styles.barValue}>{b.value}</span>
+              </li>
+            ))}
+            {!data?.circles.length && <li className={styles.barEmpty}>暂无记录</li>}
+          </ul>
+        </div>
+        <div className={styles.panelBlock}>
+          <h2>商户权益覆盖分布</h2>
+          <ul className={styles.bars}>
+            {merchantBenefitCounts.map((b) => (
+              <li key={b.key} className={styles.barRow}>
+                <span className={styles.barLabel}>{b.key}</span>
+                <span className={styles.barTrack}>
+                  <span
+                    className={styles.barFill}
+                    style={{ width: barWidth(merchantTotal, b.value) }}
+                  />
+                </span>
+                <span className={styles.barValue}>{b.value}</span>
+              </li>
+            ))}
+            {!merchantTotal && <li className={styles.barEmpty}>暂无记录</li>}
+          </ul>
+        </div>
+        <div className={styles.panelBlock}>
+          <h2>内容密度分布</h2>
+          <ul className={styles.bars}>
+            {contentDensityCounts.map((b) => (
+              <li key={b.key} className={styles.barRow}>
+                <span className={styles.barLabel}>{b.key}</span>
+                <span className={styles.barTrack}>
+                  <span
+                    className={styles.barFill}
+                    style={{ width: barWidth(merchantTotal, b.value) }}
+                  />
+                </span>
+                <span className={styles.barValue}>{b.value}</span>
+              </li>
+            ))}
+            {!merchantTotal && <li className={styles.barEmpty}>暂无记录</li>}
+          </ul>
+        </div>
+        <div className={styles.panelBlock}>
+          <h2>流量行为分布</h2>
+          <ul className={styles.bars}>
+            {trafficDensityCounts.map((b) => (
+              <li key={b.key} className={styles.barRow}>
+                <span className={styles.barLabel}>{b.key}</span>
+                <span className={styles.barTrack}>
+                  <span
+                    className={styles.barFill}
+                    style={{ width: barWidth(merchantTotal, b.value) }}
+                  />
+                </span>
+                <span className={styles.barValue}>{b.value}</span>
+              </li>
+            ))}
+            {!merchantTotal && <li className={styles.barEmpty}>暂无记录</li>}
+          </ul>
+        </div>
+        <div className={styles.panelBlock}>
+          <h2>入口转化分布</h2>
+          <ul className={styles.bars}>
+            {conversionDensityCounts.map((b) => (
+              <li key={b.key} className={styles.barRow}>
+                <span className={styles.barLabel}>{b.key}</span>
+                <span className={styles.barTrack}>
+                  <span
+                    className={styles.barFill}
+                    style={{ width: barWidth(merchantTotal, b.value) }}
+                  />
+                </span>
+                <span className={styles.barValue}>{b.value}</span>
+              </li>
+            ))}
+            {!merchantTotal && <li className={styles.barEmpty}>暂无记录</li>}
+          </ul>
+        </div>
+      </section>
+
+      <p className={styles.honest}>
+        以上分布全部由已抓取商圈联盟档案行现场推导（source=local）：联盟规模、商户权益覆盖、
+        内容密度、流量行为与入口转化；商圈是商家联盟整合网络，仅呈现聚合入口痕迹，不包含本平台收款、
+        非本平台下单；本地试点记录，未接美团实时商户数据。
+      </p>
 
       <section className={styles.panel} aria-label="固定商圈联盟明细">
         <div className={styles.panelHead}>
