@@ -180,6 +180,10 @@ export default function MembershipsPage() {
       value,
     }));
 
+  const coveredStores = new Set(enrollments.map((item) => item.store_name ?? '未绑定门店'));
+  const benefitCount = data.benefits.length;
+  const enrolledCount = enrollments.length;
+
   return (
     <main className={styles.page} data-testid="management-memberships">
       <header className={styles.topBar}>
@@ -203,14 +207,18 @@ export default function MembershipsPage() {
         </p>
       ) : null}
 
-      <section className={styles.summary} aria-label="会员概况">
+      <section className={styles.summaryStrip} aria-label="会员数据概况">
         <div>
-          <strong>{data.enrollments.length}</strong>
           <span>在册会员</span>
+          <strong>{enrolledCount}</strong>
         </div>
         <div>
-          <strong>{data.benefits.length}</strong>
           <span>权益项</span>
+          <strong>{benefitCount}</strong>
+        </div>
+        <div>
+          <span>覆盖门店</span>
+          <strong>{coveredStores.size}</strong>
         </div>
       </section>
 

@@ -107,6 +107,11 @@ export default function ManagementCustomersPage() {
   const byTag = [...tagCounts.entries()]
     .sort((a, b) => b[1] - a[1])
     .map(([key, value]) => ({ key, value }));
+
+  const activeCount = customers.filter((c) => c.segment === 'active').length;
+  const repurchaseCount = customers.filter((c) => c.segment === 'repurchase').length;
+  const dormantCount = customers.filter((c) => c.segment === 'dormant').length;
+  const orderedCount = customers.filter((c) => c.orders > 0).length;
   const requestExport = async () => {
     setBusy('export');
     setNotice('');
@@ -184,7 +189,7 @@ export default function ManagementCustomersPage() {
     );
 
   return (
-    <main className={styles.page}>
+    <main className={styles.page} data-testid="management-customers">
       <header className={styles.topBar}>
         <span className={styles.topBarTitle}>推广员工具 · 客户跟进</span>
         <button
@@ -202,6 +207,33 @@ export default function ManagementCustomersPage() {
         <p>
           基于已沉淀的来源、标签与归属筛选客户，组织实名授权跟进；导出与归属变更均保留审批和审计记录。
         </p>
+      </section>
+
+      <section className={styles.summaryStrip} aria-label="客户数据概况">
+        <div>
+          <span>客户</span>
+          <strong>{customers.length}</strong>
+        </div>
+        <div>
+          <span>活跃</span>
+          <strong>{activeCount}</strong>
+        </div>
+        <div>
+          <span>复购</span>
+          <strong>{repurchaseCount}</strong>
+        </div>
+        <div>
+          <span>沉睡</span>
+          <strong>{dormantCount}</strong>
+        </div>
+        <div>
+          <span>标签</span>
+          <strong>{byTag.length}</strong>
+        </div>
+        <div>
+          <span>有有效订单</span>
+          <strong>{orderedCount}</strong>
+        </div>
       </section>
 
       <section className={styles.panel} aria-label="客户跟进分布">

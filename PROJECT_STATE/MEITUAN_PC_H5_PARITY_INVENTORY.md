@@ -1,7 +1,7 @@
 # 美团 PC / H5 复刻清单（施工权威）
 
 - created_at: 2026-08-10 23:30 Asia/Shanghai
-- updated_at: 2026-08-11 21:47 Asia/Shanghai
+- updated_at: 2026-08-12 Asia/Shanghai
 - authority: 主人裁决 — **不做美团产品**；学习成熟管理系统/人员/代理/指标/开店链路（客户熟悉→上手快）；底盘仍为 ONEDAY；仅工作流整合页自研差异
 - strategy: `PRODUCT_DUAL_TRACK_STRATEGY.md`
 - rule: **对成熟场景施工**。禁止自创陌生管理 IA；也禁止宣称「已是美团」。
@@ -47,9 +47,9 @@
 | MPC-03 | 商品管理 | `/m/offers` | PARTIAL | W∞-19/23 工具身份；**W∞-39** 视觉/IA densify（黄顶栏+灰底白卡）；**W∞-47** 真实数据深页分布（套餐可见/门店/平台入口/Offer 状态/价格带，source=local 档案行推导，禁止假 BI）；toward PARITY；见 WINF39/WINF47 |
 | MPC-04 | 订单中心 | — | PARTIAL | 只读档案/痕迹（`/m/orders`）+ 导航「订单痕迹」（W∞-21/22）；**W∞-42** 视觉 densify（黄顶栏+灰底白卡+heroCard+概况条+row 列表）；**W∞-45** 真实数据深页分布（状态/门店/来源，source=local 档案行推导，禁止假 BI）；toward PARITY；不做本平台成交；见 WINF42/WINF45 |
 | MPC-05 | 评价管理 | `/m/reviews` | PARTIAL | 诚实档案/答复痕迹；W∞-23 导航+页头 `评价管理→评价档案`；**W∞-42** 视觉 densify（黄顶栏+灰底白卡+heroCard+概况条+row 列表）；**W∞-45** 真实数据深页分布（评分 5★~1★/门店，source=local 推导，禁止假 BI）；toward PARITY；不接第三方评价流；见 WINF42/WINF45 |
-| MPC-06 | 顾客 / CRM | `/m/customers` | PARTIAL | W∞-24 工具身份收尾：`客户资产/驱动每次经营动作/经营管理权限` → `客户跟进`（eyebrow/title/状态/back-link/aria）；保留实名授权跟进/来源分层/归属与导出审批；**W∞-40** 视觉/IA densify（`/m/customers` + `/m/customers/[id]` 黄顶栏+灰底白卡+heroCard+白卡面板）；**W∞-46** 真实数据深页分布（分层/归属/标签，source=local 档案行推导，禁止假 BI）；toward PARITY；见 WINF40/WINF46 |
+| MPC-06 | 顾客 / CRM | `/m/customers` | PARTIAL | W∞-24 工具身份收尾：`客户资产/驱动每次经营动作/经营管理权限` → `客户跟进`（eyebrow/title/状态/back-link/aria）；保留实名授权跟进/来源分层/归属与导出审批；**W∞-40** 视觉/IA densify（`/m/customers` + `/m/customers/[id]` 黄顶栏+灰底白卡+heroCard+白卡面板）；**W∞-46** 真实数据深页分布（分层/归属/标签，source=local 档案行推导，禁止假 BI）；**W∞-88** 全标对概况条 densify（`data-testid="management-customers"` + 白卡概况条 `客户数据概况` 客户/活跃/复购/沉睡/标签/有有效订单，全部由真实 customers 档案行现场推导）；toward PARITY；见 WINF40/WINF46/WINF88 |
 | MPC-07 | 营销中心（券/活动） | `/m/marketing` | PARTIAL | 本地营销活动档案；W∞-23 页头 `营销中心→营销活动`（对齐导航）；**W∞-42** 视觉 densify（黄顶栏+灰底白卡+heroCard+概况条+row 列表）；**W∞-45** 真实数据深页分布（状态/类型，source=local 推导，禁止假 BI）；toward PARITY；不接实时投放；见 WINF42/WINF45 |
-| MPC-08 | 会员 | `/m/memberships` | PARTIAL | W∞-25 眉标 `会员中心`；会员码核销/ledger 工具身份；**W∞-41** 视觉/IA densify（黄顶栏+灰底白卡+heroCard+概况条+白卡会员卡+ledger）；**W∞-46** 真实数据深页分布（门店/入会时间，source=local 档案行推导，禁止假 BI）；toward PARITY；见 WINF41/WINF46 |
+| MPC-08 | 会员 | `/m/memberships` | PARTIAL | W∞-25 眉标 `会员中心`；会员码核销/ledger 工具身份；**W∞-41** 视觉/IA densify（黄顶栏+灰底白卡+heroCard+概况条+白卡会员卡+ledger）；**W∞-46** 真实数据深页分布（门店/入会时间，source=local 档案行推导，禁止假 BI）；**W∞-88** 全标对概况条 densify（旧 `.summary` 概览条升级为白卡概况条 `会员数据概况` 在册会员/权益项/覆盖门店，全部由真实会员档案行现场推导）；toward PARITY；见 WINF41/WINF46/WINF88 |
 | MPC-09 | 数据 / 经营分析 | `/m/analytics` | PARTIAL | W∞-44 美团经营日报密度（`GET /api/v1/management/entry-funnel/daily-report` + `/m/analytics`：今日指标+环比+逐日明细，真实 L0–L2，禁止假 BI）；**W∞-81** 真实数据深页密度 densify（`经营分析分布`：今日漏斗/今日 L2 动作/逐日流量，由真实 daily 报表 L0–L2 痕迹行推导，禁止假 BI）；`/m/entry-funnel` `/m/attribution` 互链；toward PARITY；见 WINF44/WINF81 |
 | MPC-10 | 员工 / 权限 | `/m/organization-employees`, `/m/roles-permissions`, `/m/employee-process-performance` | PARTIAL | W∞-25 眉标 `员工管理`/`角色权限`、`员工表现`/`操作审计`；**W∞-43** 视觉/IA densify（`/m/organization-employees` + `/m/roles-permissions` 黄顶栏+灰底白卡+heroCard+概况条+白卡面板）；**W∞-83** 真实数据深页 densify（`/m/employee-process-performance` 员工表现：黄顶栏+灰底白卡 heroCard+概况条 `员工概况`+分布面板 `员工表现分布`——任务负载/逾期信号/跟进完整度/证据链覆盖/贡献关联，由真实 employees[] 行推导，禁止假 BI）；toward PARITY；见 WINF43/WINF83 |
 | MPC-11 | 店铺装修 / 展示 | `/m/page-builder`, `/m/content` | PARTIAL | **壳跟美团**；内容数据仍走 ONEDAY 发布链；W∞-25 眉标 `入口页装修`/`营销内容`（对齐导航）；**W∞-43** 视觉/IA densify（`/m/page-builder` + `/m/content` 黄顶栏+灰底白卡+heroCard+概况条+白卡面板）；toward PARITY；见 WINF43 |
@@ -142,7 +142,7 @@
 
 ## 6. 当前下一刀
 
-  > **当前：W∞-87 PASS** — Management 工作台 `/m/dashboard`（MPC-01 工作台）全标对概况条 densify：把「今日概况」面板收束到与管理面 MPC 深页一致的独立「白卡概况条 `summaryStrip`」（`data-testid="management-dashboard"` + `aria-label="工作台数据概况"` + 6 项今日指标由真实 dashboard metrics 字段现场推导，禁止假 BI），使 MPC-01 完整对标 topBar+heroCard+概况条+分布面板+常用功能格的层级。**下一刀：** 转 inventory `PARITY` 关断复核（本文件状态列逐面复审 toward PARITY），或推进未闭合项（HUMAN-PILOT-HANDOFF / G1 OWNER GATE）。
+  > **当前：W∞-88 PASS** — Management 客户端（MPC-06 `/m/customers`）+ 会员中心（MPC-08 `/m/memberships`）全标对概况条 densify：为两者补齐与 `/m/offers`/`/m/dashboard` 一致的独立「白卡概况条 `summaryStrip`」（`客户数据概况` 6 项真实客户字段推导；`会员数据概况` 3 项真实会员字段推导），使全仓 Management MPC 主面（工作台/门店/商品/客户/会员/订单/评价/营销/分析/员工/内容/装修/设置/通知/零星面）均已具备 topBar+heroCard+概况条+分布面板层级。**下一刀：** 转 inventory `PARITY` 关断复核（本文件状态列逐面复审 toward PARITY），或推进未闭合项（HUMAN-PILOT-HANDOFF / G1 OWNER GATE）。
 
 **历史波（自 W24 起）累计——**
 

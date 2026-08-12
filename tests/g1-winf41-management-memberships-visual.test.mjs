@@ -26,7 +26,7 @@ test('W∞-41: /m/memberships renders white panels on gray canvas (no AdminPageH
   const s = src();
   assert.match(s, /className=\{styles\.topBar\}/);
   assert.match(s, /className=\{styles\.heroCard\}/);
-  assert.match(s, /className=\{styles\.summary\}/);
+  assert.match(s, /className=\{styles\.summaryStrip\}/);
   assert.match(s, /className=\{styles\.panel\}/);
   assert.doesNotMatch(s, /AdminPageHeader/);
   assert.doesNotMatch(s, /<Card/);
