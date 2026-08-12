@@ -10,8 +10,8 @@
 ## Current task
 
 - branch: `hardening/COMMERCIAL-COMPLETION`
-- last_verified: **2026-08-13** — W∞-107 工作台队列一键处置 PASS（migration 062 + dispositions API + /m/dashboard 早会队列处置 + QueueRow，`g1-winf` 377/377、build/typecheck 20/20、unit 49/49）
-- next_wave: **W∞-108** Storefront 发布链闭环加固（Phase1 / 1.2；装修 Draft→Preview→Publish→Consumer 可读）
+- last_verified: **2026-08-13** — W∞-108 Storefront 发布链闭环加固 PASS（migration 063 portal_publications 发布台账 + page-template switch 写台账 + PortalLayout bindingVersion/publishedAt 读取证据，`g1-winf` 378/378、build/typecheck 20/20、unit 49/49）
+- next_wave: **W∞-109** CRM 深操作：RFM + 批量打标/归属 + 客户 360 互动时间轴（MPC-06 / Phase1 1.4）
 - deferred: §5 开通 READY 全编排（待主人「开始第五节」）
 - blocker: **none (engineering)** — human G1 UI sign 仍开放但不阻塞深度刀
 

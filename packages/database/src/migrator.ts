@@ -61,6 +61,7 @@ import * as tenantCircles from './migrations/059_tenant_circles.js';
 import * as entryFunnelSavedViews from './migrations/060_entry_funnel_saved_views.js';
 import * as portalBindings from './migrations/061_portal_bindings.js';
 import * as managementQueueDisposition from './migrations/062_management_queue_disposition.js';
+import * as portalPublications from './migrations/063_portal_publications.js';
 import type { Database } from './types.js';
 
 const migrationProvider: MigrationProvider = {
@@ -128,6 +129,7 @@ const migrationProvider: MigrationProvider = {
       '060_entry_funnel_saved_views': entryFunnelSavedViews,
       '061_portal_bindings': portalBindings,
       '062_management_queue_disposition': managementQueueDisposition,
+      '063_portal_publications': portalPublications,
     };
   },
 };

@@ -362,14 +362,7 @@ export class PageTemplateService implements OnModuleDestroy {
     } else {
       await this.pool.query(
         "insert into portal_preview_tokens(id,tenant_id,target,template_version_id,token_hash,expires_at,status,created_by,updated_by) values($1,$2,$3,$4,$5,now()+interval '30 minutes','active',$6,$6)",
-        [
-          randomUUID(),
-          c.tenantId,
-          portal.target,
-          body.versionId,
-          this.tokenHash(token),
-          c.userId,
-        ],
+        [randomUUID(), c.tenantId, portal.target, body.versionId, this.tokenHash(token), c.userId],
       );
       path =
         portal.target === 'employee'
@@ -495,7 +488,31 @@ export class PageTemplateService implements OnModuleDestroy {
           )
         ).rows[0];
         const publicationType = action.includes('rolled_back') ? 'rollback' : 'publish';
-        Object.assign(data, { binding: bindingData, publicationType, target: portalBinding.target });
+        const publicationSequence = (
+          await q.query(
+            'select coalesce(max(sequence),0)+1 value from portal_publications where binding_id=$1',
+            [portalBinding.id],
+          )
+        ).rows[0].value;
+        await q.query(
+          'insert into portal_publications(id,tenant_id,binding_id,template_version_id,publication_type,sequence,correlation_id,created_by,updated_by) values($1,$2,$3,$4,$5,$6,$7,$8,$8)',
+          [
+            randomUUID(),
+            c.tenantId,
+            portalBinding.id,
+            v.id,
+            publicationType,
+            publicationSequence,
+            correlation(r),
+            c.userId,
+          ],
+        );
+        Object.assign(data, {
+          binding: bindingData,
+          publicationType,
+          publicationSequence,
+          target: portalBinding.target,
+        });
         await this.event(
           q,
           c,
@@ -566,11 +583,7 @@ export class PageTemplateService implements OnModuleDestroy {
     return {
       id: t.binding_id,
       storeId: isPortal ? null : t.store_id,
-      storeName: isPortal
-        ? target === 'employee'
-          ? '员工工作台'
-          : '管理工作台'
-        : t.store_name,
+      storeName: isPortal ? (target === 'employee' ? '员工工作台' : '管理工作台') : t.store_name,
       target,
       draftVersionId: t.draft_version_id,
       liveVersionId: t.live_version_id,

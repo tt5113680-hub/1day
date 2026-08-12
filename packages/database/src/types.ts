@@ -882,6 +882,52 @@ export interface StorefrontPreviewTokensTable {
   deleted_at: Timestamp | null;
   version: Generated<number>;
 }
+export interface PortalBindingsTable {
+  id: string;
+  tenant_id: string;
+  target: string;
+  template_id: string;
+  draft_version_id: string | null;
+  live_version_id: string | null;
+  status: string;
+  published_at: Timestamp | null;
+  created_at: Timestamp;
+  created_by: string | null;
+  updated_at: Timestamp;
+  updated_by: string | null;
+  deleted_at: Timestamp | null;
+  version: Generated<number>;
+}
+export interface PortalPreviewTokensTable {
+  id: string;
+  tenant_id: string;
+  target: string;
+  template_version_id: string;
+  token_hash: string;
+  expires_at: Timestamp;
+  status: string;
+  created_at: Timestamp;
+  created_by: string | null;
+  updated_at: Timestamp;
+  updated_by: string | null;
+  deleted_at: Timestamp | null;
+  version: Generated<number>;
+}
+export interface PortalPublicationsTable {
+  id: string;
+  tenant_id: string;
+  binding_id: string;
+  template_version_id: string;
+  publication_type: string;
+  sequence: number;
+  correlation_id: string;
+  created_at: Timestamp;
+  created_by: string | null;
+  updated_at: Timestamp;
+  updated_by: string | null;
+  deleted_at: Timestamp | null;
+  version: Generated<number>;
+}
 export interface ExternalActionsTable {
   id: string;
   tenant_id: string;
@@ -1603,6 +1649,9 @@ export interface Database {
   member_benefit_ledger: MemberBenefitLedgerTable;
   one_code_entries: OneCodeEntriesTable;
   storefront_preview_tokens: StorefrontPreviewTokensTable;
+  portal_bindings: PortalBindingsTable;
+  portal_preview_tokens: PortalPreviewTokensTable;
+  portal_publications: PortalPublicationsTable;
   consumer_store_outbound_events: ConsumerStoreOutboundEventsTable;
   consumer_process_accesses: ConsumerProcessAccessesTable;
   consumer_profile_accesses: ConsumerProfileAccessesTable;

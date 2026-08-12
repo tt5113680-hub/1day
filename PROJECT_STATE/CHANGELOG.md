@@ -1,5 +1,17 @@
 # CHANGELOG
 
+## 2026-08-13 - G1-W∞-108 Storefront 发布链闭环加固（Phase1 / 1.2）PASS
+
+- 承接 `MEITUAN_DEPTH_OPTIMIZATION_PLAN.md` Phase1/1.2，把装修发布链（Draft→同渲染器 Preview→Publish→Consumer/Portal 可读）闭环加固到 **consumer / employee / management 三目标 binding/version/证据 全对齐**，真实 DB、禁止假 BI、无 GMV、跳过 §5 READY：
+  - **migration `063_portal_publications`**：新表 `portal_publications`（与 `storefront_publications` 对齐——tenant_scoped、`binding_id→portal_bindings.id`、`template_version_id`、`publication_type`、按 binding 连续 `sequence`、`correlation_id`，`(binding_id,sequence)` 唯一 + 索引）。此前只有 storefront 侧有可审计发布台账，portal 发布/回滚无版本化台账。
+  - **`page-template.service.ts` `switch()` portal 分支写台账**：publish/rollback 照抄 storefront 逻辑——算 `publicationSequence` 并写 `portal_publications`，响应 `data` 暴露 `publicationType`+`publicationSequence`。
+  - **`portal-layout.service.ts` 读取路径版本证据**：`PortalLayout` 新增 `bindingVersion`（`portal_bindings.version`）+ `publishedAt`，published 与 preview 两分支都拉取返回——与 consumer 读取同构，员工/管理端「发布→可读」可读 binding/version 证据。
+  - **DB 类型/工程加固**：`types.ts` 新增并注册 `PortalBindingsTable`/`PortalPreviewTokensTable`/`PortalPublicationsTable`（此前 portal 两表未注册进 `Database` 接口，raw SQL 才可用）；`recovery.ts` SNAPSHOT_TABLES 加入 `portal_bindings`/`storefront_publications`/`portal_publications`。
+- 诚实边界全保留（台账仅记录发布意图/版本/序号，不改任何数据；不碰钱/销/管店；无 GMV；非本平台下单）；`/m/workflows` CUSTOM；不复活 consumer_orders/本平台下单/收单；§5 READY 编排未触碰。
+- 新增 `tests/g1-winf108-storefront-publish-loop-harden.test.mjs` 1/1（真实 DB：建 management 模板→publish→`portal_publications` sequence 1→management dashboard `layout` 读取 `bindingVersion`/`publishedAt`/`mode=published`→draft→rollback→sequence 2；outbox `portal.published.v1/rolled_back.v1` + audit `page.template_published/rolled_back` 落库断言）。
+- `g1-winf*.test.mjs` **378/378**（原 377 + 新增 1）；`pnpm typecheck` 20/20、`pnpm build` 20/20、`pnpm test:unit` **49/49**；batch-2-storefront-lifecycle 1/1 消费端回归 + g1-winf104/89、management-queue-disposition、management-notifications 回归通过；eslint+prettier clean。
+- `pnpm db:migrate`（DATABASE_URL=oneday_v3_test）apply 063。Not owner sign-off（G1 人工验签仍开放）。See evidence/G1-MEITUAN-PARITY/WINF108/ACCEPTANCE.md.
+
 ## 2026-08-13 - G1-W∞-107 工作台队列一键处置（MPC-01 / Phase1 1.3）PASS
 
 - 承接 `MEITUAN_DEPTH_OPTIMIZATION_PLAN.md` Phase1/1.3，把管理工作台早会队列从「只看 deep-link」升级为「**一键处置**」闭环（列表→打开→回写已处理/忽略→审计），全部真实 DB、禁止假 BI、无 GMV：

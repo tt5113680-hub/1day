@@ -153,9 +153,9 @@
 
 > **权威深度计划：** `MEITUAN_DEPTH_OPTIMIZATION_PLAN.md`（主人 2026-08-12：深度 100%、SaaS 最强、**§5 READY 先不做**、DeepSeek 无人值守）。
 >
-> **当前 NEXT：W∞-108** — Storefront 发布链闭环加固（MPC-01 已 PASS）。后续 W∞-109..110 Phase1；W∞-111..117 Phase2；W∞-118..124 Phase3 SaaS。
+> **当前 NEXT：W∞-109** — CRM 深操作：RFM + 批量打标/归属 + 客户 360 互动时间轴（MPC-06 / 1.4）。后续 W∞-110 Phase1；W∞-111..117 Phase2；W∞-118..124 Phase3 SaaS。
 >
-> **W∞-107 工作台队列一键处置 PASS**（2026-08-13）。**壳层 densify W3..106 PASS**（含 W∞-99 工作台深度）。31 inventory PARTIAL = engineering-complete；商用 PARITY 仍待主人 G1 签（不阻塞深度刀）。
+> **W∞-108 Storefront 发布链闭环加固 PASS**（2026-08-13；portal_publications 台账 + PortalLayout bindingVersion/publishedAt 证据）。**W∞-107 工作台队列一键处置 PASS**（2026-08-13）。**壳层 densify W3..106 PASS**（含 W∞-99 工作台深度）。31 inventory PARTIAL = engineering-complete；商用 PARITY 仍待主人 G1 签（不阻塞深度刀）。
 >
 > **DEFERRED：** §5 开通 READY 全编排 — 待主人「开始第五节」。
 

@@ -15,7 +15,9 @@ export type PortalLayoutModule = {
 export type PortalLayout = {
   mode: 'published' | 'preview';
   bindingId: string;
+  bindingVersion: number;
   templateVersionId: string;
+  publishedAt: string | null;
   modules: PortalLayoutModule[];
 };
 
@@ -32,13 +34,15 @@ export class PortalLayoutService implements OnModuleDestroy {
 
     let versionId: string | null = null;
     let bindingId: string | null = null;
+    let bindingVersion: number | null = null;
+    let publishedAt: string | null = null;
     let mode: PortalLayout['mode'] = 'published';
 
     if (previewToken) {
       if (!PREVIEW.test(previewToken)) throw new BadRequestException('VALIDATION_ERROR');
       const row = (
         await this.pool.query(
-          `select ppt.template_version_id, pb.id as binding_id
+          `select ppt.template_version_id, pb.id as binding_id, pb.version as binding_version, pb.published_at
            from portal_preview_tokens ppt
            join portal_bindings pb on pb.tenant_id=ppt.tenant_id and pb.target=ppt.target
              and pb.status='active' and pb.deleted_at is null
@@ -50,11 +54,13 @@ export class PortalLayoutService implements OnModuleDestroy {
       if (!row) return null;
       versionId = row.template_version_id;
       bindingId = row.binding_id;
+      bindingVersion = row.binding_version;
+      publishedAt = row.published_at;
       mode = 'preview';
     } else {
       const row = (
         await this.pool.query(
-          `select pb.id as binding_id, pb.live_version_id as template_version_id
+          `select pb.id as binding_id, pb.live_version_id as template_version_id, pb.version as binding_version, pb.published_at
            from portal_bindings pb
            where pb.tenant_id=$1 and pb.target=$2 and pb.status='active'
              and pb.live_version_id is not null and pb.deleted_at is null`,
@@ -64,6 +70,8 @@ export class PortalLayoutService implements OnModuleDestroy {
       if (!row) return null;
       versionId = row.template_version_id;
       bindingId = row.binding_id;
+      bindingVersion = row.binding_version;
+      publishedAt = row.published_at;
     }
 
     const modules = (
@@ -83,7 +91,9 @@ export class PortalLayoutService implements OnModuleDestroy {
     return {
       mode,
       bindingId: bindingId!,
+      bindingVersion: bindingVersion!,
       templateVersionId: versionId!,
+      publishedAt: publishedAt ?? null,
       modules,
     };
   }
