@@ -206,6 +206,74 @@ export default function StorePage({
     return [...groups.values()];
   }, [data.platformOffers]);
   const money = (value: number) => `¥${value.toFixed(value % 1 === 0 ? 0 : 2)}`;
+  const countBy = (rows: string[]) => {
+    const buckets = new Map<string, number>();
+    for (const row of rows) {
+      const label = row || '未分类';
+      buckets.set(label, (buckets.get(label) ?? 0) + 1);
+    }
+    return [...buckets.entries()]
+      .map(([label, value]) => ({ label, value }))
+      .sort((a, b) => b.value - a.value);
+  };
+  const barWidth = (total: number, value: number) =>
+    total === 0 ? 0 : Math.round((value / total) * 100);
+  const platformLabel = (type: string) =>
+    type === 'meituan'
+      ? '美团'
+      : type === 'douyin'
+        ? '抖音'
+        : type === 'saabei'
+          ? '扫呗'
+          : '直接外链';
+  const serviceBucket = (duration: number | null) =>
+    duration == null
+      ? '未标时长'
+      : duration <= 30
+        ? '短时段 ≤30 分钟'
+        : duration <= 90
+          ? '中时段 31-90 分钟'
+          : '长时段 90 分钟+';
+  const moduleBucket = (type: string) =>
+    type === 'service_catalog'
+      ? '服务/套餐'
+      : type === 'offer_compare'
+        ? '比价'
+        : type === 'benefit'
+          ? '权益'
+          : type === 'store_info'
+            ? '门店信息'
+            : '其它模块';
+  const servicesTotal = data.services.length;
+  const offersTotal = data.platformOffers.length;
+  const modulesTotal = effectiveStorefrontModules(data.storefront?.modules).length;
+  const benefitCount = data.benefits.length;
+  const serviceDist = countBy(data.services.map((item) => serviceBucket(item.duration_minutes)));
+  const platformDist = countBy(
+    data.platformOffers.flatMap((item) =>
+      item.platformType ? [platformLabel(item.platformType)] : [],
+    ),
+  );
+  const actionDist = countBy(
+    data.actions.map((item) =>
+      item.actionType === 'consultation'
+        ? '咨询'
+        : item.actionType === 'platform_entry'
+          ? '平台入口'
+          : '其它行动',
+    ),
+  );
+  const contentDist = countBy(
+    data.content.map((item) => {
+      const t = item.content_type ?? '';
+      return t ? t : '未分类';
+    }),
+  );
+  const moduleDist = countBy(
+    effectiveStorefrontModules(data.storefront?.modules).map((item) =>
+      moduleBucket(normalizeModuleType(item.module_type)),
+    ),
+  );
   const navigationUrl =
     data.store.latitude !== null && data.store.longitude !== null
       ? `https://uri.amap.com/marker?position=${data.store.longitude},${data.store.latitude}&name=${encodeURIComponent(data.store.name)}&src=ONEDAY`
@@ -352,6 +420,133 @@ export default function StorePage({
               </button>
             </div>
           </section>
+
+          <section className={styles.heroCard} aria-label="门店概况">
+            <header className={styles.heroHead}>
+              <span>{data.tenant.name} · 推广员工具 · 商家入口</span>
+              <h2>{data.store.name}</h2>
+              <p role="note">按真实门店档案汇总：服务、平台入口、行动与内容，仅供入口分流参考。</p>
+            </header>
+            <div className={styles.summaryStrip} aria-label="门店数据概况">
+              <dl>
+                <dt>平台入口</dt>
+                <dd>{offersTotal}</dd>
+              </dl>
+              <dl>
+                <dt>服务项</dt>
+                <dd>{servicesTotal}</dd>
+              </dl>
+              <dl>
+                <dt>在册权益</dt>
+                <dd>{benefitCount}</dd>
+              </dl>
+            </div>
+          </section>
+
+          <section className={styles.distribution} aria-label="门店入口分布">
+            <header className={styles.panelHead}>
+              <h3>门店入口分布</h3>
+              <p>分布由已抓取门店档案行现场推导 · 仅统计观看/跳转与入口，不涉及成交</p>
+            </header>
+            <div className={styles.panelBlock}>
+              <span className={styles.barLabel}>平台入口分布</span>
+              <div className={styles.bars} role="list">
+                {platformDist.length ? (
+                  platformDist.map((bar) => (
+                    <div className={styles.barRow} role="listitem" key={bar.label}>
+                      <span>{bar.label}</span>
+                      <b>
+                        <i style={{ width: `${barWidth(offersTotal, bar.value)}%` }} />
+                      </b>
+                      <em>{bar.value}</em>
+                    </div>
+                  ))
+                ) : (
+                  <span className={styles.barEmpty}>暂无平台入口记录</span>
+                )}
+              </div>
+            </div>
+            <div className={styles.panelBlock}>
+              <span className={styles.barLabel}>服务类型分布</span>
+              <div className={styles.bars} role="list">
+                {serviceDist.length ? (
+                  serviceDist.map((bar) => (
+                    <div className={styles.barRow} role="listitem" key={bar.label}>
+                      <span>{bar.label}</span>
+                      <b>
+                        <i style={{ width: `${barWidth(servicesTotal, bar.value)}%` }} />
+                      </b>
+                      <em>{bar.value}</em>
+                    </div>
+                  ))
+                ) : (
+                  <span className={styles.barEmpty}>暂无服务记录</span>
+                )}
+              </div>
+            </div>
+            <div className={styles.panelBlock}>
+              <span className={styles.barLabel}>行动入口分布</span>
+              <div className={styles.bars} role="list">
+                {actionDist.length ? (
+                  actionDist.map((bar) => (
+                    <div className={styles.barRow} role="listitem" key={bar.label}>
+                      <span>{bar.label}</span>
+                      <b>
+                        <i style={{ width: `${barWidth(data.actions.length, bar.value)}%` }} />
+                      </b>
+                      <em>{bar.value}</em>
+                    </div>
+                  ))
+                ) : (
+                  <span className={styles.barEmpty}>暂无行动入口</span>
+                )}
+              </div>
+            </div>
+            <div className={styles.panelBlock}>
+              <span className={styles.barLabel}>内容类型分布</span>
+              <div className={styles.bars} role="list">
+                {contentDist.length ? (
+                  contentDist.map((bar) => (
+                    <div className={styles.barRow} role="listitem" key={bar.label}>
+                      <span>{bar.label}</span>
+                      <b>
+                        <i style={{ width: `${barWidth(data.content.length, bar.value)}%` }} />
+                      </b>
+                      <em>{bar.value}</em>
+                    </div>
+                  ))
+                ) : (
+                  <span className={styles.barEmpty}>暂无内容记录</span>
+                )}
+              </div>
+            </div>
+            <div className={styles.panelBlock}>
+              <span className={styles.barLabel}>装修模块分布</span>
+              <div className={styles.bars} role="list">
+                {moduleDist.length ? (
+                  moduleDist.map((bar) => (
+                    <div className={styles.barRow} role="listitem" key={bar.label}>
+                      <span>{bar.label}</span>
+                      <b>
+                        <i style={{ width: `${barWidth(modulesTotal, bar.value)}%` }} />
+                      </b>
+                      <em>{bar.value}</em>
+                    </div>
+                  ))
+                ) : (
+                  <span className={styles.barEmpty}>暂无装修模块</span>
+                )}
+              </div>
+            </div>
+          </section>
+
+          <p className={styles.honest} role="note">
+            以上分布全部由已抓取门店/服务/平台入口/行动/内容/装修档案行现场推导，源 source=local；
+            评分与价格/月售为本地试运营提示，不接美团/抖音实时商户数据；
+            成交在美团/抖音/扫呗等外部平台完成，仅统计观看/访问/跳转/停留/分享入口痕迹，不含支付金额。
+            不在此下单，非本平台下单。
+          </p>
+
           {sectionTabs.length ? (
             <nav className={styles.storeSubTabs} aria-label="门店内容分区">
               {sectionTabs.map((tab) => (

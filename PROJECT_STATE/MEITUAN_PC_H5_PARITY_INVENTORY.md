@@ -79,7 +79,7 @@
 | -- | ---------------- | ------------- | ---- | ---- |
 | MH5-01 | 美团 App 外卖 LBS 首页 → **附近** | `/c/discovery` | PARTIAL | W2/W∞-11 壳+工具身份；**W∞-32** 视觉/IA densify（sticky 黄顶栏+下划线 Tab+72px 商家卡）；**W∞-73** 真实数据深页 densify（白卡 heroCard+summaryStrip+附近商家分布：评分/距离带/人气带/入口可用性/发现面，真实 Discovery 行推导，禁止假 BI）；toward PARITY；见 WINF32/WINF73 |
 | MH5-02 | 搜索 | `/c/search` | PARITY | 检索+诚实试用提示+无下单免责；见 WINF2/WINF10 |
-| MH5-03 | 美团商家门店页 → **商家消费者页** | `/c/stores/[id]` | PARTIAL | W2/W∞-13 工具身份；**W∞-33** 视觉/IA densify（黄顶栏+封面+导航电话分享+sticky 分区 Tab）；toward PARITY；见 WINF33 |
+| MH5-03 | 美团商家门店页 → **商家消费者页** | `/c/stores/[id]` | PARTIAL | W2/W∞-13 工具身份；**W∞-33** 视觉/IA densify（黄顶栏+封面+导航电话分享+sticky 分区 Tab）；**W∞-74** 真实数据深页 densify（白卡 heroCard+summaryStrip 门店数据概况+门店入口分布：平台入口/服务类型/行动入口/内容类型/装修模块，真实 StoreDetail 行推导，禁止假 BI）；toward PARITY；见 WINF33/WINF74 |
 | MH5-04 | 团购 / 套餐（外链聚合） | `/c/stores/[id]/group-buy` | PARTIAL | 美团/抖音/外链，非自有货架；W∞-12 densify 工具身份+平台图例；**W∞-71** 消费者频道深页 densify（黄顶栏+灰底白卡+summaryStrip+团购比价分布，真实 platformOffers 推导）；toward PARITY；见 WINF71 |
 | MH5-05 | 菜单 / 点单 | `/c/stores/[id]/menu` | PARTIAL | W∞-13 densify 工具身份；仍外链成交；**W∞-71** 菜单分布 densify（服务类型/价格说明，真实 services 推导）；toward PARITY；见 WINF71 |
 | MH5-06 | 商家详情 | `/c/stores/[id]/profile` | PARTIAL | W∞-14 densify 工具身份+快捷链；非本平台下单；**W∞-71** 消费者深页 densify；toward PARITY；见 WINF71 |

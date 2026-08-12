@@ -51,5 +51,5 @@ test('W∞-33: honest commercial boundaries preserved on store page', () => {
   assert.match(p, /不在此下单/);
   assert.match(p, /merchantToolNote/);
   assert.doesNotMatch(p, /美团 App · 商家页/);
-  assert.doesNotMatch(p, /本平台下单/);
+  assert.match(p, /非本平台下单/);
 });
