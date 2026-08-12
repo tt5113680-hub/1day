@@ -32,7 +32,7 @@ test('G1-W∞-16: employee ME-03..07 + task detail densify', () => {
   assert.match(notifications, /推广员工具 · 执行提醒/);
   assert.match(notifications, /不含第三方订单履约/);
 
-  assert.match(taskDetail, /推广员工具 · 我的任务/);
+  assert.match(taskDetail, /推广员工具 · 任务详情/);
   assert.match(taskDetail, /第三方结果单号/);
   assert.doesNotMatch(taskDetail, /结果订单号/);
 

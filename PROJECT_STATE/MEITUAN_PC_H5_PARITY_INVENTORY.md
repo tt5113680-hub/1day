@@ -1,7 +1,7 @@
 # 美团 PC / H5 复刻清单（施工权威）
 
 - created_at: 2026-08-10 23:30 Asia/Shanghai
-- updated_at: 2026-08-12 (W∞-91 Management 客户跟进明细 `/m/customers/[id]` 全标对概况条 + 真实数据分布 densify) Asia/Shanghai
+- updated_at: 2026-08-12 (W∞-92 Employee 员工任务详情 `/e/tasks/[id]` ME-02 详情 全标对概况条 + 真实数据分布 densify) Asia/Shanghai
 - authority: 主人裁决 — **不做美团产品**；学习成熟管理系统/人员/代理/指标/开店链路（客户熟悉→上手快）；底盘仍为 ONEDAY；仅工作流整合页自研差异
 - strategy: `PRODUCT_DUAL_TRACK_STRATEGY.md`
 - rule: **对成熟场景施工**。禁止自创陌生管理 IA；也禁止宣称「已是美团」。
@@ -98,7 +98,7 @@
 | ID | 美团对标 | ONEDAY 现路由 | 状态 |
 | -- | -------- | ------------- | ---- |
 | ME-01 | 商家 App 工作台 | `/e/workbench` | PARTIAL | W4 首刀；W∞-17 工具身份；**W∞-34** 视觉/IA densify（黄顶栏+头像 hero+icon 功能格+白卡面板）；**W∞-78** 真实数据深页分布（状态/升级/客户关联/到期窗口/来源/行动机会，source=local，禁止假 BI）；toward PARITY；见 WINF34/WINF78 |
-| ME-02 | 订单 / 待办 | `/e/tasks` | PARTIAL | W∞-15 工具身份；**W∞-64** 真实数据深页分布（状态/升级/客户关联/到期窗口/来源，source=local，禁止假 BI）；toward PARITY；非第三方订单履约；见 WINF64 |
+| ME-02 | 订单 / 待办 | `/e/tasks` | PARTIAL | W∞-15 工具身份；**W∞-64** 真实数据深页分布（状态/升级/客户关联/到期窗口/来源，source=local，禁止假 BI）；**W∞-92** 任务详情 `/e/tasks/[id]` 全标对概况条 `任务详情概况`（任务状态/已关联证据/待关联证据/升级次数）+ 分布 `任务详情分布`（证据类型/证据媒介/证据来源/升级状态，全部由已抓取 Detail 档案行现场推导，禁止假 BI）+ 灰底白卡 黄顶栏 `推广员工具 · 任务详情`；toward PARITY；非第三方订单履约；见 WINF64/WINF92 |
 | ME-03 | 顾客 | `/e/customers` | PARTIAL | W∞-16 工具身份；**W∞-65** 真实数据深页分布（归属/状态/待办负载/建档窗口，source=local，禁止假 BI）；toward PARITY；见 WINF65 |
 | ME-04 | 门店 | `/e/store` | PARTIAL | W∞-16 工具身份；**W∞-66** 真实数据深页分布；toward PARITY；见 WINF66 |
 | ME-05 | 核销 / 会员 | `/e/memberships` | PARTIAL | W∞-16 工具身份；**W∞-67** 真实数据深页分布 + overview API；toward PARITY；见 WINF67 |
@@ -142,7 +142,7 @@
 
 ## 6. 当前下一刀
 
-  > **当前：W∞-91 PASS** — Management 客户跟进明细 `/m/customers/[id]`（MPC-06 顾客/CRM 明细）全标对概况条 + 真实数据分布 densify（toward PARITY，禁止假 BI）。承接 W∞-45~90 Management MPC 深页波 + W∞-88 `/m/customers` 列表全标对概况条，把 MPC-06 客户跟进明细页补上「白卡概况条 `summaryStrip` + 白卡分布面板 + honest 底注」，使该明细页从「topBar + heroCard + ops/grid/时间线」收束到与管理面 MPC 深页一致的 topBar+heroCard+概况条+分布+honest 三层级全标对视觉层级。`page.tsx` 新增 `barWidth(total,value)` 与 `countBy(rows,keyOf)`，全部由已抓取真实 `Detail` 档案行现场推导：概况条 `客户详情数据概况`（6 列 = 来源记录/归属记录/任务/订单结果/跟进异常/链路事件）+ 分布面板 `客户详情分布`（任务状态/来源状态/归属角色/归属审批状态/订单结果状态/跟进异常类型/来源角色与贡献/链路事件类型 + 仅当存在时的任务升级信号分布）。`page.module.css` 新增 `.summaryStrip`（黄边浅黄底 `linear-gradient(135deg,#fff9db,#fffef5)` + `rgb(255 209 0 / 35%)` + `≤900px` 两列）+ `.distribution/.panelBlock/.bars/... /barEmpty`（灰底白卡 + 黄渐变色条 + `≤900px` 单列）+ `.honest`。诚实边界全保留（source=local、仅记录来源/归属/任务与入口痕迹、不包含本平台收款、非本平台下单）；保留全部交互与 scope 文案；无 `经营` 字样。无 schema/DB/API，不复活 consumer_orders / 本平台下单/收单。新增 `tests/g1-winf91-management-customer-detail-deep.test.mjs` 3/3，随动回归 g1-winf24/28/29/30/40/88/89/90；`g1-winf*.test.mjs` 327/327、`pnpm typecheck` 20/20、`pnpm build` 20/20、单测 47 passed（2 个 pre-existing token/storefront-renderer 失败照旧）、eslint+prettier clean。诚实边界全保留（工程对标断言，不等于 owner 已签 `PRODUCT_OWNER_UI_ACCEPTANCE.md`、不宣称已接美团实时、不复活 consumer_orders/本平台下单/收单）。See evidence/G1-MEITUAN-PARITY/WINF91/ACCEPTANCE.md. **下一刀：** 推进未闭合项（HUMAN-PILOT-HANDOFF / G1 OWNER GATE，均由主人签验），或按主人指示继续逐面密度 densify。
+  > **当前：W∞-92 PASS** — Employee 员工任务详情 `/e/tasks/[id]`（ME-02 详情）全标对概况条 + 真实数据分布 densify（toward PARITY，禁止假 BI）。承接 W∞-64 员工任务收件箱 `/e/tasks` 真实数据深页密度 + W∞-89 四端 PARITY 关断守卫，把 ME-02 任务详情内页从旧「header + 渐变 hero + 一般 section」收束到员工面与美团商家端一致的 **topBar + heroCard + 概况条 `summaryStrip` + 分布面板 + honest** 三层级全标对视觉层级（与 `/e/tasks` 收件箱白卡语言一致）。`task-detail.tsx` 新增 `barWidth(total,value)` 与 `countBy(items)`，全部由已抓取真实 `Detail` 档案行现场推导：概况条 `任务详情概况`（4 列 = 任务状态/已关联证据/待关联证据/升级次数）+ 分布面板 `任务详情分布`（证据类型 `data.evidence[].evidence_type` 经 businessLabel/证据媒介 `media_type` PNG·JPG·WebP/证据来源 已关联+待关联/升级状态 `escalationBucket` 未升级·轻度 1-2·多次 3+）。`task-detail.module.css` 改灰底画布 `#f5f5f5` + `.topBar`（sticky 黄顶栏 `linear-gradient(180deg,#ffe14d,#ffd100)`）+ `.heroCard`（白卡 h1+诚实描述）+ `.summaryStrip`（黄边浅黄底 `linear-gradient(135deg,#fff9db,#fffef5)` + `rgb(255 209 0 / 35%)` + `repeat(4)` + `≤580px` 两列）+ `.distribution/.panelBlock/.bars/... /barEmpty`（灰底白卡 + 黄渐变色条 `linear-gradient(90deg,#ffd100,#f0a500)`）+ `.honest`；原 brand 渐变 `.hero` 改白卡灰底。诚实边界全保留（source=local、分布由任务详情档案行现场推导、不含第三方订单履约、不代履约美团/抖音订单、非本平台下单）；眉标 `推广员工具 · 我的任务` → `推广员工具 · 任务详情`；保留全部交互（证据关联/完成/结果上传/记录跟进）与 loading/forbidden/error 全状态。无 `经营` 字样。无 schema/DB/API，不复活 consumer_orders / 本平台下单/收单。新增 `tests/g1-winf92-employee-task-detail-deep.test.mjs` 5/5，随动更新 g1-winf16（task-detail 眉标断言）；`g1-winf*.test.mjs` 332/332、`pnpm typecheck` 20/20、`pnpm build` 20/20、单测 47 passed（2 个 pre-existing token/storefront-renderer 失败照旧）、eslint+prettier clean。诚实边界全保留（工程对标断言，不等于 owner 已签 `PRODUCT_OWNER_UI_ACCEPTANCE.md`、不宣称已接美团实时、不复活 consumer_orders/本平台下单/收单）。See evidence/G1-MEITUAN-PARITY/WINF92/ACCEPTANCE.md. **下一刀：** 推进未闭合项（HUMAN-PILOT-HANDOFF / G1 OWNER GATE，均由主人签验），或按主人指示继续逐面密度 densify。
 
 **历史波（自 W24 起）累计——**
 

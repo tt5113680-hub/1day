@@ -3,7 +3,6 @@ import { SessionApiClient } from '@oneday/session-client';
 import {
   AppStatePanel,
   Button,
-  StatusBadge,
   businessLabel,
   customerNameCopy,
   taskReasonCopy,
@@ -57,6 +56,37 @@ const fileBase64 = (file: File) =>
     };
     reader.readAsDataURL(file);
   });
+
+type Bucket = { label: string; value: number };
+const barWidth = (total: number, value: number) => (total ? `${(value / total) * 100}%` : '0%');
+const countBy = (items: string[]) => {
+  const map = new Map<string, number>();
+  for (const item of items) map.set(item, (map.get(item) ?? 0) + 1);
+  return [...map.entries()]
+    .map(([label, value]) => ({ label, value }))
+    .sort((a, b) => b.value - a.value || a.label.localeCompare(b.label, 'zh'));
+};
+const mediaLabel = (media: string) =>
+  ({ 'image/png': 'PNG', 'image/jpeg': 'JPG', 'image/webp': 'WebP' })[media] ?? (media || '未标注');
+const escalationBucket = (level: number) =>
+  level ? (level >= 3 ? '多次升级 3+' : '轻度升级 1-2') : '未升级';
+
+function Bars({ items, total }: { items: Bucket[]; total: number }) {
+  if (!items.length) return <p className={styles.barEmpty}>暂无记录</p>;
+  return (
+    <div className={styles.bars}>
+      {items.map((item) => (
+        <div className={styles.barRow} key={item.label}>
+          <span className={styles.barLabel}>{item.label}</span>
+          <div className={styles.barTrack}>
+            <div className={styles.barFill} style={{ width: barWidth(total, item.value) }} />
+          </div>
+          <span className={styles.barValue}>{item.value}</span>
+        </div>
+      ))}
+    </div>
+  );
+}
 
 export function TaskDetail() {
   const params = useParams<{ id: string }>();
@@ -220,35 +250,91 @@ export function TaskDetail() {
     );
   if (!data) return null;
   const done = data.task.status === 'completed';
+  const typeDist = countBy(data.evidence.map((item) => businessLabel(item.evidence_type)));
+  const mediaDist = countBy(data.evidence.map((item) => mediaLabel(item.media_type)));
+  const sourceDist = [
+    { label: '已关联', value: data.evidence.length },
+    { label: '待关联', value: data.availableEvidence.length },
+  ].filter((item) => item.value > 0);
+  const escalationDist = [{ label: escalationBucket(data.task.escalationLevel), value: 1 }];
   return (
-    <main className={styles.page}>
-      <header className={styles.header}>
-        <Button
-          tone="quiet"
-          className={styles.back}
-          onClick={() => window.history.back()}
-          aria-label="返回工作台"
-        >
-          ←
-        </Button>
-        <div>
-          <p>推广员工具 · 我的任务</p>
-          <h1>{taskTitleCopy(data.task.title)}</h1>
-        </div>
-        <StatusBadge tone={done ? 'success' : 'info'}>{done ? '已完成' : '待执行'}</StatusBadge>
+    <main className={styles.page} data-testid="employee-task-detail">
+      <header className={styles.topBar}>
+        <span className={styles.topBarTitle}>推广员工具 · 任务详情</span>
+        <button className={styles.topBarRefresh} type="button" onClick={() => void load()}>
+          刷新
+        </button>
       </header>
+
+      <section className={styles.heroCard} aria-label="任务详情概览">
+        <h1>{taskTitleCopy(data.task.title)}</h1>
+        <p>仅可查看分配给本人的任务；跟进门店服务痕迹，不含第三方订单履约。</p>
+      </section>
+
       {message && (
         <p className={styles.feedback} role="status">
           {message}
         </p>
       )}
-      <section className={styles.hero} aria-label="任务状态">
-        <span>截止时间</span>
-        <strong>{when(data.task.dueAt)}</strong>
-        <p>
-          {data.task.escalationLevel
-            ? `已升级 ${data.task.escalationLevel} 次`
-            : '请在截止前完成并保留必要证据。'}
+
+      <section className={styles.panel} aria-label="任务详情概况">
+        <div className={styles.summaryStrip}>
+          <div>
+            <span>任务状态</span>
+            <strong>{done ? '已完成' : '待执行'}</strong>
+          </div>
+          <div>
+            <span>已关联证据</span>
+            <strong>{data.evidence.length}</strong>
+          </div>
+          <div>
+            <span>待关联证据</span>
+            <strong>{data.availableEvidence.length}</strong>
+          </div>
+          <div>
+            <span>升级次数</span>
+            <strong>{data.task.escalationLevel}</strong>
+          </div>
+        </div>
+      </section>
+
+      <section className={styles.panel} aria-label="任务详情分布">
+        <div className={styles.panelHead}>
+          <h2>任务详情分布</h2>
+          <span className={styles.panelMeta}>由任务详情真实档案行推导</span>
+        </div>
+        <div className={styles.distribution}>
+          <div className={styles.panelBlock}>
+            <h3>证据类型分布</h3>
+            <Bars items={typeDist} total={data.evidence.length} />
+          </div>
+          <div className={styles.panelBlock}>
+            <h3>证据媒介分布</h3>
+            <Bars items={mediaDist} total={data.evidence.length} />
+          </div>
+          <div className={styles.panelBlock}>
+            <h3>证据来源分布</h3>
+            <Bars items={sourceDist} total={data.evidence.length + data.availableEvidence.length} />
+          </div>
+          <div className={styles.panelBlock}>
+            <h3>升级状态分布</h3>
+            <Bars items={escalationDist} total={1} />
+          </div>
+        </div>
+      </section>
+
+      <section className={styles.section} aria-label="任务信息">
+        <div className={styles.sectionHead}>
+          <h2>截止时间</h2>
+          <span>{done ? '已完成' : '待执行'}</span>
+        </div>
+        <p className={styles.hero}>
+          <strong>{when(data.task.dueAt)}</strong>
+          <span>
+            {data.task.escalationLevel
+              ? `已升级 ${data.task.escalationLevel} 次`
+              : '请在截止前完成并保留必要证据。'}
+          </span>
         </p>
       </section>
       <section className={styles.section} aria-labelledby="reason-title">
@@ -332,6 +418,11 @@ export function TaskDetail() {
           </div>
         </section>
       )}
+      <p className={styles.honest} role="note">
+        以上分布全部由已抓取任务详情档案行现场推导(source=local)：状态/升级/证据类型/证据媒介/证据来源均由真实
+        tasks 与 evidence
+        行统计。推广员工具任务详情跟进门店服务痕迹，不含第三方订单履约，不代履约美团/抖音订单，非本平台下单。
+      </p>
       <footer className={styles.footer}>
         <a href="/e/workbench">返回工作台</a>
         <a href={`/e/tasks/${data.task.id}/follow-up`}>记录跟进</a>
