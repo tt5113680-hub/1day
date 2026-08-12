@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## 2026-08-12 - G1-W∞-103 消费者诚实信号：entry_funnel_events 过滤列修正（提交关闭）PASS
+
+- 关闭 W∞-103 已验证但未提交的正确性修正：`consumer-discovery.service.ts` 的 `discovery` 与 `search` 两处 `entry_visits_30d` 子查询原带 `and e.deleted_at is null`，而 `entry_funnel_events` 表（migration `058_entry_funnel`）**没有 `deleted_at` 列**，真实执行会抛「column does not exist」，导致附近/搜索入口访问数跑不出正确值——已移除该不存在的过滤，保留 `target_store_id` + `event_code in ('visit','view')` + 30 天窗口。
+- 测试断言修正：原 `doesNotMatch(/entry_funnel_events e[\s\S]*deleted_at/)` 因贪婪 `[\s\S]*` 误命中 `search` 方法内其它表的 `deleted_at` 而误报失败；改为按块匹配（`from entry_funnel_events e ... ) as entry_visits_30d`）逐一断言无 `deleted_at`，并断言存在 discovery+search 两块子查询受保护。
+- `tests/g1-winf103-consumer-discovery-honest-signals.test.mjs` **2/2**；`g1-winf*.test.mjs` **372/372**；`pnpm typecheck` **20/20**；变更 TS/test eslint+prettier clean。诚实边界全保留（入口痕迹仅统计观看/访问、local_pilot fallback 诚实标注「试用分/试用月售」、不复活 consumer_orders / 本平台下单/收单）。Not owner sign-off（G1 人工验签仍开放）。See evidence/G1-MEITUAN-PARITY/WINF103/ACCEPTANCE.md.
+
 ## 2026-08-12 - G1-W∞-104 员工 H5 + 管理 PC 自定义装修（portal_bindings 全链路）PASS
 
 - **W104** `portal_bindings` + `portal_preview_tokens`（migration `061_portal_bindings`）+ page-template service portal preview（`target=employee|management`）+ `/m/page-builder` 员工/管理 模板发布与「在员工 H5 / 管理工作台打开安全预览」；员工 `/e/workbench` 与管理 `/` 按已发布 layout modules 渲染（`workbench-layout-modules.tsx` / `management-home-modules.tsx` / `portal-layout.service.ts`）；human-pilot seed 默认员工/管理 portal 模板。

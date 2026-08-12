@@ -11,6 +11,11 @@ test('W∞-103: discovery API prefers store_reviews + entry_visits_30d with pilo
   assert.match(api, /store_reviews/);
   assert.match(api, /entry_visits_30d/);
   assert.match(api, /target_store_id/);
+  const funnelBlocks = api.match(
+    /from entry_funnel_events e[\s\S]*?\) as entry_visits_30d/g,
+  );
+  assert.ok(funnelBlocks && funnelBlocks.length >= 2, 'entry_funnel_events subqueries present');
+  for (const block of funnelBlocks) assert.doesNotMatch(block, /deleted_at/);
   assert.match(api, /storeSignals/);
   assert.match(api, /ratingSource.*store_reviews/);
   assert.match(api, /salesSource.*entry_visits_30d/);

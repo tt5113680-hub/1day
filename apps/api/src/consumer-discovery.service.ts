@@ -98,7 +98,7 @@ export class ConsumerDiscoveryService implements OnModuleDestroy {
                 (select round(avg(r.rating)::numeric,1) from store_reviews r
                    where r.store_id=s.id and r.tenant_id=m.tenant_id and r.status='active' and r.deleted_at is null) as review_avg,
                 (select count(*)::int from entry_funnel_events e
-                   where e.target_store_id=s.id and e.deleted_at is null
+                   where e.target_store_id=s.id
                      and e.event_code in ('visit','view')
                      and e.occurred_at>=now()-interval '30 days') as entry_visits_30d
                from merchant_locations l
@@ -182,7 +182,7 @@ export class ConsumerDiscoveryService implements OnModuleDestroy {
           (select round(avg(r.rating)::numeric,1) from store_reviews r
              where r.store_id=s.id and r.tenant_id=m.tenant_id and r.status='active' and r.deleted_at is null) as review_avg,
           (select count(*)::int from entry_funnel_events e
-             where e.target_store_id=s.id and e.deleted_at is null
+             where e.target_store_id=s.id
                and e.event_code in ('visit','view')
                and e.occurred_at>=now()-interval '30 days') as entry_visits_30d
          from merchants m
