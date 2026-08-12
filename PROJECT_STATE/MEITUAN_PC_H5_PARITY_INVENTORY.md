@@ -98,7 +98,7 @@
 | ID | 美团对标 | ONEDAY 现路由 | 状态 |
 | -- | -------- | ------------- | ---- |
 | ME-01 | 商家 App 工作台 | `/e/workbench` | PARTIAL | W4 首刀；W∞-17 工具身份；**W∞-34** 视觉/IA densify（黄顶栏+头像 hero+icon 功能格+白卡面板）；toward PARITY；见 WINF34 |
-| ME-02 | 订单 / 待办 | `/e/tasks` | PARTIAL | W∞-15 densify 任务待办/收件箱工具身份；非第三方订单履约 |
+| ME-02 | 订单 / 待办 | `/e/tasks` | PARTIAL | W∞-15 工具身份；**W∞-64** 真实数据深页分布（状态/升级/客户关联/到期窗口/来源，source=local，禁止假 BI）；toward PARITY；非第三方订单履约；见 WINF64 |
 | ME-03 | 顾客 | `/e/customers` | PARTIAL | W∞-16 densify 推广员工具客户目录 |
 | ME-04 | 门店 | `/e/store` | PARTIAL | W∞-16 densify 店长模式工具身份 |
 | ME-05 | 核销 / 会员 | `/e/memberships` | PARTIAL | W∞-16 densify 会员核销工具身份 |
