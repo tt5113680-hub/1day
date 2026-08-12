@@ -47,7 +47,8 @@ test('W∞-40: /m/customers list keeps honest promotion-tool follow-up copy and 
   assert.match(l, /客户跟进暂不可用/);
   assert.match(l, /aria-label="客户跟进列表"/);
   assert.doesNotMatch(l, /客户资产/);
-  assert.doesNotMatch(l, /本平台下单/);
+  assert.match(l, /非本平台下单/);
+  assert.doesNotMatch(l, /在本平台下单/);
 });
 
 test('W∞-40: /m/customers/[id] detail has Meituan merchant PC yellow top bar + gray canvas', () => {

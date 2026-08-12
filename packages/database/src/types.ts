@@ -1581,6 +1581,24 @@ export interface ManagementQueueDispositionsTable {
   version: Generated<number>;
 }
 
+export interface CustomerRfmProfilesTable {
+  id: string;
+  tenant_id: string;
+  customer_id: string;
+  recency_days: number | null;
+  frequency_count: number | null;
+  reach_count: number | null;
+  layer: string | null;
+  window_days: number | null;
+  computed_at: Timestamp;
+  created_at: Timestamp;
+  created_by: string | null;
+  updated_at: Timestamp;
+  updated_by: string | null;
+  deleted_at: Timestamp | null;
+  version: Generated<number>;
+}
+
 export interface Database {
   tenants: TenantsTable;
   agent_regions: AgentRegionsTable;
@@ -1677,4 +1695,5 @@ export interface Database {
   store_reviews: StoreReviewsTable;
   marketing_campaigns: MarketingCampaignsTable;
   management_queue_dispositions: ManagementQueueDispositionsTable;
+  customer_rfm_profiles: CustomerRfmProfilesTable;
 }

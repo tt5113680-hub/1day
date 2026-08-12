@@ -39,6 +39,12 @@
   cursor: pointer;
 }
 
+.topBarActions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
 .heroCard {
   display: grid;
   gap: 6px;
@@ -112,7 +118,8 @@
 
 .filters input,
 .filters select,
-.batch select {
+.batch select,
+.batch input {
   min-width: 0;
   height: 40px;
   border: 1px solid #e5e5e5;
@@ -148,6 +155,58 @@
 
 .batch select {
   width: 220px;
+}
+
+.batch input {
+  width: 160px;
+}
+
+.rfmRow {
+  display: flex;
+  align-items: flex-end;
+  gap: 12px;
+  border-radius: 12px;
+  padding: 12px 18px;
+  background: linear-gradient(135deg, #fff9db 0%, #fffef5 100%);
+  border: 1px solid rgb(255 209 0 / 35%);
+}
+
+.rfmRow p {
+  margin: 0 0 2px;
+  color: #666;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.rfmRow strong {
+  color: #222;
+  font-size: 14px;
+}
+
+.rfmSummary {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 18px;
+  margin-right: auto;
+  align-items: baseline;
+}
+
+.rfmSummary>div {
+  display: grid;
+  gap: 2px;
+}
+
+.rfmSummary span {
+  color: #666;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.rfmSummary em {
+  color: #222;
+  font-weight: 800;
+  font-style: normal;
+  font-size: 16px;
 }
 
 .notice {

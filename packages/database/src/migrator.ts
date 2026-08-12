@@ -62,6 +62,7 @@ import * as entryFunnelSavedViews from './migrations/060_entry_funnel_saved_view
 import * as portalBindings from './migrations/061_portal_bindings.js';
 import * as managementQueueDisposition from './migrations/062_management_queue_disposition.js';
 import * as portalPublications from './migrations/063_portal_publications.js';
+import * as customerRfmProfiles from './migrations/064_customer_rfm_profiles.js';
 import type { Database } from './types.js';
 
 const migrationProvider: MigrationProvider = {
@@ -130,6 +131,7 @@ const migrationProvider: MigrationProvider = {
       '061_portal_bindings': portalBindings,
       '062_management_queue_disposition': managementQueueDisposition,
       '063_portal_publications': portalPublications,
+      '064_customer_rfm_profiles': customerRfmProfiles,
     };
   },
 };

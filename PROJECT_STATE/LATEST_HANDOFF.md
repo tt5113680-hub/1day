@@ -10,8 +10,8 @@
 ## Current task
 
 - branch: `hardening/COMMERCIAL-COMPLETION`
-- last_verified: **2026-08-13** — W∞-108 Storefront 发布链闭环加固 PASS（migration 063 portal_publications 发布台账 + page-template switch 写台账 + PortalLayout bindingVersion/publishedAt 读取证据，`g1-winf` 378/378、build/typecheck 20/20、unit 49/49）
-- next_wave: **W∞-109** CRM 深操作：RFM + 批量打标/归属 + 客户 360 互动时间轴（MPC-06 / Phase1 1.4）
+- last_verified: **2026-08-13** — W∞-109 CRM 深操作 PASS（migration 064 customer_rfm_profiles + RFM 自动分层 rfm/compute + 批量打标 tags/batch + list `?layer=` 筛选/导出 rfm_layer + detail 360 互动时间轴/跟进记录，真实 DB 闭环，`g1-winf` 385/385、build/typecheck 20/20、unit 49/49、sys-24/sys-31 回归 2/2）
+- next_wave: **W∞-110** 会员闭环加固：等级/权益规则 + 到期提醒 + 异常告警（MPC-08 / Phase1 1.5，无储值/支付）
 - deferred: §5 开通 READY 全编排（待主人「开始第五节」）
 - blocker: **none (engineering)** — human G1 UI sign 仍开放但不阻塞深度刀
 

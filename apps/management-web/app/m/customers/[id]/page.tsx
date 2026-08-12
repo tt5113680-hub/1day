@@ -47,6 +47,15 @@ type Detail = {
   tasks: { title: string; status: string; assignee_name: string; escalation_level: number }[];
   anomalies: { type: string; title: string }[];
   timeline: { kind: string; label: string; at: string }[];
+  rfm: {
+    recencyDays: number | null;
+    frequencyCount: number | null;
+    reachCount: number | null;
+    layer: string | null;
+    windowDays: number | null;
+    computedAt: string | null;
+  } | null;
+  follow_ups: { action_type: string; summary: string | null; employee_name: string }[];
 };
 type Assignee = { id: string; displayName: string; title: string | null };
 
@@ -315,6 +324,35 @@ export default function ManagementCustomerDetail({ params }: { params: Promise<{
           <span>链路事件</span>
           <strong>{timelineCount}</strong>
         </div>
+      </section>
+
+      <section className={styles.rfmPanel} aria-label="客户 RFM 互动分层">
+        <div className={styles.rfmHead}>
+          <h2>RFM 互动分层</h2>
+          <span>{data.rfm?.layer ? `${data.rfm.layer}` : '待重算'}</span>
+        </div>
+        <div className={styles.rfmGrid}>
+          <div>
+            <span>最近互动 R</span>
+            <strong>{data.rfm?.recencyDays ?? '—'}天</strong>
+          </div>
+          <div>
+            <span>互动频次 F</span>
+            <strong>{data.rfm?.frequencyCount ?? '—'}</strong>
+          </div>
+          <div>
+            <span>触达覆盖 M</span>
+            <strong>{data.rfm?.reachCount ?? '—'}</strong>
+          </div>
+          <div>
+            <span>回看窗口</span>
+            <strong>{data.rfm?.windowDays ?? '—'}天</strong>
+          </div>
+        </div>
+        <p className={styles.rfmNote}>
+          RFM 由真实互动档案（跟进、触点、订单痕迹、来源）计算；M
+          为去重触达覆盖（来源+贡献+证据），不含支付金额、非本平台下单、不代表第三方成交。
+        </p>
       </section>
 
       <section className={styles.distribution} aria-label="客户详情分布">
@@ -685,8 +723,19 @@ export default function ManagementCustomerDetail({ params }: { params: Promise<{
           />
         </Panel>
       </section>
+      <section className={styles.grid}>
+        <Panel title="跟进记录">
+          <List
+            items={data.follow_ups.map((item) => ({
+              title: `${item.employee_name} · ${businessLabel(item.action_type)}`,
+              detail: item.summary ?? '跟进',
+            }))}
+            empty="暂无跟进记录"
+          />
+        </Panel>
+      </section>
       <section className={styles.timeline}>
-        <h2>可审计时间线</h2>
+        <h2>客户 360 互动时间线</h2>
         {data.timeline.length ? (
           data.timeline.map((item, index) => (
             <article key={`${item.kind}-${index}`}>
@@ -701,7 +750,7 @@ export default function ManagementCustomerDetail({ params }: { params: Promise<{
             </article>
           ))
         ) : (
-          <p>尚无可展示的链路事件。</p>
+          <p>尚无可展示的互动链路事件。</p>
         )}
       </section>
     </main>

@@ -14,19 +14,32 @@ type Customer = {
   segment: string;
   tags: string[];
   orders: number;
+  rfm?: {
+    layer: string | null;
+    recencyDays: number | null;
+    frequencyCount: number | null;
+    reachCount: number | null;
+  } | null;
 };
 type Assignee = { id: string; displayName: string; title: string | null };
-type Filters = { search: string; tag: string; segment: string; source: string };
+type Filters = { search: string; tag: string; segment: string; source: string; layer: string };
 
 const api = process.env.NEXT_PUBLIC_API_BASE_URL ?? 'http://127.0.0.1:3001';
 const sessionApi = new SessionApiClient(api);
-const emptyFilters: Filters = { search: '', tag: '', segment: '', source: '' };
+const emptyFilters: Filters = { search: '', tag: '', segment: '', source: '', layer: '' };
 const ownerNameCopy = (value: string) =>
   value === 'Store Manager' ? '门店负责人' : value === 'Follow-up Employee' ? '跟进员工' : value;
 const segmentCopy: Record<string, string> = {
   active: '活跃',
   repurchase: '复购',
   dormant: '沉睡',
+};
+const rfmLayerCopy: Record<string, string> = {
+  高价值: '高价值',
+  活跃: '活跃',
+  温和互动: '温和互动',
+  需唤醒: '需唤醒',
+  沉睡: '沉睡',
 };
 
 export default function ManagementCustomersPage() {
@@ -38,7 +51,14 @@ export default function ManagementCustomersPage() {
   const [assignees, setAssignees] = useState<Assignee[]>([]);
   const [assigneeId, setAssigneeId] = useState('');
   const [notice, setNotice] = useState('');
-  const [busy, setBusy] = useState<'export' | 'ownership' | null>(null);
+  const [busy, setBusy] = useState<'export' | 'ownership' | 'rfm' | 'tags' | null>(null);
+  const [rfmSummary, setRfmSummary] = useState<{
+    total: number;
+    layers: Record<string, number>;
+    dormant: number;
+  } | null>(null);
+  const [tagInput, setTagInput] = useState('');
+  const [tagMode, setTagMode] = useState<'add' | 'remove'>('add');
   const headers = (idempotencyKey?: string) => ({
     'content-type': 'application/json',
     ...(idempotencyKey ? { 'idempotency-key': idempotencyKey } : {}),
@@ -155,6 +175,51 @@ export default function ManagementCustomersPage() {
       setBusy(null);
     }
   };
+  const computeRfm = async () => {
+    setBusy('rfm');
+    setNotice('');
+    try {
+      const response = await sessionApi.request(`${api}/api/v1/management/customers/rfm/compute`, {
+        method: 'POST',
+        headers: headers(crypto.randomUUID()),
+      });
+      if (!response.ok) throw Error('RFM');
+      setRfmSummary((await response.json()).data);
+      setNotice('已按真实互动档案重算客户 RFM 分层。');
+      await load();
+    } catch {
+      setNotice('RFM 分层计算未完成，请稍后重试。');
+    } finally {
+      setBusy(null);
+    }
+  };
+  const requestBatchTag = async () => {
+    const label = tagInput.trim();
+    if (!label || !selectedCustomers.length) return;
+    setBusy('tags');
+    setNotice('');
+    try {
+      const response = await sessionApi.request(`${api}/api/v1/management/customers/tags/batch`, {
+        method: 'POST',
+        headers: headers(crypto.randomUUID()),
+        body: JSON.stringify({
+          action: tagMode,
+          label,
+          customerIds: selectedCustomers.map((item) => item.id),
+        }),
+      });
+      if (!response.ok) throw Error('TAGS');
+      setNotice(
+        `${tagMode === 'add' ? '已添加' : '已移除'}"${label}"到 ${selectedCustomers.length} 位客户。`,
+      );
+      setTagInput('');
+      await load();
+    } catch {
+      setNotice('批量打标未完成，请稍后重试。');
+    } finally {
+      setBusy(null);
+    }
+  };
 
   if (state === 'loading')
     return (
@@ -192,14 +257,24 @@ export default function ManagementCustomersPage() {
     <main className={styles.page} data-testid="management-customers">
       <header className={styles.topBar}>
         <span className={styles.topBarTitle}>推广员工具 · 客户跟进</span>
-        <button
-          className={styles.topBarRefresh}
-          type="button"
-          disabled={busy === 'export'}
-          onClick={() => void requestExport()}
-        >
-          申请导出
-        </button>
+        <div className={styles.topBarActions}>
+          <button
+            className={styles.topBarRefresh}
+            type="button"
+            disabled={busy === 'rfm'}
+            onClick={() => void computeRfm()}
+          >
+            {busy === 'rfm' ? '计算中' : '重算 RFM 分层'}
+          </button>
+          <button
+            className={styles.topBarRefresh}
+            type="button"
+            disabled={busy === 'export'}
+            onClick={() => void requestExport()}
+          >
+            申请导出
+          </button>
+        </div>
       </header>
 
       <section className={styles.heroCard} aria-label="客户跟进概览">
@@ -234,6 +309,35 @@ export default function ManagementCustomersPage() {
           <span>有有效订单</span>
           <strong>{orderedCount}</strong>
         </div>
+      </section>
+
+      <section className={styles.rfmRow} aria-label="RFM 互动分层">
+        <div className={styles.rfmSummary}>
+          <div>
+            <span>客户数</span>
+            <em>{rfmSummary?.total ?? customers.length}</em>
+          </div>
+          <div>
+            <span>高价值-活跃</span>
+            <em>{rfmSummary?.layers['高价值-活跃'] ?? 0}</em>
+          </div>
+          <div>
+            <span>温和互动</span>
+            <em>{rfmSummary?.layers['温和互动'] ?? 0}</em>
+          </div>
+          <div>
+            <span>需唤醒</span>
+            <em>{rfmSummary?.layers['需唤醒'] ?? 0}</em>
+          </div>
+          <div>
+            <span>沉睡</span>
+            <em>{rfmSummary?.layers['沉睡'] ?? 0}</em>
+          </div>
+        </div>
+        <p>
+          RFM
+          分层由真实互动档案（跟进、触点、订单痕迹、来源）现场计算，仅统计观看/访问/跳转/跟进等入口与痕迹，不含支付金额，非本平台下单、不代表第三方成交。
+        </p>
       </section>
 
       <section className={styles.panel} aria-label="客户跟进分布">
@@ -329,6 +433,19 @@ export default function ManagementCustomersPage() {
           </select>
         </label>
         <label>
+          RFM 分层
+          <select
+            value={filters.layer}
+            onChange={(event) => setFilters({ ...filters, layer: event.target.value })}
+          >
+            <option value="">全部 RFM</option>
+            <option value="高价值-活跃">高价值-活跃</option>
+            <option value="温和互动">温和互动</option>
+            <option value="需唤醒">需唤醒</option>
+            <option value="沉睡">沉睡</option>
+          </select>
+        </label>
+        <label>
           来源
           <input
             value={filters.source}
@@ -366,6 +483,33 @@ export default function ManagementCustomersPage() {
           批量发起归属审批
         </Button>
       </section>
+      <section className={styles.batch} aria-label="批量打标操作">
+        <div>
+          <strong>批量打标</strong>
+          <span>对已选客户批量新增或移除标签，写入可审计记录。</span>
+        </div>
+        <select
+          value={tagMode}
+          onChange={(event) => setTagMode(event.target.value as 'add' | 'remove')}
+          aria-label="打标方式"
+        >
+          <option value="add">添加标签</option>
+          <option value="remove">移除标签</option>
+        </select>
+        <input
+          value={tagInput}
+          onChange={(event) => setTagInput(event.target.value)}
+          aria-label="标签内容"
+          placeholder="如 VIP / 需跟进"
+        />
+        <Button
+          disabled={!selected.length || !tagInput.trim() || busy === 'tags'}
+          loading={busy === 'tags'}
+          onClick={() => void requestBatchTag()}
+        >
+          批量{tagMode === 'add' ? '添加' : '移除'}标签
+        </Button>
+      </section>
       {notice && (
         <p className={styles.notice} role="status">
           {notice}
@@ -395,6 +539,7 @@ export default function ManagementCustomersPage() {
                 </th>
                 <th>客户</th>
                 <th>分层与标签</th>
+                <th>RFM 互动分层</th>
                 <th>当前归属</th>
                 <th>有效订单</th>
               </tr>
@@ -425,6 +570,23 @@ export default function ManagementCustomersPage() {
                         <em>无标签</em>
                       )}
                     </div>
+                  </td>
+                  <td>
+                    {customer.rfm?.layer ? (
+                      <>
+                        <StatusBadge
+                          tone={customer.rfm.layer === '高价值-活跃' ? 'success' : 'info'}
+                        >
+                          {rfmLayerCopy[customer.rfm.layer] ?? customer.rfm.layer}
+                        </StatusBadge>
+                        <small>
+                          R{customer.rfm.recencyDays ?? '-'}天 · F
+                          {customer.rfm.frequencyCount ?? '-'} · M{customer.rfm.reachCount ?? '-'}
+                        </small>
+                      </>
+                    ) : (
+                      <em>待重算</em>
+                    )}
                   </td>
                   <td>{ownerNameCopy(customer.owner.name)}</td>
                   <td>{customer.orders}</td>
