@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 2026-08-12 - G1-W∞-56 Platform 平台投递队列 真实数据深页密度 densify（平台面 SYS-4）PASS
+
+- 承接 Management MPC 深页序列（W∞-45~51）+ 平台面 `/p/agents`（W∞-52）`/p/tenants`（W∞-53）`/p/channels`（W∞-54）`/p/business-circles`（W∞-55），本刀续平台面 `/p/outbox`（平台投递死信运维 SYS-4）补上「分布洞察」并视觉/IA densify toward 美团平台/代理后台：`/p/outbox` 移除页面级 AdminPageHeader/Card/ONEDAY 眉标，新增黄顶栏 `topBar`（推广员工具 · 平台投递队列 + 右上「刷新」）+ 灰底白卡画布（背景 #f5f5f5）+ heroCard 白卡（h1 + 诚实描述）+ 白卡概况条 summaryStrip（死信记录/涉及租户/聚合对象/已达上限）+ 白卡分布面板 `aria-label="平台投递分布"`——事件类型分布（按真实 eventType 频次降序）+ 聚合对象分布（按真实 aggregateType 频次降序）+ 重试次数分布（按真实 attempts 分桶 首次失败 1/多次重试 2-5/已达上限 6+）+ 租户分布（按真实 tenantId 前缀匿名频次降序），宽度百分比 `barWidth(items.length, b.value)` 由真实平台投递死信档案行推导，空数据「暂无记录」。`page.module.css` 新增 `.topBar/.topBarTitle/.topBarActions/.topBarRefresh/.heroCard/.summaryStrip/.distribution/.panelBlock/.bars/.barRow/.barTrack/.barFill/.barValue/.barLabel/.barEmpty/.honest` 灰底白卡+黄渐变色条（线性 #ffd100→#f0a500），≤900px 单列堆叠（与 Management MPC 深页 + /p/agents /p/tenants /p/channels /p/business-circles 共享视觉语言）。诚实边界全保留（源 source=local，新增 honest 底注 Outbox 是平台投递与同步队列·重放不会调用美团/抖音实时·仅恢复本地投递状态·不包含本平台收款·非本平台下单）；工具身份眉标+loading/forbidden/error/empty 全状态+死信队列/重放/运维边界交互全继承，`data-testid="platform-outbox"`。无 schema/DB/API，不复活 consumer_orders / 本平台下单/收单。新增 tests/g1-winf56-platform-outbox-deep.test.mjs 4/4。typecheck PASS、platform build PASS（含 /p/outbox 路由）、`pnpm build` 20/20、`g1-winf*.test.mjs` 176/176、单测 47 passed（2 个 pre-existing token 失败照旧）、eslint + prettier clean。See evidence/G1-MEITUAN-PARITY/WINF56/ACCEPTANCE.md.
+
 ## 2026-08-12 - G1-W∞-46 Management 顾客·会员 真实数据深页密度 densify（MPC-06/08）PASS
 
 - 承接 W∞-45（订单·评价·营销 深页密度），把其余两个真实数据档案面补上「深页密度」(美团商家端成熟场景分布洞察)，全部由已抓取的真实行现场推导，禁止假 BI。
