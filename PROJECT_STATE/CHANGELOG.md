@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## 2026-08-12 - G1-W∞-78 员工/管理工作台真实数据深页 densify（ME-01 + MPC-01）PASS
+
+- `/e/workbench` 新增 summaryStrip + 分布面板（状态/升级/客户关联/到期窗口/来源/行动机会），由 workbench API 真实行推导。
+- `/m/dashboard` 新增分布面板（待办指标/客户门店/异常类型/提醒队列），由 dashboard metrics+anomalies+suggestions 推导。
+- 新增 tests/g1-winf78 5/5；`g1-winf*.test.mjs` 269/269；employee+management typecheck+build PASS。See evidence/G1-MEITUAN-PARITY/WINF78/ACCEPTANCE.md.
+
 ## 2026-08-12 - G1-W∞-72 统一消费者入口 densify（MH5-01/13）PASS
 
 - 消费者 H5 统一入口 `/c/entry`（美团 App 首页型/统一入口语境）从旧暖色白板视觉（#f6f8fb/#1649bd 蓝色渐变 hero）densify 到美团 App 到店浏览视觉/IA，承接 discovery W∞-32 / store W∞-33 / 频道深页 W∞-71 视觉语言 + W∞-45+ 深页分布波。

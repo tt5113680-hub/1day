@@ -2,7 +2,7 @@
 import { SessionApiClient } from '@oneday/session-client';
 import { useTenantSync } from '@oneday/sync-client';
 import { AppStatePanel, Button, taskTitleCopy } from '@oneday/ui';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import styles from './page.module.css';
 
 type Data = {
@@ -24,6 +24,38 @@ type Data = {
 
 const api = process.env.NEXT_PUBLIC_API_BASE_URL ?? 'http://127.0.0.1:3001';
 const sessionApi = new SessionApiClient(api);
+
+type Bucket = { label: string; value: number };
+
+const barWidth = (total: number, value: number) => (total ? `${(value / total) * 100}%` : '0%');
+
+const countBy = (items: string[]) => {
+  const map = new Map<string, number>();
+  for (const item of items) map.set(item, (map.get(item) ?? 0) + 1);
+  return [...map.entries()]
+    .map(([label, value]) => ({ label, value }))
+    .sort((a, b) => b.value - a.value || a.label.localeCompare(b.label, 'zh'));
+};
+
+const anomalyTypeLabel = (type: string) =>
+  type === 'overdue_task' ? '任务逾期' : type === 'attribution_pending' ? '归属审批' : '其他异常';
+
+function Bars({ items, total }: { items: Bucket[]; total: number }) {
+  if (!items.length) return <p className={styles.barEmpty}>暂无记录</p>;
+  return (
+    <div className={styles.bars}>
+      {items.map((item) => (
+        <div className={styles.barRow} key={item.label}>
+          <span className={styles.barLabel}>{item.label}</span>
+          <div className={styles.barTrack}>
+            <div className={styles.barFill} style={{ width: barWidth(total, item.value) }} />
+          </div>
+          <span className={styles.barValue}>{item.value}</span>
+        </div>
+      ))}
+    </div>
+  );
+}
 
 /** Meituan merchant-PC workbench shortcuts — real routes only (no fake 订单/评价). */
 const SHORTCUTS = [
@@ -88,6 +120,44 @@ export default function ManagementHome() {
     () => void load('quiet'),
     state === 'ready',
   );
+  const taskMetricDist = useMemo(() => {
+    const m = data?.metrics;
+    if (!m) return [];
+    return [
+      { label: '待推进任务', value: m.openTasks },
+      { label: '今日待办', value: m.openTasksToday },
+      { label: '今日完成', value: m.completedTasksToday },
+      { label: '近30日完成', value: m.completedTasks30d },
+      { label: '逾期任务', value: m.overdueTasks },
+    ].filter((item) => item.value > 0);
+  }, [data?.metrics]);
+  const customerMetricDist = useMemo(() => {
+    const m = data?.metrics;
+    if (!m) return [];
+    return [
+      { label: '客户总数', value: m.customers },
+      { label: '今日客户', value: m.customersToday },
+      { label: '门店数', value: m.stores },
+      { label: '在岗跟进', value: m.activeAssignees },
+      { label: '近30日服务档案', value: m.orders30d },
+    ].filter((item) => item.value > 0);
+  }, [data?.metrics]);
+  const anomalyDist = useMemo(
+    () => countBy((data?.anomalies ?? []).map((item) => anomalyTypeLabel(item.type))),
+    [data?.anomalies],
+  );
+  const queueDist = useMemo(
+    () =>
+      [
+        { label: '待办与异常', value: data?.anomalies.length ?? 0 },
+        { label: '作业提醒', value: data?.suggestions.length ?? 0 },
+      ].filter((item) => item.value > 0),
+    [data?.anomalies.length, data?.suggestions.length],
+  );
+  const taskMetricTotal = taskMetricDist.reduce((acc, item) => acc + item.value, 0);
+  const customerMetricTotal = customerMetricDist.reduce((acc, item) => acc + item.value, 0);
+  const anomalyTotal = data?.anomalies.length ?? 0;
+  const queueTotal = (data?.anomalies.length ?? 0) + (data?.suggestions.length ?? 0);
   if (state === 'loading')
     return (
       <main className={styles.centered}>
@@ -177,6 +247,31 @@ export default function ManagementHome() {
         </div>
       </section>
 
+      <section className={styles.panel} aria-label="管理工作台分布">
+        <div className={styles.panelHead}>
+          <h2>管理工作台分布</h2>
+          <span className={styles.panelMeta}>由 dashboard 真实指标与队列行推导</span>
+        </div>
+        <div className={styles.distribution}>
+          <div className={styles.panelBlock}>
+            <h3>待办指标分布</h3>
+            <Bars items={taskMetricDist} total={taskMetricTotal} />
+          </div>
+          <div className={styles.panelBlock}>
+            <h3>客户门店分布</h3>
+            <Bars items={customerMetricDist} total={customerMetricTotal} />
+          </div>
+          <div className={styles.panelBlock}>
+            <h3>异常类型分布</h3>
+            <Bars items={anomalyDist} total={anomalyTotal} />
+          </div>
+          <div className={styles.panelBlock}>
+            <h3>提醒队列分布</h3>
+            <Bars items={queueDist} total={queueTotal} />
+          </div>
+        </div>
+      </section>
+
       <section className={styles.panel} aria-label="常用功能">
         <div className={styles.panelHead}>
           <h2>常用功能</h2>
@@ -251,6 +346,11 @@ export default function ManagementHome() {
           )}
         </section>
       </div>
+
+      <p className={styles.honest} role="note">
+        以上分布全部由已抓取管理工作台档案行现场推导(source=local)：待办/客户/门店指标来自 dashboard metrics
+        真实字段；异常类型由 anomalies 行 type 映射；提醒队列由 anomalies 与 suggestions 行计数。不含支付金额与第三方订单履约；近30日服务档案为本地试点记录，非本平台下单。
+      </p>
     </main>
   );
 }

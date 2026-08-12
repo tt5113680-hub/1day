@@ -273,6 +273,80 @@
   text-align: center;
 }
 
+.distribution {
+  display: grid;
+  gap: 12px;
+}
+
+.panelBlock {
+  display: grid;
+  gap: 8px;
+}
+
+.panelBlock h3 {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.bars {
+  display: grid;
+  gap: 8px;
+}
+
+.barRow {
+  display: grid;
+  grid-template-columns: 108px minmax(0, 1fr) 36px;
+  gap: 8px;
+  align-items: center;
+}
+
+.barLabel {
+  overflow: hidden;
+  color: #666;
+  font-size: 12px;
+  font-weight: 600;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.barTrack {
+  overflow: hidden;
+  height: 8px;
+  border-radius: 999px;
+  background: #f0f0f0;
+}
+
+.barFill {
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, #ffd100 0%, #f0a500 100%);
+}
+
+.barValue {
+  color: #222;
+  font-size: 12px;
+  font-weight: 800;
+  text-align: right;
+}
+
+.barEmpty {
+  margin: 0;
+  color: #999;
+  font-size: 12px;
+}
+
+.honest {
+  margin: 0;
+  border-radius: 10px;
+  padding: 12px 14px;
+  background: #fff9db;
+  color: #666;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.5;
+}
+
 .centered {
   display: grid;
   min-height: 70vh;

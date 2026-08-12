@@ -42,7 +42,7 @@
 
 | ID | 美团对标模块（PC） | ONEDAY 现路由（若有） | 状态 | 备注 |
 | -- | ----------------- | --------------------- | ---- | ---- |
-| MPC-01 | 工作台 / 首页概览 | `/m/dashboard` | PARTIAL | W1 首刀；W∞-18/21 工具身份；**W∞-35** 视觉/IA densify（黄顶栏+icon 功能格+白卡面板+自定义指标）；toward PARITY；见 WINF35 |
+| MPC-01 | 工作台 / 首页概览 | `/m/dashboard` | PARTIAL | W1 首刀；W∞-18/21 工具身份；**W∞-35** 视觉/IA densify（黄顶栏+icon 功能格+白卡面板+自定义指标）；**W∞-78** 真实数据深页分布（待办指标/客户门店/异常类型/提醒队列，source=local dashboard 行推导，禁止假 BI）；toward PARITY；见 WINF35/WINF78 |
 | MPC-02 | 门店管理 | `/m/stores` | PARTIAL | W∞-19/23 工具身份；**W∞-38** 视觉/IA densify（黄顶栏+灰底白卡+概况条）；toward PARITY；见 WINF38 |
 | MPC-03 | 商品管理 | `/m/offers` | PARTIAL | W∞-19/23 工具身份；**W∞-39** 视觉/IA densify（黄顶栏+灰底白卡）；**W∞-47** 真实数据深页分布（套餐可见/门店/平台入口/Offer 状态/价格带，source=local 档案行推导，禁止假 BI）；toward PARITY；见 WINF39/WINF47 |
 | MPC-04 | 订单中心 | — | PARTIAL | 只读档案/痕迹（`/m/orders`）+ 导航「订单痕迹」（W∞-21/22）；**W∞-42** 视觉 densify（黄顶栏+灰底白卡+heroCard+概况条+row 列表）；**W∞-45** 真实数据深页分布（状态/门店/来源，source=local 档案行推导，禁止假 BI）；toward PARITY；不做本平台成交；见 WINF42/WINF45 |
@@ -97,7 +97,7 @@
 
 | ID | 美团对标 | ONEDAY 现路由 | 状态 |
 | -- | -------- | ------------- | ---- |
-| ME-01 | 商家 App 工作台 | `/e/workbench` | PARTIAL | W4 首刀；W∞-17 工具身份；**W∞-34** 视觉/IA densify（黄顶栏+头像 hero+icon 功能格+白卡面板）；toward PARITY；见 WINF34 |
+| ME-01 | 商家 App 工作台 | `/e/workbench` | PARTIAL | W4 首刀；W∞-17 工具身份；**W∞-34** 视觉/IA densify（黄顶栏+头像 hero+icon 功能格+白卡面板）；**W∞-78** 真实数据深页分布（状态/升级/客户关联/到期窗口/来源/行动机会，source=local，禁止假 BI）；toward PARITY；见 WINF34/WINF78 |
 | ME-02 | 订单 / 待办 | `/e/tasks` | PARTIAL | W∞-15 工具身份；**W∞-64** 真实数据深页分布（状态/升级/客户关联/到期窗口/来源，source=local，禁止假 BI）；toward PARITY；非第三方订单履约；见 WINF64 |
 | ME-03 | 顾客 | `/e/customers` | PARTIAL | W∞-16 工具身份；**W∞-65** 真实数据深页分布（归属/状态/待办负载/建档窗口，source=local，禁止假 BI）；toward PARITY；见 WINF65 |
 | ME-04 | 门店 | `/e/store` | PARTIAL | W∞-16 工具身份；**W∞-66** 真实数据深页分布；toward PARITY；见 WINF66 |

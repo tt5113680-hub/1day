@@ -3,7 +3,7 @@ import { SessionApiClient } from '@oneday/session-client';
 import { useTenantSync } from '@oneday/sync-client';
 import { AppStatePanel, Button, StatusBadge } from '@oneday/ui';
 
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import styles from './workbench.module.css';
 
 type Task = {
@@ -28,6 +28,55 @@ const api = process.env.NEXT_PUBLIC_API_BASE_URL ?? 'http://127.0.0.1:3001';
 const sessionApi = new SessionApiClient(api);
 const time = (value: string) =>
   new Intl.DateTimeFormat('zh-CN', { hour: '2-digit', minute: '2-digit' }).format(new Date(value));
+
+type Bucket = { label: string; value: number };
+
+const barWidth = (total: number, value: number) => (total ? `${(value / total) * 100}%` : '0%');
+
+const countBy = (items: string[]) => {
+  const map = new Map<string, number>();
+  for (const item of items) map.set(item, (map.get(item) ?? 0) + 1);
+  return [...map.entries()]
+    .map(([label, value]) => ({ label, value }))
+    .sort((a, b) => b.value - a.value || a.label.localeCompare(b.label, 'zh'));
+};
+
+const statusLabel = (status: string) =>
+  ({ overdue: '已逾期', open: '待推进', done: '已完成', cancelled: '已取消' })[status] ??
+  (status ? status : '未标注');
+
+const escalationBucket = (level: number) => {
+  if (!level) return '未升级';
+  if (level <= 2) return '轻度升级 1-2';
+  return '多次升级 3+';
+};
+
+const dueBucket = (dueAt: string, status: string) => {
+  if (status === 'overdue') return '已逾期';
+  const due = new Date(dueAt).getTime();
+  if (Number.isNaN(due)) return '时间待定';
+  const hours = (due - Date.now()) / 36e5;
+  if (hours <= 24) return '24 小时内';
+  if (hours <= 72) return '1-3 天内';
+  return '3 天以上';
+};
+
+function Bars({ items, total }: { items: Bucket[]; total: number }) {
+  if (!items.length) return <p className={styles.barEmpty}>暂无记录</p>;
+  return (
+    <div className={styles.bars}>
+      {items.map((item) => (
+        <div className={styles.barRow} key={item.label}>
+          <span className={styles.barLabel}>{item.label}</span>
+          <div className={styles.barTrack}>
+            <div className={styles.barFill} style={{ width: barWidth(total, item.value) }} />
+          </div>
+          <span className={styles.barValue}>{item.value}</span>
+        </div>
+      ))}
+    </div>
+  );
+}
 
 const FUNCTION_ICONS: Record<string, string> = {
   任务待办: '✓',
@@ -98,6 +147,41 @@ export function Workbench() {
       setBusy(null);
     }
   };
+  const openTasks = data?.tasks ?? [];
+  const reminders = data?.customerReminders ?? [];
+  const opportunities = data?.opportunities ?? [];
+  const allRows = useMemo(() => [...openTasks, ...reminders], [openTasks, reminders]);
+  const statusDist = useMemo(
+    () => countBy(allRows.map((task) => statusLabel(task.status))),
+    [allRows],
+  );
+  const escalationDist = useMemo(
+    () => countBy(allRows.map((task) => escalationBucket(task.escalationLevel ?? 0))),
+    [allRows],
+  );
+  const customerDist = useMemo(
+    () =>
+      countBy(allRows.map((task) => (task.customer?.displayName ? '关联客户' : '内部执行'))),
+    [allRows],
+  );
+  const dueDist = useMemo(
+    () => countBy(allRows.map((task) => dueBucket(task.dueAt, task.status))),
+    [allRows],
+  );
+  const sourceDist = useMemo(
+    () =>
+      [
+        { label: '今日待办', value: openTasks.length },
+        { label: '客户提醒', value: reminders.length },
+        { label: '行动机会', value: opportunities.length },
+      ].filter((item) => item.value > 0),
+    [openTasks.length, reminders.length, opportunities.length],
+  );
+  const opportunityDist = useMemo(
+    () => countBy(opportunities.map((item) => item.source || '时限信号')),
+    [opportunities],
+  );
+  const overdueCount = allRows.filter((task) => task.status === 'overdue').length;
   if (state === 'loading')
     return (
       <main className={styles.centered}>
@@ -176,6 +260,28 @@ export function Workbench() {
           <span id="overview-title">今日作业概览</span>
           <span className={styles.panelMeta}>{time(data.generatedAt)} 更新</span>
         </div>
+        <div className={styles.summaryStrip} aria-label="工作台数据概况">
+          <div>
+            <span>全部待办</span>
+            <strong>{allRows.length}</strong>
+          </div>
+          <div>
+            <span>今日任务</span>
+            <strong>{openTasks.length}</strong>
+          </div>
+          <div>
+            <span>客户提醒</span>
+            <strong>{reminders.length}</strong>
+          </div>
+          <div>
+            <span>行动机会</span>
+            <strong>{opportunities.length}</strong>
+          </div>
+          <div>
+            <span>已逾期</span>
+            <strong>{overdueCount}</strong>
+          </div>
+        </div>
         <div className={styles.metrics}>
           {overview.map((item) => (
             <article className={styles.metric} key={item.label}>
@@ -184,6 +290,39 @@ export function Workbench() {
               <small>{item.hint}</small>
             </article>
           ))}
+        </div>
+      </section>
+
+      <section className={styles.panel} aria-label="工作台作业分布">
+        <div className={styles.panelHead}>
+          <h2>工作台作业分布</h2>
+          <span className={styles.panelMeta}>由工作台真实行推导</span>
+        </div>
+        <div className={styles.distribution}>
+          <div className={styles.panelBlock}>
+            <h3>状态分布</h3>
+            <Bars items={statusDist} total={allRows.length} />
+          </div>
+          <div className={styles.panelBlock}>
+            <h3>升级分布</h3>
+            <Bars items={escalationDist} total={allRows.length} />
+          </div>
+          <div className={styles.panelBlock}>
+            <h3>客户关联分布</h3>
+            <Bars items={customerDist} total={allRows.length} />
+          </div>
+          <div className={styles.panelBlock}>
+            <h3>到期窗口分布</h3>
+            <Bars items={dueDist} total={allRows.length} />
+          </div>
+          <div className={styles.panelBlock}>
+            <h3>来源分布</h3>
+            <Bars items={sourceDist} total={allRows.length + opportunities.length} />
+          </div>
+          <div className={styles.panelBlock}>
+            <h3>行动机会分布</h3>
+            <Bars items={opportunityDist} total={opportunities.length} />
+          </div>
         </div>
       </section>
 
@@ -284,6 +423,11 @@ export function Workbench() {
           ))
         )}
       </section>
+
+      <p className={styles.honest} role="note">
+        以上分布全部由已抓取工作台档案行现场推导(source=local)：状态/升级/客户关联/到期窗口/来源均由真实
+        tasks 与 customerReminders 行统计；行动机会由 opportunities 行 source 字段统计。推广员工具工作台跟进门店服务痕迹，不含第三方订单履约，不代履约美团/抖音订单，非本平台下单。
+      </p>
     </main>
   );
 }
