@@ -1,3 +1,6 @@
+## 2026-08-12 - G1-W∞-70 Channel 商户开通 真实数据深页 densify（MP-02）PASS
+
+- `/ch/merchants/new` 黄顶栏+开通分布（邀请/交付/套餐/模板/渠道）。See WINF70.
 ## 2026-08-12 - G1-W∞-69 Employee 我的工作空间 真实数据深页 densify（ME-07）PASS
 
 - `/e/profile` 黄顶栏+工作空间分布（服务门店/权限域/权限级别/权限项）。员工面 ME-02~07 深页波次收口。See WINF69.

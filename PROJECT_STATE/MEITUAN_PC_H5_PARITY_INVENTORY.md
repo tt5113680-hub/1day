@@ -115,7 +115,7 @@
 | -- | -------- | ------------- | ---- |
 | MP-00 | 平台总览 | `/p/dashboard` | PARTIAL | W∞-18 工具身份；**W∞-36** 视觉/IA densify（黄顶栏+icon 功能格+白卡面板+自定义指标）；toward PARITY；见 WINF36 |
 | MP-01 | 省市区代理树 | `/p/channels`, `/ch/*` | GAP |
-| MP-02 | 商户入驻开通 | `/p/tenants`, `/ch/merchants/new` | GAP |
+| MP-02 | 商户入驻开通 | `/p/tenants`, `/ch/merchants/new` | PARTIAL | **W∞-70** `/ch/merchants/new` 真实数据深页 densify；toward PARITY；见 WINF70 |
 | MP-03 | 代理商管理后台 | `/ch/dashboard` | PARTIAL | W∞-6 densify；**W∞-37** 视觉/IA densify（黄顶栏+icon 功能格+白卡指标+商户队列卡）；toward PARITY；见 WINF37 |
 | MP-04 | 商圈 / 运营集合 | `/p/business-circles`, `/bc/*` | PARTIAL | **W∞-37** `/bc/dashboard` 视觉/IA densify（黄顶栏+icon 功能格+白卡指标+商圈明细）；toward PARITY；见 WINF37 |
 
