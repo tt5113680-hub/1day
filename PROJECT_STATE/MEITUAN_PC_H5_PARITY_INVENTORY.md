@@ -77,7 +77,7 @@
 
 | ID | 成熟型（学习源） | ONEDAY 现路由 | 状态 | 备注 |
 | -- | ---------------- | ------------- | ---- | ---- |
-| MH5-01 | 美团 App 外卖 LBS 首页 → **附近** | `/c/discovery` | PARTIAL | W2/W∞-11 壳+工具身份；**W∞-32** 视觉/IA densify（sticky 黄顶栏+下划线 Tab+72px 商家卡）；toward PARITY；见 WINF32 |
+| MH5-01 | 美团 App 外卖 LBS 首页 → **附近** | `/c/discovery` | PARTIAL | W2/W∞-11 壳+工具身份；**W∞-32** 视觉/IA densify（sticky 黄顶栏+下划线 Tab+72px 商家卡）；**W∞-73** 真实数据深页 densify（白卡 heroCard+summaryStrip+附近商家分布：评分/距离带/人气带/入口可用性/发现面，真实 Discovery 行推导，禁止假 BI）；toward PARITY；见 WINF32/WINF73 |
 | MH5-02 | 搜索 | `/c/search` | PARITY | 检索+诚实试用提示+无下单免责；见 WINF2/WINF10 |
 | MH5-03 | 美团商家门店页 → **商家消费者页** | `/c/stores/[id]` | PARTIAL | W2/W∞-13 工具身份；**W∞-33** 视觉/IA densify（黄顶栏+封面+导航电话分享+sticky 分区 Tab）；toward PARITY；见 WINF33 |
 | MH5-04 | 团购 / 套餐（外链聚合） | `/c/stores/[id]/group-buy` | PARTIAL | 美团/抖音/外链，非自有货架；W∞-12 densify 工具身份+平台图例；**W∞-71** 消费者频道深页 densify（黄顶栏+灰底白卡+summaryStrip+团购比价分布，真实 platformOffers 推导）；toward PARITY；见 WINF71 |

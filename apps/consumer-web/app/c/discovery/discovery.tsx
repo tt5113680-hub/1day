@@ -102,6 +102,50 @@ export default function DiscoveryPage({ data }: { data: Discovery }) {
     if (nearbySort === 'sales') return (b.salesHint ?? 0) - (a.salesHint ?? 0);
     return a.distanceKm - b.distanceKm;
   });
+  const ratingBucket = (rating?: number) =>
+    rating == null
+      ? '暂无评分'
+      : rating <= 3.5
+        ? '低分 3.5 及以下'
+        : rating <= 4.2
+          ? '中等 3.6-4.2'
+          : '高评 4.3+';
+  const distanceBucket = (distanceKm: number) =>
+    distanceKm <= 1 ? '1km 内' : distanceKm <= 3 ? '1-3km' : distanceKm <= 5 ? '3-5km' : '5km 外';
+  const salesBucket = (salesHint?: number) =>
+    salesHint == null
+      ? '暂无人气'
+      : salesHint <= 100
+        ? '低人气 ≤100'
+        : salesHint <= 500
+          ? '中人气 101-500'
+          : '高人 501+';
+  const nearbyTotal = data.nearby.length;
+  const countBy = (rows: string[]) => {
+    const buckets = new Map<string, number>();
+    for (const row of rows) {
+      const label = row || '未分类';
+      buckets.set(label, (buckets.get(label) ?? 0) + 1);
+    }
+    return [...buckets.entries()]
+      .map(([label, value]) => ({ label, value }))
+      .sort((a, b) => b.value - a.value);
+  };
+  const barWidth = (total: number, value: number) =>
+    total === 0 ? 0 : Math.round((value / total) * 100);
+  const ratingDist = countBy(data.nearby.map((item) => ratingBucket(item.rating)));
+  const distanceDist = countBy(data.nearby.map((item) => distanceBucket(item.distanceKm)));
+  const salesDist = countBy(data.nearby.map((item) => salesBucket(item.salesHint)));
+  const entryDist = countBy(
+    data.nearby.map((item) => (item.entryUrl ? '可直接跳转' : '待商家补充入口')),
+  );
+  const surfaceDist = countBy([
+    ...data.nearby.map(() => '附近商家'),
+    ...data.channels.flatMap((item) => item.merchants.map(() => '渠道推荐')),
+    ...data.circles.flatMap((item) => item.merchants.map(() => '商圈商家')),
+  ]);
+  const circleCount = data.circles.length;
+  const discoveredMerchants = data.channels.reduce((acc, item) => acc + item.merchants.length, 0);
   return (
     <MobileShell>
       <ConsumerStorefrontNav
@@ -141,12 +185,141 @@ export default function DiscoveryPage({ data }: { data: Discovery }) {
             </a>
           </header>
 
-          <p className={styles.eyebrow}>
-            {data.tenant.name} · 推广员工具 · 附近
-          </p>
+          <p className={styles.eyebrow}>{data.tenant.name} · 推广员工具 · 附近</p>
           <h1 className={styles.srOnly}>附近</h1>
           <p className={styles.compactNote} role="note">
             全平台可见引流商家 · 不在此下单 · 评分/月售为本地试用提示 · 成交以美团/抖音/扫呗等为准
+          </p>
+
+          <section className={styles.heroCard} aria-label="附近概况">
+            <header className={styles.heroHead}>
+              <span>{data.tenant.name} · 推广员工具 · 附近发现</span>
+              <h2>附近与全网引流商家</h2>
+              <p role="note">
+                按真实发现结果汇总：附近商家入口、渠道推荐与商圈，仅供入口分流参考。
+              </p>
+            </header>
+            <div className={styles.summaryStrip} aria-label="附近数据概况">
+              <dl>
+                <dt>附近商家</dt>
+                <dd>
+                  {nearbyTotal}
+                  {data.locationRequired ? <i> 需定位</i> : null}
+                </dd>
+              </dl>
+              <dl>
+                <dt>渠道推荐</dt>
+                <dd>{discoveredMerchants}</dd>
+              </dl>
+              <dl>
+                <dt>商圈栏目</dt>
+                <dd>{circleCount}</dd>
+              </dl>
+            </div>
+          </section>
+
+          <section className={styles.distribution} aria-label="附近商家分布">
+            <header className={styles.panelHead}>
+              <h3>附近商家分布</h3>
+              <p>分布由已抓取附近商家档案行现场推导 · 仅统计观看/跳转与入口，不涉及成交</p>
+            </header>
+            <div className={styles.panelBlock}>
+              <span className={styles.barLabel}>评分分布</span>
+              <div className={styles.bars} role="list">
+                {ratingDist.length ? (
+                  ratingDist.map((bar) => (
+                    <div className={styles.barRow} role="listitem" key={bar.label}>
+                      <span>{bar.label}</span>
+                      <b>
+                        <i style={{ width: `${barWidth(nearbyTotal, bar.value)}%` }} />
+                      </b>
+                      <em>{bar.value}</em>
+                    </div>
+                  ))
+                ) : (
+                  <span className={styles.barEmpty}>暂无附近记录</span>
+                )}
+              </div>
+            </div>
+            <div className={styles.panelBlock}>
+              <span className={styles.barLabel}>距离带分布</span>
+              <div className={styles.bars} role="list">
+                {distanceDist.length ? (
+                  distanceDist.map((bar) => (
+                    <div className={styles.barRow} role="listitem" key={bar.label}>
+                      <span>{bar.label}</span>
+                      <b>
+                        <i style={{ width: `${barWidth(nearbyTotal, bar.value)}%` }} />
+                      </b>
+                      <em>{bar.value}</em>
+                    </div>
+                  ))
+                ) : (
+                  <span className={styles.barEmpty}>暂无附近记录</span>
+                )}
+              </div>
+            </div>
+            <div className={styles.panelBlock}>
+              <span className={styles.barLabel}>人气带分布</span>
+              <div className={styles.bars} role="list">
+                {salesDist.length ? (
+                  salesDist.map((bar) => (
+                    <div className={styles.barRow} role="listitem" key={bar.label}>
+                      <span>{bar.label}</span>
+                      <b>
+                        <i style={{ width: `${barWidth(nearbyTotal, bar.value)}%` }} />
+                      </b>
+                      <em>{bar.value}</em>
+                    </div>
+                  ))
+                ) : (
+                  <span className={styles.barEmpty}>暂无附近记录</span>
+                )}
+              </div>
+            </div>
+            <div className={styles.panelBlock}>
+              <span className={styles.barLabel}>入口可用性分布</span>
+              <div className={styles.bars} role="list">
+                {entryDist.length ? (
+                  entryDist.map((bar) => (
+                    <div className={styles.barRow} role="listitem" key={bar.label}>
+                      <span>{bar.label}</span>
+                      <b>
+                        <i style={{ width: `${barWidth(nearbyTotal, bar.value)}%` }} />
+                      </b>
+                      <em>{bar.value}</em>
+                    </div>
+                  ))
+                ) : (
+                  <span className={styles.barEmpty}>暂无附近记录</span>
+                )}
+              </div>
+            </div>
+            <div className={styles.panelBlock}>
+              <span className={styles.barLabel}>发现面分布</span>
+              <div className={styles.bars} role="list">
+                {surfaceDist.length ? (
+                  surfaceDist.map((bar) => (
+                    <div className={styles.barRow} role="listitem" key={bar.label}>
+                      <span>{bar.label}</span>
+                      <b>
+                        <i style={{ width: `${barWidth(nearbyTotal, bar.value)}%` }} />
+                      </b>
+                      <em>{bar.value}</em>
+                    </div>
+                  ))
+                ) : (
+                  <span className={styles.barEmpty}>暂无发现记录</span>
+                )}
+              </div>
+            </div>
+          </section>
+
+          <p className={styles.honest} role="note">
+            以上分布全部由已抓取附近/渠道/商圈商家档案行现场推导，源 source=local；
+            评分与月售为本地试用提示，不接美团/抖音实时商户数据；
+            成交在美团/抖音/扫呗等外部平台完成，仅统计观看/访问/跳转/停留/分享入口痕迹，不含支付金额。
+            不在此下单，非本平台下单。
           </p>
 
           <nav className={styles.tabs} aria-label="发现分类">
@@ -256,7 +429,9 @@ export default function DiscoveryPage({ data }: { data: Discovery }) {
                 })}
               </div>
             ) : (
-              <div className={styles.empty}>当前位置 20 公里内暂无已发布的商家；可切换推荐/商圈。</div>
+              <div className={styles.empty}>
+                当前位置 20 公里内暂无已发布的商家；可切换推荐/商圈。
+              </div>
             )}
           </section>
 

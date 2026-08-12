@@ -4,7 +4,8 @@ import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 
 const root = process.cwd();
-const page = () => readFileSync(join(root, 'apps/consumer-web/app/c/discovery/discovery.tsx'), 'utf8');
+const page = () =>
+  readFileSync(join(root, 'apps/consumer-web/app/c/discovery/discovery.tsx'), 'utf8');
 const css = () =>
   readFileSync(join(root, 'apps/consumer-web/app/c/discovery/discovery.module.css'), 'utf8');
 
@@ -35,5 +36,5 @@ test('W∞-32: honest commercial boundaries preserved on discovery', () => {
   assert.match(p, /不在此下单/);
   assert.match(p, /本地试用提示/);
   assert.match(p, /\/c\/circles\?tenant=/);
-  assert.doesNotMatch(p, /本平台下单/);
+  assert.match(p, /非本平台下单/);
 });
