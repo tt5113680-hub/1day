@@ -198,7 +198,7 @@ export default function ManagementHome() {
     { label: '待推进任务', value: m.openTasks, hint: '全部未完成任务' },
   ] as const;
   return (
-    <main className={styles.page}>
+    <main className={styles.page} data-testid="management-dashboard">
       <header className={styles.topBar}>
         <span className={styles.topBarTitle}>推广员工具 · 管理工作台</span>
         <button className={styles.topBarRefresh} type="button" onClick={() => void load()}>
@@ -208,42 +208,36 @@ export default function ManagementHome() {
 
       <section className={styles.heroCard} aria-label="工作台概览">
         <h1>工作台</h1>
-        <p>
-          今日概况 · 常用功能 · 待办提醒 · 入口痕迹；不含支付金额与第三方订单履约
-        </p>
+        <p>今日概况 · 常用功能 · 待办提醒 · 入口痕迹；不含支付金额与第三方订单履约</p>
       </section>
 
-      <section className={styles.panel} aria-label="今日概况">
-        <div className={styles.panelHead}>
-          <span>今日概况</span>
+      <section className={styles.summaryStrip} aria-label="工作台数据概况">
+        <span className={styles.summaryStripTitle}>今日概况</span>
+        <div className={styles.todayItem}>
+          <span>今日客户</span>
+          <strong>{m.customersToday}</strong>
         </div>
-        <div className={styles.todayStrip}>
-          <div className={styles.todayItem}>
-            <span>今日客户</span>
-            <strong>{m.customersToday}</strong>
-          </div>
-          <div className={styles.todayItem}>
-            <span>今日待办</span>
-            <strong>{m.openTasksToday}</strong>
-          </div>
-          <div className={styles.todayItem}>
-            <span>今日完成</span>
-            <strong>{m.completedTasksToday}</strong>
-          </div>
-          <div className={styles.todayItem}>
-            <span>逾期</span>
-            <strong className={m.overdueTasks > 0 ? styles.danger : undefined}>
-              {m.overdueTasks}
-            </strong>
-          </div>
-          <div className={styles.todayItem}>
-            <span>门店</span>
-            <strong>{m.stores}</strong>
-          </div>
-          <div className={styles.todayItem}>
-            <span>在岗跟进</span>
-            <strong>{m.activeAssignees}</strong>
-          </div>
+        <div className={styles.todayItem}>
+          <span>今日待办</span>
+          <strong>{m.openTasksToday}</strong>
+        </div>
+        <div className={styles.todayItem}>
+          <span>今日完成</span>
+          <strong>{m.completedTasksToday}</strong>
+        </div>
+        <div className={styles.todayItem}>
+          <span>逾期</span>
+          <strong className={m.overdueTasks > 0 ? styles.danger : undefined}>
+            {m.overdueTasks}
+          </strong>
+        </div>
+        <div className={styles.todayItem}>
+          <span>门店</span>
+          <strong>{m.stores}</strong>
+        </div>
+        <div className={styles.todayItem}>
+          <span>在岗跟进</span>
+          <strong>{m.activeAssignees}</strong>
         </div>
       </section>
 
@@ -348,8 +342,9 @@ export default function ManagementHome() {
       </div>
 
       <p className={styles.honest} role="note">
-        以上分布全部由已抓取管理工作台档案行现场推导(source=local)：待办/客户/门店指标来自 dashboard metrics
-        真实字段；异常类型由 anomalies 行 type 映射；提醒队列由 anomalies 与 suggestions 行计数。不含支付金额与第三方订单履约；近30日服务档案为本地试点记录，非本平台下单。
+        以上分布全部由已抓取管理工作台档案行现场推导(source=local)：待办/客户/门店指标来自 dashboard
+        metrics 真实字段；异常类型由 anomalies 行 type 映射；提醒队列由 anomalies 与 suggestions
+        行计数。不含支付金额与第三方订单履约；近30日服务档案为本地试点记录，非本平台下单。
       </p>
     </main>
   );

@@ -42,7 +42,7 @@
 
 | ID | 美团对标模块（PC） | ONEDAY 现路由（若有） | 状态 | 备注 |
 | -- | ----------------- | --------------------- | ---- | ---- |
-| MPC-01 | 工作台 / 首页概览 | `/m/dashboard` | PARTIAL | W1 首刀；W∞-18/21 工具身份；**W∞-35** 视觉/IA densify（黄顶栏+icon 功能格+白卡面板+自定义指标）；**W∞-78** 真实数据深页分布（待办指标/客户门店/异常类型/提醒队列，source=local dashboard 行推导，禁止假 BI）；toward PARITY；见 WINF35/WINF78 |
+| MPC-01 | 工作台 / 首页概览 | `/m/dashboard` | PARTIAL | W1 首刀；W∞-18/21 工具身份；**W∞-35** 视觉/IA densify（黄顶栏+icon 功能格+白卡面板+自定义指标）；**W∞-78** 真实数据深页分布（待办指标/客户门店/异常类型/提醒队列，source=local dashboard 行推导，禁止假 BI）；**W∞-87** 全标对概况条 densify（`data-testid="management-dashboard"` + 独立白卡概况条 `工作台数据概况` 今日客户/今日待办/今日完成/逾期/门店/在岗跟进，全部由真实 dashboard metrics 字段现场推导，与 W∞-80~86 summaryStrip 视觉语言一致）；toward PARITY；见 WINF35/WINF78/WINF87 |
 | MPC-02 | 门店管理 | `/m/stores` | PARTIAL | W∞-19/23 工具身份；**W∞-38** 视觉/IA densify（黄顶栏+灰底白卡+概况条+门店卡）；**W∞-80** 真实数据深页 densify（`门店入口分布`：营业状态/负责人指派/启用平台入口/服务覆盖/近30日入口打开/待跟进负载，由真实 stores[].推导，禁止假 BI）；toward PARITY；见 WINF38/WINF80 |
 | MPC-03 | 商品管理 | `/m/offers` | PARTIAL | W∞-19/23 工具身份；**W∞-39** 视觉/IA densify（黄顶栏+灰底白卡）；**W∞-47** 真实数据深页分布（套餐可见/门店/平台入口/Offer 状态/价格带，source=local 档案行推导，禁止假 BI）；toward PARITY；见 WINF39/WINF47 |
 | MPC-04 | 订单中心 | — | PARTIAL | 只读档案/痕迹（`/m/orders`）+ 导航「订单痕迹」（W∞-21/22）；**W∞-42** 视觉 densify（黄顶栏+灰底白卡+heroCard+概况条+row 列表）；**W∞-45** 真实数据深页分布（状态/门店/来源，source=local 档案行推导，禁止假 BI）；toward PARITY；不做本平台成交；见 WINF42/WINF45 |
@@ -142,7 +142,7 @@
 
 ## 6. 当前下一刀
 
-  > **当前：W∞-85 PASS** — 收束全仓最后一批残留旧 `AdminPageHeader`+`Card` chrome：Management `/m/attribution`（来源归因）、`/m/entry-funnel`（入口痕迹看板/模块命名，归入 MPC-09 经营分析区）、`/m/circles`（商圈双身份，网络身份面）、`/m/funnels/[id]`（来源归因漏斗）+ Platform `/p/tenants/new`（MP-02 商户入驻开通）一次性改挂黄顶栏+灰底白卡+heroCard+概况条+分布洞察+honest 边界（禁止假 BI）。全仓四端已无页面级 `AdminPageHeader`+`Card` 数据型页残留。**下一刀：** inventory `PARITY` 关断复核（本文件状态列逐面复审 toward PARITY），或推进未闭合项（HUMAN-PILOT-HANDOFF / G1 OWNER GATE）。
+  > **当前：W∞-87 PASS** — Management 工作台 `/m/dashboard`（MPC-01 工作台）全标对概况条 densify：把「今日概况」面板收束到与管理面 MPC 深页一致的独立「白卡概况条 `summaryStrip`」（`data-testid="management-dashboard"` + `aria-label="工作台数据概况"` + 6 项今日指标由真实 dashboard metrics 字段现场推导，禁止假 BI），使 MPC-01 完整对标 topBar+heroCard+概况条+分布面板+常用功能格的层级。**下一刀：** 转 inventory `PARITY` 关断复核（本文件状态列逐面复审 toward PARITY），或推进未闭合项（HUMAN-PILOT-HANDOFF / G1 OWNER GATE）。
 
 **历史波（自 W24 起）累计——**
 

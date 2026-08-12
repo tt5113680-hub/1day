@@ -91,14 +91,22 @@
   font-size: 12px;
 }
 
-.todayStrip {
+.summaryStrip {
   display: grid;
   grid-template-columns: repeat(6, minmax(0, 1fr));
   gap: 10px;
+  align-items: start;
   border-radius: 10px;
   padding: 12px;
   background: linear-gradient(135deg, #fff9db 0%, #fffef5 100%);
   border: 1px solid rgb(255 209 0 / 35%);
+}
+
+.summaryStripTitle {
+  grid-column: 1 / -1;
+  color: #b8860b;
+  font-size: 12px;
+  font-weight: 800;
 }
 
 .todayItem {
@@ -357,7 +365,7 @@
 
 @media (max-width: 1100px) {
   .functions,
-  .todayStrip {
+  .summaryStrip {
     grid-template-columns: repeat(4, minmax(0, 1fr));
   }
 }
@@ -369,8 +377,8 @@
   }
 
   .functions,
-  .todayStrip {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+  .summaryStrip {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 
@@ -378,7 +386,7 @@
   .metrics,
   .grid,
   .functions,
-  .todayStrip {
+  .summaryStrip {
     grid-template-columns: 1fr 1fr;
   }
 }
