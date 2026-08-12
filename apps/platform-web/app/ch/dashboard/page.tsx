@@ -36,10 +36,11 @@ const statusLabel = (value: string) =>
   ({
     invited: '待接受',
     onboarding: '开通中',
-    onboarded: '已开通',
+    active: '已开通',
+    paused: '已暂停',
     pending: '待处理',
     ready: '可服务',
-    active: '正常',
+    normal: '正常',
     low: '低风险',
     medium: '中风险',
     high: '高风险',
@@ -47,6 +48,11 @@ const statusLabel = (value: string) =>
     growth: '成长版',
     enterprise: '企业版',
   })[value] ?? value;
+const barWidth = (total: number, value: number) => (total ? `${(value / total) * 100}%` : '0%');
+const onboardingLabel = (status: string) =>
+  ({ invited: '待接受', onboarding: '开通中', active: '已开通', paused: '已暂停' })[status] ??
+  status;
+const riskLevelLabel = (risk: string) => ({ low: '低', medium: '中', high: '高' })[risk] ?? risk;
 
 const CHANNEL_SHORTCUTS = [
   { href: '/p/agents', label: '代理', desc: '省市区代理' },
@@ -102,7 +108,8 @@ export default function ChannelDashboardPage() {
     if (!data) return [] as Merchant[];
     const q = query.trim().toLowerCase();
     return data.merchants.filter((merchant) => {
-      if (onboardingFilter !== 'all' && merchant.onboardingStatus !== onboardingFilter) return false;
+      if (onboardingFilter !== 'all' && merchant.onboardingStatus !== onboardingFilter)
+        return false;
       if (signalFilter === 'has_signal' && !merchant.renewalSignal) return false;
       if (signalFilter === 'none' && merchant.renewalSignal) return false;
       if (regionFilter !== 'all' && merchant.regionName !== regionFilter) return false;
@@ -115,6 +122,65 @@ export default function ChannelDashboardPage() {
       );
     });
   }, [data, query, onboardingFilter, signalFilter, regionFilter]);
+
+  const merchants = data?.merchants ?? [];
+  const onboardingCounts = useMemo(() => {
+    const map = new Map<string, number>();
+    for (const m of merchants) {
+      const key = onboardingLabel(m.onboardingStatus);
+      map.set(key, (map.get(key) ?? 0) + 1);
+    }
+    return [...map.entries()].map(([key, value]) => ({ key, value }));
+  }, [merchants]);
+  const planCounts = useMemo(() => {
+    const map = new Map<string, number>();
+    for (const m of merchants) {
+      const key = statusLabel(m.plan);
+      map.set(key, (map.get(key) ?? 0) + 1);
+    }
+    const list = [...map.entries()].map(([key, value]) => ({ key, value }));
+    list.sort((a, b) => b.value - a.value);
+    return list;
+  }, [merchants]);
+  const riskLevelCounts = useMemo(() => {
+    const map = new Map<string, number>();
+    for (const m of merchants) {
+      const key = riskLevelLabel(m.riskLevel);
+      map.set(key, (map.get(key) ?? 0) + 1);
+    }
+    return [...map.entries()].map(([key, value]) => ({ key, value }));
+  }, [merchants]);
+  const regionCounts = useMemo(() => {
+    const map = new Map<string, number>();
+    for (const m of merchants) {
+      const key = m.regionName?.trim() || '未归属省市区代理';
+      map.set(key, (map.get(key) ?? 0) + 1);
+    }
+    const list = [...map.entries()].map(([key, value]) => ({ key, value }));
+    list.sort((a, b) => b.value - a.value);
+    return list;
+  }, [merchants]);
+  const activeCounts = useMemo(() => {
+    const map = new Map<string, number>();
+    for (const m of merchants) {
+      const key = m.activeIn30Days ? '近 30 天有活跃' : '近 30 天无活跃';
+      map.set(key, (map.get(key) ?? 0) + 1);
+    }
+    return [...map.entries()].map(([key, value]) => ({ key, value }));
+  }, [merchants]);
+  const signalCounts = useMemo(() => {
+    const map = new Map<string, number>();
+    for (const m of merchants) {
+      const key =
+        m.renewalSignal === 'inactive_30d'
+          ? '建议跟进：30 天不活跃'
+          : m.renewalSignal === 'high_risk'
+            ? '建议跟进：高风险'
+            : '无跟进信号';
+      map.set(key, (map.get(key) ?? 0) + 1);
+    }
+    return [...map.entries()].map(([key, value]) => ({ key, value }));
+  }, [merchants]);
 
   if (state !== 'ready')
     return (
@@ -167,6 +233,143 @@ export default function ChannelDashboardPage() {
           代理后台看开通进度、省市区归属与跟进信号。续约机会仅来自不活跃或既有高风险证据，不表示套餐到期或本平台成交。
         </p>
       </section>
+
+      <section className={styles.summaryStrip} aria-label="渠道概况">
+        <div>
+          <span>渠道商户</span>
+          <strong>{merchants.length}</strong>
+        </div>
+        <div>
+          <span>已开通</span>
+          <strong>{metrics?.onboarded_count ?? 0}</strong>
+        </div>
+        <div>
+          <span>近 30 天活跃</span>
+          <strong>{metrics?.active_count ?? 0}</strong>
+        </div>
+        <div>
+          <span>跟进信号</span>
+          <strong>{metrics?.renewal_opportunity_count ?? 0}</strong>
+        </div>
+      </section>
+
+      <section className={styles.distribution} aria-label="渠道运营分布">
+        <div className={styles.panelBlock}>
+          <h2>开通状态分布</h2>
+          <ul className={styles.bars}>
+            {onboardingCounts.map((b) => (
+              <li key={b.key} className={styles.barRow}>
+                <span className={styles.barLabel}>{b.key}</span>
+                <span className={styles.barTrack}>
+                  <span
+                    className={styles.barFill}
+                    style={{ width: barWidth(merchants.length, b.value) }}
+                  />
+                </span>
+                <span className={styles.barValue}>{b.value}</span>
+              </li>
+            ))}
+            {!merchants.length && <li className={styles.barEmpty}>暂无记录</li>}
+          </ul>
+        </div>
+        <div className={styles.panelBlock}>
+          <h2>套餐分布</h2>
+          <ul className={styles.bars}>
+            {planCounts.map((b) => (
+              <li key={b.key} className={styles.barRow}>
+                <span className={styles.barLabel}>{b.key}</span>
+                <span className={styles.barTrack}>
+                  <span
+                    className={styles.barFill}
+                    style={{ width: barWidth(merchants.length, b.value) }}
+                  />
+                </span>
+                <span className={styles.barValue}>{b.value}</span>
+              </li>
+            ))}
+            {!merchants.length && <li className={styles.barEmpty}>暂无记录</li>}
+          </ul>
+        </div>
+        <div className={styles.panelBlock}>
+          <h2>风险等级分布</h2>
+          <ul className={styles.bars}>
+            {riskLevelCounts.map((b) => (
+              <li key={b.key} className={styles.barRow}>
+                <span className={styles.barLabel}>{b.key}</span>
+                <span className={styles.barTrack}>
+                  <span
+                    className={styles.barFill}
+                    style={{ width: barWidth(merchants.length, b.value) }}
+                  />
+                </span>
+                <span className={styles.barValue}>{b.value}</span>
+              </li>
+            ))}
+            {!merchants.length && <li className={styles.barEmpty}>暂无记录</li>}
+          </ul>
+        </div>
+        <div className={styles.panelBlock}>
+          <h2>归属区域分布</h2>
+          <ul className={styles.bars}>
+            {regionCounts.map((b) => (
+              <li key={b.key} className={styles.barRow}>
+                <span className={styles.barLabel}>{b.key}</span>
+                <span className={styles.barTrack}>
+                  <span
+                    className={styles.barFill}
+                    style={{ width: barWidth(merchants.length, b.value) }}
+                  />
+                </span>
+                <span className={styles.barValue}>{b.value}</span>
+              </li>
+            ))}
+            {!merchants.length && <li className={styles.barEmpty}>暂无记录</li>}
+          </ul>
+        </div>
+        <div className={styles.panelBlock}>
+          <h2>近 30 天活跃分布</h2>
+          <ul className={styles.bars}>
+            {activeCounts.map((b) => (
+              <li key={b.key} className={styles.barRow}>
+                <span className={styles.barLabel}>{b.key}</span>
+                <span className={styles.barTrack}>
+                  <span
+                    className={styles.barFill}
+                    style={{ width: barWidth(merchants.length, b.value) }}
+                  />
+                </span>
+                <span className={styles.barValue}>{b.value}</span>
+              </li>
+            ))}
+            {!merchants.length && <li className={styles.barEmpty}>暂无记录</li>}
+          </ul>
+        </div>
+        <div className={styles.panelBlock}>
+          <h2>跟进信号分布</h2>
+          <ul className={styles.bars}>
+            {signalCounts.map((b) => (
+              <li key={b.key} className={styles.barRow}>
+                <span className={styles.barLabel}>{b.key}</span>
+                <span className={styles.barTrack}>
+                  <span
+                    className={styles.barFill}
+                    style={{ width: barWidth(merchants.length, b.value) }}
+                  />
+                </span>
+                <span className={styles.barValue}>{b.value}</span>
+              </li>
+            ))}
+            {!merchants.length && <li className={styles.barEmpty}>暂无记录</li>}
+          </ul>
+        </div>
+      </section>
+
+      <p className={styles.honest}>
+        以上分布全部由已抓取渠道商户档案行现场推导（source=local）：开通状态、套餐、风险等级由真实商户行映射；
+        归属区域按真实省市区归属统计，未归属统一「未归属省市区代理」；近 30
+        天活跃仅反映既有作业/跟进与档案类证据，不作入口成交归因；
+        跟进信号仅来自不活跃或既有高风险证据，非套餐到期、非成交漏斗。不含本平台收款、非本平台下单；本地试点记录，未接美团实时商户数据。
+      </p>
 
       <p className={styles.disclaimer} role="note">
         渠道代理服务「统一入口开通与归属」；不碰钱、不碰销售履约、不做替商家管店。
@@ -230,7 +433,8 @@ export default function ChannelDashboardPage() {
               <option value="all">全部</option>
               <option value="invited">待接受</option>
               <option value="onboarding">开通中</option>
-              <option value="onboarded">已开通</option>
+              <option value="active">已开通</option>
+              <option value="paused">已暂停</option>
             </select>
           </label>
           <label>
@@ -275,7 +479,7 @@ export default function ChannelDashboardPage() {
                 </div>
                 <div>
                   <StatusBadge tone={merchant.serviceStatus === 'ready' ? 'success' : 'warning'}>
-                    {statusLabel(merchant.onboardingStatus)}
+                    {onboardingLabel(merchant.onboardingStatus)}
                   </StatusBadge>
                   <span>服务状态：{statusLabel(merchant.serviceStatus)}</span>
                 </div>
