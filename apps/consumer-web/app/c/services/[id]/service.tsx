@@ -5,6 +5,18 @@ import { AppStatePanel } from '@oneday/ui';
 import { ConsumerShell, storeHref } from '../../consumer-shell';
 import styles from './service.module.css';
 
+const countBy = (rows: string[]) => {
+  const buckets = new Map<string, number>();
+  for (const row of rows) {
+    buckets.set(row, (buckets.get(row) ?? 0) + 1);
+  }
+  return [...buckets.entries()]
+    .map(([label, value]) => ({ label, value }))
+    .sort((a, b) => b.value - a.value);
+};
+const barWidth = (total: number, value: number) =>
+  total === 0 ? 0 : Math.round((value / total) * 100);
+
 type PlatformOffer = {
   id: string;
   offerId: string;
@@ -103,6 +115,35 @@ export default function ServicePage({
       ),
     [data.platformOffers],
   );
+  const offerTotal = data.platformOffers.length;
+  const platformDist = useMemo(
+    () => countBy(data.platformOffers.map((offer) => platformLabel(offer.platformType))),
+    [data.platformOffers],
+  );
+  const priceBandDist = useMemo(() => {
+    const buckets = new Map<string, number>();
+    for (const offer of data.platformOffers) {
+      const key =
+        offer.offerPrice <= 100 ? '¥0-100' : offer.offerPrice <= 200 ? '¥100-200' : '¥200+';
+      buckets.set(key, (buckets.get(key) ?? 0) + 1);
+    }
+    return [...buckets.entries()].map(([label, value]) => ({ label, value }));
+  }, [data.platformOffers]);
+  const durationDist = useMemo(
+    () =>
+      countBy([
+        data.service.durationMinutes ? `定时服务 ${data.service.durationMinutes} 分钟` : '到店自取',
+      ]),
+    [data.service.durationMinutes],
+  );
+  const benefitDist = useMemo(
+    () => data.benefits.map((benefit) => ({ label: benefit.title, value: 1 })),
+    [data.benefits],
+  );
+  const contentDist = useMemo(
+    () => countBy(data.content.map((item) => item.content_type || '未分类')),
+    [data.content],
+  );
   const fallbackAction =
     data.actions.find((action) => action.actionType !== 'platform_entry') ?? data.actions[0];
   const primaryAction = data.platformOffers[0] ?? fallbackAction;
@@ -128,21 +169,145 @@ export default function ServicePage({
 
   return (
     <ConsumerShell context={context} active="menu">
-      <main className={styles.page}>
+      <main className={`${styles.page} od-sf-theme`}>
         <div className={styles.shell}>
-          <header className={styles.header}>
-            <a className={styles.back} href={storeHref(context, '/menu', 'service_back')}>
-              ‹ 返回菜单
+          <header className={styles.topBar}>
+            <a
+              className={styles.backLink}
+              href={storeHref(context, '/menu', 'service_back')}
+              aria-label="返回菜单"
+            >
+              ‹
             </a>
-            <p className={styles.eyebrow}>
-              推广员工具 · 套餐详情 · {data.store.merchant} · {data.store.name}
-            </p>
-            <p className={styles.testOnly}>本地试用 · 不在此下单</p>
+            <span className={styles.topTitle}>套餐详情</span>
+            <span className={styles.topMark}>推广员工具</span>
           </header>
 
-          <p className={styles.disclaimer} role="note">
-            本页只做套餐说明与比价；成交经确认页跳转美团/抖音/扫呗等第三方，不在此下单，也不含支付金额。
+          <section className={styles.heroCard} aria-label="套餐概况">
+            <header className={styles.heroHead}>
+              <span>
+                推广员工具 · 套餐详情 · {data.store.merchant} · {data.store.name}
+              </span>
+              <h2>{data.service.name}</h2>
+              <p role="note">
+                按真实套餐与比价档案汇总：平台入口、价格带、时长与权益，仅供入口分流参考。
+              </p>
+            </header>
+            <div className={styles.summaryStrip} aria-label="套餐数据概况">
+              <dl>
+                <dt>平台入口</dt>
+                <dd>{offerTotal}</dd>
+              </dl>
+              <dl>
+                <dt>覆盖平台</dt>
+                <dd>{platformDist.length}</dd>
+              </dl>
+              <dl>
+                <dt>服务权益</dt>
+                <dd>{data.benefits.length}</dd>
+              </dl>
+            </div>
+          </section>
+
+          <section className={styles.distribution} aria-label="套餐比价分布">
+            <header className={styles.panelHead}>
+              <h3>套餐比价分布</h3>
+              <p>分布全部由已抓取套餐/比价档案行现场推导 · 仅统计入口痕迹与商家发现，不涉及成交</p>
+            </header>
+            <div className={styles.panelBlock}>
+              <span className={styles.barLabel}>平台入口分布</span>
+              <div className={styles.bars} role="list">
+                {platformDist.length ? (
+                  platformDist.map((bar) => (
+                    <div className={styles.barRow} role="listitem" key={bar.label}>
+                      <span>{bar.label}</span>
+                      <b>
+                        <i style={{ width: `${barWidth(offerTotal, bar.value)}%` }} />
+                      </b>
+                      <em>{bar.value}</em>
+                    </div>
+                  ))
+                ) : (
+                  <span className={styles.barEmpty}>暂无平台入口记录</span>
+                )}
+              </div>
+            </div>
+            <div className={styles.panelBlock}>
+              <span className={styles.barLabel}>价格带分布</span>
+              <div className={styles.bars} role="list">
+                {priceBandDist.length ? (
+                  priceBandDist.map((bar) => (
+                    <div className={styles.barRow} role="listitem" key={bar.label}>
+                      <span>{bar.label}</span>
+                      <b>
+                        <i style={{ width: `${barWidth(offerTotal, bar.value)}%` }} />
+                      </b>
+                      <em>{bar.value}</em>
+                    </div>
+                  ))
+                ) : (
+                  <span className={styles.barEmpty}>暂无平台入口记录</span>
+                )}
+              </div>
+            </div>
+            <div className={styles.panelBlock}>
+              <span className={styles.barLabel}>时长类型分布</span>
+              <div className={styles.bars} role="list">
+                {durationDist.map((bar) => (
+                  <div className={styles.barRow} role="listitem" key={bar.label}>
+                    <span>{bar.label}</span>
+                    <b>
+                      <i style={{ width: '100%' }} />
+                    </b>
+                    <em>{bar.value}</em>
+                  </div>
+                ))}
+              </div>
+            </div>
+            <div className={styles.panelBlock}>
+              <span className={styles.barLabel}>服务权益分布</span>
+              <div className={styles.bars} role="list">
+                {benefitDist.length ? (
+                  benefitDist.map((bar, index) => (
+                    <div className={styles.barRow} role="listitem" key={`${bar.label}-${index}`}>
+                      <span>{bar.label}</span>
+                      <b>
+                        <i style={{ width: `${barWidth(data.benefits.length, bar.value)}%` }} />
+                      </b>
+                      <em>{bar.value}</em>
+                    </div>
+                  ))
+                ) : (
+                  <span className={styles.barEmpty}>暂无服务权益</span>
+                )}
+              </div>
+            </div>
+            <div className={styles.panelBlock}>
+              <span className={styles.barLabel}>内容类型分布</span>
+              <div className={styles.bars} role="list">
+                {contentDist.length ? (
+                  contentDist.map((bar) => (
+                    <div className={styles.barRow} role="listitem" key={bar.label}>
+                      <span>{bar.label}</span>
+                      <b>
+                        <i style={{ width: `${barWidth(data.content.length, bar.value)}%` }} />
+                      </b>
+                      <em>{bar.value}</em>
+                    </div>
+                  ))
+                ) : (
+                  <span className={styles.barEmpty}>暂无套餐资料</span>
+                )}
+              </div>
+            </div>
+          </section>
+
+          <p className={styles.honest} role="note">
+            以上分布全部由已抓取套餐/比价档案行现场推导，源 source=local；
+            本页只做套餐说明与比价，成交经确认页跳转美团/抖音/扫呗等第三方；
+            仅统计观看/访问/跳转/停留/分享入口痕迹，不含支付金额。不在此下单，非本平台下单。
           </p>
+
           <div className={styles.quickLinks}>
             <a href={storeHref(context, '', 'service_home')}>门店首页</a>
             <a href={storeHref(context, '/menu', 'service_menu')}>门店菜单</a>
@@ -198,9 +363,7 @@ export default function ServicePage({
                         <strong>{money(offer.offerPrice)}</strong>
                         {offer.marketPrice !== null && <del>{money(offer.marketPrice)}</del>}
                       </div>
-                      <a href={actionHref(offer.id, 'service_platform_offer')}>
-                        确认前往
-                      </a>
+                      <a href={actionHref(offer.id, 'service_platform_offer')}>确认前往</a>
                     </div>
                   </article>
                 ))}

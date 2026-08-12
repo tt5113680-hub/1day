@@ -1,49 +1,197 @@
 .page,
 .message {
-  min-height: 100vh;
-  background: #f5f7fb;
-  color: #0f172a;
-  padding: 34px 16px;
-  font-family: Arial, sans-serif;
+  min-height: 100svh;
+  background: var(--od-sf-canvas);
+  color: var(--od-sf-ink);
+  padding: 20px 14px calc(108px + env(safe-area-inset-bottom));
 }
 .page {
   max-width: 560px;
   margin: auto;
 }
-.eyebrow {
-  margin: 0 0 8px;
-  color: #4f46e5;
+
+.topBar {
+  position: sticky;
+  top: 0;
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin: -20px -14px 14px;
+  padding: 12px 14px;
+  background: var(--od-sf-topbar);
+  color: var(--od-sf-topbar-ink);
+}
+.topTitle {
+  font-size: 15px;
+  font-weight: 800;
+}
+.topMark {
+  font-size: 11px;
+  font-weight: 800;
+  opacity: 0.85;
+}
+
+.heroCard {
+  border: 1px solid var(--od-sf-border);
+  border-radius: 18px;
+  padding: 16px;
+  background: var(--od-sf-white);
+  box-shadow: var(--od-sf-shadow-card);
+}
+.heroHead {
+  display: grid;
+  gap: 6px;
+}
+.heroHead > span {
+  color: var(--od-sf-muted);
+  font-size: 11px;
   font-weight: 700;
 }
+.heroHead h2 {
+  margin: 0;
+  font-size: 20px;
+  line-height: 1.25;
+}
+.heroHead p {
+  margin: 0;
+  color: var(--od-sf-muted);
+  font-size: 12px;
+  line-height: 1.55;
+}
+
+.summaryStrip {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  margin-top: 14px;
+  border: 1px solid var(--od-sf-border);
+  border-radius: 14px;
+  padding: 12px 10px;
+  background: var(--od-sf-canvas);
+}
+.summaryStrip dl {
+  display: grid;
+  gap: 3px;
+  margin: 0;
+  text-align: center;
+}
+.summaryStrip dt {
+  color: var(--od-sf-muted);
+  font-size: 10px;
+  font-weight: 700;
+}
+.summaryStrip dd {
+  margin: 0;
+  color: var(--od-brand-700);
+  font-size: 18px;
+  font-weight: 900;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.distribution {
+  margin-top: 16px;
+  border: 1px solid var(--od-sf-border);
+  border-radius: 18px;
+  padding: 16px;
+  background: var(--od-sf-white);
+  box-shadow: var(--od-sf-shadow-card);
+}
+.panelHead {
+  display: grid;
+  gap: 5px;
+  margin-bottom: 12px;
+}
+.panelHead h3 {
+  margin: 0;
+  font-size: 16px;
+}
+.panelHead p {
+  margin: 0;
+  color: var(--od-sf-muted);
+  font-size: 11px;
+}
+.panelBlock + .panelBlock {
+  margin-top: 14px;
+}
+.barLabel {
+  display: block;
+  margin-bottom: 7px;
+  color: var(--od-sf-muted);
+  font-size: 11px;
+  font-weight: 700;
+}
+.bars {
+  display: grid;
+  gap: 7px;
+}
+.barRow {
+  display: grid;
+  grid-template-columns: 108px minmax(0, 1fr) 26px;
+  align-items: center;
+  gap: 8px;
+}
+.barRow > span {
+  font-size: 12px;
+  color: var(--od-sf-ink);
+}
+.barRow b {
+  overflow: hidden;
+  height: 9px;
+  border-radius: 999px;
+  background: var(--od-sf-bar);
+}
+.barRow i {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, var(--od-brand-700), var(--od-brand-600));
+}
+.barRow em {
+  font-size: 11px;
+  font-style: normal;
+  font-weight: 800;
+  text-align: right;
+}
+.barEmpty {
+  color: var(--od-sf-muted);
+  font-size: 12px;
+}
+
 .disclaimer {
-  margin: 0 0 16px;
-  border-left: 3px solid #6366f1;
+  margin: 12px 0 0;
+  border-left: 3px solid var(--od-brand-600);
   padding-left: 10px;
-  color: #64748b;
+  color: var(--od-sf-muted);
   font-size: 13px;
   font-weight: 600;
   line-height: 1.5;
 }
-.page h1 {
-  font-size: 30px;
-  margin: 0 0 12px;
+
+.honest {
+  margin: 16px 0 0;
+  color: var(--od-sf-muted);
+  font-size: 11px;
+  line-height: 1.6;
+  text-align: center;
 }
-.hero,
-.section,
-.warning,
-.messageCard {
-  background: #fff;
-  border: 1px solid #e5e7eb;
-  border-radius: 20px;
-  padding: 20px;
-  box-shadow: 0 14px 30px #1e293b0d;
-}
+
 .hero {
-  background: linear-gradient(135deg, #312e81, #2563eb);
+  margin-top: 16px;
+  border: 1px solid var(--od-sf-border);
+  border-radius: 18px;
+  padding: 16px;
+  background: linear-gradient(135deg, var(--od-brand-800), var(--od-brand-600));
   color: #fff;
+  box-shadow: var(--od-sf-shadow-card);
 }
 .hero span {
-  opacity: 0.8;
+  font-size: 11px;
+  font-weight: 700;
+  opacity: 0.85;
 }
 .hero strong {
   display: block;
@@ -52,10 +200,18 @@
 }
 .hero p {
   margin: 0;
+  font-size: 12px;
+  opacity: 0.9;
 }
+
 .section,
 .warning {
   margin-top: 16px;
+  border: 1px solid var(--od-sf-border);
+  border-radius: 18px;
+  padding: 16px;
+  background: var(--od-sf-white);
+  box-shadow: var(--od-sf-shadow-card);
 }
 .section h2,
 .warning h2 {
@@ -79,8 +235,8 @@
   flex: 0 0 27px;
   height: 27px;
   border-radius: 50%;
-  background: #dbeafe;
-  color: #1d4ed8;
+  background: var(--od-sf-chip);
+  color: var(--od-brand-700);
   font-style: normal;
   font-weight: 700;
 }
@@ -91,29 +247,29 @@
 .timeline p,
 .receipt p {
   margin: 4px 0 0;
-  color: #64748b;
+  color: var(--od-sf-muted);
   font-size: 14px;
 }
 .receipt {
-  border-top: 1px solid #e2e8f0;
+  border-top: 1px solid var(--od-sf-divider);
   padding: 12px 0;
 }
 .receipt span {
   float: right;
-  color: #047857;
+  color: var(--od-brand-700);
   font-weight: 700;
 }
 .warning {
-  border-color: #fed7aa;
-  background: #fff7ed;
+  border-color: var(--od-brand-200);
+  background: var(--od-warn-bg);
 }
 .warning p {
   line-height: 1.65;
   margin: 0;
-  color: #9a3412;
+  color: var(--od-warn-ink);
 }
 .foot {
-  color: #64748b;
+  color: var(--od-sf-muted);
   font-size: 13px;
   line-height: 1.6;
   text-align: center;
@@ -121,20 +277,35 @@
 .message {
   display: grid;
   place-items: center;
+  padding: 24px;
 }
 .messageCard {
   max-width: 340px;
+  border: 1px solid var(--od-sf-border);
+  border-radius: 20px;
+  padding: 24px;
   text-align: center;
+  background: var(--od-sf-white);
+  box-shadow: var(--od-sf-shadow-card);
 }
 .messageCard p {
-  color: #475569;
+  color: var(--od-sf-muted);
   line-height: 1.7;
 }
 .messageCard button {
   border: 0;
   border-radius: 12px;
-  background: #2563eb;
+  background: var(--od-brand-600);
   color: #fff;
   padding: 12px 18px;
   font-weight: 700;
+}
+
+@media (min-width: 700px) {
+  .page {
+    padding-top: 36px;
+  }
+  .topBar {
+    margin-top: -36px;
+  }
 }

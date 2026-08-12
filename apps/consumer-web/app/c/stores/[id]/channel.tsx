@@ -218,6 +218,27 @@ export default function StoreChannel({
       })),
     [data.benefits],
   );
+  const profileEntryDist = useMemo(
+    () => countBy(data.externalLinks.map((item) => shortPlatform(item.platformType))),
+    [data.externalLinks],
+  );
+  const profileServiceDist = useMemo(
+    () =>
+      countBy(data.services.map((service) => (service.duration_minutes ? '定时服务' : '到店自取'))),
+    [data.services],
+  );
+  const profileStoreDist = useMemo(
+    () =>
+      countBy([
+        ...data.stores.map((store) => store.name),
+        ...(data.store.name ? [data.store.name] : []),
+      ]),
+    [data.stores, data.store.name],
+  );
+  const profileStoreTotal = useMemo(
+    () => data.stores.length + (data.store.name ? 1 : 0),
+    [data.stores, data.store.name],
+  );
 
   const offerCount = data.platformOffers.length;
   const groupCount = groups.length;
@@ -664,6 +685,70 @@ export default function StoreChannel({
 
           {channel === 'profile' && (
             <>
+              <section className={styles.distribution} aria-label="我的服务分布">
+                <header className={styles.panelHead}>
+                  <h3>我的服务分布</h3>
+                  <p>分布全部由本店已抓取档案行现场推导 · 仅统计入口与到店服务痕迹</p>
+                </header>
+                <div className={styles.panelBlock}>
+                  <span className={styles.barLabel}>入口类型分布</span>
+                  <div className={styles.bars} role="list">
+                    {profileEntryDist.length ? (
+                      profileEntryDist.map((bar) => (
+                        <div className={styles.barRow} role="listitem" key={bar.label}>
+                          <span>{bar.label}</span>
+                          <b>
+                            <i
+                              style={{
+                                width: `${barWidth(data.externalLinks.length, bar.value)}%`,
+                              }}
+                            />
+                          </b>
+                          <em>{bar.value}</em>
+                        </div>
+                      ))
+                    ) : (
+                      <span className={styles.barEmpty}>暂无外链入口记录</span>
+                    )}
+                  </div>
+                </div>
+                <div className={styles.panelBlock}>
+                  <span className={styles.barLabel}>菜单服务类型分布</span>
+                  <div className={styles.bars} role="list">
+                    {profileServiceDist.length ? (
+                      profileServiceDist.map((bar) => (
+                        <div className={styles.barRow} role="listitem" key={bar.label}>
+                          <span>{bar.label}</span>
+                          <b>
+                            <i style={{ width: `${barWidth(data.services.length, bar.value)}%` }} />
+                          </b>
+                          <em>{bar.value}</em>
+                        </div>
+                      ))
+                    ) : (
+                      <span className={styles.barEmpty}>暂无菜单服务记录</span>
+                    )}
+                  </div>
+                </div>
+                <div className={styles.panelBlock}>
+                  <span className={styles.barLabel}>门店服务覆盖分布</span>
+                  <div className={styles.bars} role="list">
+                    {profileStoreDist.length ? (
+                      profileStoreDist.map((bar) => (
+                        <div className={styles.barRow} role="listitem" key={bar.label}>
+                          <span>{bar.label}</span>
+                          <b>
+                            <i style={{ width: `${barWidth(profileStoreTotal, bar.value)}%` }} />
+                          </b>
+                          <em>{bar.value}</em>
+                        </div>
+                      ))
+                    ) : (
+                      <span className={styles.barEmpty}>暂无门店记录</span>
+                    )}
+                  </div>
+                </div>
+              </section>
               <div className={styles.quickLinks}>
                 <a href={storeHref(context, '', 'profile_home')}>门店首页</a>
                 <a href={storeHref(context, '/membership', 'profile_tab_membership')}>会员权益</a>
