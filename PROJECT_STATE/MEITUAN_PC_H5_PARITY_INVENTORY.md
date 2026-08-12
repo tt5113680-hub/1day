@@ -51,7 +51,7 @@
 | MPC-07 | 营销中心（券/活动） | `/m/marketing` | PARTIAL | 本地营销活动档案；W∞-23 页头 `营销中心→营销活动`（对齐导航）；**W∞-42** 视觉 densify（黄顶栏+灰底白卡+heroCard+概况条+row 列表）；**W∞-45** 真实数据深页分布（状态/类型，source=local 推导，禁止假 BI）；toward PARITY；不接实时投放；见 WINF42/WINF45 |
 | MPC-08 | 会员 | `/m/memberships` | PARTIAL | W∞-25 眉标 `会员中心`；会员码核销/ledger 工具身份；**W∞-41** 视觉/IA densify（黄顶栏+灰底白卡+heroCard+概况条+白卡会员卡+ledger）；**W∞-46** 真实数据深页分布（门店/入会时间，source=local 档案行推导，禁止假 BI）；toward PARITY；见 WINF41/WINF46 |
 | MPC-09 | 数据 / 经营分析 | `/m/analytics` | PARTIAL | W∞-44 美团经营日报密度（`GET /api/v1/management/entry-funnel/daily-report` + `/m/analytics`：今日指标+环比+逐日明细，真实 L0–L2，禁止假 BI）；**W∞-81** 真实数据深页密度 densify（`经营分析分布`：今日漏斗/今日 L2 动作/逐日流量，由真实 daily 报表 L0–L2 痕迹行推导，禁止假 BI）；`/m/entry-funnel` `/m/attribution` 互链；toward PARITY；见 WINF44/WINF81 |
-| MPC-10 | 员工 / 权限 | `/m/organization-employees`, `/m/roles-permissions` | PARTIAL | W∞-25 眉标 `员工管理`/`角色权限`、`员工表现`/`操作审计`；**W∞-43** 视觉/IA densify（`/m/organization-employees` + `/m/roles-permissions` 黄顶栏+灰底白卡+heroCard+概况条+白卡面板）；toward PARITY；见 WINF43 |
+| MPC-10 | 员工 / 权限 | `/m/organization-employees`, `/m/roles-permissions`, `/m/employee-process-performance` | PARTIAL | W∞-25 眉标 `员工管理`/`角色权限`、`员工表现`/`操作审计`；**W∞-43** 视觉/IA densify（`/m/organization-employees` + `/m/roles-permissions` 黄顶栏+灰底白卡+heroCard+概况条+白卡面板）；**W∞-83** 真实数据深页 densify（`/m/employee-process-performance` 员工表现：黄顶栏+灰底白卡 heroCard+概况条 `员工概况`+分布面板 `员工表现分布`——任务负载/逾期信号/跟进完整度/证据链覆盖/贡献关联，由真实 employees[] 行推导，禁止假 BI）；toward PARITY；见 WINF43/WINF83 |
 | MPC-11 | 店铺装修 / 展示 | `/m/page-builder`, `/m/content` | PARTIAL | **壳跟美团**；内容数据仍走 ONEDAY 发布链；W∞-25 眉标 `入口页装修`/`营销内容`（对齐导航）；**W∞-43** 视觉/IA densify（`/m/page-builder` + `/m/content` 黄顶栏+灰底白卡+heroCard+概况条+白卡面板）；toward PARITY；见 WINF43 |
 | MPC-12 | 设置 | `/m/settings` | PARTIAL | W∞-12 densify 工具链 cross-link；W∞-25 眉标 `工具设置`（对齐导航）；W∞-26 状态口径 `经营设置/经营规则`→`工具设置/工具规则`（title/loading/forbidden/error/保存/成功提示）；**W∞-43** 视觉/IA densify（`/m/settings` 黄顶栏+灰底白卡+heroCard+白卡 fieldset 面板）；**W∞-82** 真实数据深页密度 densify（新增白卡概况条 `工具规则概况` + 白卡分布面板 `工具规则分布`：审批开关/提醒时限/免打扰/标签规则/归属分配/全平台可见引流，由当前已加载真实工具规则档字段现场推导，禁止假 BI）；toward PARITY；见 WINF43/WINF82 |
 | MPC-13 | 消息 / 通知 | `/m/notifications` | PARTIAL | W∞-31 送「统一工作流」管理通知中心：只读聚合租户范围内待推进（跟进异常/待审批/进行中工作流）deepLink → `/m/customers` `/m/workflows`；**W∞-81** 真实数据深页密度 densify（改挂黄顶栏 topBar + heroCard + 概况条 + `通知分布`：通知类型/推进去向/待办负载，由真实租户待推进文件行推导，禁止假 BI）；见 WINF31/WINF81 |
@@ -142,7 +142,7 @@
 
 ## 6. 当前下一刀
 
-  > **当前：W∞-82 PASS** — W∞-81 收束后补上 Management MPC 面最后缺的 `/m/settings`（MPC-12）真实数据深页分布（`工具规则概况` + `工具规则分布`，由当前已加载真实工具规则档字段现场推导，禁止假 BI）。Management MPC 真实数据深页分布已全部闭合。**下一刀：** inventory `PARITY` 关断复核，或 W∞ 收束其余 PARTIAL/零星 gap 面。
+  > **当前：W∞-83 PASS** — W∞-82 收束后补上 Management MPC-10 员工/人力区最后仍停留在旧 `AdminPageHeader`+`Card` chrome 的 `/m/employee-process-performance`（员工表现）真实数据深页分布（黄顶栏+灰底白卡 heroCard+概况条 `员工概况`+分布面板 `员工表现分布`，由真实 employees[] 行推导，禁止假 BI）。Management MPC 真实数据深页分布已全部闭合。**下一刀：** W∞ 收束其余仍停留在旧 chrome 的 MPC 零星面（`/m/permission-audit`、`/m/connectors`、`/m/external-actions`、`/m/ai-suggestions` 等），或 inventory `PARITY` 关断复核。
 
 **历史波（自 W24 起）累计——**
 

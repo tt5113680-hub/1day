@@ -30,7 +30,8 @@ test('W∞-25: Management page eyebrows align to the promotion-tool identity (no
   assert.match(src.connectors(), /eyebrow="推广员工具 · 连接配置"/);
   assert.match(src.ai_suggestions(), /eyebrow="推广员工具 · 作业建议"/);
   assert.match(src.workflows(), /eyebrow="推广员工具 · 工作流整合"/);
-  assert.match(src.employee_perf(), /eyebrow="推广员工具 · 员工表现"/);
+  assert.match(src.employee_perf(), /topBarTitle}>推广员工具 · 员工表现<\/span>/);
+  assert.doesNotMatch(src.employee_perf(), /eyebrow="推广员工具 · 员工表现"/);
   assert.match(src.external_actions(), /eyebrow="推广员工具 · 外链服务"/);
 });
 
