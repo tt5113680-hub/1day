@@ -10,10 +10,10 @@
 
 - branch: `hardening/COMMERCIAL-COMPLETION`
 - product_bar: **商用前提 = 四端完整对标美团成熟场景**（消费者/员工/管理/平台）；**唯一例外** `/m/workflows`。团购推广员工具身份 + L0+L1+L2；不碰钱·销售·本平台下单。
-- last_verified: **2026-08-12** — W∞-64: Employee `/e/tasks` 任务收件箱 真实数据深页密度 densify（ME-02）：黄顶栏+灰底白卡+heroCard+summaryStrip+任务待办分布（状态/升级/客户关联/到期窗口/来源，由真实 tasks+customerReminders 推导，禁止假 BI）。诚实边界保留（source=local、不含第三方订单履约、非本平台下单）。tests/g1-winf64 4/4；g1-winf* 208/208；employee typecheck+build PASS。See evidence/G1-MEITUAN-PARITY/WINF64/ACCEPTANCE.md.
+- last_verified: **2026-08-12** — W∞-65: Employee `/e/customers` 客户目录真实数据深页 densify（ME-03）。See evidence/G1-MEITUAN-PARITY/WINF65/ACCEPTANCE.md.
 - status: Owner 重申完整对标为商用前提（2026-08-11 21:47）。工程继续视觉+IA 完整对标 densify（非仅文案）。全权委托 agent 连续施工。
 - blocker: **none** — `BLOCKED_REPORT` marked RESOLVED 2026-08-12.
-- progress: Next: **W∞-65** 续员工 `/e/*` 剩余（customers/store/memberships/notifications/profile）/ 渠道 `/ch/*` 剩余 / 消费者深页（已收 Management MPC W∞-45~51 + 平台/商圈/渠道 W∞-52~63 + `/e/tasks` W∞-64）。
+- progress: Next: **W∞-66** 续员工 `/e/store|/e/memberships|/e/notifications|/e/profile` / 渠道 `/ch/*` 剩余 / 消费者深页（已收 `/e/tasks` W∞-64 + `/e/customers` W∞-65）。
 - note: Hub http://127.0.0.1:3299/ · **健康排查：每 6 小时** `pnpm unattended:health`（计划任务 `ONEDAY-V3-Unattended-Health-6h`）；BLOCKED/停摆会写 `logs/unattended/health-latest.json`。daemon 与 IDE 勿并行写同分支。
 
 ### Owner — next actions

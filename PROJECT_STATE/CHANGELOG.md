@@ -1,3 +1,6 @@
+## 2026-08-12 - G1-W∞-65 Employee 客户目录 真实数据深页密度 densify（ME-03）PASS
+
+- `/e/customers` 黄顶栏+灰底白卡+heroCard+summaryStrip+客户跟进分布（归属/状态/待办负载/建档窗口，由真实 customers 行推导，禁止假 BI）。诚实边界保留（source=local、不含第三方订单履约、非本平台下单）。tests/g1-winf65 4/4；g1-winf* 212/212；employee typecheck+build PASS。See evidence/G1-MEITUAN-PARITY/WINF65/ACCEPTANCE.md.
 ## 2026-08-12 - G1-W∞-64 Employee 任务收件箱 真实数据深页密度 densify（ME-02）PASS
 
 - 承接 Management MPC（W∞-45~51）+ 平台/商圈/渠道面（W∞-52~63），本刀把员工面 `/e/tasks` 任务收件箱补上「分布洞察」并视觉/IA densify toward 美团商家 App 待办密度：黄顶栏 sticky `topBar`（推广员工具 · 任务收件箱 + 刷新）+ 灰底白卡画布（#f5f5f5）+ heroCard + summaryStrip（全部待办/今日待办/客户提醒/已逾期）+ 白卡分布面板 `aria-label="任务待办分布"`——状态/升级/客户关联/到期窗口/来源，宽度 `barWidth(allRows.length)` 由真实 tasks+customerReminders 行现场推导，禁止假 BI。诚实边界全保留（source=local、不含第三方订单履约、不代履约美团/抖音订单、非本平台下单）。无 schema/DB/API。新增 tests/g1-winf64-employee-tasks-deep.test.mjs 4/4；`g1-winf*.test.mjs` 208/208；employee typecheck+build PASS。See evidence/G1-MEITUAN-PARITY/WINF64/ACCEPTANCE.md.
