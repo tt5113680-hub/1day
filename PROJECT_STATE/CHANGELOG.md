@@ -1,3 +1,6 @@
+## 2026-08-12 - G1-W∞-68 Employee 执行提醒 真实数据深页 densify（ME-06）PASS
+
+- `/e/notifications` 黄顶栏+执行提醒分布（类型/已读/发送窗口/处理入口）。See WINF68.
 ## 2026-08-12 - G1-W∞-67 Employee 会员核销 真实数据深页 densify（ME-05）PASS
 
 - `/e/memberships` + `GET /api/v1/employee/memberships/overview`：黄顶栏+分布面板（动作/权益项/门店/月份/状态）；核销表单与 W∞-27 空态文案保留。See WINF67.

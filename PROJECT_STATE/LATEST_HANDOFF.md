@@ -10,10 +10,10 @@
 
 - branch: `hardening/COMMERCIAL-COMPLETION`
 - product_bar: **商用前提 = 四端完整对标美团成熟场景**（消费者/员工/管理/平台）；**唯一例外** `/m/workflows`。团购推广员工具身份 + L0+L1+L2；不碰钱·销售·本平台下单。
-- last_verified: **2026-08-12** — W∞-66 `/e/store` + W∞-67 `/e/memberships` densify PASS。See WINF66/WINF67。
+- last_verified: **2026-08-12** — W∞-68 `/e/notifications` densify PASS。See WINF68。
 - status: Owner 重申完整对标为商用前提（2026-08-11 21:47）。工程继续视觉+IA 完整对标 densify（非仅文案）。全权委托 agent 连续施工。
 - blocker: **none** — `BLOCKED_REPORT` marked RESOLVED 2026-08-12.
-- progress: Next: **W∞-68** 续 `/e/notifications|/e/profile` / 渠道 `/ch/*` / 消费者深页。
+- progress: Next: **W∞-69** `/e/profile` / 渠道 `/ch/*` / 消费者深页。
 - note: Hub http://127.0.0.1:3299/ · **健康排查：每 6 小时** `pnpm unattended:health`（计划任务 `ONEDAY-V3-Unattended-Health-6h`）；BLOCKED/停摆会写 `logs/unattended/health-latest.json`。daemon 与 IDE 勿并行写同分支。
 
 ### Owner — next actions

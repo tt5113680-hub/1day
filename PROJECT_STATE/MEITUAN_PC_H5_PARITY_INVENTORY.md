@@ -102,7 +102,7 @@
 | ME-03 | 顾客 | `/e/customers` | PARTIAL | W∞-16 工具身份；**W∞-65** 真实数据深页分布（归属/状态/待办负载/建档窗口，source=local，禁止假 BI）；toward PARITY；见 WINF65 |
 | ME-04 | 门店 | `/e/store` | PARTIAL | W∞-16 工具身份；**W∞-66** 真实数据深页分布；toward PARITY；见 WINF66 |
 | ME-05 | 核销 / 会员 | `/e/memberships` | PARTIAL | W∞-16 工具身份；**W∞-67** 真实数据深页分布 + overview API；toward PARITY；见 WINF67 |
-| ME-06 | 消息 | `/e/notifications` | PARTIAL | W∞-16 densify 执行提醒工具身份 |
+| ME-06 | 消息 | `/e/notifications` | PARTIAL | W∞-16 工具身份；**W∞-68** 真实数据深页分布；toward PARITY；见 WINF68 |
 | ME-07 | 我的 | `/e/profile` | PARTIAL | W∞-16 densify 工作空间 + 工具快捷链 |
 
 ---
