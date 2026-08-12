@@ -92,9 +92,48 @@ export default function CirclesHome({ data }: { data: CirclesData }) {
   const owned = filtered.filter((item) => item.ownedByViewer);
   const nearby = filtered.filter((item) => !item.ownedByViewer);
 
+  const countBy = (rows: string[]) => {
+    const buckets = new Map<string, number>();
+    for (const row of rows) {
+      const label = row || '未分类';
+      buckets.set(label, (buckets.get(label) ?? 0) + 1);
+    }
+    return [...buckets.entries()]
+      .map(([label, value]) => ({ label, value }))
+      .sort((a, b) => b.value - a.value);
+  };
+  const barWidth = (total: number, value: number) =>
+    total === 0 ? 0 : Math.round((value / total) * 100);
+  const sizeBucket = (count: number) =>
+    count === 0
+      ? '未收拢商户'
+      : count <= 5
+        ? '精简联盟 1-5'
+        : count <= 15
+          ? '中型联盟 6-15'
+          : '规模联盟 16+';
+  const distanceBucket = (km: number | null) =>
+    km == null
+      ? '未定位商圈'
+      : km <= 1
+        ? '1km 内'
+        : km <= 3
+          ? '1-3km'
+          : km <= 5
+            ? '3-5km'
+            : '5km 外';
+  const itemsTotal = data.items.length;
+  const industryDist = countBy(data.items.map((item) => item.industryTag ?? '未分类'));
+  const sizeDist = countBy(data.items.map((item) => sizeBucket(item.merchantCount)));
+  const distanceDist = countBy(data.items.map((item) => distanceBucket(item.distanceKm)));
+  const identityDist = countBy(
+    data.items.map((item) =>
+      item.ownedByViewer ? '本店经营' : item.publicVisible ? '附近公开' : '邀请中',
+    ),
+  );
+
   const locate = () => {
-    if (!navigator.geolocation)
-      return setNotice('当前设备不支持定位，仍可浏览本租户公开商圈。');
+    if (!navigator.geolocation) return setNotice('当前设备不支持定位，仍可浏览本租户公开商圈。');
     navigator.geolocation.getCurrentPosition(
       (position) => {
         const query = new URLSearchParams({
@@ -188,6 +227,115 @@ export default function CirclesHome({ data }: { data: CirclesData }) {
               {notice}
             </p>
           ) : null}
+
+          <section className={styles.heroCard} aria-label="商圈概况">
+            <header className={styles.heroHead}>
+              <span>{data.tenant.name} · 推广员工具 · 商圈联盟首页</span>
+              <h2>商圈</h2>
+              <p role="note">
+                按真实商圈档案汇总：行业、商户规模、覆盖距离与商圈身份，仅供入口分流参考。
+              </p>
+            </header>
+            <div className={styles.summaryStrip} aria-label="商圈数据概况">
+              <dl>
+                <dt>可见商圈</dt>
+                <dd>{itemsTotal}</dd>
+              </dl>
+              <dl>
+                <dt>本店经营</dt>
+                <dd>{owned.length}</dd>
+              </dl>
+              <dl>
+                <dt>覆盖商户</dt>
+                <dd>{data.items.reduce((acc, item) => acc + item.merchantCount, 0)}</dd>
+              </dl>
+            </div>
+          </section>
+
+          <section className={styles.distribution} aria-label="商圈分布">
+            <header className={styles.panelHead}>
+              <h3>商圈分布</h3>
+              <p>分布由已抓取商圈档案行现场推导 · 仅统计观看/访问/跳转与入口，不涉及成交</p>
+            </header>
+            <div className={styles.panelBlock}>
+              <span className={styles.barLabel}>行业分布</span>
+              <div className={styles.bars} role="list">
+                {industryDist.length ? (
+                  industryDist.map((bar) => (
+                    <div className={styles.barRow} role="listitem" key={bar.label}>
+                      <span>{bar.label}</span>
+                      <b>
+                        <i style={{ width: `${barWidth(itemsTotal, bar.value)}%` }} />
+                      </b>
+                      <em>{bar.value}</em>
+                    </div>
+                  ))
+                ) : (
+                  <span className={styles.barEmpty}>暂无商圈记录</span>
+                )}
+              </div>
+            </div>
+            <div className={styles.panelBlock}>
+              <span className={styles.barLabel}>商户规模分布</span>
+              <div className={styles.bars} role="list">
+                {sizeDist.length ? (
+                  sizeDist.map((bar) => (
+                    <div className={styles.barRow} role="listitem" key={bar.label}>
+                      <span>{bar.label}</span>
+                      <b>
+                        <i style={{ width: `${barWidth(itemsTotal, bar.value)}%` }} />
+                      </b>
+                      <em>{bar.value}</em>
+                    </div>
+                  ))
+                ) : (
+                  <span className={styles.barEmpty}>暂无商圈记录</span>
+                )}
+              </div>
+            </div>
+            <div className={styles.panelBlock}>
+              <span className={styles.barLabel}>覆盖距离分布</span>
+              <div className={styles.bars} role="list">
+                {distanceDist.length ? (
+                  distanceDist.map((bar) => (
+                    <div className={styles.barRow} role="listitem" key={bar.label}>
+                      <span>{bar.label}</span>
+                      <b>
+                        <i style={{ width: `${barWidth(itemsTotal, bar.value)}%` }} />
+                      </b>
+                      <em>{bar.value}</em>
+                    </div>
+                  ))
+                ) : (
+                  <span className={styles.barEmpty}>暂无商圈记录</span>
+                )}
+              </div>
+            </div>
+            <div className={styles.panelBlock}>
+              <span className={styles.barLabel}>商圈身份分布</span>
+              <div className={styles.bars} role="list">
+                {identityDist.length ? (
+                  identityDist.map((bar) => (
+                    <div className={styles.barRow} role="listitem" key={bar.label}>
+                      <span>{bar.label}</span>
+                      <b>
+                        <i style={{ width: `${barWidth(itemsTotal, bar.value)}%` }} />
+                      </b>
+                      <em>{bar.value}</em>
+                    </div>
+                  ))
+                ) : (
+                  <span className={styles.barEmpty}>暂无商圈记录</span>
+                )}
+              </div>
+            </div>
+          </section>
+
+          <p className={styles.honest} role="note">
+            以上分布全部由已抓取商圈档案行现场推导，源 source=local；
+            商圈互助是入口引流与商家发现，成交在美团/抖音/扫呗等外部平台完成；
+            仅统计观看/访问/跳转/停留/分享入口痕迹，不含支付金额。不在此下单，非本平台下单。
+          </p>
           {data.locationRequired ? (
             <button className={styles.location} type="button" onClick={locate}>
               使用当前位置发现附近商圈
@@ -236,9 +384,7 @@ export default function CirclesHome({ data }: { data: CirclesData }) {
           ) : null}
 
           <section className={styles.section} aria-label="附近公开商圈">
-            <h2 className={styles.sectionTitle}>
-              {owned.length ? '附近公开商圈' : '可见商圈'}
-            </h2>
+            <h2 className={styles.sectionTitle}>{owned.length ? '附近公开商圈' : '可见商圈'}</h2>
             <div className={styles.list}>
               {nearby.length || (!owned.length && filtered.length) ? (
                 (owned.length ? nearby : filtered).map(renderCard)

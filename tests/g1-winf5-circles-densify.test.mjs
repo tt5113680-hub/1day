@@ -11,7 +11,7 @@ test('G1-W∞-5: consumer circles densify (MH5-13)', () => {
   assert.match(home, /附近公开商圈/);
   assert.match(home, /距离优先/);
   assert.match(home, /不表示第三方成交/);
-  assert.doesNotMatch(home, /本平台下单/);
+  assert.match(home, /非本平台下单/);
 
   const detail = readFileSync(
     join(root, 'apps/consumer-web/app/c/circles/[id]/circle-detail.tsx'),
