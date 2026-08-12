@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## 2026-08-12 - G1-W∞-95 Employee `/e/nurture` 客户跟进队列 full-parity densify（员工面 PARITY, toward Meituan 商家端）PASS
+
+- 收束全仓最后一块仍残留旧 `.header` + `.Card` chrome 的员工面——`/e/nurture`（客户跟进队列，`e/nurture`）从「推广员工具 · 客户跟进 文案 + 旧 Card 列表」改挂与现代员工面 full-parity 完全一致的 **topBar + heroCard + summaryStrip + distribution + honest** 三层级（与 `/e/workbench`、`/e/tasks`、`/e/memberships` 一致）：
+  - `nurture-workbench.tsx` 移除旧 `.header` 与 `@oneday/ui` 的 `Card`/`StatusBadge` 页面级 chrome，改挂 sticky 黄顶栏 `topBar`（`推广员工具 · 客户跟进` + 右上 `刷新`）+ `data-testid="employee-nurture"` + 灰底画布 `#f5f5f5` + 白卡 heroCard（h1 `把下一次触达变成今天的行动` + 诚实描述）+ 白卡概况条 `summaryStrip` `客户跟进队列概况`（队列客户/持续跟进/回访机会/沉睡唤醒，4 列黄边浅黄底）+ 白卡分布面板 `客户跟进队列分布`（分层/待办负载/触达安排/触达窗口/多待办负载，`barWidth(total,value)`+`countBy`）——全部由真实 `profiles[]` 档案行现场推导，禁止假 BI；分段 chip 改 `segmentBadge[data-segment]` od-token、行为色相不变。
+  - `nurture-workbench.module.css` 重建 `.topBar/.topBarRefresh/.heroCard/.panel/.panelHead/.panelMeta/.summaryStrip/.distribution/.panelBlock/.bars/.barRow/.barTrack/.barFill/.barValue/.barLabel/.barEmpty/.honest`（灰底白卡 + 黄渐变 `linear-gradient(90deg,#ffd100,#f0a500)`，≤580px summaryStrip 两列/barRow 收窄），与员工 full-parity 序列共享视觉语言。
+  - 全部既有交互/状态（客户分层筛选、调整分层/记录触达/安排跟进幂等发送、loading/forbidden/error+重新加载、empty 空态）全保留；诚实边界 source=local、只做跟进作业编排、不代履约美团/抖音订单、非本平台下单、不含第三方订单履约与支付金额、不碰销售成交。无 `经营`、无 `复购机会/把下一次复购`、无 `ONEDAY /` 眉标、无本平台收单。无 schema/DB/API，不复活 consumer_orders / 本平台下单收单。新增 tests/g1-winf95-employee-nurture-parity.test.mjs 4/4，随动回归 g1-winf17/28 通过；`g1-winf*.test.mjs` 345/345；`pnpm typecheck` 20/20、`pnpm build` 20/20（employee-web 含 `/e/nurture`）、单测 47 passed（2 前存 token 失败照旧）；eslint+prettier clean。See evidence/G1-MEITUAN-PARITY/WINF95/ACCEPTANCE.md. Not owner sign-off.
+
 ## 2026-08-12 - G1-W∞-88 Management 客户跟进 + 会员中心 全标对概况条 densify（MPC-06 + MPC-08，toward PARITY）PASS
 
 - 承接 W∞-86（`/m/offers`）与 W∞-87（`/m/dashboard`）确立的「topBar + heroCard + 白卡概况条 summaryStrip + 白卡分布面板 + honest」全标对视觉语言，把 Management MPC 面仍缺「独立白卡概况条」的最后两张零星主面补齐（toward PARITY，禁止假 BI）：
