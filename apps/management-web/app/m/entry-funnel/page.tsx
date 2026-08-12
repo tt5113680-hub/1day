@@ -1,13 +1,7 @@
 'use client';
 
 import { SessionApiClient } from '@oneday/session-client';
-import {
-  AdminPageHeader,
-  AppStatePanel,
-  Button,
-  Card,
-  MetricCard,
-} from '@oneday/ui';
+import { AppStatePanel, Button } from '@oneday/ui';
 import { useCallback, useEffect, useState } from 'react';
 import styles from './page.module.css';
 
@@ -121,6 +115,9 @@ const MODULE_LABEL: Record<string, string> = {
   circle_detail: '商圈详情',
 };
 
+const barWidth = (total: number, value: number) =>
+  total ? `${Math.max(2, (value / total) * 100)}%` : '0%';
+
 export default function EntryFunnelPage() {
   const [state, setState] = useState<'loading' | 'ready' | 'forbidden' | 'error'>('loading');
   const [days, setDays] = useState(7);
@@ -169,7 +166,11 @@ export default function EntryFunnelPage() {
     setFilterSurface(view.surface ?? '');
     setFilterPlatform(view.targetPlatform ?? '');
     setFilterEvent(view.eventCode ?? '');
-    if (view.industryTemplate === 'restaurant' || view.industryTemplate === 'beauty' || view.industryTemplate === 'retail')
+    if (
+      view.industryTemplate === 'restaurant' ||
+      view.industryTemplate === 'beauty' ||
+      view.industryTemplate === 'retail'
+    )
       setIndustry(view.industryTemplate);
     setViewName(view.name);
     setSaveNote(`已加载视图「${view.name}」，可再点查询/解读。`);
@@ -223,10 +224,9 @@ export default function EntryFunnelPage() {
       if (filterSurface) q.set('surface', filterSurface);
       if (filterPlatform) q.set('targetPlatform', filterPlatform);
       if (filterEvent) q.set('eventCode', filterEvent);
-      const r = await sessionApi.request(
-        `${api}/api/v1/management/entry-funnel/query?${q}`,
-        { headers: {} },
-      );
+      const r = await sessionApi.request(`${api}/api/v1/management/entry-funnel/query?${q}`, {
+        headers: {},
+      });
       if (!r.ok) throw Error();
       setDiy((await r.json()).data as QueryResult);
     } catch {
@@ -294,101 +294,127 @@ export default function EntryFunnelPage() {
 
   const template = data.industryTemplates?.[industry];
   const focusSet = new Set(template?.focusModules ?? []);
-  const focusModules = data.byModule.filter(
-    (row) => focusSet.has(row.key) || focusSet.size === 0,
-  );
+  const focusModules = data.byModule.filter((row) => focusSet.has(row.key) || focusSet.size === 0);
 
   return (
-    <main className={styles.page}>
-      <AdminPageHeader
-        eyebrow="推广员工具 · 入口痕迹"
-        title="按模块看分流是否有效"
-        description={data.disclaimer}
-        actions={
-          <>
-            <label className={styles.days}>
-              窗口
-              <select
-                aria-label="统计天数"
-                value={days}
-                onChange={(e) => setDays(Number(e.target.value))}
-              >
-                <option value={7}>近 7 天</option>
-                <option value={30}>近 30 天</option>
-                <option value={90}>近 90 天</option>
-              </select>
-            </label>
-            <label className={styles.days}>
-              行业模板
-              <select
-                aria-label="行业分析模板"
-                value={industry}
-                onChange={(e) =>
-                  setIndustry(e.target.value as 'restaurant' | 'beauty' | 'retail')
-                }
-              >
-                <option value="restaurant">餐饮</option>
-                <option value="beauty">美业</option>
-                <option value="retail">零售</option>
-              </select>
-            </label>
-            <Button
-              tone="secondary"
-              onClick={() => {
-                window.location.href = '/m/attribution';
-              }}
+    <main className={styles.page} data-testid="management-entry-funnel">
+      <div className={styles.topBar}>
+        <span className={styles.topBarTitle}>推广员工具 · 入口痕迹</span>
+        <div className={styles.topBarActions}>
+          <label className={styles.days}>
+            窗口
+            <select
+              aria-label="统计天数"
+              value={days}
+              onChange={(e) => setDays(Number(e.target.value))}
             >
-              来源归因
-            </Button>
-            <Button tone="secondary" onClick={() => void load()}>
-              刷新
-            </Button>
-          </>
-        }
-      />
-      <section className={styles.cards}>
-        <MetricCard label="观看" value={data.totals.impressions} hint="曝光" />
-        <MetricCard label="访问" value={data.totals.visits} hint="进页" />
-        <MetricCard label="跳转" value={data.totals.jumps} hint="出站（至第三方）" />
-        <MetricCard
-          label="模块曝光"
-          value={data.totals.moduleImpressions ?? 0}
-          hint="L2 去重可见"
-        />
-        <MetricCard
-          label="咨询点击"
-          value={data.totals.consultClicks ?? 0}
-          hint="站内动作"
-        />
-        <MetricCard
-          label="跳转确认"
-          value={data.totals.jumpConfirms ?? 0}
-          hint="确认页完成"
-        />
-        <MetricCard
-          label="分享发出码"
-          value={data.sharePairing?.sentCodes ?? 0}
-          hint="员工发出（去重）"
-        />
-        <MetricCard
-          label="分享打开码"
-          value={data.sharePairing?.openedCodes ?? 0}
-          hint="消费者打开（去重）"
-        />
-        <MetricCard
-          label="分享配对"
-          value={data.sharePairing?.pairedCodes ?? 0}
-          hint="发出↔打开同码"
-        />
+              <option value={7}>近 7 天</option>
+              <option value={30}>近 30 天</option>
+              <option value={90}>近 90 天</option>
+            </select>
+          </label>
+          <label className={styles.days}>
+            行业模板
+            <select
+              aria-label="行业分析模板"
+              value={industry}
+              onChange={(e) => setIndustry(e.target.value as 'restaurant' | 'beauty' | 'retail')}
+            >
+              <option value="restaurant">餐饮</option>
+              <option value="beauty">美业</option>
+              <option value="retail">零售</option>
+            </select>
+          </label>
+          <button
+            type="button"
+            className={styles.topBarRefresh}
+            onClick={() => {
+              window.location.href = '/m/attribution';
+            }}
+          >
+            来源归因
+          </button>
+          <button type="button" className={styles.topBarRefresh} onClick={() => void load()}>
+            刷新
+          </button>
+        </div>
+      </div>
+      <section className={styles.heroCard} aria-label="入口痕迹概况">
+        <h1>按模块看分流是否有效</h1>
+        <p>{data.disclaimer}</p>
       </section>
       {data.sharePairing?.note ? (
         <p className={styles.hint} role="note">
           {data.sharePairing.note}
         </p>
       ) : null}
+      <section className={styles.panel}>
+        <div className={styles.summaryStrip} aria-label="入口数据概况">
+          <div>
+            <span>观看</span>
+            <strong>{data.totals.impressions}</strong>
+          </div>
+          <div>
+            <span>访问</span>
+            <strong>{data.totals.visits}</strong>
+          </div>
+          <div>
+            <span>跳转</span>
+            <strong>{data.totals.jumps}</strong>
+          </div>
+          <div>
+            <span>停留</span>
+            <strong>{data.totals.dwells}</strong>
+          </div>
+          <div>
+            <span>模块曝光</span>
+            <strong>{data.totals.moduleImpressions ?? 0}</strong>
+          </div>
+          <div>
+            <span>咨询点击</span>
+            <strong>{data.totals.consultClicks ?? 0}</strong>
+          </div>
+          <div>
+            <span>跳转确认</span>
+            <strong>{data.totals.jumpConfirms ?? 0}</strong>
+          </div>
+          <div>
+            <span>分享配对</span>
+            <strong>{data.sharePairing?.pairedCodes ?? 0}</strong>
+          </div>
+        </div>
+      </section>
+      <section className={styles.panel}>
+        <div className={styles.panelHead}>
+          <h2>入口痕迹分布</h2>
+          <span className={styles.panelMeta}>真实 L0–L2 痕迹行聚合 · 禁止假 BI</span>
+        </div>
+        <div className={styles.distribution} aria-label="入口痕迹分布">
+          <div className={styles.panelBlock}>
+            <h3>事件分布</h3>
+            {renderBuckets(data.byEventCode, (k) => EVENT_LABEL[k] ?? k)}
+          </div>
+          <div className={styles.panelBlock}>
+            <h3>入口面分布</h3>
+            {renderBuckets(data.bySurface, (k) => SURFACE_LABEL[k] ?? k)}
+          </div>
+          <div className={styles.panelBlock}>
+            <h3>模块分布</h3>
+            {renderBuckets(data.byModule, (k) => MODULE_LABEL[k] ?? k)}
+          </div>
+          <div className={styles.panelBlock}>
+            <h3>跳转目标平台分布</h3>
+            {renderBuckets(data.byTargetPlatform, (k) => k)}
+          </div>
+        </div>
+        <p className={styles.honest} role="note">
+          分布全部由已抓取 entrance L0–L2
+          入口痕迹行现场推导（source=local）；仅统计观看/访问/跳转/停留/分享等入口行为，跳转统计到跳转为止，不包含本平台收款，非本平台下单，不含支付金额与第三方成交。
+        </p>
+      </section>
 
       {template ? (
-        <Card className={styles.panelWide}>
+        <section className={styles.panelWide}>
           <h2>{template.label}行业模板（只解读痕迹）</h2>
           <p className={styles.hint}>
             关注模块：
@@ -403,10 +429,10 @@ export default function EntryFunnelPage() {
             rows={focusModules.length ? focusModules : data.byModule.slice(0, 8)}
             labelOf={(k) => MODULE_LABEL[k] ?? k}
           />
-        </Card>
+        </section>
       ) : null}
 
-      <Card className={styles.panelWide}>
+      <section className={styles.panelWide}>
         <h2>自助分析（DIY 维度）</h2>
         <p className={styles.hint}>拖选维度与过滤条件，只聚合 L0–L2 痕迹表。</p>
         <div className={styles.diyRow}>
@@ -546,39 +572,33 @@ export default function EntryFunnelPage() {
             </ul>
           </div>
         ) : null}
-      </Card>
+      </section>
 
       <div className={styles.grid}>
-        <Card className={styles.panel}>
+        <section className={styles.panel}>
           <h2>按模块名</h2>
           <p className={styles.hint}>看板标题跟租户入口模块走；无模块名归入「未命名模块」。</p>
           <BucketList rows={data.byModule} labelOf={(k) => MODULE_LABEL[k] ?? k} />
-        </Card>
-        <Card className={styles.panel}>
+        </section>
+        <section className={styles.panel}>
           <h2>按入口面</h2>
           <BucketList rows={data.bySurface} labelOf={(k) => SURFACE_LABEL[k] ?? k} />
-        </Card>
-        <Card className={styles.panel}>
+        </section>
+        <section className={styles.panel}>
           <h2>按事件</h2>
           <BucketList rows={data.byEventCode} labelOf={(k) => EVENT_LABEL[k] ?? k} />
-        </Card>
-        <Card className={styles.panel}>
+        </section>
+        <section className={styles.panel}>
           <h2>跳转目标平台</h2>
           <p className={styles.hint}>仅 jump / jump_confirm；统计到跳转为止。</p>
           <BucketList rows={data.byTargetPlatform} labelOf={(k) => k} />
-        </Card>
+        </section>
       </div>
     </main>
   );
 }
 
-function BucketList({
-  rows,
-  labelOf,
-}: {
-  rows: Bucket[];
-  labelOf: (key: string) => string;
-}) {
+function BucketList({ rows, labelOf }: { rows: Bucket[]; labelOf: (key: string) => string }) {
   if (!rows.length) return <p className={styles.empty}>本窗口暂无痕迹。</p>;
   return (
     <ul className={styles.list}>
@@ -586,6 +606,30 @@ function BucketList({
         <li key={row.key}>
           <span>{labelOf(row.key)}</span>
           <strong>{row.count}</strong>
+        </li>
+      ))}
+    </ul>
+  );
+}
+
+function renderBuckets(rows: Bucket[], labelOf: (key: string) => string) {
+  if (!rows.length)
+    return (
+      <>
+        <p className={styles.barEmpty}>当前窗口暂无痕迹分布。</p>
+        <p className={styles.barEmpty}>暂无记录</p>
+      </>
+    );
+  const total = rows.reduce((sum, row) => sum + row.count, 0);
+  return (
+    <ul className={styles.bars}>
+      {rows.map((row) => (
+        <li className={styles.barRow} key={row.key}>
+          <span className={styles.barLabel}>{labelOf(row.key)}</span>
+          <span className={styles.barTrack}>
+            <span className={styles.barFill} style={{ width: barWidth(total, row.count) }} />
+          </span>
+          <span className={styles.barValue}>{row.count}</span>
         </li>
       ))}
     </ul>

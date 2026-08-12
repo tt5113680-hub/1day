@@ -1,9 +1,23 @@
 'use client';
 
 import { SessionApiClient } from '@oneday/session-client';
-import { AdminPageHeader, AppStatePanel, Button, Card, StatusBadge } from '@oneday/ui';
-import { useRef, useState } from 'react';
+import { AppStatePanel, Button, StatusBadge } from '@oneday/ui';
+import { useMemo, useRef, useState } from 'react';
 import styles from './page.module.css';
+
+const barWidth = (total: number, value: number) =>
+  total ? `${Math.max(2, (value / total) * 100)}%` : '0%';
+
+const countBy = <T,>(rows: T[], key: (row: T) => string) => {
+  const acc: Record<string, number> = {};
+  for (const row of rows) {
+    const k = key(row);
+    acc[k] = (acc[k] ?? 0) + 1;
+  }
+  return Object.entries(acc)
+    .map(([label, value]) => ({ label, value }))
+    .sort((a, b) => b.value - a.value);
+};
 
 const api = process.env.NEXT_PUBLIC_API_BASE_URL ?? 'http://127.0.0.1:3001';
 const sessionApi = new SessionApiClient(api);
@@ -139,218 +153,254 @@ export default function Onboarding() {
       </main>
     );
   return (
-    <main className={styles.page}>
-      <AdminPageHeader
-        eyebrow="ONEDAY / 商户商业开通"
-        title="一次提交，生成可登录、可经营、可访问的 READY 商户"
-        description="系统将创建老板与角色包、主体和首店、行业数字门店、经营默认项及 ONE-CODE，并逐步保存机器验收结果。失败时展示步骤轨迹；重新开通使用新的幂等键，不做中途续跑伪装。"
-      />
-      <Card className={styles.form}>
-        <label>
-          租户标识
-          <input
-            aria-label="租户标识"
-            value={form.slug}
-            onChange={(event) => update('slug', event.target.value)}
-            placeholder="demo-merchant"
-          />
-        </label>
-        <label>
-          商户名称
-          <input
-            aria-label="商户名称"
-            value={form.tenantName}
-            onChange={(event) => update('tenantName', event.target.value)}
-          />
-        </label>
-        <label>
-          总部组织名称
-          <input
-            aria-label="总部组织名称"
-            value={form.organizationName}
-            onChange={(event) => update('organizationName', event.target.value)}
-          />
-        </label>
-        <label>
-          经营主体名称
-          <input
-            aria-label="经营主体名称"
-            value={form.merchantName}
-            onChange={(event) => update('merchantName', event.target.value)}
-          />
-        </label>
-        <label>
-          首店名称
-          <input
-            aria-label="首店名称"
-            value={form.storeName}
-            onChange={(event) => update('storeName', event.target.value)}
-          />
-        </label>
-        <label>
-          门店电话
-          <input
-            aria-label="门店电话"
-            value={form.phone}
-            onChange={(event) => update('phone', event.target.value)}
-          />
-        </label>
-        <label className={styles.wide}>
-          门店地址
-          <input
-            aria-label="门店地址"
-            value={form.address}
-            onChange={(event) => update('address', event.target.value)}
-          />
-        </label>
-        <label>
-          营业时间
-          <input
-            aria-label="营业时间"
-            value={form.businessHours}
-            onChange={(event) => update('businessHours', event.target.value)}
-          />
-        </label>
-        <label>
-          老板姓名
-          <input
-            aria-label="老板姓名"
-            value={form.adminName}
-            onChange={(event) => update('adminName', event.target.value)}
-          />
-        </label>
-        <label>
-          老板邮箱
-          <input
-            aria-label="老板邮箱"
-            type="email"
-            value={form.adminEmail}
-            onChange={(event) => update('adminEmail', event.target.value)}
-          />
-        </label>
-        <label>
-          初始登录密码
-          <input
-            aria-label="初始登录密码"
-            type="password"
-            minLength={12}
-            value={form.adminPassword}
-            onChange={(event) => update('adminPassword', event.target.value)}
-          />
-        </label>
-        <label>
-          行业模板
-          <select
-            aria-label="行业模板"
-            value={form.industry}
-            onChange={(event) => update('industry', event.target.value)}
-          >
-            <option value="restaurant">餐饮数字门店</option>
-            <option value="beauty">美业服务门店</option>
-            <option value="education">教育校区</option>
-            <option value="retail">新零售门店</option>
-          </select>
-        </label>
-        <label>
-          商业套餐
-          <select
-            aria-label="商业套餐"
-            value={form.plan}
-            onChange={(event) => update('plan', event.target.value)}
-          >
-            <option value="starter">起步版</option>
-            <option value="growth">成长版</option>
-            <option value="enterprise">企业版</option>
-          </select>
-        </label>
-        <Button className={styles.submit} loading={saving} onClick={() => void submit()}>
-          一键开通并验证 READY
-        </Button>
-      </Card>
+    <main className={styles.page} data-testid="platform-onboarding">
+      <div className={styles.topBar}>
+        <span className={styles.topBarTitle}>推广员工具 · 商户开通</span>
+      </div>
+      <section className={styles.heroCard} aria-label="商户开通概况">
+        <h1>一次提交，生成可登录、可访问的 READY 商户</h1>
+        <p>
+          系统将创建老板与角色包、主体和首店、行业数字门店、经营默认项及
+          ONE-CODE，并逐步保存机器验收结果。失败时展示步骤轨迹；重新开通使用新的幂等键，不做中途续跑伪装。
+        </p>
+      </section>
+      <section className={styles.panel}>
+        <div className={styles.form}>
+          <label>
+            租户标识
+            <input
+              aria-label="租户标识"
+              value={form.slug}
+              onChange={(event) => update('slug', event.target.value)}
+              placeholder="demo-merchant"
+            />
+          </label>
+          <label>
+            商户名称
+            <input
+              aria-label="商户名称"
+              value={form.tenantName}
+              onChange={(event) => update('tenantName', event.target.value)}
+            />
+          </label>
+          <label>
+            总部组织名称
+            <input
+              aria-label="总部组织名称"
+              value={form.organizationName}
+              onChange={(event) => update('organizationName', event.target.value)}
+            />
+          </label>
+          <label>
+            经营主体名称
+            <input
+              aria-label="经营主体名称"
+              value={form.merchantName}
+              onChange={(event) => update('merchantName', event.target.value)}
+            />
+          </label>
+          <label>
+            首店名称
+            <input
+              aria-label="首店名称"
+              value={form.storeName}
+              onChange={(event) => update('storeName', event.target.value)}
+            />
+          </label>
+          <label>
+            门店电话
+            <input
+              aria-label="门店电话"
+              value={form.phone}
+              onChange={(event) => update('phone', event.target.value)}
+            />
+          </label>
+          <label className={styles.wide}>
+            门店地址
+            <input
+              aria-label="门店地址"
+              value={form.address}
+              onChange={(event) => update('address', event.target.value)}
+            />
+          </label>
+          <label>
+            营业时间
+            <input
+              aria-label="营业时间"
+              value={form.businessHours}
+              onChange={(event) => update('businessHours', event.target.value)}
+            />
+          </label>
+          <label>
+            老板姓名
+            <input
+              aria-label="老板姓名"
+              value={form.adminName}
+              onChange={(event) => update('adminName', event.target.value)}
+            />
+          </label>
+          <label>
+            老板邮箱
+            <input
+              aria-label="老板邮箱"
+              type="email"
+              value={form.adminEmail}
+              onChange={(event) => update('adminEmail', event.target.value)}
+            />
+          </label>
+          <label>
+            初始登录密码
+            <input
+              aria-label="初始登录密码"
+              type="password"
+              minLength={12}
+              value={form.adminPassword}
+              onChange={(event) => update('adminPassword', event.target.value)}
+            />
+          </label>
+          <label>
+            行业模板
+            <select
+              aria-label="行业模板"
+              value={form.industry}
+              onChange={(event) => update('industry', event.target.value)}
+            >
+              <option value="restaurant">餐饮数字门店</option>
+              <option value="beauty">美业服务门店</option>
+              <option value="education">教育校区</option>
+              <option value="retail">新零售门店</option>
+            </select>
+          </label>
+          <label>
+            商业套餐
+            <select
+              aria-label="商业套餐"
+              value={form.plan}
+              onChange={(event) => update('plan', event.target.value)}
+            >
+              <option value="starter">起步版</option>
+              <option value="growth">成长版</option>
+              <option value="enterprise">企业版</option>
+            </select>
+          </label>
+          <Button className={styles.submit} loading={saving} onClick={() => void submit()}>
+            一键开通并验证 READY
+          </Button>
+        </div>
+      </section>
       {note && (
         <div data-testid="provisioning-result">
-        <Card className={styles.result}>
-          <p className={styles.note} role="status">
-            <StatusBadge tone={state === 'done' ? 'success' : 'danger'}>
-              {state === 'done' ? 'READY' : '需要处理'}
-            </StatusBadge>
-            <span>{note}</span>
-          </p>
-          {run ? (
-            <>
-              {run.errorCode || run.errorDetail ? (
-                <p className={styles.failure} data-testid="provisioning-error">
-                  {run.errorCode ? `${run.errorCode}: ` : ''}
-                  {run.errorDetail ?? '开通未完成'}
-                </p>
-              ) : null}
-              <dl className={styles.delivery}>
-                <div>
-                  <dt>运行 ID</dt>
-                  <dd>{run.runId}</dd>
-                </div>
-                <div>
-                  <dt>ONE-CODE</dt>
-                  <dd data-testid="provisioning-one-code">{run.delivery?.oneCode ?? '—'}</dd>
-                </div>
-                <div>
-                  <dt>消费者落地页</dt>
-                  <dd>
-                    {run.delivery?.oneCode ? (
-                      <>
-                        <code data-testid="provisioning-one-code-landing">
-                          {run.delivery.landingPath ?? `/c/one-code/${run.delivery.oneCode}`}
-                        </code>
-                        <small> 在 Consumer 打开；本地交付入口，不是第三方平台跳转。</small>
-                      </>
-                    ) : (
-                      '—'
-                    )}
-                  </dd>
-                </div>
-                <div>
-                  <dt>行业 / 套餐</dt>
-                  <dd>
-                    {run.industry} / {run.plan}
-                  </dd>
-                </div>
-              </dl>
-              <ol className={styles.steps} data-testid="provisioning-steps">
-                {run.steps.map((step) => (
-                  <li key={step.code} data-step-state={step.state}>
-                    <span>{stepLabels[step.code] ?? step.code}</span>
-                    <StatusBadge tone={stepTone(step.state)}>{stepLabel(step.state)}</StatusBadge>
-                  </li>
-                ))}
-              </ol>
-              <div className={styles.actions}>
-                {state !== 'done' ? (
-                  <>
-                    <Button
-                      tone="secondary"
-                      data-testid="provisioning-refresh"
-                      onClick={() =>
-                        void refreshRun(run.runId)
-                          .then((next) => {
-                            setRun(next);
-                            setNote(`已刷新运行 ${next.runId}（状态 ${next.state}）。`);
-                          })
-                          .catch(() => setNote('无法刷新运行步骤，请稍后重试。'))
-                      }
-                    >
-                      刷新步骤轨迹
-                    </Button>
-                    <Button data-testid="provisioning-retry-fresh" onClick={retryFresh}>
-                      换标识后重新开通
-                    </Button>
-                  </>
+          <section className={styles.result}>
+            <p className={styles.note} role="status">
+              <StatusBadge tone={state === 'done' ? 'success' : 'danger'}>
+                {state === 'done' ? 'READY' : '需要处理'}
+              </StatusBadge>
+              <span>{note}</span>
+            </p>
+            {run ? (
+              <>
+                {run.errorCode || run.errorDetail ? (
+                  <p className={styles.failure} data-testid="provisioning-error">
+                    {run.errorCode ? `${run.errorCode}: ` : ''}
+                    {run.errorDetail ?? '开通未完成'}
+                  </p>
                 ) : null}
-              </div>
-            </>
-          ) : null}
-        </Card>
+                <dl className={styles.delivery}>
+                  <div>
+                    <dt>运行 ID</dt>
+                    <dd>{run.runId}</dd>
+                  </div>
+                  <div>
+                    <dt>ONE-CODE</dt>
+                    <dd data-testid="provisioning-one-code">{run.delivery?.oneCode ?? '—'}</dd>
+                  </div>
+                  <div>
+                    <dt>消费者落地页</dt>
+                    <dd>
+                      {run.delivery?.oneCode ? (
+                        <>
+                          <code data-testid="provisioning-one-code-landing">
+                            {run.delivery.landingPath ?? `/c/one-code/${run.delivery.oneCode}`}
+                          </code>
+                          <small> 在 Consumer 打开；本地交付入口，不是第三方平台跳转。</small>
+                        </>
+                      ) : (
+                        '—'
+                      )}
+                    </dd>
+                  </div>
+                  <div>
+                    <dt>行业 / 套餐</dt>
+                    <dd>
+                      {run.industry} / {run.plan}
+                    </dd>
+                  </div>
+                </dl>
+                {run.steps.length ? <OnboardingDist run={run} /> : null}
+                <ol className={styles.steps} data-testid="provisioning-steps">
+                  {run.steps.map((step) => (
+                    <li key={step.code} data-step-state={step.state}>
+                      <span>{stepLabels[step.code] ?? step.code}</span>
+                      <StatusBadge tone={stepTone(step.state)}>{stepLabel(step.state)}</StatusBadge>
+                    </li>
+                  ))}
+                </ol>
+                <div className={styles.actions}>
+                  {state !== 'done' ? (
+                    <>
+                      <Button
+                        tone="secondary"
+                        data-testid="provisioning-refresh"
+                        onClick={() =>
+                          void refreshRun(run.runId)
+                            .then((next) => {
+                              setRun(next);
+                              setNote(`已刷新运行 ${next.runId}（状态 ${next.state}）。`);
+                            })
+                            .catch(() => setNote('无法刷新运行步骤，请稍后重试。'))
+                        }
+                      >
+                        刷新步骤轨迹
+                      </Button>
+                      <Button data-testid="provisioning-retry-fresh" onClick={retryFresh}>
+                        换标识后重新开通
+                      </Button>
+                    </>
+                  ) : null}
+                </div>
+              </>
+            ) : null}
+          </section>
         </div>
       )}
     </main>
+  );
+}
+
+function OnboardingDist({ run }: { run: ProvisioningRun }) {
+  const total = run.steps.length;
+  const stateDist = useMemo(() => countBy(run.steps, (s) => stepLabel(s.state)), [run]);
+  if (!total) return null;
+  return (
+    <div className={styles.distPanel} aria-label="开通步骤分布">
+      <div className={styles.distHead}>
+        <h3>开通步骤分布</h3>
+        <span className={styles.distMeta}>由当前运行步骤档案现场推导 · 禁止假 BI</span>
+      </div>
+      <ul className={styles.bars}>
+        {stateDist.map((item) => (
+          <li className={styles.barRow} key={item.label}>
+            <span className={styles.barLabel}>{item.label}</span>
+            <span className={styles.barTrack}>
+              <span className={styles.barFill} style={{ width: barWidth(total, item.value) }} />
+            </span>
+            <span className={styles.barValue}>{item.value}</span>
+          </li>
+        ))}
+      </ul>
+      <p className={styles.honest}>
+        分布全部由已抓取开通运行步骤档案行现场推导（source=local）；本地试点记录未接美团实时商户数据，仅登记开通意图与本地验收结果，不包含本平台收款，非本平台下单。
+      </p>
+    </div>
   );
 }

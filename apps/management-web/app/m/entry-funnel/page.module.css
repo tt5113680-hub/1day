@@ -1,38 +1,240 @@
 .page {
-  width: min(100%, 1400px);
-  min-height: 100vh;
+  display: grid;
+  gap: 12px;
+  max-width: 1200px;
   margin: 0 auto;
-  padding: 48px;
+  padding: 0 16px 32px;
+  color: #222;
+  background: #f5f5f5;
 }
 
-.centered {
-  min-height: 100vh;
-  display: grid;
-  place-items: center;
-  padding: 32px;
+.topBar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  min-height: 52px;
+  margin: 0 -16px;
+  padding: 0 20px;
+  background: linear-gradient(180deg, #ffe14d 0%, #ffd100 100%);
+  box-shadow: 0 1px 3px rgb(0 0 0 / 8%);
 }
 
-.cards {
+.topBarTitle {
+  color: #222;
+  font-size: 16px;
+  font-weight: 800;
+}
+
+.topBarActions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+}
+
+.topBarRefresh {
+  min-height: 34px;
+  border: 0;
+  border-radius: 17px;
+  padding: 0 14px;
+  color: #333;
+  background: rgb(255 255 255 / 65%);
+  font: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.days {
+  display: inline-grid;
+  gap: 4px;
+  font-weight: 700;
+  color: #222;
+  font-size: 12px;
+}
+
+.days select {
+  min-height: 34px;
+  border: 0;
+  border-radius: 17px;
+  padding: 0 12px;
+  color: #333;
+  background: rgb(255 255 255 / 65%);
+  font: inherit;
+  font-weight: 700;
+}
+
+.heroCard {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 16px;
-  margin: 28px 0 18px;
+  gap: 6px;
+  border-radius: 12px;
+  padding: 16px 18px;
+  background: #fff;
+  box-shadow: 0 1px 2px rgb(0 0 0 / 4%);
+}
+
+.heroCard h1 {
+  margin: 0;
+  font: 700 24px / 1.2 var(--od-font-display, system-ui);
+  letter-spacing: -0.02em;
+}
+
+.heroCard p {
+  margin: 0;
+  color: #666;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.panel,
+.panelWide {
+  display: grid;
+  gap: 14px;
+  border-radius: 12px;
+  padding: 16px 18px;
+  background: #fff;
+  box-shadow: 0 1px 2px rgb(0 0 0 / 4%);
+}
+
+.panel h2,
+.panelWide h2 {
+  margin: 0;
+  color: #222;
+  font-size: 18px;
+  font-weight: 800;
+}
+
+.summaryStrip {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.summaryStrip > div {
+  display: grid;
+  gap: 4px;
+  border-radius: 10px;
+  padding: 12px 14px;
+  background: #fafafa;
+}
+
+.summaryStrip span {
+  color: #888;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.summaryStrip strong {
+  color: #222;
+  font: 800 20px / 1.2 var(--od-font-display, system-ui);
+}
+
+.panelHead {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.panelHead h2 {
+  margin: 0;
+  color: #222;
+  font-size: 18px;
+  font-weight: 800;
+}
+
+.panelMeta {
+  color: #999;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.distribution {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.panelBlock {
+  display: grid;
+  gap: 10px;
+  border-radius: 10px;
+  padding: 12px 14px;
+  background: #fafafa;
+}
+
+.panelBlock h3 {
+  margin: 0;
+  color: #333;
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.bars {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.barRow {
+  display: grid;
+  grid-template-columns: 150px minmax(0, 1fr) 28px;
+  align-items: center;
+  gap: 10px;
+  color: #555;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.barLabel {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.barTrack {
+  overflow: hidden;
+  height: 8px;
+  border-radius: 4px;
+  background: #eee;
+}
+
+.barFill {
+  display: block;
+  height: 100%;
+  border-radius: 4px;
+  background: linear-gradient(90deg, #ffd100, #f0a500);
+}
+
+.barValue {
+  color: #333;
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+}
+
+.barEmpty {
+  margin: 0;
+  color: #999;
+  font-size: 12px;
+}
+
+.honest {
+  margin: 0;
+  border-top: 1px solid #f0f0f0;
+  padding-top: 12px;
+  color: #888;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.5;
 }
 
 .grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 16px;
-}
-
-.panelWide {
-  padding: 22px;
-  margin: 0 0 16px;
-}
-
-.panelWide h2 {
-  margin: 0 0 8px;
-  font-size: 1.05rem;
+  gap: 12px;
 }
 
 .insights {
@@ -57,28 +259,29 @@
   display: grid;
   gap: 4px;
   font-weight: 700;
+  color: #555;
   min-width: 120px;
 }
 
 .diyRow select {
   min-height: 40px;
   border: 1px solid var(--od-border);
-  border-radius: var(--od-radius-sm);
+  border-radius: 8px;
   padding: 8px 12px;
   font: inherit;
   font-weight: 700;
   color: var(--od-ink);
-  background: var(--od-surface);
+  background: #fff;
 }
 
 .diyRow input {
   min-height: 40px;
   border: 1px solid var(--od-border);
-  border-radius: var(--od-radius-sm);
+  border-radius: 8px;
   padding: 8px 12px;
   font: inherit;
   color: var(--od-ink);
-  background: var(--od-surface);
+  background: #fff;
   min-width: 220px;
 }
 
@@ -132,20 +335,10 @@
   font-size: 1rem;
 }
 
-.panel {
-  padding: 22px;
-}
-
-.panel h2,
-.panelWide h2 {
-  margin: 0 0 8px;
-  font-size: 1.05rem;
-}
-
 .hint {
   margin: 0 0 14px;
-  color: var(--od-text-muted);
-  font-size: 0.92rem;
+  color: #777;
+  font-size: 12px;
 }
 
 .list {
@@ -168,34 +361,38 @@
 
 .empty {
   margin: 0;
-  color: var(--od-text-muted);
+  color: #999;
+  font-size: 12px;
 }
 
-.days {
-  display: inline-grid;
-  gap: 4px;
-  font-weight: 700;
-  margin-right: 10px;
+.centered {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: 32px;
 }
 
-.days select {
-  min-height: 42px;
-  border: 1px solid var(--od-border);
-  border-radius: var(--od-radius-sm);
-  color: var(--od-ink);
-  background: var(--od-surface);
-  padding: 10px 14px;
-  font: inherit;
-  font-weight: 700;
-}
-
-@media (max-width: 960px) {
+@media (max-width: 900px) {
   .page {
-    padding: 24px 16px;
+    padding-right: 10px;
+    padding-left: 10px;
   }
 
-  .cards,
+  .topBar {
+    margin-right: -10px;
+    margin-left: -10px;
+  }
+
+  .summaryStrip {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .distribution,
   .grid {
     grid-template-columns: 1fr;
+  }
+
+  .barRow {
+    grid-template-columns: 110px minmax(0, 1fr) 28px;
   }
 }

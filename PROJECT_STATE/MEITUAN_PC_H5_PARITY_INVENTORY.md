@@ -63,7 +63,7 @@
 
 | 现路由 | 处置 |
 | ------ | ---- |
-| `/m/attribution` | 并入顾客/经营分析美团同构区 |
+| `/m/attribution` | 并入顾客/经营分析美团同构区；**W∞-85** 真实数据深页分布（`来源归因分布`：归因阶段/来源类型/证据级别，由真实 records[] 推导，禁止假 BI）+ `归因摘要` 概况条 |
 | `/m/ai-suggestions` | 并入工作台建议或设置；禁止独立「AI 产品首页」感；**W∞-84** 真实数据深页分布（`作业建议分布`：处理状态/动作类型/建议来源模型/执行状态，由真实 items[] 推导，禁止假 BI） |
 | `/m/connectors` | 设置/对接意图；诚实边界；**W∞-84** 真实数据深页分布（`连接配置分布`：连接器平台/授权状态/运行日志状态，由真实 connectors[]+logs[] 推导，禁止假 BI） |
 | `/m/external-actions` | 外链动作 → 美团「外链/活动」同类入口；**W∞-84** 真实数据深页分布（`外链服务分布`：动作类型/平台命名/状态，由真实 actions[] 推导，禁止假 BI） |
@@ -115,7 +115,7 @@
 | -- | -------- | ------------- | ---- |
 | MP-00 | 平台总览 | `/p/dashboard` | PARTIAL | W∞-18 工具身份；**W∞-36** 视觉/IA densify（黄顶栏+icon 功能格+白卡面板+自定义指标）；toward PARITY；见 WINF36 |
 | MP-01 | 省市区代理树 | `/p/channels`, `/ch/*` | GAP |
-| MP-02 | 商户入驻开通 | `/p/tenants`, `/ch/merchants/new` | PARTIAL | **W∞-70** `/ch/merchants/new` 真实数据深页 densify；toward PARITY；见 WINF70 |
+| MP-02 | 商户入驻开通 | `/p/tenants`, `/ch/merchants/new` | PARTIAL | **W∞-70** `/ch/merchants/new` 真实数据深页 densify；**W∞-85** `/p/tenants/new` 商户开通向导收束旧 chrome（黄顶栏 `推广员工具 · 商户开通` + 白卡 heroCard h1 一次提交，生成可登录、可访问的 READY 商户 + 白卡表单 + `开通步骤分布` 按真实 run.steps[] 推导，禁止假 BI）；toward PARITY；见 WINF70/WINF85 |
 | MP-03 | 代理商管理后台 | `/ch/dashboard` | PARTIAL | W∞-6 densify；**W∞-37** 视觉/IA densify（黄顶栏+icon 功能格+白卡指标+商户队列卡）；toward PARITY；见 WINF37 |
 | MP-04 | 商圈 / 运营集合 | `/p/business-circles`, `/bc/*` | PARTIAL | **W∞-37** `/bc/dashboard` 视觉/IA densify（黄顶栏+icon 功能格+白卡指标+商圈明细）；toward PARITY；见 WINF37 |
 
@@ -142,7 +142,7 @@
 
 ## 6. 当前下一刀
 
-  > **当前：W∞-84 PASS** — Management 剩余 MPC 零星面（`/m/permission-audit` 操作审计、`/m/connectors` 连接配置、`/m/external-actions` 外链服务、`/m/ai-suggestions` 作业建议）一次性改挂黄顶栏+灰底白卡+heroCard+概况条+分布洞察+honest 边界（禁止假 BI），收束 Management 全部旧 `AdminPageHeader`+`Card` chrome。Management MPC 真实数据深页分布已全部闭合。**下一刀：** inventory `PARITY` 关断复核（`MEITUAN_PC_H5_PARITY_INVENTORY.md` 状态列逐面复审 toward PARITY），或推进未闭合项（HUMAN-PILOT-HANDOFF / G1 OWNER GATE）。
+  > **当前：W∞-85 PASS** — 收束全仓最后一批残留旧 `AdminPageHeader`+`Card` chrome：Management `/m/attribution`（来源归因）、`/m/entry-funnel`（入口痕迹看板/模块命名，归入 MPC-09 经营分析区）、`/m/circles`（商圈双身份，网络身份面）、`/m/funnels/[id]`（来源归因漏斗）+ Platform `/p/tenants/new`（MP-02 商户入驻开通）一次性改挂黄顶栏+灰底白卡+heroCard+概况条+分布洞察+honest 边界（禁止假 BI）。全仓四端已无页面级 `AdminPageHeader`+`Card` 数据型页残留。**下一刀：** inventory `PARITY` 关断复核（本文件状态列逐面复审 toward PARITY），或推进未闭合项（HUMAN-PILOT-HANDOFF / G1 OWNER GATE）。
 
 **历史波（自 W24 起）累计——**
 

@@ -34,7 +34,7 @@ test('platform admin completes the tenant onboarding wizard', async ({ page }) =
     { accessToken: token, refresh: refreshToken },
   );
   await page.goto('/p/tenants/new');
-  await expect(page.getByRole('heading', { name: /生成可登录、可经营、可访问/ })).toBeVisible();
+  await expect(page.getByRole('heading', { name: /生成可登录、可访问的 READY 商户/ })).toBeVisible();
   await page.getByLabel('租户标识').fill(slug);
   await page.getByLabel('商户名称').fill(`Browser ${suffix}`);
   await page.getByLabel('总部组织名称').fill('Browser HQ');

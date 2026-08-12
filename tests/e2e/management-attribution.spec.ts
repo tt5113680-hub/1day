@@ -27,7 +27,7 @@ test('manager filters attributable source records at desktop width', async ({ pa
   );
   await page.goto('/m/attribution');
   await expect(
-    page.getByRole('heading', { name: '从首次触达，到当前经营与最终结果' }),
+    page.getByRole('heading', { name: '看清从哪进、谁承接、证据到哪一级' }),
   ).toBeVisible();
   await page.getByLabel('归因阶段').selectOption('first_source');
   await page.screenshot({

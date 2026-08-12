@@ -1,15 +1,6 @@
 'use client';
 import { SessionApiClient } from '@oneday/session-client';
-import {
-  AdminPageHeader,
-  AppStatePanel,
-  businessLabel,
-  Button,
-  Card,
-  customerNameCopy,
-  MetricCard,
-  StatusBadge,
-} from '@oneday/ui';
+import { AppStatePanel, businessLabel, Button, customerNameCopy, StatusBadge } from '@oneday/ui';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import styles from './page.module.css';
 
@@ -39,6 +30,26 @@ function metaText(meta: Item['metadata'], key: string): string | null {
   return typeof value === 'string' && value.trim() ? value.trim() : null;
 }
 
+const barWidth = (total: number, value: number) =>
+  total ? `${Math.max(2, (value / total) * 100)}%` : '0%';
+
+const countBy = <T,>(rows: T[], key: (row: T) => string) => {
+  const acc: Record<string, number> = {};
+  for (const row of rows) {
+    const k = key(row);
+    acc[k] = (acc[k] ?? 0) + 1;
+  }
+  return Object.entries(acc)
+    .map(([label, value]) => ({ label, value }))
+    .sort((a, b) => b.value - a.value);
+};
+
+const ROLE_LABEL: Record<Item['role'], string> = {
+  first_source: '首次来源',
+  current_source: '当前来源',
+  final_source: '最终来源',
+};
+
 export default function AttributionPage() {
   const [state, setState] = useState<'loading' | 'ready' | 'forbidden' | 'error'>('loading');
   const [data, setData] = useState<Data | null>(null);
@@ -67,6 +78,19 @@ export default function AttributionPage() {
     if (!data) return [] as string[];
     return [...new Set(data.records.map((r) => r.sourceType).filter(Boolean))].sort();
   }, [data]);
+
+  const roleDist = useMemo(
+    () => (data ? countBy(data.records, (r) => ROLE_LABEL[r.role]) : []),
+    [data],
+  );
+  const sourceTypeDist = useMemo(
+    () => (data ? countBy(data.records, (r) => businessLabel(r.sourceType)) : []),
+    [data],
+  );
+  const evidenceDist = useMemo(
+    () => (data ? countBy(data.records, (r) => businessLabel(r.evidenceLevel)) : []),
+    [data],
+  );
 
   if (state === 'loading')
     return (
@@ -103,41 +127,103 @@ export default function AttributionPage() {
 
   const rows = data.records.filter(
     (x) =>
-      (role === 'all' || x.role === role) &&
-      (sourceType === 'all' || x.sourceType === sourceType),
+      (role === 'all' || x.role === role) && (sourceType === 'all' || x.sourceType === sourceType),
   );
 
+  const renderBars = (items: { label: string; value: number }[], total: number) => {
+    if (!items.length)
+      return (
+        <>
+          <p className={styles.barEmpty}>当前筛选下暂无归因分布记录。</p>
+          <p className={styles.barEmpty}>暂无记录</p>
+        </>
+      );
+    return (
+      <ul className={styles.bars}>
+        {items.map((item) => (
+          <li className={styles.barRow} key={item.label}>
+            <span className={styles.barLabel}>{item.label}</span>
+            <span className={styles.barTrack}>
+              <span className={styles.barFill} style={{ width: barWidth(total, item.value) }} />
+            </span>
+            <span className={styles.barValue}>{item.value}</span>
+          </li>
+        ))}
+      </ul>
+    );
+  };
+
+  const recordsTotal = data.records.length;
+
   return (
-    <main className={styles.page}>
-      <AdminPageHeader
-        eyebrow="推广员工具 · 来源归因"
-        title="看清从哪进、谁承接、证据到哪一级"
-        description="来源、渠道、分享码与员工贡献均来自已留痕数据。不表示第三方已下单或已支付；成交结果以外部平台为准。"
-        actions={
-          <>
-            <Button
-              tone="secondary"
-              onClick={() => {
-                window.location.href = '/m/entry-funnel';
-              }}
-            >
-              入口痕迹看板
-            </Button>
-            <Button tone="secondary" onClick={() => void load()}>
-              刷新数据
-            </Button>
-          </>
-        }
-      />
-      <p className={styles.disclaimer} role="note">
-        归因阶段（首次/当前/最终）描述入口分流与承接，不是销售漏斗成交阶段。
-      </p>
-      <section className={styles.cards}>
-        <MetricCard label="首次来源" value={data.summary.first} hint="初次进入入口分流链路" />
-        <MetricCard label="当前来源" value={data.summary.current} hint="当前承接来源" />
-        <MetricCard label="最终来源" value={data.summary.final} hint="结果归因（非成交）" />
+    <main className={styles.page} data-testid="management-attribution">
+      <div className={styles.topBar}>
+        <span className={styles.topBarTitle}>推广员工具 · 来源归因</span>
+        <div className={styles.topBarActions}>
+          <button
+            type="button"
+            className={styles.topBarLink}
+            onClick={() => {
+              window.location.href = '/m/entry-funnel';
+            }}
+          >
+            入口痕迹看板
+          </button>
+          <button type="button" className={styles.topBarRefresh} onClick={() => void load()}>
+            刷新数据
+          </button>
+        </div>
+      </div>
+      <section className={styles.heroCard} aria-label="来源归因概况">
+        <h1>看清从哪进、谁承接、证据到哪一级</h1>
+        <p>
+          来源、渠道、分享码与员工贡献均来自已留痕数据。归因阶段描述入口分流与承接，不是销售漏斗成交阶段；成交结果以外部平台为准。
+        </p>
       </section>
-      <Card className={styles.panel}>
+      <section className={styles.panel}>
+        <div className={styles.summaryStrip} aria-label="归因摘要">
+          <div>
+            <span>归因记录</span>
+            <strong>{recordsTotal}</strong>
+          </div>
+          <div>
+            <span>首次来源</span>
+            <strong>{data.summary.first}</strong>
+          </div>
+          <div>
+            <span>当前来源</span>
+            <strong>{data.summary.current}</strong>
+          </div>
+          <div>
+            <span>最终来源</span>
+            <strong>{data.summary.final}</strong>
+          </div>
+        </div>
+      </section>
+      <section className={styles.panel}>
+        <div className={styles.panelHead}>
+          <h2>来源归因分布</h2>
+          <span className={styles.panelMeta}>由已抓取归因档案行现场推导 · 禁止假 BI</span>
+        </div>
+        <div className={styles.distribution} aria-label="来源归因分布">
+          <div className={styles.panelBlock}>
+            <h3>归因阶段分布</h3>
+            {renderBars(roleDist, recordsTotal)}
+          </div>
+          <div className={styles.panelBlock}>
+            <h3>来源类型分布</h3>
+            {renderBars(sourceTypeDist, recordsTotal)}
+          </div>
+          <div className={styles.panelBlock}>
+            <h3>证据级别分布</h3>
+            {renderBars(evidenceDist, recordsTotal)}
+          </div>
+        </div>
+        <p className={styles.honest} role="note">
+          分布全部由已抓取来源归因档案行现场推导（source=local）；仅记录观看/访问/跳转/停留/分享入口痕迹，不表示第三方已下单或已支付，不包含本平台收款，非本平台下单。
+        </p>
+      </section>
+      <section className={styles.panel}>
         <div className={styles.controls}>
           <h2>可解释归因记录</h2>
           <label>
@@ -173,10 +259,9 @@ export default function AttributionPage() {
           <div className={styles.rows}>
             {rows.map((x) => {
               const scene = metaText(x.metadata, 'scene') ?? metaText(x.metadata, 'Scene');
-              const share =
-                metaText(x.metadata, 'shareCode') ?? metaText(x.metadata, 'share_code');
+              const share = metaText(x.metadata, 'shareCode') ?? metaText(x.metadata, 'share_code');
               return (
-                <article key={x.id}>
+                <article key={x.id} data-testid="attribution-row">
                   <div>
                     <StatusBadge tone="info">{businessLabel(x.role)}</StatusBadge>
                     <strong>{customerNameCopy(x.customerName) || '未命名客户'}</strong>
@@ -204,7 +289,7 @@ export default function AttributionPage() {
             description="切换归因阶段或来源类型，或等待新的入口分流链路形成。"
           />
         )}
-      </Card>
+      </section>
     </main>
   );
 }

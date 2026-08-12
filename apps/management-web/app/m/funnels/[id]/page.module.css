@@ -1,60 +1,262 @@
 .page {
-  max-width: 1440px;
-  margin: auto;
-  padding: 40px 48px;
-  color: var(--od-ink);
+  display: grid;
+  gap: 12px;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 16px 32px;
+  color: #222;
+  background: #f5f5f5;
 }
-.funnel p,
-.funnel small,
-.notice p {
-  color: var(--od-text-muted);
+
+.topBar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  min-height: 52px;
+  margin: 0 -16px;
+  padding: 0 20px;
+  background: linear-gradient(180deg, #ffe14d 0%, #ffd100 100%);
+  box-shadow: 0 1px 3px rgb(0 0 0 / 8%);
 }
+
+.topBarTitle {
+  color: #222;
+  font-size: 16px;
+  font-weight: 800;
+}
+
+.topBarRefresh {
+  min-height: 34px;
+  border: 0;
+  border-radius: 17px;
+  padding: 0 14px;
+  color: #333;
+  background: rgb(255 255 255 / 65%);
+  font: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.heroCard {
+  display: grid;
+  gap: 6px;
+  border-radius: 12px;
+  padding: 16px 18px;
+  background: #fff;
+  box-shadow: 0 1px 2px rgb(0 0 0 / 4%);
+}
+
+.heroCard h1 {
+  margin: 0;
+  font: 700 24px / 1.2 var(--od-font-display, system-ui);
+  letter-spacing: -0.02em;
+}
+
+.heroCard p {
+  margin: 0;
+  color: #666;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.panel {
+  display: grid;
+  gap: 14px;
+  border-radius: 12px;
+  padding: 16px 18px;
+  background: #fff;
+  box-shadow: 0 1px 2px rgb(0 0 0 / 4%);
+}
+
+.panel h2 {
+  margin: 0;
+  color: #222;
+  font-size: 18px;
+  font-weight: 800;
+}
+
+.summaryStrip {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.summaryStrip > div {
+  display: grid;
+  gap: 4px;
+  border-radius: 10px;
+  padding: 12px 14px;
+  background: #fafafa;
+}
+
+.summaryStrip span {
+  color: #888;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.summaryStrip strong {
+  color: #222;
+  font: 800 20px / 1.2 var(--od-font-display, system-ui);
+}
+
+.panelHead {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.panelHead h2 {
+  margin: 0;
+  color: #222;
+  font-size: 18px;
+  font-weight: 800;
+}
+
+.panelMeta {
+  color: #999;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.distribution {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.panelBlock {
+  display: grid;
+  gap: 10px;
+  border-radius: 10px;
+  padding: 12px 14px;
+  background: #fafafa;
+}
+
+.panelBlock h3 {
+  margin: 0;
+  color: #333;
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.bars {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.barRow {
+  display: grid;
+  grid-template-columns: 150px minmax(0, 1fr) 28px;
+  align-items: center;
+  gap: 10px;
+  color: #555;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.barLabel {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.barTrack {
+  overflow: hidden;
+  height: 8px;
+  border-radius: 4px;
+  background: #eee;
+}
+
+.barFill {
+  display: block;
+  height: 100%;
+  border-radius: 4px;
+  background: linear-gradient(90deg, #ffd100, #f0a500);
+}
+
+.barValue {
+  color: #333;
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+}
+
+.barEmpty {
+  margin: 0;
+  color: #999;
+  font-size: 12px;
+}
+
+.honest {
+  margin: 0;
+  border-top: 1px solid #f0f0f0;
+  padding-top: 12px;
+  color: #888;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.5;
+}
+
 .funnel {
   display: grid;
   grid-template-columns: repeat(6, 1fr);
   gap: 12px;
-  margin-top: 32px;
 }
-.confirmed,
-.inferred,
-.notice {
-  border: 1px solid var(--od-border);
-  border-radius: 16px;
-  background: var(--od-surface);
-  box-shadow: var(--od-shadow-low);
-}
+
 .confirmed,
 .inferred {
+  border: 1px solid #f0f0f0;
+  border-radius: 16px;
   min-height: 190px;
   padding: 20px;
+  background: #fff;
+  box-shadow: 0 1px 2px rgb(0 0 0 / 4%);
 }
+
 .confirmed {
   border-top: 4px solid var(--od-success);
 }
+
 .inferred {
   border-top: 4px solid var(--od-warning);
-  background: color-mix(in srgb, var(--od-warning) 6%, var(--od-surface));
+  background: color-mix(in srgb, var(--od-warning) 6%, #fff);
 }
+
+.funnel p,
+.funnel small {
+  margin: 0;
+  color: #777;
+  font-size: 12px;
+}
+
 .funnel span,
 .funnel strong {
   display: block;
 }
+
 .funnel strong {
   margin: 12px 0;
   font-size: 28px;
 }
-.funnel p {
+
+.funnel small {
+  display: block;
+  line-height: 1.5;
+}
+
+.noteText {
+  margin: 0;
+  color: #777;
   font-size: 13px;
   line-height: 1.55;
 }
-.notice {
-  margin-top: 16px;
-  padding: 20px;
-}
-.notice h2 {
-  margin: 0;
-  font-size: 18px;
-}
+
 .centered {
   display: grid;
   min-height: 70vh;
@@ -62,15 +264,36 @@
   padding: 24px;
   text-align: center;
 }
+
 @media (max-width: 1100px) {
   .funnel {
     grid-template-columns: repeat(3, 1fr);
   }
 }
-@media (max-width: 700px) {
+
+@media (max-width: 900px) {
   .page {
-    padding: 28px 20px;
+    padding-right: 10px;
+    padding-left: 10px;
   }
+
+  .topBar {
+    margin-right: -10px;
+    margin-left: -10px;
+  }
+
+  .summaryStrip {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .distribution {
+    grid-template-columns: 1fr;
+  }
+
+  .barRow {
+    grid-template-columns: 110px minmax(0, 1fr) 28px;
+  }
+
   .funnel {
     grid-template-columns: 1fr;
   }

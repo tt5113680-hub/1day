@@ -1,8 +1,8 @@
 'use client';
 
 import { SessionApiClient } from '@oneday/session-client';
-import { AdminPageHeader, AppStatePanel, Button, Card } from '@oneday/ui';
-import { useCallback, useEffect, useState } from 'react';
+import { AppStatePanel, Button } from '@oneday/ui';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import styles from './page.module.css';
 
 type Owned = {
@@ -39,6 +39,20 @@ type Application = {
 
 const api = process.env.NEXT_PUBLIC_API_BASE_URL ?? 'http://127.0.0.1:3001';
 const sessionApi = new SessionApiClient(api);
+
+const barWidth = (total: number, value: number) =>
+  total ? `${Math.max(2, (value / total) * 100)}%` : '0%';
+
+const countBy = <T,>(rows: T[], key: (row: T) => string) => {
+  const acc: Record<string, number> = {};
+  for (const row of rows) {
+    const k = key(row);
+    acc[k] = (acc[k] ?? 0) + 1;
+  }
+  return Object.entries(acc)
+    .map(([label, value]) => ({ label, value }))
+    .sort((a, b) => b.value - a.value);
+};
 
 export default function ManagementCirclesPage() {
   const [state, setState] = useState<'loading' | 'ready' | 'forbidden' | 'error'>('loading');
@@ -212,6 +226,19 @@ export default function ManagementCirclesPage() {
     }
   };
 
+  const ownedDist = useMemo(
+    () => [
+      { label: '公开引流', value: owned.filter((c) => c.publicVisible).length },
+      { label: '私密', value: owned.filter((c) => !c.publicVisible).length },
+    ],
+    [owned],
+  );
+  const ownedTotal = owned.length;
+  const appsDist = useMemo(() => countBy(applications, (a) => a.source), [applications]);
+  const appsStatusDist = useMemo(() => countBy(applications, (a) => a.status), [applications]);
+  const nearbyDist = useMemo(() => countBy(nearby, (n) => n.industryTag ?? '联盟'), [nearby]);
+  const nearbyTotal = nearby.length;
+
   if (state === 'loading')
     return (
       <main className={styles.centered}>
@@ -240,26 +267,100 @@ export default function ManagementCirclesPage() {
       </main>
     );
 
+  const renderBars = (items: { label: string; value: number }[], total: number) => {
+    if (!items.length)
+      return (
+        <>
+          <p className={styles.barEmpty}>当前暂无商圈分布记录。</p>
+          <p className={styles.barEmpty}>暂无记录</p>
+        </>
+      );
+    return (
+      <ul className={styles.bars}>
+        {items.map((item) => (
+          <li className={styles.barRow} key={item.label}>
+            <span className={styles.barLabel}>{item.label}</span>
+            <span className={styles.barTrack}>
+              <span className={styles.barFill} style={{ width: barWidth(total, item.value) }} />
+            </span>
+            <span className={styles.barValue}>{item.value}</span>
+          </li>
+        ))}
+      </ul>
+    );
+  };
+
+  const pendingApps = applications.filter((a) => a.status === 'pending').length;
+
   return (
-    <main className={styles.page}>
-      <AdminPageHeader
-        eyebrow="推广员工具 · 商圈双身份"
-        title="经营自己的商圈，也能申请加入附近商圈"
-        description="经理可邀约商家；商家可浏览公开商圈并申请。不碰钱、不碰销售。"
-        actions={
-          <Button tone="secondary" onClick={() => void load()}>
-            刷新
-          </Button>
-        }
-      />
+    <main className={styles.page} data-testid="management-circles">
+      <div className={styles.topBar}>
+        <span className={styles.topBarTitle}>推广员工具 · 商圈双身份</span>
+        <button type="button" className={styles.topBarRefresh} onClick={() => void load()}>
+          刷新
+        </button>
+      </div>
+      <section className={styles.heroCard} aria-label="商圈双身份概况">
+        <h1>经营自己的商圈，也能申请加入附近商圈</h1>
+        <p>
+          经理可邀约商家；商家可浏览公开商圈并申请。商圈是商家联盟整合网络，仅管理成员关系，不碰钱、不碰销售。
+        </p>
+      </section>
       {note ? (
         <p className={styles.notice} role="status">
           {note}
         </p>
       ) : null}
+      <section className={styles.panel}>
+        <div className={styles.summaryStrip} aria-label="商圈概况">
+          <div>
+            <span>我管理的商圈</span>
+            <strong>{ownedTotal}</strong>
+          </div>
+          <div>
+            <span>附近公开商圈</span>
+            <strong>{nearbyTotal}</strong>
+          </div>
+          <div>
+            <span>申请/邀约</span>
+            <strong>{applications.length}</strong>
+          </div>
+          <div>
+            <span>待审批</span>
+            <strong>{pendingApps}</strong>
+          </div>
+        </div>
+      </section>
+      <section className={styles.panel}>
+        <div className={styles.panelHead}>
+          <h2>商圈运营分布</h2>
+          <span className={styles.panelMeta}>由已抓取商圈档案行现场推导 · 禁止假 BI</span>
+        </div>
+        <div className={styles.distribution} aria-label="商圈分布">
+          <div className={styles.panelBlock}>
+            <h3>自有商圈可见分布</h3>
+            {renderBars(ownedDist, ownedTotal)}
+          </div>
+          <div className={styles.panelBlock}>
+            <h3>申请/邀约来源分布</h3>
+            {renderBars(appsDist, applications.length)}
+          </div>
+          <div className={styles.panelBlock}>
+            <h3>申请/邀约状态分布</h3>
+            {renderBars(appsStatusDist, applications.length)}
+          </div>
+          <div className={styles.panelBlock}>
+            <h3>附近商圈行业分布</h3>
+            {renderBars(nearbyDist, nearbyTotal)}
+          </div>
+        </div>
+        <p className={styles.honest} role="note">
+          分布全部由已抓取商圈档案行现场推导（source=local）；商圈是商家联盟整合网络（本店经营/附近公开/邀约中），仅呈现聚合入口痕迹，不包含本平台收款，非本平台下单，本地试点记录未接美团实时商户数据。
+        </p>
+      </section>
 
       <div className={styles.grid}>
-        <Card className={styles.panel}>
+        <section className={styles.panel}>
           <h2>创建商圈（经营者）</h2>
           <div className={styles.form}>
             <label>
@@ -325,9 +426,9 @@ export default function ManagementCirclesPage() {
             </label>
             <Button onClick={() => void createCircle()}>创建</Button>
           </div>
-        </Card>
+        </section>
 
-        <Card className={styles.panel}>
+        <section className={styles.panel}>
           <h2>我管理的商圈</h2>
           <ul className={styles.list}>
             {owned.length ? (
@@ -349,9 +450,9 @@ export default function ManagementCirclesPage() {
               <li className={styles.empty}>尚未创建商圈。</li>
             )}
           </ul>
-        </Card>
+        </section>
 
-        <Card className={styles.panel}>
+        <section className={styles.panel}>
           <h2>邀约商家入圈</h2>
           <div className={styles.form}>
             <label>
@@ -385,9 +486,9 @@ export default function ManagementCirclesPage() {
             </label>
             <Button onClick={() => void sendInvite()}>发出邀约</Button>
           </div>
-        </Card>
+        </section>
 
-        <Card className={styles.panel}>
+        <section className={styles.panel}>
           <h2>申请 / 邀约审批</h2>
           <ul className={styles.list}>
             {applications.length ? (
@@ -416,9 +517,9 @@ export default function ManagementCirclesPage() {
               <li className={styles.empty}>暂无申请记录。</li>
             )}
           </ul>
-        </Card>
+        </section>
 
-        <Card className={styles.panelWide}>
+        <section className={styles.panelWide}>
           <h2>附近公开商圈（消费者/加盟视角）</h2>
           <ul className={styles.list}>
             {nearby.length ? (
@@ -444,7 +545,7 @@ export default function ManagementCirclesPage() {
               <li className={styles.empty}>暂无其它租户的公开商圈。</li>
             )}
           </ul>
-        </Card>
+        </section>
       </div>
     </main>
   );

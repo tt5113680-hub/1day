@@ -19,7 +19,7 @@ test('W∞-28: Management 404 fallback frames the tenant tool, not store-ops 经
 test('W∞-28: /m/attribution drops store-ops 经营 wording (入口 link, not sales funnel)', () => {
   const attribution = mg('m/attribution/page.tsx');
   assert.match(attribution, /正在关联入口来源、员工贡献与入口证据（不含第三方成交）。/);
-  assert.match(attribution, /归因阶段（首次\/当前\/最终）描述入口分流与承接，不是销售漏斗成交阶段。/);
+  assert.match(attribution, /归因阶段描述入口分流与承接，不是销售漏斗成交阶段/);
   assert.doesNotMatch(attribution, /经营证据/);
   assert.doesNotMatch(attribution, /经营承接/);
 });
