@@ -159,6 +159,108 @@
   font-size: 11px;
 }
 
+.summaryStrip {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+  border-radius: 12px;
+  padding: 14px 16px;
+  background: #fff;
+  box-shadow: 0 1px 2px rgb(0 0 0 / 4%);
+}
+
+.summaryStrip div {
+  display: grid;
+  gap: 2px;
+}
+
+.summaryStrip span {
+  color: #999;
+  font-size: 12px;
+}
+
+.summaryStrip strong {
+  color: #222;
+  font-size: 18px;
+}
+
+.distribution {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.panelBlock {
+  display: grid;
+  gap: 8px;
+  border-radius: 12px;
+  padding: 14px 16px;
+  background: #fff;
+  box-shadow: 0 1px 2px rgb(0 0 0 / 4%);
+}
+
+.panelBlock h2 {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 800;
+}
+
+.bars {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.barRow {
+  display: grid;
+  grid-template-columns: 96px 1fr 32px;
+  align-items: center;
+  gap: 8px;
+}
+
+.barLabel {
+  color: #555;
+  font-size: 12px;
+  white-space: nowrap;
+}
+
+.barTrack {
+  display: block;
+  height: 10px;
+  border-radius: 5px;
+  background: #f0f0f0;
+  overflow: hidden;
+}
+
+.barFill {
+  display: block;
+  height: 100%;
+  border-radius: 5px;
+  background: linear-gradient(90deg, #ffd100, #f0a500);
+}
+
+.barValue {
+  color: #222;
+  font-size: 13px;
+  font-weight: 700;
+  text-align: right;
+}
+
+.barEmpty {
+  color: #999;
+  font-size: 12px;
+}
+
+.honest {
+  margin: 0 0 16px;
+  color: #888;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
 .grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -204,12 +306,24 @@
   .functions {
     grid-template-columns: 1fr 1fr;
   }
+
+  .summaryStrip {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .distribution {
+    grid-template-columns: 1fr;
+  }
 }
 
 @media (max-width: 580px) {
   .metrics,
   .grid,
   .functions {
+    grid-template-columns: 1fr;
+  }
+
+  .summaryStrip {
     grid-template-columns: 1fr;
   }
 }

@@ -5,7 +5,7 @@ import { createApiPool } from './database-pool';
 export class PlatformDashboardService implements OnModuleDestroy {
   private readonly pool = createApiPool();
   async overview() {
-    const [metrics, risks, health] = await Promise.all([
+    const [metrics, risks, health, tenants, channels, deadLetters, signals] = await Promise.all([
       this.pool.query(`select
         (select count(*)::int from tenants where status='active' and deleted_at is null) tenants,
         (select count(distinct platform)::int from external_actions where status='active' and deleted_at is null and platform is not null) channels,
@@ -17,6 +17,19 @@ export class PlatformDashboardService implements OnModuleDestroy {
         union all select 'connector_attention' from connector_configs where status not in ('authorized','pending_authorization') and deleted_at is null
       ) risk group by type order by type`),
       this.pool.query('select now() checked_at, current_database() database_name'),
+      this.pool
+        .query(`select t.status, coalesce(s.plan,'starter') plan, coalesce(s.risk_level,'low') risk_level
+        from tenants t left join platform_tenant_settings s on s.tenant_id=t.id and s.deleted_at is null
+        where t.deleted_at is null order by t.created_at`),
+      this.pool.query(`select coalesce(platform,'(未指定)') platform, status
+        from external_actions where deleted_at is null order by created_at`),
+      this.pool.query(`select event_type, aggregate_type, attempts, tenant_id
+        from outbox_events where status='needs_attention' and deleted_at is null
+        order by updated_at desc limit 100`),
+      this.pool.query(`select event_code as key, count(*)::int as count
+        from entry_funnel_events
+        where occurred_at >= now() - interval '30 days'
+        group by event_code order by count desc`),
     ]);
     return {
       metrics: {
@@ -26,6 +39,19 @@ export class PlatformDashboardService implements OnModuleDestroy {
         pendingEvents: metrics.rows[0].pending_events,
       },
       risks: risks.rows.map((row) => ({ type: row.type, count: row.count })),
+      tenants: tenants.rows.map((row) => ({
+        status: row.status,
+        plan: row.plan,
+        riskLevel: row.risk_level,
+      })),
+      channels: channels.rows.map((row) => ({ platform: row.platform, status: row.status })),
+      outbox: deadLetters.rows.map((row) => ({
+        eventType: row.event_type,
+        aggregateType: row.aggregate_type,
+        attempts: row.attempts,
+        tenantId: row.tenant_id,
+      })),
+      signals: signals.rows.map((row) => ({ key: row.key, count: Number(row.count) })),
       system: {
         database: 'available',
         checkedAt: health.rows[0].checked_at,
