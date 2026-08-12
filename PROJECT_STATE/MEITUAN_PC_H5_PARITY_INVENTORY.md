@@ -1,7 +1,7 @@
 # 美团 PC / H5 复刻清单（施工权威）
 
 - created_at: 2026-08-10 23:30 Asia/Shanghai
-- updated_at: 2026-08-12 Asia/Shanghai
+- updated_at: 2026-08-12 (W∞-89 四端 PARITY 关断复核收束) Asia/Shanghai
 - authority: 主人裁决 — **不做美团产品**；学习成熟管理系统/人员/代理/指标/开店链路（客户熟悉→上手快）；底盘仍为 ONEDAY；仅工作流整合页自研差异
 - strategy: `PRODUCT_DUAL_TRACK_STRATEGY.md`
 - rule: **对成熟场景施工**。禁止自创陌生管理 IA；也禁止宣称「已是美团」。
@@ -142,7 +142,7 @@
 
 ## 6. 当前下一刀
 
-  > **当前：W∞-88 PASS** — Management 客户端（MPC-06 `/m/customers`）+ 会员中心（MPC-08 `/m/memberships`）全标对概况条 densify：为两者补齐与 `/m/offers`/`/m/dashboard` 一致的独立「白卡概况条 `summaryStrip`」（`客户数据概况` 6 项真实客户字段推导；`会员数据概况` 3 项真实会员字段推导），使全仓 Management MPC 主面（工作台/门店/商品/客户/会员/订单/评价/营销/分析/员工/内容/装修/设置/通知/零星面）均已具备 topBar+heroCard+概况条+分布面板层级。**下一刀：** 转 inventory `PARITY` 关断复核（本文件状态列逐面复审 toward PARITY），或推进未闭合项（HUMAN-PILOT-HANDOFF / G1 OWNER GATE）。
+  > **当前：W∞-89 PASS** — 四端 PARITY 关断复核收束（toward PARITY，禁止假 BI）：新增可复跑防护护栏 `tests/g1-winf89-four-terminal-parity-closeout.test.mjs`，把四端所有走完 W 波 densify 主面统一纳入「美团成熟场景完整对标」关断守卫——逐一断言 Management MPC 22 主面（工作台/门店/商品/客户/会员/订单/评价/营销/分析/员工/角色权限/内容/装修/设置/通知 + 零星面 attribution/entry-funnel/connectors/external-actions/ai/permission-audit/circles）携带 `推广员工具 · <label>` 黄顶栏 + `summaryStrip` + 诚实边界（非本平台下单/不代替平台成交/非本平台成交/不包含本平台收款/不伪造第三方/不宣称已接入/source=local/保留审批和审计记录），并对 offers/customers/memberships 三页 `page.module.css` 宽度列数 + `≤900px` 两列堆叠断言；Employee ME 8 主面（工作台/任务收件箱/客户档案/门店入口/会员核销/执行提醒/我的/获客池）携带工具身份 + summary/hero + 诚实边界；Consumer MH5 5 主面（附近/门店页/统一入口/我的/商圈）携带推广员工具 mark + `summaryStrip`/分布 + 非本平台下单/不在此下单诚实边界；Platform/Channel/Circle 13 主面（平台总览/租户/渠道/代理/商圈/outbox/安全审计/连接器/模板/商圈联盟/商圈成员/渠道代理/商户开通）携带黄顶栏 + `summaryStrip`/分布 + 诚实边界；`/m/workflows` 仅断言保持 `工作流整合` 定制身份不复刻美团。它把「商用前提 = 四端完整对标」在测试层落成可回归断言，防止视觉/IA densify 回退。新增 tests/g1-winf89 6/6，`g1-winf*.test.mjs` 322/322；`pnpm typecheck` 20/20、`pnpm build` 20/20；单测 47 passed（2 个 pre-existing token/storefront-renderer 失败照旧）；新文件 eslint+prettier clean。诚实边界全保留（这是工程对标断言，不等于 owner 已签 `PRODUCT_OWNER_UI_ACCEPTANCE.md`、不宣称已接美团实时、不复活 consumer_orders/本平台下单/收单）。See evidence/G1-MEITUAN-PARITY/WINF89/ACCEPTANCE.md. **下一刀：** 推进未闭合项（HUMAN-PILOT-HANDOFF / G1 OWNER GATE，均由主人签验），或按主人指示继续逐面密度 densify。
 
 **历史波（自 W24 起）累计——**
 
