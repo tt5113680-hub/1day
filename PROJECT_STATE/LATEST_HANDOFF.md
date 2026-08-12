@@ -10,8 +10,8 @@
 ## Current task
 
 - branch: `hardening/COMMERCIAL-COMPLETION`
-- last_verified: **2026-08-12** — 主人裁决落地：深度计划写入 + TASK_QUEUE 重开 W∞-107+（**跳过 §5 READY**）
-- next_wave: **W∞-107** 工作台队列一键处置（MPC-01）
+- last_verified: **2026-08-13** — W∞-107 工作台队列一键处置 PASS（migration 062 + dispositions API + /m/dashboard 早会队列处置 + QueueRow，`g1-winf` 377/377、build/typecheck 20/20、unit 49/49）
+- next_wave: **W∞-108** Storefront 发布链闭环加固（Phase1 / 1.2；装修 Draft→Preview→Publish→Consumer 可读）
 - deferred: §5 开通 READY 全编排（待主人「开始第五节」）
 - blocker: **none (engineering)** — human G1 UI sign 仍开放但不阻塞深度刀
 

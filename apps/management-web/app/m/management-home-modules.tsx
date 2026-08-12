@@ -3,7 +3,11 @@
 import { taskTitleCopy } from '@oneday/ui';
 import type { ReactNode } from 'react';
 import styles from '../page.module.css';
-import { ManagementDeepPageNav, ManagementEarlyMeetingKpiStrip } from './management-early-meeting-kpi';
+import { QueueRow } from './management-queue-row';
+import {
+  ManagementDeepPageNav,
+  ManagementEarlyMeetingKpiStrip,
+} from './management-early-meeting-kpi';
 
 type DashboardData = {
   metrics: {
@@ -33,14 +37,46 @@ type DashboardData = {
     openTasks: number;
   }[];
   queues: {
-    consults: { id: string; title: string; occurredAt: string; deepLink: string }[];
-    leads: { id: string; title: string; status: string; occurredAt: string; deepLink: string }[];
+    consults: {
+      id: string;
+      title: string;
+      occurredAt: string;
+      deepLink: string;
+      disposition: 'pending' | 'handled' | 'ignored';
+    }[];
+    leads: {
+      id: string;
+      title: string;
+      status: string;
+      occurredAt: string;
+      deepLink: string;
+      disposition: 'pending' | 'handled' | 'ignored';
+    }[];
   };
-  anomalies: { id: string; type: string; title: string; occurredAt: string; deepLink: string }[];
+  anomalies: {
+    id: string;
+    type: string;
+    title: string;
+    occurredAt: string;
+    deepLink: string;
+    disposition: 'pending' | 'handled' | 'ignored';
+  }[];
   suggestions: { id: string; title: string; reason: string; deepLink: string }[];
+  disposition: {
+    total: number;
+    pending: number;
+    handled: number;
+    ignored: number;
+    handledRate: number;
+  };
   layout: {
     mode: 'published' | 'preview';
-    modules: { id: string; module_type: string; position: number; config: Record<string, unknown> }[];
+    modules: {
+      id: string;
+      module_type: string;
+      position: number;
+      config: Record<string, unknown>;
+    }[];
   } | null;
 };
 
@@ -106,6 +142,9 @@ function Bars({ items, total }: { items: Bucket[]; total: number }) {
 export function PortalManagementHomeLayout({
   data,
   distribution,
+  message = '',
+  busy = null,
+  dispose,
 }: {
   data: DashboardData;
   distribution: {
@@ -122,6 +161,15 @@ export function PortalManagementHomeLayout({
     anomalyTotal: number;
     queueTotal: number;
   };
+  message?: string;
+  busy?: string | null;
+  dispose: (
+    type: string,
+    sourceId: string,
+    action: 'handled' | 'ignored',
+    title: string,
+    deepLink: string,
+  ) => void;
 }) {
   const modules = (data.layout?.modules ?? []).filter((module) => visible(module.config));
   const m = data.metrics;
@@ -133,8 +181,7 @@ export function PortalManagementHomeLayout({
   ] as const;
 
   const renderModule = (module: (typeof modules)[number]): ReactNode => {
-    const type =
-      module.module_type === 'quick_actions' ? 'action_grid' : module.module_type;
+    const type = module.module_type === 'quick_actions' ? 'action_grid' : module.module_type;
     const section = String(module.config.section ?? '');
 
     switch (type) {
@@ -150,7 +197,8 @@ export function PortalManagementHomeLayout({
           </section>
         );
       case 'content':
-        if (section === 'deep_nav') return <ManagementDeepPageNav key={module.id} page="workbench" />;
+        if (section === 'deep_nav')
+          return <ManagementDeepPageNav key={module.id} page="workbench" />;
         if (section === 'summary_strip')
           return (
             <section className={styles.summaryStrip} aria-label="工作台数据概况" key={module.id}>
@@ -227,7 +275,10 @@ export function PortalManagementHomeLayout({
                 </div>
                 <div className={styles.panelBlock}>
                   <h3>经营信号分布</h3>
-                  <Bars items={distribution.operationalDist} total={distribution.operationalTotal} />
+                  <Bars
+                    items={distribution.operationalDist}
+                    total={distribution.operationalTotal}
+                  />
                 </div>
                 <div className={styles.panelBlock}>
                   <h3>门店对比（30日入口+待办）</h3>
@@ -310,13 +361,21 @@ export function PortalManagementHomeLayout({
               </div>
               {data.anomalies.length ? (
                 data.anomalies.map((item) => (
-                  <a className={styles.anomaly} href={item.deepLink} key={item.id}>
-                    <div>
-                      <strong>{item.type === 'overdue_task' ? '任务逾期' : '归属审批'}</strong>
-                      <p>{taskTitleCopy(item.title)}</p>
-                    </div>
-                    <time>{new Date(item.occurredAt).toLocaleDateString()}</time>
-                  </a>
+                  <QueueRow
+                    key={item.id}
+                    item={{
+                      kind: 'anomaly',
+                      type: item.type,
+                      label: item.type === 'overdue_task' ? '任务逾期' : '归属审批',
+                      title: taskTitleCopy(item.title),
+                      id: item.id,
+                      occurredAt: item.occurredAt,
+                      disposition: item.disposition,
+                    }}
+                    deepLink={item.deepLink}
+                    busy={busy}
+                    dispose={dispose}
+                  />
                 ))
               ) : (
                 <div className={styles.empty}>当前没有待处理异常。</div>
@@ -354,13 +413,20 @@ export function PortalManagementHomeLayout({
               </div>
               {data.queues.consults.length ? (
                 data.queues.consults.map((item) => (
-                  <a className={styles.anomaly} href={item.deepLink} key={item.id}>
-                    <div>
-                      <strong>入口咨询</strong>
-                      <p>{item.title}</p>
-                    </div>
-                    <time>{new Date(item.occurredAt).toLocaleString()}</time>
-                  </a>
+                  <QueueRow
+                    key={item.id}
+                    item={{
+                      kind: 'consult',
+                      label: '入口咨询',
+                      title: item.title,
+                      id: item.id,
+                      occurredAt: item.occurredAt,
+                      disposition: item.disposition,
+                    }}
+                    deepLink={item.deepLink}
+                    busy={busy}
+                    dispose={dispose}
+                  />
                 ))
               ) : (
                 <div className={styles.empty}>今日暂无咨询记录。</div>
@@ -378,13 +444,21 @@ export function PortalManagementHomeLayout({
               </div>
               {data.queues.leads.length ? (
                 data.queues.leads.map((item) => (
-                  <a className={styles.anomaly} href={item.deepLink} key={item.id}>
-                    <div>
-                      <strong>{item.title}</strong>
-                      <p>{item.status === 'open' ? '待认领' : '已认领'}</p>
-                    </div>
-                    <time>{new Date(item.occurredAt).toLocaleDateString()}</time>
-                  </a>
+                  <QueueRow
+                    key={item.id}
+                    item={{
+                      kind: 'lead',
+                      label: '线索',
+                      title: item.title,
+                      status: item.status,
+                      id: item.id,
+                      occurredAt: item.occurredAt,
+                      disposition: item.disposition,
+                    }}
+                    deepLink={item.deepLink}
+                    busy={busy}
+                    dispose={dispose}
+                  />
                 ))
               ) : (
                 <div className={styles.empty}>暂无开放线索。</div>
@@ -405,6 +479,33 @@ export function PortalManagementHomeLayout({
           装修预览模式 · 仅当前登录可见 · 30 分钟有效
         </p>
       ) : null}
+      <section className={styles.panel} aria-label="早会队列处置">
+        <div className={styles.panelHead}>
+          <h2>早会队列处置</h2>
+          <span className={styles.panelMeta}>
+            处置率 {data.disposition.handledRate}%（已处理 {data.disposition.handled}/
+            {data.disposition.total} 项）
+          </span>
+        </div>
+        <div className={styles.rateStrip}>
+          {[
+            { label: '可处置项', value: data.disposition.total },
+            { label: '待处置', value: data.disposition.pending },
+            { label: '已处理', value: data.disposition.handled },
+            { label: '已忽略', value: data.disposition.ignored },
+          ].map((item) => (
+            <article className={styles.rateItem} key={item.label}>
+              <span>{item.label}</span>
+              <strong>{item.value}</strong>
+            </article>
+          ))}
+        </div>
+        {message ? (
+          <p className={styles.panelMeta} role="status">
+            {message}
+          </p>
+        ) : null}
+      </section>
       {modules.map((module) => renderModule(module))}
     </>
   );

@@ -8,6 +8,7 @@ const read = (rel) => readFileSync(join(root, rel), 'utf8');
 
 test('W∞-99: management dashboard exposes早会经营 KPIs + store comparison + operational queues', () => {
   const page = read('apps/management-web/app/page.tsx');
+  const portal = read('apps/management-web/app/m/management-home-modules.tsx');
   const api = read('apps/api/src/management-dashboard.service.ts');
   const kpi = read('apps/management-web/app/m/management-early-meeting-kpi.tsx');
   assert.match(page, /ManagementEarlyMeetingKpiStrip/);
@@ -20,8 +21,11 @@ test('W∞-99: management dashboard exposes早会经营 KPIs + store comparison 
   assert.match(page, /m\.redemptionsToday/);
   assert.match(page, /m\.taskCompletionRateToday/);
   assert.match(page, /aria-label="门店对比"/);
-  assert.match(page, /aria-label="咨询队列"/);
-  assert.match(page, /aria-label="线索队列"/);
+  // W∞-107: consult and lead operational queues still render with aria labels in the
+  // portal (module-driven) layout, and the default path consolidates them into 早会队列处置.
+  assert.match(portal, /aria-label="咨询队列"/);
+  assert.match(portal, /aria-label="线索队列"/);
+  assert.match(page, /早会队列处置/);
   assert.match(page, /\/m\/orders/);
   assert.match(page, /\/m\/reviews/);
   assert.match(page, /\/m\/notifications/);
@@ -30,6 +34,8 @@ test('W∞-99: management dashboard exposes早会经营 KPIs + store comparison 
   assert.match(api, /queues:\s*\{/);
   assert.match(api, /consultsToday/);
   assert.match(api, /taskCompletionRateToday/);
+  assert.match(api, /dispositionSummary/);
+  assert.match(api, /handledRate/);
 });
 
 test('W∞-99: employee workbench adds share/nurture grid + lead/share KPIs + queues', () => {

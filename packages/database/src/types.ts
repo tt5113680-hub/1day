@@ -1516,6 +1516,25 @@ export interface EntryFunnelSavedViewsTable {
   version: Generated<number>;
 }
 
+/** W∞-107: management workbench queue one-click disposition (handled/ignored). */
+export interface ManagementQueueDispositionsTable {
+  id: string;
+  tenant_id: string;
+  queue_type: string;
+  source_id: string;
+  status: string;
+  deep_link: string | null;
+  title: string | null;
+  disposition_at: Timestamp;
+  disposed_by: string | null;
+  created_at: Timestamp;
+  created_by: string | null;
+  updated_at: Timestamp;
+  updated_by: string | null;
+  deleted_at: Timestamp | null;
+  version: Generated<number>;
+}
+
 export interface Database {
   tenants: TenantsTable;
   agent_regions: AgentRegionsTable;
@@ -1608,4 +1627,5 @@ export interface Database {
   consumer_operating_projections: ConsumerOperatingProjectionsTable;
   store_reviews: StoreReviewsTable;
   marketing_campaigns: MarketingCampaignsTable;
+  management_queue_dispositions: ManagementQueueDispositionsTable;
 }

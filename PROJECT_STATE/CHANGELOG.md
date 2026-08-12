@@ -1,5 +1,17 @@
 # CHANGELOG
 
+## 2026-08-13 - G1-W∞-107 工作台队列一键处置（MPC-01 / Phase1 1.3）PASS
+
+- 承接 `MEITUAN_DEPTH_OPTIMIZATION_PLAN.md` Phase1/1.3，把管理工作台早会队列从「只看 deep-link」升级为「**一键处置**」闭环（列表→打开→回写已处理/忽略→审计），全部真实 DB、禁止假 BI、无 GMV：
+  - **migration `062_management_queue_disposition`**：新表 `management_queue_dispositions`（tenant_scoped，`(tenant_id,queue_type,source_id)` 唯一，queue_type=overdue_task/ownership_approval/consult/lead，status=handled/ignored，含 deep_link/title/disposition_at/disposed_by/version）。
+  - **`POST /api/v1/management/dashboard/dispositions`**（`ManagementQueueDispositionController/Service`）：`tenant.manage` fail-closed + Idempotency-Key 幂等重放 + audit_logs `management.queue_disposition` + outbox `management.queue_disposition.v1`（照抄 employee-notification 闭环，无 GMV）。
+  - **dashboard GET**：查询 dispositions，每条异常/咨询/线索项标注 `disposition`(pending/handled/ignored)+`dispositionAt`，返回摘要 `{total,pending,handled,ignored,handledRate}`（可处置率=已处理/可处置项，真实处置记录）。
+  - **`/m/dashboard`（page.tsx + management-home-modules.tsx portal 双路径）**：新增「早会队列处置」白卡（处置率 % + 可处置项/待处置/已处理/已忽略 rateStrip）+ 新组件 `management-queue-row.tsx` `QueueRow`（打开→ deep-link + 已处理/忽略 按钮，busy+message+load 回读，已处置显示徽标）+ CSS。
+- 诚实边界全保留（处置率仅登记处置状态，不代履约美团/抖音订单、不含支付金额、非本平台下单、无 GMV）；`/m/workflows` CUSTOM；不复活 consumer_orders/本平台下单/收单。
+- 新增 `tests/g1-winf107-workbench-queue-disposition.test.mjs` 5/5 + `tests/management-queue-disposition.test.mjs` 1/1（真实 DB：400/403/幂等重放/dashboard 回读 handled+可处置率/audit/outbox）；随动更新 `g1-winf99`（咨询/线索队列 aria 改 portal 布局 + 新增早会队列处置/可处置率断言）。
+- `g1-winf*.test.mjs` **377/377**（原 372+5）；`pnpm typecheck` 20/20、`pnpm build` 20/20、`pnpm test:unit` **49/49**、eslint+prettier clean。（`sys-5-storefront-renderer` storefrontActionIcon 为既有基线失败，clean HEAD 复现一致与 W∞-107 无关。）
+- `pnpm db:migrate`（DATABASE_URL=oneday_v3_test）apply 062。Not owner sign-off（G1 人工验签仍开放）。See evidence/G1-MEITUAN-PARITY/WINF107/ACCEPTANCE.md.
+
 ## 2026-08-12 - 主人深度裁决落地：MEITUAN_DEPTH_OPTIMIZATION_PLAN + 重开 W∞-107+（跳过 §5 READY）
 
 - 写入权威计划 `PROJECT_STATE/MEITUAN_DEPTH_OPTIMIZATION_PLAN.md`：§2–4 目标深度/底座产品/对标 **100%**；§5 开通 READY **DEFERRED**；§6 SaaS **最强**；§7 Phase1–3 落地切片；§8–10 按原方案。

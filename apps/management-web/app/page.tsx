@@ -2,8 +2,12 @@
 import { SessionApiClient } from '@oneday/session-client';
 import { useTenantSync } from '@oneday/sync-client';
 import { AppStatePanel, Button, taskTitleCopy } from '@oneday/ui';
-import { ManagementDeepPageNav, ManagementEarlyMeetingKpiStrip } from './m/management-early-meeting-kpi';
+import {
+  ManagementDeepPageNav,
+  ManagementEarlyMeetingKpiStrip,
+} from './m/management-early-meeting-kpi';
 import { PortalManagementHomeLayout } from './m/management-home-modules';
+import { QueueRow, type QueueDisposition } from './m/management-queue-row';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import styles from './page.module.css';
@@ -36,14 +40,46 @@ type Data = {
     openTasks: number;
   }[];
   queues: {
-    consults: { id: string; title: string; occurredAt: string; deepLink: string }[];
-    leads: { id: string; title: string; status: string; occurredAt: string; deepLink: string }[];
+    consults: {
+      id: string;
+      title: string;
+      occurredAt: string;
+      deepLink: string;
+      disposition: 'pending' | 'handled' | 'ignored';
+    }[];
+    leads: {
+      id: string;
+      title: string;
+      status: string;
+      occurredAt: string;
+      deepLink: string;
+      disposition: 'pending' | 'handled' | 'ignored';
+    }[];
   };
-  anomalies: { id: string; type: string; title: string; occurredAt: string; deepLink: string }[];
+  anomalies: {
+    id: string;
+    type: string;
+    title: string;
+    occurredAt: string;
+    deepLink: string;
+    disposition: 'pending' | 'handled' | 'ignored';
+  }[];
   suggestions: { id: string; title: string; reason: string; deepLink: string }[];
+  disposition: {
+    total: number;
+    pending: number;
+    handled: number;
+    ignored: number;
+    handledRate: number;
+  };
   layout: {
     mode: 'published' | 'preview';
-    modules: { id: string; module_type: string; position: number; config: Record<string, unknown> }[];
+    modules: {
+      id: string;
+      module_type: string;
+      position: number;
+      config: Record<string, unknown>;
+    }[];
   } | null;
 };
 
@@ -129,22 +165,28 @@ export default function ManagementHome() {
   const previewToken = searchParams.get('preview') ?? undefined;
   const [state, setState] = useState<'loading' | 'ready' | 'forbidden' | 'error'>('loading');
   const [data, setData] = useState<Data | null>(null);
-  const load = useCallback(async (mode: 'full' | 'quiet' = 'full') => {
-    if (!(await sessionApi.context())) return setState('forbidden');
-    if (mode === 'full') setState('loading');
-    try {
-      const previewQuery = previewToken ? `?preview=${encodeURIComponent(previewToken)}` : '';
-      const r = await sessionApi.request(`${api}/api/v1/management/dashboard${previewQuery}`, {
-        headers: {},
-      });
-      if ([401, 403].includes(r.status)) return setState('forbidden');
-      if (!r.ok) throw Error('LOAD');
-      setData((await r.json()).data);
-      setState('ready');
-    } catch {
-      if (mode === 'full') setState('error');
-    }
-  }, [previewToken]);
+  const [message, setMessage] = useState('');
+  const [busy, setBusy] = useState<string | null>(null);
+  const headers = () => ({ 'content-type': 'application/json' });
+  const load = useCallback(
+    async (mode: 'full' | 'quiet' = 'full') => {
+      if (!(await sessionApi.context())) return setState('forbidden');
+      if (mode === 'full') setState('loading');
+      try {
+        const previewQuery = previewToken ? `?preview=${encodeURIComponent(previewToken)}` : '';
+        const r = await sessionApi.request(`${api}/api/v1/management/dashboard${previewQuery}`, {
+          headers: {},
+        });
+        if ([401, 403].includes(r.status)) return setState('forbidden');
+        if (!r.ok) throw Error('LOAD');
+        setData((await r.json()).data);
+        setState('ready');
+      } catch {
+        if (mode === 'full') setState('error');
+      }
+    },
+    [previewToken],
+  );
   useEffect(() => {
     void load();
   }, [load]);
@@ -155,6 +197,31 @@ export default function ManagementHome() {
     () => void load('quiet'),
     state === 'ready',
   );
+  const dispose = async (
+    queueType: string,
+    sourceId: string,
+    action: 'handled' | 'ignored',
+    title: string,
+    deepLink: string,
+  ) => {
+    const key = `${queueType}:${sourceId}:${action}`;
+    setBusy(key);
+    setMessage('');
+    try {
+      const r = await sessionApi.request(`${api}/api/v1/management/dashboard/dispositions`, {
+        method: 'POST',
+        headers: headers(),
+        body: JSON.stringify({ queueType, sourceId, action, title, deepLink }),
+      });
+      if (!r.ok) throw Error('DISPOSE_FAILED');
+      setMessage(action === 'handled' ? '已标记为已处理。' : '已标记为忽略。');
+      await load();
+    } catch {
+      setMessage('操作未完成，请检查网络后重试。');
+    } finally {
+      setBusy(null);
+    }
+  };
   const taskMetricDist = useMemo(() => {
     const m = data?.metrics;
     if (!m) return [];
@@ -274,6 +341,11 @@ export default function ManagementHome() {
       {useLayout ? (
         <PortalManagementHomeLayout
           data={data}
+          dispose={(type, sourceId, action, title, deepLink) =>
+            void dispose(type, sourceId, action, title, deepLink)
+          }
+          busy={busy}
+          message={message}
           distribution={{
             taskMetricDist,
             customerMetricDist,
@@ -291,227 +363,267 @@ export default function ManagementHome() {
         />
       ) : (
         <>
-      <section className={styles.heroCard} aria-label="工作台概览">
-        <h1>工作台</h1>
-        <p>今日概况 · 常用功能 · 待办提醒 · 入口痕迹；不含支付金额与第三方订单履约</p>
-      </section>
+          <section className={styles.heroCard} aria-label="工作台概览">
+            <h1>工作台</h1>
+            <p>今日概况 · 常用功能 · 待办提醒 · 入口痕迹；不含支付金额与第三方订单履约</p>
+          </section>
 
-      <ManagementDeepPageNav page="workbench" />
+          <ManagementDeepPageNav page="workbench" />
 
-      <section className={styles.summaryStrip} aria-label="工作台数据概况">
-        <span className={styles.summaryStripTitle}>今日概况</span>
-        <div className={styles.todayItem}>
-          <span>今日客户</span>
-          <strong>{m.customersToday}</strong>
-        </div>
-        <div className={styles.todayItem}>
-          <span>今日待办</span>
-          <strong>{m.openTasksToday}</strong>
-        </div>
-        <div className={styles.todayItem}>
-          <span>今日完成</span>
-          <strong>{m.completedTasksToday}</strong>
-        </div>
-        <div className={styles.todayItem}>
-          <span>完成率</span>
-          <strong>
-            {m.taskCompletionRateToday != null ? `${m.taskCompletionRateToday}%` : '—'}
-          </strong>
-        </div>
-        <div className={styles.todayItem}>
-          <span>逾期</span>
-          <strong className={m.overdueTasks > 0 ? styles.danger : undefined}>
-            {m.overdueTasks}
-          </strong>
-        </div>
-        <div className={styles.todayItem}>
-          <span>门店</span>
-          <strong>{m.stores}</strong>
-        </div>
-        <div className={styles.todayItem}>
-          <span>在岗跟进</span>
-          <strong>{m.activeAssignees}</strong>
-        </div>
-      </section>
+          <section className={styles.summaryStrip} aria-label="工作台数据概况">
+            <span className={styles.summaryStripTitle}>今日概况</span>
+            <div className={styles.todayItem}>
+              <span>今日客户</span>
+              <strong>{m.customersToday}</strong>
+            </div>
+            <div className={styles.todayItem}>
+              <span>今日待办</span>
+              <strong>{m.openTasksToday}</strong>
+            </div>
+            <div className={styles.todayItem}>
+              <span>今日完成</span>
+              <strong>{m.completedTasksToday}</strong>
+            </div>
+            <div className={styles.todayItem}>
+              <span>完成率</span>
+              <strong>
+                {m.taskCompletionRateToday != null ? `${m.taskCompletionRateToday}%` : '—'}
+              </strong>
+            </div>
+            <div className={styles.todayItem}>
+              <span>逾期</span>
+              <strong className={m.overdueTasks > 0 ? styles.danger : undefined}>
+                {m.overdueTasks}
+              </strong>
+            </div>
+            <div className={styles.todayItem}>
+              <span>门店</span>
+              <strong>{m.stores}</strong>
+            </div>
+            <div className={styles.todayItem}>
+              <span>在岗跟进</span>
+              <strong>{m.activeAssignees}</strong>
+            </div>
+          </section>
 
-      <ManagementEarlyMeetingKpiStrip page="workbench" metrics={m} state="ready" />
+          <ManagementEarlyMeetingKpiStrip page="workbench" metrics={m} state="ready" />
 
-      <section className={styles.panel} aria-label="管理工作台分布">
-        <div className={styles.panelHead}>
-          <h2>管理工作台分布</h2>
-          <span className={styles.panelMeta}>由 dashboard 真实指标与队列行推导</span>
-        </div>
-        <div className={styles.distribution}>
-          <div className={styles.panelBlock}>
-            <h3>待办指标分布</h3>
-            <Bars items={taskMetricDist} total={taskMetricTotal} />
-          </div>
-          <div className={styles.panelBlock}>
-            <h3>客户门店分布</h3>
-            <Bars items={customerMetricDist} total={customerMetricTotal} />
-          </div>
-          <div className={styles.panelBlock}>
-            <h3>异常类型分布</h3>
-            <Bars items={anomalyDist} total={anomalyTotal} />
-          </div>
-          <div className={styles.panelBlock}>
-            <h3>提醒队列分布</h3>
-            <Bars items={queueDist} total={queueTotal} />
-          </div>
-          <div className={styles.panelBlock}>
-            <h3>经营信号分布</h3>
-            <Bars items={operationalDist} total={operationalTotal} />
-          </div>
-          <div className={styles.panelBlock}>
-            <h3>门店对比（30日入口+待办）</h3>
-            <Bars items={storeDist} total={storeTotal} />
-          </div>
-        </div>
-      </section>
+          <section className={styles.panel} aria-label="管理工作台分布">
+            <div className={styles.panelHead}>
+              <h2>管理工作台分布</h2>
+              <span className={styles.panelMeta}>由 dashboard 真实指标与队列行推导</span>
+            </div>
+            <div className={styles.distribution}>
+              <div className={styles.panelBlock}>
+                <h3>待办指标分布</h3>
+                <Bars items={taskMetricDist} total={taskMetricTotal} />
+              </div>
+              <div className={styles.panelBlock}>
+                <h3>客户门店分布</h3>
+                <Bars items={customerMetricDist} total={customerMetricTotal} />
+              </div>
+              <div className={styles.panelBlock}>
+                <h3>异常类型分布</h3>
+                <Bars items={anomalyDist} total={anomalyTotal} />
+              </div>
+              <div className={styles.panelBlock}>
+                <h3>提醒队列分布</h3>
+                <Bars items={queueDist} total={queueTotal} />
+              </div>
+              <div className={styles.panelBlock}>
+                <h3>经营信号分布</h3>
+                <Bars items={operationalDist} total={operationalTotal} />
+              </div>
+              <div className={styles.panelBlock}>
+                <h3>门店对比（30日入口+待办）</h3>
+                <Bars items={storeDist} total={storeTotal} />
+              </div>
+            </div>
+          </section>
 
-      {data.storeBreakdown.length ? (
-        <section className={styles.panel} aria-label="门店对比">
-          <div className={styles.panelHead}>
-            <h2>门店对比</h2>
-            <a className={styles.link} href="/m/stores">
-              全部门店 →
-            </a>
-          </div>
-          <div className={styles.storeTable}>
-            {data.storeBreakdown.map((store) => (
-              <article className={styles.storeRow} key={store.id}>
-                <strong>{store.name}</strong>
-                <span>30日入口 {store.entryOpens30d}</span>
-                <span>待办 {store.openTasks}</span>
-              </article>
-            ))}
-          </div>
-        </section>
-      ) : null}
+          {data.storeBreakdown.length ? (
+            <section className={styles.panel} aria-label="门店对比">
+              <div className={styles.panelHead}>
+                <h2>门店对比</h2>
+                <a className={styles.link} href="/m/stores">
+                  全部门店 →
+                </a>
+              </div>
+              <div className={styles.storeTable}>
+                {data.storeBreakdown.map((store) => (
+                  <article className={styles.storeRow} key={store.id}>
+                    <strong>{store.name}</strong>
+                    <span>30日入口 {store.entryOpens30d}</span>
+                    <span>待办 {store.openTasks}</span>
+                  </article>
+                ))}
+              </div>
+            </section>
+          ) : null}
 
-      <section className={styles.panel} aria-label="常用功能">
-        <div className={styles.panelHead}>
-          <h2>常用功能</h2>
-          <span className={styles.panelMeta}>推广员工具快捷入口</span>
-        </div>
-        <div className={styles.functions}>
-          {SHORTCUTS.map((item) => (
-            <a className={styles.function} href={item.href} key={item.href}>
-              <span className={styles.functionIcon} aria-hidden>
-                {SHORTCUT_ICONS[item.label] ?? '·'}
+          <section className={styles.panel} aria-label="常用功能">
+            <div className={styles.panelHead}>
+              <h2>常用功能</h2>
+              <span className={styles.panelMeta}>推广员工具快捷入口</span>
+            </div>
+            <div className={styles.functions}>
+              {SHORTCUTS.map((item) => (
+                <a className={styles.function} href={item.href} key={item.href}>
+                  <span className={styles.functionIcon} aria-hidden>
+                    {SHORTCUT_ICONS[item.label] ?? '·'}
+                  </span>
+                  <strong>{item.label}</strong>
+                  <span>{item.desc}</span>
+                </a>
+              ))}
+            </div>
+          </section>
+
+          <section className={styles.panel} aria-label="作业数据">
+            <div className={styles.panelHead}>
+              <h2>作业数据</h2>
+              <a className={styles.link} href="/m/customers">
+                客户跟进 →
+              </a>
+            </div>
+            <div className={styles.metrics}>
+              {metricCards.map((item) => (
+                <article className={styles.metric} key={item.label}>
+                  <strong>{item.value}</strong>
+                  <span>{item.label}</span>
+                  <small>{item.hint}</small>
+                </article>
+              ))}
+            </div>
+          </section>
+
+          <section className={styles.panel} aria-label="早会队列处置">
+            <div className={styles.panelHead}>
+              <h2>早会队列处置</h2>
+              <span className={styles.panelMeta}>
+                处置率 {data.disposition.handledRate}%（已处理 {data.disposition.handled}/
+                {data.disposition.total} 项）
               </span>
-              <strong>{item.label}</strong>
-              <span>{item.desc}</span>
-            </a>
-          ))}
-        </div>
-      </section>
+            </div>
+            <div className={styles.rateStrip}>
+              {[
+                { label: '可处置项', value: data.disposition.total },
+                { label: '待处置', value: data.disposition.pending },
+                { label: '已处理', value: data.disposition.handled },
+                { label: '已忽略', value: data.disposition.ignored },
+              ].map((item) => (
+                <article className={styles.rateItem} key={item.label}>
+                  <span>{item.label}</span>
+                  <strong>{item.value}</strong>
+                </article>
+              ))}
+            </div>
+            {message ? (
+              <p className={styles.panelMeta} role="status">
+                {message}
+              </p>
+            ) : null}
+            <div className={styles.storeTable}>
+              {[
+                ...data.anomalies.map(
+                  (item): QueueDisposition => ({
+                    kind: 'anomaly',
+                    type: item.type,
+                    label: item.type === 'overdue_task' ? '任务逾期' : '归属审批',
+                    title: taskTitleCopy(item.title),
+                    id: item.id,
+                    occurredAt: item.occurredAt,
+                    disposition: item.disposition,
+                  }),
+                ),
+                ...data.queues.consults.map(
+                  (item): QueueDisposition => ({
+                    kind: 'consult',
+                    label: '入口咨询',
+                    title: item.title,
+                    id: item.id,
+                    occurredAt: item.occurredAt,
+                    disposition: item.disposition,
+                  }),
+                ),
+                ...data.queues.leads.map(
+                  (item): QueueDisposition => ({
+                    kind: 'lead',
+                    label: '线索',
+                    title: item.title,
+                    status: item.status,
+                    id: item.id,
+                    occurredAt: item.occurredAt,
+                    disposition: item.disposition,
+                  }),
+                ),
+              ].map((item) => (
+                <QueueRow
+                  key={item.id}
+                  item={item}
+                  deepLink={
+                    item.kind === 'anomaly'
+                      ? (data.anomalies.find((row) => row.id === item.id)?.deepLink ??
+                        '/m/customers')
+                      : item.kind === 'consult'
+                        ? '/m/entry-funnel'
+                        : '/e/leads'
+                  }
+                  busy={busy}
+                  dispose={(type, sourceId, action, title, deepLink) =>
+                    void dispose(type, sourceId, action, title, deepLink)
+                  }
+                />
+              ))}
+            </div>
+          </section>
 
-      <section className={styles.panel} aria-label="作业数据">
-        <div className={styles.panelHead}>
-          <h2>作业数据</h2>
-          <a className={styles.link} href="/m/customers">
-            客户跟进 →
-          </a>
-        </div>
-        <div className={styles.metrics}>
-          {metricCards.map((item) => (
-            <article className={styles.metric} key={item.label}>
-              <strong>{item.value}</strong>
-              <span>{item.label}</span>
-              <small>{item.hint}</small>
-            </article>
-          ))}
-        </div>
-      </section>
-
-      <div className={styles.grid}>
-        <section className={styles.panel} aria-label="待办与异常">
-          <div className={styles.head}>
-            <h2>待办与异常</h2>
-            <span className={styles.panelMeta}>{data.anomalies.length} 项</span>
+          <div className={styles.grid}>
+            <section className={styles.panel} aria-label="待办与异常">
+              <div className={styles.head}>
+                <h2>待办与异常</h2>
+                <span className={styles.panelMeta}>{data.anomalies.length} 项</span>
+              </div>
+              {data.anomalies.length ? (
+                data.anomalies.map((item) => (
+                  <a className={styles.anomaly} href={item.deepLink} key={item.id}>
+                    <div>
+                      <strong>{item.type === 'overdue_task' ? '任务逾期' : '归属审批'}</strong>
+                      <p>{taskTitleCopy(item.title)}</p>
+                    </div>
+                    <time>{new Date(item.occurredAt).toLocaleDateString()}</time>
+                  </a>
+                ))
+              ) : (
+                <div className={styles.empty}>当前没有待处理异常。</div>
+              )}
+            </section>
+            <section className={styles.panel} aria-label="作业提醒">
+              <div className={styles.head}>
+                <h2>作业提醒</h2>
+                <span className={styles.panelMeta}>可解释</span>
+              </div>
+              {data.suggestions.length ? (
+                data.suggestions.map((item) => (
+                  <article className={styles.ai} key={item.id}>
+                    <strong>{item.title}</strong>
+                    <p>{item.reason}</p>
+                    <a href={item.deepLink}>去处理 →</a>
+                  </article>
+                ))
+              ) : (
+                <div className={styles.empty}>暂无作业提醒。</div>
+              )}
+            </section>
           </div>
-          {data.anomalies.length ? (
-            data.anomalies.map((item) => (
-              <a className={styles.anomaly} href={item.deepLink} key={item.id}>
-                <div>
-                  <strong>{item.type === 'overdue_task' ? '任务逾期' : '归属审批'}</strong>
-                  <p>{taskTitleCopy(item.title)}</p>
-                </div>
-                <time>{new Date(item.occurredAt).toLocaleDateString()}</time>
-              </a>
-            ))
-          ) : (
-            <div className={styles.empty}>当前没有待处理异常。</div>
-          )}
-        </section>
-        <section className={styles.panel} aria-label="作业提醒">
-          <div className={styles.head}>
-            <h2>作业提醒</h2>
-            <span className={styles.panelMeta}>可解释</span>
-          </div>
-          {data.suggestions.length ? (
-            data.suggestions.map((item) => (
-              <article className={styles.ai} key={item.id}>
-                <strong>{item.title}</strong>
-                <p>{item.reason}</p>
-                <a href={item.deepLink}>去处理 →</a>
-              </article>
-            ))
-          ) : (
-            <div className={styles.empty}>暂无作业提醒。</div>
-          )}
-        </section>
-        <section className={styles.panel} aria-label="咨询队列">
-          <div className={styles.head}>
-            <h2>咨询队列</h2>
-            <a className={styles.link} href="/m/entry-funnel">
-              入口痕迹 →
-            </a>
-          </div>
-          {data.queues.consults.length ? (
-            data.queues.consults.map((item) => (
-              <a className={styles.anomaly} href={item.deepLink} key={item.id}>
-                <div>
-                  <strong>入口咨询</strong>
-                  <p>{item.title}</p>
-                </div>
-                <time>{new Date(item.occurredAt).toLocaleString()}</time>
-              </a>
-            ))
-          ) : (
-            <div className={styles.empty}>今日暂无咨询记录。</div>
-          )}
-        </section>
-        <section className={styles.panel} aria-label="线索队列">
-          <div className={styles.head}>
-            <h2>线索队列</h2>
-            <a className={styles.link} href="/e/leads">
-              线索池 →
-            </a>
-          </div>
-          {data.queues.leads.length ? (
-            data.queues.leads.map((item) => (
-              <a className={styles.anomaly} href={item.deepLink} key={item.id}>
-                <div>
-                  <strong>{item.status === 'open' ? '待认领' : '已认领'}</strong>
-                  <p>{item.title}</p>
-                </div>
-                <time>{new Date(item.occurredAt).toLocaleDateString()}</time>
-              </a>
-            ))
-          ) : (
-            <div className={styles.empty}>当前没有开放线索。</div>
-          )}
-        </section>
-      </div>
         </>
       )}
 
       <p className={styles.honest} role="note">
         以上分布全部由已抓取管理工作台档案行现场推导(source=local)：待办/客户/门店/经营信号来自
         dashboard metrics 真实字段；门店对比来自 storeBreakdown；咨询与线索队列来自 queues 行
-        deepLink 可处置。不含支付金额与第三方订单履约；近30日服务档案为本地试点记录，非本平台下单。
+        deepLink 可处置；早会队列处置率按真实处置记录统计（已处理/可处置项），仅登记处置状态，不代
+        履约美团/抖音订单、不含支付金额与第三方订单履约；近30日服务档案为本地试点记录，非本平台下单。
       </p>
     </main>
   );

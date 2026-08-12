@@ -10,7 +10,7 @@ export class ManagementDashboardService implements OnModuleDestroy {
   constructor(private readonly portalLayout: PortalLayoutService) {}
 
   async overview(context: OrganizationContext, previewToken?: string) {
-    const [metrics, anomalies, operational, storeRows, recentConsults, openLeadRows] =
+    const [metrics, anomalies, operational, storeRows, recentConsults, openLeadRows, dispositions] =
       await Promise.all([
         this.pool.query(
           `select
@@ -77,6 +77,12 @@ export class ManagementDashboardService implements OnModuleDestroy {
          order by l.created_at desc limit 6`,
           [context.tenantId],
         ),
+        this.pool.query(
+          `select queue_type, source_id, status, disposition_at
+           from management_queue_dispositions
+           where tenant_id=$1 and deleted_at is null`,
+          [context.tenantId],
+        ),
       ]);
     const result = metrics.rows[0];
     const op = operational.rows[0];
@@ -91,6 +97,44 @@ export class ManagementDashboardService implements OnModuleDestroy {
       occurredAt: row.occurred_at,
       deepLink: row.deep_link,
     }));
+    const dispositionByKey = new Map<string, string>();
+    const dispositionAtByKey = new Map<string, string>();
+    for (const row of dispositions.rows) {
+      dispositionByKey.set(`${row.queue_type}:${row.source_id}`, row.status);
+      dispositionAtByKey.set(`${row.queue_type}:${row.source_id}`, row.disposition_at);
+    }
+    const withDisposition = (type: string, id: string) => {
+      const key = `${type}:${id}`;
+      return {
+        disposition: dispositionByKey.get(key) ?? 'pending',
+        dispositionAt: dispositionAtByKey.get(key) ?? null,
+      };
+    };
+    const anomaliesWithDisposition = items.map((item) => ({
+      ...item,
+      ...withDisposition(item.type, item.id),
+    }));
+    const consults = recentConsults.rows.map((row) => ({
+      id: row.id,
+      title: row.title,
+      occurredAt: row.occurred_at,
+      deepLink: row.deep_link,
+      ...withDisposition('consult', row.id),
+    }));
+    const leads = openLeadRows.rows.map((row) => ({
+      id: row.id,
+      title: row.display_name,
+      status: row.status,
+      occurredAt: row.created_at,
+      deepLink: row.deep_link,
+      ...withDisposition('lead', row.id),
+    }));
+    const dispositionSummary = this.dispositionSummary(
+      Object.fromEntries(dispositionByKey),
+      anomaliesWithDisposition,
+      consults,
+      leads,
+    );
     const suggestions = [
       ...(items.filter((item) => item.type === 'overdue_task').length
         ? [
@@ -148,25 +192,35 @@ export class ManagementDashboardService implements OnModuleDestroy {
         openTasks: row.open_tasks,
       })),
       queues: {
-        consults: recentConsults.rows.map((row) => ({
-          id: row.id,
-          title: row.title,
-          occurredAt: row.occurred_at,
-          deepLink: row.deep_link,
-        })),
-        leads: openLeadRows.rows.map((row) => ({
-          id: row.id,
-          title: row.display_name,
-          status: row.status,
-          occurredAt: row.created_at,
-          deepLink: row.deep_link,
-        })),
+        consults,
+        leads,
       },
-      anomalies: items,
+      anomalies: anomaliesWithDisposition,
+      disposition: dispositionSummary,
       suggestions,
       generatedAt: new Date().toISOString(),
       layout: await this.portalLayout.resolve(context.tenantId, 'management', previewToken),
     };
+  }
+  private dispositionSummary(
+    byKey: Record<string, string>,
+    anomalies: { type: string; id: string }[],
+    consults: { id: string }[],
+    leads: { id: string }[],
+  ) {
+    const actionable = [
+      ...anomalies.map((item) => item.type + ':' + item.id),
+      ...consults.map((item) => 'consult:' + item.id),
+      ...leads.map((item) => 'lead:' + item.id),
+    ];
+    const unique = [...new Set(actionable)];
+    const pending = unique.filter(
+      (key) => byKey[key] !== 'handled' && byKey[key] !== 'ignored',
+    ).length;
+    const handled = unique.filter((key) => byKey[key] === 'handled').length;
+    const ignored = unique.filter((key) => byKey[key] === 'ignored').length;
+    const rate = unique.length ? Math.round((handled / unique.length) * 100) : 100;
+    return { total: unique.length, pending, handled, ignored, handledRate: rate };
   }
   async onModuleDestroy() {
     await this.pool.end();

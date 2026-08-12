@@ -1,0 +1,6 @@
+﻿鈩?pass 5
+鈩?fail 0
+鈩?cancelled 0
+鈩?skipped 0
+鈩?todo 0
+鈩?duration_ms 79.938
