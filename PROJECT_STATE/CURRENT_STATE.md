@@ -4,7 +4,9 @@
 - completed_tasks: 72/72
 - foundation_final_state_commit: 239114e
 - core_final_state_commit: df5ef65
-- last_completed_task: G1-W∞-71 PASS — Consumer channel deep pages densify（团购/菜单/会员/我的）. See WINF71.
+- last_completed_task: G1-W∞-72 PASS — Consumer unified entry `/c/entry` real-data deep densify toward Meituan App（黄顶栏+灰底白卡+summaryStrip+统一入口分布，平台入口/入口类型/落地方案由真实 ConsumerAction[] 推导）。tests/g1-winf72 4/4；`g1-winf*.test.mjs` 241/241；consumer typecheck+build PASS；`pnpm build` 20/20；单测 47 passed（2 个 pre-existing token 失败照旧）。See WINF72.
+- verified_g1_winf71_consumer_channel_deep: PASS (2026-08-12) - Consumer 频道深页 densify. See WINF71.
+- verified_g1_winf72_consumer_entry_deep: PASS (2026-08-12) - Consumer 统一入口 `/c/entry` 真实数据深页密度 densify toward 美团 App（黄顶栏+灰底白卡+summaryStrip+统一入口分布，平台入口/入口类型/落地方案由真实 ConsumerAction[] 推导，禁止假 BI；consumer-entry.tsx 旧暖色白板改挂 od-sf-theme + storefront.css，consumer-entry.module.css 全 token 化零 raw hex）。工具身份+诚实边界全保留，原交互全继承，无 schema/DB/API，不复活 consumer_orders/本平台下单/收单。随动更新 g1-winf9。新增 tests/g1-winf72 4/4；`g1-winf*.test.mjs` 241/241；consumer typecheck+build PASS（含 /c/entry）；`pnpm build` 20/20；单测 47 passed（2 个 pre-existing token 失败照旧）；eslint+prettier clean。See evidence/G1-MEITUAN-PARITY/WINF72/ACCEPTANCE.md.
 - verified_g1_winf70_channel_merchant_onboarding_deep: PASS (2026-08-12) - Channel 商户开通真实数据深页 densify。See WINF70.
 - verified_g1_winf69_employee_profile_deep: PASS (2026-08-12) - Employee 工作空间真实数据深页 densify（ME-07）。See WINF69.
 - verified_g1_winf68_employee_notifications_deep: PASS (2026-08-12) - Employee 执行提醒真实数据深页 densify（ME-06）。See WINF68.
@@ -154,7 +156,7 @@
 - progress_p0_covered: 26/26 (100%)
 - progress_matrix_waves: 4/4 close-out complete
 - progress_sys_waves: 6/6 scaffolded + SYS-7..SYS-34 remainders landed
-- next_scope: W∞-71 已收（消费者频道深页 densify）；下一刀 W∞-72：消费者深页真实数据密度续（service/menu/entry 等剩余 PARTIAL）或平台剩余 PARTIAL densify。
+- next_scope: W∞-72 已收（统一消费者入口 `/c/entry` real-data deep densify）；下一刀 W∞-73：消费者深页真实数据密度续（discovery/store 等剩余 PARTIAL）或平台剩余 PARTIAL densify。
 - verified_pre_pilot_polish: PASS at 268464d.
 - verified_g1_w4_employee_workbench: PASS (2026-08-11) - Employee /e/workbench 对齐美团商家 App 工作台 IA：今日经营概览条(真实 今日任务/客户提醒/行动机会，无假 BI) + 常用功能宫格(订单待办/顾客/会员核销/获客线索/门店/消息，全部既有路由深链) + 任务区。Typecheck PASS + employee-web build 15 路由 PASS。Maps to ME-01 首刀; ME-02~05 深页续接 W5/W∞。Not owner sign-off。See evidence/G1-MEITUAN-PARITY/W4/ACCEPTANCE.md.
 - verified_g1_w5_management_commerce_skeleton: PASS (2026-08-11) - Management PC /m/orders /m/reviews /m/marketing 订单·评价·营销骨架（MPC-04/05/07）: migration 055 extend customer_orders + new store_reviews/marketing_campaigns; ManagementCommerce 只读 API（tenant+store-scope, operatorContext/DataScopeService）; 菜单新增 orders/reviews/marketing + orders 分组。Typecheck 20/20 + build 20/20（management-web 25 路由）+ page-m-commerce L2 隔离 PASS + menu-dto 17/17 + sys-29/sys-6 更新 8/8。本地 seed（source=local TEST ONLY）。诚实：未接美团实时订单/评价/投放，非 pixel 1:1。Not owner sign-off。See evidence/G1-MEITUAN-PARITY/W5/ACCEPTANCE.md.

@@ -5,13 +5,10 @@ import { join } from 'node:path';
 
 test('G1-W∞-9: consumer entry densify', () => {
   const root = process.cwd();
-  const page = readFileSync(
-    join(root, 'apps/consumer-web/app/c/entry/consumer-entry.tsx'),
-    'utf8',
-  );
-  assert.match(page, /推广员入口/);
+  const page = readFileSync(join(root, 'apps/consumer-web/app/c/entry/consumer-entry.tsx'), 'utf8');
+  assert.match(page, /推广员工具/);
   assert.match(page, /\/c\/circles\?tenant=/);
   assert.match(page, /经确认页跳转/);
-  assert.match(page, /只统计至出站/);
+  assert.match(page, /仅统计观看\/访问\/跳转\/停留\/分享入口痕迹/);
   assert.match(page, /saabei/);
 });

@@ -1,5 +1,14 @@
 # CHANGELOG
 
+## 2026-08-12 - G1-W∞-72 统一消费者入口 densify（MH5-01/13）PASS
+
+- 消费者 H5 统一入口 `/c/entry`（美团 App 首页型/统一入口语境）从旧暖色白板视觉（#f6f8fb/#1649bd 蓝色渐变 hero）densify 到美团 App 到店浏览视觉/IA，承接 discovery W∞-32 / store W∞-33 / 频道深页 W∞-71 视觉语言 + W∞-45+ 深页分布波。
+- `consumer-entry.tsx`：`import '@oneday/storefront-renderer/storefront.css'` + `<main className={`${styles.page} od-sf-theme`}>` 挂 storefront token 作用域；sticky 黄顶栏 `topBar`（返回发现+居中「统一入口」+推广员工具 mark）+ 灰底画布（--od-sf-canvas）+ 白卡 heroCard（h1+诚实描述）+ 白卡概况条 `summaryStrip`（快捷入口/覆盖平台/入口分流）+ 白卡分布面板 `aria-label="统一入口分布"`——平台入口分布（`platformLabel(action.platform)` 美团/抖音/扫呗平台/外链）+ 入口类型分布（`entryTypeLabel(action.actionType)` 咨询跟进/平台入口/外链服务）+ 落地方案分布（`landingLabel(action.platform)` 美团团购/抖音团购/扫呗入口/直接外链），全部由真实 `ConsumerAction[]` 档案行现场推导，宽度 `barWidth(actionCount, b.value)`，空数据「暂无记录」，禁止假 BI。
+- `consumer-entry.module.css`：旧暖色全部替换为灰底白卡画布 + 黄渐变条 `linear-gradient(90deg,var(--od-brand-700),var(--od-brand-600))`，≤900px 单列；全部 token 化（var(--od-*)/var(--od-sf-*)）、**零 raw hex**（与 W∞-45+ 深页波共享视觉语言）。
+- 工具身份与诚实边界全保留：source=local、成交在美团/抖音/扫呗等外部平台完成、经确认页跳转、仅统计观看/访问/跳转/停留/分享入口痕迹、不含支付金额、非本平台下单、不在此下单；全部原交互（快捷入口发现门店/商圈联盟/第三方入口、服务与权益卡、立即行动、FunnelPageBeacon、底部导航）继承。无 schema/DB/API，不复活 consumer_orders / 本平台下单/收单。
+- 随动更新 tests/g1-winf9（旧视觉 markers `推广员入口`/`只统计至出站` → 新 densify markers `推广员工具`/`仅统计观看/访问/跳转/停留/分享入口痕迹`）。
+- 新增 tests/g1-winf72-consumer-entry-deep.test.mjs 4/4；`g1-winf*.test.mjs` 241/241；consumer typecheck+build PASS（含 /c/entry）；`pnpm build` 20/20；单测 47 passed（2 个 pre-existing token 失败照旧）；eslint + prettier clean。See evidence/G1-MEITUAN-PARITY/WINF72/ACCEPTANCE.md.
+
 ## 2026-08-12 - G1-W∞-71 消费者深页 densify（MH5-04/05/06/10）PASS
 
 - 消费者 H5 频道深页 `/c/stores/[id]/group-buy` · `menu` · `membership` · `profile`（团购/菜单/会员/我的）从旧暖色白板视觉 densify 到美团 App 到店浏览视觉/IA（承接 discovery W∞-32 / store W∞-33 视觉语言 + W∞-45+ 深页分布波）。

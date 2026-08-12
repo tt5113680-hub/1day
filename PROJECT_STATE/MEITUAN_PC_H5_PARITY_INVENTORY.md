@@ -89,7 +89,7 @@
 | MH5-10 | 会员 | `/c/stores/[id]/membership` | PARTIAL | W∞-12 densify 本店会员工具身份；**W∞-71** 消费者频道深页 densify（权益分布，真实 benefits 推导）；toward PARITY；见 WINF71 |
 | MH5-11 | 分享落地 | `/c/share/[code]`, `/c/one-code/[code]` | PARITY (首刀) | share landing densify; 见 WINF7 |
 | MH5-12 | 服务 / 咨询 hand-off | `/c/services/[id]`, `/c/actions/[id]` | PARITY (首刀+) | 确认页 WINF3；套餐详情 WINF14「确认前往」 |
-| MH5-13 | 美团 App 首页型 → **商圈联盟首页** | `/c/circles`, discovery | PARITY (首刀) | 行业 chips+排序+双身份；见 WINF5 |
+| MH5-13 | 美团 App 首页型 → **商圈联盟首页** | `/c/circles`, discovery | PARTIAL | 行业 chips+排序+双身份；见 WINF5；**W∞-72** `/c/entry` 统一入口真实数据深页 densify（黄顶栏+灰底白卡+summaryStrip+统一入口分布，真实 ConsumerAction[] 推导）；toward PARITY；见 WINF72 |
 
 ---
 
@@ -142,7 +142,7 @@
 
 ## 6. 当前下一刀
 
-  > **当前：W∞-71 PASS** — 消费者频道深页（团购/菜单/会员/我的，MH5-04/05/06/10）真实数据深页密度 densify（黄顶栏+灰底白卡+summaryStrip+团购比价分布/菜单分布/权益分布，全部由既有 StoreDetail 真实档案行推导，禁止假 BI）。**下一刀：W∞-72** 消费者深页真实数据密度续（service/menu/entry 等剩余 PARTIAL）或平台剩余 PARTIAL densify。
+  > **当前：W∞-72 PASS** — 统一消费者入口 `/c/entry`（MH5-01/13）真实数据深页密度 densify（黄顶栏+灰底白卡+summaryStrip+统一入口分布，平台入口/入口类型/落地方案由真实 `ConsumerAction[]` 档案行推导，禁止假 BI）。**下一刀：W∞-73** 消费者深页真实数据密度续（discovery/store 等剩余 PARTIAL）或平台剩余 PARTIAL densify。
 
 **历史波（自 W24 起）累计——**
 
