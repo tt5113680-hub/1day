@@ -103,7 +103,7 @@
 | ME-04 | 门店 | `/e/store` | PARTIAL | W∞-16 工具身份；**W∞-66** 真实数据深页分布；toward PARITY；见 WINF66 |
 | ME-05 | 核销 / 会员 | `/e/memberships` | PARTIAL | W∞-16 工具身份；**W∞-67** 真实数据深页分布 + overview API；toward PARITY；见 WINF67 |
 | ME-06 | 消息 | `/e/notifications` | PARTIAL | W∞-16 工具身份；**W∞-68** 真实数据深页分布；toward PARITY；见 WINF68 |
-| ME-07 | 我的 | `/e/profile` | PARTIAL | W∞-16 densify 工作空间 + 工具快捷链 |
+| ME-07 | 我的 | `/e/profile` | PARTIAL | W∞-16 工具身份；**W∞-69** 真实数据深页分布；toward PARITY；见 WINF69 |
 
 ---
 

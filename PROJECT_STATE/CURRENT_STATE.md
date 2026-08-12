@@ -4,7 +4,8 @@
 - completed_tasks: 71/71
 - foundation_final_state_commit: 239114e
 - core_final_state_commit: df5ef65
-- last_completed_task: G1-W∞-68 PASS — Employee `/e/notifications` densify (ME-06). See WINF68.
+- last_completed_task: G1-W∞-69 PASS — Employee `/e/profile` densify (ME-07). Employee ME-02~07 deep densify wave closed. See WINF69.
+- verified_g1_winf69_employee_profile_deep: PASS (2026-08-12) - Employee 工作空间真实数据深页 densify（ME-07）。See WINF69.
 - verified_g1_winf68_employee_notifications_deep: PASS (2026-08-12) - Employee 执行提醒真实数据深页 densify（ME-06）。See WINF68.
 - verified_g1_winf66_employee_store_deep: PASS (2026-08-12) - Employee `/e/store` 门店入口真实数据深页 densify（ME-04）。See evidence/G1-MEITUAN-PARITY/WINF66/ACCEPTANCE.md.
 - verified_g1_winf67_employee_memberships_deep: PASS (2026-08-12) - Employee `/e/memberships` 会员核销真实数据深页 densify（ME-05）+ overview API。See evidence/G1-MEITUAN-PARITY/WINF67/ACCEPTANCE.md.
@@ -44,7 +45,7 @@
 - verified_g1_winf37_channel_circle_dashboard_visual: PASS (2026-08-11) - Channel+Circle Meituan agent/circle PC visual densify. See WINF37.
 - verified_g1_winf38_management_stores_visual: PASS (2026-08-11) - Management stores Meituan merchant PC visual densify. See WINF38.
 - verified_g1_winf39_management_offers_visual: PASS (2026-08-12) - Management offers Meituan PC visual densify. See WINF39.
-- current_task: ONEDAY-V3-COMMERCIAL-COMPLETION / **W∞-69（下一刀）：`/e/profile` / 渠道 `/ch/*` / 消费者深页**
+- current_task: ONEDAY-V3-COMMERCIAL-COMPLETION / **W∞-70（下一刀）：渠道 `/ch/*` 剩余 / 消费者深页 / 平台-circle 剩余缺口**
 - status: SYS_1_PASS; SYS_2_PASS; SYS_3_PASS; SYS_4_PASS; SYS_4_CONTENT_DISTRIBUTIONS_PASS; SYS_4_WORKFLOW_AUTHORING_PASS; SYS_4_RBAC_ROLE_CREATE_PASS; SYS_5_SCAFFOLD_PASS; SYS_5_VISUAL_PASS; SYS_5_QUICK_ACTIONS_PAINT_PASS; SYS_5_MEMBER_OFFER_PAINT_PASS; SYS_5_COMPARE_STORY_PAINT_PASS; SYS_5_BENEFIT_STORE_INFO_PAINT_PASS; SYS_5_HERO_FLOATING_CONSULT_PAINT_PASS; SYS_6_SCAFFOLD_PASS; SYS_6_MULTI_PRODUCT_PASS; SYS_6_DATA_SCOPES_PASS; SYS_6_WRITE_PATH_SCOPES_PASS; SYS_6_NETWORK_PACKS_PASS; SYS_6_CONTENT_PLACEMENTS_PASS; SYS_6_CATALOG_SCOPES_PASS; SYS_6_MEMBERSHIP_SCOPES_PASS; SYS_6_WORKFLOW_ORG_WRITE_PASS; SYS_6_ROLE_MATRIX_STORE_MANAGER_PASS; SYS_6_ROLE_MATRIX_TENANT_OWNER_PASS; SYS_6_ROLE_MATRIX_NETWORK_PASS; SYS_6_ROLE_MATRIX_MEMBER_PASS; SYS_7_WORKFLOW_VERSIONING_PASS; SYS_8_MEMBER_RESUME_PASS; SYS_9_WORKFLOW_VERSION_PANEL_PASS; SYS_10_WORKFLOW_LINEAR_FLOW_PASS; SYS_11_PROVISIONING_FAILURE_TRAIL_PASS; SYS_12_CONDITION_BRANCH_FLOW_PASS; SYS_13_CONDITION_PATH_PREVIEW_PASS; SYS_14_DRAFT_AUTHORING_PREVIEW_PASS; SYS_15_VERSION_PANEL_REORDER_PASS; SYS_16_LINEAR_FLOW_EXPORT_PASS; SYS_17_INSERT_RAILS_PASS; SYS_18_CONDITION_CARD_PASS; SYS_19_START_CONTEXT_PRESETS_PASS; SYS_20_LIST_DND_REORDER_PASS; SYS_21_STA_CLOSED_LOOP_PASS; SYS_22_ONE_CODE_LANDING_PASS; SYS_23_ATTRIBUTION_MENU_PASS; SYS_24_CUSTOMER_MERGE_TRANSFER_PASS; SYS_25_EXTERNAL_ACTIONS_PASS; SYS_26_MANAGEMENT_ORPHAN_IA_PASS; SYS_27_S3_ROLE_IA_PASS; SYS_28_PLATFORM_SHELL_ISOLATION_PASS; SYS_29_ADMIN_NAV_GROUPS_PASS; SYS_30_EMPLOYEE_TASK_INBOX_PASS; SYS_31_EMPLOYEE_CUSTOMER_DIRECTORY_PASS; SYS_32_EXTERNAL_ACTIONS_LIFECYCLE_PASS; SYS_33_EMPLOYEE_MEMBERSHIP_REDEEM_PASS; SYS_34_MEMBERSHIP_LEDGER_PASS; P1_A_COMMERCIAL_CLOSED_LOOP_PASS; P1_B_SESSION_LOGIN_PASS; P1_B_UI_KIT_PASS; P1_B_CONSUMER_SHELL_PASS; P1_B_EMPLOYEE_SHELL_PASS; P1_B_MANAGEMENT_SHELL_PASS; P1_B_PLATFORM_SHELL_PASS; MATRIX_GAP_CLOSEOUT_COMPLETE; HUMAN_PILOT_SANDBOX_REFRESHED; COMMERCIAL_FIXTURES_GENERATOR_PASS; G1_PACKAGING_PASS; G1_W1_MEITUAN_PC_NAV_HOME_PASS; G1_W2_MEITUAN_H5_NEARBY_STORE_PASS
 - branch: hardening/COMMERCIAL-COMPLETION
 - executor: Cursor Agent (2026-08-10; see PROJECT_STATE/EXECUTOR_HANDOFF.md)
@@ -151,7 +152,7 @@
 - progress_p0_covered: 26/26 (100%)
 - progress_matrix_waves: 4/4 close-out complete
 - progress_sys_waves: 6/6 scaffolded + SYS-7..SYS-34 remainders landed
-- next_scope: 下一刀 W∞-69：员工 ME-07 profile / 渠道 `/ch/*` / 消费者深页。
+- next_scope: 员工面 ME-02~07 深页已收（W∞-64~69）。下一刀 W∞-70：渠道 `/ch/*` / 消费者深页。
 - verified_pre_pilot_polish: PASS at 268464d.
 - verified_g1_w4_employee_workbench: PASS (2026-08-11) - Employee /e/workbench 对齐美团商家 App 工作台 IA：今日经营概览条(真实 今日任务/客户提醒/行动机会，无假 BI) + 常用功能宫格(订单待办/顾客/会员核销/获客线索/门店/消息，全部既有路由深链) + 任务区。Typecheck PASS + employee-web build 15 路由 PASS。Maps to ME-01 首刀; ME-02~05 深页续接 W5/W∞。Not owner sign-off。See evidence/G1-MEITUAN-PARITY/W4/ACCEPTANCE.md.
 - verified_g1_w5_management_commerce_skeleton: PASS (2026-08-11) - Management PC /m/orders /m/reviews /m/marketing 订单·评价·营销骨架（MPC-04/05/07）: migration 055 extend customer_orders + new store_reviews/marketing_campaigns; ManagementCommerce 只读 API（tenant+store-scope, operatorContext/DataScopeService）; 菜单新增 orders/reviews/marketing + orders 分组。Typecheck 20/20 + build 20/20（management-web 25 路由）+ page-m-commerce L2 隔离 PASS + menu-dto 17/17 + sys-29/sys-6 更新 8/8。本地 seed（source=local TEST ONLY）。诚实：未接美团实时订单/评价/投放，非 pixel 1:1。Not owner sign-off。See evidence/G1-MEITUAN-PARITY/W5/ACCEPTANCE.md.
