@@ -205,7 +205,7 @@ export default function OffersPage() {
     .sort((a, b) => b[1] - a[1])
     .map(([key, value]) => ({ key, value }));
   return (
-    <main className={styles.page}>
+    <main className={styles.page} data-testid="management-offers">
       <header className={styles.topBar}>
         <span className={styles.topBarTitle}>推广员工具 · 商品/套餐入口</span>
         <button className={styles.topBarRefresh} type="button" onClick={() => void load()}>
@@ -218,6 +218,25 @@ export default function OffersPage() {
         <p>
           维护服务/套餐真源与受控平台价格入口，供统一入口展示与比价；价格由商户登记，不宣称第三方实时同步，也不在此售卖下单。
         </p>
+      </section>
+
+      <section className={styles.summaryStrip} aria-label="商品套餐数据概况">
+        <div>
+          <span>门店</span>
+          <strong>{stores.length}</strong>
+        </div>
+        <div>
+          <span>套餐/服务</span>
+          <strong>{allServices.length}</strong>
+        </div>
+        <div>
+          <span>平台 Offer</span>
+          <strong>{allOffers.length}</strong>
+        </div>
+        <div>
+          <span>展示中</span>
+          <strong>{allOffers.filter((offer) => offer.status === 'active').length}</strong>
+        </div>
       </section>
 
       <section className={styles.distribution} aria-label="商品套餐分布">
