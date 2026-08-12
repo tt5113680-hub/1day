@@ -63,6 +63,7 @@ import * as portalBindings from './migrations/061_portal_bindings.js';
 import * as managementQueueDisposition from './migrations/062_management_queue_disposition.js';
 import * as portalPublications from './migrations/063_portal_publications.js';
 import * as customerRfmProfiles from './migrations/064_customer_rfm_profiles.js';
+import * as membershipRulesAlerts from './migrations/065_membership_rules_alerts.js';
 import type { Database } from './types.js';
 
 const migrationProvider: MigrationProvider = {
@@ -132,6 +133,7 @@ const migrationProvider: MigrationProvider = {
       '062_management_queue_disposition': managementQueueDisposition,
       '063_portal_publications': portalPublications,
       '064_customer_rfm_profiles': customerRfmProfiles,
+      '065_membership_rules_alerts': membershipRulesAlerts,
     };
   },
 };

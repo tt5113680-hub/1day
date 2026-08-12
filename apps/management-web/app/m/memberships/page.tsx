@@ -14,6 +14,9 @@ type Enrollment = {
   display_name: string;
   store_name: string;
   joined_at: string;
+  tier: string;
+  expires_at: string | null;
+  last_active_at: string | null;
 };
 type Benefit = { id: string; title: string };
 type LedgerEntry = {
@@ -32,7 +35,42 @@ type LedgerData = {
   balances: Balance[];
   entries: LedgerEntry[];
 };
-type Data = { enrollments: Enrollment[]; benefits: Benefit[] };
+type BenefitRule = {
+  id: string;
+  title: string;
+  tier: string;
+  benefits_config: Array<{ benefitId: string; benefitTitle: string; maxQuantity: number }>;
+  validity_days: number;
+  enforce_quantity: boolean;
+  enabled: boolean;
+  updated_at: string;
+};
+type Renewal = {
+  id: string;
+  member_code: string;
+  tier: string;
+  display_name: string;
+  store_name: string | null;
+  joined_at: string | null;
+  expires_at: string | null;
+  last_active_at: string | null;
+};
+type AlertRow = {
+  id: string;
+  member_code: string;
+  tier: string;
+  display_name: string;
+  store_name: string | null;
+  alert_type: string;
+};
+type AlertData = { suspended: AlertRow[]; expired: AlertRow[]; noRecentActivity: AlertRow[] };
+type Data = {
+  enrollments: Enrollment[];
+  benefits: Benefit[];
+  rules: BenefitRule[];
+  renewals: Renewal[];
+  alerts: AlertData;
+};
 
 const entryLabel = (type: string) =>
   type === 'grant' ? '发放' : type === 'revoke' ? '吊销' : type === 'redeem' ? '核销' : type;
@@ -44,6 +82,8 @@ export default function MembershipsPage() {
   const [busy, setBusy] = useState(false);
   const [openId, setOpenId] = useState<string | null>(null);
   const [ledger, setLedger] = useState<LedgerData | null>(null);
+  const [ruleTier, setRuleTier] = useState('');
+  const [ruleValidity, setRuleValidity] = useState('365');
 
   const load = useCallback(async () => {
     if (!(await client.context())) {
@@ -52,13 +92,26 @@ export default function MembershipsPage() {
     }
     setState('loading');
     try {
-      const response = await client.request(`${api}/api/v1/management/memberships`);
-      if ([401, 403].includes(response.status)) {
+      const [membership, rules, renewals, alerts] = await Promise.all([
+        client.request(`${api}/api/v1/management/memberships`),
+        client.request(`${api}/api/v1/management/memberships/rules`),
+        client.request(`${api}/api/v1/management/memberships/renewals`),
+        client.request(`${api}/api/v1/management/memberships/alerts`),
+      ]);
+      if ([401, 403].includes(membership.status)) {
         setState('forbidden');
         return;
       }
-      if (!response.ok) throw new Error('LOAD');
-      setData((await response.json()).data as Data);
+      if (!membership.ok) throw new Error('LOAD');
+      const baseData = (await membership.json()).data as Data;
+      setData({
+        ...baseData,
+        rules: rules.ok ? ((await rules.json()).data as BenefitRule[]) : [],
+        renewals: renewals.ok ? ((await renewals.json()).data as Renewal[]) : [],
+        alerts: alerts.ok
+          ? ((await alerts.json()).data as AlertData)
+          : { suspended: [], expired: [], noRecentActivity: [] },
+      });
       setState('ready');
     } catch {
       setState('error');
@@ -131,6 +184,42 @@ export default function MembershipsPage() {
     }
   };
 
+  const saveRule = async () => {
+    const tier = ruleTier.trim();
+    if (!tier || !data) {
+      setNote('请填写等级标识再保存权益规则。');
+      return;
+    }
+    setBusy(true);
+    setNote('');
+    try {
+      const response = await client.request(`${api}/api/v1/management/memberships/rules`, {
+        method: 'POST',
+        headers: { 'content-type': 'application/json', 'idempotency-key': crypto.randomUUID() },
+        body: JSON.stringify({
+          title: tier,
+          tier,
+          validityDays: Number(ruleValidity),
+          enforceQuantity: true,
+          enabled: true,
+          benefitsConfig: data.benefits.map((benefit) => ({
+            benefitId: benefit.id,
+            benefitTitle: benefit.title,
+            maxQuantity: 1,
+          })),
+        }),
+      });
+      setNote(
+        response.ok
+          ? '等级权益规则已保存（规则不含储值与支付）。'
+          : '规则保存未完成，请刷新后重试。',
+      );
+      if (response.ok) await load();
+    } finally {
+      setBusy(false);
+    }
+  };
+
   if (state === 'loading')
     return (
       <main className={styles.centered}>
@@ -183,6 +272,23 @@ export default function MembershipsPage() {
   const coveredStores = new Set(enrollments.map((item) => item.store_name ?? '未绑定门店'));
   const benefitCount = data.benefits.length;
   const enrolledCount = enrollments.length;
+  const renewals = data.renewals ?? [];
+  const alertData = data.alerts ?? { suspended: [], expired: [], noRecentActivity: [] };
+  const rules = data.rules ?? [];
+
+  const alertLabel = (type: string) =>
+    type === 'suspended'
+      ? '已暂停/已取消'
+      : type === 'expired'
+        ? '有效期已过'
+        : type === 'no_recent_activity'
+          ? '长期未核销'
+          : type;
+  const alertRows: AlertRow[] = [
+    ...(alertData.suspended ?? []),
+    ...(alertData.expired ?? []),
+    ...(alertData.noRecentActivity ?? []),
+  ];
 
   return (
     <main className={styles.page} data-testid="management-memberships">
@@ -265,6 +371,110 @@ export default function MembershipsPage() {
         </div>
       </section>
 
+      <section className={styles.panelBlock} aria-label="等级权益规则">
+        <h2>等级/权益规则</h2>
+        <p className={styles.muted}>
+          规则为等级→权益的配置（有效天数、是否限量、启用），不含储值、不含支付、不代第三方成交。
+        </p>
+        <div className={styles.rules}>
+          {rules.length ? (
+            rules.map((rule) => (
+              <div key={rule.id} className={styles.ruleRow} data-testid={`rule-${rule.tier}`}>
+                <StatusBadge tone={rule.enabled ? 'success' : 'info'}>
+                  {rule.enabled ? '启用' : '停用'}
+                </StatusBadge>
+                <span className={styles.ruleTier}>等级 {rule.tier}</span>
+                <span className={styles.ruleTitle}>{rule.title}</span>
+                <span className={styles.sub}>
+                  {rule.benefits_config.length} 项权益 · 有效期 {rule.validity_days} 天
+                </span>
+              </div>
+            ))
+          ) : (
+            <p className={styles.muted}>尚无等级权益规则，可在下方按已建档权益快速建立。</p>
+          )}
+        </div>
+        <div className={styles.rules}>
+          <label className={styles.ruleField}>
+            等级
+            <input
+              className={styles.ruleInput}
+              value={ruleTier}
+              onChange={(event) => setRuleTier(event.target.value)}
+              placeholder="如 gold / silver"
+            />
+          </label>
+          <label className={styles.ruleField}>
+            有效天数
+            <input
+              className={styles.ruleInput}
+              value={ruleValidity}
+              onChange={(event) => setRuleValidity(event.target.value)}
+              placeholder="365"
+            />
+          </label>
+          <Button
+            tone="secondary"
+            disabled={busy || !data.benefits.length}
+            onClick={() => void saveRule()}
+          >
+            保存等级权益规则
+          </Button>
+        </div>
+      </section>
+
+      <section className={styles.panelBlock} aria-label="到期提醒">
+        <h2>到期提醒</h2>
+        <p className={styles.muted}>
+          真实档案信号：有效期临近 3
+          天、已过期仍在册、或长期无核销活跃，均来自会员档案，不含成交金额。
+        </p>
+        <ul className={styles.alertList}>
+          {renewals.length ? (
+            renewals.map((item) => (
+              <li key={item.id} className={styles.alertRow}>
+                <StatusBadge tone="info">{item.tier}</StatusBadge>
+                <span>
+                  {item.display_name} · {item.member_code}
+                </span>
+                <span className={styles.sub}>
+                  {item.store_name ?? '未绑定门店'} ·{' '}
+                  {item.expires_at
+                    ? `有效期至 ${new Date(item.expires_at).toLocaleDateString('zh-CN')}`
+                    : item.last_active_at
+                      ? `最近核销 ${new Date(item.last_active_at).toLocaleDateString('zh-CN')}`
+                      : '长期无活跃'}
+                </span>
+              </li>
+            ))
+          ) : (
+            <li className={styles.muted}>暂无到期提醒。</li>
+          )}
+        </ul>
+      </section>
+
+      <section className={styles.panelBlock} aria-label="异常告警">
+        <h2>异常告警</h2>
+        <p className={styles.muted}>
+          真实档案信号：已暂停/已取消、有效期已过仍在册、长期未核销，均来自会员档案。
+        </p>
+        <ul className={styles.alertList}>
+          {alertRows.length ? (
+            alertRows.map((item) => (
+              <li key={`${item.alert_type}-${item.id}`} className={styles.alertRow}>
+                <StatusBadge tone="danger">{alertLabel(item.alert_type)}</StatusBadge>
+                <span>
+                  {item.display_name} · {item.member_code} · {item.tier}
+                </span>
+                <span className={styles.sub}>{item.store_name ?? '未绑定门店'}</span>
+              </li>
+            ))
+          ) : (
+            <li className={styles.muted}>暂无异常告警。</li>
+          )}
+        </ul>
+      </section>
+
       <section className={styles.list} aria-label="会员列表">
         {data.enrollments.length ? (
           data.enrollments.map((item) => (
@@ -283,8 +493,11 @@ export default function MembershipsPage() {
                 </Button>
               </div>
               <p className={styles.sub}>
-                {item.store_name ?? '未绑定门店'} · 入会于{' '}
+                {item.store_name ?? '未绑定门店'} · 等级 {item.tier} · 入会于{' '}
                 {new Date(item.joined_at).toLocaleString('zh-CN')}
+                {item.expires_at
+                  ? ` · 有效期至 ${new Date(item.expires_at).toLocaleDateString('zh-CN')}`
+                  : ''}
               </p>
               <div className={styles.actions}>
                 {data.benefits.map((benefit) => (

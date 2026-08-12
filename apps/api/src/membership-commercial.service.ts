@@ -195,7 +195,7 @@ export class MembershipCommercialService implements OnModuleDestroy {
       ).rows[0];
       if (!enrollment) throw new NotFoundException('NOT_FOUND');
       await client.query(
-        "update membership_enrollments set store_id=$1,updated_at=now(),version=version+1 where id=$2 and tenant_id=$3",
+        'update membership_enrollments set store_id=$1,updated_at=now(),version=version+1 where id=$2 and tenant_id=$3',
         [store.id, enrollment.id, tenant.id],
       );
       await client.query(
@@ -274,7 +274,7 @@ export class MembershipCommercialService implements OnModuleDestroy {
     const benefitFilter = scoped ? 'and store_id = any($2::uuid[])' : '';
     const [enrollments, benefits] = await Promise.all([
       this.pool.query(
-        `select e.id,e.member_code,e.enrollment_status,e.joined_at,c.display_name,s.name store_name
+        `select e.id,e.member_code,e.enrollment_status,e.joined_at,e.tier,e.expires_at,e.last_active_at,c.display_name,s.name store_name
          from membership_enrollments e
          join customers c on c.id=e.customer_id and c.tenant_id=e.tenant_id
          left join stores s on s.id=e.store_id and s.tenant_id=e.tenant_id
@@ -312,14 +312,8 @@ export class MembershipCommercialService implements OnModuleDestroy {
   }
   /** Employee-scoped member redeem overview: enrollments + benefits + ledger rows. */
   async employeeOverview(context: OrganizationContext) {
-    const scopes = await this.dataScopes.resolveStoreScopes(
-      context.tenantId,
-      context.userId,
-    );
-    const permissions = await this.dataScopes.permissionCodes(
-      context.tenantId,
-      context.userId,
-    );
+    const scopes = await this.dataScopes.resolveStoreScopes(context.tenantId, context.userId);
+    const permissions = await this.dataScopes.permissionCodes(context.tenantId, context.userId);
     const owner = permissions.includes('tenant.manage');
     const storeScoped = !owner && scopes.length > 0;
     const storeIds = storeScoped ? scopes.map((scope) => scope.id) : null;
@@ -459,10 +453,7 @@ export class MembershipCommercialService implements OnModuleDestroy {
       )
     ).rows[0];
     if (!enrollment) throw new NotFoundException('NOT_FOUND');
-    const permissionCodes = await this.dataScopes.permissionCodes(
-      context.tenantId,
-      context.userId,
-    );
+    const permissionCodes = await this.dataScopes.permissionCodes(context.tenantId, context.userId);
     await this.dataScopes.requireStoreWriteScope(
       context.tenantId,
       context.userId,
@@ -516,7 +507,8 @@ export class MembershipCommercialService implements OnModuleDestroy {
       );
       if (quantity < 0 && balance < Math.abs(quantity))
         throw new ConflictException('INSUFFICIENT_BENEFIT');
-      const entryType = quantity > 0 ? 'grant' : reference.startsWith('revoke:') ? 'revoke' : 'redeem';
+      const entryType =
+        quantity > 0 ? 'grant' : reference.startsWith('revoke:') ? 'revoke' : 'redeem';
       const data = (
         await client.query(
           'insert into member_benefit_ledger(id,tenant_id,enrollment_id,benefit_id,store_id,entry_type,quantity,balance_after,business_reference,created_by,updated_by) values($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$10) returning id,balance_after,entry_type,quantity',
@@ -546,6 +538,12 @@ export class MembershipCommercialService implements OnModuleDestroy {
           : entryType === 'revoke'
             ? 'membership.benefit.revoked.v1'
             : 'membership.benefit.redeemed.v1';
+      if (entryType === 'redeem') {
+        await client.query(
+          'update membership_enrollments set last_active_at=now(),updated_at=now(),version=version+1 where id=$1 and tenant_id=$2',
+          [enrollmentId, context.tenantId],
+        );
+      }
       await this.receipt(
         client,
         context.tenantId,

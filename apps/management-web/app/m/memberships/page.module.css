@@ -270,3 +270,53 @@
     align-items: flex-start;
   }
 }
+
+.rules,
+.alertList {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.ruleRow,
+.alertRow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  border-radius: 10px;
+  padding: 10px 12px;
+  background: #f8f8f8;
+}
+
+.ruleTier {
+  color: #222;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.ruleTitle {
+  color: #555;
+  font-size: 13px;
+}
+
+.ruleField {
+  display: grid;
+  gap: 4px;
+  color: #666;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.ruleInput {
+  min-width: 180px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 8px 10px;
+  color: #222;
+  background: #fff;
+  font: inherit;
+  font-size: 13px;
+}

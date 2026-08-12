@@ -824,6 +824,8 @@ export interface MembershipEnrollmentsTable {
   joined_at: Timestamp | null;
   suspended_at: Timestamp | null;
   cancelled_at: Timestamp | null;
+  expires_at: Timestamp | null;
+  last_active_at: Timestamp | null;
   created_at: Timestamp;
   created_by: string | null;
   updated_at: Timestamp;
@@ -1599,6 +1601,23 @@ export interface CustomerRfmProfilesTable {
   version: Generated<number>;
 }
 
+export interface MembershipBenefitRulesTable {
+  id: string;
+  tenant_id: string;
+  title: string;
+  tier: string;
+  benefits_config: unknown;
+  validity_days: number;
+  enforce_quantity: boolean;
+  enabled: boolean;
+  created_at: Timestamp;
+  created_by: string | null;
+  updated_at: Timestamp;
+  updated_by: string | null;
+  deleted_at: Timestamp | null;
+  version: Generated<number>;
+}
+
 export interface Database {
   tenants: TenantsTable;
   agent_regions: AgentRegionsTable;
@@ -1696,4 +1715,5 @@ export interface Database {
   marketing_campaigns: MarketingCampaignsTable;
   management_queue_dispositions: ManagementQueueDispositionsTable;
   customer_rfm_profiles: CustomerRfmProfilesTable;
+  membership_benefit_rules: MembershipBenefitRulesTable;
 }

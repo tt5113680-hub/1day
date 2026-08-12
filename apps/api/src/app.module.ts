@@ -74,6 +74,8 @@ import { ManagementCustomerAssetsController } from './management-customer-assets
 import { ManagementCustomerAssetsService } from './management-customer-assets.service';
 import { ManagementCrmDepthController } from './management-crm-depth.controller';
 import { ManagementCrmDepthService } from './management-crm-depth.service';
+import { ManagementMembershipDepthController } from './management-membership-depth.controller';
+import { ManagementMembershipDepthService } from './management-membership-depth.service';
 import { ManagementAiSuggestionController } from './management-ai-suggestion.controller';
 import { ManagementAiSuggestionService } from './management-ai-suggestion.service';
 import { ManagementStoreController } from './management-store.controller';
@@ -174,6 +176,7 @@ import { EmployeeManagedStoresController } from './employee-managed-stores.contr
     ManagementFunnelController,
     ManagementCustomerAssetsController,
     ManagementCrmDepthController,
+    ManagementMembershipDepthController,
     ManagementAiSuggestionController,
     ManagementStoreController,
     ManagementOrganizationEmployeeController,
@@ -244,6 +247,7 @@ import { EmployeeManagedStoresController } from './employee-managed-stores.contr
     ManagementFunnelService,
     ManagementCustomerAssetsService,
     ManagementCrmDepthService,
+    ManagementMembershipDepthService,
     ManagementAiSuggestionService,
     ManagementStoreService,
     ManagementOrganizationEmployeeService,

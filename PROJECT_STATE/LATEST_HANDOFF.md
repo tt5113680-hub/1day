@@ -10,8 +10,8 @@
 ## Current task
 
 - branch: `hardening/COMMERCIAL-COMPLETION`
-- last_verified: **2026-08-13** — W∞-109 CRM 深操作 PASS（migration 064 customer_rfm_profiles + RFM 自动分层 rfm/compute + 批量打标 tags/batch + list `?layer=` 筛选/导出 rfm_layer + detail 360 互动时间轴/跟进记录，真实 DB 闭环，`g1-winf` 385/385、build/typecheck 20/20、unit 49/49、sys-24/sys-31 回归 2/2）
-- next_wave: **W∞-110** 会员闭环加固：等级/权益规则 + 到期提醒 + 异常告警（MPC-08 / Phase1 1.5，无储值/支付）
+- last_verified: **2026-08-13** — W∞-110 会员闭环加固 PASS（migration 065 membership_benefit_rules + enrollments expires_at/last_active_at + ManagementMembershipDepth：rules 幂等 upsert / renewals 到期提醒 / alerts 异常告警，`/m/memberships` 三白卡，真实 DB 闭环，`g1-winf*.test.mjs` 392/392、build/typecheck 20/20、unit 49/49、相关真实 DB 回归 10/10）
+- next_wave: **W∞-111** 门店完整 CRUD + 三类二维码（MPC-02 / Phase2）
 - deferred: §5 开通 READY 全编排（待主人「开始第五节」）
 - blocker: **none (engineering)** — human G1 UI sign 仍开放但不阻塞深度刀
 
