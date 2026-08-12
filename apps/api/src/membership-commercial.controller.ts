@@ -208,4 +208,19 @@ export class MembershipCommercialController {
       error: null,
     };
   }
+
+  @Get('employee/memberships/overview')
+  async employeeMembershipOverview(
+    @Headers('authorization') a: string | undefined,
+    @Headers('x-tenant-context') t: string | undefined,
+    @Headers('x-request-id') r: string | undefined,
+  ) {
+    return {
+      data: await this.memberships.employeeOverview(
+        await this.employeeContext(a, t, r, 'task.read'),
+      ),
+      meta: { requestId: r },
+      error: null,
+    };
+  }
 }

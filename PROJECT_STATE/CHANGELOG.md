@@ -1,3 +1,10 @@
+## 2026-08-12 - G1-W∞-67 Employee 会员核销 真实数据深页 densify（ME-05）PASS
+
+- `/e/memberships` + `GET /api/v1/employee/memberships/overview`：黄顶栏+分布面板（动作/权益项/门店/月份/状态）；核销表单与 W∞-27 空态文案保留。See WINF67.
+
+## 2026-08-12 - G1-W∞-66 Employee 门店入口 真实数据深页 densify（ME-04）PASS
+
+- `/e/store` 黄顶栏+门店授权分布（门店/范围类型/角色/范围标签）。See WINF66.
 ## 2026-08-12 - G1-W∞-65 Employee 客户目录 真实数据深页密度 densify（ME-03）PASS
 
 - `/e/customers` 黄顶栏+灰底白卡+heroCard+summaryStrip+客户跟进分布（归属/状态/待办负载/建档窗口，由真实 customers 行推导，禁止假 BI）。诚实边界保留（source=local、不含第三方订单履约、非本平台下单）。tests/g1-winf65 4/4；g1-winf* 212/212；employee typecheck+build PASS。See evidence/G1-MEITUAN-PARITY/WINF65/ACCEPTANCE.md.

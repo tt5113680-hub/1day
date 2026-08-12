@@ -310,6 +310,60 @@ export class MembershipCommercialService implements OnModuleDestroy {
       )
     ).rows;
   }
+  /** Employee-scoped member redeem overview: enrollments + benefits + ledger rows. */
+  async employeeOverview(context: OrganizationContext) {
+    const scopes = await this.dataScopes.resolveStoreScopes(
+      context.tenantId,
+      context.userId,
+    );
+    const permissions = await this.dataScopes.permissionCodes(
+      context.tenantId,
+      context.userId,
+    );
+    const owner = permissions.includes('tenant.manage');
+    const storeScoped = !owner && scopes.length > 0;
+    const storeIds = storeScoped ? scopes.map((scope) => scope.id) : null;
+    const storeFilter = storeScoped ? ' and s.id = any($2::uuid[])' : '';
+    const ledgerStoreFilter = storeScoped ? ' and l.store_id = any($2::uuid[])' : '';
+    const params = storeScoped ? [context.tenantId, storeIds] : [context.tenantId];
+    const [ledger, enrollments, benefitDefs] = await Promise.all([
+      this.pool.query(
+        `select l.id,l.entry_type,l.quantity,l.balance_after,l.business_reference,l.created_at,
+                l.store_id, b.title as benefit_title, s.name as store_name,
+                e.member_code, c.display_name
+         from member_benefit_ledger l
+         join store_benefits b on b.id = l.benefit_id and b.tenant_id = l.tenant_id
+         left join stores s on s.id = l.store_id and s.tenant_id = l.tenant_id
+         left join membership_enrollments e on e.id = l.enrollment_id and e.tenant_id = l.tenant_id
+         left join customers c on c.id = e.customer_id and c.tenant_id = e.tenant_id
+         where l.tenant_id = $1 and l.deleted_at is null ${ledgerStoreFilter}
+         order by l.created_at desc, l.id desc
+         limit 200`,
+        params,
+      ),
+      this.pool.query(
+        `select e.id,e.member_code,e.enrollment_status,e.joined_at,e.source,
+                c.display_name, s.name as store_name
+         from membership_enrollments e
+         join customers c on c.id = e.customer_id and c.tenant_id = e.tenant_id
+         left join stores s on s.id = e.store_id and s.tenant_id = e.tenant_id
+         where e.tenant_id = $1 and e.deleted_at is null ${storeFilter}
+         order by e.joined_at desc
+         limit 200`,
+        params,
+      ),
+      this.pool.query(
+        "select id,title from store_benefits where tenant_id=$1 and status='active' and deleted_at is null order by title limit 200",
+        [context.tenantId],
+      ),
+    ]);
+    return {
+      storeScoped,
+      ledger: ledger.rows,
+      enrollments: enrollments.rows,
+      benefits: benefitDefs.rows,
+    };
+  }
   async grant(
     context: OrganizationContext,
     enrollmentId: string,
