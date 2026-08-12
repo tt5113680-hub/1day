@@ -56,6 +56,16 @@ const jsonHeaders = (idempotencyKey?: string) => ({
   'content-type': 'application/json',
   ...(idempotencyKey ? { 'idempotency-key': idempotencyKey } : {}),
 });
+const barWidth = (total: number, value: number) =>
+  `${(total ? (value / total) * 100 : 0).toFixed(2)}%`;
+const countBy = <T,>(rows: T[], keyOf: (row: T) => string) => {
+  const counts = new Map<string, number>();
+  for (const row of rows) {
+    const key = keyOf(row);
+    counts.set(key, (counts.get(key) ?? 0) + 1);
+  }
+  return [...counts.entries()].sort((a, b) => b[1] - a[1]).map(([key, value]) => ({ key, value }));
+};
 
 export default function ManagementCustomerDetail({ params }: { params: Promise<{ id: string }> }) {
   const router = useRouter();
@@ -230,6 +240,31 @@ export default function ManagementCustomerDetail({ params }: { params: Promise<{
 
   const writable = data.customer.status === 'active';
 
+  const sourceCount = data.sources.length;
+  const ownershipCount = data.ownerships.length;
+  const taskCount = data.tasks.length;
+  const orderCount = data.orders.length;
+  const anomalyCount = data.anomalies.length;
+  const timelineCount = data.timeline.length;
+  const contributionCount = data.contributions.length;
+  const transferCount = data.transfers.length;
+
+  const taskDist = countBy(data.tasks, (t) => businessLabel(t.status));
+  const escalationDist = countBy(
+    data.tasks.filter((t) => t.escalation_level > 0),
+    (t) => (t.escalation_level >= 3 ? '已升级 ≥3 次' : '已升级'),
+  );
+  const sourceStatusDist = countBy(data.sources, (s) => businessLabel(s.status));
+  const sourceRoleDist = countBy(data.sources, (s) => businessLabel(s.source_role));
+  const ownershipRoleDist = countBy(data.ownerships, (o) => businessLabel(o.ownership_role));
+  const transferStatusDist = countBy(data.transfers, (t) => businessLabel(t.status));
+  const contributionRoleDist = countBy(data.contributions, (c) =>
+    businessLabel(c.contribution_role),
+  );
+  const orderStatusDist = countBy(data.orders, (o) => businessLabel(o.status));
+  const anomalyTypeDist = countBy(data.anomalies, (a) => businessLabel(a.type));
+  const timelineKindDist = countBy(data.timeline, (t) => businessLabel(t.kind));
+
   return (
     <main className={styles.page}>
       <Link className={styles.back} href="/m/customers">
@@ -254,6 +289,218 @@ export default function ManagementCustomerDetail({ params }: { params: Promise<{
           } · ${data.tags.map((item) => item.label).join(' / ') || '无标签'} · 版本 ${data.customer.version}`}
         </p>
       </section>
+
+      <section className={styles.summaryStrip} aria-label="客户详情数据概况">
+        <div>
+          <span>来源记录</span>
+          <strong>{sourceCount}</strong>
+        </div>
+        <div>
+          <span>归属记录</span>
+          <strong>{ownershipCount}</strong>
+        </div>
+        <div>
+          <span>任务</span>
+          <strong>{taskCount}</strong>
+        </div>
+        <div>
+          <span>订单结果</span>
+          <strong>{orderCount}</strong>
+        </div>
+        <div>
+          <span>跟进异常</span>
+          <strong>{anomalyCount}</strong>
+        </div>
+        <div>
+          <span>链路事件</span>
+          <strong>{timelineCount}</strong>
+        </div>
+      </section>
+
+      <section className={styles.distribution} aria-label="客户详情分布">
+        <div className={styles.panelBlock}>
+          <h2>任务状态分布</h2>
+          <ul className={styles.bars}>
+            {taskDist.map((b) => (
+              <li key={b.key} className={styles.barRow}>
+                <span className={styles.barLabel}>{b.key}</span>
+                <span className={styles.barTrack}>
+                  <span
+                    className={styles.barFill}
+                    style={{ width: barWidth(taskDist.length ? taskCount : 0, b.value) }}
+                  />
+                </span>
+                <span className={styles.barValue}>{b.value}</span>
+              </li>
+            ))}
+            {!taskCount && <li className={styles.barEmpty}>暂无任务</li>}
+          </ul>
+        </div>
+        <div className={styles.panelBlock}>
+          <h2>来源状态分布</h2>
+          <ul className={styles.bars}>
+            {sourceStatusDist.map((b) => (
+              <li key={b.key} className={styles.barRow}>
+                <span className={styles.barLabel}>{b.key}</span>
+                <span className={styles.barTrack}>
+                  <span
+                    className={styles.barFill}
+                    style={{ width: barWidth(sourceCount, b.value) }}
+                  />
+                </span>
+                <span className={styles.barValue}>{b.value}</span>
+              </li>
+            ))}
+            {!sourceCount && <li className={styles.barEmpty}>暂无来源记录</li>}
+          </ul>
+        </div>
+        <div className={styles.panelBlock}>
+          <h2>归属角色分布</h2>
+          <ul className={styles.bars}>
+            {ownershipRoleDist.map((b) => (
+              <li key={b.key} className={styles.barRow}>
+                <span className={styles.barLabel}>{b.key}</span>
+                <span className={styles.barTrack}>
+                  <span
+                    className={styles.barFill}
+                    style={{ width: barWidth(ownershipCount, b.value) }}
+                  />
+                </span>
+                <span className={styles.barValue}>{b.value}</span>
+              </li>
+            ))}
+            {!ownershipCount && <li className={styles.barEmpty}>暂无归属记录</li>}
+          </ul>
+        </div>
+        <div className={styles.panelBlock}>
+          <h2>归属审批状态分布</h2>
+          <ul className={styles.bars}>
+            {transferStatusDist.map((b) => (
+              <li key={b.key} className={styles.barRow}>
+                <span className={styles.barLabel}>{b.key}</span>
+                <span className={styles.barTrack}>
+                  <span
+                    className={styles.barFill}
+                    style={{ width: barWidth(transferCount, b.value) }}
+                  />
+                </span>
+                <span className={styles.barValue}>{b.value}</span>
+              </li>
+            ))}
+            {!transferCount && <li className={styles.barEmpty}>暂无归属审批</li>}
+          </ul>
+        </div>
+        <div className={styles.panelBlock}>
+          <h2>订单结果状态分布</h2>
+          <ul className={styles.bars}>
+            {orderStatusDist.map((b) => (
+              <li key={b.key} className={styles.barRow}>
+                <span className={styles.barLabel}>{b.key}</span>
+                <span className={styles.barTrack}>
+                  <span
+                    className={styles.barFill}
+                    style={{ width: barWidth(orderCount, b.value) }}
+                  />
+                </span>
+                <span className={styles.barValue}>{b.value}</span>
+              </li>
+            ))}
+            {!orderCount && <li className={styles.barEmpty}>暂无订单结果</li>}
+          </ul>
+        </div>
+        <div className={styles.panelBlock}>
+          <h2>跟进异常类型分布</h2>
+          <ul className={styles.bars}>
+            {anomalyTypeDist.map((b) => (
+              <li key={b.key} className={styles.barRow}>
+                <span className={styles.barLabel}>{b.key}</span>
+                <span className={styles.barTrack}>
+                  <span
+                    className={styles.barFill}
+                    style={{ width: barWidth(anomalyCount, b.value) }}
+                  />
+                </span>
+                <span className={styles.barValue}>{b.value}</span>
+              </li>
+            ))}
+            {!anomalyCount && <li className={styles.barEmpty}>暂无跟进异常</li>}
+          </ul>
+        </div>
+        <div className={styles.panelBlock}>
+          <h2>来源角色与贡献</h2>
+          <ul className={styles.bars}>
+            {sourceRoleDist.map((b) => (
+              <li key={b.key} className={styles.barRow}>
+                <span className={styles.barLabel}>{b.key}</span>
+                <span className={styles.barTrack}>
+                  <span
+                    className={styles.barFill}
+                    style={{ width: barWidth(sourceCount, b.value) }}
+                  />
+                </span>
+                <span className={styles.barValue}>{b.value}</span>
+              </li>
+            ))}
+            {contributionRoleDist.map((b) => (
+              <li key={b.key} className={styles.barRow}>
+                <span className={styles.barLabel}>{b.key}</span>
+                <span className={styles.barTrack}>
+                  <span
+                    className={styles.barFill}
+                    style={{ width: barWidth(contributionCount || sourceCount, b.value) }}
+                  />
+                </span>
+                <span className={styles.barValue}>{b.value}</span>
+              </li>
+            ))}
+            {!sourceCount && !contributionCount && (
+              <li className={styles.barEmpty}>暂无来源或贡献记录</li>
+            )}
+          </ul>
+        </div>
+        <div className={styles.panelBlock}>
+          <h2>链路事件类型分布</h2>
+          <ul className={styles.bars}>
+            {timelineKindDist.map((b) => (
+              <li key={b.key} className={styles.barRow}>
+                <span className={styles.barLabel}>{b.key}</span>
+                <span className={styles.barTrack}>
+                  <span
+                    className={styles.barFill}
+                    style={{ width: barWidth(timelineCount, b.value) }}
+                  />
+                </span>
+                <span className={styles.barValue}>{b.value}</span>
+              </li>
+            ))}
+            {!timelineCount && <li className={styles.barEmpty}>暂无链路事件</li>}
+          </ul>
+        </div>
+        {escalationDist.length > 0 && (
+          <div className={styles.panelBlock}>
+            <h2>任务升级信号分布</h2>
+            <ul className={styles.bars}>
+              {escalationDist.map((b) => (
+                <li key={b.key} className={styles.barRow}>
+                  <span className={styles.barLabel}>{b.key}</span>
+                  <span className={styles.barTrack}>
+                    <span
+                      className={styles.barFill}
+                      style={{ width: barWidth(taskCount, b.value) }}
+                    />
+                  </span>
+                  <span className={styles.barValue}>{b.value}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+      </section>
+
+      <p className={styles.honest}>
+        分布全部由已抓取客户详情档案行现场推导，仅记录来源、归属、任务与入口痕迹；来源与贡献反映已登记的推广跟进工作流，不代表第三方成交或本平台收款，非本平台下单。
+      </p>
+
       {!writable && (
         <section className={styles.merged} role="status">
           <StatusBadge tone="warning">{businessLabel(data.customer.status)}</StatusBadge>
