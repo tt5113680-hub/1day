@@ -1,15 +1,8 @@
 'use client';
 import { SessionApiClient } from '@oneday/session-client';
-import {
-  AdminPageHeader,
-  AppStatePanel,
-  businessLabel,
-  Button,
-  Card,
-  StatusBadge,
-} from '@oneday/ui';
+import { AppStatePanel, businessLabel, Button, StatusBadge } from '@oneday/ui';
 
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import styles from './page.module.css';
 
 type Template = {
@@ -20,6 +13,8 @@ type Template = {
   industry_config: { industry?: string; scenario?: string };
   published_version_id: string | null;
   version: number;
+  store_name?: string | null;
+  live_version_id?: string | null;
 };
 type Preview = {
   template: {
@@ -39,6 +34,29 @@ const bundles = {
   service: ['hero', 'action_grid', 'content'],
   conversion: ['hero', 'content', 'result_list'],
 };
+const barWidth = (total: number, value: number) => (total ? `${(value / total) * 100}%` : '0%');
+const targetLabel = (target: string) =>
+  target === 'consumer'
+    ? '消费者'
+    : target === 'employee'
+      ? '员工'
+      : target === 'management'
+        ? '管理'
+        : target || '未分类';
+const publishLabel = (template: Template) =>
+  template.live_version_id
+    ? '数字门店已发布'
+    : template.published_version_id
+      ? '模板已发布未绑定'
+      : '尚未发布';
+const industryLabel = (industry?: string) =>
+  industry === 'restaurant'
+    ? '餐饮'
+    : industry === 'beauty'
+      ? '美业'
+      : industry === 'retail'
+        ? '零售'
+        : industry || '未配置行业';
 
 export default function PlatformTemplatesPage() {
   const [state, setState] = useState<'loading' | 'ready' | 'forbidden' | 'error'>('loading');
@@ -145,6 +163,61 @@ export default function PlatformTemplatesPage() {
       setSaving(false);
     }
   };
+
+  const targetCounts = useMemo(() => {
+    const map = new Map<string, number>();
+    for (const template of templates) {
+      const key = targetLabel(template.target);
+      map.set(key, (map.get(key) ?? 0) + 1);
+    }
+    return [...map.entries()].map(([key, value]) => ({ key, value }));
+  }, [templates]);
+
+  const publishCounts = useMemo(() => {
+    const map = new Map<string, number>();
+    for (const template of templates) {
+      const key = publishLabel(template);
+      map.set(key, (map.get(key) ?? 0) + 1);
+    }
+    return [...map.entries()].map(([key, value]) => ({ key, value }));
+  }, [templates]);
+
+  const industryCounts = useMemo(() => {
+    const map = new Map<string, number>();
+    for (const template of templates) {
+      const key = industryLabel(template.industry_config?.industry);
+      map.set(key, (map.get(key) ?? 0) + 1);
+    }
+    const list = [...map.entries()].map(([key, value]) => ({ key, value }));
+    list.sort((a, b) => b.value - a.value || a.key.localeCompare(b.key));
+    return list;
+  }, [templates]);
+
+  const storeCounts = useMemo(() => {
+    const map = new Map<string, number>();
+    for (const template of templates) {
+      if (!template.live_version_id) continue;
+      const key = template.store_name?.trim() || '未绑定门店';
+      map.set(key, (map.get(key) ?? 0) + 1);
+    }
+    const list = [...map.entries()].map(([key, value]) => ({ key, value }));
+    list.sort((a, b) => b.value - a.value || a.key.localeCompare(b.key));
+    return list;
+  }, [templates]);
+
+  const versionBuckets = useMemo(() => {
+    const buckets = new Map<string, number>();
+    for (const template of templates) {
+      const n = template.version ?? 0;
+      const key = n <= 1 ? '首版 1' : n <= 5 ? '演进 2-5' : '多次演进 6+';
+      buckets.set(key, (buckets.get(key) ?? 0) + 1);
+    }
+    return [...buckets.entries()].map(([key, value]) => ({ key, value }));
+  }, [templates]);
+
+  const boundCount = templates.filter((template) => template.live_version_id).length;
+  const publishedCount = templates.filter((template) => template.published_version_id).length;
+
   if (state === 'loading')
     return (
       <main className={styles.centered}>
@@ -177,24 +250,150 @@ export default function PlatformTemplatesPage() {
       </main>
     );
   return (
-    <main className={styles.page}>
-      <AdminPageHeader
-        eyebrow="ONEDAY / 平台模板治理"
-        title="固定组件、行业配置与受控发布"
-        description="平台模板只使用经过验证的固定模块，不提供任意代码或低代码执行能力。发布动作全程保留版本与审计记录。"
-        actions={
-          <Button tone="secondary" onClick={() => void load()}>
+    <main className={styles.page} data-testid="platform-templates">
+      <header className={styles.topBar}>
+        <span className={styles.topBarTitle}>推广员工具 · 平台模板治理</span>
+        <span className={styles.topBarActions}>
+          <button className={styles.topBarRefresh} type="button" onClick={() => void load()}>
             刷新目录
-          </Button>
-        }
-      />
+          </button>
+        </span>
+      </header>
+
+      <section className={styles.heroCard} aria-label="平台模板治理说明">
+        <h1>固定组件、行业配置与受控发布</h1>
+        <p>
+          只使用经过验证的固定模块，不提供任意代码或低代码执行能力。发布动作全程保留版本与审计记录；
+          分布全部由已抓取模板档案行现场推导；不包含本平台收款、非本平台下单。
+        </p>
+      </section>
+
+      <section className={styles.summaryStrip} aria-label="平台模板治理概况">
+        <div>
+          <span>模板</span>
+          <strong>{templates.length}</strong>
+        </div>
+        <div>
+          <span>目标页面</span>
+          <strong>{targetCounts.length}</strong>
+        </div>
+        <div>
+          <span>已发布</span>
+          <strong>{publishedCount}</strong>
+        </div>
+        <div>
+          <span>绑定数字门店</span>
+          <strong>{boundCount}</strong>
+        </div>
+      </section>
+
+      <section className={styles.distribution} aria-label="平台模板分布">
+        <div className={styles.panelBlock}>
+          <h2>模板目标分布</h2>
+          <ul className={styles.bars}>
+            {targetCounts.map((b) => (
+              <li key={b.key} className={styles.barRow}>
+                <span className={styles.barLabel}>{b.key}</span>
+                <span className={styles.barTrack}>
+                  <span
+                    className={styles.barFill}
+                    style={{ width: barWidth(templates.length, b.value) }}
+                  />
+                </span>
+                <span className={styles.barValue}>{b.value}</span>
+              </li>
+            ))}
+            {!templates.length && <li className={styles.barEmpty}>暂无记录</li>}
+          </ul>
+        </div>
+        <div className={styles.panelBlock}>
+          <h2>发布状态分布</h2>
+          <ul className={styles.bars}>
+            {publishCounts.map((b) => (
+              <li key={b.key} className={styles.barRow}>
+                <span className={styles.barLabel}>{b.key}</span>
+                <span className={styles.barTrack}>
+                  <span
+                    className={styles.barFill}
+                    style={{ width: barWidth(templates.length, b.value) }}
+                  />
+                </span>
+                <span className={styles.barValue}>{b.value}</span>
+              </li>
+            ))}
+            {!templates.length && <li className={styles.barEmpty}>暂无记录</li>}
+          </ul>
+        </div>
+        <div className={styles.panelBlock}>
+          <h2>行业配置分布</h2>
+          <ul className={styles.bars}>
+            {industryCounts.map((b) => (
+              <li key={b.key} className={styles.barRow}>
+                <span className={styles.barLabel}>{b.key}</span>
+                <span className={styles.barTrack}>
+                  <span
+                    className={styles.barFill}
+                    style={{ width: barWidth(templates.length, b.value) }}
+                  />
+                </span>
+                <span className={styles.barValue}>{b.value}</span>
+              </li>
+            ))}
+            {!templates.length && <li className={styles.barEmpty}>暂无记录</li>}
+          </ul>
+        </div>
+        <div className={styles.panelBlock}>
+          <h2>绑定数字门店分布</h2>
+          <ul className={styles.bars}>
+            {storeCounts.map((b) => (
+              <li key={b.key} className={styles.barRow}>
+                <span className={styles.barLabel}>{b.key}</span>
+                <span className={styles.barTrack}>
+                  <span
+                    className={styles.barFill}
+                    style={{ width: barWidth(boundCount, b.value) }}
+                  />
+                </span>
+                <span className={styles.barValue}>{b.value}</span>
+              </li>
+            ))}
+            {!boundCount && <li className={styles.barEmpty}>暂无记录</li>}
+          </ul>
+        </div>
+        <div className={styles.panelBlock}>
+          <h2>版本演进分布</h2>
+          <ul className={styles.bars}>
+            {versionBuckets.map((b) => (
+              <li key={b.key} className={styles.barRow}>
+                <span className={styles.barLabel}>{b.key}</span>
+                <span className={styles.barTrack}>
+                  <span
+                    className={styles.barFill}
+                    style={{ width: barWidth(templates.length, b.value) }}
+                  />
+                </span>
+                <span className={styles.barValue}>{b.value}</span>
+              </li>
+            ))}
+            {!templates.length && <li className={styles.barEmpty}>暂无记录</li>}
+          </ul>
+        </div>
+      </section>
+
+      <p className={styles.honest}>
+        以上分布全部由已抓取模板档案行现场推导（source=local）：模板目标、发布状态、行业配置、
+        绑定数字门店与版本演进；仅记录受控模板治理，未接美团/抖音实时投放，不包含本平台收款、
+        非本平台下单；本地试点记录。
+      </p>
+
       {note && (
         <p role="status" className={styles.notice}>
           {note}
         </p>
       )}
+
       <section className={styles.grid}>
-        <Card className={styles.panel}>
+        <section className={styles.panel}>
           <h2>新建平台模板</h2>
           <label>
             模板编码
@@ -257,20 +456,26 @@ export default function PlatformTemplatesPage() {
           <Button className={styles.submit} loading={saving} onClick={() => void create()}>
             保存平台模板草稿
           </Button>
-        </Card>
-        <Card className={styles.panel}>
-          <h2>已持久化模板</h2>
+        </section>
+        <section className={styles.panel}>
+          <div className={styles.head}>
+            <h2>已持久化模板</h2>
+            <StatusBadge tone={templates.length ? 'success' : 'neutral'}>
+              {templates.length ? `${templates.length} 个模板` : '暂无模板'}
+            </StatusBadge>
+          </div>
           {templates.length ? (
             templates.map((template) => (
               <article className={styles.template} key={template.id}>
                 <div>
                   <strong>{template.name}</strong>
                   <span>
-                    {template.code} · {businessLabel(template.target)}
+                    {template.code} · {targetLabel(template.target)}
                   </span>
                   <small>
                     {template.industry_config?.industry || '未配置行业'} /{' '}
                     {template.industry_config?.scenario || '未配置场景'}
+                    {template.live_version_id ? ` · ${template.store_name || '未绑定门店'}` : ''}
                   </small>
                 </div>
                 <div className={styles.templateActions}>
@@ -290,9 +495,10 @@ export default function PlatformTemplatesPage() {
               description="在左侧创建第一个受控行业模板。"
             />
           )}
-        </Card>
+        </section>
       </section>
-      <Card className={styles.panel}>
+
+      <section className={styles.panel}>
         <h2>实时预览与发布</h2>
         {selected ? (
           <>
@@ -327,7 +533,7 @@ export default function PlatformTemplatesPage() {
         ) : (
           <p>选择模板后可查看其持久化模块和发布状态。</p>
         )}
-      </Card>
+      </section>
     </main>
   );
 }
