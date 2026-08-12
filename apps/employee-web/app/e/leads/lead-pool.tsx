@@ -1,7 +1,7 @@
 'use client';
 import { SessionApiClient } from '@oneday/session-client';
-import { AppStatePanel, Button, Card, StatusBadge, businessLabel } from '@oneday/ui';
-import { useCallback, useEffect, useState } from 'react';
+import { AppStatePanel, Button, StatusBadge, businessLabel } from '@oneday/ui';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import styles from './lead-pool.module.css';
 
 type Lead = {
@@ -15,8 +15,58 @@ type Lead = {
   openTasks: number;
 };
 type Assignee = { id: string; displayName: string; title: string };
+type Bucket = { label: string; value: number };
+
 const api = process.env.NEXT_PUBLIC_API_BASE_URL ?? 'http://127.0.0.1:3001';
 const sessionApi = new SessionApiClient(api);
+
+const barWidth = (total: number, value: number) => (total ? `${(value / total) * 100}%` : '0%');
+
+const countBy = (items: string[]) => {
+  const map = new Map<string, number>();
+  for (const item of items) map.set(item, (map.get(item) ?? 0) + 1);
+  return [...map.entries()]
+    .map(([label, value]) => ({ label, value }))
+    .sort((a, b) => b.value - a.value || a.label.localeCompare(b.label, 'zh'));
+};
+
+const statusLabel = (status: string) =>
+  ({
+    available: '待领取',
+    claimed: '已领取',
+    follow_up: '跟进中',
+    nurture: '养客中',
+  })[status] ?? (status || '未标注');
+
+const priorityLabel = (priority: string) =>
+  ({
+    high: '高优先级',
+    low: '低优先级',
+    normal: '常规',
+  })[priority] ?? (priority || '未标注');
+
+const taskLoadBucket = (openTasks: number) => {
+  if (!openTasks) return '尚未创建任务';
+  if (openTasks <= 2) return '轻负载 1-2';
+  return '重负载 3+';
+};
+
+function Bars({ items, total }: { items: Bucket[]; total: number }) {
+  if (!items.length) return <p className={styles.barEmpty}>暂无记录</p>;
+  return (
+    <div className={styles.bars}>
+      {items.map((item) => (
+        <div className={styles.barRow} key={item.label}>
+          <span className={styles.barLabel}>{item.label}</span>
+          <div className={styles.barTrack}>
+            <div className={styles.barFill} style={{ width: barWidth(total, item.value) }} />
+          </div>
+          <span className={styles.barValue}>{item.value}</span>
+        </div>
+      ))}
+    </div>
+  );
+}
 
 export function LeadPool() {
   const [state, setState] = useState<'loading' | 'ready' | 'forbidden' | 'error'>('loading');
@@ -50,6 +100,31 @@ export function LeadPool() {
   useEffect(() => {
     void load();
   }, [load]);
+
+  const statusDist = useMemo(
+    () => countBy(leads.map((lead) => statusLabel(lead.status))),
+    [leads],
+  );
+  const priorityDist = useMemo(
+    () => countBy(leads.map((lead) => priorityLabel(lead.priority))),
+    [leads],
+  );
+  const sourceDist = useMemo(
+    () => countBy(leads.map((lead) => businessLabel(lead.sourceType))),
+    [leads],
+  );
+  const taskLoadDist = useMemo(
+    () => countBy(leads.map((lead) => taskLoadBucket(lead.openTasks))),
+    [leads],
+  );
+  const ownershipDist = useMemo(
+    () =>
+      countBy(leads.map((lead) => (lead.isCurrentEmployee ? '我的线索' : '团队线索'))),
+    [leads],
+  );
+  const highPriorityCount = leads.filter((lead) => lead.priority === 'high').length;
+  const availableCount = leads.filter((lead) => lead.status === 'available').length;
+
   const action = async (
     lead: Lead,
     actionName: 'claim' | 'assign' | 'convert',
@@ -115,26 +190,47 @@ export function LeadPool() {
       </main>
     );
   return (
-    <main className={styles.page}>
-      <header className={styles.header}>
-        <div>
-          <p>推广员工具 · 获客池</p>
-          <h1>找到最值得立即跟进的线索</h1>
-          <span>
-            领取后可转入跟进任务或养客队列；审计留痕不含支付金额与第三方订单结果。
-          </span>
-        </div>
-        <Button tone="quiet" onClick={() => void load()}>
+    <main className={styles.page} data-testid="employee-lead-pool">
+      <header className={styles.topBar}>
+        <span className={styles.topBarTitle}>推广员工具 · 获客池</span>
+        <button className={styles.topBarRefresh} type="button" onClick={() => void load()}>
           刷新
-        </Button>
+        </button>
       </header>
-      {message && (
+
+      <section className={styles.heroCard} aria-label="获客池概览">
+        <h1>找到最值得立即跟进的线索</h1>
+        <p>
+          领取后可转入跟进任务或养客队列；审计留痕不含支付金额与第三方订单结果，非本平台下单。
+        </p>
+      </section>
+
+      {message ? (
         <p className={styles.feedback} role="status">
           {message}
         </p>
-      )}
-      <Card className={styles.toolbar}>
-        <label>
+      ) : null}
+
+      <section className={styles.panel} aria-label="获客池概况">
+        <div className={styles.summaryStrip}>
+          <div>
+            <span>全部线索</span>
+            <strong>{leads.length}</strong>
+          </div>
+          <div>
+            <span>待领取</span>
+            <strong>{availableCount}</strong>
+          </div>
+          <div>
+            <span>高优先级</span>
+            <strong>{highPriorityCount}</strong>
+          </div>
+          <div>
+            <span>可分配员工</span>
+            <strong>{assignees.length}</strong>
+          </div>
+        </div>
+        <label className={styles.filter}>
           筛选状态
           <select aria-label="线索状态" value={status} onChange={(e) => setStatus(e.target.value)}>
             <option value="">全部线索</option>
@@ -144,12 +240,41 @@ export function LeadPool() {
             <option value="nurture">养客中</option>
           </select>
         </label>
-        <strong>{leads.length} 条</strong>
-      </Card>
-      <section className={styles.list}>
+      </section>
+
+      <section className={styles.panel} aria-label="获客池分布">
+        <div className={styles.panelHead}>
+          <h2>获客池分布</h2>
+          <span className={styles.panelMeta}>由线索真实行推导</span>
+        </div>
+        <div className={styles.distribution}>
+          <div className={styles.panelBlock}>
+            <h3>状态分布</h3>
+            <Bars items={statusDist} total={leads.length} />
+          </div>
+          <div className={styles.panelBlock}>
+            <h3>优先级分布</h3>
+            <Bars items={priorityDist} total={leads.length} />
+          </div>
+          <div className={styles.panelBlock}>
+            <h3>来源分布</h3>
+            <Bars items={sourceDist} total={leads.length} />
+          </div>
+          <div className={styles.panelBlock}>
+            <h3>待办负载分布</h3>
+            <Bars items={taskLoadDist} total={leads.length} />
+          </div>
+          <div className={styles.panelBlock}>
+            <h3>归属分布</h3>
+            <Bars items={ownershipDist} total={leads.length} />
+          </div>
+        </div>
+      </section>
+
+      <section className={styles.list} aria-label="线索列表">
         {leads.length ? (
           leads.map((lead) => (
-            <Card className={styles.card} key={lead.id}>
+            <article className={styles.card} key={lead.id}>
               <div>
                 <StatusBadge
                   tone={
@@ -160,11 +285,7 @@ export function LeadPool() {
                         : 'info'
                   }
                 >
-                  {lead.priority === 'high'
-                    ? '高优先级'
-                    : lead.priority === 'low'
-                      ? '低优先级'
-                      : '常规'}
+                  {priorityLabel(lead.priority)}
                 </StatusBadge>
                 <h2>{lead.customerName}</h2>
                 <p>
@@ -219,16 +340,10 @@ export function LeadPool() {
                     </select>
                   </label>
                 ) : (
-                  <StatusBadge tone="neutral">
-                    {lead.status === 'follow_up'
-                      ? '跟进中'
-                      : lead.status === 'nurture'
-                        ? '养客中'
-                        : '已被领取'}
-                  </StatusBadge>
+                  <StatusBadge tone="neutral">{statusLabel(lead.status)}</StatusBadge>
                 )}
               </div>
-            </Card>
+            </article>
           ))
         ) : (
           <AppStatePanel
@@ -238,6 +353,11 @@ export function LeadPool() {
           />
         )}
       </section>
+
+      <p className={styles.honest} role="note">
+        以上分布全部由已抓取获客池档案行现场推导(source=local)：状态/优先级/来源/待办负载/归属均由真实
+        leads 行统计。推广员工具获客池跟进门店服务痕迹，不含支付金额与第三方订单结果，非本平台下单。
+      </p>
     </main>
   );
 }

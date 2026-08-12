@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 2026-08-12 - G1-W∞-79 Employee `/e/leads` 获客池真实数据深页 densify PASS
+
+- 黄顶栏+灰底白卡+summaryStrip+分布面板；移除 Card。tests/g1-winf79 4/4。See WINF79.
+
 ## 2026-08-12 - G1-W∞-78 员工/管理工作台真实数据深页 densify（ME-01 + MPC-01）PASS
 
 - `/e/workbench` 新增 summaryStrip + 分布面板（状态/升级/客户关联/到期窗口/来源/行动机会），由 workbench API 真实行推导。
