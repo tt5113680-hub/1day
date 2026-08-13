@@ -1,5 +1,23 @@
 # CHANGELOG
 
+## 2026-08-13 - G1-W∞-114 评价待回复队列（MPC-05）PASS
+
+承接 `MEITUAN_DEPTH_OPTIMIZATION_PLAN.md` Phase2/MPC-05，把 `/m/reviews` 从「静态分布条 + 行列表」推进到可作业闭环（列表→筛→队→回复→审计），真实 DB、禁止假 BI、无 GMV、无储值/支付、跳过 §5 READY、承接 W∞-113/112/45/42/23。验证期修复 `listReviews` rating 参数绑定。
+
+- **migration `068_reviews_reply`**：`store_reviews` 新增回复痕迹 `reply_text`(varchar(1000))/`replied_by`(uuid)/`replied_at`(timestamptz) + 索引 `store_reviews_reply_status_idx(tenant_id, replied_at, created_at)`。
+- **API**：
+  - `GET /api/v1/management/commerce/reviews?reply=all|pending|replied&rating=1..5`（`listReviews`；修正 rating 筛选：按有/无门店 store filter 使用 `$2`/`$3` 占位符并真实绑定值，修复 `?rating=` 500）。
+  - `GET /api/v1/management/commerce/reviews/queue`（`reviewQueue`：真实 `store_reviews` 行现场聚合 `total/pending/replied/replyRate/avgRating/byRating[]/pendingQueue[]` 待回复队列，无伪 BI）。
+  - `POST /api/v1/management/commerce/reviews/:id/reply`（`replyToReview`：写 `reply_text/replied_by/replied_at`；Idempotency-Key 幂等（advisory lock + idempotency_keys）+ `audit_logs reviews.replied` + `outbox reviews.replied.v1`；`requireReviewStoreWrite` 租户+store scope fail-closed，store-manager 无权跨店回复）。
+- **`/m/reviews`**（page.tsx + `_commerce.module.css`）：并行拉取列表+队列；新增「评价待回复队列」面板（真实待回复行 + 回复编辑器 textarea + 保存/取消）、「待回复评分分布」面板（真实 byRating）、「回复状态筛选」chips（全部/待回复/已回复）、已回复卡片/写回复、概况条（评价数/平均分/待回复/已回复/回复率）。
+- **诚实边界全保留**：评价与回复均为本地试点（`source=local`）、推广员工具只做档案与回复痕迹、**不接美团/抖音实时评价、不代第三方回写、不伪造第三方评价分**、不含本平台收款、**非本平台下单**；`/m/workflows` CUSTOM；§5 READY DEFERRED；不复活 consumer_orders/本平台下单/收单。
+- **测试**：新增 `tests/g1-winf114-reviews-reply-queue.test.mjs` 5/5 + `tests/management-reviews-reply-queue.test.mjs` 1/1（真实 DB：跨租户 403/404 deny → 队列 pending 真实行 → 列表 pending+rating 筛选 → 幂等回复重放 → replied 移出待回复并回读 → audit/outbox 落库 → 空回复 400 → 未授权 401/403）；随动回归 g1-winf45/42/23/17/100 + page-m-commerce 全绿；全仓 `node --test tests/*.test.mjs` **686 pass/9 fail**（9 = clean HEAD 既有集成/e2e 基线，与本刀无涉）、typecheck 20/20、build 20/20、unit 49/49、evidence-contract 74/74、变更文件 eslint+prettier clean。`pnpm db:migrate`（DATABASE_URL=oneday_v3_test）apply 068。
+- 证据：`evidence/G1-MEITUAN-PARITY/WINF114/ACCEPTANCE.md`。下一刀 **W∞-115 经营分析行业模板 + 模块热力 + 工具漏斗（MPC-09）**。
+
+## 2026-08-13 - G1-W∞-113 订单痕迹详情抽屉 + 导出（MPC-04）PASS
+
+承接 `MEITUAN_DEPTH_OPTIMIZATION_PLAN.md` Phase2/MPC-04：`GET /api/v1/management/commerce/orders/:id` 详情抽屉（订单档案 + `customer_sources` 来源链 + 客户 `tasks` 任务链 + 本地 `audit_logs` 审计链 + evidence/connector 计数，tenant/scope fail-closed）+ `GET /api/v1/management/commerce/orders/export` 真实订单痕迹 CSV（表头 `order_number,...`）；`/m/orders` 导出按钮 + 订单行点击详情抽屉。tests/g1-winf113 5/5 + management-order-detail-export 1/1；全仓 680 pass/9 fail（9 为 clean HEAD 既有集成/e2e 基线）；typecheck/build 20/20、unit 49/49。诚实边界 source=local、不接美团实时、非本平台下单。证据：`evidence/G1-MEITUAN-PARITY/WINF113/ACCEPTANCE.md`。
+
 ## 2026-08-13 - Unattended stale-lock auto-heal (monitoring failure fix)
 
 主人发现 DeepSeek 余额不动后定位：IDE 保活锁未释放 → daemon 连续 SKIP；健康检查误读 `construction.lock`（真文件 `.construction.lock`）且无自动清锁。

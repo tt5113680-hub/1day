@@ -15,8 +15,8 @@
 ## Current task
 
 - branch: `hardening/COMMERCIAL-COMPLETION`
-- last_verified: **2026-08-13** — **W∞-113 PASS** 订单痕迹详情抽屉 + 导出（MPC-04）：`GET /api/v1/management/commerce/orders/:id` 详情抽屉（订单档案 + `customer_sources` 来源链 + 客户 `tasks` 任务链 + 本地 `audit_logs` 审计链 + evidence/connector 计数，tenant/scope fail-closed）+ `GET /api/v1/management/commerce/orders/export` 真实订单痕迹 CSV；`/m/orders` 导出按钮 + 订单行点击详情抽屉；真实 DB 跨租户/未授权 deny 断言，禁止假 BI，无 GMV；诚实边界 source=local、不接美团实时、非本平台下单。新增 tests/g1-winf113 5/5 + management-order-detail-export 1/1；全仓 680 pass/9 fail（9 为 clean HEAD 既有集成/e2e 基线）；typecheck/build 20/20、unit 49/49、变更文件 eslint+prettier clean。
-- in_flight: **W∞-114 (NEXT)** 评价待回复队列（MPC-05）
+- last_verified: **2026-08-13** — **W∞-114 PASS** 评价待回复队列（MPC-05 / Phase2）：migration `068_reviews_reply`（`store_reviews` 新增 `reply_text/replied_by/replied_at` + 索引）；`GET .../commerce/reviews?reply=&rating=`（`listReviews` rating 参数绑定修正）+ `GET .../reviews/queue`（`reviewQueue` 真实 pending/replied/replyRate/byRating/pendingQueue）+ `POST .../reviews/:id/reply`（幂等 + audit `reviews.replied` + outbox `reviews.replied.v1`，store scope fail-closed）；`/m/reviews` 新增待回复队列/待回复评分分布/状态筛选 chips/回复编辑器 + 概况条（评价数/平均分/待回复/已回复/回复率）。诚实边界 source=local、不接美团评价、不代第三方回写、非本平台下单。新增 tests/g1-winf114 5/5 + management-reviews-reply-queue 1/1（真实 DB：跨租户 deny → 队列 → 筛选 → 幂等重放 → replied 移出 → audit/outbox → 400/401/403）；随动回归 g1-winf45/42/23/17/100 + page-m-commerce 全绿；全仓 686 pass/9 fail（9 为 clean HEAD 既有集成/e2e 基线，与本刀无涉）；typecheck/build 20/20、unit 49/49、evidence-contract 74/74、变更文件 eslint+prettier clean（修复验证期发现 `listReviews` rating `$param` 未绑定导致 `?rating=` 500）。`pnpm db:migrate`（oneday_v3_test）apply 068。见 evidence/G1-MEITUAN-PARITY/WINF114/ACCEPTANCE.md.
+- in_flight: **W∞-115 (NEXT)** 经营分析行业模板 + 模块热力 + 工具漏斗（MPC-09）
 - deferred: §5 开通 READY（待主人「开始第五节」）
 - blocker: **none (engineering)**
 - note: 僵死锁应自愈；若再出现余额长期不动，先看 `PROJECT_STATE/OWNER_ALERT_UNATTENDED.md` + `pnpm unattended:health`

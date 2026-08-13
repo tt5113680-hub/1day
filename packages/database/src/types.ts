@@ -1396,6 +1396,9 @@ export interface StoreReviewsTable {
   updated_by: string | null;
   deleted_at: Timestamp | null;
   version: Generated<number>;
+  reply_text: string | null;
+  replied_by: string | null;
+  replied_at: Timestamp | null;
 }
 
 export interface MarketingCampaignsTable {

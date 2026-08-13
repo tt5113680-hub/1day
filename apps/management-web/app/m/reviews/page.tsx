@@ -15,7 +15,21 @@ type ReviewRow = {
   reviewer_label: string;
   source: string;
   status: string;
+  reply_text: string | null;
+  replied_at: string | null;
+  replied_by_name: string | null;
+  reply_status: 'pending' | 'replied';
   created_at: string;
+};
+
+type ReviewQueue = {
+  total: number;
+  pending: number;
+  replied: number;
+  replyRate: number;
+  avgRating: number;
+  byRating: { rating: number; total: number; pending: number }[];
+  pendingQueue: ReviewRow[];
 };
 
 const api = process.env.NEXT_PUBLIC_API_BASE_URL ?? 'http://127.0.0.1:3001';
@@ -23,23 +37,73 @@ const sessionApi = new SessionApiClient(api);
 const fmt = (iso: string) => new Date(iso).toLocaleString('zh-CN', { hour12: false });
 const stars = (rating: number) => `★`.repeat(rating) + `☆`.repeat(Math.max(0, 5 - rating));
 
+const REPLY_FILTERS = [
+  { key: 'all', label: '全部' },
+  { key: 'pending', label: '待回复' },
+  { key: 'replied', label: '已回复' },
+] as const;
+
 export default function CommerceReviewsPage() {
   const [state, setState] = useState<'loading' | 'ready' | 'forbidden' | 'error'>('loading');
   const [reviews, setReviews] = useState<ReviewRow[]>([]);
+  const [queue, setQueue] = useState<ReviewQueue | null>(null);
+  const [reply, setReply] = useState<'all' | 'pending' | 'replied'>('all');
+  const [replyingId, setReplyingId] = useState<string | null>(null);
+  const [replyDraft, setReplyDraft] = useState('');
+  const [replyBusy, setReplyBusy] = useState(false);
+  const [replyMessage, setReplyMessage] = useState<string | null>(null);
+
   const load = useCallback(async () => {
     if (!(await sessionApi.context())) return setState('forbidden');
     setState('loading');
     try {
-      const response = await sessionApi.request(`${api}/api/v1/management/commerce/reviews`);
-      if ([401, 403].includes(response.status)) return setState('forbidden');
-      if (!response.ok) throw Error();
-      setReviews((await response.json()).data as ReviewRow[]);
+      const [listResponse, queueResponse] = await Promise.all([
+        sessionApi.request(`${api}/api/v1/management/commerce/reviews?reply=${reply}`),
+        sessionApi.request(`${api}/api/v1/management/commerce/reviews/queue`),
+      ]);
+      if ([401, 403].includes(listResponse.status) || [401, 403].includes(queueResponse.status))
+        return setState('forbidden');
+      if (!listResponse.ok || !queueResponse.ok) throw Error();
+      setReviews((await listResponse.json()).data as ReviewRow[]);
+      setQueue((await queueResponse.json()).data as ReviewQueue);
       setState('ready');
     } catch {
       setState('error');
     }
-  }, []);
+  }, [reply]);
+
   useEffect(() => void load(), [load]);
+
+  const submitReply = async (reviewId: string) => {
+    const text = replyDraft.trim();
+    if (!text) return;
+    setReplyBusy(true);
+    setReplyMessage(null);
+    try {
+      const response = await sessionApi.request(
+        `${api}/api/v1/management/commerce/reviews/${reviewId}/reply`,
+        {
+          method: 'POST',
+          headers: {
+            'content-type': 'application/json',
+            'idempotency-key': `reply-${reviewId}-${Date.now()}`,
+          },
+          body: JSON.stringify({ replyText: text }),
+        },
+      );
+      if ([401, 403].includes(response.status)) return setState('forbidden');
+      if (!response.ok) throw Error();
+      setReplyMessage('回复已保存为本地评价档案痕迹。');
+      setReplyingId(null);
+      setReplyDraft('');
+      await load();
+    } catch {
+      setReplyMessage('回复保存失败，请重试。');
+    } finally {
+      setReplyBusy(false);
+    }
+  };
+
   if (state === 'loading')
     return (
       <main className={styles.centered}>
@@ -62,6 +126,7 @@ export default function CommerceReviewsPage() {
         />
       </main>
     );
+
   const sum = reviews.reduce((acc, r) => acc + r.rating, 0);
   const avg = reviews.length ? (sum / reviews.length).toFixed(1) : '0';
   const ratingBuckets = [5, 4, 3, 2, 1].map((star) => ({
@@ -71,6 +136,9 @@ export default function CommerceReviewsPage() {
   const reviewScope = new Map<string, number>();
   for (const r of reviews) reviewScope.set(r.store_name, (reviewScope.get(r.store_name) ?? 0) + 1);
   const byReviewStore = [...reviewScope.entries()].map(([name, value]) => ({ key: name, value }));
+  const pendingList = queue?.pendingQueue ?? reviews.filter((r) => r.reply_status === 'pending');
+  const replyRate = queue ? Math.round((queue.replied / Math.max(1, queue.total)) * 100) : 0;
+
   return (
     <main className={styles.page} data-testid="management-reviews">
       <header className={styles.topBar}>
@@ -82,33 +150,40 @@ export default function CommerceReviewsPage() {
 
       <section className={styles.heroCard} aria-label="评价档案说明">
         <h1>评价档案</h1>
-        <p>本地试点评价记录与平均分（租户隔离）。来源如实标注；不接第三方评价流，不伪造评分。</p>
+        <p>
+          本地试点评价记录、平均分与待回复队列（租户隔离）。来源如实标注；不接第三方评价流，不伪造第三方评价分。
+        </p>
       </section>
 
       <ManagementEarlyMeetingKpi page="reviews" />
 
       <p className={styles.honest} role="status">
-        评价骨架为本地试点数据（source=local）。推广员工具只做档案与回复痕迹；不接美团评价接口，不伪造第三方评价分。
+        评价与回复均为本地试点档案（source=local），推广员工具只做档案与回复痕迹；不接美团评价接口，不代第三方回写，不伪造第三方评价分，不包含本平台收款，非本平台下单。
       </p>
 
       <section className={styles.summaryStrip} aria-label="评价概况">
         <div>
           <span>评价数</span>
-          <strong>{reviews.length}</strong>
+          <strong>{queue?.total ?? reviews.length}</strong>
         </div>
         <div>
           <span>平均分</span>
-          <strong>{avg}</strong>
+          <strong>{queue ? queue.avgRating : avg}</strong>
         </div>
         <div>
-          <span>好评(≥4)</span>
-          <strong>{reviews.filter((r) => r.rating >= 4).length}</strong>
+          <span>待回复</span>
+          <strong>{queue?.pending ?? 0}</strong>
         </div>
         <div>
-          <span>门店</span>
-          <strong>{new Set(reviews.map((r) => r.store_id)).size}</strong>
+          <span>已回复</span>
+          <strong>{queue?.replied ?? 0}</strong>
+        </div>
+        <div>
+          <span>回复率</span>
+          <strong>{replyRate}%</strong>
         </div>
       </section>
+
       <section className={styles.panel} aria-label="评价分布">
         <div className={styles.panelBlock}>
           <h2>评分分布</h2>
@@ -126,6 +201,26 @@ export default function CommerceReviewsPage() {
               </li>
             ))}
             {!reviews.length && <li className={styles.barEmpty}>暂无评价</li>}
+          </ul>
+        </div>
+        <div className={styles.panelBlock}>
+          <h2>待回复评分分布</h2>
+          <ul className={styles.bars}>
+            {(queue?.byRating ?? []).map((b) => (
+              <li key={b.rating} className={styles.barRow}>
+                <span className={styles.barLabel}>{b.rating} 星</span>
+                <span className={styles.barTrack}>
+                  <span
+                    className={styles.barFill}
+                    style={{
+                      width: `${queue && queue.pending ? (b.pending / queue.pending) * 100 : 0}%`,
+                    }}
+                  />
+                </span>
+                <span className={styles.barValue}>{b.pending} 待</span>
+              </li>
+            ))}
+            {!queue?.pending && <li className={styles.barEmpty}>暂无待回复评价</li>}
           </ul>
         </div>
         <div className={styles.panelBlock}>
@@ -147,6 +242,107 @@ export default function CommerceReviewsPage() {
           </ul>
         </div>
       </section>
+
+      <section className={styles.panel} aria-label="评价待回复队列">
+        <button
+          className={styles.replyReset}
+          type="button"
+          onClick={() => {
+            setReplyingId(null);
+            setReplyDraft('');
+            setReplyMessage(null);
+          }}
+        >
+          收起回复
+        </button>
+        <div className={styles.panelBlock}>
+          <h2>待回复队列</h2>
+          <p className={styles.panelMeta}>真实评价档案中尚未登记回复的记录。</p>
+          <div className={styles.queueList}>
+            {pendingList.map((review) => (
+              <div className={styles.queueItem} key={review.id}>
+                <div className={styles.rowHead}>
+                  <div>
+                    <h3>
+                      <span className={styles.rating}>{stars(review.rating)}</span>{' '}
+                      {review.reviewer_label}
+                    </h3>
+                    <p>
+                      {review.store_name} · {fmt(review.created_at)}
+                    </p>
+                  </div>
+                  <Button
+                    onClick={() => {
+                      setReplyingId(review.id);
+                      setReplyDraft(review.reply_text ?? '');
+                      setReplyMessage(null);
+                    }}
+                    disabled={replyBusy && replyingId === review.id}
+                  >
+                    回复
+                  </Button>
+                </div>
+                <p className={styles.reviewContent}>{review.content}</p>
+                {replyingId === review.id && (
+                  <div className={styles.replyBox}>
+                    <textarea
+                      className={styles.replyTextarea}
+                      value={replyDraft}
+                      onChange={(event) => setReplyDraft(event.target.value)}
+                      rows={3}
+                      maxLength={1000}
+                      placeholder="输入对这条评价的回复（仅登记为本地档案痕迹）。"
+                    />
+                    <div className={styles.replyActions}>
+                      <Button
+                        onClick={() => void submitReply(review.id)}
+                        disabled={replyBusy || !replyDraft.trim()}
+                      >
+                        {replyBusy ? '保存中…' : '保存回复'}
+                      </Button>
+                      <Button
+                        tone="quiet"
+                        onClick={() => {
+                          setReplyingId(null);
+                          setReplyDraft('');
+                        }}
+                      >
+                        取消
+                      </Button>
+                    </div>
+                  </div>
+                )}
+              </div>
+            ))}
+            {!pendingList.length && (
+              <p className={styles.barEmpty}>暂无待回复评价，全部已登记回复痕迹。</p>
+            )}
+          </div>
+        </div>
+        <div className={styles.panelBlock}>
+          <h2>回复状态筛选</h2>
+          <p className={styles.panelMeta}>对下方评价列表按回复状态过滤。</p>
+          <div className={styles.chips}>
+            {REPLY_FILTERS.map((filter) => (
+              <button
+                key={filter.key}
+                type="button"
+                className={`${styles.chip} ${reply === filter.key ? styles.chipActive : ''}`}
+                onClick={() => setReply(filter.key)}
+              >
+                {filter.label}
+              </button>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {replyMessage && (
+        <p className={styles.notice} role="status">
+          {replyMessage}
+        </p>
+      )}
+
       <section className={styles.grid}>
         {reviews.map((review) => (
           <article className={styles.row} key={review.id}>
@@ -164,7 +360,57 @@ export default function CommerceReviewsPage() {
                 {review.status === 'active' ? '展示中' : '已隐藏'}
               </StatusBadge>
             </div>
-            <p style={{ color: 'var(--od-ink)', margin: '12px 0 0' }}>{review.content}</p>
+            <p className={styles.reviewContent}>{review.content}</p>
+            {review.reply_status === 'replied' ? (
+              <div className={styles.replyCard}>
+                <span className={styles.replyLabel}>
+                  已回复{review.replied_at ? ` · ${fmt(review.replied_at)}` : ''}
+                  {review.replied_by_name ? ` · ${review.replied_by_name}` : ''}
+                </span>
+                <p>{review.reply_text}</p>
+              </div>
+            ) : (
+              <button
+                type="button"
+                className={styles.replyInline}
+                onClick={() => {
+                  setReplyingId(review.id);
+                  setReplyDraft('');
+                  setReplyMessage(null);
+                }}
+              >
+                写回复
+              </button>
+            )}
+            {replyingId === review.id && review.reply_status !== 'replied' && (
+              <div className={styles.replyBox}>
+                <textarea
+                  className={styles.replyTextarea}
+                  value={replyDraft}
+                  onChange={(event) => setReplyDraft(event.target.value)}
+                  rows={3}
+                  maxLength={1000}
+                  placeholder="输入对这条评价的回复（仅登记为本地档案痕迹）。"
+                />
+                <div className={styles.replyActions}>
+                  <Button
+                    onClick={() => void submitReply(review.id)}
+                    disabled={replyBusy || !replyDraft.trim()}
+                  >
+                    {replyBusy ? '保存中…' : '保存回复'}
+                  </Button>
+                  <Button
+                    tone="quiet"
+                    onClick={() => {
+                      setReplyingId(null);
+                      setReplyDraft('');
+                    }}
+                  >
+                    取消
+                  </Button>
+                </div>
+              </div>
+            )}
           </article>
         ))}
         {!reviews.length && (

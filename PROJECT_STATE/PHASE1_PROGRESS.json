@@ -1,17 +1,17 @@
 {
-  "recordedAt": "2026-08-13T13:05:00+08:00",
+  "recordedAt": "2026-08-13T19:00:00+08:00",
   "phase": "Meituan depth 100% closed-loop (owner plan 2026-08-12)",
   "goal": "Blueprint/product depth 100%; SaaS strongest; skip §5 READY; DeepSeek/IDE unattended W∞-112+",
-  "currentStep": "W∞-112 PASS (offers category tree + batch status + jump rank MPC-03). Next W∞-113 order detail drawer + export (MPC-04). §5 READY deferred.",
+  "currentStep": "W∞-114 PASS (reviews pending-reply queue MPC-05, migration 068 + reviews/queue + reply write, real DB). Next W∞-115 analytics industry template + module heat + tool funnel (MPC-09). §5 READY deferred.",
   "milestones": [
     { "id": "g1-winf-chrome", "label": "W∞-chrome densify W3..106", "weight": 18, "status": "pass", "evidence": "evidence/G1-MEITUAN-PARITY/WINF*" },
     { "id": "depth-phase1", "label": "Depth Phase1 W∞-107..110", "weight": 15, "status": "pass", "evidence": "MEITUAN_DEPTH_OPTIMIZATION_PLAN.md" },
-    { "id": "depth-phase2", "label": "Depth Phase2 W∞-111..117 MPC 100%", "weight": 22, "status": "active", "evidence": "WINF111+WINF112 PASS; next W113" },
+    { "id": "depth-phase2", "label": "Depth Phase2 W∞-111..117 MPC 100%", "weight": 22, "status": "active", "evidence": "WINF111/112/113/114 PASS; next W115" },
     { "id": "depth-phase3-saas", "label": "Depth Phase3 SaaS strongest W∞-118..124", "weight": 15, "status": "pending", "evidence": "MEITUAN_DEPTH_OPTIMIZATION_PLAN.md §6" }
   ],
   "ownerGates": [
     { "id": "p1-d", "label": "P1-D owner local full test + sign-off", "status": "waiting" },
     { "id": "section5-ready", "label": "§5 READY provisioning (deferred)", "status": "deferred" }
   ],
-  "notes": "W112 closed: catalog depth API (categories/batch-status/jump-rank) + /m/offers 3 panels, real DB idempotent/isolated/audit/outbox, no fake BI, no GMV. Lock released for DeepSeek resume on W113."
+  "notes": "W114 closed: migration 068 + reviews list/queue/reply API (idempotent audit/outbox) + /m/reviews reply queue panels; real DB 5+1, 686 pass/9 fail baseline; no fake BI, no GMV. Fixed listReviews rating param binding during verification. Next W115 MPC-09 analytics depth."
 }

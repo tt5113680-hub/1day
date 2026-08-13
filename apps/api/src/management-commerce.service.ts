@@ -1,10 +1,14 @@
 import {
   BadRequestException,
+  ConflictException,
   Injectable,
   NotFoundException,
   OnModuleDestroy,
 } from '@nestjs/common';
+import { randomUUID } from 'node:crypto';
+import type { PoolClient } from 'pg';
 import { createApiPool } from './database-pool';
+import type { OrganizationContext } from './organization.service';
 
 const uuid = /^[0-9a-f-]{36}$/i;
 
@@ -148,20 +152,206 @@ export class ManagementCommerceService implements OnModuleDestroy {
     };
   }
 
-  async listReviews(tenantId: string, storeIds: string[] | null) {
+  /**
+   * G1-W∞-114 (MPC-05): evaluation archive list, optionally filtered by reply state.
+   *
+   * Real, tenant-scoped (store-scoped for store managers) `store_reviews` rows plus
+   * the honest local reply trace (`reply_text`/`reply_status`/`replied_at`/`replied_by_name`).
+   * `reply` filter = pending (no reply yet) / replied / all. `rating` narrows by star.
+   * No third-party review stream is ever claimed; no fabricated rating aggregates.
+   */
+  async listReviews(tenantId: string, storeIds: string[] | null, reply = 'all', rating?: number) {
+    if (!['all', 'pending', 'replied'].includes(reply))
+      throw new BadRequestException('VALIDATION_ERROR');
     const { clause, params } = this.storeFilter(storeIds);
+    const hasStoreFilter = params.length > 0;
+    const filters: string[] = [];
+    const values: (string | number)[] = [tenantId, ...params];
+    if (reply === 'pending') filters.push('r.replied_at is null');
+    if (reply === 'replied') filters.push('r.replied_at is not null');
+    if (rating !== undefined) {
+      filters.push(`r.rating=$${hasStoreFilter ? 3 : 2}`);
+      values.push(rating);
+    }
     const result = await this.pool.query(
-      `select r.id,r.store_id,st.name as store_name,r.rating,r.content,r.reviewer_label,r.source,r.status,r.created_at
+      `select r.id,r.store_id,st.name as store_name,r.rating,r.content,r.reviewer_label,r.source,r.status,
+              r.reply_text,r.replied_at,coalesce(u.display_name,'未知操作人') as replied_by_name,
+              case when r.replied_at is null then 'pending' else 'replied' end as reply_status,r.created_at
        from store_reviews r
        join stores st on st.id=r.store_id and st.tenant_id=r.tenant_id and st.deleted_at is null
-       where r.tenant_id=$1 and r.deleted_at is null ${clause}
-       order by r.created_at desc limit 200`,
-      [tenantId, ...params],
+       left join users u on u.id=r.replied_by
+       where r.tenant_id=$1 and r.deleted_at is null ${clause}${filters.length ? ' and ' + filters.join(' and ') : ''}
+       order by r.replied_at is not null, r.created_at desc limit 200`,
+      values,
     );
     return result.rows.map((row) => ({
       ...row,
       rating: Number(row.rating),
     }));
+  }
+
+  /**
+   * W∞-114 — resolve a review's owning store (for scoped store-manager write gating).
+   * Returns null when the review does not exist in the tenant (treated as NOT_FOUND).
+   */
+  async reviewStoreId(tenantId: string, reviewId: string) {
+    if (!uuid.test(reviewId)) return null;
+    const row = (
+      await this.pool.query(
+        'select store_id from store_reviews where id=$1 and tenant_id=$2 and deleted_at is null',
+        [reviewId, tenantId],
+      )
+    ).rows[0];
+    return row?.store_id ? String(row.store_id) : null;
+  }
+
+  /**
+   * G1-W∞-114 (MPC-05): reply-state queue summary mined from real `store_reviews` rows.
+   *
+   * Returns honest pending/replied counts, overall average rating and a per-rating
+   * pending breakdown. The `pendingQueue` is the actionable 待回复队列 (reviews with no
+   * reply yet). No fabricated metrics and no claims about third-party live evaluation.
+   */
+  async reviewQueue(tenantId: string, storeIds: string[] | null) {
+    const { clause, params } = this.storeFilter(storeIds);
+    const rows = await this.pool.query(
+      `select r.id,r.store_id,st.name as store_name,r.rating,r.content,r.reviewer_label,r.source,r.status,
+              r.reply_text,r.replied_at,coalesce(u.display_name,'未知操作人') as replied_by_name,
+              case when r.replied_at is null then 'pending' else 'replied' end as reply_status,r.created_at
+       from store_reviews r
+       join stores st on st.id=r.store_id and st.tenant_id=r.tenant_id and st.deleted_at is null
+       left join users u on u.id=r.replied_by
+       where r.tenant_id=$1 and r.deleted_at is null ${clause}
+       order by case when r.replied_at is null then 0 else 1 end, r.created_at desc limit 500`,
+      [tenantId, ...params],
+    );
+    const all = rows.rows.map((row) => ({
+      ...row,
+      rating: Number(row.rating),
+    }));
+    const pending = all.filter((row) => row.reply_status === 'pending');
+    const total = all.length;
+    const pendingCount = pending.length;
+    const repliedCount = total - pendingCount;
+    const sum = all.reduce((acc, row) => acc + row.rating, 0);
+    const avgRating = total ? Number((sum / total).toFixed(1)) : 0;
+    const byRating = [5, 4, 3, 2, 1].map((star) => ({
+      rating: star,
+      total: all.filter((row) => row.rating === star).length,
+      pending: pending.filter((row) => row.rating === star).length,
+    }));
+    return {
+      total,
+      pending: pendingCount,
+      replied: repliedCount,
+      replyRate: total ? pendingCount / total : 0,
+      avgRating,
+      byRating,
+      pendingQueue: pending.slice(0, 50),
+    };
+  }
+
+  /**
+   * G1-W∞-114 (MPC-05): record a reply on one local evaluation archive row.
+   *
+   * Write gated by tenant + store scope in the controller. Idempotent via
+   * Idempotency-Key and writes honest reply trail + local audit/outbox. Does not push
+   * to any third-party review stream and does not fabricate a live evaluation reply.
+   */
+  async replyToReview(
+    context: OrganizationContext,
+    reviewId: string,
+    body: Record<string, unknown>,
+    key: string,
+    requestId: string,
+  ) {
+    if (!uuid.test(reviewId)) throw new BadRequestException('VALIDATION_ERROR');
+    if (!key.trim() || key.length > 160) throw new BadRequestException('VALIDATION_ERROR');
+    const replyText = body.replyText;
+    if (typeof replyText !== 'string' || !replyText.trim() || replyText.trim().length > 1000)
+      throw new BadRequestException('VALIDATION_ERROR');
+
+    return this.withIdempotency(context, 'reviews_reply', key, async (client) => {
+      const review = await client.query(
+        `select id,store_id from store_reviews where id=$1 and tenant_id=$2 and deleted_at is null limit 1`,
+        [reviewId, context.tenantId],
+      );
+      if (!review.rowCount) throw new NotFoundException('NOT_FOUND');
+      const updated = await client.query(
+        `update store_reviews set reply_text=$1,replied_by=$2,replied_at=now(),updated_at=now(),updated_by=$2,version=version+1
+         where id=$3 and tenant_id=$4 and deleted_at is null
+         returning id,store_id,reply_text,replied_at,version`,
+        [replyText.trim(), context.userId, reviewId, context.tenantId],
+      );
+      if (!updated.rowCount) throw new ConflictException('CONFLICT');
+      await this.reviewReceipt(
+        client,
+        context,
+        'reviews.replied',
+        'reviews.replied.v1',
+        reviewId,
+        requestId,
+        { replyText: replyText.trim(), replyStatus: 'replied' },
+      );
+      return { id: reviewId, replyStatus: 'replied' };
+    });
+  }
+
+  private async reviewReceipt(
+    client: PoolClient,
+    context: OrganizationContext,
+    action: string,
+    eventType: string,
+    id: string,
+    requestId: string,
+    details: unknown,
+  ) {
+    const correlationId = uuid.test(requestId) ? requestId : randomUUID();
+    await client.query(
+      "insert into audit_logs(id,tenant_id,actor_id,action,resource_type,resource_id,correlation_id,trace_id,details,created_by,updated_by) values($1,$2,$3,$4,'store_review',$5,$6,'page-m-005',$7,$3,$3)",
+      [randomUUID(), context.tenantId, context.userId, action, id, correlationId, details],
+    );
+    await client.query(
+      "insert into outbox_events(id,tenant_id,event_type,aggregate_type,aggregate_id,payload,correlation_id,trace_id,created_by,updated_by) values($1,$2,$3,'store_review',$4,$5,$6,'page-m-005',$7,$7)",
+      [randomUUID(), context.tenantId, eventType, id, details, correlationId, context.userId],
+    );
+  }
+
+  private async withIdempotency(
+    context: OrganizationContext,
+    type: string,
+    key: string,
+    action: (client: PoolClient) => Promise<Record<string, unknown>>,
+  ) {
+    const client = await this.pool.connect();
+    try {
+      await client.query('begin');
+      await client.query('select pg_advisory_xact_lock(hashtext($1),hashtext($2))', [
+        context.tenantId,
+        `${type}:${key}`,
+      ]);
+      const existing = await client.query(
+        'select response from idempotency_keys where tenant_id=$1 and resource_type=$2 and idempotency_key=$3',
+        [context.tenantId, type, key],
+      );
+      if (existing.rowCount) {
+        await client.query('commit');
+        return existing.rows[0].response as Record<string, unknown>;
+      }
+      const data = await action(client);
+      await client.query(
+        'insert into idempotency_keys(id,tenant_id,resource_type,idempotency_key,response,created_by,updated_by) values($1,$2,$3,$4,$5,$6,$6)',
+        [randomUUID(), context.tenantId, type, key, data, context.userId],
+      );
+      await client.query('commit');
+      return data;
+    } catch (error) {
+      await client.query('rollback');
+      if ((error as { code?: string }).code === '23505') throw new ConflictException('CONFLICT');
+      throw error;
+    } finally {
+      client.release();
+    }
   }
 
   async listMarketing(tenantId: string, storeIds: string[] | null) {

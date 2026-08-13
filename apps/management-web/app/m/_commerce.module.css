@@ -371,6 +371,140 @@
   white-space: nowrap;
 }
 
+.reviewContent {
+  margin: 12px 0 0;
+  color: var(--od-ink);
+  line-height: 1.55;
+}
+
+.replyReset {
+  justify-self: end;
+  border: 0;
+  border-radius: 17px;
+  padding: 6px 12px;
+  color: #666;
+  background: #f2f2f2;
+  font: inherit;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.queueList {
+  display: grid;
+  gap: 10px;
+  margin: 0;
+}
+
+.queueItem {
+  display: grid;
+  gap: 8px;
+  border-radius: 10px;
+  padding: 12px;
+  background: #fafafa;
+}
+
+.queueItem h3 {
+  margin: 0;
+  font-size: 15px;
+  color: #222;
+}
+
+.queueItem .rowHead {
+  align-items: center;
+}
+
+.replyBox {
+  display: grid;
+  gap: 10px;
+  margin-top: 4px;
+}
+
+.replyTextarea {
+  width: 100%;
+  resize: vertical;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  padding: 10px 12px;
+  color: #222;
+  background: #fff;
+  font: inherit;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.replyTextarea:focus {
+  outline: 2px solid rgb(255 209 0 / 60%);
+  border-color: #ffd100;
+}
+
+.replyActions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  justify-content: flex-end;
+}
+
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.chip {
+  border: 1px solid #eee;
+  border-radius: 16px;
+  padding: 6px 14px;
+  color: #666;
+  background: #fff;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.chipActive {
+  border-color: #ffd100;
+  color: #222;
+  background: #fff9db;
+}
+
+.replyCard {
+  display: grid;
+  gap: 6px;
+  border-radius: 10px;
+  margin-top: 12px;
+  padding: 12px;
+  background: #fff9db;
+}
+
+.replyCard p {
+  margin: 0;
+  color: #666;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.replyLabel {
+  color: #b8860b;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.replyInline {
+  justify-self: start;
+  border: 1px solid #ffd100;
+  border-radius: 16px;
+  margin-top: 12px;
+  padding: 6px 14px;
+  color: #222;
+  background: #fff;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
 @media (max-width: 900px) {
   .page {
     padding-right: 10px;
