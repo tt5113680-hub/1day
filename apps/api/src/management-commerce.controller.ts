@@ -4,7 +4,10 @@ import {
   ForbiddenException,
   Get,
   Headers,
+  Param,
+  Res,
 } from '@nestjs/common';
+import type { FastifyReply } from 'fastify';
 import { DataScopeService } from './data-scope.service';
 import { ManagementCommerceService } from './management-commerce.service';
 import { TenantContextService } from './tenant-context.service';
@@ -30,10 +33,7 @@ export class ManagementCommerceController {
   ) {
     if (!requestId?.trim()) throw new BadRequestException('VALIDATION_ERROR');
     const context = await this.tenantContext.fromAuthorization(authorization, tenant);
-    const permissionCodes = await this.dataScopes.permissionCodes(
-      context.tenantId,
-      context.userId,
-    );
+    const permissionCodes = await this.dataScopes.permissionCodes(context.tenantId, context.userId);
     if (permissionCodes.includes('tenant.manage')) {
       return { ...context, storeIds: null as string[] | null };
     }
@@ -55,6 +55,37 @@ export class ManagementCommerceController {
     const context = await this.operatorContext(authorization, tenant, requestId);
     return {
       data: await this.commerce.listOrders(context.tenantId, context.storeIds),
+      meta: { requestId },
+      error: null,
+    };
+  }
+
+  @Get('orders/export')
+  async ordersExport(
+    @Res() reply: FastifyReply,
+    @Headers('authorization') authorization?: string,
+    @Headers('x-tenant-context') tenant?: string,
+    @Headers('x-request-id') requestId?: string,
+  ) {
+    const context = await this.operatorContext(authorization, tenant, requestId);
+    const file = await this.commerce.exportOrders(context.tenantId, context.storeIds);
+    return reply
+      .header('content-type', 'text/csv; charset=utf-8')
+      .header('content-disposition', `attachment; filename="${file.filename}"`)
+      .header('x-content-type-options', 'nosniff')
+      .send(file.csv);
+  }
+
+  @Get('orders/:id')
+  async orderDetail(
+    @Param('id') id: string,
+    @Headers('authorization') authorization?: string,
+    @Headers('x-tenant-context') tenant?: string,
+    @Headers('x-request-id') requestId?: string,
+  ) {
+    const context = await this.operatorContext(authorization, tenant, requestId);
+    return {
+      data: await this.commerce.getOrderDetail(context.tenantId, context.storeIds, id),
       meta: { requestId },
       error: null,
     };

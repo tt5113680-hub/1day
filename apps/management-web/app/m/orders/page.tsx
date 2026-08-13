@@ -20,6 +20,38 @@ type OrderRow = {
   merchant_note: string | null;
   occurred_at: string;
   items: { name?: string; qty?: number; source?: string }[];
+  evidence_count?: number;
+  connector_count?: number;
+};
+
+type TraceSource = {
+  source_role: string | null;
+  source_type: string | null;
+  source_id: string | null;
+  status: string | null;
+  created_at: string;
+};
+type TraceTask = {
+  title: string;
+  status: string | null;
+  due_at: string | null;
+  escalation_level: number | null;
+  created_at: string;
+  assignee_name: string | null;
+};
+type TraceAudit = {
+  action: string;
+  action_type: string | null;
+  resource_id: string | null;
+  details: unknown;
+  created_at: string;
+  actor_name?: string;
+};
+type OrderDetail = {
+  order: OrderRow;
+  sources: TraceSource[];
+  tasks: TraceTask[];
+  audits: TraceAudit[];
 };
 
 const api = process.env.NEXT_PUBLIC_API_BASE_URL ?? 'http://127.0.0.1:3001';
@@ -44,6 +76,13 @@ const toneOf = (value: string): 'success' | 'warning' | 'neutral' => {
 export default function CommerceOrdersPage() {
   const [state, setState] = useState<'loading' | 'ready' | 'forbidden' | 'error'>('loading');
   const [orders, setOrders] = useState<OrderRow[]>([]);
+  const [busy, setBusy] = useState<'export' | null>(null);
+  const [notice, setNotice] = useState('');
+  const [drawer, setDrawer] = useState<{
+    orderId: string;
+    detail: OrderDetail | null;
+    loading: boolean;
+  } | null>(null);
   const load = useCallback(async () => {
     if (!(await sessionApi.context())) return setState('forbidden');
     setState('loading');
@@ -57,6 +96,48 @@ export default function CommerceOrdersPage() {
       setState('error');
     }
   }, []);
+  const openDetail = async (orderId: string) => {
+    setDrawer({ orderId, detail: null, loading: true });
+    try {
+      const response = await sessionApi.request(
+        `${api}/api/v1/management/commerce/orders/${orderId}`,
+      );
+      if ([401, 403].includes(response.status))
+        return setDrawer({ orderId, detail: null, loading: false });
+      if (!response.ok) return setDrawer({ orderId, detail: null, loading: false });
+      const { data } = (await response.json()) as { data: OrderDetail };
+      setDrawer({ orderId, detail: data, loading: false });
+    } catch {
+      setDrawer({ orderId, detail: null, loading: false });
+    }
+  };
+  const closeDrawer = () => setDrawer(null);
+  const requestExport = async () => {
+    setBusy('export');
+    try {
+      const response = await sessionApi.request(`${api}/api/v1/management/commerce/orders/export`);
+      if ([401, 403].includes(response.status)) {
+        setNotice('无权导出订单痕迹');
+        return;
+      }
+      if (!response.ok) throw Error('EXPORT');
+      const csv = await response.text();
+      const blob = new Blob([`\uFEFF${csv}`], { type: 'text/csv;charset=utf-8' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `order-trace-${new Date().toISOString().slice(0, 10)}.csv`;
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      URL.revokeObjectURL(url);
+      setNotice('订单痕迹已导出（本地档案 source=local，不含第三方实时与支付金额）。');
+    } catch {
+      setNotice('导出失败，请稍后再试。');
+    } finally {
+      setBusy(null);
+    }
+  };
   useEffect(() => void load(), [load]);
   if (state === 'loading')
     return (
@@ -109,10 +190,26 @@ export default function CommerceOrdersPage() {
     <main className={styles.page} data-testid="management-orders">
       <header className={styles.topBar}>
         <span className={styles.topBarTitle}>{topBarTitle}</span>
-        <button className={styles.topBarRefresh} type="button" onClick={() => void load()}>
-          刷新
-        </button>
+        <div className={styles.topBarActions}>
+          <button
+            className={styles.topBarRefresh}
+            type="button"
+            disabled={busy === 'export'}
+            onClick={() => void requestExport()}
+          >
+            {busy === 'export' ? '导出中…' : '导出'}
+          </button>
+          <button className={styles.topBarRefresh} type="button" onClick={() => void load()}>
+            刷新
+          </button>
+        </div>
       </header>
+
+      {notice && (
+        <p className={styles.notice} role="status">
+          {notice}
+        </p>
+      )}
 
       <section className={styles.heroCard} aria-label="订单痕迹说明">
         <h1>订单痕迹</h1>
@@ -205,7 +302,17 @@ export default function CommerceOrdersPage() {
       </section>
       <section className={styles.grid}>
         {orders.map((order) => (
-          <article className={styles.row} key={order.id}>
+          <article
+            className={styles.row}
+            key={order.id}
+            onClick={() => void openDetail(order.id)}
+            data-testid="order-detail-open"
+            role="button"
+            tabIndex={0}
+            onKeyDown={(event) => {
+              if (event.key === 'Enter' || event.key === ' ') void openDetail(order.id);
+            }}
+          >
             <div className={styles.rowHead}>
               <div>
                 <h2>{order.order_number}</h2>
@@ -255,6 +362,145 @@ export default function CommerceOrdersPage() {
           />
         )}
       </section>
+
+      {drawer && (
+        <OrderTraceDrawer detail={drawer.detail} loading={drawer.loading} onClose={closeDrawer} />
+      )}
     </main>
+  );
+}
+
+function OrderTraceDrawer({
+  detail,
+  loading,
+  onClose,
+}: {
+  detail: OrderDetail | null;
+  loading: boolean;
+  onClose: () => void;
+}) {
+  const order = detail?.order ?? null;
+  const label = (value: string | null | undefined, map: Record<string, string>) =>
+    map[value ?? ''] ?? value ?? '—';
+  return (
+    <div className={styles.drawerBackdrop} onClick={onClose} data-testid="order-detail-drawer">
+      <aside
+        className={styles.drawer}
+        role="dialog"
+        aria-label="订单痕迹详情"
+        onClick={(event) => event.stopPropagation()}
+      >
+        <header className={styles.drawerHead}>
+          <h2>{order?.order_number ?? '订单痕迹详情'}</h2>
+          <button className={styles.topBarRefresh} type="button" onClick={onClose}>
+            关闭
+          </button>
+        </header>
+        {loading && <p className={styles.drawerNote}>正在加载订单痕迹详情…</p>}
+        {!loading && !detail && (
+          <p className={styles.drawerNote}>订单痕迹详情暂不可用或已超出授权范围。</p>
+        )}
+        {!loading && detail && order && (
+          <div className={styles.drawerBody}>
+            <section className={styles.drawerCard} aria-label="订单档案">
+              <dl className={styles.dl}>
+                <div>
+                  <dt>门店</dt>
+                  <dd>{order.store_name}</dd>
+                </div>
+                <div>
+                  <dt>客户</dt>
+                  <dd>{order.customer_name ?? '匿名客户'}</dd>
+                </div>
+                <div>
+                  <dt>来源</dt>
+                  <dd>{label(order.source, statusCopy)}</dd>
+                </div>
+                <div>
+                  <dt>金额参考</dt>
+                  <dd>
+                    {order.currency} {yuan(order.amount_cents)}
+                  </dd>
+                </div>
+                <div>
+                  <dt>状态</dt>
+                  <dd>{label(order.fulfillment_status, statusCopy)}</dd>
+                </div>
+                <div>
+                  <dt>时间</dt>
+                  <dd>{fmt(order.occurred_at)}</dd>
+                </div>
+                <div>
+                  <dt>证据文书</dt>
+                  <dd>{order.evidence_count ?? 0}</dd>
+                </div>
+                <div>
+                  <dt>回执</dt>
+                  <dd>{order.connector_count ?? 0}</dd>
+                </div>
+              </dl>
+            </section>
+
+            <section className={styles.drawerCard} aria-label="来源链">
+              <h3>来源链（source=local）</h3>
+              {detail.sources.length ? (
+                <ul className={styles.chainList}>
+                  {detail.sources.map((s, index) => (
+                    <li key={index}>
+                      <span>{label(s.source_role, {})}</span>
+                      <span>{label(s.source_type, {})}</span>
+                      <span>{label(s.status, {})}</span>
+                      <span>{fmt(s.created_at)}</span>
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <p className={styles.drawerNote}>暂无来源记录</p>
+              )}
+            </section>
+
+            <section className={styles.drawerCard} aria-label="客户任务链">
+              <h3>客户任务链（Consult→Task→Done）</h3>
+              {detail.tasks.length ? (
+                <ul className={styles.chainList}>
+                  {detail.tasks.map((t, index) => (
+                    <li key={index}>
+                      <span>{t.title}</span>
+                      <span>{label(t.status, statusCopy)}</span>
+                      <span>{t.assignee_name ?? '未分配'}</span>
+                      <span>{t.due_at ? fmt(t.due_at) : '—'}</span>
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <p className={styles.drawerNote}>暂无任务</p>
+              )}
+            </section>
+
+            <section className={styles.drawerCard} aria-label="本地审计链">
+              <h3>本地审计链</h3>
+              {detail.audits.length ? (
+                <ul className={styles.chainList}>
+                  {detail.audits.map((a, index) => (
+                    <li key={index}>
+                      <span>{label(a.action, {})}</span>
+                      <span>{label(a.action_type, {})}</span>
+                      <span>{a.actor_name ?? '系统'}</span>
+                      <span>{fmt(a.created_at)}</span>
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <p className={styles.drawerNote}>暂无审计记录</p>
+              )}
+            </section>
+
+            <p className={styles.honest}>
+              订单痕迹为本地试点档案（source=local）。详情仅聚合来源、客户与任务痕迹，不接美团实时订单，不代表第三方成交或履约，不含本平台收款，非本平台下单。
+            </p>
+          </div>
+        )}
+      </aside>
+    </div>
   );
 }
