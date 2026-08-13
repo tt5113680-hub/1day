@@ -1,17 +1,17 @@
 {
-  "recordedAt": "2026-08-13T09:45:00+08:00",
+  "recordedAt": "2026-08-13T13:05:00+08:00",
   "phase": "Meituan depth 100% closed-loop (owner plan 2026-08-12)",
   "goal": "Blueprint/product depth 100%; SaaS strongest; skip §5 READY; DeepSeek/IDE unattended W∞-112+",
-  "currentStep": "W∞-111 PASS. Next W∞-112 offers category tree + batch + jump rank (MPC-03). §5 READY deferred.",
+  "currentStep": "W∞-112 PASS (offers category tree + batch status + jump rank MPC-03). Next W∞-113 order detail drawer + export (MPC-04). §5 READY deferred.",
   "milestones": [
-    { "id": "g1-winf-chrome", "label": "W∞ chrome densify W3..106", "weight": 18, "status": "pass", "evidence": "evidence/G1-MEITUAN-PARITY/WINF*" },
+    { "id": "g1-winf-chrome", "label": "W∞-chrome densify W3..106", "weight": 18, "status": "pass", "evidence": "evidence/G1-MEITUAN-PARITY/WINF*" },
     { "id": "depth-phase1", "label": "Depth Phase1 W∞-107..110", "weight": 15, "status": "pass", "evidence": "MEITUAN_DEPTH_OPTIMIZATION_PLAN.md" },
-    { "id": "depth-phase2", "label": "Depth Phase2 W∞-111..117 MPC 100%", "weight": 22, "status": "active", "evidence": "WINF111 PASS; next W112" },
+    { "id": "depth-phase2", "label": "Depth Phase2 W∞-111..117 MPC 100%", "weight": 22, "status": "active", "evidence": "WINF111+WINF112 PASS; next W113" },
     { "id": "depth-phase3-saas", "label": "Depth Phase3 SaaS strongest W∞-118..124", "weight": 15, "status": "pending", "evidence": "MEITUAN_DEPTH_OPTIMIZATION_PLAN.md §6" }
   ],
   "ownerGates": [
     { "id": "p1-d", "label": "P1-D owner local full test + sign-off", "status": "waiting" },
     { "id": "section5-ready", "label": "§5 READY provisioning (deferred)", "status": "deferred" }
   ],
-  "notes": "W111 closed by IDE after DeepSeek 180m timeout left uncommitted work. Lock released for DeepSeek resume on W112."
+  "notes": "W112 closed: catalog depth API (categories/batch-status/jump-rank) + /m/offers 3 panels, real DB idempotent/isolated/audit/outbox, no fake BI, no GMV. Lock released for DeepSeek resume on W113."
 }

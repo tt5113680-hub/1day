@@ -1,5 +1,13 @@
 # CHANGELOG
 
+## 2026-08-13 - Unattended stale-lock auto-heal (monitoring failure fix)
+
+主人发现 DeepSeek 余额不动后定位：IDE 保活锁未释放 → daemon 连续 SKIP；健康检查误读 `construction.lock`（真文件 `.construction.lock`）且无自动清锁。
+
+- `Clear-StaleConstructionLock`：死 pid / `expires=` / IDE≥90m / daemon≥200m 自动杀保活并放锁；写 `OWNER_ALERT_UNATTENDED.md`
+- health 每小时 + AutoFix；daemon/orchestrator 长 SKIP 告警
+- `pnpm unattended:ide-lock` TTL Acquire/Release（禁止无限 keeper）
+
 ## 2026-08-13 - G1-W∞-112 商品分类树 + 批量上下架 + 跳转排行（MPC-03）PASS
 
 承接 `MEITUAN_DEPTH_OPTIMIZATION_PLAN.md` Phase2/MPC-03，把 `/m/offers` 从「分布条 + 新建套餐/Offer」推进到可作业闭环（分类树 + 批量上下架 + 跳转排行），真实 DB、禁止假 BI、无 GMV、无储值/支付、跳过 §5 READY、承接 W∞-111/109/86/47/45 等前序。

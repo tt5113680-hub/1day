@@ -1254,6 +1254,7 @@ export interface StoreServicesTable {
   duration_minutes: number | null;
   price_label: string | null;
   rank: number;
+  category: string | null;
   status: string;
   created_at: Timestamp;
   created_by: string | null;

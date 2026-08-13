@@ -23,6 +23,7 @@ type Service = {
   name: string;
   description: string | null;
   price_label: string | null;
+  category: string | null;
   status: string;
   version: number;
   offers: Offer[];
@@ -34,10 +35,41 @@ type Store = {
   services: Service[];
   externalLinks: { actionId: string; name: string; platform: string }[];
 };
+type CategoryGroup = {
+  category: string;
+  unassigned: boolean;
+  storeCount: number;
+  serviceCount: number;
+  services: {
+    id: string;
+    storeId: string;
+    storeName: string;
+    name: string;
+    category: string | null;
+    status: string;
+    offerCount: number;
+  }[];
+};
+type JumpRankItem = {
+  serviceId: string;
+  serviceName: string;
+  storeId: string;
+  jumps: number;
+  jumpConfirms: number;
+  distinctModules: number;
+  sharePct: number;
+};
 
 const api = process.env.NEXT_PUBLIC_API_BASE_URL ?? 'http://127.0.0.1:3001';
 const sessionApi = new SessionApiClient(api);
-const initialService = { code: '', name: '', description: '', priceLabel: '', rank: 100 };
+const initialService = {
+  code: '',
+  name: '',
+  description: '',
+  priceLabel: '',
+  rank: 100,
+  category: '',
+};
 const platformCopy: Record<string, string> = {
   meituan: '美团',
   douyin: '抖音',
@@ -45,25 +77,40 @@ const platformCopy: Record<string, string> = {
   external: '直接外链',
 };
 const priceBand = (value: number) => (value < 100 ? '¥0-100' : value <= 300 ? '¥100-300' : '¥300+');
+const barWidth = (total: number, value: number) => (total ? `${(value / total) * 100}%` : '0%');
 
 export default function OffersPage() {
   const [state, setState] = useState<'loading' | 'ready' | 'forbidden' | 'error'>('loading'),
     [stores, setStores] = useState<Store[]>([]),
+    [categories, setCategories] = useState<CategoryGroup[]>([]),
+    [jumpRank, setJumpRank] = useState<JumpRankItem[]>([]),
     [selectedStore, setSelectedStore] = useState(''),
     [service, setService] = useState(initialService),
     [offerDrafts, setOfferDrafts] = useState<Record<string, Record<string, string>>>({}),
+    [batchSelection, setBatchSelection] = useState<Record<string, boolean>>({}),
     [note, setNote] = useState(''),
     [saving, setSaving] = useState(false);
   const load = useCallback(async () => {
     if (!(await sessionApi.context())) return setState('forbidden');
     setState('loading');
     try {
-      const response = await sessionApi.request(`${api}/api/v1/management/catalog`);
-      if ([401, 403].includes(response.status)) return setState('forbidden');
-      if (!response.ok) throw Error();
-      const data = (await response.json()).data as Store[];
+      const [catalogResponse, categoryResponse, rankResponse] = await Promise.all([
+        sessionApi.request(`${api}/api/v1/management/catalog`),
+        sessionApi.request(`${api}/api/v1/management/catalog/categories`),
+        sessionApi.request(`${api}/api/v1/management/catalog/jump-rank?days=30`),
+      ]);
+      if ([401, 403].includes(catalogResponse.status)) return setState('forbidden');
+      if (!catalogResponse.ok) throw Error();
+      const data = (await catalogResponse.json()).data as Store[];
       setStores(data);
       setSelectedStore((current) => current || data[0]?.id || '');
+      if (categoryResponse.ok)
+        setCategories(
+          ((await categoryResponse.json()).data as { categories?: CategoryGroup[] }).categories ??
+            [],
+        );
+      if (rankResponse.ok)
+        setJumpRank(((await rankResponse.json()).data as { items?: JumpRankItem[] }).items ?? []);
       setState('ready');
     } catch {
       setState('error');
@@ -146,6 +193,34 @@ export default function OffersPage() {
       await load();
     } catch {
       setNote('Offer 状态未更新，请刷新后重试。');
+    } finally {
+      setSaving(false);
+    }
+  };
+  const batchToggle = async (store: Store, status: 'active' | 'inactive') => {
+    const serviceIds = store.services
+      .filter((item) => batchSelection[item.id])
+      .map((item) => item.id);
+    if (!serviceIds.length) return setNote('请先勾选要上下架的套餐。');
+    setSaving(true);
+    try {
+      const response = await request(
+        `/api/v1/management/catalog/stores/${store.id}/services/batch-status`,
+        'POST',
+        { storeId: store.id, serviceIds, status },
+        true,
+      );
+      if (!response.ok) throw Error();
+      const data = (await response.json()).data as { effected?: number };
+      setNote(
+        status === 'active'
+          ? `已批量上架 ${data.effected ?? serviceIds.length} 个套餐。`
+          : `已批量下架 ${data.effected ?? serviceIds.length} 个套餐。`,
+      );
+      setBatchSelection({});
+      await load();
+    } catch {
+      setNote('批量操作未生效，请刷新后重试。');
     } finally {
       setSaving(false);
     }
@@ -352,6 +427,69 @@ export default function OffersPage() {
           {note}
         </p>
       ) : null}
+
+      <section className={styles.panel} aria-label="跳转排行">
+        <div className={styles.sectionTitle}>
+          <h2>套餐跳转排行</h2>
+          <p>
+            按真实入口跳转痕迹（jump / jump_confirm）聚合到套餐，仅统计出站跳转，不代表第三方成交。
+          </p>
+        </div>
+        {jumpRank.length ? (
+          <ul className={styles.bars}>
+            {jumpRank.map((item) => (
+              <li key={item.serviceId} className={styles.barRow}>
+                <span className={styles.barLabel}>{item.serviceName}</span>
+                <span className={styles.barTrack}>
+                  <span
+                    className={styles.barFill}
+                    style={{ width: barWidth(jumpRank[0]?.jumps ?? 0, item.jumps) }}
+                  />
+                </span>
+                <span className={styles.barValue}>{item.jumps}</span>
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <p className={styles.barEmpty}>近 30 日暂无跳转痕迹。</p>
+        )}
+        <p className={styles.honest} role="note">
+          排行仅聚合入口痕迹中的出站跳转（event_code = jump /
+          jump_confirm，source=local）；不接美团/抖音实时，也不代表第三方成交或支付。
+        </p>
+      </section>
+
+      <section className={styles.panel} aria-label="商品分类树">
+        <div className={styles.sectionTitle}>
+          <h2>商品分类树</h2>
+          <p>按分类组织套餐入口，便于按类目批量上下架与管理展示。</p>
+        </div>
+        {categories.length ? (
+          <div className={styles.categoryList}>
+            {categories.map((group) => (
+              <div key={group.category} className={styles.categoryNode}>
+                <h3>{group.category}</h3>
+                <span className={styles.categoryMeta}>
+                  {group.serviceCount} 个套餐 · 覆盖 {group.storeCount} 个门店
+                </span>
+                <div className={styles.categoryServices}>
+                  {group.services.map((item) => (
+                    <span className={styles.categoryService} key={item.id}>
+                      <span>{item.name}</span>
+                      <span>
+                        {item.offerCount} 平台入口 ·{' '}
+                        {item.status === 'active' ? 'Consumer 可见' : '已停用'}
+                      </span>
+                    </span>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <p className={styles.barEmpty}>暂无分类；创建套餐时可填分类，将在此按类目归档。</p>
+        )}
+      </section>
       <section className={styles.panel} aria-label="新建商品套餐">
         <h2>新建商品/套餐</h2>
         <div className={styles.create}>
@@ -394,6 +532,15 @@ export default function OffersPage() {
               placeholder="例如：价格请咨询门店"
             />
           </label>
+          <label>
+            分类
+            <input
+              aria-label="套餐分类"
+              value={service.category}
+              onChange={(event) => setService({ ...service, category: event.target.value })}
+              placeholder="例如：团购套餐 / 到店服务"
+            />
+          </label>
           <label className={styles.wide}>
             套餐说明
             <input
@@ -407,17 +554,63 @@ export default function OffersPage() {
           </Button>
         </div>
       </section>
+      <section className={styles.panel} aria-label="批量上下架">
+        <div className={styles.sectionTitle}>
+          <h2>批量上下架</h2>
+          <p>在当前门店内勾选多个套餐，一次性置为上架或下架（Consumer 可见性）。</p>
+        </div>
+        <div className={styles.batchToolbar}>
+          <select
+            className={styles.batchSelect}
+            value={selectedStore}
+            onChange={(event) => setSelectedStore(event.target.value)}
+          >
+            {stores.map((store) => (
+              <option key={store.id} value={store.id}>
+                {store.name}
+              </option>
+            ))}
+          </select>
+          <Button
+            loading={saving}
+            onClick={() => currentStore && void batchToggle(currentStore, 'active')}
+          >
+            批量上架
+          </Button>
+          <Button
+            tone="quiet"
+            loading={saving}
+            onClick={() => currentStore && void batchToggle(currentStore, 'inactive')}
+          >
+            批量下架
+          </Button>
+        </div>
+      </section>
       <section className={styles.catalog}>
         {currentStore?.services.map((item) => {
           const draft = offerDrafts[item.id] ?? {};
           return (
             <article key={item.id} className={styles.service}>
               <header>
-                <div>
-                  <h2>{item.name}</h2>
-                  <p>
-                    {item.description ?? '暂无说明'} · {item.price_label ?? '价格请咨询门店'}
-                  </p>
+                <div className={styles.treeRow}>
+                  <input
+                    type="checkbox"
+                    aria-label={`选择 ${item.name}`}
+                    checked={Boolean(batchSelection[item.id])}
+                    onChange={(event) =>
+                      setBatchSelection((value) => ({
+                        ...value,
+                        [item.id]: event.target.checked,
+                      }))
+                    }
+                  />
+                  <div>
+                    <h2>{item.name}</h2>
+                    <p>
+                      {item.description ?? '暂无说明'} · {item.price_label ?? '价格请咨询门店'}
+                      {item.category ? ` · 分类 ${item.category}` : ''}
+                    </p>
+                  </div>
                 </div>
                 <StatusBadge tone={item.status === 'active' ? 'success' : 'neutral'}>
                   {item.status === 'active' ? 'Consumer 可见' : '已停用'}

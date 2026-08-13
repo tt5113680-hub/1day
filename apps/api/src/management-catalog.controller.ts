@@ -9,6 +9,7 @@ import {
   Param,
   Post,
   Put,
+  Query,
 } from '@nestjs/common';
 import { DataScopeService } from './data-scope.service';
 import { ManagementCatalogService } from './management-catalog.service';
@@ -30,10 +31,7 @@ export class ManagementCatalogController {
   ) {
     if (!requestId?.trim()) throw new BadRequestException('VALIDATION_ERROR');
     const context = await this.tenantContext.fromAuthorization(authorization, tenant);
-    const permissionCodes = await this.dataScopes.permissionCodes(
-      context.tenantId,
-      context.userId,
-    );
+    const permissionCodes = await this.dataScopes.permissionCodes(context.tenantId, context.userId);
     if (permissionCodes.includes('tenant.manage')) {
       return { ...context, storeIds: null as string[] | null, permissionCodes };
     }
@@ -144,6 +142,56 @@ export class ManagementCatalogController {
     await this.requireScopedStoreWrite(context, storeId);
     return {
       data: await this.catalog.updateOffer(context, offerId, body, requestId!),
+      meta: { requestId },
+      error: null,
+    };
+  }
+
+  /** G1-W∞-112 — 商品分类树（MPC-03）：按分类返回套餐层级。 */
+  @Get('categories')
+  async categories(
+    @Headers('authorization') authorization?: string,
+    @Headers('x-tenant-context') tenant?: string,
+    @Headers('x-request-id') requestId?: string,
+  ) {
+    const context = await this.operatorContext(authorization, tenant, requestId);
+    return {
+      data: await this.catalog.categoryTree(context, context.storeIds),
+      meta: { requestId },
+      error: null,
+    };
+  }
+
+  /** G1-W∞-112 — 跳转排行（MPC-03）：按真实入口跳转痕迹聚合并返回。 */
+  @Get('jump-rank')
+  async jumpRank(
+    @Query('days') days: string | undefined,
+    @Headers('authorization') authorization?: string,
+    @Headers('x-tenant-context') tenant?: string,
+    @Headers('x-request-id') requestId?: string,
+  ) {
+    const context = await this.operatorContext(authorization, tenant, requestId);
+    return {
+      data: await this.catalog.jumpRank(context, context.storeIds, days),
+      meta: { requestId },
+      error: null,
+    };
+  }
+
+  /** G1-W∞-112 — 批量上下架（MPC-03）：单个门店内多个套餐批量置上下架（幂等）。 */
+  @Post('stores/:storeId/services/batch-status')
+  async batchServiceStatus(
+    @Param('storeId') storeId: string,
+    @Headers('authorization') authorization?: string,
+    @Headers('x-tenant-context') tenant?: string,
+    @Headers('x-request-id') requestId?: string,
+    @Headers('idempotency-key') key?: string,
+    @Body() body: Record<string, unknown> = {},
+  ) {
+    const context = await this.operatorContext(authorization, tenant, requestId);
+    await this.requireScopedStoreWrite(context, storeId);
+    return {
+      data: await this.catalog.batchSetServiceStatus(context, storeId, body, key ?? '', requestId!),
       meta: { requestId },
       error: null,
     };

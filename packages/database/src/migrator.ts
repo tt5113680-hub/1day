@@ -65,6 +65,7 @@ import * as portalPublications from './migrations/063_portal_publications.js';
 import * as customerRfmProfiles from './migrations/064_customer_rfm_profiles.js';
 import * as membershipRulesAlerts from './migrations/065_membership_rules_alerts.js';
 import * as storeContactQr from './migrations/066_store_contact_qr.js';
+import * as serviceCategoryRank from './migrations/067_service_category_rank.js';
 import type { Database } from './types.js';
 
 const migrationProvider: MigrationProvider = {
@@ -136,6 +137,7 @@ const migrationProvider: MigrationProvider = {
       '064_customer_rfm_profiles': customerRfmProfiles,
       '065_membership_rules_alerts': membershipRulesAlerts,
       '066_store_contact_qr': storeContactQr,
+      '067_service_category_rank': serviceCategoryRank,
     };
   },
 };

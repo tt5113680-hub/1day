@@ -202,6 +202,87 @@
   justify-items: start;
 }
 
+.sectionTitle {
+  display: grid;
+  gap: 4px;
+}
+
+.sectionTitle h2 {
+  margin: 0;
+  font-size: 17px;
+  font-weight: 800;
+}
+
+.sectionTitle p {
+  margin: 0;
+  color: #666;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.categoryList {
+  display: grid;
+  gap: 12px;
+}
+
+.categoryNode {
+  display: grid;
+  gap: 8px;
+  border-radius: 10px;
+  padding: 12px 14px;
+  background: #f8f8f8;
+}
+
+.categoryNode h3 {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 800;
+  color: #222;
+}
+
+.categoryMeta {
+  color: #999;
+  font-size: 12px;
+}
+
+.categoryServices {
+  display: grid;
+  gap: 6px;
+  padding-left: 4px;
+}
+
+.categoryService {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  font-size: 13px;
+  color: #444;
+}
+
+.batchToolbar {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto auto;
+  gap: 10px;
+  align-items: center;
+}
+
+.batchSelect {
+  min-height: 40px;
+  padding: 8px 12px;
+  border: 1px solid #e5e5e5;
+  border-radius: 8px;
+  color: #222;
+  background: #f8f8f8;
+  font: inherit;
+}
+
+.treeRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
 .centered {
   display: grid;
   min-height: 70vh;
