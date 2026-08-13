@@ -619,6 +619,26 @@ export interface EmployeeNotificationsTable {
   version: Generated<number>;
 }
 
+export interface ManagementNotificationsTable {
+  id: string;
+  tenant_id: string;
+  category: string;
+  source_type: string;
+  source_id: string;
+  title: string;
+  body: string;
+  deep_link: string | null;
+  sent_at: Timestamp;
+  read_at: Timestamp | null;
+  status: string;
+  created_at: Timestamp;
+  created_by: string | null;
+  updated_at: Timestamp;
+  updated_by: string | null;
+  deleted_at: Timestamp | null;
+  version: Generated<number>;
+}
+
 export interface CustomerOrdersTable {
   id: string;
   tenant_id: string;
@@ -1691,6 +1711,7 @@ export interface Database {
   notification_logs: NotificationLogsTable;
   employee_notification_preferences: EmployeeNotificationPreferencesTable;
   employee_notifications: EmployeeNotificationsTable;
+  management_notifications: ManagementNotificationsTable;
   customer_orders: CustomerOrdersTable;
   evidence_files: EvidenceFilesTable;
   verification_codes: VerificationCodesTable;
