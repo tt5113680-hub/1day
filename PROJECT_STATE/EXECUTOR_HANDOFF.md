@@ -45,6 +45,16 @@
 
 **IDE sessions:** review/验收 only while DeepSeek writes; 90–95% then new window.
 
+**IDE write mutex (mandatory):** never hand-write infinite keepers. Use:
+
+```text
+pnpm unattended:ide-lock -- -Action Acquire -Holder IDE-Agent-Wxxx -Minutes 90
+# ... finish TASK ...
+pnpm unattended:ide-lock -- -Action Release
+```
+
+Forgotten IDE locks auto-clear after TTL / 90m (`Clear-StaleConstructionLock`). Alerts → `PROJECT_STATE/OWNER_ALERT_UNATTENDED.md`.
+
 ## Secrets and cloud
 
 - Do not store passwords or tokens in chat or Git.

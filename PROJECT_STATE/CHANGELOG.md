@@ -1,5 +1,20 @@
 # CHANGELOG
 
+## 2026-08-13 - G1-W∞-112 商品分类树 + 批量上下架 + 跳转排行（MPC-03）PASS
+
+承接 `MEITUAN_DEPTH_OPTIMIZATION_PLAN.md` Phase2/MPC-03，把 `/m/offers` 从「分布条 + 新建套餐/Offer」推进到可作业闭环（分类树 + 批量上下架 + 跳转排行），真实 DB、禁止假 BI、无 GMV、无储值/支付、跳过 §5 READY、承接 W∞-111/109/86/47/45 等前序。
+
+- **migration `067_service_category_rank`**：`store_services` 新增 `category`（varchar(80)，可为空 = 未分类）+ `store_services_tenant_category_idx` 索引。
+- **catalog depth API**：
+  - `createService`/`updateService` 现接受 `category`（1000-字符说明可选）；`list` 返回 `category`；
+  - `GET /api/v1/management/catalog/categories`（分类树：按 category 分组返回 group 的 `storeCount`/`serviceCount`/services，未分类兜底 `(未分类)`，真实档案行现场推导，`tenant.read`+store scope fail-closed）；
+  - `POST /api/v1/management/catalog/stores/:storeId/services/batch-status`（批量上下架，`serviceIds` 1–200，Idempotency-Key 幂等重放，写 `audit_logs catalog.service_batch_<status>` + `outbox catalog.service.batch_<status>.v1`，仅登记套餐可见状态）；
+  - `GET /api/v1/management/catalog/jump-rank?days=N`（**跳转排行**：真实 `entry_funnel_events` 中 `jump`/`jump_confirm` 按 `target_url = external_actions.target_url` 或 `module_key = external_actions.name` 关联到套餐，聚合 per-service `jumps`/`jumpConfirms`/`distinctModules` + `totalJumps` + `sharePct`）。
+- **`/m/offers`** 新增「套餐跳转排行」「商品分类树」「批量上下架」三面板：跳转排行黄条（`barWidth` 由真实跳转次数）、分类树（分组 + 组内套餐 + 平台入口/可见状态）、批量上下架（门店选择 + 勾选套餐 + 批量上架/下架，真实 `affected` 回读）；新建套餐表单新增「分类」；服务卡新增勾选框与分类展示。
+- **诚实边界全保留**：分类仅组织维度；批量仅登记可见状态；跳转排行仅聚合入口出站跳转痕迹（`source=local`），**不含支付、不含成交、不代第三方成交、不接美团/抖音实时**；`/m/workflows` CUSTOM；§5 READY 未触碰；不复活 consumer_orders/本平台下单/收单。
+- **测试**：新增 `tests/g1-winf112-offers-category-rank.test.mjs` 7/7 + `tests/management-offer-depth.test.mjs` 1/1（真实 DB：跨租户 403/404 deny → 分类树分组成对 → 批量上下架幂等重放 → 跳转排行关联真实 jump/confirm → audit/outbox `catalog.service.batch_inactive(.v1)` 落库断言）；随动回归 batch-2-offer-operations + sys-6-catalog-scopes + matrix-mg-g-depth 5/5；`g1-winf*.test.mjs` 404/404、typecheck/build 20/20、unit 49/49、eslint+prettier clean。`pnpm db:migrate`（DATABASE_URL=oneday_v3_test）apply 067。
+- 证据：`evidence/G1-MEITUAN-PARITY/WINF112/ACCEPTANCE.md`。下一刀 **W∞-113 订单痕迹详情抽屉 + 导出（MPC-04）**。
+
 ## 2026-08-13 - G1-W∞-111 门店完整 CRUD + 三类触点二维码（MPC-02）PASS
 
 - 收口 DeepSeek 超时未提交半成品：migration `066_store_contact_qr` + `ManagementStoreDepth` API（create/update/delete/qr-codes）+ `/m/stores` 新建/资料维护/停用移除/商户·门店·员工码二维码。

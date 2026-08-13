@@ -23,6 +23,11 @@ while ($true) {
     break
   }
 
+  $cleared = Clear-StaleConstructionLock
+  if ($cleared.cleared) {
+    Write-Log ("DAEMON auto-cleared stale lock: {0}" -f $cleared.reason)
+  }
+
   $gate = Test-ShouldRunNow
   if ($gate.ok) {
     Write-Log 'DAEMON prev finished — starting next task'
@@ -32,6 +37,13 @@ while ($true) {
     Write-Log "DAEMON turn finished exit=$code"
   } else {
     Write-Log "DAEMON monitor: $($gate.reason)"
+    # Loud signal when lock is blocking DeepSeek (should self-heal via TTL; if not, owner alert file exists)
+    if ("$($gate.reason)" -match 'lock') {
+      $info = Get-ConstructionLockInfo
+      if ($info.exists -and $info.ageMinutes -ge 60) {
+        Write-UnattendedOwnerAlert ("DeepSeek blocked by lock for {0}m holder={1} pid={2} — health will auto-clear when stale" -f $info.ageMinutes, $info.holder, $info.pid)
+      }
+    }
   }
 
   Write-Log "DAEMON sleep ${PollMinutes}m until next check"

@@ -11,9 +11,20 @@ function Write-Log([string]$Message) {
   Add-Content -Path (Join-Path $paths.LogDir 'daemon.log') -Value $line -Encoding utf8
 }
 
+$cleared = Clear-StaleConstructionLock
+if ($cleared.cleared) {
+  Write-Log ("ORCHESTRATOR auto-cleared stale lock: {0}" -f $cleared.reason)
+}
+
 $gate = Test-ShouldRunNow -Force:$Force
 if (-not $gate.ok) {
   Write-Log "ORCHESTRATOR SKIP: $($gate.reason)"
+  if ("$($gate.reason)" -match 'lock') {
+    $info = Get-ConstructionLockInfo
+    if ($info.exists -and $info.ageMinutes -ge 60) {
+      Write-UnattendedOwnerAlert ("ORCHESTRATOR blocked by lock {0}m holder={1}" -f $info.ageMinutes, $info.holder)
+    }
+  }
   exit 0
 }
 

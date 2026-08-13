@@ -46,15 +46,136 @@ function Set-RunNumber([int]$Number) {
   Set-Content -Path $paths.RunCounter -Value "$Number" -Encoding utf8
 }
 
-function Test-ConstructionLockActive {
+function Get-ConstructionLockInfo {
   $paths = Ensure-UnattendedLogDir
-  if (-not (Test-Path $paths.LockFile)) { return $false }
-  $existing = Get-Content $paths.LockFile -Raw -ErrorAction SilentlyContinue
-  if ($existing -match 'pid=(\d+)') {
-    $proc = Get-Process -Id ([int]$Matches[1]) -ErrorAction SilentlyContinue
-    return [bool]$proc
+  if (-not (Test-Path $paths.LockFile)) {
+    return @{
+      exists     = $false
+      path       = $paths.LockFile
+      pid        = $null
+      pidAlive   = $false
+      started    = $null
+      expires    = $null
+      holder     = ''
+      ageMinutes = 0
+      isIde      = $false
+      raw        = ''
+    }
   }
-  return $false
+  $raw = Get-Content $paths.LockFile -Raw -ErrorAction SilentlyContinue
+  if (-not $raw) { $raw = '' }
+  $pidNum = $null
+  $pidAlive = $false
+  if ($raw -match 'pid=(\d+)') {
+    $pidNum = [int]$Matches[1]
+    $pidAlive = [bool](Get-Process -Id $pidNum -ErrorAction SilentlyContinue)
+  }
+  $started = $null
+  if ($raw -match 'started=([^\r\n\s]+)') {
+    try { $started = [datetime]::Parse($Matches[1].Trim()) } catch { $started = $null }
+  }
+  $expires = $null
+  if ($raw -match 'expires=([^\r\n\s]+)') {
+    try { $expires = [datetime]::Parse($Matches[1].Trim()) } catch { $expires = $null }
+  }
+  $holder = ''
+  if ($raw -match 'holder=([^\r\n]+)') { $holder = $Matches[1].Trim() }
+  $ageMinutes = 0
+  if ($started) {
+    $ageMinutes = [math]::Round(((Get-Date) - $started).TotalMinutes, 1)
+  } else {
+    $ageMinutes = [math]::Round(((Get-Date) - (Get-Item $paths.LockFile).LastWriteTime).TotalMinutes, 1)
+  }
+  $isIde = ($holder -match '(?i)IDE-Agent|ide\b')
+  return @{
+    exists     = $true
+    path       = $paths.LockFile
+    pid        = $pidNum
+    pidAlive   = $pidAlive
+    started    = $started
+    expires    = $expires
+    holder     = $holder
+    ageMinutes = $ageMinutes
+    isIde      = $isIde
+    raw        = $raw.Trim()
+  }
+}
+
+function Write-UnattendedOwnerAlert([string]$Message) {
+  $paths = Ensure-UnattendedLogDir
+  $alertPath = Join-Path $paths.Root 'PROJECT_STATE/OWNER_ALERT_UNATTENDED.md'
+  $line = "[{0}] {1}" -f (Get-Date -Format 'yyyy-MM-dd HH:mm:ss'), $Message
+  Add-Content -Path (Join-Path $paths.LogDir 'daemon.log') -Value $line -Encoding utf8
+  $body = @(
+    '# OWNER_ALERT — Unattended construction'
+    ''
+    '- auto_generated: true'
+    ("- updated_at: {0}" -f (Get-Date -Format 'yyyy-MM-dd HH:mm:ss'))
+    '- action: check `logs/unattended/daemon.log` / `pnpm unattended:health`'
+    ''
+    '## Latest'
+    ''
+    $Message
+    ''
+  ) -join "`n"
+  Set-Content -Path $alertPath -Value $body -Encoding utf8
+}
+
+function Clear-StaleConstructionLock {
+  <#
+    Auto-heal hung/forgotten locks so DeepSeek is not blocked for hours.
+    - dead pid → drop lock file
+    - expires= past → kill keeper (if any) + drop
+    - IDE-Agent holder older than IdeMaxMinutes (default 90) → kill + drop
+    - daemon/unattended holder older than DaemonMaxMinutes (default 200) → kill + drop
+  #>
+  param(
+    [int]$IdeMaxMinutes = 90,
+    [int]$DaemonMaxMinutes = 200,
+    [switch]$DryRun
+  )
+
+  $info = Get-ConstructionLockInfo
+  if (-not $info.exists) {
+    return @{ cleared = $false; reason = 'no lock' }
+  }
+
+  $why = $null
+  if (-not $info.pidAlive) {
+    $why = "stale lock file (pid dead holder=$($info.holder))"
+  } elseif ($info.expires -and ((Get-Date) -gt $info.expires)) {
+    $why = "lock expired at $($info.expires.ToString('o')) holder=$($info.holder)"
+  } elseif ($info.isIde -and ($info.ageMinutes -ge $IdeMaxMinutes)) {
+    $why = "IDE lock age $($info.ageMinutes)m >= ${IdeMaxMinutes}m holder=$($info.holder) — forgotten session"
+  } elseif ((-not $info.isIde) -and ($info.ageMinutes -ge $DaemonMaxMinutes)) {
+    $why = "daemon lock age $($info.ageMinutes)m >= ${DaemonMaxMinutes}m holder=$($info.holder) — hung turn"
+  }
+
+  if (-not $why) {
+    return @{
+      cleared    = $false
+      reason     = "lock healthy age=$($info.ageMinutes)m holder=$($info.holder) pid=$($info.pid)"
+      lock       = $info
+    }
+  }
+
+  if ($DryRun) {
+    return @{ cleared = $false; wouldClear = $true; reason = $why; lock = $info }
+  }
+
+  if ($info.pidAlive -and $info.pid) {
+    Stop-Process -Id $info.pid -Force -ErrorAction SilentlyContinue
+  }
+  Remove-Item -Path $info.path -Force -ErrorAction SilentlyContinue
+  Write-UnattendedOwnerAlert ("AUTO-CLEARED construction lock: {0}" -f $why)
+  return @{ cleared = $true; reason = $why; lock = $info }
+}
+
+function Test-ConstructionLockActive {
+  # Heal forgotten/hung locks before treating the mutex as busy.
+  Clear-StaleConstructionLock | Out-Null
+  $info = Get-ConstructionLockInfo
+  return [bool]($info.exists -and $info.pidAlive)
 }
 
 function Test-G1Ready {

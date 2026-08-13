@@ -41,6 +41,10 @@ function Test-AgentCli {
 }
 
 function Acquire-Lock {
+  $cleared = Clear-StaleConstructionLock
+  if ($cleared.cleared) {
+    Write-Log ("AUTO-CLEARED stale lock before acquire: {0}" -f $cleared.reason)
+  }
   if (Test-Path $lockFile) {
     $existing = Get-Content $lockFile -Raw -ErrorAction SilentlyContinue
     if ($existing -match 'pid=(\d+)') {
@@ -52,7 +56,9 @@ function Acquire-Lock {
       }
     }
   }
-  Set-Content -Path $lockFile -Value "pid=$PID started=$(Get-Date -Format o)" -Encoding utf8
+  $ttl = [Math]::Max(30, [int]$MaxMinutes)
+  $expires = (Get-Date).AddMinutes($ttl).ToString('o')
+  Set-Content -Path $lockFile -Value "pid=$PID started=$(Get-Date -Format o) expires=$expires holder=unattended-$executor" -Encoding utf8
 }
 
 function Release-Lock {
