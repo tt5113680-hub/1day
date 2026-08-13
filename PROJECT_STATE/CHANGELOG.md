@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## 2026-08-13 - G1-W∞-111 门店完整 CRUD + 三类触点二维码（MPC-02）PASS
+
+- 收口 DeepSeek 超时未提交半成品：migration `066_store_contact_qr` + `ManagementStoreDepth` API（create/update/delete/qr-codes）+ `/m/stores` 新建/资料维护/停用移除/商户·门店·员工码二维码。
+- 修复：`defaultMerchant` 正确映射 `organization_id`；DELETE 不带空 JSON body；无人值守 `Stop-Job -Force` 兼容 PS5.1。
+- 测试：`g1-winf111` 5/5 + `management-store-depth` 真实 DB 1/1；api/management typecheck+build PASS。
+- 证据：`evidence/G1-MEITUAN-PARITY/WINF111/ACCEPTANCE.md`。下一刀 **W∞-112**。
+
 ## 2026-08-13 - G1-W∞-108 Storefront 发布链闭环加固（Phase1 / 1.2）PASS
 
 - 承接 `MEITUAN_DEPTH_OPTIMIZATION_PLAN.md` Phase1/1.2，把装修发布链（Draft→同渲染器 Preview→Publish→Consumer/Portal 可读）闭环加固到 **consumer / employee / management 三目标 binding/version/证据 全对齐**，真实 DB、禁止假 BI、无 GMV、跳过 §5 READY：

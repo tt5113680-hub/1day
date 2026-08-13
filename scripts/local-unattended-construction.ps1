@@ -180,8 +180,10 @@ try {
   } while ((Get-Date) -lt $deadline)
 
   if ($job.State -eq 'Running') {
-    Stop-Job $job -Force
-    Receive-Job $job | Out-File $runLog -Append -Encoding utf8
+    # Windows PowerShell 5.1 Stop-Job has no -Force; prefer Stop-Job then Remove-Job.
+    try { Stop-Job $job -ErrorAction Stop } catch { try { Stop-Job $job -Force -ErrorAction SilentlyContinue } catch {} }
+    try { Receive-Job $job -ErrorAction SilentlyContinue | Out-File $runLog -Append -Encoding utf8 } catch {}
+    try { Remove-Job $job -Force -ErrorAction SilentlyContinue } catch {}
     Write-Log "TIMEOUT after ${MaxMinutes}m — next turn will adapt (shorter wait, longer max)"
     $exitCode = 3
   } else {

@@ -80,6 +80,8 @@ import { ManagementAiSuggestionController } from './management-ai-suggestion.con
 import { ManagementAiSuggestionService } from './management-ai-suggestion.service';
 import { ManagementStoreController } from './management-store.controller';
 import { ManagementStoreService } from './management-store.service';
+import { ManagementStoreDepthController } from './management-store-depth.controller';
+import { ManagementStoreDepthService } from './management-store-depth.service';
 import { ManagementOrganizationEmployeeController } from './management-organization-employee.controller';
 import { ManagementOrganizationEmployeeService } from './management-organization-employee.service';
 import { ManagementRolePermissionController } from './management-role-permission.controller';
@@ -179,6 +181,7 @@ import { EmployeeManagedStoresController } from './employee-managed-stores.contr
     ManagementMembershipDepthController,
     ManagementAiSuggestionController,
     ManagementStoreController,
+    ManagementStoreDepthController,
     ManagementOrganizationEmployeeController,
     ManagementRolePermissionController,
     ManagementPermissionAuditController,
@@ -250,6 +253,7 @@ import { EmployeeManagedStoresController } from './employee-managed-stores.contr
     ManagementMembershipDepthService,
     ManagementAiSuggestionService,
     ManagementStoreService,
+    ManagementStoreDepthService,
     ManagementOrganizationEmployeeService,
     ManagementRolePermissionService,
     ManagementPermissionAuditService,

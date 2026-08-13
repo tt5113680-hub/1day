@@ -1618,6 +1618,25 @@ export interface MembershipBenefitRulesTable {
   version: Generated<number>;
 }
 
+export interface StoreContactQrCodesTable {
+  id: string;
+  tenant_id: string;
+  store_id: string;
+  merchant_id: string | null;
+  contact_type: string;
+  group_by: string;
+  token: string;
+  label: string;
+  target_path: string;
+  scan_count: number;
+  created_at: Timestamp;
+  created_by: string | null;
+  updated_at: Timestamp;
+  updated_by: string | null;
+  deleted_at: Timestamp | null;
+  version: Generated<number>;
+}
+
 export interface Database {
   tenants: TenantsTable;
   agent_regions: AgentRegionsTable;
@@ -1716,4 +1735,5 @@ export interface Database {
   management_queue_dispositions: ManagementQueueDispositionsTable;
   customer_rfm_profiles: CustomerRfmProfilesTable;
   membership_benefit_rules: MembershipBenefitRulesTable;
+  store_contact_qr_codes: StoreContactQrCodesTable;
 }

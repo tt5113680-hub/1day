@@ -1,5 +1,6 @@
 'use client';
 
+import QRCode from 'qrcode';
 import { SessionApiClient } from '@oneday/session-client';
 import { AppStatePanel, Button, StatusBadge } from '@oneday/ui';
 import { useCallback, useEffect, useMemo, useState } from 'react';
@@ -14,6 +15,20 @@ type Link = {
   enabled: boolean;
   sortOrder: number;
   version: number;
+};
+type ContactQr = {
+  contactType: 'merchant' | 'store' | 'employee';
+  label: string;
+  token: string;
+  targetPath: string;
+  groupBy: string;
+  scanCount: number;
+};
+type StoreDraft = {
+  code: string;
+  name: string;
+  address: string;
+  status: 'active' | 'inactive';
 };
 type Commercial = {
   phone: string | null;
@@ -86,6 +101,15 @@ const blankLink = (): LinkDraft => ({
   enabled: true,
   sortOrder: 0,
 });
+const blankStore = (): StoreDraft => ({ code: '', name: '', address: '', status: 'active' });
+const contactMeta: Record<ContactQr['contactType'], { title: string; hint: string }> = {
+  merchant: { title: '商户码', hint: '把顾客引到商户统一入口，按商户归因' },
+  store: { title: '门店码', hint: '扫码直达本门店消费者页' },
+  employee: { title: '员工码', hint: '把顾客引到员工触点，按员工/门店归因' },
+};
+const consumerOrigin =
+  process.env.NEXT_PUBLIC_CONSUMER_BASE_URL ?? process.env.NEXT_PUBLIC_API_BASE_URL ?? 'http://127.0.0.1:3001';
+const scanUrl = (targetPath: string) => `${consumerOrigin}${targetPath}`;
 
 export default function StoresPage() {
   const [state, setState] = useState<'loading' | 'ready' | 'forbidden' | 'error'>('loading');
@@ -96,6 +120,11 @@ export default function StoresPage() {
   const [drafts, setDrafts] = useState<Record<string, LinkDraft>>({});
   const [note, setNote] = useState('');
   const [busy, setBusy] = useState<string | null>(null);
+  const [newStore, setNewStore] = useState<StoreDraft>(blankStore);
+  const [editStore, setEditStore] = useState<Record<string, Partial<StoreDraft>>>({});
+  const [qr, setQr] = useState<Record<string, Record<ContactQr['contactType'], string> | undefined>>({});
+  const [qrContacts, setQrContacts] = useState<Record<string, Record<ContactQr['contactType'], ContactQr> | undefined>>({});
+  const [qrLoading, setQrLoading] = useState<Record<string, boolean>>({});
   const load = useCallback(async () => {
     if (!(await sessionApi.context())) return setState('forbidden');
     setState('loading');
@@ -148,11 +177,15 @@ export default function StoresPage() {
     () => countBy(stores.map((store) => tasksBuckets(store.openTasks))),
     [stores],
   );
-  const request = (url: string, method: 'POST' | 'PATCH' | 'PUT', body: unknown) =>
+  const request = (url: string, method: 'POST' | 'PATCH' | 'PUT' | 'DELETE', body?: unknown) =>
     sessionApi.request(url, {
       method,
-      headers: { 'content-type': 'application/json' },
-      body: JSON.stringify(body),
+      ...(body === undefined
+        ? {}
+        : {
+            headers: { 'content-type': 'application/json' },
+            body: JSON.stringify(body),
+          }),
     });
   const saveCommercial = async (store: Store) => {
     setBusy(`commercial-${store.id}`);
@@ -217,6 +250,112 @@ export default function StoresPage() {
     } finally {
       setBusy(null);
     }
+  };
+  const createStore = async () => {
+    setBusy('create-store');
+    setNote('');
+    try {
+      const response = await request(`${api}/api/v1/management/stores/depth`, 'POST', {
+        code: newStore.code,
+        name: newStore.name,
+        address: newStore.address || undefined,
+      });
+      if (!response.ok) throw new Error('CREATE_STORE');
+      setNote(`门店「${newStore.name}」已创建。`);
+      setNewStore(blankStore());
+      await load();
+    } catch {
+      setNote('门店未创建。门店编号需唯一，请检查编号与店名后重试。');
+    } finally {
+      setBusy(null);
+    }
+  };
+  const saveStore = async (store: Store) => {
+    const draft = editStore[store.id] ?? {};
+    if (draft.name === undefined && draft.address === undefined && draft.status === undefined)
+      return setNote('请先修改门店名称、地址或营业状态。');
+    setBusy(`edit-${store.id}`);
+    setNote('');
+    try {
+      const response = await request(`${api}/api/v1/management/stores/depth/${store.id}`, 'PUT', {
+        name: draft.name ?? store.name,
+        address: draft.address ?? store.address ?? '',
+        status: draft.status ?? store.status,
+        version: store.version,
+      });
+      if (!response.ok) throw new Error('SAVE_STORE');
+      setNote(`门店「${store.name}」已更新。`);
+      setEditStore((value) => ({ ...value, [store.id]: {} }));
+      await load();
+    } catch {
+      setNote('门店未更新，可能已被其他操作修改，请刷新后重试。');
+    } finally {
+      setBusy(null);
+    }
+  };
+  const removeStore = async (store: Store) => {
+    if (!window.confirm(`确认停用并移除门店「${store.name}」？该操作可审计且不可在本页恢复。`))
+      return;
+    setBusy(`delete-${store.id}`);
+    setNote('');
+    try {
+      const response = await request(
+        `${api}/api/v1/management/stores/depth/${store.id}`,
+        'DELETE',
+        undefined,
+      );
+      if (!response.ok) throw new Error('DELETE_STORE');
+      setNote(`门店「${store.name}」已停用并移除。`);
+      await load();
+    } catch {
+      setNote('门店未移除，请刷新后重试。');
+    } finally {
+      setBusy(null);
+    }
+  };
+  const loadQr = async (store: Store) => {
+    setQrLoading((value) => ({ ...value, [store.id]: true }));
+    try {
+      const response = await sessionApi.request(
+        `${api}/api/v1/management/stores/depth/${store.id}/qr-codes`,
+      );
+      if (!response.ok) throw new Error('QR');
+      const data = (await response.json()).data as { contacts: ContactQr[] };
+      const next: Record<ContactQr['contactType'], string> = {
+        merchant: '',
+        store: '',
+        employee: '',
+      };
+      const nextContacts: Record<ContactQr['contactType'], ContactQr> = {
+        merchant: data.contacts.find((c) => c.contactType === 'merchant')!,
+        store: data.contacts.find((c) => c.contactType === 'store')!,
+        employee: data.contacts.find((c) => c.contactType === 'employee')!,
+      };
+      await Promise.all(
+        data.contacts.map(async (contact) => {
+          next[contact.contactType] = await QRCode.toDataURL(scanUrl(contact.targetPath), {
+            margin: 1,
+            width: 320,
+            errorCorrectionLevel: 'M',
+          });
+        }),
+      );
+      setQr((value) => ({ ...value, [store.id]: next }));
+      setQrContacts((value) => ({ ...value, [store.id]: nextContacts }));
+    } catch {
+      setNote('二维码加载失败，请稍后重试。');
+    } finally {
+      setQrLoading((value) => ({ ...value, [store.id]: false }));
+    }
+  };
+  const qrOpen = (storeId: string) => Boolean(qr[storeId]);
+  const toggleQr = async (store: Store) => {
+    if (qrOpen(store.id)) {
+      setQr((value) => ({ ...value, [store.id]: undefined }));
+      setQrContacts((value) => ({ ...value, [store.id]: undefined }));
+      return;
+    }
+    await loadQr(store);
   };
   if (state === 'loading')
     return (
@@ -330,6 +469,43 @@ export default function StoresPage() {
           {note}
         </p>
       )}
+      <section className={styles.panel} aria-label="新建门店">
+        <div className={styles.panelHead}>
+          <h2>新建门店</h2>
+          <span className={styles.panelMeta}>门店编号需在租户内唯一</span>
+        </div>
+        <div className={styles.formGrid}>
+          <label>
+            门店编号
+            <input
+              value={newStore.code}
+              onChange={(event) => setNewStore((value) => ({ ...value, code: event.target.value }))}
+              placeholder="例如：SH-002"
+            />
+          </label>
+          <label>
+            门店名称
+            <input
+              value={newStore.name}
+              onChange={(event) => setNewStore((value) => ({ ...value, name: event.target.value }))}
+              placeholder="例如：陆家嘴旗舰店"
+            />
+          </label>
+          <label className={styles.full}>
+            地址
+            <input
+              value={newStore.address}
+              onChange={(event) =>
+                setNewStore((value) => ({ ...value, address: event.target.value }))
+              }
+              placeholder="可选"
+            />
+          </label>
+        </div>
+        <Button type="button" disabled={busy === 'create-store'} onClick={() => void createStore()}>
+          创建门店
+        </Button>
+      </section>
       <section className={styles.list}>
         {stores.map((store) => (
           <article className={styles.card} key={store.id}>
@@ -390,6 +566,106 @@ export default function StoresPage() {
                 保存负责人
               </Button>
             </div>
+            <section className={styles.commercial} aria-label="门店资料维护">
+              <h3>门店资料维护</h3>
+              <div className={styles.formGrid}>
+                <label>
+                  门店名称
+                  <input
+                    value={editStore[store.id]?.name ?? store.name}
+                    onChange={(event) =>
+                      setEditStore((value) => ({
+                        ...value,
+                        [store.id]: { ...value[store.id], name: event.target.value },
+                      }))
+                    }
+                  />
+                </label>
+                <label>
+                  地址
+                  <input
+                    value={editStore[store.id]?.address ?? store.address ?? ''}
+                    onChange={(event) =>
+                      setEditStore((value) => ({
+                        ...value,
+                        [store.id]: { ...value[store.id], address: event.target.value },
+                      }))
+                    }
+                  />
+                </label>
+                <label>
+                  营业状态
+                  <select
+                    value={editStore[store.id]?.status ?? store.status}
+                    onChange={(event) =>
+                      setEditStore((value) => ({
+                        ...value,
+                        [store.id]: {
+                          ...value[store.id],
+                          status: event.target.value as 'active' | 'inactive',
+                        },
+                      }))
+                    }
+                  >
+                    <option value="active">营业中</option>
+                    <option value="inactive">已停用</option>
+                  </select>
+                </label>
+              </div>
+              <div className={styles.lineActions}>
+                <Button
+                  disabled={busy === `edit-${store.id}`}
+                  onClick={() => void saveStore(store)}
+                >
+                  保存门店资料
+                </Button>
+                <Button
+                  tone="danger"
+                  disabled={busy === `delete-${store.id}`}
+                  onClick={() => void removeStore(store)}
+                >
+                  停用并移除
+                </Button>
+              </div>
+            </section>
+            <section className={styles.commercial} aria-label="三类触点二维码">
+              <h3>三类触点二维码</h3>
+              <p className={styles.help}>
+                商户码 / 门店码 / 员工码是扫码分流入口，顾客扫码仅进站/跳转并按触点归因到入口痕迹，不含本平台收款、不建立自营订单。
+              </p>
+              <Button type="button" disabled={qrLoading[store.id]} onClick={() => void toggleQr(store)}>
+                {qrOpen(store.id) ? '收起二维码' : '查看触点二维码'}
+              </Button>
+              {qrOpen(store.id) && (
+                <div className={styles.qrGrid}>
+                  {(Object.keys(contactMeta) as ContactQr['contactType'][]).map((type) => (
+                    <div className={styles.qrCard} key={type}>
+                      <h4>{contactMeta[type].title}</h4>
+                      <p>{contactMeta[type].hint}</p>
+                      {qr[store.id]?.[type] ? (
+                        // eslint-disable-next-line @next/next/no-img-element
+                        <img
+                          src={qr[store.id]![type]}
+                          alt={`${contactMeta[type].title}二维码`}
+                          width={160}
+                          height={160}
+                        />
+                      ) : (
+                        <div className={styles.qrEmpty}>二维码加载中…</div>
+                      )}
+                      <a
+                        className={styles.qrLink}
+                        href={scanUrl(qrContacts[store.id]?.[type]?.targetPath ?? '/c/entry')}
+                        target="_blank"
+                        rel="noreferrer"
+                      >
+                        打开落点
+                      </a>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </section>
             <section className={styles.commercial}>
               <h3>消费者门店资料</h3>
               <div className={styles.formGrid}>

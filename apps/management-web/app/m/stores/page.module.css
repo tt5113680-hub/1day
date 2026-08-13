@@ -360,6 +360,70 @@
   text-align: center;
 }
 
+.full {
+  grid-column: 1 / -1;
+}
+
+.lineActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.qrGrid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.qrCard {
+  display: grid;
+  gap: 8px;
+  justify-items: start;
+  border-radius: 12px;
+  padding: 14px;
+  background: #f8f8f8;
+}
+
+.qrCard h4 {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 800;
+}
+
+.qrCard p {
+  margin: 0;
+  color: #666;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.qrCard img {
+  border-radius: 8px;
+  background: #fff;
+  padding: 6px;
+  border: 1px solid #eee;
+}
+
+.qrEmpty {
+  min-height: 96px;
+  display: grid;
+  place-items: center;
+  color: #999;
+  font-size: 13px;
+}
+
+.qrLink {
+  color: #b8860b;
+  font-size: 13px;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.qrLink:hover {
+  text-decoration: underline;
+}
+
 @media (max-width: 900px) {
   .summaryStrip,
   .card dl,
@@ -369,6 +433,10 @@
   }
 
   .distribution {
+    grid-template-columns: 1fr;
+  }
+
+  .qrGrid {
     grid-template-columns: 1fr;
   }
 
