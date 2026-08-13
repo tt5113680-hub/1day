@@ -42,8 +42,7 @@ const SURFACES = new Set([
 const PLATFORMS = new Set(['meituan', 'douyin', 'saabei', 'external']);
 const DEVICES = new Set(['h5', 'pc']);
 
-const UUID =
-  /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 const text = (value: unknown, max: number) => {
   if (value === undefined || value === null) return null;
   if (typeof value !== 'string') throw new BadRequestException('VALIDATION_ERROR');
@@ -292,7 +291,10 @@ export class EntryFunnelService implements OnModuleDestroy {
       key: r.key as string,
       count: Number(r.count),
     }));
-    const byModule = byModuleRows.rows.map((r) => ({ key: r.key as string, count: Number(r.count) }));
+    const byModule = byModuleRows.rows.map((r) => ({
+      key: r.key as string,
+      count: Number(r.count),
+    }));
     const byTargetPlatform = byPlatform.rows.map((r) => ({
       key: r.key as string,
       count: Number(r.count),
@@ -495,17 +497,161 @@ export class EntryFunnelService implements OnModuleDestroy {
     };
   }
 
+  /** MPC-09 tool funnel: Consult → Customer → Task → Done from real rows (charter §4.1). */
+  async toolFunnel(tenantId: string, daysRaw: unknown) {
+    const days = parseDays(daysRaw);
+
+    const [consults, funnelRows] = await Promise.all([
+      this.pool.query(
+        `select
+           (select count(*)::int from consumer_action_events
+            where tenant_id=$1 and deleted_at is null and created_at >= now() - make_interval(days => $2))
+           + (select count(*)::int from consumer_action_redirect_events
+             where tenant_id=$1 and deleted_at is null and created_at >= now() - make_interval(days => $2))
+           as consult_events`,
+        [tenantId, days],
+      ),
+      this.pool.query(
+        `with cohort as (
+           select id from customers
+           where tenant_id=$1 and status='active' and deleted_at is null
+             and created_at >= now() - make_interval(days => $2)
+         ),
+         customer_tasks as (
+           select distinct t.customer_id, t.status from tasks t
+           join cohort c on c.id=t.customer_id
+           where t.tenant_id=$1 and t.deleted_at is null
+         )
+         select
+           (select count(*)::int from cohort) as customers,
+           (select count(*)::int from customer_tasks) as with_task,
+           (select count(*)::int from customer_tasks where status='completed') as done`,
+        [tenantId, days],
+      ),
+    ]);
+
+    const consultEvents = Number(consults.rows[0]?.consult_events ?? 0);
+    const customers = Number(funnelRows.rows[0]?.customers ?? 0);
+    const withTask = Number(funnelRows.rows[0]?.with_task ?? 0);
+    const done = Number(funnelRows.rows[0]?.done ?? 0);
+
+    const pct = (num: number, den: number) =>
+      den > 0 ? Number(((num / den) * 100).toFixed(1)) : 0;
+
+    const stages = [
+      {
+        id: 'consult',
+        label: '咨询',
+        value: consultEvents,
+        unit: '事件',
+        note: '公开入口动作 + 外链跳转确认（咨询动作事件），不表示第三方成交。',
+      },
+      {
+        id: 'customer',
+        label: '客户',
+        value: customers,
+        unit: '去重客户',
+        note: '本窗口内新建的去重客户。',
+        rate: pct(customers, consultEvents),
+        rateLabel: '咨询→客户',
+      },
+      {
+        id: 'task',
+        label: '任务',
+        value: withTask,
+        unit: '客户',
+        note: '新建客户中已生成本平台跟进任务的去重客户。',
+        rate: pct(withTask, customers),
+        rateLabel: '客户→任务',
+      },
+      {
+        id: 'done',
+        label: '完成',
+        value: done,
+        unit: '客户',
+        note: '上述客户中已完成至少一项任务的去重客户。',
+        rate: pct(done, withTask),
+        rateLabel: '任务→完成',
+      },
+    ];
+
+    return {
+      days,
+      disclaimer:
+        '工具漏斗只聚合本平台入口动作与跟进/任务痕迹（咨询→客户→任务→完成）；不含支付、成交金额或第三方订单结果。',
+      stages,
+      generatedAt: new Date().toISOString(),
+    };
+  }
+
+  /** MPC-09 module heat: module_key × event_code heat matrix from real L0–L2 entry traces. */
+  async moduleHeat(tenantId: string, daysRaw: unknown) {
+    const days = parseDays(daysRaw);
+
+    const result = await this.pool.query(
+      `select coalesce(nullif(module_key,''), '(未命名模块)') as module_key,
+              event_code,
+              count(*)::int as count
+       from entry_funnel_events
+       where tenant_id=$1 and occurred_at >= now() - make_interval(days => $2)
+       group by 1, 2
+       order by 1 asc, 2 asc`,
+      [tenantId, days],
+    );
+
+    const byModule = new Map<string, Map<string, number>>();
+    let max = 0;
+    for (const row of result.rows) {
+      const key = String(row.module_key);
+      const code = String(row.event_code);
+      const count = Number(row.count);
+      let inner = byModule.get(key);
+      if (!inner) {
+        inner = new Map();
+        byModule.set(key, inner);
+      }
+      inner.set(code, count);
+      if (count > max) max = count;
+    }
+
+    const ORDER: [string, string][] = [
+      ['module_impression', '模块曝光'],
+      ['consult_click', '咨询点击'],
+      ['jump_confirm', '跳转确认'],
+      ['impression', '观看'],
+      ['visit', '访问'],
+      ['jump', '跳转'],
+      ['dwell', '停留'],
+      ['share', '分享'],
+    ];
+
+    const modules = [...byModule.entries()]
+      .map(([key, inner]) => {
+        const totalCount = [...inner.values()].reduce((a, b) => a + b, 0);
+        const cells = ORDER.filter(([code]) => inner.has(code)).map(([code, label]) => ({
+          eventCode: code,
+          label,
+          value: inner.get(code) ?? 0,
+        }));
+        return { moduleKey: key, total: totalCount, cells };
+      })
+      .sort((a, b) => b.total - a.total || a.moduleKey.localeCompare(b.moduleKey, 'zh'));
+
+    return {
+      days,
+      disclaimer:
+        '模块热力仅统计 L0–L2 入口痕迹（模块曝光/咨询点击/跳转确认/观看/访问/跳转/停留/分享）按模块聚合；不含支付与成交。',
+      max,
+      modules,
+      generatedAt: new Date().toISOString(),
+    };
+  }
+
   /** DIY: group entry traces by chosen dimension with optional filters (no payment fields). */
   async query(tenantId: string, params: Record<string, unknown>) {
     const days = parseDays(params.days);
     const groupBy = textOpt(params.groupBy ?? params.group_by, 32) ?? 'surface';
-    const allowedGroup = new Set([
-      'surface',
-      'module_key',
-      'target_platform',
-      'event_code',
-      'day',
-    ]);
+    const allowedGroup = new Set(['surface', 'module_key', 'target_platform', 'event_code', 'day']);
     if (!allowedGroup.has(groupBy)) throw new BadRequestException('VALIDATION_ERROR');
 
     const surface = textOpt(params.surface, 48);
@@ -657,13 +803,7 @@ export class EntryFunnelService implements OnModuleDestroy {
     if (!name) throw new BadRequestException('VALIDATION_ERROR');
     const days = parseDays(body.days);
     const groupBy = textOpt(body.groupBy ?? body.group_by, 32) ?? 'module_key';
-    const allowedGroup = new Set([
-      'surface',
-      'module_key',
-      'target_platform',
-      'event_code',
-      'day',
-    ]);
+    const allowedGroup = new Set(['surface', 'module_key', 'target_platform', 'event_code', 'day']);
     if (!allowedGroup.has(groupBy)) throw new BadRequestException('VALIDATION_ERROR');
     const surface = textOpt(body.surface, 48);
     const moduleKey = textOpt(body.moduleKey ?? body.module_key, 80);
@@ -816,7 +956,9 @@ function buildInterpretInsights(input: {
   const weak = input.topModules.filter((m) => m.count > 0).slice(-1)[0];
   const strong = input.topModules[0];
   if (strong)
-    insights.push(`当前维度下最热模块/维度是「${strong.key}」（${strong.count}）；可对照装修位是否匹配目标引流。`);
+    insights.push(
+      `当前维度下最热模块/维度是「${strong.key}」（${strong.count}）；可对照装修位是否匹配目标引流。`,
+    );
   if (weak && strong && weak.key !== strong.key)
     insights.push(`相对偏弱的一项是「${weak.key}」（${weak.count}）；可检查是否曝光不足或入口弱。`);
 
@@ -840,8 +982,7 @@ function buildRestaurantInsights(input: {
   douyinJumps: number;
 }) {
   const insights: string[] = [];
-  if (input.visits === 0)
-    insights.push('近窗暂无访问痕迹；先确认店页/附近入口是否在投放。');
+  if (input.visits === 0) insights.push('近窗暂无访问痕迹；先确认店页/附近入口是否在投放。');
   if (input.offerCompare > 0 && input.jumps === 0)
     insights.push('「全平台团购比价」有模块曝光，但尚无出站跳转；检查外链是否可达。');
   if (input.moduleImpressions > 0 && input.jumpConfirms === 0 && input.jumps > 0)
@@ -850,8 +991,7 @@ function buildRestaurantInsights(input: {
     insights.push(
       `第三方跳转以美团 ${input.meituanJumps} / 抖音 ${input.douyinJumps} 计至出站（非成交）。`,
     );
-  if (!insights.length)
-    insights.push('餐饮模板：关注比价模块曝光 → 跳转确认 → 平台出站是否连贯。');
+  if (!insights.length) insights.push('餐饮模板：关注比价模块曝光 → 跳转确认 → 平台出站是否连贯。');
   return insights;
 }
 
@@ -871,8 +1011,7 @@ function buildBeautyInsights(input: {
     insights.push(`平均停留约 ${input.avgDwellMs}ms，偏短；可看头图/权益模块是否过早跳出。`);
   if (input.moduleImpressions === 0 && input.visits > 0)
     insights.push('有访问但尚无模块曝光；需客户端 IntersectionObserver 上报 L2。');
-  if (!insights.length)
-    insights.push('美业模板：优先看咨询点击与会员入口曝光是否匹配访问量。');
+  if (!insights.length) insights.push('美业模板：优先看咨询点击与会员入口曝光是否匹配访问量。');
   return insights;
 }
 
@@ -892,9 +1031,7 @@ function buildRetailInsights(input: {
     insights.push('有分享发出但未见分享打开；核对分享码落地页是否上报 share_open。');
   if (input.circleSurface > 0)
     insights.push(`商圈入口面有 ${input.circleSurface} 条痕迹，可对照圈内进店是否继续跳转。`);
-  if (input.visits === 0)
-    insights.push('零售模板：近窗无访问，先打通发现/搜索/分享入口。');
-  if (!insights.length)
-    insights.push('零售模板：对照轮播/内容曝光与分享打开、出站跳转是否同向。');
+  if (input.visits === 0) insights.push('零售模板：近窗无访问，先打通发现/搜索/分享入口。');
+  if (!insights.length) insights.push('零售模板：对照轮播/内容曝光与分享打开、出站跳转是否同向。');
   return insights;
 }

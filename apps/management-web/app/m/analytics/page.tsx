@@ -40,6 +40,41 @@ type DailyReport = {
   daily: DayRow[];
   generatedAt: string;
 };
+type FunnelStage = {
+  id: string;
+  label: string;
+  value: number;
+  unit: string;
+  note?: string;
+  rate?: number;
+  rateLabel?: string;
+};
+type ToolFunnel = {
+  days: number;
+  disclaimer: string;
+  stages: FunnelStage[];
+  generatedAt: string;
+};
+type HeatCell = { eventCode: string; label: string; value: number };
+type HeatModule = { moduleKey: string; total: number; cells: HeatCell[] };
+type ModuleHeat = {
+  days: number;
+  disclaimer: string;
+  max: number;
+  modules: HeatModule[];
+  generatedAt: string;
+};
+type SummaryIndustry = {
+  id: string;
+  label: string;
+  focusModules: string[];
+  insights: string[];
+};
+type SummaryTemplate = Record<string, SummaryIndustry>;
+type EntrySummary = {
+  byModule: { key: string; count: number }[];
+  industryTemplates: SummaryTemplate;
+};
 
 const api = process.env.NEXT_PUBLIC_API_BASE_URL ?? 'http://127.0.0.1:3001';
 const sessionApi = new SessionApiClient(api);
@@ -56,23 +91,85 @@ export default function AnalyticsPage() {
   const [state, setState] = useState<'loading' | 'ready' | 'forbidden' | 'error'>('loading');
   const [days, setDays] = useState(7);
   const [data, setData] = useState<DailyReport | null>(null);
+  const [funnel, setFunnel] = useState<ToolFunnel | null>(null);
+  const [heat, setHeat] = useState<ModuleHeat | null>(null);
+  const [summary, setSummary] = useState<EntrySummary | null>(null);
+  const [industryId, setIndustryId] = useState<string>('restaurant');
   const load = useCallback(async () => {
     if (!(await sessionApi.context())) return setState('forbidden');
     setState('loading');
     try {
-      const response = await sessionApi.request(
-        `${api}/api/v1/management/entry-funnel/daily-report?days=${days}`,
-        { headers: {} },
-      );
-      if ([401, 403].includes(response.status)) return setState('forbidden');
-      if (!response.ok) throw new Error('LOAD');
-      setData((await response.json()).data as DailyReport);
+      const queries = new URLSearchParams({ days: String(days) });
+      const [reportRes, funnelRes, heatRes, summaryRes] = await Promise.all([
+        sessionApi.request(`${api}/api/v1/management/entry-funnel/daily-report?${queries}`, {
+          headers: {},
+        }),
+        sessionApi.request(`${api}/api/v1/management/entry-funnel/tool-funnel?${queries}`, {
+          headers: {},
+        }),
+        sessionApi.request(`${api}/api/v1/management/entry-funnel/module-heat?${queries}`, {
+          headers: {},
+        }),
+        sessionApi.request(`${api}/api/v1/management/entry-funnel/summary?${queries}`, {
+          headers: {},
+        }),
+      ]);
+      if ([401, 403].includes(reportRes.status)) return setState('forbidden');
+      if (!reportRes.ok || !funnelRes.ok || !heatRes.ok || !summaryRes.ok) throw new Error('LOAD');
+      const [reportJson, funnelJson, heatJson, summaryJson] = await Promise.all([
+        reportRes.json(),
+        funnelRes.json(),
+        heatRes.json(),
+        summaryRes.json(),
+      ]);
+      setData(reportJson.data as DailyReport);
+      setFunnel(funnelJson.data as ToolFunnel);
+      setHeat(heatJson.data as ModuleHeat);
+      setSummary(summaryJson.data as EntrySummary);
       setState('ready');
     } catch {
       setState('error');
     }
   }, [days]);
   useEffect(() => void load(), [load]);
+
+  const industries = useMemo(
+    () => (summary?.industryTemplates ? Object.values(summary.industryTemplates) : []),
+    [summary],
+  );
+  const activeIndustry = useMemo(() => {
+    const found = industries.find((i) => i.id === industryId) ?? industries[0];
+    return found ?? null;
+  }, [industries, industryId]);
+
+  const moduleTotals = useMemo<Record<string, number>>(() => {
+    const map: Record<string, number> = {};
+    for (const m of summary?.byModule ?? []) map[m.key] = m.count;
+    return map;
+  }, [summary]);
+
+  const focusModuleDist = useMemo<Bucket[]>(() => {
+    if (!activeIndustry) return [];
+    return buckets(
+      activeIndustry.focusModules
+        .map((key) => [key, moduleTotals[key] ?? 0] as [string, number])
+        .filter(([, value]) => value > 0),
+    );
+  }, [activeIndustry, moduleTotals]);
+
+  const heatLevel = (value: number) => {
+    if (!heat?.max) return 0;
+    return Math.round(Math.min(100, (value / heat.max) * 100));
+  };
+  const heatIntensity = (value: number) =>
+    heat && heat.max > 0 ? `${Math.max(8, heatLevel(value))}` : '0';
+
+  const first = funnel?.stages[0];
+  const consultCustomers = funnel?.stages[1];
+  const consultRate =
+    first && consultCustomers && first.value > 0
+      ? Math.round((consultCustomers.value / first.value) * 1000) / 10
+      : 0;
 
   const funnelDist = useMemo<Bucket[]>(() => {
     if (!data) return [];
@@ -179,6 +276,136 @@ export default function AnalyticsPage() {
       </section>
 
       <ManagementEarlyMeetingKpi page="analytics" />
+
+      <section className={styles.industryPanel} aria-label="行业模板解读">
+        <div className={styles.panelHead}>
+          <h2>行业模板解读</h2>
+          <span className={styles.panelMeta}>由真实 L0–L2 痕迹推导 · 只解读入口承接</span>
+        </div>
+        <div className={styles.industryTabs} role="tablist" aria-label="选择行业模板">
+          {industries.map((item) => (
+            <button
+              key={item.id}
+              type="button"
+              role="tab"
+              aria-selected={activeIndustry?.id === item.id}
+              className={activeIndustry?.id === item.id ? styles.tabActive : styles.tab}
+              onClick={() => setIndustryId(item.id)}
+            >
+              {item.label}
+            </button>
+          ))}
+        </div>
+        {activeIndustry ? (
+          <div className={styles.industryBody}>
+            <div className={styles.panelBlock}>
+              <h3>
+                聚焦模块 · {activeIndustry.label}（{activeIndustry.focusModules.length} 项）
+              </h3>
+              {focusModuleDist.length ? (
+                <BarList
+                  items={focusModuleDist}
+                  total={focusModuleDist.reduce((n, b) => n + b.value, 0)}
+                />
+              ) : (
+                <p className={styles.barEmpty}>暂无记录</p>
+              )}
+            </div>
+            <div className={styles.panelBlock}>
+              <h3>模板解读（规则引擎）</h3>
+              <ul className={styles.insightList}>
+                {activeIndustry.insights.map((insight, index) => (
+                  <li key={`${activeIndustry.id}-${index}`}>{insight}</li>
+                ))}
+              </ul>
+            </div>
+          </div>
+        ) : (
+          <p className={styles.barEmpty}>暂无行业模板</p>
+        )}
+        <p className={styles.honest} role="note">
+          行业模板只按已抓取的 L0–L2 入口痕迹解读模块曝光与承接，不编造成交、支付或第三方订单结果。
+        </p>
+      </section>
+
+      <section className={styles.floorPanel} aria-label="模块热力">
+        <div className={styles.panelHead}>
+          <h2>模块热力</h2>
+          <span className={styles.panelMeta}>由真实 L0–L2 痕迹按模块 × 事件聚合</span>
+        </div>
+        {heat?.modules.length ? (
+          <div className={styles.heatWrap}>
+            <table className={styles.heatTable}>
+              <thead>
+                <tr>
+                  <th>模块</th>
+                  <th>热度</th>
+                  <th>合计</th>
+                </tr>
+              </thead>
+              <tbody>
+                {heat.modules.slice(0, 24).map((module) => (
+                  <tr key={module.moduleKey}>
+                    <td>{module.moduleKey}</td>
+                    <td className={styles.heatCell}>
+                      <span
+                        className={styles.heatBar}
+                        style={{ width: `${heatIntensity(module.total)}%` }}
+                      />
+                      <span className={styles.heatEventList}>
+                        {module.cells.map((cell) => (
+                          <span key={cell.eventCode} className={styles.heatEventItem}>
+                            {cell.label} {cell.value}
+                          </span>
+                        ))}
+                      </span>
+                    </td>
+                    <td className={styles.heatValue}>{module.total}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        ) : (
+          <p className={styles.barEmpty}>暂无记录</p>
+        )}
+        <p className={styles.honest} role="note">
+          模块热力仅统计 L0–L2
+          入口痕迹按模块聚合（模块曝光/咨询点击/跳转确认/观看/访问/跳转/停留/分享），
+          不含支付与成交。
+        </p>
+      </section>
+
+      <section className={styles.floorPanel} aria-label="工具漏斗">
+        <div className={styles.panelHead}>
+          <h2>工具漏斗</h2>
+          <span className={styles.panelMeta}>咨询 → 客户 → 任务 → 完成 · 真实档案行</span>
+        </div>
+        {funnel && funnel.stages.length ? (
+          <div className={styles.funnelBreakdown}>
+            {funnel.stages.map((stage) => (
+              <div className={styles.funnelStage} key={stage.id}>
+                <span className={styles.funnelStageLabel}>{stage.label}</span>
+                <strong>{stage.value}</strong>
+                <em>{stage.unit}</em>
+                {stage.rate !== undefined && (
+                  <small>
+                    {stage.rateLabel} {stage.rate}%
+                  </small>
+                )}
+              </div>
+            ))}
+          </div>
+        ) : (
+          <p className={styles.barEmpty}>暂无记录</p>
+        )}
+        <p className={styles.honest} role="note">
+          工具漏斗 =
+          咨询→客户→任务→完成（本窗口新建客户中生成任务/完成任务的去重口径）；咨询→客户率约{' '}
+          {consultRate}
+          %。仅聚合本平台入口动作与跟进/任务痕迹，不含支付、成交金额或第三方订单结果。
+        </p>
+      </section>
 
       <section className={styles.summaryStrip} aria-label="入口痕迹日报（L0–L2）">
         <div>

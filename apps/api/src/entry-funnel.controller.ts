@@ -21,10 +21,7 @@ export class EntryFunnelController {
 
   /** Public batch ingest for L0+L1+L2 entry traces (no payment fields). */
   @Post('consumer/funnel/events')
-  async ingest(
-    @Query('tenant') tenant: string | undefined,
-    @Body() body: Record<string, unknown>,
-  ) {
+  async ingest(@Query('tenant') tenant: string | undefined, @Body() body: Record<string, unknown>) {
     return {
       data: await this.funnel.ingest(tenant ?? '', body ?? {}),
       meta: { public: true },
@@ -78,6 +75,40 @@ export class EntryFunnelController {
     const context = await this.auth.require(authorization, 'tenant.manage', tenant);
     return {
       data: await this.funnel.dailyReport(context.tenantId, days),
+      meta: { requestId },
+      error: null,
+    };
+  }
+
+  /** MPC-09 tool funnel (Consult → Customer → Task → Done) from real rows. */
+  @Get('management/entry-funnel/tool-funnel')
+  async toolFunnel(
+    @Headers('authorization') authorization: string | undefined,
+    @Headers('x-tenant-context') tenant: string | undefined,
+    @Headers('x-request-id') requestId: string | undefined,
+    @Query('days') days: string | undefined,
+  ) {
+    if (!requestId?.trim()) throw new BadRequestException('VALIDATION_ERROR');
+    const context = await this.auth.require(authorization, 'tenant.manage', tenant);
+    return {
+      data: await this.funnel.toolFunnel(context.tenantId, days),
+      meta: { requestId },
+      error: null,
+    };
+  }
+
+  /** MPC-09 module heat: module_key × event_code heat matrix from real L0–L2 traces. */
+  @Get('management/entry-funnel/module-heat')
+  async moduleHeat(
+    @Headers('authorization') authorization: string | undefined,
+    @Headers('x-tenant-context') tenant: string | undefined,
+    @Headers('x-request-id') requestId: string | undefined,
+    @Query('days') days: string | undefined,
+  ) {
+    if (!requestId?.trim()) throw new BadRequestException('VALIDATION_ERROR');
+    const context = await this.auth.require(authorization, 'tenant.manage', tenant);
+    return {
+      data: await this.funnel.moduleHeat(context.tenantId, days),
       meta: { requestId },
       error: null,
     };
