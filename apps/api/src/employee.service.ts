@@ -23,7 +23,14 @@ export class EmployeeService implements OnModuleDestroy {
   async list(context: OrganizationContext) {
     return (
       await this.pool.query(
-        'select e.id,e.employee_code,e.title,e.status,e.organization_id,e.version,u.email,u.display_name from employees e join memberships m on m.id=e.membership_id join users u on u.id=m.user_id where e.tenant_id=$1 and e.deleted_at is null order by e.employee_code',
+        `select e.id,e.employee_code,e.title,e.status,e.organization_id,e.version,u.email,u.display_name,
+          coalesce(array_remove(array_agg(distinct r.code),null),'{}') roles,
+          coalesce((select array_agg(distinct sm.store_id) from store_managers sm where sm.tenant_id=e.tenant_id and sm.employee_id=e.id and sm.status='active' and sm.deleted_at is null),'{}') store_scope
+         from employees e join memberships m on m.id=e.membership_id join users u on u.id=m.user_id
+         left join membership_roles mr on mr.membership_id=e.membership_id and mr.tenant_id=e.tenant_id
+         left join roles r on r.id=mr.role_id and r.tenant_id=e.tenant_id and r.status='active' and r.deleted_at is null
+         where e.tenant_id=$1 and e.deleted_at is null
+         group by e.id,m.id,u.id order by e.employee_code`,
         [context.tenantId],
       )
     ).rows;
@@ -38,8 +45,11 @@ export class EmployeeService implements OnModuleDestroy {
     const email = text(body.email, 320).toLowerCase(),
       organizationId = text(body.organizationId, 36),
       employeeCode = text(body.employeeCode, 80),
-      title = body.title === undefined ? null : text(body.title, 160);
+      title = body.title === undefined ? null : text(body.title, 160),
+      roleCode = body.roleCode === undefined ? null : text(body.roleCode, 80),
+      storeId = body.storeId === undefined ? null : text(body.storeId, 36);
     if (!uuid.test(organizationId)) throw new BadRequestException('VALIDATION_ERROR');
+    if (storeId !== null && !uuid.test(storeId)) throw new BadRequestException('VALIDATION_ERROR');
     const client = await this.pool.connect();
     try {
       await client.query('begin');
@@ -60,10 +70,26 @@ export class EmployeeService implements OnModuleDestroy {
         ).rowCount
       )
         throw new NotFoundException('NOT_FOUND');
+      let roleId: string | null = null;
+      if (roleCode !== null) {
+        const role = await client.query(
+          "select id from roles where tenant_id=$1 and code=$2 and status='active' and deleted_at is null",
+          [context.tenantId, roleCode],
+        );
+        if (!role.rowCount) throw new BadRequestException('VALIDATION_ERROR');
+        roleId = role.rows[0].id;
+      }
+      if (storeId !== null) {
+        const store = await client.query(
+          'select 1 from stores where id=$1 and tenant_id=$2 and deleted_at is null',
+          [storeId, context.tenantId],
+        );
+        if (!store.rowCount) throw new NotFoundException('NOT_FOUND');
+      }
       const token = randomBytes(24).toString('base64url'),
         id = randomUUID();
       const created = await client.query(
-        "insert into membership_invitations (id,tenant_id,organization_id,email,employee_code,title,token_hash,expires_at,created_by,updated_by) values ($1,$2,$3,$4,$5,$6,$7,now()+interval '7 days',$8,$8) returning id,email,employee_code,title,status,expires_at,version",
+        "insert into membership_invitations (id,tenant_id,organization_id,email,employee_code,title,role_id,store_id,token_hash,expires_at,created_by,updated_by) values ($1,$2,$3,$4,$5,$6,$7,$8,$9,now()+interval '7 days',$10,$10) returning id,email,employee_code,title,role_id,store_id,status,expires_at,version",
         [
           id,
           context.tenantId,
@@ -71,6 +97,8 @@ export class EmployeeService implements OnModuleDestroy {
           email,
           employeeCode,
           title,
+          roleId,
+          storeId,
           hash(token),
           context.userId,
         ],
@@ -145,6 +173,22 @@ export class EmployeeService implements OnModuleDestroy {
           context.userId,
         ],
       );
+      if (invite.rows[0].role_id) {
+        await client.query(
+          'insert into membership_roles(id,tenant_id,membership_id,role_id) values($1,$2,$3,$4) on conflict(membership_id,role_id) do nothing',
+          [randomUUID(), context.tenantId, membershipId, invite.rows[0].role_id],
+        );
+      }
+      if (invite.rows[0].store_id) {
+        await client.query(
+          "insert into store_managers(id,tenant_id,store_id,employee_id,status,created_by,updated_by) values($1,$2,$3,$4,'active',$5,$5) on conflict(store_id,employee_id) do update set status='active',deleted_at=null,updated_at=now(),updated_by=excluded.updated_by,version=store_managers.version+1",
+          [randomUUID(), context.tenantId, invite.rows[0].store_id, employeeId, context.userId],
+        );
+        await client.query(
+          "insert into data_scopes(id,tenant_id,membership_id,scope_type,scope_value,status,created_by,updated_by) values($1,$2,$3,'store',$4,'active',$5,$5) on conflict(membership_id,scope_type,scope_value) do update set status='active',deleted_at=null,updated_at=now(),updated_by=excluded.updated_by,version=data_scopes.version+1",
+          [randomUUID(), context.tenantId, membershipId, invite.rows[0].store_id, context.userId],
+        );
+      }
       await client.query(
         "update membership_invitations set status='accepted',accepted_at=now(),updated_by=$2,version=version+1 where id=$1",
         [id, context.userId],

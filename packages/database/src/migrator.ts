@@ -67,6 +67,7 @@ import * as membershipRulesAlerts from './migrations/065_membership_rules_alerts
 import * as storeContactQr from './migrations/066_store_contact_qr.js';
 import * as serviceCategoryRank from './migrations/067_service_category_rank.js';
 import * as reviewsReply from './migrations/068_reviews_reply.js';
+import * as employeeRolePackage from './migrations/069_employee_role_package.js';
 import type { Database } from './types.js';
 
 const migrationProvider: MigrationProvider = {
@@ -140,6 +141,7 @@ const migrationProvider: MigrationProvider = {
       '066_store_contact_qr': storeContactQr,
       '067_service_category_rank': serviceCategoryRank,
       '068_reviews_reply': reviewsReply,
+      '069_employee_role_package': employeeRolePackage,
     };
   },
 };

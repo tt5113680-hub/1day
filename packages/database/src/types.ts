@@ -285,6 +285,8 @@ export interface MembershipInvitationsTable {
   email: string;
   employee_code: string;
   title: string | null;
+  role_id: string | null;
+  store_id: string | null;
   token_hash: string;
   expires_at: Timestamp;
   accepted_at: Timestamp | null;

@@ -29,6 +29,8 @@ type Employee = {
   version: number;
   display_name: string;
   email: string;
+  roles: string[];
+  store_scope: string[];
   open_task_count: number;
   active_customer_count: number;
 };
@@ -38,21 +40,52 @@ type Invitation = {
   email: string;
   employee_code: string;
   title: string | null;
+  role_code: string | null;
+  store_name: string | null;
   expires_at: string;
+};
+type Role = {
+  id: string;
+  code: string;
+  name: string;
+};
+type Store = {
+  id: string;
+  name: string;
+  code: string;
+  organization_id: string;
 };
 type Data = {
   organizations: Organization[];
   merchants: Merchant[];
   employees: Employee[];
   invitations: Invitation[];
+  roles: Role[];
+  stores: Store[];
 };
 const api = process.env.NEXT_PUBLIC_API_BASE_URL ?? 'http://127.0.0.1:3001';
 const sessionApi = new SessionApiClient(api);
 
+const roleLabel = (code: string) =>
+  code === 'store_manager'
+    ? '店长'
+    : code === 'employee'
+      ? '员工'
+      : code === 'owner'
+        ? '店主'
+        : code;
+
 export default function OrganizationEmployeesPage() {
   const [state, setState] = useState<'loading' | 'ready' | 'forbidden' | 'error'>('loading');
   const [data, setData] = useState<Data | null>(null);
-  const [form, setForm] = useState({ email: '', employeeCode: '', organizationId: '', title: '' });
+  const [form, setForm] = useState({
+    email: '',
+    employeeCode: '',
+    organizationId: '',
+    title: '',
+    roleCode: '',
+    storeId: '',
+  });
   const [orgForm, setOrgForm] = useState({ code: '', name: '', organizationType: 'merchant' });
   const [merchantForm, setMerchantForm] = useState({
     code: '',
@@ -182,22 +215,36 @@ export default function OrganizationEmployeesPage() {
     }
   };
   const invite = async () => {
-    if (!form.email || !form.employeeCode || !form.organizationId) {
-      setFieldError('邮箱、员工编号和组织不能为空。');
+    if (!form.email || !form.employeeCode || !form.organizationId || !form.roleCode) {
+      setFieldError('邮箱、员工编号、组织与角色包不能为空。');
       return;
     }
     setFieldError('');
     const response = await sessionApi.request(`${api}/api/v1/employees/invitations`, {
       method: 'POST',
       headers: { ...headers(), 'idempotency-key': crypto.randomUUID() },
-      body: JSON.stringify(form),
+      body: JSON.stringify({
+        email: form.email,
+        employeeCode: form.employeeCode,
+        organizationId: form.organizationId,
+        title: form.title,
+        roleCode: form.roleCode,
+        storeId: form.storeId || undefined,
+      }),
     });
     if (!response.ok) {
       setNote('邀请未发送，请检查字段后重试。');
       return;
     }
     setNote('邀请已创建，等待员工在有效期内接受。');
-    setForm((value) => ({ ...value, email: '', employeeCode: '', title: '' }));
+    setForm((value) => ({
+      ...value,
+      email: '',
+      employeeCode: '',
+      title: '',
+      roleCode: '',
+      storeId: '',
+    }));
     await load();
   };
   const offboard = async (employee: Employee) => {
@@ -299,6 +346,15 @@ export default function OrganizationEmployeesPage() {
     invitationCounts.set(key, (invitationCounts.get(key) ?? 0) + 1);
   }
   const byInvitation = [...invitationCounts.entries()].map(([key, value]) => ({ key, value }));
+  const roleCounts = new Map<string, number>();
+  for (const employee of data.employees) {
+    const key = employee.roles.length ? employee.roles.map(roleLabel).join('、') : '未绑定角色包';
+    roleCounts.set(key, (roleCounts.get(key) ?? 0) + 1);
+  }
+  const byRole = [...roleCounts.entries()].map(([key, value]) => ({ key, value }));
+  const storeManagerCount = data.employees.filter((employee) =>
+    employee.roles.includes('store_manager'),
+  ).length;
   return (
     <main className={styles.page} data-testid="management-organization-employees">
       <header className={styles.topBar}>
@@ -312,7 +368,8 @@ export default function OrganizationEmployeesPage() {
         <h1>让每位员工的归属、待办与离职交接可见</h1>
         <p>
           组织、商户、门店创建与员工邀请均复用既有组织写接口；不另造第二套
-          API。员工表现、交接风险与受控离职均在租户工具授权范围内。
+          API。邀请可绑定角色包与门店范围，接受激活后自动授予对应角色与门店 scope。
+          员工表现、交接风险与受控离职均在租户工具授权范围内。
         </p>
       </section>
 
@@ -332,6 +389,10 @@ export default function OrganizationEmployeesPage() {
         <div>
           <span>待接受邀请</span>
           <strong>{data.invitations.length}</strong>
+        </div>
+        <div>
+          <span>店长员工</span>
+          <strong>{storeManagerCount}</strong>
         </div>
       </section>
 
@@ -360,6 +421,26 @@ export default function OrganizationEmployeesPage() {
           <h2>组织员工分布</h2>
           <ul className={styles.bars}>
             {byOrganization.map((b) => (
+              <li key={b.key} className={styles.barRow}>
+                <span className={styles.barLabel}>{b.key}</span>
+                <span className={styles.barTrack}>
+                  <span
+                    className={styles.barFill}
+                    style={{
+                      width: `${data.employees.length ? (b.value / data.employees.length) * 100 : 0}%`,
+                    }}
+                  />
+                </span>
+                <span className={styles.barValue}>{b.value}</span>
+              </li>
+            ))}
+            {!data.employees.length && <li className={styles.barEmpty}>暂无记录</li>}
+          </ul>
+        </div>
+        <div className={styles.panelBlock}>
+          <h2>角色包分布</h2>
+          <ul className={styles.bars}>
+            {byRole.map((b) => (
               <li key={b.key} className={styles.barRow}>
                 <span className={styles.barLabel}>{b.key}</span>
                 <span className={styles.barTrack}>
@@ -439,7 +520,9 @@ export default function OrganizationEmployeesPage() {
       </section>
 
       <p className={styles.honest}>
-        以上分布全部由已抓取的真实组织与员工档案行现场推导（source=local）：不接美团/抖音实时人事或绩效、不伪造第三方评分或成交、不包含本平台收款、非本平台下单。
+        以上分布全部由已抓取的真实组织、员工、角色包与门店 scope 档案行现场推导（source=local）：
+        角色包与门店范围仅登记租户内访问授权，不接美团/抖音实时人事或绩效、不伪造第三方评分或成交、
+        不包含本平台收款、非本平台下单。
       </p>
 
       {note && (
@@ -661,13 +744,49 @@ export default function OrganizationEmployeesPage() {
                 onChange={(event) => setForm({ ...form, title: event.target.value })}
               />
             </label>
+            <label>
+              角色包
+              <select
+                aria-label="邀请角色包"
+                value={form.roleCode}
+                onChange={(event) => setForm({ ...form, roleCode: event.target.value })}
+              >
+                <option value="">请选择角色包</option>
+                {data.roles
+                  .filter((role) => role.code === 'store_manager' || role.code === 'employee')
+                  .map((role) => (
+                    <option value={role.code} key={role.id}>
+                      {roleLabel(role.code)}（{role.code}）
+                    </option>
+                  ))}
+              </select>
+            </label>
+            <label>
+              门店范围（可选）
+              <select
+                aria-label="邀请门店范围"
+                value={form.storeId}
+                onChange={(event) => setForm({ ...form, storeId: event.target.value })}
+              >
+                <option value="">不限定门店</option>
+                {data.stores.map((store) => (
+                  <option value={store.id} key={store.id}>
+                    {store.name}
+                  </option>
+                ))}
+              </select>
+            </label>
             <Button onClick={() => void invite()}>创建邀请</Button>
           </div>
           <h3>待接受邀请</h3>
           {data.invitations.length ? (
             data.invitations.map((invitation) => (
               <p className={styles.invite} key={invitation.id}>
-                {invitation.email} · {invitation.employee_code} · 截止{' '}
+                {invitation.email} · {invitation.employee_code} ·{' '}
+                <strong>
+                  {invitation.role_code ? roleLabel(invitation.role_code) : '未绑定角色包'}
+                </strong>
+                {invitation.store_name ? ` · ${invitation.store_name}` : ''} · 截止{' '}
                 {new Date(invitation.expires_at).toLocaleDateString('zh-CN')}
               </p>
             ))
@@ -691,6 +810,19 @@ export default function OrganizationEmployeesPage() {
                   <StatusBadge tone={employee.status === 'active' ? 'success' : 'neutral'}>
                     {businessLabel(employee.status)}
                   </StatusBadge>
+                  <small>
+                    角色包：
+                    {employee.roles.length ? employee.roles.map(roleLabel).join('、') : '未绑定'}
+                  </small>
+                  <small>
+                    门店范围：
+                    {employee.store_scope.length
+                      ? data.stores
+                          .filter((store) => employee.store_scope.includes(store.id))
+                          .map((store) => store.name)
+                          .join('、')
+                      : '不限定'}
+                  </small>
                 </div>
                 <div>
                   <b>{employee.open_task_count}</b>
