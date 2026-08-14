@@ -3,7 +3,7 @@
 ## ACTIVE — No authorized engineering slice remains (2026-08-14)
 
 - recorded_at: 2026-08-14 Asia/Shanghai
-- re_verified_at: **2026-08-15** Asia/Shanghai — another unattended cold-start turn confirmed the same NO_AUTHORIZED_SLICE state; no authorized (non-DEFERRED, non-archive) engineering slice exists to cut. Not a technical failure.
+- re_verified_at: **2026-08-15** Asia/Shanghai — another unattended cold-start turn confirmed the same NO_AUTHORIZED_SLICE state; no authorized (non-DEFERRED, non-archive) engineering slice exists to cut. Not a technical failure. Working tree contains only the owner-added untracked `ONEDAY_DIAGNOSIS_REUSE_AUDIT.md` (untouched); branch up to date with origin; no parallel writer; no active construction lock.
 - status: **NO_AUTHORIZED_SLICE** — awaiting owner direction
 - branch: `hardening/COMMERCIAL-COMPLETION`
 
