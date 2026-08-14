@@ -15,11 +15,11 @@
 ## Current task
 
 - branch: `hardening/COMMERCIAL-COMPLETION`
-- last_verified: **2026-08-14** — **W∞-122 PASS** 代理结算周期 + 合同状态机（无资金托管）（§2 BD/合同 + §7 Phase3）。See evidence/G1-MEITUAN-PARITY/WINF122/ACCEPTANCE.md。
-- in_flight: **W∞-123 (NEXT, Phase3)** 渠道/商圈运营队列与 scope 最强化
+- last_verified: **2026-08-14** — **W∞-123 PASS** 渠道/商圈运营队列与 scope 最强化（§6 W∞-SAAS-SCOPE，Phase3）。See evidence/G1-MEITUAN-PARITY/WINF123/ACCEPTANCE.md。
+- in_flight: **W∞-124 (NEXT, Phase3)** 多端 sync SLO 可测护栏（发布/权限变更 ≤60s 收敛可测）
 - deferred: §5 开通 READY（待主人「开始第五节」）
 - blocker: **none (engineering)**
-- note: W122 由 DeepSeek 完成（migration 075 agent_contracts 合同状态机 + agent_settlements cycle_number；合同建/迁移 + 结算周期监控 endpoints，写路径 audit+outbox；/p/agents 合同状态机面板 + 合同记录 + 结算周期监控 + 三分布面板；无资金托管/费率/佣金/分账）。tests/g1-winf122 3/3 + page-p-agent-ops 1/1；g1-winf* 串行 440/441（唯一 g1-winf116 并行 API ECONNRESET 瞬断，隔离 3 轮 7/7 通过）；typecheck/build 20/20、unit 49/49、evidence 74/74、eslint clean。W123+ 可 `pnpm unattended:resume` 续全自动。
+- note: W123 由 DeepSeek 完成（platform-business-circle list 补 `circleIds` scope 过滤关闭商圈越权缺口 + controller requirePlatformAny+networkListIds('circle')；channel/circle dashboard overview 挂 `scope{type,restricted,count}`；channel dashboard 新增 `queues.attention` 关注队列；platform-workbench-kpi 新增共享 NetworkScopeChip + /ch/dashboard 渲染 scope 指示/渠道关注队列面板 + /bc/dashboard scope 指示）。tests/g1-winf123 3/3（真实 DB：admin 见两圈→circle-scoped 仅见其 scope 圈无泄漏→circle dashboard scope restricted:true+count:1→admin restricted:false→401）；回退回归 g1-winf54/55/60/62/63 + g1-winf102 + sys-6-role-matrix-network 23/23；`g1-winf*.test.mjs` 串行 **444/444**（含本刀新增 3 与回归）、typecheck/build 20/20、unit 49/49、evidence 74/74、eslint clean。W124 可 `pnpm unattended:resume` 续全自动。
 
 ## Owner gates (parallel)
 

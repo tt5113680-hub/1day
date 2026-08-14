@@ -67,6 +67,40 @@
   line-height: 1.5;
 }
 
+.scopeChip {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  border-radius: 10px;
+  padding: 10px 12px;
+  background: #fff;
+  border: 1px solid rgb(255 209 0 / 35%);
+  box-shadow: 0 1px 2px rgb(0 0 0 / 4%);
+}
+
+.scopeMark {
+  border-radius: 12px;
+  padding: 2px 8px;
+  color: #b8860b;
+  background: linear-gradient(135deg, #fff9db 0%, #ffe14d 100%);
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.scopeChip strong {
+  color: #222;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.scopeNote {
+  flex-basis: 100%;
+  color: #666;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
 .queuePanel {
   display: grid;
   gap: 8px;

@@ -91,10 +91,40 @@ export class ChannelDashboardService implements OnModuleDestroy {
         onboardingStatus: m.onboardingStatus,
         deepLink: `/ch/merchants/new?tenant=${m.tenantId}`,
       }));
+    const attentionQueue = merchants
+      .filter(
+        (m) =>
+          m.onboardingStatus === 'invited' ||
+          m.onboardingStatus === 'onboarding' ||
+          m.renewalSignal !== null,
+      )
+      .sort((a, b) =>
+        (a.riskLevel === 'high' ? 1 : 0) !== (b.riskLevel === 'high' ? 1 : 0)
+          ? (a.riskLevel === 'high' ? 1 : 0) < (b.riskLevel === 'high' ? 1 : 0)
+            ? 1
+            : -1
+          : b.name.localeCompare(a.name),
+      )
+      .slice(0, 10)
+      .map((m) => ({
+        membershipId: m.membershipId,
+        tenantId: m.tenantId,
+        name: m.name,
+        slug: m.slug,
+        channelName: m.channelName,
+        onboardingStatus: m.onboardingStatus,
+        renewalSignal: m.renewalSignal,
+        plan: m.plan,
+        riskLevel: m.riskLevel,
+        deepLink:
+          m.onboardingStatus === 'active'
+            ? `/p/tenants/${m.tenantId}`
+            : `/ch/merchants/new?tenant=${m.tenantId}`,
+      }));
     return {
       metrics: metrics.rows[0],
       merchants,
-      queues: { renewal: renewalQueue, onboarding: onboardingQueue },
+      queues: { renewal: renewalQueue, onboarding: onboardingQueue, attention: attentionQueue },
     };
   }
 

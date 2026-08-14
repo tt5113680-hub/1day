@@ -23,18 +23,23 @@ export class ChannelDashboardController {
       'platform.read',
       'platform.manage',
     ]);
-    const permissionCodes = await this.dataScopes.permissionCodes(
-      context.tenantId,
-      context.userId,
-    );
+    const permissionCodes = await this.dataScopes.permissionCodes(context.tenantId, context.userId);
     const channelIds = await this.dataScopes.networkListIds(
       context.tenantId,
       context.userId,
       'channel',
       permissionCodes,
     );
+    const overview = await this.dashboard.overview(context.tenantId, channelIds);
     return {
-      data: await this.dashboard.overview(context.tenantId, channelIds),
+      data: {
+        ...overview,
+        scope: {
+          type: 'channel',
+          restricted: channelIds !== null,
+          count: channelIds?.length ?? 0,
+        },
+      },
       meta: { requestId },
       error: null,
     };

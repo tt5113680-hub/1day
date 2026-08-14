@@ -4,7 +4,11 @@ import { AppStatePanel, Button, StatusBadge } from '@oneday/ui';
 
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { PlatformProductHome } from '../../platform-product-home';
-import { ChannelOperationalQueues, PlatformOperationalKpi } from '../../platform-workbench-kpi';
+import {
+  ChannelOperationalQueues,
+  NetworkScopeChip,
+  PlatformOperationalKpi,
+} from '../../platform-workbench-kpi';
 import styles from './page.module.css';
 
 type Merchant = {
@@ -47,6 +51,23 @@ type Data = {
       onboardingStatus: string;
       deepLink: string;
     }[];
+    attention: {
+      membershipId: string;
+      tenantId: string;
+      name: string;
+      slug: string;
+      channelName: string;
+      onboardingStatus: string;
+      renewalSignal: string | null;
+      plan: string;
+      riskLevel: string;
+      deepLink: string;
+    }[];
+  };
+  scope?: {
+    type: 'channel' | 'circle';
+    restricted: boolean;
+    count: number;
   };
 };
 const api = process.env.NEXT_PUBLIC_API_BASE_URL ?? 'http://127.0.0.1:3001';
@@ -253,7 +274,36 @@ export default function ChannelDashboardPage() {
         </p>
       </section>
 
+      <NetworkScopeChip scope={data?.scope} />
+
       <PlatformOperationalKpi page="channel" />
+
+      {data?.queues?.attention?.length ? (
+        <section className={styles.panel} aria-label="渠道关注队列">
+          <div className={styles.panelHead}>
+            <h2>渠道关注队列</h2>
+            <span className={styles.panelMeta}>开通待办 + 跟进信号合并 · 可 drill-down</span>
+          </div>
+          <ul className={styles.attentionList}>
+            {data.queues.attention.map((item) => (
+              <li key={item.membershipId} className={styles.attentionRow}>
+                <a href={item.deepLink}>
+                  <strong>{item.name}</strong>
+                  <span>
+                    {item.channelName} · {statusLabel(item.onboardingStatus)}
+                    {item.renewalSignal
+                      ? item.renewalSignal === 'inactive_30d'
+                        ? ' · 30 天不活跃'
+                        : ' · 高风险'
+                      : ''}{' '}
+                    → 处置
+                  </span>
+                </a>
+              </li>
+            ))}
+          </ul>
+        </section>
+      ) : null}
 
       {data?.queues ? (
         <section className={styles.panel} aria-label="渠道待办队列">

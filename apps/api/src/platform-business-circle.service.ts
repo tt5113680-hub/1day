@@ -34,17 +34,16 @@ const benefits = (value: unknown) => {
 export class PlatformBusinessCircleService implements OnModuleDestroy {
   private readonly pool = createApiPool();
 
-  async list(context: OrganizationContext) {
-    const [circles, merchantPool] = await Promise.all([
-      this.pool.query(
-        `select c.id,c.code,c.name,c.description,c.status,c.version,
+  async list(context: OrganizationContext, circleIds: string[] | null = null) {
+    const scoped = circleIds !== null;
+    const circlesQuery = `select c.id,c.code,c.name,c.description,c.status,c.version,
           coalesce(json_agg(json_build_object('tenantId',m.merchant_tenant_id,'name',t.name,'slug',t.slug,'benefits',m.benefits,'recommendationReason',m.recommendation_reason,'approvalStatus',m.approval_status,'version',m.version) order by t.name) filter(where m.id is not null),'[]') merchants
          from platform_business_circles c
          left join platform_business_circle_merchants m on m.circle_id=c.id and m.tenant_id=c.tenant_id and m.deleted_at is null
          left join tenants t on t.id=m.merchant_tenant_id and t.deleted_at is null
-         where c.tenant_id=$1 and c.deleted_at is null group by c.id order by c.created_at`,
-        [context.tenantId],
-      ),
+         where c.tenant_id=$1 and c.deleted_at is null${scoped ? ' and c.id = any($2::uuid[])' : ''} group by c.id order by c.created_at`;
+    const [circles, merchantPool] = await Promise.all([
+      this.pool.query(circlesQuery, scoped ? [context.tenantId, circleIds] : [context.tenantId]),
       this.pool.query(
         "select id as tenant_id,slug,name from tenants where id<>$1 and status='active' and deleted_at is null order by created_at desc",
         [context.tenantId],

@@ -22,18 +22,23 @@ export class CircleDashboardController {
       'platform.manage',
       'circle.manage',
     ]);
-    const permissionCodes = await this.dataScopes.permissionCodes(
-      context.tenantId,
-      context.userId,
-    );
+    const permissionCodes = await this.dataScopes.permissionCodes(context.tenantId, context.userId);
     const circleIds = await this.dataScopes.networkListIds(
       context.tenantId,
       context.userId,
       'circle',
       permissionCodes,
     );
+    const overview = await this.dashboard.overview(context.tenantId, circleIds);
     return {
-      data: await this.dashboard.overview(context.tenantId, circleIds),
+      data: {
+        ...overview,
+        scope: {
+          type: 'circle',
+          restricted: circleIds !== null,
+          count: circleIds?.length ?? 0,
+        },
+      },
       meta: { requestId },
       error: null,
     };

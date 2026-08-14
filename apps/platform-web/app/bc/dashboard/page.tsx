@@ -4,7 +4,7 @@ import { AppStatePanel, Button } from '@oneday/ui';
 
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { PlatformProductHome } from '../../platform-product-home';
-import { PlatformOperationalKpi } from '../../platform-workbench-kpi';
+import { NetworkScopeChip, PlatformOperationalKpi } from '../../platform-workbench-kpi';
 import styles from './page.module.css';
 
 type Merchant = {
@@ -42,6 +42,11 @@ type Data = {
       conversionOrders: number;
       deepLink: string;
     }[];
+  };
+  scope?: {
+    type: 'channel' | 'circle';
+    restricted: boolean;
+    count: number;
   };
 };
 const api = process.env.NEXT_PUBLIC_API_BASE_URL ?? 'http://127.0.0.1:3001';
@@ -181,6 +186,8 @@ export default function BusinessCircleDashboard() {
           仅展示平台已批准的固定商圈成员；商户数据仍归属各租户。本页只呈现聚合入口痕迹，非本平台下单。
         </p>
       </section>
+
+      <NetworkScopeChip scope={data?.scope} />
 
       <PlatformOperationalKpi page="circle" />
 

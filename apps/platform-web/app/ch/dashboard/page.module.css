@@ -372,3 +372,36 @@
     grid-template-columns: 1fr;
   }
 }
+
+.attentionList {
+  display: grid;
+  gap: 0;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.attentionRow {
+  border-bottom: 1px solid #eee;
+}
+
+.attentionRow:last-child {
+  border-bottom: 0;
+}
+
+.attentionRow a {
+  display: grid;
+  gap: 4px;
+  padding: 10px 0;
+  color: inherit;
+  text-decoration: none;
+  font-size: 13px;
+}
+
+.attentionRow strong {
+  color: #222;
+}
+
+.attentionRow span {
+  color: #666;
+}

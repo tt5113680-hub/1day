@@ -6,6 +6,14 @@ import styles from './platform-workbench-kpi.module.css';
 
 export type PlatformDeepPageId = 'platform' | 'channel' | 'circle' | 'outbox' | 'provisioning';
 
+export type NetworkScope = {
+  type: 'channel' | 'circle';
+  restricted: boolean;
+  count: number;
+};
+
+const SCOPE_LABEL: Record<NetworkScope['type'], string> = { channel: '渠道', circle: '商圈' };
+
 const NAV: { id: PlatformDeepPageId; href: string; label: string }[] = [
   { id: 'platform', href: '/p/dashboard', label: '平台总览' },
   { id: 'provisioning', href: '/p/tenants/new', label: '开通 Run' },
@@ -44,7 +52,9 @@ export function PlatformOperationalKpi({ page }: { page: PlatformDeepPageId }) {
         return;
       }
       if (page === 'channel') {
-        const response = await sessionApi.request(`${api}/api/v1/channel/dashboard`, { headers: {} });
+        const response = await sessionApi.request(`${api}/api/v1/channel/dashboard`, {
+          headers: {},
+        });
         if (!response.ok) throw Error();
         const data = (await response.json()).data;
         const m = data.metrics;
@@ -77,7 +87,9 @@ export function PlatformOperationalKpi({ page }: { page: PlatformDeepPageId }) {
         ]);
         setNote('与 /p/outbox 概况条同源；重放仅恢复本地投递，不含 GMV/第三方履约。');
       } else if (page === 'circle') {
-        const response = await sessionApi.request(`${api}/api/v1/circle/dashboard`, { headers: {} });
+        const response = await sessionApi.request(`${api}/api/v1/circle/dashboard`, {
+          headers: {},
+        });
         if (!response.ok) throw Error();
         const data = (await response.json()).data;
         const m = data.metrics;
@@ -89,7 +101,9 @@ export function PlatformOperationalKpi({ page }: { page: PlatformDeepPageId }) {
         ]);
         setNote('与 /bc/dashboard 同源；未转化队列=有访问无转化档案。');
       } else {
-        const response = await sessionApi.request(`${api}/api/v1/platform/dashboard`, { headers: {} });
+        const response = await sessionApi.request(`${api}/api/v1/platform/dashboard`, {
+          headers: {},
+        });
         if (!response.ok) throw Error();
         const data = (await response.json()).data;
         setItems([
@@ -151,6 +165,29 @@ type ChannelQueueItem = {
   deepLink: string;
 };
 
+export function NetworkScopeChip({ scope }: { scope?: NetworkScope | null }) {
+  if (!scope) return null;
+  return (
+    <section
+      className={styles.scopeChip}
+      aria-label={`数据访问范围 · ${scope.restricted ? '已限定' : '全域'}`}
+      data-testid="network-scope-chip"
+    >
+      <span className={styles.scopeMark}>范围</span>
+      <strong>
+        {scope.restricted
+          ? `${SCOPE_LABEL[scope.type]}数据访问 · ${scope.count} 个${SCOPE_LABEL[scope.type]}`
+          : '平台全域数据访问'}
+      </strong>
+      <span className={styles.scopeNote}>
+        {scope.restricted
+          ? '本账号按 data_scopes / network scope 限定查看，越权请求将被拒绝（fail-closed）。'
+          : '本账号拥有平台级权限，可查看全部渠道/商圈档案。'}
+      </span>
+    </section>
+  );
+}
+
 export function ChannelOperationalQueues({
   renewal,
   onboarding,
@@ -159,14 +196,14 @@ export function ChannelOperationalQueues({
   onboarding: ChannelQueueItem[];
 }) {
   const signalLabel = (signal?: string | null) =>
-    signal === 'inactive_30d'
-      ? '30 天不活跃'
-      : signal === 'high_risk'
-        ? '高风险'
-        : '跟进信号';
+    signal === 'inactive_30d' ? '30 天不活跃' : signal === 'high_risk' ? '高风险' : '跟进信号';
   return (
     <div className={styles.queuePanel}>
-      <section className={styles.kpiStrip} aria-label="渠道待办队列" data-testid="channel-operational-queues">
+      <section
+        className={styles.kpiStrip}
+        aria-label="渠道待办队列"
+        data-testid="channel-operational-queues"
+      >
         <span className={styles.kpiTitle}>渠道待办队列（可 drill-down）</span>
         <div className={styles.kpiItem}>
           <span>跟进待办</span>
