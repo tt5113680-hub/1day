@@ -139,6 +139,8 @@ import { MembershipCommercialController } from './membership-commercial.controll
 import { MembershipCommercialService } from './membership-commercial.service';
 import { SyncGatewayController } from './sync-gateway.controller';
 import { SyncGatewayService } from './sync-gateway.service';
+import { ManagementSyncSloController } from './management-sync-slo.controller';
+import { SyncSloService } from './sync-slo.service';
 import { MenuController } from './menu.controller';
 import { MenuService } from './menu.service';
 import { DataScopeService } from './data-scope.service';
@@ -217,6 +219,7 @@ import { EmployeeManagedStoresController } from './employee-managed-stores.contr
     ManagementCommerceController,
     MembershipCommercialController,
     SyncGatewayController,
+    ManagementSyncSloController,
     MenuController,
     EmployeeManagedStoresController,
   ],
@@ -291,6 +294,7 @@ import { EmployeeManagedStoresController } from './employee-managed-stores.contr
     ManagementCommerceService,
     MembershipCommercialService,
     SyncGatewayService,
+    SyncSloService,
     MenuService,
     DataScopeService,
   ],

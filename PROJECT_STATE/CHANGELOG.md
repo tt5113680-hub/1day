@@ -1,5 +1,17 @@
 # CHANGELOG
 
+## 2026-08-14 - G1-W∞-124 多端 sync SLO 可测护栏（发布/权限变更 ≤60s 收敛可测）PASS
+
+承接 `MEITUAN_DEPTH_OPTIMIZATION_PLAN.md` §6「同步：发布/权限变更 ≤60s 收敛可测」+ §7 `W∞-124 多端 sync SLO 可测护栏`（Phase3 NEXT，toward PARITY），对接 `MULTI_TERMINAL_SYNC_SPEC.md` §8 可观测性（projection/subscription lag、outbox pending age、五端 trace）与 §10 验收 SLO（publish ≤10s p95 / 60s max；tenant suspension / permission UI convergence ≤60s），matrix SY-02「五端 trace + event lag metrics」。把多端同步从「有基建但不可观测」推进到**可测 SLO 护栏**，全部由真实 `sync_notifications`/`outbox_events` 档案行现场推导（禁止假 BI），无 GMV、无储值/支付、不碰钱/销售、跳过 §5 READY。
+
+- **后端 SLO 观测服务**：新增 `apps/api/src/sync-slo.service.ts`（`SyncSloService`，只读 + `tenant.manage` fail-closed + 零 schema/migration）——`topics[]` 对 8 类同步主题（operating/storefront/content/membership/lifecycle/rbac/channel/circle）从 `sync_notifications` 取最新一条投影订阅滞后（`now()-max(occurred_at)` 秒），每主题给 `label`/`projectedAt`/`lagSeconds`/`withinSlo` 并回填最近投影事件类型（`eventType`/`aggregateType`/`aggregateId`）作五端 trace；`pendingOutbox`（未投递 `outbox_events` 条数 + 最旧等待秒 `oldestAgeSeconds`）；`events24h`（近 24h 已投影事件数）；`guardrail{maxSloSeconds:60, within60s}`——任一主题投影滞后或待投递等待超 60s 判定违约，无相关变更视为健康（诚实：无事件不编造滞后）。
+- **控制器**：新增 `apps/api/src/management-sync-slo.controller.ts`（`GET /api/v1/management/sync-slo`，`auth.require(...,'tenant.manage')` + `x-request-id`）；`app.module.ts` 注册 `ManagementSyncSloController` + `SyncSloService`。
+- **前端观测卡片**：`/m/settings` 新增「多端同步 SLO · 60 秒收敛护栏」面板（`data-testid="sync-slo-panel"`，镜像既有会话安全卡片骨架）：概况条（护栏判定 ≤60s/>60s、已测主题、待投递、待投递最旧秒）+ 各端主题投影滞后 bar 列表（`data-testid="sync-slo-topics"`，按 `maxSloSeconds` 归一 `barWidth`，达标/超时/暂无投影 + 秒数徽标）+ 诚实底注（`source=local`、`不接美团/抖音实时`、`不含支付金额/销售成交`、`非本平台下单`）。复用既有 `.panel/.summaryStrip/.bars/.barFill/.honest` CSS，零新 CSS。
+- **诚实边界全保留**：护栏只观测推广员工具租户内同步投递状态；不接美团/抖音实时、不含支付金额/销售成交、非本平台下单、无 GMV；`/m/workflows` CUSTOM；§5 READY 未触碰；不复活 consumer_orders/本平台下单/收单。
+- **测试**：新增 `tests/g1-winf124-sync-slo-guardrail.test.mjs` 2/2（静态：service `SYNC_SLO_MAX_SECONDS`/`guardrail`/`within60s`/`lagSeconds`/`pendingOutbox` + controller `@Get()`/`auth.require`/`tenant.manage` + app.module 两件 + settings 卡片/诚实口径；真实 DB round-trip：provision 租户 → 将 onboarding `storefront.published.v1` 经 `createSyncNotificationHandler` dispatcher 投影 → `GET /management/sync-slo` 200 `guardrail.maxSloSeconds==60` 且 storefront `withinSlo==true`/`lagSeconds<=60` → 插入 120s 前 `membership` 主题投影行 → 该主题 `withinSlo==false`/`lagSeconds>60` 且全局 `guardrail.within60s==false`（>60s 违约被真实观测）→ 未授权 `401` fail-closed）。回退回归 `node --test --test-concurrency=1 tests/g1-winf*.test.mjs` 串行 **446/446**（原 444 + 本刀新增 2，无回归）、typecheck 20/20、build 20/20（management-web 含 `/m/settings`）、unit 49/49、evidence-contract 74/74、变更文件 eslint（0 errors）+prettier clean。证据：`evidence/G1-MEITUAN-PARITY/WINF124/ACCEPTANCE.md`。
+
+**Phase3 §6/§7（W∞-118..124）全部 PASS。** 下一施工方向（§5 READY 编排或 Phase4 连接器）待主人明确；本刀不自动开工 DEFERRED。
+
 ## 2026-08-14 - G1-W∞-122 代理结算周期 + 合同状态机（无资金托管）PASS
 
 承接 `MEITUAN_DEPTH_OPTIMIZATION_PLAN.md` §2「BD/合同（代理）」+ §7 `W∞-122 代理结算周期 + 合同状态（无资金）`，把 `/p/agents`（MP-03 省市区代理深层运营）从「结算(open/finalized)+配额+审批」推进到 **合同状态机 + 结算周期监控** 可作业闭环，真实 DB、禁止假 BI、无 GMV、无储值/支付、**无资金托管、不含费率/佣金/分账**、跳过 §5 READY。

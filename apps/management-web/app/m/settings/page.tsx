@@ -43,6 +43,23 @@ type SessionSecurity = {
   sessionsByEpoch: { authEpoch: number; count: number }[];
   recentRevocations: number;
 };
+type SyncSloTopic = {
+  topic: string;
+  label: string;
+  eventType: string | null;
+  aggregateType: string | null;
+  aggregateId: string | null;
+  projectedAt: string | null;
+  lagSeconds: number | null;
+  withinSlo: boolean;
+};
+type SyncSlo = {
+  topics: SyncSloTopic[];
+  pendingOutbox: { count: number; oldestAgeSeconds: number | null; withinSlo: boolean };
+  events24h: number;
+  guardrail: { maxSloSeconds: number; within60s: boolean };
+  measuredTopics: number;
+};
 const barWidth = (total: number, value: number) => (total ? `${(value / total) * 100}%` : '0%');
 const countBy = (items: string[]) => {
   const map = new Map<string, number>();
@@ -78,6 +95,7 @@ export default function SettingsPage() {
   const [visibilitySaving, setVisibilitySaving] = useState(false);
   const [quota, setQuota] = useState<QuotaStatus | null>(null);
   const [sessionSecurity, setSessionSecurity] = useState<SessionSecurity | null>(null);
+  const [syncSlo, setSyncSlo] = useState<SyncSlo | null>(null);
   const headers = () => ({});
   const load = useCallback(async () => {
     if (!(await sessionApi.context())) return setState('forbidden');
@@ -107,6 +125,10 @@ export default function SettingsPage() {
       );
       if (sessionSecurity.ok)
         setSessionSecurity((await sessionSecurity.json()).data as SessionSecurity);
+      const syncSloResponse = await sessionApi.request(`${api}/api/v1/management/sync-slo`, {
+        headers: { ...headers(), 'x-request-id': crypto.randomUUID() },
+      });
+      if (syncSloResponse.ok) setSyncSlo((await syncSloResponse.json()).data as SyncSlo);
       setState('ready');
     } catch {
       setState('error');
@@ -482,6 +504,86 @@ export default function SettingsPage() {
           </>
         ) : (
           <p className={styles.barEmpty}>会话安全状态暂不可用</p>
+        )}
+      </section>
+      <section
+        className={styles.panel}
+        aria-label="多端同步 SLO · 60 秒收敛护栏"
+        data-testid="sync-slo-panel"
+      >
+        <div className={styles.panelHead}>
+          <h2>多端同步 SLO · 60 秒收敛护栏</h2>
+          <span className={styles.panelMeta}>
+            {syncSlo
+              ? `${syncSlo.guardrail.within60s ? 'SLO 正常 ≤60s' : 'SLO 违约 >60s'} · 近 24h ${syncSlo.events24h} 条投影`
+              : '正在读取同步 SLO'}
+          </span>
+        </div>
+        {syncSlo ? (
+          <>
+            <div className={styles.summaryStrip}>
+              <div>
+                <span>护栏判定</span>
+                <strong>{syncSlo.guardrail.within60s ? '≤60s' : '>60s'}</strong>
+              </div>
+              <div>
+                <span>已测主题</span>
+                <strong>{syncSlo.measuredTopics}</strong>
+              </div>
+              <div>
+                <span>待投递</span>
+                <strong>{syncSlo.pendingOutbox.count}</strong>
+              </div>
+              <div>
+                <span>待投递最旧(s)</span>
+                <strong>{syncSlo.pendingOutbox.oldestAgeSeconds ?? 0}</strong>
+              </div>
+            </div>
+            <div className={styles.panelBlock} data-testid="sync-slo-topics">
+              <h3>各端主题投影滞后（秒）</h3>
+              {syncSlo.topics.length ? (
+                <ul className={styles.bars}>
+                  {syncSlo.topics.map((item) => (
+                    <li key={item.topic} className={styles.barRow}>
+                      <span className={styles.barLabel}>
+                        {item.label}
+                        {item.lagSeconds !== null
+                          ? item.withinSlo
+                            ? ' · 达标'
+                            : ' · 超时'
+                          : ' · 暂无投影'}
+                      </span>
+                      <span className={styles.barTrack}>
+                        <span
+                          className={styles.barFill}
+                          style={{
+                            width: barWidth(
+                              syncSlo.guardrail.maxSloSeconds,
+                              Math.max(0, item.lagSeconds ?? 0),
+                            ),
+                          }}
+                        />
+                      </span>
+                      <span className={styles.barValue}>
+                        {item.lagSeconds !== null ? `${item.lagSeconds}s` : '—'}
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <p className={styles.barEmpty}>暂无投影主题（尚未有发布/权限/作业变更）</p>
+              )}
+            </div>
+            <p className={styles.honest} role="note">
+              多端同步 SLO 由真实投影档案行现场推导(source=local)：投影滞后＝最新一条
+              sync_notifications 距现在秒数；待投递＝未下发的 outbox 条数与最旧等待秒数。 护栏限 60
+              秒（发布/权限变更应在此窗口内被各端读取收敛）。无相关变更时无传播
+              滞后可测、视为健康。同步护栏只观测租户内工具投递状态，不接美团/抖音实时、
+              不含支付金额/销售成交、非本平台下单。
+            </p>
+          </>
+        ) : (
+          <p className={styles.barEmpty}>同步 SLO 状态暂不可用</p>
         )}
       </section>
       <section className={styles.grid}>

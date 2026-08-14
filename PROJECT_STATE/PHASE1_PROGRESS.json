@@ -2,16 +2,48 @@
   "recordedAt": "2026-08-14T12:00:00+08:00",
   "phase": "Meituan depth 100% closed-loop (owner plan 2026-08-12)",
   "goal": "Blueprint/product depth 100%; SaaS strongest; skip §5 READY; DeepSeek/IDE unattended W119+",
-  "currentStep": "W122 PASS (agent settlement cycle + contract state machine, no funds: migration 075 agent_contracts + agent_settlements.cycle_number; contract create/transition state machine draft→pending→active→paused⭢active→expired|terminated with CONTRACT_TRANSITIONS guard; GET /settlement-cycles monitor; /p/agents 合同状态机 + 合同记录 + 结算周期监控 + 3 new distribution panels; writes audited+outboxed; no funds/commission). Next W123 channel/circle ops queue + scope strongest. §5 READY deferred.",
+  "currentStep": "W124 PASS (multi-terminal sync SLO testable guardrail, W∞-SAAS-SYNC: SyncSloService read-only observability of 8 topic projection/subscription lag + pendingOutbox + events24h + guardrail{maxSloSeconds:60,within60s}, tenant.manage fail-closed, zero schema; ManagementSyncSloController GET /management/sync-slo; /m/settings 多端同步 SLO · 60 秒收敛护栏 card reusing existing CSS; g1-winf124 2/2 real DB round-trip incl. stale >60s projection flips within60s=false + 401). Phase3 §6/§7 (W118..124) all PASS. §5 READY deferred.",
   "milestones": [
-    { "id": "g1-winf-chrome", "label": "W chrome densify W3..106", "weight": 18, "status": "pass", "evidence": "evidence/G1-MEITUAN-PARITY/WINF*" },
-    { "id": "depth-phase1", "label": "Depth Phase1 W107..110", "weight": 15, "status": "pass", "evidence": "MEITUAN_DEPTH_OPTIMIZATION_PLAN.md" },
-    { "id": "depth-phase2", "label": "Depth Phase2 W111..117 MPC 100%", "weight": 22, "status": "pass", "evidence": "WINF111..117 PASS" },
-    { "id": "depth-phase3-saas", "label": "Depth Phase3 SaaS strongest W118..124", "weight": 15, "status": "active", "evidence": "WINF118..122 PASS; next W123 channel/circle scope strongest" }
+    {
+      "id": "g1-winf-chrome",
+      "label": "W chrome densify W3..106",
+      "weight": 18,
+      "status": "pass",
+      "evidence": "evidence/G1-MEITUAN-PARITY/WINF*"
+    },
+    {
+      "id": "depth-phase1",
+      "label": "Depth Phase1 W107..110",
+      "weight": 15,
+      "status": "pass",
+      "evidence": "MEITUAN_DEPTH_OPTIMIZATION_PLAN.md"
+    },
+    {
+      "id": "depth-phase2",
+      "label": "Depth Phase2 W111..117 MPC 100%",
+      "weight": 22,
+      "status": "pass",
+      "evidence": "WINF111..117 PASS"
+    },
+    {
+      "id": "depth-phase3-saas",
+      "label": "Depth Phase3 SaaS strongest W118..124",
+      "weight": 15,
+      "status": "pass",
+      "evidence": "WINF118..124 PASS"
+    }
   ],
   "ownerGates": [
-    { "id": "p1-d", "label": "P1-D owner local full test + sign-off", "status": "waiting" },
-    { "id": "section5-ready", "label": "§5 READY provisioning (deferred)", "status": "deferred" }
+    {
+      "id": "p1-d",
+      "label": "P1-D owner local full test + sign-off",
+      "status": "waiting"
+    },
+    {
+      "id": "section5-ready",
+      "label": "§5 READY provisioning (deferred)",
+      "status": "deferred"
+    }
   ],
-  "notes": "W122 closed by DeepSeek (agent settlement cycle + contract state machine, W∞-SAAS / §2 BD+contract): migration 075 adds agent_contracts (draft→pending→active→paused⭢active→expired|terminated, lifecycle approved_by/at, paused_at/resumed_at, expired_at/terminated_at, reason; (tenant_id,contract_code) unique) and adds agent_settlements.cycle_number + idx. PlatformAgentService/Controller add POST /:id/contracts, POST /:id/contracts/:contractId/transition (CONTRACT_TRANSITIONS guarded, invalid => 409, activate writes approved_by/approved_at, resume writes resumed_at), GET /settlement-cycles (maxCycle/periods/finalized/finalizedAmountCents). All contract/settlement writes audited (platform.agent_contract_created/transitioned + platform.agent_settlement_opened/finalized) + outboxed (.created/.transitioned/.opened/.finalized .v1). /p/agents gains 合作合同·状态机 form, 合作合同记录 (submit/approve/void/pause/resume/terminate), 结算周期监控, and 3 new distribution panels (contract status / settlement cycle / per-cycle progress); honest boundary stresses no funds/no commission/agent ops ledger not consumer revenue. g1-winf122 3/3 + page-p-agent-ops 1/1, g1-winf* serial 440/441 (only g1-winf116 ECONNRESET transient under parallel API spawn, isolated 3x 7/7), typecheck/build 20/20, unit 49/49, evidence-contract 74/74, eslint+prettier clean; no funds, no GMV, §5 READY deferred. Next W123 channel/circle ops queue + scope strongest; DeepSeek sole writer. Prior W121 closed by DeepSeek (audit export full coverage, W∞-SAAS-AUDIT): management /m/permission-audit gains GET /api/v1/management/permission-audit/export returning same tenant-scoped audit_logs the UI lists (shared queryAuditRows + filter), CSV of action/kind/actor/resource/correlation/trace/detail/created_at; export write itself recorded to audit_logs + outbox_events ('management.audit.exported(.v1)'). /m/permission-audit topBar 导出审计 button + exportBar. g1-winf121 3/3, g1-winf* 437/438, typecheck/build 20/20, unit 49/49, evidence-contract 74/74, eslint+prettier clean; no schema, no fake BI, no GMV, no payment, §5 READY deferred. Prior W119 closed by DeepSeek (session epoch authentication hardening W∞-SAAS-LIFE): tenants.auth_epoch snapshot into each auth_sessions row; claims()/refresh() force s.auth_epoch = t.auth_epoch so suspending a tenant bumps auth_epoch and immediately/permanently invalidates all issued access tokens (fail-closed, no re-auth wait; reactivate never resurrects old tokens). New GET /api/v1/management/session-security observability + /m/settings session-security card from real rows. g1-winf 430/430, typecheck 12/12, build 11/11, unit 49/49, evidence-contract 74/74; no fake BI, no GMV, no payment, §5 READY deferred."
+  "notes": "W124 closed by DeepSeek (multi-terminal sync SLO testable guardrail, W∞-SAAS-SYNC): new apps/api/src/sync-slo.service.ts (SyncSloService, read-only, tenant.manage fail-closed, zero schema/migration) derives per-topic projection/subscription lag from sync_notifications (now()-max(occurred_at) sec, rounded) for 8 topics (operating/storefront/content/membership/lifecycle/rbac/channel/circle) with label/projectedAt/lagSeconds/withinSlo + recent projected event trace (eventType/aggregateType/aggregateId), pendingOutbox (count + oldest pending/needs_attention age sec), events24h, and guardrail{maxSloSeconds:60, within60s} - any topic lag or pending wait >60s flips within60s=false (honest: no changes = no measurable lag = healthy). New management-sync-slo.controller.ts GET /api/v1/management/sync-slo; app.module registers both. /m/settings adds sync SLO card (data-testid sync-slo-panel) with summaryStrip + per-topic lag bar list (sync-slo-topics normalized to maxSloSeconds) + honest source=local/no-native-checkout/non-Meituan-Douyin notes, reusing existing CSS zero-new. g1-winf124-sync-slo-guardrail 2/2 (static + real DB: provision -> dispatch onboarding storefront.published.v1 via createSyncNotificationHandler -> GET /management/sync-slo 200 guardrail.maxSloSeconds==60, storefront withinSlo==true lag<=60; insert 120s-old membership projection row -> that topic withinSlo==false/lag>60 and global guardrail.within60s==false proving observable >60s breach; unauthenticated 401). g1-winf*.test.mjs serial 446/446, typecheck/build 20/20, unit 49/49, evidence-contract 74/74, eslint+prettier clean; no GMV, no payment, §5 READY deferred. Phase3 §6/§7 (W118..124) all PASS; next direction (§5 READY / Phase4) awaits owner."
 }
