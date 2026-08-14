@@ -15,30 +15,63 @@ type DeadLetter = {
   correlationId: string;
   attempts: number;
   lastError: string | null;
+  createdAt: string;
   updatedAt: string;
+  alertLevel: string | null;
+  ageMinutes: number;
+  alertStatus: string | null;
+  alertCount: number;
+  firstSeenAt: string | null;
+  replayedAt: string | null;
+};
+
+type OutboxHealth = {
+  alertLevel: 'healthy' | 'warning' | 'critical';
+  needsAttention: number;
+  dlqDepth: number;
+  oldestDeadLetterMinutes: number;
+  totalPending: number;
+  oldestPendingMinutes: number;
+  activeAlerts: number;
+  criticalAlerts: number;
+  byEventType: Array<{ eventType: string; count: number }>;
+  byAlertLevel: Array<{ alertLevel: string; count: number }>;
 };
 
 const api = process.env.NEXT_PUBLIC_API_BASE_URL ?? 'http://127.0.0.1:3001';
 const sessionApi = new SessionApiClient(api);
 const barWidth = (total: number, value: number) => (total ? `${(value / total) * 100}%` : '0%');
+const healthAlert = (health: OutboxHealth | null) =>
+  health?.alertLevel === 'critical'
+    ? '严重'
+    : health?.alertLevel === 'warning'
+      ? '关注'
+      : '健康';
 
 export default function PlatformOutboxPage() {
   const [state, setState] = useState<'loading' | 'ready' | 'forbidden' | 'error'>('loading');
   const [items, setItems] = useState<DeadLetter[]>([]);
+  const [health, setHealth] = useState<OutboxHealth | null>(null);
   const [busyId, setBusyId] = useState<string | null>(null);
+  const [replayAllBusy, setReplayAllBusy] = useState(false);
+  const [confirmReplayAll, setConfirmReplayAll] = useState(false);
   const [note, setNote] = useState('');
 
   const load = useCallback(async (mode: 'full' | 'quiet' = 'full') => {
     if (!(await sessionApi.context())) return setState('forbidden');
     if (mode === 'full') setState('loading');
     try {
-      const response = await sessionApi.request(
-        `${api}/api/v1/platform/outbox/dead-letters?limit=100`,
-        { headers: {} },
-      );
-      if ([401, 403].includes(response.status)) return setState('forbidden');
-      if (!response.ok) throw Error();
-      setItems((await response.json()).data as DeadLetter[]);
+      const [dead, h] = await Promise.all([
+        sessionApi.request(`${api}/api/v1/platform/outbox/dead-letters?limit=100`, {
+          headers: {},
+        }),
+        sessionApi.request(`${api}/api/v1/platform/outbox/health`, { headers: {} }),
+      ]);
+      if ([401, 403].includes(dead.status) || [401, 403].includes(h.status))
+        return setState('forbidden');
+      if (!dead.ok || !h.ok) throw Error();
+      setItems((await dead.json()).data as DeadLetter[]);
+      setHealth((await h.json()).data as OutboxHealth);
       setState('ready');
     } catch {
       if (mode === 'full') setState('error');
@@ -48,6 +81,27 @@ export default function PlatformOutboxPage() {
   useEffect(() => {
     void load();
   }, [load]);
+
+  const replayAll = async () => {
+    setReplayAllBusy(true);
+    setNote('');
+    try {
+      const response = await sessionApi.request(`${api}/api/v1/platform/outbox/replay-all`, {
+        method: 'POST',
+        headers: {},
+      });
+      if ([401, 403].includes(response.status)) return setState('forbidden');
+      if (!response.ok) throw Error();
+      const data = (await response.json()).data as { replayedCount: number };
+      setNote(`已一键重放 ${data.replayedCount} 条死信，等待 Worker 重新投递。`);
+      setConfirmReplayAll(false);
+      await load('quiet');
+    } catch {
+      setNote('重放失败，请确认具备 platform.manage 权限后重试。');
+    } finally {
+      setReplayAllBusy(false);
+    }
+  };
 
   const replay = async (item: DeadLetter) => {
     setBusyId(item.id);
@@ -120,6 +174,32 @@ export default function PlatformOutboxPage() {
   const uniqueTenants = new Set(items.map((item) => item.tenantId)).size;
   const uniqueAggregates = new Set(items.map((item) => item.aggregateType)).size;
   const maxedOut = items.filter((item) => (item.attempts ?? 0) > 5).length;
+  const criticalCount = items.filter((item) => item.alertLevel === 'critical').length;
+  const warnCount = items.filter((item) => item.alertLevel === 'warning').length;
+
+  const alertCounts = useMemo(() => {
+    const map = new Map<string, number>();
+    for (const item of items) {
+      const key = item.alertLevel || '未观察';
+      map.set(key, (map.get(key) ?? 0) + 1);
+    }
+    const list = [...map.entries()].map(([key, value]) => ({ key, value }));
+    list.sort((a, b) => b.value - a.value || a.key.localeCompare(b.key));
+    return list;
+  }, [items]);
+
+  const healthLabel =
+    health?.alertLevel === 'critical'
+      ? '需立即处置'
+      : health?.alertLevel === 'warning'
+        ? '需关注'
+        : '健康';
+  const healthTone =
+    health?.alertLevel === 'critical'
+      ? 'danger'
+      : health?.alertLevel === 'warning'
+        ? 'warning'
+        : 'success';
 
   if (state === 'loading')
     return (
@@ -191,6 +271,43 @@ export default function PlatformOutboxPage() {
         <div>
           <span>已达上限</span>
           <strong>{maxedOut}</strong>
+        </div>
+        <div>
+          <span>最老死信</span>
+          <strong>{health ? `${health.oldestDeadLetterMinutes}m` : '—'}</strong>
+        </div>
+        <div>
+          <span>告警等级</span>
+          <strong>{healthAlert(health)}</strong>
+        </div>
+      </section>
+
+      <section className={styles.alertPanel} aria-label="Outbox 告警">
+        <div className={styles.alertHead}>
+          <h2>Outbox 告警字段</h2>
+          <StatusBadge tone={healthTone}>{healthLabel}</StatusBadge>
+        </div>
+        <div className={styles.alertGrid}>
+          <div>
+            <span>Critical</span>
+            <strong>{health?.criticalAlerts ?? 0}</strong>
+          </div>
+          <div>
+            <span>在册告警</span>
+            <strong>{health?.activeAlerts ?? 0}</strong>
+          </div>
+          <div>
+            <span>待投递</span>
+            <strong>{health?.totalPending ?? 0}</strong>
+          </div>
+          <div>
+            <span>最老待投递</span>
+            <strong>{health ? `${health.oldestPendingMinutes}m` : '—'}</strong>
+          </div>
+          <div>
+            <span>主要事件</span>
+            <strong>{health?.byEventType[0]?.eventType ?? '—'}</strong>
+          </div>
         </div>
       </section>
 
@@ -267,10 +384,28 @@ export default function PlatformOutboxPage() {
             {!items.length && <li className={styles.barEmpty}>暂无记录</li>}
           </ul>
         </div>
+        <div className={styles.panelBlock}>
+          <h2>告警等级分布</h2>
+          <ul className={styles.bars}>
+            {alertCounts.map((b) => (
+              <li key={b.key} className={styles.barRow}>
+                <span className={styles.barLabel}>{b.key}</span>
+                <span className={styles.barTrack}>
+                  <span
+                    className={styles.barFill}
+                    style={{ width: barWidth(items.length, b.value) }}
+                  />
+                </span>
+                <span className={styles.barValue}>{b.value}</span>
+              </li>
+            ))}
+            {!items.length && <li className={styles.barEmpty}>暂无记录</li>}
+          </ul>
+        </div>
       </section>
 
       <p className={styles.honest}>
-        以上分布全部由已抓取平台投递死信档案行现场推导（source=local）：事件类型、聚合对象、重试次数与涉及租户；
+        以上分布全部由已抓取平台投递死信档案行现场推导（source=local）：事件类型、聚合对象、重试次数、涉及租户与告警等级；
         重放不会调用美团/抖音等外部平台，仅恢复本地投递状态；Outbox
         是平台投递与同步队列，不包含本平台收款、 非本平台下单；本地试点记录。
       </p>
@@ -285,23 +420,65 @@ export default function PlatformOutboxPage() {
         <section className={styles.panel}>
           <div className={styles.head}>
             <h2>死信队列</h2>
-            <StatusBadge tone={items.length ? 'warning' : 'success'}>
-              {items.length ? `${items.length} 条待处理` : '当前无死信'}
-            </StatusBadge>
+            <span className={styles.headActions}>
+              <StatusBadge tone={items.length ? 'warning' : 'success'}>
+                {items.length ? `${items.length} 条待处理` : '当前无死信'}
+              </StatusBadge>
+              {items.length ? (
+                confirmReplayAll ? (
+                  <span className={styles.confirm}>
+                    <span>确认重放全部 {items.length} 条？</span>
+                    <Button
+                      loading={replayAllBusy}
+                      onClick={() => void replayAll()}
+                      tone="primary"
+                    >
+                      确认
+                    </Button>
+                    <Button
+                      disabled={replayAllBusy}
+                      onClick={() => setConfirmReplayAll(false)}
+                      tone="secondary"
+                    >
+                      取消
+                    </Button>
+                  </span>
+                ) : (
+                  <Button
+                    loading={replayAllBusy}
+                    onClick={() => setConfirmReplayAll(true)}
+                    tone="primary"
+                  >
+                    一键重放全部
+                  </Button>
+                )
+              ) : null}
+            </span>
           </div>
           {items.length ? (
             <div className={styles.list}>
               {items.map((item) => (
                 <article key={item.id} className={styles.item}>
                   <div>
-                    <strong>{item.eventType}</strong>
+                    <span className={styles.itemTitle}>
+                      <strong>{item.eventType}</strong>
+                      {item.alertLevel && (
+                        <StatusBadge
+                          tone={item.alertLevel === 'critical' ? 'danger' : 'warning'}
+                        >
+                          {item.alertLevel === 'critical' ? '严重' : '关注'} ·{' '}
+                          {item.ageMinutes}m
+                        </StatusBadge>
+                      )}
+                    </span>
                     <span>
                       租户 {item.tenantId.slice(0, 8)}… · 聚合 {item.aggregateType} · 尝试{' '}
                       {item.attempts} 次
                     </span>
                     <small>
                       相关 ID {item.correlationId || '—'} · 更新于{' '}
-                      {new Date(item.updatedAt).toLocaleString('zh-CN')}
+                      {new Date(item.updatedAt).toLocaleString('zh-CN')} · 生成于{' '}
+                      {new Date(item.createdAt).toLocaleString('zh-CN')}
                     </small>
                     <p>{item.lastError || '无错误详情'}</p>
                   </div>

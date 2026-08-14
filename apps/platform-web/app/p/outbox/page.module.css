@@ -68,7 +68,7 @@
 
 .summaryStrip {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: repeat(6, minmax(0, 1fr));
   gap: 10px;
   border-radius: 12px;
   padding: 14px 16px;
@@ -90,6 +90,56 @@
 .summaryStrip strong {
   color: #222;
   font-size: 18px;
+}
+
+.alertPanel {
+  display: grid;
+  gap: 12px;
+  border-radius: 12px;
+  padding: 16px 18px;
+  background: #fff;
+  box-shadow: 0 1px 2px rgb(0 0 0 / 4%);
+  margin-bottom: 12px;
+}
+
+.alertHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.alertHead h2 {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 800;
+}
+
+.alertGrid {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.alertGrid div {
+  display: grid;
+  gap: 2px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: #fafafa;
+}
+
+.alertGrid span {
+  color: #999;
+  font-size: 12px;
+}
+
+.alertGrid strong {
+  color: #222;
+  font-size: 16px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .distribution {
@@ -207,6 +257,21 @@
   margin-bottom: 18px;
 }
 
+.headActions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.confirm {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--od-text-muted);
+  font-size: 12px;
+}
+
 .list {
   display: grid;
   gap: 12px;
@@ -233,6 +298,12 @@
 
 .item strong {
   color: var(--od-text);
+}
+
+.itemTitle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
 .item span,
@@ -272,6 +343,10 @@
   }
 
   .summaryStrip {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .alertGrid {
     grid-template-columns: 1fr 1fr;
   }
 

@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 2026-08-14 - G1-W∞-120 Outbox 重放 + 告警（SAAS-OUTBOX）PASS
+
+IDE 本地收口（DeepSeek 3×TIMEOUT；073 缺 `outbox_event_id` UNIQUE → ON CONFLICT 500，074 修复）。migration `073`+`074`；`PlatformOutboxController/Service` health/dead-letters/replay-all；`/p/outbox` 告警 + 一键重放。tests/g1-winf120 5/5；`g1-winf*` 435/435。证据：`evidence/G1-MEITUAN-PARITY/WINF120/ACCEPTANCE.md`。下一刀 **W∞-121**。
+
 ## 2026-08-13 - G1-W∞-114 评价待回复队列（MPC-05）PASS
 
 承接 `MEITUAN_DEPTH_OPTIMIZATION_PLAN.md` Phase2/MPC-05，把 `/m/reviews` 从「静态分布条 + 行列表」推进到可作业闭环（列表→筛→队→回复→审计），真实 DB、禁止假 BI、无 GMV、无储值/支付、跳过 §5 READY、承接 W∞-113/112/45/42/23。验证期修复 `listReviews` rating 参数绑定。

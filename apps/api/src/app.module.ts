@@ -123,6 +123,8 @@ import { PlatformConnectorController } from './platform-connector.controller';
 import { PlatformConnectorService } from './platform-connector.service';
 import { PlatformSecurityAuditController } from './platform-security-audit.controller';
 import { PlatformSecurityAuditService } from './platform-security-audit.service';
+import { PlatformOutboxController } from './platform-outbox.controller';
+import { PlatformOutboxService } from './platform-outbox.service';
 import { PlatformTenantController } from './platform-tenant.controller';
 import { PlatformTenantService } from './platform-tenant.service';
 import { PlatformOnboardingController } from './platform-onboarding.controller';
@@ -207,6 +209,7 @@ import { EmployeeManagedStoresController } from './employee-managed-stores.contr
     PlatformTemplateController,
     PlatformConnectorController,
     PlatformSecurityAuditController,
+    PlatformOutboxController,
     PlatformTenantController,
     PlatformOnboardingController,
     OneCodeController,
@@ -280,6 +283,7 @@ import { EmployeeManagedStoresController } from './employee-managed-stores.contr
     PlatformBusinessCircleService,
     PlatformConnectorService,
     PlatformSecurityAuditService,
+    PlatformOutboxService,
     PlatformTenantService,
     PlatformOnboardingService,
     OneCodeService,

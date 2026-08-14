@@ -655,6 +655,29 @@ export interface TenantQuotaRejectionsTable {
   deleted_at: Timestamp | null;
 }
 
+export interface OutboxDlqAlertsTable {
+  id: string;
+  outbox_event_id: string;
+  tenant_id: string;
+  event_type: string;
+  aggregate_type: string;
+  attempts: number;
+  alert_level: string;
+  age_minutes: number;
+  alert_count: number;
+  first_seen_at: Timestamp;
+  last_seen_at: Timestamp;
+  status: string;
+  replayed_at: Timestamp | null;
+  replayed_by: string | null;
+  created_at: Timestamp;
+  created_by: string | null;
+  updated_at: Timestamp;
+  updated_by: string | null;
+  deleted_at: Timestamp | null;
+  version: Generated<number>;
+}
+
 export interface CustomerOrdersTable {
   id: string;
   tenant_id: string;
@@ -1729,6 +1752,7 @@ export interface Database {
   employee_notifications: EmployeeNotificationsTable;
   management_notifications: ManagementNotificationsTable;
   tenant_quota_rejections: TenantQuotaRejectionsTable;
+  outbox_dlq_alerts: OutboxDlqAlertsTable;
   customer_orders: CustomerOrdersTable;
   evidence_files: EvidenceFilesTable;
   verification_codes: VerificationCodesTable;

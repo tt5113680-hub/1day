@@ -175,46 +175,6 @@ export class SyncGatewayService implements OnModuleDestroy {
     };
   }
 
-  async listDeadLetters(limit = 50) {
-    const result = await this.pool.query(
-      `select id,tenant_id,event_type,aggregate_type,aggregate_id,correlation_id,attempts,last_error,updated_at
-       from outbox_events
-       where status='needs_attention' and deleted_at is null
-       order by updated_at desc
-       limit $1`,
-      [Math.max(1, Math.min(limit, 200))],
-    );
-    return result.rows.map((row) => ({
-      id: row.id as string,
-      tenantId: row.tenant_id as string,
-      eventType: row.event_type as string,
-      aggregateType: row.aggregate_type as string,
-      aggregateId: row.aggregate_id as string,
-      correlationId: row.correlation_id as string,
-      attempts: row.attempts as number,
-      lastError: row.last_error as string | null,
-      updatedAt: row.updated_at as string,
-    }));
-  }
-
-  async replayDeadLetter(context: OrganizationContext, eventId: string, eventTenantId: string) {
-    if (!/^[0-9a-f-]{36}$/i.test(eventId) || !/^[0-9a-f-]{36}$/i.test(eventTenantId))
-      throw new BadRequestException('VALIDATION_ERROR');
-    const result = await this.pool.query(
-      `update outbox_events
-       set status='pending', available_at=now(), attempts=0, last_error=null, updated_at=now(), updated_by=$3
-       where id=$1 and tenant_id=$2 and status='needs_attention' and deleted_at is null
-       returning id,status,tenant_id`,
-      [eventId, eventTenantId, context.userId],
-    );
-    if (result.rowCount !== 1) throw new NotFoundException('NOT_FOUND');
-    return {
-      eventId: result.rows[0].id as string,
-      tenantId: result.rows[0].tenant_id as string,
-      status: result.rows[0].status as string,
-    };
-  }
-
   async onModuleDestroy() {
     await this.pool.end();
   }

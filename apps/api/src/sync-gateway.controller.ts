@@ -3,8 +3,6 @@ import {
   Controller,
   Get,
   Headers,
-  Param,
-  Post,
   Query,
   Req,
   Res,
@@ -132,37 +130,6 @@ export class SyncGatewayController {
     return {
       data: result,
       meta: { requestId, etag: result.etag, pollAfterSeconds: result.pollAfterSeconds },
-      error: null,
-    };
-  }
-
-  @Get('platform/outbox/dead-letters')
-  async deadLetters(
-    @Headers('authorization') authorization: string | undefined,
-    @Headers('x-request-id') requestId: string | undefined,
-    @Query('limit') limit: string | undefined,
-  ) {
-    if (!requestId?.trim()) throw new BadRequestException('VALIDATION_ERROR');
-    await this.authorization.requirePlatform(authorization, 'platform.read');
-    return {
-      data: await this.sync.listDeadLetters(limit ? Number(limit) : 50),
-      meta: { requestId },
-      error: null,
-    };
-  }
-
-  @Post('platform/outbox/:tenantId/:eventId/replay')
-  async replay(
-    @Headers('authorization') authorization: string | undefined,
-    @Headers('x-request-id') requestId: string | undefined,
-    @Param('tenantId') eventTenantId: string,
-    @Param('eventId') eventId: string,
-  ) {
-    if (!requestId?.trim()) throw new BadRequestException('VALIDATION_ERROR');
-    const context = await this.authorization.requirePlatform(authorization, 'platform.manage');
-    return {
-      data: await this.sync.replayDeadLetter(context, eventId, eventTenantId),
-      meta: { requestId },
       error: null,
     };
   }
