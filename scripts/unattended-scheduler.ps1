@@ -8,6 +8,7 @@ function Get-UnattendedPaths {
     Root       = $root
     LogDir     = $logDir
     LockFile   = Join-Path $logDir '.construction.lock'
+    WakeFile   = Join-Path $logDir '.wake'
     LastRun    = Join-Path $logDir 'last-run.json'
     Schedule   = Join-Path $logDir 'schedule.json'
     RunCounter = Join-Path $logDir 'run-counter.txt'
@@ -271,6 +272,30 @@ function Get-PollMinutes {
   return Get-EnvInt 'UNATTENDED_POLL_MINUTES' 10
 }
 
+function Request-UnattendedWake([string]$Reason = 'manual') {
+  $paths = Ensure-UnattendedLogDir
+  $line = "at={0} reason={1}" -f (Get-Date).ToString('o'), $Reason
+  Set-Content -Path $paths.WakeFile -Value $line -Encoding utf8
+}
+
+# Sleep in 15s slices so IDE lock release / .wake / cooldown end starts the next
+# turn within seconds — never a blind 20-minute nap after SKIP-lock.
+function Wait-UnattendedIdle {
+  param([int]$MaxMinutes = 10)
+  $paths = Ensure-UnattendedLogDir
+  $deadline = (Get-Date).AddMinutes([Math]::Max(1, $MaxMinutes))
+  while ((Get-Date) -lt $deadline) {
+    if (Test-Path $paths.WakeFile) {
+      Remove-Item $paths.WakeFile -Force -ErrorAction SilentlyContinue
+      return 'wake'
+    }
+    $gate = Test-ShouldRunNow
+    if ($gate.ok) { return 'ready' }
+    Start-Sleep -Seconds 15
+  }
+  return 'interval'
+}
+
 function Get-TaskSizeProfile {
   $paths = Get-UnattendedPaths
   $blob = @(
@@ -321,6 +346,9 @@ function Get-AdaptiveSchedule {
   $limits = Get-ProfileLimits $Profile
   $minWait = Get-EnvInt 'UNATTENDED_MIN_INTERVAL_MIN' 10
   $maxWait = Get-EnvInt 'UNATTENDED_MAX_INTERVAL_MIN' 90
+  if (Test-ChainMode) {
+    $minWait = Get-EnvInt 'UNATTENDED_CHAIN_WAIT_MIN' 1
+  }
 
   $wait = $limits.BaseWait
   $maxMinutes = $limits.MaxMinutes

@@ -14,6 +14,7 @@ if (-not (Test-Path $envFile)) { Copy-Item $example $envFile }
 $map = [ordered]@{
   UNATTENDED_CHAIN_MODE       = '1'
   UNATTENDED_POLL_MINUTES     = '20'
+  UNATTENDED_CHAIN_WAIT_MIN   = '1'
   UNATTENDED_MIN_INTERVAL_MIN = '10'
   UNATTENDED_USAGE_LIMIT_WAIT_MIN = '360'
 }
@@ -42,7 +43,7 @@ Set-Content -Path $envFile -Value ($out -join "`n") -Encoding utf8
 & "$PSScriptRoot/install-logon-daemon.ps1"
 
 Write-Output '=== Dedicated build machine — FULL AUTO (no watching) ==='
-Write-Output 'Every 20 min + logon daemon: auto chain tasks until G1 READY'
+Write-Output 'Daemon: 15s slices; lock-release / .wake starts next turn. Backup task every 20 min.'
 Write-Output 'At usage limit: auto wait 6h then retry — no owner action'
 Write-Output 'Optional: pnpm unattended:status   Logs: logs/unattended/daemon.log'
 if (-not $CursorApiKey) {

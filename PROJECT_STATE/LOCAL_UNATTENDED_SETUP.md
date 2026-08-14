@@ -55,9 +55,9 @@ powershell -ExecutionPolicy Bypass -File scripts/install-dedicated-build-machine
 
 等价于：
 
-1. 写入 `UNATTENDED_CHAIN_MODE=1` + `UNATTENDED_POLL_MINUTES=10`
-2. 注册计划任务：**每 10 分钟**调用 orchestrator
-3. orchestrator 只在「上一轮已结束」时真正开工
+1. 写入 `UNATTENDED_CHAIN_MODE=1` + `UNATTENDED_POLL_MINUTES=20` + `UNATTENDED_CHAIN_WAIT_MIN=1`
+2. 注册计划任务：每 20 分钟兜底调用 orchestrator（锁互斥，不会双写）
+3. **登录守护进程**每 15 秒看一次锁 / `.wake`：IDE Release 或上一轮结束 → **约 15 秒内**开工，不用盯
 
 **电源：** 插电 **从不休眠**。Cursor IDE **不必**打开。
 
@@ -65,7 +65,7 @@ powershell -ExecutionPolicy Bypass -File scripts/install-dedicated-build-machine
 
 ```powershell
 pnpm unattended:daemon
-# 同样每 10 分钟监控 + 接龙
+# 15 秒切片等待；锁释放 / .wake 立即接下一刀
 ```
 
 ## 监控（不用盯 Cursor）

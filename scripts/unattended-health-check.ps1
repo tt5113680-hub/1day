@@ -67,6 +67,13 @@ if ($lockActive) {
   Add-Note 'construction lock clear'
 }
 
+# Idle-but-ready: next DeepSeek turn can start — poke the daemon instead of waiting for a 20m nap.
+$gateNow = Test-ShouldRunNow
+if ($AutoFix -and $gateNow.ok -and -not $lockActive) {
+  Request-UnattendedWake 'health-gate-ready'
+  Add-Note 'wake written (gate ready, no lock) — daemon should start next turn without owner watching'
+}
+
 # --- Skip-storm: only count SKIP-lock lines AFTER current lock started ---
 $daemonLog = Join-Path $paths.LogDir 'daemon.log'
 $skipStorm = $false

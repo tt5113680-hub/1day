@@ -51,8 +51,8 @@ pnpm unattended:dashboard
 
 | Layer | Role |
 | ----- | ---- |
-| Scheduled task | Every **20 min** — start next turn if previous finished |
-| Logon daemon | Hidden loop — same chain, survives reboot after login |
+| Scheduled task | Every **20 min** backup — start next turn if previous finished (lock mutex) |
+| Logon daemon | **15s slices** — IDE Release / `.wake` / cooldown end starts next turn in seconds |
 | Usage limit | Auto **6h backoff**, then retry until quota returns — **no click from you** |
 
 **You appear only at G1 READY** (full local test). Until then: use PC for other work; do not IDE-write `ONEDAY_V3`.

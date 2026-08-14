@@ -1,4 +1,5 @@
-# 24h dedicated build machine: poll every 10m, chain next task when previous finished.
+# 24h dedicated build machine: poll, chain next task when previous finished.
+# Sleep is sliced (15s) so IDE lock release wakes DeepSeek immediately.
 param(
   [int]$PollMinutes = 0
 )
@@ -15,7 +16,7 @@ function Write-Log([string]$Message) {
   Add-Content -Path (Join-Path $paths.LogDir 'daemon.log') -Value $line -Encoding utf8
 }
 
-Write-Log "DAEMON chain-mode poll=${PollMinutes}m — check prev task, then start next if ready"
+Write-Log "DAEMON chain-mode poll=${PollMinutes}m slice=15s — lock release / .wake starts next turn without babysitting"
 
 while ($true) {
   if (Test-G1Ready) {
@@ -37,7 +38,6 @@ while ($true) {
     Write-Log "DAEMON turn finished exit=$code"
   } else {
     Write-Log "DAEMON monitor: $($gate.reason)"
-    # Loud signal when lock is blocking DeepSeek (should self-heal via TTL; if not, owner alert file exists)
     if ("$($gate.reason)" -match 'lock') {
       $info = Get-ConstructionLockInfo
       if ($info.exists -and $info.ageMinutes -ge 60) {
@@ -46,6 +46,7 @@ while ($true) {
     }
   }
 
-  Write-Log "DAEMON sleep ${PollMinutes}m until next check"
-  Start-Sleep -Seconds ($PollMinutes * 60)
+  Write-Log "DAEMON wait up to ${PollMinutes}m (15s slices; wakes on lock-release / .wake / cooldown end)"
+  $why = Wait-UnattendedIdle -MaxMinutes $PollMinutes
+  Write-Log "DAEMON resume reason=$why"
 }

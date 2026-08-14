@@ -30,7 +30,8 @@ switch ($Action) {
       Stop-Process -Id $info.pid -Force -ErrorAction SilentlyContinue
     }
     if (Test-Path $lockFile) { Remove-Item $lockFile -Force -ErrorAction SilentlyContinue }
-    Write-Out "released holder=$Holder"
+    Request-UnattendedWake 'ide-lock-release'
+    Write-Out "released holder=$Holder (wake DeepSeek)"
     exit 0
   }
   'Acquire' {
