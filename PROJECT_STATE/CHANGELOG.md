@@ -1,5 +1,14 @@
 # CHANGELOG
 
+## 2026-08-14 - G1-W∞-122 代理结算周期 + 合同状态机（无资金托管）PASS
+
+承接 `MEITUAN_DEPTH_OPTIMIZATION_PLAN.md` §2「BD/合同（代理）」+ §7 `W∞-122 代理结算周期 + 合同状态（无资金）`，把 `/p/agents`（MP-03 省市区代理深层运营）从「结算(open/finalized)+配额+审批」推进到 **合同状态机 + 结算周期监控** 可作业闭环，真实 DB、禁止假 BI、无 GMV、无储值/支付、**无资金托管、不含费率/佣金/分账**、跳过 §5 READY。
+
+- **migration `075_agent_contracts`**：新表 `agent_contracts`（tenant_scoped：`contract_code`/`contract_title`/`contract_status` 状态机 + 生命周期 `sign_date`/`start_date`/`end_date`/`reason`/`approved_by`/`approved_at`/`paused_at`/`resumed_at`/`expired_at`/`terminated_at`；`(tenant_id,contract_code)` 唯一 + agent 索引）；`agent_settlements` 新增 `cycle_number`（结算周期序号）+ 索引。
+- **API**（`platform-agent.controller/service`，`platform.manage` fail-closed + `x-request-id`）：`POST /agents/:id/contracts` 建草稿、`POST /agents/:id/contracts/:contractId/transition` 状态机迁移（校验 `CONTRACT_TRANSITIONS`：draft→pending→active→paused⭢active→expired|terminated，非法 409；激活写 approved_by/approved_at，恢复写 resumed_at），`GET /agents/settlement-cycles` 周期监控（maxCycle/periods/finalized/应收合计）；`list()` 返回 `contracts[]`+`settlementCycles[]`。写路径自审计 + Outbox：建合同/迁移/开结算期/结算 → `audit_logs`(`platform.agent_contract_created`/`transitioned`/`agent_settlement_opened`/`finalized`) + `outbox_events`(`.created.v1`/`.transitioned.v1`/`.opened.v1`/`.finalized.v1`)。
+- **`/p/agents`**：新增「合作合同 · 状态机」表单、合作合同记录（状态徽标+生命周期+迁移按钮：提交审核/生效/作废/暂停/恢复/终止）、结算周期监控（每代理至第 N 期/期数/已结算/应收合计+全结算徽标）、分布面板新增合同状态/结算周期/分期结算进度；诚实底注（仅登记合作状态、无资金托管、不含费率/佣金/分账、本地试点、不接美团实时代理、不包含本平台收款、非本平台下单）。
+- **测试**：新增 `tests/g1-winf122-agent-contract-settlement.test.mjs` 3/3（静态 + 真实 DB：建合同 draft→pending→active→paused→active；非法迁移 409；重复 code 409；结算周期 cycle 1→2 + settlement-cycles；audit/outbox 落库；未授权 401）；回退回归 `tests/page-p-agent-ops.test.mjs` 1/1；`node --test tests/g1-winf*.test.mjs` 串行 **440/441**（唯一 `g1-winf116` 为并行 API 起服 `ECONNRESET` 瞬断，隔离复跑 3 轮 7/7 通过与本节无涉）；typecheck 20/20、build 20/20、unit 49/49、evidence-contract 74/74、变更文件 eslint（0 errors）+prettier clean。`pnpm db:migrate`（DATABASE_URL=oneday_v3_test）apply `075_agent_contracts:Up`。证据：`evidence/G1-MEITUAN-PARITY/WINF122/ACCEPTANCE.md`。下一刀 **W∞-123 渠道/商圈运营队列与 scope 最强化**。
+
 ## 2026-08-14 - G1-W∞-120 Outbox 重放 + 告警（SAAS-OUTBOX）PASS
 
 IDE 本地收口（DeepSeek 3×TIMEOUT；073 缺 `outbox_event_id` UNIQUE → ON CONFLICT 500，074 修复）。migration `073`+`074`；`PlatformOutboxController/Service` health/dead-letters/replay-all；`/p/outbox` 告警 + 一键重放。tests/g1-winf120 5/5；`g1-winf*` 435/435。证据：`evidence/G1-MEITUAN-PARITY/WINF120/ACCEPTANCE.md`。下一刀 **W∞-121**。

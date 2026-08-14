@@ -53,6 +53,29 @@ type Settlement = {
   periodEnd: string;
   settlementStatus: string;
   amountCents: string | number;
+  cycleNumber: number;
+};
+type SettlementCycle = {
+  agentId: string;
+  agentName: string;
+  regionName: string;
+  maxCycle: number;
+  periods: number;
+  finalized: number;
+  finalizedAmountCents: string | number;
+};
+type Contract = {
+  id: string;
+  agentId: string;
+  agentName: string;
+  regionName: string;
+  contractCode: string;
+  contractTitle: string;
+  contractStatus: string;
+  signDate: string | null;
+  startDate: string | null;
+  endDate: string | null;
+  reason: string | null;
 };
 type Approval = {
   id: string;
@@ -72,6 +95,8 @@ type Data = {
   quotas: Quota[];
   settlements: Settlement[];
   approvals: Approval[];
+  contracts: Contract[];
+  settlementCycles: SettlementCycle[];
 };
 
 const api = process.env.NEXT_PUBLIC_API_BASE_URL ?? 'http://127.0.0.1:3001';
@@ -80,11 +105,30 @@ const levelLabel = (level: string) =>
   ({ province: '省级', city: '市级', district: '区县' })[level] ?? level;
 const agentStatusLabel = (status: string) => (status === 'active' ? '正常' : '已暂停');
 const settlementStatusLabel = (status: string) => (status === 'finalized' ? '已结算' : '结算中');
+const contractStatusLabel = (status: string) =>
+  ({
+    draft: '草稿',
+    pending: '待审核',
+    active: '生效中',
+    paused: '已暂停',
+    expired: '已到期',
+    terminated: '已终止',
+  })[status] ?? status;
+const contractStatusTone = (status: string) =>
+  status === 'active'
+    ? 'success'
+    : status === 'paused' || status === 'expired'
+      ? 'warning'
+      : status === 'terminated'
+        ? 'danger'
+        : 'neutral';
 const approvalStatusLabel = (status: string) =>
   ({ pending: '待审批', approved: '已通过', rejected: '已驳回' })[status] ?? status;
 const centsToYuan = (value: string | number) => Number(value ?? 0).toLocaleString('zh-CN');
 const quotaFor = (quotas: Quota[], agentId: string) =>
   quotas.find((quota) => quota.agentId === agentId);
+const contractCycleBucket = (cycle: number) =>
+  cycle <= 0 ? '未开启' : cycle === 1 ? '第 1 期' : cycle === 2 ? '第 2 期' : '第 3 期及以上';
 
 const byLevel = (regions: Region[]) =>
   regions.reduce<Record<string, Region[]>>((acc, region) => {
@@ -102,6 +146,8 @@ export default function AgentsPage() {
     quotas: [],
     settlements: [],
     approvals: [],
+    contracts: [],
+    settlementCycles: [],
   });
   const [regionForm, setRegionForm] = useState({
     code: '',
@@ -128,6 +174,10 @@ export default function AgentsPage() {
   const [unitCents, setUnitCents] = useState('100000');
   const [approvalAgentId, setApprovalAgentId] = useState('');
   const [approvalMerchantTenantId, setApprovalMerchantTenantId] = useState('');
+  const [contractAgentId, setContractAgentId] = useState('');
+  const [contractCode, setContractCode] = useState('');
+  const [contractTitle, setContractTitle] = useState('');
+  const [signDate, setSignDate] = useState('');
   const [note, setNote] = useState('');
   const [saving, setSaving] = useState(false);
 
@@ -196,10 +246,41 @@ export default function AgentsPage() {
       );
     return [...counts.entries()].map(([key, value]) => ({ key, value }));
   }, [data.approvals]);
+  const contractStatusCounts = useMemo(() => {
+    const counts = new Map<string, number>();
+    for (const contract of data.contracts)
+      counts.set(
+        contractStatusLabel(contract.contractStatus),
+        (counts.get(contractStatusLabel(contract.contractStatus)) ?? 0) + 1,
+      );
+    return [...counts.entries()].map(([key, value]) => ({ key, value }));
+  }, [data.contracts]);
+  const contractCycleCounts = useMemo(() => {
+    const counts = new Map<string, number>();
+    for (const cycle of data.settlementCycles)
+      counts.set(
+        contractCycleBucket(cycle.maxCycle),
+        (counts.get(contractCycleBucket(cycle.maxCycle)) ?? 0) + 1,
+      );
+    return [...counts.entries()].map(([key, value]) => ({ key, value }));
+  }, [data.settlementCycles]);
+  const cycleFinalizedCounts = useMemo(() => {
+    const counts = new Map<string, number>();
+    for (const cycle of data.settlementCycles)
+      counts.set(
+        cycle.finalized === cycle.periods && cycle.periods > 0 ? '已全部结算' : '仍有待结算',
+        (counts.get(
+          cycle.finalized === cycle.periods && cycle.periods > 0 ? '已全部结算' : '仍有待结算',
+        ) ?? 0) + 1,
+      );
+    return [...counts.entries()].map(([key, value]) => ({ key, value }));
+  }, [data.settlementCycles]);
   const agentTotal = data.agents.length;
   const regionTotal = data.regions.length;
   const settlementTotal = data.settlements.length;
   const approvalTotal = data.approvals.length;
+  const contractTotal = data.contracts.length;
+  const cycleTotal = data.settlementCycles.length;
   const barWidth = (total: number, value: number) => (total ? `${(value / total) * 100}%` : '0%');
 
   const createRegion = async () => {
@@ -423,6 +504,66 @@ export default function AgentsPage() {
     }
   };
 
+  const createContract = async () => {
+    if (!contractAgentId || !contractCode || !contractTitle)
+      return setNote('请选择代理商并填写合同编码与标题。');
+    setSaving(true);
+    setNote('');
+    try {
+      const response = await sessionApi.request(
+        `${api}/api/v1/platform/agents/${contractAgentId}/contracts`,
+        {
+          method: 'POST',
+          headers: { 'content-type': 'application/json', 'x-request-id': crypto.randomUUID() },
+          body: JSON.stringify({ contractCode, contractTitle, signDate: signDate || undefined }),
+        },
+      );
+      if ([401, 403].includes(response.status)) return setState('forbidden');
+      if (response.status === 409) return setNote('该合同编码已存在。');
+      if (response.status === 400)
+        return setNote('请填写有效的合同信息（编码大写/字母数字，标题必填）。');
+      if (!response.ok) throw Error();
+      setNote('合同草稿已建立。可进入待审核后激活。');
+      setContractCode('');
+      setContractTitle('');
+      setSignDate('');
+      await load();
+    } catch {
+      setNote('合同创建失败，请检查后重试。');
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const transitionContract = async (
+    agentId: string,
+    contractId: string,
+    contractStatus: string,
+  ) => {
+    setSaving(true);
+    setNote('');
+    try {
+      const response = await sessionApi.request(
+        `${api}/api/v1/platform/agents/${agentId}/contracts/${contractId}/transition`,
+        {
+          method: 'POST',
+          headers: { 'content-type': 'application/json', 'x-request-id': crypto.randomUUID() },
+          body: JSON.stringify({ contractStatus }),
+        },
+      );
+      if ([401, 403].includes(response.status)) return setState('forbidden');
+      if (response.status === 409) return setNote('当前状态不允许该迁移。');
+      if (response.status === 400) return setNote('迁移参数无效。');
+      if (!response.ok) throw Error();
+      setNote(`合同已迁移为「${contractStatusLabel(contractStatus)}」。`);
+      await load();
+    } catch {
+      setNote('合同状态迁移失败，请检查后重试。');
+    } finally {
+      setSaving(false);
+    }
+  };
+
   if (state === 'loading')
     return (
       <main className={styles.centered}>
@@ -588,11 +729,66 @@ export default function AgentsPage() {
             {!approvalTotal && <li className={styles.barEmpty}>暂无记录</li>}
           </ul>
         </div>
+        <div className={styles.panelBlock}>
+          <h2>合同状态分布</h2>
+          <ul className={styles.bars}>
+            {contractStatusCounts.map((b) => (
+              <li key={b.key} className={styles.barRow}>
+                <span className={styles.barLabel}>{b.key}</span>
+                <span className={styles.barTrack}>
+                  <span
+                    className={styles.barFill}
+                    style={{ width: barWidth(contractTotal, b.value) }}
+                  />
+                </span>
+                <span className={styles.barValue}>{b.value}</span>
+              </li>
+            ))}
+            {!contractTotal && <li className={styles.barEmpty}>暂无记录</li>}
+          </ul>
+        </div>
+        <div className={styles.panelBlock}>
+          <h2>结算周期分布</h2>
+          <ul className={styles.bars}>
+            {contractCycleCounts.map((b) => (
+              <li key={b.key} className={styles.barRow}>
+                <span className={styles.barLabel}>{b.key}</span>
+                <span className={styles.barTrack}>
+                  <span
+                    className={styles.barFill}
+                    style={{ width: barWidth(cycleTotal, b.value) }}
+                  />
+                </span>
+                <span className={styles.barValue}>{b.value}</span>
+              </li>
+            ))}
+            {!cycleTotal && <li className={styles.barEmpty}>暂无记录</li>}
+          </ul>
+        </div>
+        <div className={styles.panelBlock}>
+          <h2>分期结算进度分布</h2>
+          <ul className={styles.bars}>
+            {cycleFinalizedCounts.map((b) => (
+              <li key={b.key} className={styles.barRow}>
+                <span className={styles.barLabel}>{b.key}</span>
+                <span className={styles.barTrack}>
+                  <span
+                    className={styles.barFill}
+                    style={{ width: barWidth(cycleTotal, b.value) }}
+                  />
+                </span>
+                <span className={styles.barValue}>{b.value}</span>
+              </li>
+            ))}
+            {!cycleTotal && <li className={styles.barEmpty}>暂无记录</li>}
+          </ul>
+        </div>
       </section>
 
       <p className={styles.honest}>
-        以上分布全部由已抓取的省市区代理真实档案行现场推导（source=local）：代理层级、代理状态、区域层级、结算状态与入驻审批状态；
-        结算/配额是代理运营账，不是消费者成交；本地试点记录，未接美团实时代理数据；不包含本平台收款、非本平台下单。
+        以上分布全部由已抓取的省市区代理真实档案行现场推导（source=local）：代理层级、代理状态、区域层级、结算状态、
+        入驻审批状态、合同状态与结算周期进度；结算/配额是代理运营账，不是消费者成交；合同仅登记合作状态、无资金托管、
+        不含费率/佣金/分账；本地试点记录，未接美团实时代理数据；不包含本平台收款、非本平台下单。
       </p>
 
       {note && (
@@ -918,6 +1114,54 @@ export default function AgentsPage() {
             发起入驻开通审批
           </Button>
         </section>
+        <section className={styles.panel}>
+          <h2>合作合同 · 状态机</h2>
+          <label>
+            代理商
+            <select
+              aria-label="合同代理商"
+              value={contractAgentId}
+              onChange={(event) => setContractAgentId(event.target.value)}
+            >
+              <option value="">选择代理商</option>
+              {data.agents.map((agent) => (
+                <option key={agent.id} value={agent.id}>
+                  {agent.name}（{agent.regionName}）
+                </option>
+              ))}
+            </select>
+          </label>
+          <label>
+            合同编码
+            <input
+              aria-label="合同编码"
+              value={contractCode}
+              onChange={(event) => setContractCode(event.target.value)}
+              placeholder="GD-AGENT-2026-001"
+            />
+          </label>
+          <label>
+            合同标题
+            <input
+              aria-label="合同标题"
+              value={contractTitle}
+              onChange={(event) => setContractTitle(event.target.value)}
+              placeholder="广东省级代理合作协议"
+            />
+          </label>
+          <label>
+            签署日期
+            <input
+              aria-label="合同签署日期"
+              value={signDate}
+              onChange={(event) => setSignDate(event.target.value)}
+              placeholder="2026-08-01"
+            />
+          </label>
+          <Button loading={saving} onClick={() => void createContract()}>
+            建立合同草稿
+          </Button>
+        </section>
       </section>
 
       <section className={styles.tree}>
@@ -1005,6 +1249,146 @@ export default function AgentsPage() {
           </div>
         ) : (
           <p className={styles.empty}>尚无入驻审批。通过后商户自动归属该代理商。</p>
+        )}
+      </section>
+
+      <section className={styles.tree}>
+        <h2>合作合同记录</h2>
+        {data.contracts.length ? (
+          <div className={styles.affiliations}>
+            {data.contracts.map((contract) => (
+              <div className={styles.affiliation} key={contract.id}>
+                <div>
+                  <strong>
+                    {contract.agentName} · {contract.contractCode}
+                  </strong>
+                  <span className={styles.agentMeta}>
+                    {contract.contractTitle} · {contract.regionName}
+                    {contract.signDate ? ` · 签署 ${contract.signDate}` : ''}
+                    {contract.reason ? ` · 原因：${contract.reason}` : ''}
+                  </span>
+                </div>
+                <StatusBadge tone={contractStatusTone(contract.contractStatus)}>
+                  {contractStatusLabel(contract.contractStatus)}
+                </StatusBadge>
+                {contract.contractStatus === 'draft' ? (
+                  <span className={styles.approveActions}>
+                    <Button
+                      tone="secondary"
+                      loading={saving}
+                      onClick={() =>
+                        void transitionContract(contract.agentId, contract.id, 'pending')
+                      }
+                    >
+                      提交审核
+                    </Button>
+                  </span>
+                ) : null}
+                {contract.contractStatus === 'pending' ? (
+                  <span className={styles.approveActions}>
+                    <Button
+                      tone="secondary"
+                      loading={saving}
+                      onClick={() =>
+                        void transitionContract(contract.agentId, contract.id, 'active')
+                      }
+                    >
+                      生效
+                    </Button>
+                    <Button
+                      tone="danger"
+                      loading={saving}
+                      onClick={() =>
+                        void transitionContract(contract.agentId, contract.id, 'terminated')
+                      }
+                    >
+                      作废
+                    </Button>
+                  </span>
+                ) : null}
+                {contract.contractStatus === 'active' ? (
+                  <span className={styles.approveActions}>
+                    <Button
+                      tone="secondary"
+                      loading={saving}
+                      onClick={() =>
+                        void transitionContract(contract.agentId, contract.id, 'paused')
+                      }
+                    >
+                      暂停
+                    </Button>
+                    <Button
+                      tone="danger"
+                      loading={saving}
+                      onClick={() =>
+                        void transitionContract(contract.agentId, contract.id, 'terminated')
+                      }
+                    >
+                      终止
+                    </Button>
+                  </span>
+                ) : null}
+                {contract.contractStatus === 'paused' ? (
+                  <span className={styles.approveActions}>
+                    <Button
+                      tone="secondary"
+                      loading={saving}
+                      onClick={() =>
+                        void transitionContract(contract.agentId, contract.id, 'active')
+                      }
+                    >
+                      恢复
+                    </Button>
+                    <Button
+                      tone="danger"
+                      loading={saving}
+                      onClick={() =>
+                        void transitionContract(contract.agentId, contract.id, 'terminated')
+                      }
+                    >
+                      终止
+                    </Button>
+                  </span>
+                ) : null}
+              </div>
+            ))}
+          </div>
+        ) : (
+          <p className={styles.empty}>尚无合作合同。建立合同后走「草稿→待审核→生效」状态机。</p>
+        )}
+      </section>
+
+      <section className={styles.tree}>
+        <h2>结算周期监控</h2>
+        {data.settlementCycles.length ? (
+          <div className={styles.affiliations}>
+            {data.settlementCycles.map((cycle) => (
+              <div className={styles.affiliation} key={cycle.agentId}>
+                <div>
+                  <strong>
+                    {cycle.agentName} · 至第 {cycle.maxCycle} 期
+                  </strong>
+                  <span className={styles.agentMeta}>
+                    {cycle.regionName} · 结算期 {cycle.periods} 个 · 已结算 {cycle.finalized} 个 ·
+                    应收合计 {centsToYuan(cycle.finalizedAmountCents)} 元
+                  </span>
+                </div>
+                <StatusBadge
+                  tone={
+                    cycle.finalized === cycle.periods && cycle.periods > 0 ? 'success' : 'warning'
+                  }
+                >
+                  {cycle.finalized === cycle.periods && cycle.periods > 0
+                    ? '已全部结算'
+                    : '仍有待结算'}
+                </StatusBadge>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <p className={styles.empty}>
+            尚无已开启的结算周期。开启结算期并结算后，可按周期监控进度。
+          </p>
         )}
       </section>
     </main>

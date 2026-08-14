@@ -73,6 +73,7 @@ import * as tenantQuotaRejections from './migrations/071_tenant_quota_rejections
 import * as authSessionEpoch from './migrations/072_auth_session_epoch.js';
 import * as outboxAlertFields from './migrations/073_outbox_alert_fields.js';
 import * as outboxDlqAlertsEventUnique from './migrations/074_outbox_dlq_alerts_event_unique.js';
+import * as agentContracts from './migrations/075_agent_contracts.js';
 import type { Database } from './types.js';
 
 const migrationProvider: MigrationProvider = {
@@ -152,6 +153,7 @@ const migrationProvider: MigrationProvider = {
       '072_auth_session_epoch': authSessionEpoch,
       '073_outbox_alert_fields': outboxAlertFields,
       '074_outbox_dlq_alerts_event_unique': outboxDlqAlertsEventUnique,
+      '075_agent_contracts': agentContracts,
     };
   },
 };

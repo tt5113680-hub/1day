@@ -1,12 +1,4 @@
-import {
-  BadRequestException,
-  Body,
-  Controller,
-  Get,
-  Headers,
-  Param,
-  Post,
-} from '@nestjs/common';
+import { BadRequestException, Body, Controller, Get, Headers, Param, Post } from '@nestjs/common';
 import { AuthorizationService } from './authorization.service';
 import { PlatformAgentService } from './platform-agent.service';
 
@@ -39,7 +31,10 @@ export class PlatformAgentController {
   ) {
     if (!requestId?.trim()) throw new BadRequestException('VALIDATION_ERROR');
     return {
-      data: await this.agents.createRegion(await this.auth.requirePlatform(authorization, 'platform.manage'), body),
+      data: await this.agents.createRegion(
+        await this.auth.requirePlatform(authorization, 'platform.manage'),
+        body,
+      ),
       meta: { requestId },
       error: null,
     };
@@ -53,7 +48,10 @@ export class PlatformAgentController {
   ) {
     if (!requestId?.trim()) throw new BadRequestException('VALIDATION_ERROR');
     return {
-      data: await this.agents.createAgent(await this.auth.requirePlatform(authorization, 'platform.manage'), body),
+      data: await this.agents.createAgent(
+        await this.auth.requirePlatform(authorization, 'platform.manage'),
+        body,
+      ),
       meta: { requestId },
       error: null,
     };
@@ -68,7 +66,11 @@ export class PlatformAgentController {
   ) {
     if (!requestId?.trim()) throw new BadRequestException('VALIDATION_ERROR');
     return {
-      data: await this.agents.affiliate(await this.auth.requirePlatform(authorization, 'platform.manage'), id, body),
+      data: await this.agents.affiliate(
+        await this.auth.requirePlatform(authorization, 'platform.manage'),
+        id,
+        body,
+      ),
       meta: { requestId },
       error: null,
     };
@@ -83,7 +85,11 @@ export class PlatformAgentController {
   ) {
     if (!requestId?.trim()) throw new BadRequestException('VALIDATION_ERROR');
     return {
-      data: await this.agents.setQuota(await this.auth.requirePlatform(authorization, 'platform.manage'), id, body),
+      data: await this.agents.setQuota(
+        await this.auth.requirePlatform(authorization, 'platform.manage'),
+        id,
+        body,
+      ),
       meta: { requestId },
       error: null,
     };
@@ -98,7 +104,11 @@ export class PlatformAgentController {
   ) {
     if (!requestId?.trim()) throw new BadRequestException('VALIDATION_ERROR');
     return {
-      data: await this.agents.createSettlement(await this.auth.requirePlatform(authorization, 'platform.manage'), id, body),
+      data: await this.agents.createSettlement(
+        await this.auth.requirePlatform(authorization, 'platform.manage'),
+        id,
+        body,
+      ),
       meta: { requestId },
       error: null,
     };
@@ -113,7 +123,11 @@ export class PlatformAgentController {
   ) {
     if (!requestId?.trim()) throw new BadRequestException('VALIDATION_ERROR');
     return {
-      data: await this.agents.finalizeSettlement(await this.auth.requirePlatform(authorization, 'platform.manage'), settlementId, body),
+      data: await this.agents.finalizeSettlement(
+        await this.auth.requirePlatform(authorization, 'platform.manage'),
+        settlementId,
+        body,
+      ),
       meta: { requestId },
       error: null,
     };
@@ -128,7 +142,11 @@ export class PlatformAgentController {
   ) {
     if (!requestId?.trim()) throw new BadRequestException('VALIDATION_ERROR');
     return {
-      data: await this.agents.requestApproval(await this.auth.requirePlatform(authorization, 'platform.manage'), id, body),
+      data: await this.agents.requestApproval(
+        await this.auth.requirePlatform(authorization, 'platform.manage'),
+        id,
+        body,
+      ),
       meta: { requestId },
       error: null,
     };
@@ -143,7 +161,68 @@ export class PlatformAgentController {
   ) {
     if (!requestId?.trim()) throw new BadRequestException('VALIDATION_ERROR');
     return {
-      data: await this.agents.decideApproval(await this.auth.requirePlatform(authorization, 'platform.manage'), approvalId, body),
+      data: await this.agents.decideApproval(
+        await this.auth.requirePlatform(authorization, 'platform.manage'),
+        approvalId,
+        body,
+      ),
+      meta: { requestId },
+      error: null,
+    };
+  }
+
+  // W∞-122: 结算周期监控（只读）。
+  @Get('settlement-cycles')
+  async listSettlementCycles(
+    @Headers('authorization') authorization: string | undefined,
+    @Headers('x-request-id') requestId: string | undefined,
+  ) {
+    if (!requestId?.trim()) throw new BadRequestException('VALIDATION_ERROR');
+    await this.auth.requirePlatform(authorization);
+    return {
+      data: await this.agents.listSettlementCycles(),
+      meta: { requestId },
+      error: null,
+    };
+  }
+
+  // W∞-122: 为代理商建立合同（draft）。
+  @Post(':id/contracts')
+  async createContract(
+    @Headers('authorization') authorization: string | undefined,
+    @Headers('x-request-id') requestId: string | undefined,
+    @Param('id') id: string,
+    @Body() body: Record<string, unknown>,
+  ) {
+    if (!requestId?.trim()) throw new BadRequestException('VALIDATION_ERROR');
+    return {
+      data: await this.agents.createContract(
+        await this.auth.requirePlatform(authorization, 'platform.manage'),
+        id,
+        body,
+      ),
+      meta: { requestId },
+      error: null,
+    };
+  }
+
+  // W∞-122: 合同状态机迁移。
+  @Post(':id/contracts/:contractId/transition')
+  async transitionContract(
+    @Headers('authorization') authorization: string | undefined,
+    @Headers('x-request-id') requestId: string | undefined,
+    @Param('id') id: string,
+    @Param('contractId') contractId: string,
+    @Body() body: Record<string, unknown>,
+  ) {
+    if (!requestId?.trim()) throw new BadRequestException('VALIDATION_ERROR');
+    return {
+      data: await this.agents.transitionContract(
+        await this.auth.requirePlatform(authorization, 'platform.manage'),
+        id,
+        contractId,
+        body,
+      ),
       meta: { requestId },
       error: null,
     };

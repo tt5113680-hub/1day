@@ -1580,6 +1580,32 @@ export interface AgentOnboardingApprovalsTable {
   version: Generated<number>;
 }
 
+/** W∞-122: 代理商合同状态机（无资金托管；不含费率/佣金/分账）。 */
+export interface AgentContractsTable {
+  id: string;
+  tenant_id: string;
+  agent_id: string;
+  contract_code: string;
+  contract_title: string;
+  contract_status: string;
+  sign_date: string | null;
+  start_date: string | null;
+  end_date: string | null;
+  reason: string | null;
+  approved_by: string | null;
+  approved_at: Timestamp | null;
+  paused_at: Timestamp | null;
+  resumed_at: Timestamp | null;
+  expired_at: Timestamp | null;
+  terminated_at: Timestamp | null;
+  created_at: Timestamp;
+  created_by: string | null;
+  updated_at: Timestamp;
+  updated_by: string | null;
+  deleted_at: Timestamp | null;
+  version: Generated<number>;
+}
+
 /** TOOL-PHASE-0: L0+L1+L2 entry funnel traces (no payment fields). */
 export interface EntryFunnelEventsTable {
   id: string;
@@ -1710,6 +1736,7 @@ export interface Database {
   agent_quotas: AgentQuotasTable;
   agent_settlements: AgentSettlementsTable;
   agent_onboarding_approvals: AgentOnboardingApprovalsTable;
+  agent_contracts: AgentContractsTable;
   entry_funnel_events: EntryFunnelEventsTable;
   entry_funnel_saved_views: EntryFunnelSavedViewsTable;
   sync_notifications: SyncNotificationsTable;

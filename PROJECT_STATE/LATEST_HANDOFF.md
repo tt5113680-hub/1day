@@ -15,11 +15,11 @@
 ## Current task
 
 - branch: `hardening/COMMERCIAL-COMPLETION`
-- last_verified: **2026-08-14** — **W∞-121 PASS** 审计导出全覆盖（§6 W∞-SAAS-AUDIT）。See evidence/G1-MEITUAN-PARITY/WINF121/ACCEPTANCE.md。
-- in_flight: **W∞-122 (NEXT, Phase3)** 代理结算周期 + 合同状态（无资金）
+- last_verified: **2026-08-14** — **W∞-122 PASS** 代理结算周期 + 合同状态机（无资金托管）（§2 BD/合同 + §7 Phase3）。See evidence/G1-MEITUAN-PARITY/WINF122/ACCEPTANCE.md。
+- in_flight: **W∞-123 (NEXT, Phase3)** 渠道/商圈运营队列与 scope 最强化
 - deferred: §5 开通 READY（待主人「开始第五节」）
 - blocker: **none (engineering)**
-- note: W121 审计导出全覆盖由 DeepSeek 完成（管理 /m/permission-audit CSV 导出 + 导出自审计 audit/outbox；运行 g1-winf121 3/3；g1-winf* 437/438 中唯一失败 g1-winf116 为并行 API 起服 ECONNRESET 瞬断，隔离复跑 10/10 通过）。W122+ 可 `pnpm unattended:resume` 续全自动。
+- note: W122 由 DeepSeek 完成（migration 075 agent_contracts 合同状态机 + agent_settlements cycle_number；合同建/迁移 + 结算周期监控 endpoints，写路径 audit+outbox；/p/agents 合同状态机面板 + 合同记录 + 结算周期监控 + 三分布面板；无资金托管/费率/佣金/分账）。tests/g1-winf122 3/3 + page-p-agent-ops 1/1；g1-winf* 串行 440/441（唯一 g1-winf116 并行 API ECONNRESET 瞬断，隔离 3 轮 7/7 通过）；typecheck/build 20/20、unit 49/49、evidence 74/74、eslint clean。W123+ 可 `pnpm unattended:resume` 续全自动。
 
 ## Owner gates (parallel)
 
