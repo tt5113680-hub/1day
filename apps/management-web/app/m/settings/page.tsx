@@ -16,6 +16,25 @@ type Settings = {
 };
 
 type Bucket = { label: string; value: number };
+type QuotaRow = {
+  dimension: string;
+  label: string;
+  limit: number;
+  usage: number;
+  remaining: number;
+  reached: boolean;
+};
+type QuotaStatus = {
+  plan: string;
+  planLabel: string;
+  upgrades: QuotaRow[];
+  rejectedRecent: {
+    dimension: string;
+    current_usage: number;
+    current_limit: number;
+    rejected_at: string;
+  }[];
+};
 const barWidth = (total: number, value: number) => (total ? `${(value / total) * 100}%` : '0%');
 const countBy = (items: string[]) => {
   const map = new Map<string, number>();
@@ -49,6 +68,7 @@ export default function SettingsPage() {
   const [saving, setSaving] = useState(false);
   const [platformVisible, setPlatformVisible] = useState(false);
   const [visibilitySaving, setVisibilitySaving] = useState(false);
+  const [quota, setQuota] = useState<QuotaStatus | null>(null);
   const headers = () => ({});
   const load = useCallback(async () => {
     if (!(await sessionApi.context())) return setState('forbidden');
@@ -68,6 +88,10 @@ export default function SettingsPage() {
         const body = (await visibility.json()).data as { platformVisibleTraffic?: boolean };
         setPlatformVisible(Boolean(body.platformVisibleTraffic));
       }
+      const quotaStatus = await sessionApi.request(`${api}/api/v1/management/quota/status`, {
+        headers: { ...headers(), 'x-request-id': crypto.randomUUID() },
+      });
+      if (quotaStatus.ok) setQuota((await quotaStatus.json()).data as QuotaStatus);
       setState('ready');
     } catch {
       setState('error');
@@ -315,6 +339,70 @@ export default function SettingsPage() {
       <p className={styles.toolHint} role="note">
         全平台可见引流只影响「附近」列表曝光；痕迹为观看/访问/跳转，不含支付金额与第三方订单成功。
       </p>
+      <section className={styles.panel} aria-label="套餐配额用量">
+        <div className={styles.panelHead}>
+          <h2>套餐配额用量</h2>
+          <span className={styles.panelMeta}>
+            {quota ? `${quota.planLabel} · 由真实档案行现场推导` : '正在读取配额'}
+          </span>
+        </div>
+        {quota ? (
+          <>
+            <div className={styles.distribution}>
+              {quota.upgrades.map((row) => (
+                <div key={row.dimension} className={styles.panelBlock}>
+                  <h3>
+                    {row.label}
+                    {row.reached && <em className={styles.quotaReached}>已用满</em>}
+                  </h3>
+                  <ul className={styles.bars}>
+                    <li className={styles.quotaRow}>
+                      <span className={styles.barLabel}>已用 {row.usage}</span>
+                      <span className={styles.barTrack}>
+                        <span
+                          className={styles.barFill}
+                          style={{ width: barWidth(row.limit, row.usage) }}
+                        />
+                      </span>
+                      <span className={styles.barValue}>
+                        {row.usage}/{row.limit}
+                      </span>
+                    </li>
+                  </ul>
+                  <p className={styles.toolHint}>
+                    {row.reached
+                      ? `当前${row.label}额度 ${row.limit} 已用满，超出部分将被硬拦截。`
+                      : `剩余 ${row.remaining}。`}
+                  </p>
+                </div>
+              ))}
+            </div>
+            {quota.rejectedRecent.length > 0 && (
+              <div className={styles.panelBlock}>
+                <h3>最近被拦截的异常写入</h3>
+                <ul className={styles.bars}>
+                  {quota.rejectedRecent.map((r, i) => (
+                    <li key={i} className={styles.barRow}>
+                      <span className={styles.barLabel}>
+                        {r.dimension} 用时 {r.current_usage}/{r.current_limit}
+                      </span>
+                      <span className={styles.barValue}>
+                        {new Date(r.rejected_at).toLocaleString()}
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+            <p className={styles.honest} role="note">
+              配额用量由真实档案行现场推导(source=local)：开放账号计在册激活账号与待接受邀请、客户档案计活跃客户、
+              门店入口计活跃门店。触顶仅拒绝超额新建写并记录审计/事件，不碰钱/销售成交、不含支付金额、非本平台下单。
+            </p>
+          </>
+        ) : (
+          <p className={styles.barEmpty}>配额状态暂不可用</p>
+        )}
+      </section>
       <section className={styles.grid}>
         <fieldset>
           <legend>提醒与升级</legend>

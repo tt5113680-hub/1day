@@ -8,6 +8,7 @@ import {
 import { createHash, randomBytes, randomUUID } from 'node:crypto';
 import { type Pool } from 'pg';
 import { createApiPool } from './database-pool';
+import { TenantQuotaService } from './tenant-quota.service';
 import type { OrganizationContext } from './organization.service';
 
 const uuid = /^[0-9a-f-]{36}$/i;
@@ -20,6 +21,9 @@ const hash = (value: string) => createHash('sha256').update(value).digest('hex')
 @Injectable()
 export class EmployeeService implements OnModuleDestroy {
   private readonly pool = createApiPool();
+
+  constructor(private readonly quotas: TenantQuotaService) {}
+
   async list(context: OrganizationContext) {
     return (
       await this.pool.query(
@@ -86,6 +90,7 @@ export class EmployeeService implements OnModuleDestroy {
         );
         if (!store.rowCount) throw new NotFoundException('NOT_FOUND');
       }
+      await this.quotas.assertWithin(client, context, 'users', 'membership_invitation');
       const token = randomBytes(24).toString('base64url'),
         id = randomUUID();
       const created = await client.query(

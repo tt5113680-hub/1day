@@ -1,17 +1,17 @@
 {
-  "recordedAt": "2026-08-13T22:30:00+08:00",
+  "recordedAt": "2026-08-14T10:45:00+08:00",
   "phase": "Meituan depth 100% closed-loop (owner plan 2026-08-12)",
-  "goal": "Blueprint/product depth 100%; SaaS strongest; skip §5 READY; DeepSeek/IDE unattended W116+",
-  "currentStep": "W116 PASS (employees invite→activate→role package + store scope MPC-10, migration 069 membership_invitations role_id/store_id + invite/accept role+store binding + /m/organization-employees role package/store UI). Next W117 notifications read/ignore/batch (MPC-13) + settings change audit (MPC-12). §5 READY deferred.",
+  "goal": "Blueprint/product depth 100%; SaaS strongest; skip §5 READY; DeepSeek/IDE unattended W119+",
+  "currentStep": "W118 PASS (tenant quota cap hard intercept, migration 071 tenant_quota_rejections, assertWithin stores/customers/users, /m/settings quota panel). Next W119 suspend session invalidation. §5 READY deferred.",
   "milestones": [
     { "id": "g1-winf-chrome", "label": "W chrome densify W3..106", "weight": 18, "status": "pass", "evidence": "evidence/G1-MEITUAN-PARITY/WINF*" },
     { "id": "depth-phase1", "label": "Depth Phase1 W107..110", "weight": 15, "status": "pass", "evidence": "MEITUAN_DEPTH_OPTIMIZATION_PLAN.md" },
-    { "id": "depth-phase2", "label": "Depth Phase2 W111..117 MPC 100%", "weight": 22, "status": "active", "evidence": "WINF111..116 PASS; next W117" },
-    { "id": "depth-phase3-saas", "label": "Depth Phase3 SaaS strongest W118..124", "weight": 15, "status": "pending", "evidence": "MEITUAN_DEPTH_OPTIMIZATION_PLAN.md §6" }
+    { "id": "depth-phase2", "label": "Depth Phase2 W111..117 MPC 100%", "weight": 22, "status": "pass", "evidence": "WINF111..117 PASS" },
+    { "id": "depth-phase3-saas", "label": "Depth Phase3 SaaS strongest W118..124", "weight": 15, "status": "active", "evidence": "WINF118 PASS; next W119 suspend session invalidation" }
   ],
   "ownerGates": [
     { "id": "p1-d", "label": "P1-D owner local full test + sign-off", "status": "waiting" },
     { "id": "section5-ready", "label": "§5 READY provisioning (deferred)", "status": "deferred" }
   ],
-  "notes": "W116 closed: employees invite→activate→role package + store scope (MPC-10). Migration 069 added membership_invitations.role_id/store_id; invite accepts roleCode/storeId and persists them; accept activates and binds membership_roles + store_managers + data_scopes('store'); management overview returns employee roles/store_scope + invitation role_code/store_name + role/store lists; /m/organization-employees offers role package + store select, shows role/store per row, adds role-package distribution + store-manager summaryStrip item. Real DB round-trip 7/7, g1-winf 427/427 serial, 429/429 real-DB+sync serial, typecheck/build 20/20, unit 49/49, evidence-contract 74/74, eslint/prettier clean; no fake BI, no GMV, no payment, §5 READY deferred. Next W117 MPC-13 notifications + MPC-12 settings audit."
+  "notes": "W118 closed by IDE (owner: run W118 locally, rest automatic). Quota hard-block 400 QUOTA_LIMIT_REACHED on store/customer/invite over-cap writes; rejection ledger/audit/outbox on a separate auto-commit so outer idempotency rollback cannot erase the deny; /m/settings quota usage panel from real counts. g1-winf 429/429, typecheck/build 20/20, unit 49/49, evidence-contract 74/74; no fake BI, no GMV, no payment, §5 READY deferred. Next W119 suspend session invalidation — DeepSeek sole writer."
 }

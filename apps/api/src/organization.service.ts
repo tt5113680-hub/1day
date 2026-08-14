@@ -8,6 +8,7 @@ import {
 import { randomUUID } from 'node:crypto';
 import { type Pool, type PoolClient } from 'pg';
 import { createApiPool } from './database-pool';
+import { TenantQuotaService } from './tenant-quota.service';
 
 export interface OrganizationContext {
   tenantId: string;
@@ -63,6 +64,8 @@ function responseRow(row: Record<string, unknown>) {
 @Injectable()
 export class OrganizationService implements OnModuleDestroy {
   private readonly pool = createApiPool();
+
+  constructor(private readonly quotas: TenantQuotaService) {}
 
   async listOrganizations(context: OrganizationContext) {
     const result = await this.pool.query(
@@ -238,6 +241,7 @@ export class OrganizationService implements OnModuleDestroy {
           [input.merchantId, context.tenantId, input.organizationId],
         );
         if (merchant.rowCount !== 1) throw new NotFoundException('NOT_FOUND');
+        await this.quotas.assertWithin(client, context, 'stores', 'store');
         const id = randomUUID();
         const created = await client.query(
           'insert into stores (id,tenant_id,organization_id,merchant_id,code,name,address,created_by,updated_by) values ($1,$2,$3,$4,$5,$6,$7,$8,$8) returning *',

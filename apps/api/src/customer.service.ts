@@ -8,6 +8,7 @@ import {
 import { createHash, randomUUID } from 'node:crypto';
 import { type Pool, type PoolClient } from 'pg';
 import { createApiPool } from './database-pool';
+import { TenantQuotaService } from './tenant-quota.service';
 import type { OrganizationContext } from './organization.service';
 
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
@@ -70,6 +71,8 @@ function customerRow(row: Record<string, unknown>, identities: Record<string, un
 export class CustomerService implements OnModuleDestroy {
   private readonly pool = createApiPool();
 
+  constructor(private readonly quotas: TenantQuotaService) {}
+
   async list(context: OrganizationContext) {
     const customers = await this.pool.query(
       "select * from customers where tenant_id=$1 and deleted_at is null and status='active' order by created_at desc",
@@ -107,6 +110,7 @@ export class CustomerService implements OnModuleDestroy {
     if (new Set(identities.map(digest)).size !== identities.length)
       throw new BadRequestException('VALIDATION_ERROR');
     return this.withIdempotency(context, 'customer', idempotencyKey, async (client) => {
+      await this.quotas.assertWithin(client, context, 'customers', 'customer');
       for (const item of identities)
         await this.assertIdentityAvailable(client, context.tenantId, item);
       const id = randomUUID();

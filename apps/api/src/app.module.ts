@@ -68,6 +68,8 @@ import { ManagementQueueDispositionController } from './management-queue-disposi
 import { ManagementQueueDispositionService } from './management-queue-disposition.service';
 import { ManagementNotificationController } from './management-notification.controller';
 import { ManagementNotificationService } from './management-notification.service';
+import { TenantQuotaService } from './tenant-quota.service';
+import { ManagementQuotaController } from './management-quota.controller';
 import { ManagementFunnelController } from './management-funnel.controller';
 import { ManagementFunnelService } from './management-funnel.service';
 import { ManagementCustomerAssetsController } from './management-customer-assets.controller';
@@ -175,6 +177,7 @@ import { EmployeeManagedStoresController } from './employee-managed-stores.contr
     ManagementDashboardController,
     ManagementQueueDispositionController,
     ManagementNotificationController,
+    ManagementQuotaController,
     ManagementFunnelController,
     ManagementCustomerAssetsController,
     ManagementCrmDepthController,
@@ -247,6 +250,7 @@ import { EmployeeManagedStoresController } from './employee-managed-stores.contr
     ManagementDashboardService,
     ManagementQueueDispositionService,
     ManagementNotificationService,
+    TenantQuotaService,
     ManagementFunnelService,
     ManagementCustomerAssetsService,
     ManagementCrmDepthService,

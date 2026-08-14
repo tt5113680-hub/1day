@@ -69,6 +69,7 @@ import * as serviceCategoryRank from './migrations/067_service_category_rank.js'
 import * as reviewsReply from './migrations/068_reviews_reply.js';
 import * as employeeRolePackage from './migrations/069_employee_role_package.js';
 import * as managementNotifications from './migrations/070_management_notifications.js';
+import * as tenantQuotaRejections from './migrations/071_tenant_quota_rejections.js';
 import type { Database } from './types.js';
 
 const migrationProvider: MigrationProvider = {
@@ -144,6 +145,7 @@ const migrationProvider: MigrationProvider = {
       '068_reviews_reply': reviewsReply,
       '069_employee_role_package': employeeRolePackage,
       '070_management_notifications': managementNotifications,
+      '071_tenant_quota_rejections': tenantQuotaRejections,
     };
   },
 };

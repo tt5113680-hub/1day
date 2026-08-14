@@ -639,6 +639,21 @@ export interface ManagementNotificationsTable {
   version: Generated<number>;
 }
 
+export interface TenantQuotaRejectionsTable {
+  id: string;
+  tenant_id: string;
+  dimension: string;
+  source_resource: string;
+  source_id: string | null;
+  current_usage: number;
+  current_limit: number;
+  actor_id: string | null;
+  rejected_at: Timestamp;
+  created_at: Timestamp;
+  created_by: string | null;
+  deleted_at: Timestamp | null;
+}
+
 export interface CustomerOrdersTable {
   id: string;
   tenant_id: string;
@@ -1712,6 +1727,7 @@ export interface Database {
   employee_notification_preferences: EmployeeNotificationPreferencesTable;
   employee_notifications: EmployeeNotificationsTable;
   management_notifications: ManagementNotificationsTable;
+  tenant_quota_rejections: TenantQuotaRejectionsTable;
   customer_orders: CustomerOrdersTable;
   evidence_files: EvidenceFilesTable;
   verification_codes: VerificationCodesTable;
