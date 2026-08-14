@@ -4,12 +4,13 @@
 - completed_tasks: 72/72
 - foundation_final_state_commit: 239114e
 - core_final_state_commit: df5ef65
-- last_completed_task: G1-W∞-120 Outbox 重放 + 告警 PASS（见 CHANGELOG + evidence/G1-MEITUAN-PARITY/WINF120）
+- last_completed_task: G1-W∞-121 审计导出全覆盖 PASS（见 CHANGELOG + evidence/G1-MEITUAN-PARITY/WINF121）
 - depth_plan: `MEITUAN_DEPTH_OPTIMIZATION_PLAN.md`（深度 100%、SaaS 最强、§5 READY DEFERRED）
-- current_task: **W∞-121 NEXT** 审计导出全覆盖（Phase3 SaaS 最强）
-- next_scope: W∞-121..124 Phase3 SaaS（审计导出/代理结算/渠道商圈 scope/sync SLO）
+- current_task: **W∞-122 NEXT** 代理结算周期 + 合同状态（无资金）（Phase3 SaaS 最强）
+- next_scope: W∞-122..124 Phase3 SaaS（代理结算/渠道商圈 scope/sync SLO）
 - deferred_section5_ready: true
-- executor_note: W120 由 IDE 本地收口（DeepSeek 3×TIMEOUT；073 缺 UNIQUE 已修 074）；W121+ 可续 DeepSeek 全自动
+- executor_note: W121 审计导出全覆盖 PASS（DeepSeek）；W122+ 可续 DeepSeek 全自动
+- verified_g1_winf121_audit_export_full_coverage: PASS (2026-08-14) - 审计导出全覆盖（G1-R-SAAS-AUDIT / Phase3 §6）。抽取共享 queryAuditRows；/m/permission-audit 新增 GET export CSV（filter+tenant.manage fail-closed+nosniff）+ 导出写 audit 'management.audit.exported' + outbox .v1（导出自审计闭环）；页 topBar 导出按钮 + exportBar 提示。无 schema。tests/g1-winf121 3/3（静态+真实 DB：401/跨租户 403→CSV 表头+种子 action/trace→audit+outbox→非法 filter 400）；g1-winf* 437/438（唯一 g1-winf116 并行 API ECONNRESET 瞬断，隔离 10/10 通过与本节无涉）；typecheck 20/20、build 20/20、unit 49/49、evidence-contract 74/74、eslint+prettier clean。See evidence/G1-MEITUAN-PARITY/WINF121/ACCEPTANCE.md.
 - verified_g1_winf120_platform_outbox_replay_alert: PASS (2026-08-14) - Outbox 重放 + 告警（G1-R-SAAS-OUTBOX / Phase3 §6，IDE 本地收口）。migration 073+074；PlatformOutbox health/dead-letters/replay-all；/p/outbox 告警+一键重放。tests/g1-winf120 5/5；g1-winf* 435/435（串行）。See evidence/G1-MEITUAN-PARITY/WINF120/ACCEPTANCE.md.
 - verified_g1_winf119_suspend_session_invalidation: PASS (2026-08-14)
 - verified_g1_winf118_tenant_quota_interception: PASS (2026-08-14) - 配额触顶拦截（G1-R-SAAS-QUOTA / Phase3 §6，toward PARITY，禁止假 BI，无 GMV，无储值/支付，不含 §5 READY）承接 W∞-117，把套餐配额从平台设置数字推进到可作业闭环：用量现场推导 → 触顶硬拦截超额新建写 → 被拒台账 + 审计 + Outbox → `/m/settings` 升级引导。新增 migration `071_tenant_quota_rejections`（tenant_scoped 被拒台账 dimension=users|customers|stores + tenant/dimension/rejected_at 索引）。`TenantQuotaService.assertWithin` 挂在 `createStore` / `customers.create` / `employees.invite`：开放账号计 active memberships + pending 未过期邀请、客户计 active customers、门店计 active stores；触顶 HTTP 400 `QUOTA_LIMIT_REACHED` 且超额行不落库；`tenant_quota_rejections` + `audit_logs management.quota_rejected` + `outbox tenant.quota_rejected.v1` 走独立 auto-commit，避免外层幂等事务 rollback 抹掉拒绝记录（台账失败也不得把硬拦截变成 500）。`GET /api/v1/management/quota/status`（tenant.manage fail-closed）+ `/m/settings`「套餐配额用量」白卡。诚实边界全保留（仅登记入口/客户/开放账号规模上限，不碰钱/销售、不含支付、非本平台下单、不接美团/抖音实时；`/m/workflows` CUSTOM；§5 READY deferred）。`pnpm db:migrate`（oneday_v3_test）apply 071。新增 tests/g1-winf118-tenant-quota-interception.test.mjs 1/1（真实 DB：401/跨租户 403 → status 三维 → stores/customers/users 额度+1 内 201 / 超额 400 且不落库 → ledger/audit/outbox）；`g1-winf*.test.mjs` 429/429、typecheck/build 20/20、unit 49/49、evidence-contract 74/74，变更文件 eslint + prettier clean。See evidence/G1-MEITUAN-PARITY/WINF118/ACCEPTANCE.md.

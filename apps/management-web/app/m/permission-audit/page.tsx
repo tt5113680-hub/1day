@@ -67,6 +67,8 @@ export default function PermissionAuditPage() {
   const [filter, setFilter] = useState<Filter>('all');
   const [data, setData] = useState<Data | null>(null);
   const [open, setOpen] = useState<string | null>(null);
+  const [exporting, setExporting] = useState(false);
+  const [exported, setExported] = useState<string | null>(null);
   const load = useCallback(
     async (next = filter) => {
       if (!(await sessionApi.context())) return setState('forbidden');
@@ -91,6 +93,34 @@ export default function PermissionAuditPage() {
     setFilter(next);
     setOpen(null);
     void load(next);
+  };
+
+  const exportAudit = async () => {
+    if (exporting) return;
+    if (!(await sessionApi.context())) return setState('forbidden');
+    setExporting(true);
+    try {
+      const response = await sessionApi.request(
+        `${api}/api/v1/management/permission-audit/export?filter=${filter}`,
+        { headers: {} },
+      );
+      if ([401, 403].includes(response.status)) return setState('forbidden');
+      if (!response.ok) throw Error('EXPORT');
+      const blob = await response.blob();
+      const url = URL.createObjectURL(blob);
+      const anchor = document.createElement('a');
+      anchor.href = url;
+      anchor.download = `permission-audit-${new Date().toISOString().slice(0, 10)}.csv`;
+      document.body.appendChild(anchor);
+      anchor.click();
+      anchor.remove();
+      URL.revokeObjectURL(url);
+      setExported(`${new Date().toLocaleString('zh-CN')} 已导出 ${filterLabels[filter]}。`);
+    } catch {
+      setExported(null);
+    } finally {
+      setExporting(false);
+    }
   };
 
   const isRisk = (record: AuditRecord) =>
@@ -211,10 +241,25 @@ export default function PermissionAuditPage() {
     <main className={styles.page} data-testid="management-permission-audit">
       <div className={styles.topBar}>
         <span className={styles.topBarTitle}>推广员工具 · 操作审计</span>
-        <button type="button" className={styles.topBarRefresh} onClick={() => void load()}>
-          刷新记录
-        </button>
+        <div className={styles.topBarActions}>
+          <button
+            type="button"
+            className={styles.topBarRefresh}
+            onClick={() => void exportAudit()}
+            disabled={exporting}
+          >
+            {exporting ? '导出中…' : '导出审计'}
+          </button>
+          <button type="button" className={styles.topBarRefresh} onClick={() => void load()}>
+            刷新记录
+          </button>
+        </div>
       </div>
+      {exported ? (
+        <div className={styles.exportBar} role="status" data-testid="audit-export-message">
+          {exported}
+        </div>
+      ) : null}
       <section className={styles.heroCard} aria-label="操作审计概况">
         <h1>将权限变更、风险信号与证据链放在同一审计视图</h1>
         <p>风险信号需要复核，不等同于已确认的越权；每条记录均可追溯到关联与 trace 标识。</p>

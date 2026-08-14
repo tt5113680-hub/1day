@@ -15,11 +15,11 @@
 ## Current task
 
 - branch: `hardening/COMMERCIAL-COMPLETION`
-- last_verified: **2026-08-14** — **W∞-120 PASS** Outbox 重放 + 告警（§6 W∞-SAAS-OUTBOX，IDE 本地收口）。See evidence/G1-MEITUAN-PARITY/WINF120/ACCEPTANCE.md。
-- in_flight: **W∞-121 (NEXT, Phase3)** 审计导出全覆盖
+- last_verified: **2026-08-14** — **W∞-121 PASS** 审计导出全覆盖（§6 W∞-SAAS-AUDIT）。See evidence/G1-MEITUAN-PARITY/WINF121/ACCEPTANCE.md。
+- in_flight: **W∞-122 (NEXT, Phase3)** 代理结算周期 + 合同状态（无资金）
 - deferred: §5 开通 READY（待主人「开始第五节」）
 - blocker: **none (engineering)**
-- note: W120 DeepSeek 3×TIMEOUT（073 缺 UNIQUE）；IDE 本地已 PASS。W121+ 可 `pnpm unattended:resume` 续全自动。
+- note: W121 审计导出全覆盖由 DeepSeek 完成（管理 /m/permission-audit CSV 导出 + 导出自审计 audit/outbox；运行 g1-winf121 3/3；g1-winf* 437/438 中唯一失败 g1-winf116 为并行 API 起服 ECONNRESET 瞬断，隔离复跑 10/10 通过）。W122+ 可 `pnpm unattended:resume` 续全自动。
 
 ## Owner gates (parallel)
 

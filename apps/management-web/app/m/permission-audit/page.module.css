@@ -26,6 +26,12 @@
   font-weight: 800;
 }
 
+.topBarActions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
 .topBarRefresh {
   min-height: 34px;
   border: 0;
@@ -37,6 +43,21 @@
   font-size: 13px;
   font-weight: 700;
   cursor: pointer;
+}
+
+.topBarRefresh:disabled {
+  cursor: default;
+  opacity: 0.6;
+}
+
+.exportBar {
+  border: 1px solid rgb(255 209 0 / 35%);
+  border-radius: 10px;
+  padding: 10px 14px;
+  color: #333;
+  background: linear-gradient(135deg, #fff9db 0%, #fffef5 100%);
+  font-size: 13px;
+  font-weight: 600;
 }
 
 .heroCard {
