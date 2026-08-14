@@ -70,6 +70,7 @@ import * as reviewsReply from './migrations/068_reviews_reply.js';
 import * as employeeRolePackage from './migrations/069_employee_role_package.js';
 import * as managementNotifications from './migrations/070_management_notifications.js';
 import * as tenantQuotaRejections from './migrations/071_tenant_quota_rejections.js';
+import * as authSessionEpoch from './migrations/072_auth_session_epoch.js';
 import type { Database } from './types.js';
 
 const migrationProvider: MigrationProvider = {
@@ -146,6 +147,7 @@ const migrationProvider: MigrationProvider = {
       '069_employee_role_package': employeeRolePackage,
       '070_management_notifications': managementNotifications,
       '071_tenant_quota_rejections': tenantQuotaRejections,
+      '072_auth_session_epoch': authSessionEpoch,
     };
   },
 };

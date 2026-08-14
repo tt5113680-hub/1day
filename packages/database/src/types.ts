@@ -163,6 +163,7 @@ export interface AuthSessionsTable {
   user_id: string;
   refresh_token_hash: string;
   device_name: string | null;
+  auth_epoch: Generated<number>;
   expires_at: Timestamp;
   revoked_at: Timestamp | null;
   status: string;

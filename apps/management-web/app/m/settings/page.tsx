@@ -35,6 +35,14 @@ type QuotaStatus = {
     rejected_at: string;
   }[];
 };
+type SessionSecurity = {
+  status: string;
+  suspended: boolean;
+  authEpoch: number;
+  activeSessions: number;
+  sessionsByEpoch: { authEpoch: number; count: number }[];
+  recentRevocations: number;
+};
 const barWidth = (total: number, value: number) => (total ? `${(value / total) * 100}%` : '0%');
 const countBy = (items: string[]) => {
   const map = new Map<string, number>();
@@ -69,6 +77,7 @@ export default function SettingsPage() {
   const [platformVisible, setPlatformVisible] = useState(false);
   const [visibilitySaving, setVisibilitySaving] = useState(false);
   const [quota, setQuota] = useState<QuotaStatus | null>(null);
+  const [sessionSecurity, setSessionSecurity] = useState<SessionSecurity | null>(null);
   const headers = () => ({});
   const load = useCallback(async () => {
     if (!(await sessionApi.context())) return setState('forbidden');
@@ -92,6 +101,12 @@ export default function SettingsPage() {
         headers: { ...headers(), 'x-request-id': crypto.randomUUID() },
       });
       if (quotaStatus.ok) setQuota((await quotaStatus.json()).data as QuotaStatus);
+      const sessionSecurity = await sessionApi.request(
+        `${api}/api/v1/management/session-security`,
+        { headers: { ...headers(), 'x-request-id': crypto.randomUUID() } },
+      );
+      if (sessionSecurity.ok)
+        setSessionSecurity((await sessionSecurity.json()).data as SessionSecurity);
       setState('ready');
     } catch {
       setState('error');
@@ -401,6 +416,72 @@ export default function SettingsPage() {
           </>
         ) : (
           <p className={styles.barEmpty}>配额状态暂不可用</p>
+        )}
+      </section>
+      <section className={styles.panel} aria-label="会话安全 · 即时失效">
+        <div className={styles.panelHead}>
+          <h2>会话安全 · 即时失效</h2>
+          <span className={styles.panelMeta}>
+            {sessionSecurity
+              ? `${sessionSecurity.suspended ? '已暂停' : '运行中'} · 会话代数 ${sessionSecurity.authEpoch}`
+              : '正在读取会话安全'}
+          </span>
+        </div>
+        {sessionSecurity ? (
+          <>
+            <div className={styles.summaryStrip}>
+              <div>
+                <span>会话代数</span>
+                <strong>{sessionSecurity.authEpoch}</strong>
+              </div>
+              <div>
+                <span>当前状态</span>
+                <strong>{sessionSecurity.suspended ? '已暂停' : '运行中'}</strong>
+              </div>
+              <div>
+                <span>在册会话</span>
+                <strong>{sessionSecurity.activeSessions}</strong>
+              </div>
+              <div>
+                <span>近 1 天已关断</span>
+                <strong>{sessionSecurity.recentRevocations}</strong>
+              </div>
+            </div>
+            <div className={styles.panelBlock} data-testid="session-epoch-buckets">
+              <h3>存量会话代数分布</h3>
+              {sessionSecurity.sessionsByEpoch.length ? (
+                <ul className={styles.bars}>
+                  {sessionSecurity.sessionsByEpoch.map((bucket) => (
+                    <li key={bucket.authEpoch} className={styles.barRow}>
+                      <span className={styles.barLabel}>代数 {bucket.authEpoch}</span>
+                      <span className={styles.barTrack}>
+                        <span
+                          className={styles.barFill}
+                          style={{
+                            width: barWidth(
+                              sessionSecurity.sessionsByEpoch.reduce((n, b) => n + b.count, 0),
+                              bucket.count,
+                            ),
+                          }}
+                        />
+                      </span>
+                      <span className={styles.barValue}>{bucket.count}</span>
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <p className={styles.barEmpty}>暂无在册会话</p>
+              )}
+            </div>
+            <p className={styles.honest} role="note">
+              会话安全由真实会话档案行现场推导(source=local)：会话代数随平台「暂停/恢复」即时递增；
+              租户被暂停时，系统会立即吊销全部在册会话并使存量访问令牌永久失效，无需等待重新认证。
+              会话加固只控制租户内工具访问授权是否即时关断/放开，不碰钱/销售、不含支付金额、
+              非本平台下单、不接美团/抖音实时。
+            </p>
+          </>
+        ) : (
+          <p className={styles.barEmpty}>会话安全状态暂不可用</p>
         )}
       </section>
       <section className={styles.grid}>

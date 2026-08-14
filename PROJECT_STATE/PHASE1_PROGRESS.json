@@ -1,17 +1,17 @@
 {
-  "recordedAt": "2026-08-14T10:45:00+08:00",
+  "recordedAt": "2026-08-14T11:15:00+08:00",
   "phase": "Meituan depth 100% closed-loop (owner plan 2026-08-12)",
   "goal": "Blueprint/product depth 100%; SaaS strongest; skip §5 READY; DeepSeek/IDE unattended W119+",
-  "currentStep": "W118 PASS (tenant quota cap hard intercept, migration 071 tenant_quota_rejections, assertWithin stores/customers/users, /m/settings quota panel). Next W119 suspend session invalidation. §5 READY deferred.",
+  "currentStep": "W119 PASS (suspend session immediate invalidation via auth_epoch session versioning, migration 072 auth_sessions.auth_epoch, claims/refresh epoch check, /m/settings session-security card). Next W120 Outbox replay + alert. §5 READY deferred.",
   "milestones": [
     { "id": "g1-winf-chrome", "label": "W chrome densify W3..106", "weight": 18, "status": "pass", "evidence": "evidence/G1-MEITUAN-PARITY/WINF*" },
     { "id": "depth-phase1", "label": "Depth Phase1 W107..110", "weight": 15, "status": "pass", "evidence": "MEITUAN_DEPTH_OPTIMIZATION_PLAN.md" },
     { "id": "depth-phase2", "label": "Depth Phase2 W111..117 MPC 100%", "weight": 22, "status": "pass", "evidence": "WINF111..117 PASS" },
-    { "id": "depth-phase3-saas", "label": "Depth Phase3 SaaS strongest W118..124", "weight": 15, "status": "active", "evidence": "WINF118 PASS; next W119 suspend session invalidation" }
+    { "id": "depth-phase3-saas", "label": "Depth Phase3 SaaS strongest W118..124", "weight": 15, "status": "active", "evidence": "WINF118+WINF119 PASS; next W120 Outbox replay+alert" }
   ],
   "ownerGates": [
     { "id": "p1-d", "label": "P1-D owner local full test + sign-off", "status": "waiting" },
     { "id": "section5-ready", "label": "§5 READY provisioning (deferred)", "status": "deferred" }
   ],
-  "notes": "W118 closed by IDE (owner: run W118 locally, rest automatic). Quota hard-block 400 QUOTA_LIMIT_REACHED on store/customer/invite over-cap writes; rejection ledger/audit/outbox on a separate auto-commit so outer idempotency rollback cannot erase the deny; /m/settings quota usage panel from real counts. g1-winf 429/429, typecheck/build 20/20, unit 49/49, evidence-contract 74/74; no fake BI, no GMV, no payment, §5 READY deferred. Next W119 suspend session invalidation — DeepSeek sole writer."
+  "notes": "W119 closed by DeepSeek (session epoch authentication hardening W∞-SAAS-LIFE): tenants.auth_epoch snapshot into each auth_sessions row; claims()/refresh() force s.auth_epoch = t.auth_epoch so suspending a tenant bumps auth_epoch and immediately/permanently invalidates all issued access tokens (fail-closed, no re-auth wait; reactivate never resurrects old tokens). New GET /api/v1/management/session-security observability + /m/settings session-security card from real rows. g1-winf 430/430, typecheck 12/12, build 11/11, unit 49/49, evidence-contract 74/74; no fake BI, no GMV, no payment, §5 READY deferred. Next W120 Outbox replay + alert; DeepSeek sole writer."
 }
