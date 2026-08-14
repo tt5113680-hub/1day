@@ -3,6 +3,7 @@
 ## ACTIVE — No authorized engineering slice remains (2026-08-14)
 
 - recorded_at: 2026-08-14 Asia/Shanghai
+- re_verified_at: **2026-08-15** Asia/Shanghai — another unattended cold-start turn confirmed the same NO_AUTHORIZED_SLICE state; no authorized (non-DEFERRED, non-archive) engineering slice exists to cut. Not a technical failure.
 - status: **NO_AUTHORIZED_SLICE** — awaiting owner direction
 - branch: `hardening/COMMERCIAL-COMPLETION`
 
