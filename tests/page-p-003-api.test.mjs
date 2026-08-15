@@ -160,7 +160,7 @@ test('platform one-click provisioning reaches a machine-verifiable READY state',
       steps: 11,
       audits: 1,
       outbox: 1,
-      one_codes: 1,
+      one_codes: 3,
     });
   } finally {
     await client.end();

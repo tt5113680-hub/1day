@@ -669,25 +669,75 @@ export class PlatformOnboardingService implements OnModuleDestroy {
     }
     await this.completeStep(client, runId, 'channel_circle', channelCircleOutput, channelCircleState);
 
-    const code = randomUUID().replaceAll('-', '').slice(0, 20).toUpperCase();
-    const consumerPath = `/c/entry?tenant=${encodeURIComponent(input.slug)}&source=one-code:${code}&scene=storefront`;
-    const roleTargets = {
-      consumer: consumerPath,
-      employee: '/e/workbench',
-      management: '/m',
-    };
-    await client.query(
-      "insert into one_code_entries(id,tenant_id,store_id,code,scene,source,target_path,role_targets,created_by,updated_by) values($1,$2,$3,$4,'primary','provisioning',$5,$6,$7,$7)",
-      [randomUUID(), ids.tenantId, ids.storeId, code, consumerPath, roleTargets, context.userId],
-    );
+    const mintCode = () => randomUUID().replaceAll('-', '').slice(0, 20).toUpperCase();
+    const consumerCode = mintCode();
+    const ownerCode = mintCode();
+    const employeeCode = mintCode();
+    const consumerPath = `/c/entry?tenant=${encodeURIComponent(input.slug)}&source=one-code:${consumerCode}&scene=storefront`;
+    const ownerPath = '/m';
+    const employeePath = '/e/workbench';
+    const sceneRows: {
+      scene: 'consumer_storefront' | 'owner_activation' | 'employee_onboarding';
+      code: string;
+      targetPath: string;
+      roleTargets: Record<string, string>;
+      resolveRole: 'consumer' | 'management' | 'employee';
+    }[] = [
+      {
+        scene: 'consumer_storefront',
+        code: consumerCode,
+        targetPath: consumerPath,
+        roleTargets: { consumer: consumerPath, employee: employeePath, management: ownerPath },
+        resolveRole: 'consumer',
+      },
+      {
+        scene: 'owner_activation',
+        code: ownerCode,
+        targetPath: ownerPath,
+        roleTargets: { management: ownerPath },
+        resolveRole: 'management',
+      },
+      {
+        scene: 'employee_onboarding',
+        code: employeeCode,
+        targetPath: employeePath,
+        roleTargets: { employee: employeePath },
+        resolveRole: 'employee',
+      },
+    ];
+    for (const row of sceneRows) {
+      await client.query(
+        "insert into one_code_entries(id,tenant_id,store_id,code,scene,source,target_path,role_targets,created_by,updated_by) values($1,$2,$3,$4,$5,'provisioning',$6,$7,$8,$8)",
+        [
+          randomUUID(),
+          ids.tenantId,
+          ids.storeId,
+          row.code,
+          row.scene,
+          row.targetPath,
+          row.roleTargets,
+          context.userId,
+        ],
+      );
+    }
+    const scenes = sceneRows.map((row) => ({
+      scene: row.scene,
+      code: row.code,
+      status: 'active' as const,
+      resolveRole: row.resolveRole,
+      resolvePath: `/api/v1/one-code/${row.code}${row.resolveRole === 'consumer' ? '' : `?role=${row.resolveRole}`}`,
+      landingPath: `/c/one-code/${row.code}`,
+      targetPath: row.targetPath,
+    }));
     const delivery = {
-      oneCode: code,
-      resolvePath: `/api/v1/one-code/${code}`,
-      landingPath: `/c/one-code/${code}`,
+      oneCode: consumerCode,
+      resolvePath: `/api/v1/one-code/${consumerCode}`,
+      landingPath: `/c/one-code/${consumerCode}`,
       consumerPath,
       ownerEmail: input.adminEmail,
-      managementPath: '/m',
-      employeePath: '/e/workbench',
+      managementPath: ownerPath,
+      employeePath,
+      scenes,
     };
     await this.completeStep(client, runId, 'one_code_delivery', delivery);
 
@@ -782,7 +832,14 @@ export class PlatformOnboardingService implements OnModuleDestroy {
           exists(select 1 from stores where id=$6 and tenant_id=$1 and status='active' and address is not null and phone is not null and business_hours is not null and deleted_at is null) store_ready,
           exists(select 1 from storefront_bindings where id=$7 and tenant_id=$1 and live_version_id=$8 and status='active' and deleted_at is null) storefront_published,
           exists(select 1 from page_templates where id=$9 and tenant_id=$1 and published_version_id=$8 and status='active' and deleted_at is null) template_published,
-          exists(select 1 from one_code_entries where tenant_id=$1 and store_id=$6 and status='active' and deleted_at is null) one_code_ready,
+          exists(select 1 from one_code_entries where tenant_id=$1 and store_id=$6 and scene='consumer_storefront' and status='active' and deleted_at is null) consumer_qr_ready,
+          exists(select 1 from one_code_entries where tenant_id=$1 and store_id=$6 and scene='owner_activation' and status='active' and deleted_at is null) owner_qr_ready,
+          exists(select 1 from one_code_entries where tenant_id=$1 and store_id=$6 and scene='employee_onboarding' and status='active' and deleted_at is null) employee_qr_ready,
+          (
+            select count(*)::int from one_code_entries
+            where tenant_id=$1 and store_id=$6 and status='active' and deleted_at is null
+              and scene in ('consumer_storefront','owner_activation','employee_onboarding')
+          ) = 3 one_code_ready,
           not exists(select 1 from outbox_events where tenant_id in ($1,$10) and last_error is not null and deleted_at is null) outbox_clear`,
         [
           ids.tenantId,
@@ -799,6 +856,82 @@ export class PlatformOnboardingService implements OnModuleDestroy {
       )
     ).rows[0] as Record<string, boolean>;
     return row;
+  }
+
+  async revokeDeliveryScene(
+    context: OrganizationContext,
+    runId: string,
+    scene: string,
+    requestId: string,
+  ) {
+    const allowed = new Set([
+      'consumer_storefront',
+      'owner_activation',
+      'employee_onboarding',
+    ]);
+    if (!allowed.has(scene)) throw new BadRequestException('VALIDATION_ERROR');
+    const run = (
+      await this.pool.query(
+        "select id,tenant_id,delivery,correlation_id from tenant_provisioning_runs where id=$1 and requested_by_tenant_id=$2 and state='ready' and deleted_at is null",
+        [runId, context.tenantId],
+      )
+    ).rows[0] as
+      | {
+          id: string;
+          tenant_id: string;
+          delivery: Record<string, unknown> | null;
+          correlation_id: string;
+        }
+      | undefined;
+    if (!run?.tenant_id) throw new NotFoundException('NOT_FOUND');
+    const client = await this.pool.connect();
+    try {
+      await client.query('begin');
+      const entry = (
+        await client.query(
+          "select id,code from one_code_entries where tenant_id=$1 and scene=$2 and status='active' and deleted_at is null for update",
+          [run.tenant_id, scene],
+        )
+      ).rows[0] as { id: string; code: string } | undefined;
+      if (!entry) throw new NotFoundException('NOT_FOUND');
+      await client.query(
+        "update one_code_entries set status='revoked',updated_at=now(),updated_by=$2,version=version+1 where id=$1",
+        [entry.id, context.userId],
+      );
+      const delivery = (run.delivery ?? {}) as {
+        scenes?: { scene: string; status?: string; code?: string }[];
+        [key: string]: unknown;
+      };
+      const scenes = Array.isArray(delivery.scenes)
+        ? delivery.scenes.map((item) =>
+            item.scene === scene ? { ...item, status: 'revoked' } : item,
+          )
+        : [];
+      const nextDelivery = { ...delivery, scenes };
+      await client.query(
+        'update tenant_provisioning_runs set delivery=$2,updated_at=now(),updated_by=$3,version=version+1 where id=$1',
+        [runId, nextDelivery, context.userId],
+      );
+      const correlationId = /^[0-9a-f-]{36}$/i.test(requestId)
+        ? requestId
+        : (run.correlation_id ?? randomUUID());
+      const detail = { runId, scene, code: entry.code, status: 'revoked' };
+      await client.query(
+        "insert into audit_logs(id,tenant_id,actor_id,action,resource_type,resource_id,correlation_id,trace_id,details,created_by,updated_by) values($1,$2,$3,'platform.delivery_scene_revoked','tenant_provisioning_run',$4,$5,'commercial-provisioning',$6,$3,$3)",
+        [randomUUID(), context.tenantId, context.userId, runId, correlationId, detail],
+      );
+      await client.query(
+        "insert into outbox_events(id,tenant_id,event_type,aggregate_type,aggregate_id,payload,correlation_id,trace_id,created_by,updated_by) values($1,$2,'tenant.provisioning.delivery_revoked.v1','tenant_provisioning_run',$3,$4,$5,'commercial-provisioning',$6,$6)",
+        [randomUUID(), context.tenantId, runId, detail, correlationId, context.userId],
+      );
+      await client.query('commit');
+    } catch (error) {
+      await client.query('rollback');
+      throw error;
+    } finally {
+      client.release();
+    }
+    return this.get(context, runId);
   }
 
   private async completeStep(

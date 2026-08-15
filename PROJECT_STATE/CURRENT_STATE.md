@@ -1,12 +1,13 @@
 ﻿# CURRENT_STATE
 
-- last_completed_task: G1-W∞-125 §5 READY 首刀 Channel→同一 READY Run PASS（见 CHANGELOG + evidence/G1-MEITUAN-PARITY/WINF125）
-- depth_plan: `MEITUAN_DEPTH_OPTIMIZATION_PLAN.md` §5 ACTIVE（主人「开始第五节」）
-- current_task: **W∞-126 NEXT** §5 READY 续刀（resume / activation / QR）
-- next_scope: W∞-126+ §5 READY 剩余 SPEC；Phase4 仍待 API/商务前提
+- last_completed_task: G1-W∞-126 §5 READY 三场景 QR PASS（见 CHANGELOG + evidence/G1-MEITUAN-PARITY/WINF126）
+- depth_plan: `MEITUAN_DEPTH_OPTIMIZATION_PLAN.md` §5 ACTIVE
+- current_task: **W∞-127 NEXT** §5 READY 续刀（mid-run resume / activation token）
+- next_scope: W∞-127+ §5 READY 剩余 SPEC；Phase4 仍待 API/商务前提
 - deferred_section5_ready: false
-- executor_note: W125 由 IDE 本地收口；DeepSeek COST STOP 仍有效（防空转）；W126+ 可 IDE 继续或主人明确后恢复无人值守
-- verified_g1_winf125_channel_same_ready_run: PASS (2026-08-15) - Channel merchant onboarding delegates to PlatformOnboardingService (source_mode=channel_referral); channel_circle writes platform_channel_merchants; delivery delivered requires READY; /ch/merchants/new READY badge. tests/g1-winf125 3/3. See evidence/G1-MEITUAN-PARITY/WINF125/ACCEPTANCE.md.
+- executor_note: W126 由 IDE 本地收口；DeepSeek COST STOP 仍有效；W127+ 可 IDE 继续或主人明确后恢复无人值守
+- verified_g1_winf126_three_scene_qr: PASS (2026-08-15) - Provisioning emits consumer_storefront/owner_activation/employee_onboarding one_code rows; revoke API + UI; READY asserts three scenes. tests/g1-winf126 2/2. See evidence/G1-MEITUAN-PARITY/WINF126/ACCEPTANCE.md.
+- verified_g1_winf125_channel_same_ready_run: PASS (2026-08-15) - Channel onboarding delegates to shared READY run. See evidence/G1-MEITUAN-PARITY/WINF125/ACCEPTANCE.md.
 
 ---
 

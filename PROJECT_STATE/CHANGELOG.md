@@ -1,5 +1,9 @@
 ﻿# CHANGELOG
 
+## 2026-08-15 — G1-W∞-126 §5 READY 三场景 QR PASS
+
+- Provisioning emits three one_code scenes (consumer_storefront / owner_activation / employee_onboarding); revoke by scene; platform UI lists + revoke; READY verification requires all three.
+- Evidence: `evidence/G1-MEITUAN-PARITY/WINF126/ACCEPTANCE.md`; tests/g1-winf126 2/2.
 ## 2026-08-15 - G1-W∞-125 §5 READY 首刀：渠道开通委托同一 READY Run PASS
 
 主人「开始第五节」解锁后首刀：Channel 委托 Platform READY Run（channel_referral）；channel_circle 真实写 membership；delivered 须 READY。tests/g1-winf125 3/3。证据：evidence/G1-MEITUAN-PARITY/WINF125/ACCEPTANCE.md。下一刀 W∞-126。

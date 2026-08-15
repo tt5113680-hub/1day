@@ -45,6 +45,15 @@ type ProvisioningRun = {
     consumerPath?: string;
     managementPath?: string;
     employeePath?: string;
+    scenes?: {
+      scene: string;
+      code: string;
+      status: string;
+      resolvePath: string;
+      landingPath: string;
+      targetPath: string;
+      resolveRole: string;
+    }[];
   } | null;
   steps: ProvisioningStep[];
 };
@@ -58,7 +67,7 @@ const stepLabels: Record<string, string> = {
   storefront_publish: '绑定并发布数字门店',
   commercial_defaults: '初始化经营对象',
   channel_circle: '登记渠道与商圈范围',
-  one_code_delivery: '生成 ONE-CODE 交付入口',
+  one_code_delivery: '生成三场景交付二维码',
   activate_verify: '验证四端访问与基础设施',
   ready_handoff: '生成 READY 交付包',
 };
@@ -100,6 +109,7 @@ export default function Onboarding() {
     [note, setNote] = useState(''),
     [run, setRun] = useState<ProvisioningRun | null>(null),
     [saving, setSaving] = useState(false),
+    [revoking, setRevoking] = useState<string | null>(null),
     keyRef = useRef('');
   const update = (key: string, value: string) => setForm({ ...form, [key]: value });
   const refreshRun = async (runId: string) => {
@@ -108,6 +118,29 @@ export default function Onboarding() {
     });
     if (!response.ok) throw Error('REFRESH');
     return (await response.json()).data as ProvisioningRun;
+  };
+  const revokeScene = async (runId: string, scene: string) => {
+    if (!(await sessionApi.context())) return setState('forbidden');
+    setRevoking(scene);
+    try {
+      const response = await sessionApi.request(
+        `${api}/api/v1/platform/onboarding/${runId}/delivery/revoke`,
+        {
+          method: 'POST',
+          headers: { 'content-type': 'application/json', 'x-request-id': crypto.randomUUID() },
+          body: JSON.stringify({ scene }),
+        },
+      );
+      if ([401, 403].includes(response.status)) return setState('forbidden');
+      if (!response.ok) throw Error('REVOKE');
+      const next = (await response.json()).data as ProvisioningRun;
+      setRun(next);
+      setNote(`已撤销场景 ${scene}；该码解析将立即失效。`);
+    } catch {
+      setNote('撤销失败，请稍后重试。');
+    } finally {
+      setRevoking(null);
+    }
   };
   const submit = async () => {
     if (!(await sessionApi.context())) return setState('forbidden');
@@ -161,7 +194,7 @@ export default function Onboarding() {
         <h1>一次提交，生成可登录、可访问的 READY 商户</h1>
         <p>
           系统将创建老板与角色包、主体和首店、行业数字门店、经营默认项及
-          ONE-CODE，并逐步保存机器验收结果。失败时展示步骤轨迹；重新开通使用新的幂等键，不做中途续跑伪装。
+          三类交付码（消费者门店 / 老板激活入口 / 员工入职），并逐步保存机器验收结果。失败时展示步骤轨迹；重新开通使用新的幂等键，不做中途续跑伪装。
         </p>
       </section>
       <section className={styles.panel}>
@@ -311,7 +344,7 @@ export default function Onboarding() {
                     <dd>{run.runId}</dd>
                   </div>
                   <div>
-                    <dt>ONE-CODE</dt>
+                    <dt>消费者门店码</dt>
                     <dd data-testid="provisioning-one-code">{run.delivery?.oneCode ?? '—'}</dd>
                   </div>
                   <div>
@@ -336,6 +369,38 @@ export default function Onboarding() {
                     </dd>
                   </div>
                 </dl>
+                {run.delivery?.scenes?.length ? (
+                  <ul className={styles.steps} data-testid="provisioning-delivery-scenes">
+                    {run.delivery.scenes.map((scene) => (
+                      <li key={scene.scene} data-scene={scene.scene} data-scene-status={scene.status}>
+                        <span>
+                          {scene.scene === 'consumer_storefront'
+                            ? '消费者门店'
+                            : scene.scene === 'owner_activation'
+                              ? '老板激活'
+                              : scene.scene === 'employee_onboarding'
+                                ? '员工入职'
+                                : scene.scene}
+                          {' · '}
+                          <code>{scene.code}</code>
+                        </span>
+                        <StatusBadge tone={scene.status === 'active' ? 'success' : 'neutral'}>
+                          {scene.status === 'active' ? '有效' : '已撤销'}
+                        </StatusBadge>
+                        {scene.status === 'active' ? (
+                          <Button
+                            tone="secondary"
+                            loading={revoking === scene.scene}
+                            data-testid={`provisioning-revoke-${scene.scene}`}
+                            onClick={() => void revokeScene(run.runId, scene.scene)}
+                          >
+                            撤销
+                          </Button>
+                        ) : null}
+                      </li>
+                    ))}
+                  </ul>
+                ) : null}
                 {run.steps.length ? <OnboardingDist run={run} /> : null}
                 <ol className={styles.steps} data-testid="provisioning-steps">
                   {run.steps.map((step) => (
