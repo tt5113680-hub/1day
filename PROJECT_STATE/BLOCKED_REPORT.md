@@ -1,5 +1,13 @@
 ﻿# BLOCKED_REPORT
 
+- status: **CLEAR** for engineering slice W∞-127 PASS
+- next: W∞-128 mid-run resume（§5）；Phase4 still owner/API gated
+- cost_stop: DeepSeek unattended remains disabled until owner re-enables
+- recorded_at: 2026-08-15
+
+---
+# BLOCKED_REPORT
+
 - status: **CLEAR** for engineering slice W∞-126 PASS
 - next: W∞-127 mid-run resume / activation token（§5）；Phase4 still owner/API gated
 - cost_stop: DeepSeek unattended remains disabled until owner re-enables
