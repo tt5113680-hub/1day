@@ -75,6 +75,7 @@ import * as outboxAlertFields from './migrations/073_outbox_alert_fields.js';
 import * as outboxDlqAlertsEventUnique from './migrations/074_outbox_dlq_alerts_event_unique.js';
 import * as agentContracts from './migrations/075_agent_contracts.js';
 import * as ownerActivationTokens from './migrations/076_owner_activation_tokens.js';
+import * as workerHeartbeats from './migrations/077_worker_heartbeats.js';
 import type { Database } from './types.js';
 
 const migrationProvider: MigrationProvider = {
@@ -156,6 +157,7 @@ const migrationProvider: MigrationProvider = {
       '074_outbox_dlq_alerts_event_unique': outboxDlqAlertsEventUnique,
       '075_agent_contracts': agentContracts,
       '076_owner_activation_tokens': ownerActivationTokens,
+      '077_worker_heartbeats': workerHeartbeats,
     };
   },
 };

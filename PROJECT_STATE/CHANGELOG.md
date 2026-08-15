@@ -1,5 +1,10 @@
 ﻿# CHANGELOG
 
+## 2026-08-16 — G1-W∞-129 §5 READY Worker/Outbox health PASS
+
+- migration 077 worker_heartbeats; Worker persistHeartbeat; verify adds worker_health_recent + run-scoped outbox_clear (dead-letter / stale pending); platform verification checklist UI.
+- Evidence: `evidence/G1-MEITUAN-PARITY/WINF129/ACCEPTANCE.md`; tests/g1-winf129 2/2.
+
 ## 2026-08-16 — G1-W∞-128 §5 READY mid-run resume PASS
 
 - Foundation TX commits tenant/org/store; commercial failure → `failed_recoverable` with checkpoint; `POST /api/v1/platform/onboarding/:runId/resume` replays commercial steps to READY; platform UI resume button.

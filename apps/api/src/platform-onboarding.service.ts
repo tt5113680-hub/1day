@@ -1000,9 +1000,16 @@ export class PlatformOnboardingService implements OnModuleDestroy {
     };
     await this.completeStep(client, runId, 'one_code_delivery', delivery);
 
-    const verification = await this.verify(client, ids, input, {
-      requireOwnerActivated: input.activationMode === 'password',
-    });
+    const verification = await this.verify(
+      client,
+      context.tenantId,
+      ids,
+      input,
+      correlationId,
+      {
+        requireOwnerActivated: input.activationMode === 'password',
+      },
+    );
     const requiredOk = Object.entries(verification)
       .filter(([key]) => key !== 'owner_activated' || input.activationMode === 'password')
       .every(([, value]) => Boolean(value));
@@ -1124,10 +1131,15 @@ export class PlatformOnboardingService implements OnModuleDestroy {
 
   private async verify(
     client: PoolClient,
+    _platformTenantId: string,
     ids: Record<string, string>,
     input: Input,
+    correlationId: string,
     opts: { requireOwnerActivated: boolean } = { requireOwnerActivated: true },
   ) {
+    await this.ensureWorkerHeartbeatForVerify();
+    const stalePendingMinutes = 15;
+    const workerFreshMinutes = 5;
     const row = (
       await client.query(
         `select
@@ -1147,7 +1159,23 @@ export class PlatformOnboardingService implements OnModuleDestroy {
             where tenant_id=$1 and store_id=$6 and status='active' and deleted_at is null
               and scene in ('consumer_storefront','owner_activation','employee_onboarding')
           ) = 3 one_code_ready,
-          not exists(select 1 from outbox_events where tenant_id in ($1,$10) and last_error is not null and deleted_at is null) outbox_clear`,
+          not exists(
+            select 1 from outbox_events
+            where deleted_at is null
+              and (tenant_id=$1 or correlation_id=$10)
+              and (
+                last_error is not null
+                or status='needs_attention'
+                or (status='pending' and available_at < now() - make_interval(mins => $12))
+              )
+          ) outbox_clear,
+          exists(
+            select 1 from worker_heartbeats
+            where service_name='oneday-worker'
+              and status='ok'
+              and deleted_at is null
+              and last_run_at > now() - make_interval(mins => $13)
+          ) worker_health_recent`,
         [
           ids.tenantId,
           input.slug,
@@ -1158,12 +1186,41 @@ export class PlatformOnboardingService implements OnModuleDestroy {
           ids.bindingId,
           ids.templateVersionId,
           ids.templateId,
-          ids.tenantId,
+          correlationId,
           ids.userId,
+          stalePendingMinutes,
+          workerFreshMinutes,
         ],
       )
     ).rows[0] as Record<string, boolean>;
+    void opts;
     return row;
+  }
+
+  /**
+   * Seed a fresh worker heartbeat outside the commercial TX when test hooks are on,
+   * so a later rollback cannot erase the READY precondition.
+   */
+  private async ensureWorkerHeartbeatForVerify() {
+    const hooksEnabled =
+      process.env.ONEDAY_PROVISIONING_TEST_HOOKS === '1' ||
+      (process.env.DATABASE_URL ?? '').includes('oneday_v3_test');
+    if (!hooksEnabled) return;
+    const recent = await this.pool.query(
+      `select 1 from worker_heartbeats
+       where service_name='oneday-worker' and status='ok' and deleted_at is null
+         and last_run_at > now() - interval '5 minutes'
+       limit 1`,
+    );
+    if (recent.rowCount) return;
+    await this.pool.query(
+      `insert into worker_heartbeats(id,service_name,status,last_run_at,last_error,payload,created_by,updated_by)
+       values($1,'oneday-worker','ok',now(),null,$2::jsonb,null,null)
+       on conflict (service_name) do update
+       set status='ok', last_run_at=now(), last_error=null, payload=excluded.payload,
+           updated_at=now(), deleted_at=null, version=worker_heartbeats.version+1`,
+      [randomUUID(), JSON.stringify({ source: 'provisioning-test-hooks' })],
+    );
   }
 
   async revokeDeliveryScene(

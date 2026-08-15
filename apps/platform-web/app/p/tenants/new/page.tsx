@@ -63,6 +63,7 @@ type ProvisioningRun = {
       ownerActivated?: boolean;
     };
   } | null;
+  verification?: Record<string, boolean | string | number | null> | null;
   steps: ProvisioningStep[];
 };
 
@@ -208,7 +209,7 @@ export default function Onboarding() {
         <h1>一次提交，生成可登录、可访问的 READY 商户</h1>
         <p>
           系统将创建老板与角色包、主体和首店、行业数字门店、经营默认项及
-          三类交付码（消费者门店 / 老板激活入口 / 员工入职），并逐步保存机器验收结果。失败时展示步骤轨迹；重新开通使用新的幂等键，不做中途续跑伪装。
+          三类交付码（消费者门店 / 老板激活入口 / 员工入职），并逐步保存机器验收结果。商业步骤失败可续跑；Worker/Outbox 健康纳入 READY 断言。
         </p>
       </section>
       <section className={styles.panel}>
@@ -412,6 +413,25 @@ export default function Onboarding() {
                     </div>
                   ) : null}
                 </dl>
+                {run.verification ? (
+                  <ul className={styles.steps} data-testid="provisioning-verification">
+                    {(
+                      [
+                        ['one_code_ready', '三场景一码'],
+                        ['outbox_clear', 'Outbox 无死信/凝固 pending'],
+                        ['worker_health_recent', 'Worker 心跳新鲜'],
+                        ['storefront_published', '门店已发布'],
+                      ] as const
+                    ).map(([key, label]) => (
+                      <li key={key} data-verify={key} data-verify-ok={String(Boolean(run.verification?.[key]))}>
+                        <span>{label}</span>
+                        <StatusBadge tone={run.verification?.[key] ? 'success' : 'danger'}>
+                          {run.verification?.[key] ? '通过' : '未通过'}
+                        </StatusBadge>
+                      </li>
+                    ))}
+                  </ul>
+                ) : null}
                 {run.delivery?.scenes?.length ? (
                   <ul className={styles.steps} data-testid="provisioning-delivery-scenes">
                     {run.delivery.scenes.map((scene) => (

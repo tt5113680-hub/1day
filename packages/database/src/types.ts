@@ -948,6 +948,21 @@ export interface OwnerActivationTokensTable {
   deleted_at: Timestamp | null;
   version: Generated<number>;
 }
+/** W∞-129: Worker tick heartbeat for READY Worker-health assertion. */
+export interface WorkerHeartbeatsTable {
+  id: string;
+  service_name: string;
+  status: string;
+  last_run_at: Timestamp;
+  last_error: string | null;
+  payload: unknown;
+  created_at: Timestamp;
+  created_by: string | null;
+  updated_at: Timestamp;
+  updated_by: string | null;
+  deleted_at: Timestamp | null;
+  version: Generated<number>;
+}
 export interface StorefrontPreviewTokensTable {
   id: string;
   tenant_id: string;
@@ -1818,6 +1833,7 @@ export interface Database {
   member_benefit_ledger: MemberBenefitLedgerTable;
   one_code_entries: OneCodeEntriesTable;
   owner_activation_tokens: OwnerActivationTokensTable;
+  worker_heartbeats: WorkerHeartbeatsTable;
   storefront_preview_tokens: StorefrontPreviewTokensTable;
   portal_bindings: PortalBindingsTable;
   portal_preview_tokens: PortalPreviewTokensTable;

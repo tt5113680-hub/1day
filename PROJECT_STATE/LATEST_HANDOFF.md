@@ -8,11 +8,11 @@
 ## Current task
 
 - branch: `hardening/COMMERCIAL-COMPLETION`
-- last_verified: **2026-08-16** — **W∞-128 PASS** §5 READY 续刀：mid-run resume（foundation 提交 + commercial 可恢复 + POST resume）。See evidence/G1-MEITUAN-PARITY/WINF128/ACCEPTANCE.md。
-- in_flight: **W∞-129 (NEXT)** §5 READY 续刀 — Worker/Outbox health 断言（SPEC §7）
+- last_verified: **2026-08-16** — **W∞-129 PASS** §5 READY 续刀：Worker heartbeat + Outbox run-scoped health 断言。See evidence/G1-MEITUAN-PARITY/WINF129/ACCEPTANCE.md。
+- in_flight: **W∞-130 (NEXT)** §5 READY 续刀 — Circle 双审批可见性（基础 READY 不阻塞，exposure=pending）
 - deferred: Phase4 连接器（待 API/商务前提）
 - blocker: DeepSeek **COST STOP** 仍有效（防空转烧费）；工程向 §5 已解锁
-- note: W125–W128 均已 PASS。
+- note: W125–W129 均已 PASS。
 
 ## Owner gates (parallel)
 
