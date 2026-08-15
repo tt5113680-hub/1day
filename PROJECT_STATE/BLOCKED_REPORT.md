@@ -1,5 +1,21 @@
 ﻿# BLOCKED_REPORT
 
+## RESOLVED – NO_AUTHORIZED_SLICE for §5 (2026-08-15)
+
+- resolved_at: 2026-08-15 Asia/Shanghai
+- status: **RESOLVED** for engineering direction
+- Owner said「开始第五节」; W∞-125 PASS. Next: W∞-126+.
+- **COST STOP for DeepSeek remains ACTIVE** (see below) until owner re-enables unattended.
+
+## ACTIVE – COST_STOP_20260815 (owner cost bleed)
+
+- status: **ACTIVE** — owner action required
+- recorded_at: 2026-08-15 13:13 Asia/Shanghai
+- why: Unattended OpenCode/DeepSeek kept cold-starting with NO_AUTHORIZED_SLICE (200+ times today). Each turn billed DeepSeek even though no engineering slice was authorized. Gate bug: historical "## RESOLVED" in this file cleared Test-ActiveBlockedReport.
+- stop: IDE-Agent-COST-STOP lock + DEEPSEEK_API_KEY commented in .env.local-unattended. Disable scheduled tasks as Administrator.
+- do_not: launch OpenCode/DeepSeek until owner clears this COST STOP and restores key + tasks.
+
+---
 ## ACTIVE – No authorized engineering slice remains (2026-08-14)
 
 - re_verified_at_checkpoint_213: **2026-08-15** Asia/Shanghai - two-hundred-and-thirteenth consecutive unattended cold-start turn re-verified the identical NO_AUTHORIZED_SLICE state. Full cold-start re-read of CHARTER -> PRODUCT_DUAL_TRACK_STRATEGY -> MEITUAN_DEPTH_OPTIMIZATION_PLAN -> EXECUTOR_HANDOFF -> LATEST_HANDOFF -> DECISION_REQUIRED -> CURRENT_STATE -> TASK_QUEUE -> git status (W∞-107..124 all [x] PASS incl. W∞-110 at TASK_QUEUE line 220 (G1-R-MEMBERSHIP-RULES-ALERTS membership closed-loop hardening: rules/expiry/alerts, migration 065 applied), W∞-112 at line 227, W∞-124 at line 238 last engineering slice, evidence/G1-MEITUAN-PARITY/WINF107/WINF110/WINF124/ACCEPTANCE.md; MEITUAN_DEPTH_OPTIMIZATION_PLAN section 7 "W∞-110 NEXT" is a stale label not synced when W110 passed - not open work; only non-archived [ ] engineering item remains section 5 READY at TASK_QUEUE line 216, DEFERRED per MEITUAN_DEPTH_OPTIMIZATION_PLAN section 5 awaiting owner「开始第五节」; this turn's task explicitly says "DEFERRED - do NOT start §5 READY / tenant_provisioning_runs full orchestration until owner says 开始第五节" - an uncommitted working-tree edit to DECISION_REQUIRED.md claiming §5 READY AUTHORIZED 2026-08-15 was found and was NOT a signed committed owner decision and directly conflicted with both the committed baseline and this turn's explicit instruction; it was reverted back to the committed DEFERRED baseline (git restore) so state files stay consistent with the actual no-authorized-slice reality; remaining [ ] entries (G1 OWNER GATE 239/243, HUMAN-PILOT-HANDOFF 244/262/268, CONSUMER-COMMERCIAL-HOME-V1 248, FINAL 273, HARDENING/CHANNEL/CIRCLE/PAGE-*/CORE-* 285-531 archival list) are owner human gates or historical archive, not engineering slices; G1 OWNER GATE / HUMAN-PILOT-HANDOFF / PRODUCT_OWNER_UI_ACCEPTANCE remain open owner human gates, agent does not auto-sign) + git status (fetch: HEAD=c9e5632 = origin/hardening/COMMERCIAL-COMPLETION, ahead=0 behind=0, working tree has only owner-added untracked ONEDAY_DIAGNOSIS_REUSE_AUDIT.md untouched) + lock check (only logs/unattended/.construction.lock present, holder=unattended-opencode, pid=11808, started=2026-08-15T12:59:03, expires=2026-08-15T15:59:03 covering this window = this executor's own authorized unattended lock, not a parallel IDE writer; only 1 construction lock, no other parallel lock). Re-confirmed: no authorized engineering slice exists to cut (all W∞-107..124 PASS; only candidate section 5 READY is DEFERRED and this turn explicitly prohibits it). Per COMMERCIAL_EXECUTION_CHARTER + MEITUAN_DEPTH_OPTIMIZATION_PLAN section 5 + DECISION_REQUIRED, must not start section 5 READY full orchestration (await owner「开始第五节」; this turn's task explicitly says DEFERRED - do NOT start section 5 READY) or Phase 4 connectors (await owner API/business premise), must not auto-sign owner gates (PRODUCT_OWNER_UI_ACCEPTANCE.md / HUMAN-PILOT-HANDOFF / G1 OWNER GATE), must not claim 全部商用. Did not revive consumer_orders / native checkout; zero fake BI; did not touch ONEDAY_DIAGNOSIS_REUSE_AUDIT.md. No code engineering change this turn (state reconfirm only); no new PASS, no commercial completion claim, no forbidden slice started. Next direction awaits owner decision (owner must explicitly say「开始第五节」to authorize W∞-125+ section 5 READY work).
@@ -298,3 +314,5 @@ Headless OpenCode (DeepSeek) and IDE Agent briefly overlapped on `hardening/COMM
 ### Owner note
 
 DeepSeek balance did not change overnight because the daemon was **intentionally skipping** (not a billing outage). After this RESOLVED marker, scheduled daemon/OpenCode may call DeepSeek again on the next poll (~20m or force run).
+
+

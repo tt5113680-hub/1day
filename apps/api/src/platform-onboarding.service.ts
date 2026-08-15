@@ -203,9 +203,16 @@ export class PlatformOnboardingService implements OnModuleDestroy {
       plan,
       themeVariant: optionalText(body.themeVariant, 48) ?? 'signature',
       sourceMode: body.sourceMode === 'channel_referral' ? 'channel_referral' : 'platform_direct',
+      channelId: optionalText(body.channelId, 36),
     };
     if (!/.+@.+\..+/.test(input.adminEmail) || input.adminPassword.length < 12)
       throw new BadRequestException('VALIDATION_ERROR');
+    if (input.sourceMode === 'channel_referral') {
+      if (!input.channelId || !/^[0-9a-f-]{36}$/i.test(input.channelId))
+        throw new BadRequestException('VALIDATION_ERROR');
+    } else {
+      input.channelId = null;
+    }
     return input;
   }
 
@@ -632,13 +639,35 @@ export class PlatformOnboardingService implements OnModuleDestroy {
       memberPolicy: 'consent_required',
       employeeWorkspace: 'owner_store_manager',
     });
-    await this.completeStep(
-      client,
-      runId,
-      'channel_circle',
-      { sourceMode: input.sourceMode, circleExposure: 'not_requested' },
-      input.sourceMode === 'platform_direct' ? 'skipped' : 'succeeded',
-    );
+
+    let channelCircleOutput: Record<string, unknown> = {
+      sourceMode: input.sourceMode,
+      circleExposure: 'not_requested',
+    };
+    let channelCircleState: 'succeeded' | 'skipped' =
+      input.sourceMode === 'platform_direct' ? 'skipped' : 'succeeded';
+    if (input.sourceMode === 'channel_referral' && input.channelId) {
+      const channel = (
+        await client.query(
+          "select id,code,name from platform_channels where id=$1 and tenant_id=$2 and status='active' and deleted_at is null",
+          [input.channelId, context.tenantId],
+        )
+      ).rows[0];
+      if (!channel) throw new BadRequestException('CHANNEL_NOT_AVAILABLE');
+      await client.query(
+        "insert into platform_channel_merchants(id,tenant_id,channel_id,merchant_tenant_id,onboarding_status,service_status,created_by,updated_by) values($1,$2,$3,$4,'onboarding','pending',$5,$5)",
+        [randomUUID(), context.tenantId, channel.id, ids.tenantId, context.userId],
+      );
+      channelCircleOutput = {
+        sourceMode: input.sourceMode,
+        channelId: channel.id,
+        channelCode: channel.code,
+        circleExposure: 'not_requested',
+        membership: 'written',
+      };
+      channelCircleState = 'succeeded';
+    }
+    await this.completeStep(client, runId, 'channel_circle', channelCircleOutput, channelCircleState);
 
     const code = randomUUID().replaceAll('-', '').slice(0, 20).toUpperCase();
     const consumerPath = `/c/entry?tenant=${encodeURIComponent(input.slug)}&source=one-code:${code}&scene=storefront`;
@@ -803,6 +832,7 @@ export class PlatformOnboardingService implements OnModuleDestroy {
       plan: input.plan,
       themeVariant: input.themeVariant,
       sourceMode: input.sourceMode,
+      channelId: input.channelId,
     };
   }
 

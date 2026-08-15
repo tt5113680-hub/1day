@@ -18,6 +18,8 @@ type Onboarding = {
   deliveryStatus: string;
   deliveryNote: string | null;
   version: number;
+  runId?: string | null;
+  provisioningState?: string | null;
 };
 type Form = {
   channelId: string;
@@ -410,6 +412,13 @@ export default function ChannelMerchantOnboardingPage() {
                       >
                         交付：{deliveryLabel(item.deliveryStatus)}
                       </StatusBadge>
+                      {item.provisioningState ? (
+                        <StatusBadge
+                          tone={item.provisioningState === 'ready' ? 'success' : 'warning'}
+                        >
+                          READY：{item.provisioningState}
+                        </StatusBadge>
+                      ) : null}
                       {item.deliveryNote ? ` — ${item.deliveryNote}` : ''}
                     </small>
                   </div>

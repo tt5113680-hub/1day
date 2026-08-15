@@ -101,12 +101,20 @@ Owner accepted IDE depth plan with these hard overrides (see `MEITUAN_DEPTH_OPTI
 | §2 可深度建设 | **必须达到目标深度**（作业闭环，不得停在壳/分布条） |
 | §3 底座+产品深度 | **目标 100%**（Blueprint / 各端产品深度拉满） |
 | §4 对标深度模型 | **继续做到 100%**（列表→筛→详→操作→审计） |
-| §5 开通 READY 工程 | **DEFERRED — 先不要做**；待主人明确「开始第五节」再开；可修现有开通壳 bug |
+| §5 开通 READY 工程 | **ACTIVE — 主人 2026-08-15「开始第五节」**；首刀 W∞-125：渠道开通委托同一 READY Run（`source_mode=channel_referral`） |
 | §6 多租户 SaaS | **补到最强**（配额拦截/会话即时失效/审计导出/Outbox/scope/同步） |
 | §7 分阶段路线 | **必须落地**；Phase 1 跳过 1.1 READY，从 W∞-107 起切 |
 | §8–10 | 按方案（测试策略/指标/对应关系）；指标按 100% 拉满 |
 | 执行器 | 与 **DeepSeek Plan B** 无人值守配合；IDE 不并行写入 |
 
+## Resolved (2026-08-15 — cost guard + prefer local LLM)
+
+| Decision | Resolution |
+| -------- | ---------- |
+| J1 成本硬闸门 | **所有同类无人值守项目必须默认具备**：无授权切片 / 活跃 BLOCKED → **零 API 调用**；禁止 cold-start 复确认烧费；阻塞检测不得被文末历史 RESOLVED 误清。本仓已落地于 `scripts/unattended-scheduler.ps1` 等。 |
+| J2 执行器优先序 | **优先本地大模型**（Ollama / LM Studio / 本机 OpenAI 兼容 endpoint）作为以后无人值守默认；云端 DeepSeek 等按量 API 仅备用且须主人明确打开。Cursor 云额度不作 24h 主执行器。 |
+| J3 本仓当前 | Construction/Daemon 计划任务保持 **Disabled**；`DEEPSEEK_API_KEY` 已注释止损；恢复前须主人授权真实切片 + 选定本地或云端执行器。 |
+
 ## Current blockers
 
-None (engineering). Human G1 UI sign-off still open; does not block W∞-107+ depth slices.
+- **COST STOP ACTIVE（2026-08-15）** — 空转烧费事故后已停 DeepSeek；见 `OWNER_ALERT_UNATTENDED.md`。§5 READY 已由主人「开始第五节」解锁（首刀 W∞-125）。Human G1 UI sign-off still open.

@@ -16,7 +16,7 @@
 | **二 可深度建设** | **必须达到目标深度** | §2 能力矩阵「目标深度」列 = 验收硬门槛，不得停在壳/分布条 |
 | **三 底座与产品深度** | **必须 100%** | Blueprint 成熟度目标 **100/100**；底座保持绿；产品深度从 ~52–72% 拉满 |
 | **四 对标深度模型** | **继续深度必须到 100%** | MPC/ME/MH5/MP 各模块按 §4 清单做到「列表→筛→详→操作→审计」闭环 |
-| **五 开通 READY 工程** | **先不要做**（主人暂不懂） | **DEFERRED**：不排 `tenant_provisioning_runs` / READY 10 步新工程；现有开通壳保留；待主人明确「开始第五节」后再开 |
+| **五 开通 READY 工程** | **主人 2026-08-15「开始第五节」** | **ACTIVE**：按 `TENANT_ONE_CLICK_PROVISIONING_SPEC.md` 切刀；首刀渠道统一 READY Run |
 | **六 多租户 SaaS** | **必须补到最强** | §6 全部项按「最强」目标施工，不得半成品 |
 | **七 分阶段路线** | **必须落地** | Phase 1→2→3 按序切 TASK；跳过 Phase 内 §5 相关切片 |
 | **八 测试策略** | **按方案** | 先产品深度再商用 UAT；工程回归持续绿 |
@@ -118,15 +118,17 @@
 
 | ID | 内容 | 状态 |
 | -- | ---- | ---- |
-| MP-02 READY | `tenant_provisioning_runs` 10 步编排 | **主人明确前禁止开工** |
+| MP-02 READY | `tenant_provisioning_runs` 10 步编排 | **ACTIVE**（首刀 W∞-125） |
 
 ---
 
-## 5. 开通 READY 工程 — DEFERRED
+## 5. 开通 READY 工程 — ACTIVE（主人 2026-08-15「开始第五节」）
 
-- 规格仍以 `TENANT_ONE_CLICK_PROVISIONING_SPEC.md` 为真源，**仅文档保留**。
-- 无人值守 **不得** 新建 Run 状态机 / READY 断言自动化 / 开通 3 步重构，直到 `DECISION_REQUIRED.md` 出现主人「开始第五节」决议。
-- 现有 `/p/tenants/new`、`/ch/merchants/new` 壳与既有 provisioning trail **可修 bug**，不得扩成完整 READY 产品。
+- 规格真源：`TENANT_ONE_CLICK_PROVISIONING_SPEC.md`
+- **已解锁**：可新建/扩展 Run 编排、READY 断言、渠道统一到同一 command
+- **首刀 W∞-125**：Channel `/ch/merchants/new` 委托 Platform provisioning Run（`source_mode=channel_referral`），写真实 channel membership；交付「已交付」须 READY 校验
+- 后续切片（resume saga / activation token / 三场景 QR）按 TASK_QUEUE 续切
+- 现有 `/p/tenants/new` 11 步 READY 路径保留并作为共享 command
 
 ---
 
@@ -153,7 +155,7 @@
 
 | TASK | 内容 | 状态 |
 | ---- | ---- | ---- |
-| ~~1.1 READY 开通~~ | — | **DEFERRED（§5）** |
+| ~~1.1 READY 开通~~ | W∞-125+ | **ACTIVE**（首刀 W∞-125 PASS） |
 | **W∞-107** | 工作台队列一键处置（MPC-01 / 1.3） | **PASS** |
 | **W∞-108** | Storefront 发布链闭环加固（装修→Consumer 可读 / 1.2） | **PASS** |
 | **W∞-109** | CRM 深操作：RFM + 批量 + 360 轴（MPC-06 / 1.4） | **PASS** |
@@ -208,7 +210,7 @@
 | 管理端 CRUD 完整模块 | **100%**（workflows 除外为 CUSTOM） |
 | 工作台待办可处置率 | **≥95%** |
 | 假 BI | **0** |
-| §5 READY | 本波次 N/A（deferred） |
+| §5 READY | W∞-125 PASS；续刀 W∞-126+ |
 
 ---
 
