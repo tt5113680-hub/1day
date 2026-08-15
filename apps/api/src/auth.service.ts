@@ -1,17 +1,27 @@
-import { Injectable, OnModuleDestroy, UnauthorizedException } from '@nestjs/common';
 import {
+  BadRequestException,
+  ConflictException,
+  Injectable,
+  NotFoundException,
+  OnModuleDestroy,
+  UnauthorizedException,
+} from '@nestjs/common';
+import {
+  hashPassword,
   hashRefreshToken,
   newRefreshToken,
   signAccessToken,
   verifyAccessToken,
   verifyPassword,
 } from '@oneday/auth';
-import { randomUUID } from 'node:crypto';
+import { createHash, randomUUID } from 'node:crypto';
 import { createApiPool } from './database-pool';
 import { requireAuthTokenSecret } from './runtime-config';
 
 const accessLifetimeMs = 15 * 60 * 1000;
 const refreshLifetimeMs = 30 * 24 * 60 * 60 * 1000;
+const hashToken = (value: string) => createHash('sha256').update(value).digest('hex');
+const CODE = /^[A-Z0-9]{12,48}$/;
 
 @Injectable()
 export class AuthService implements OnModuleDestroy {
@@ -86,6 +96,132 @@ export class AuthService implements OnModuleDestroy {
     );
     if (session.rowCount !== 1) throw new UnauthorizedException('AUTH_REQUIRED');
     return claims;
+  }
+
+  async activateOwner(body: {
+    token?: string;
+    code?: string;
+    password: string;
+    deviceName?: string;
+  }) {
+    const password = body.password?.trim() ?? '';
+    if (password.length < 12) throw new BadRequestException('VALIDATION_ERROR');
+    const token = typeof body.token === 'string' ? body.token.trim() : '';
+    const code = typeof body.code === 'string' ? body.code.trim().toUpperCase() : '';
+    if (!token && !code) throw new BadRequestException('VALIDATION_ERROR');
+    if (code && !CODE.test(code)) throw new BadRequestException('VALIDATION_ERROR');
+
+    const client = await this.pool.connect();
+    try {
+      await client.query('begin');
+      let row: {
+        id: string;
+        tenant_id: string;
+        run_id: string;
+        user_id: string;
+        email: string;
+        slug: string;
+      };
+      if (token) {
+        const found = await client.query(
+          `select t.id,t.tenant_id,t.run_id,t.user_id,u.email,tn.slug
+           from owner_activation_tokens t
+           join users u on u.id=t.user_id and u.deleted_at is null
+           join tenants tn on tn.id=t.tenant_id and tn.deleted_at is null
+           where t.token_hash=$1 and t.status='pending' and t.expires_at>now() and t.deleted_at is null
+           for update of t`,
+          [hashToken(token)],
+        );
+        if (!found.rowCount) throw new NotFoundException('NOT_FOUND');
+        row = found.rows[0];
+      } else {
+        const found = await client.query(
+          `select t.id,t.tenant_id,t.run_id,t.user_id,u.email,tn.slug
+           from one_code_entries oce
+           join owner_activation_tokens t on t.one_code_entry_id=oce.id and t.tenant_id=oce.tenant_id
+             and t.status='pending' and t.expires_at>now() and t.deleted_at is null
+           join users u on u.id=t.user_id and u.deleted_at is null
+           join tenants tn on tn.id=t.tenant_id and tn.deleted_at is null
+           where oce.code=$1 and oce.scene='owner_activation' and oce.status='active' and oce.deleted_at is null
+           for update of t`,
+          [code],
+        );
+        if (!found.rowCount) throw new NotFoundException('NOT_FOUND');
+        row = found.rows[0];
+      }
+
+      const run = await client.query(
+        "select id,state from tenant_provisioning_runs where id=$1 and tenant_id=$2 and deleted_at is null for update",
+        [row.run_id, row.tenant_id],
+      );
+      if (!run.rowCount) throw new NotFoundException('NOT_FOUND');
+      if (run.rows[0].state !== 'awaiting_activation' && run.rows[0].state !== 'ready')
+        throw new ConflictException('CONFLICT');
+
+      const passwordHash = await hashPassword(password);
+      await client.query(
+        "update users set password_hash=$2,status='active',updated_at=now(),version=version+1 where id=$1",
+        [row.user_id, passwordHash],
+      );
+      await client.query(
+        "update owner_activation_tokens set status='used',used_at=now(),updated_at=now(),version=version+1 where id=$1",
+        [row.id],
+      );
+
+      if (run.rows[0].state === 'awaiting_activation') {
+        const verification = {
+          owner_activated: true,
+          activationMode: 'token',
+          awaitingActivation: false,
+        };
+        await client.query(
+          "update tenant_provisioning_steps set state='succeeded',attempts=attempts+1,ended_at=now(),output=coalesce(output,'{}'::jsonb)||$3::jsonb,updated_at=now(),version=version+1 where run_id=$1 and step_code=$2",
+          [row.run_id, 'activate_verify', verification],
+        );
+        await client.query(
+          "update tenant_provisioning_steps set state='succeeded',attempts=attempts+1,started_at=coalesce(started_at,now()),ended_at=now(),output=$3,updated_at=now(),version=version+1 where run_id=$1 and step_code=$2",
+          [
+            row.run_id,
+            'ready_handoff',
+            { ready: true, tenantId: row.tenant_id, activatedVia: 'owner_activation_token' },
+          ],
+        );
+        await client.query(
+          "update tenant_provisioning_runs set state='ready',ready_at=now(),verification=coalesce(verification,'{}'::jsonb)||$2::jsonb,updated_at=now(),version=version+1 where id=$1",
+          [row.run_id, { owner_activated: true, awaitingActivation: false }],
+        );
+        const detail = {
+          runId: row.run_id,
+          tenantId: row.tenant_id,
+          userId: row.user_id,
+          activatedVia: token ? 'token' : 'owner_code',
+        };
+        await client.query(
+          "insert into audit_logs(id,tenant_id,actor_id,action,resource_type,resource_id,correlation_id,trace_id,details,created_by,updated_by) values($1,$2,$3,'platform.tenant_ready','tenant_provisioning_run',$4,$5,'owner-activation',$6,$3,$3)",
+          [randomUUID(), row.tenant_id, row.user_id, row.run_id, randomUUID(), detail],
+        );
+        await client.query(
+          "insert into outbox_events(id,tenant_id,event_type,aggregate_type,aggregate_id,payload,correlation_id,trace_id,created_by,updated_by) values($1,$2,'tenant.provisioning.ready.v1','tenant_provisioning_run',$3,$4,$5,'owner-activation',$6,$6)",
+          [randomUUID(), row.tenant_id, row.run_id, detail, randomUUID(), row.user_id],
+        );
+      }
+
+      await client.query('commit');
+      const session = await this.createSession(row.user_id, row.tenant_id, body.deviceName ?? null);
+      return {
+        ...session,
+        tenantId: row.tenant_id,
+        tenantSlug: row.slug,
+        email: row.email,
+        runId: row.run_id,
+        state: 'ready',
+      };
+    } catch (error) {
+      await client.query('rollback');
+      throw error;
+    } finally {
+      client.release();
+    }
   }
 
   async onModuleDestroy() {

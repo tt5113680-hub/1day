@@ -930,6 +930,24 @@ export interface OneCodeEntriesTable {
   deleted_at: Timestamp | null;
   version: Generated<number>;
 }
+/** W∞-127: one-time owner activation after token-mode provisioning. */
+export interface OwnerActivationTokensTable {
+  id: string;
+  tenant_id: string;
+  run_id: string;
+  user_id: string;
+  one_code_entry_id: string | null;
+  token_hash: string;
+  status: string;
+  expires_at: Timestamp;
+  used_at: Timestamp | null;
+  created_at: Timestamp;
+  created_by: string | null;
+  updated_at: Timestamp;
+  updated_by: string | null;
+  deleted_at: Timestamp | null;
+  version: Generated<number>;
+}
 export interface StorefrontPreviewTokensTable {
   id: string;
   tenant_id: string;
@@ -1799,6 +1817,7 @@ export interface Database {
   membership_enrollments: MembershipEnrollmentsTable;
   member_benefit_ledger: MemberBenefitLedgerTable;
   one_code_entries: OneCodeEntriesTable;
+  owner_activation_tokens: OwnerActivationTokensTable;
   storefront_preview_tokens: StorefrontPreviewTokensTable;
   portal_bindings: PortalBindingsTable;
   portal_preview_tokens: PortalPreviewTokensTable;

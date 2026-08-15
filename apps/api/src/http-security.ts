@@ -85,7 +85,7 @@ export function getHttpSecurityConfiguration(
 }
 
 export function routeRateLimit(pathname: string, method: string): RateLimitBucket | undefined {
-  if (method === 'POST' && ['/api/v1/auth/login', '/api/v1/auth/refresh'].includes(pathname))
+  if (method === 'POST' && ['/api/v1/auth/login', '/api/v1/auth/refresh', '/api/v1/auth/owner-activate'].includes(pathname))
     return 'auth';
   if (
     !['GET', 'HEAD', 'OPTIONS'].includes(method) &&

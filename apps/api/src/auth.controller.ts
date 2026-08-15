@@ -58,6 +58,23 @@ export class AuthController {
       body.deviceName,
     );
   }
+  @Post('owner-activate') activateOwner(
+    @Body()
+    body: {
+      token?: string;
+      code?: string;
+      password?: string;
+      deviceName?: string;
+    },
+  ) {
+    if (!body.password) throw new BadRequestException('VALIDATION_ERROR');
+    return this.auth.activateOwner({
+      token: body.token,
+      code: body.code,
+      password: body.password,
+      deviceName: body.deviceName,
+    });
+  }
   @Post('refresh') refresh(@Body() body: { refreshToken?: string }) {
     if (!body.refreshToken) throw new BadRequestException('VALIDATION_ERROR');
     return this.auth.refresh(body.refreshToken);

@@ -1,5 +1,10 @@
 ﻿# CHANGELOG
 
+## 2026-08-15 — G1-W∞-127 §5 READY Owner activation token PASS
+
+- `activationMode=token` leaves run in `awaiting_activation`; migration 076; `POST /api/v1/auth/owner-activate`; `/owner-activate` page; password mode kept for fixtures.
+- Evidence: `evidence/G1-MEITUAN-PARITY/WINF127/ACCEPTANCE.md`; tests/g1-winf127 2/2.
+
 ## 2026-08-15 — G1-W∞-126 §5 READY 三场景 QR PASS
 
 - Provisioning emits three one_code scenes (consumer_storefront / owner_activation / employee_onboarding); revoke by scene; platform UI lists + revoke; READY verification requires all three.

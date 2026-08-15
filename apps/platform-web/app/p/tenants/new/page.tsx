@@ -54,6 +54,14 @@ type ProvisioningRun = {
       targetPath: string;
       resolveRole: string;
     }[];
+    activation?: {
+      mode?: string;
+      token?: string;
+      expiresAt?: string;
+      activatePath?: string;
+      ownerCode?: string;
+      ownerActivated?: boolean;
+    };
   } | null;
   steps: ProvisioningStep[];
 };
@@ -101,6 +109,7 @@ export default function Onboarding() {
       adminEmail: '',
       adminName: '',
       adminPassword: '',
+      activationMode: 'token',
       industry: 'restaurant',
       plan: 'starter',
       themeVariant: 'signature',
@@ -150,7 +159,10 @@ export default function Onboarding() {
       const response = await sessionApi.request(`${api}/api/v1/platform/onboarding`, {
         method: 'POST',
         headers: { 'idempotency-key': keyRef.current, 'content-type': 'application/json' },
-        body: JSON.stringify(form),
+        body: JSON.stringify({
+          ...form,
+          adminPassword: form.activationMode === 'password' ? form.adminPassword : undefined,
+        }),
       });
       if ([401, 403].includes(response.status)) return setState('forbidden');
       if (response.status === 409) {
@@ -160,11 +172,13 @@ export default function Onboarding() {
       if (!response.ok) throw Error();
       const result = (await response.json()).data as ProvisioningRun;
       setRun(result);
-      setState(result.state === 'ready' ? 'done' : 'error');
+      setState(result.state === 'ready' || result.state === 'awaiting_activation' ? 'done' : 'error');
       setNote(
         result.state === 'ready'
           ? `商户 ${result.slug} 已完成机器验证并进入 READY。`
-          : `开通运行 ${result.runId} 状态 ${result.state}；请查看失败步骤后换标识重新开通。`,
+          : result.state === 'awaiting_activation'
+            ? `商户 ${result.slug} 已开通，等待老板用激活令牌设置密码后进入 READY。`
+            : `开通运行 ${result.runId} 状态 ${result.state}；请查看失败步骤后换标识重新开通。`,
       );
     } catch {
       setState('error');
@@ -282,15 +296,28 @@ export default function Onboarding() {
             />
           </label>
           <label>
-            初始登录密码
-            <input
-              aria-label="初始登录密码"
-              type="password"
-              minLength={12}
-              value={form.adminPassword}
-              onChange={(event) => update('adminPassword', event.target.value)}
-            />
+            老板激活方式
+            <select
+              aria-label="老板激活方式"
+              value={form.activationMode}
+              onChange={(event) => update('activationMode', event.target.value)}
+            >
+              <option value="token">一次性激活令牌（推荐）</option>
+              <option value="password">直接设置初始密码</option>
+            </select>
           </label>
+          {form.activationMode === 'password' ? (
+            <label>
+              初始登录密码
+              <input
+                aria-label="初始登录密码"
+                type="password"
+                minLength={12}
+                value={form.adminPassword}
+                onChange={(event) => update('adminPassword', event.target.value)}
+              />
+            </label>
+          ) : null}
           <label>
             行业模板
             <select
@@ -326,7 +353,11 @@ export default function Onboarding() {
           <section className={styles.result}>
             <p className={styles.note} role="status">
               <StatusBadge tone={state === 'done' ? 'success' : 'danger'}>
-                {state === 'done' ? 'READY' : '需要处理'}
+                {run?.state === 'awaiting_activation'
+                  ? '待激活'
+                  : state === 'done'
+                    ? 'READY'
+                    : '需要处理'}
               </StatusBadge>
               <span>{note}</span>
             </p>
@@ -368,6 +399,18 @@ export default function Onboarding() {
                       {run.industry} / {run.plan}
                     </dd>
                   </div>
+                  {run.delivery?.activation?.mode === 'token' && run.delivery.activation.token ? (
+                    <div>
+                      <dt>老板激活令牌</dt>
+                      <dd data-testid="provisioning-activation-token">
+                        <code>{run.delivery.activation.token}</code>
+                        <small>
+                          {' '}
+                          交给老板在 /owner-activate 设置密码；勿在平台浏览器长期保存明文密码。
+                        </small>
+                      </dd>
+                    </div>
+                  ) : null}
                 </dl>
                 {run.delivery?.scenes?.length ? (
                   <ul className={styles.steps} data-testid="provisioning-delivery-scenes">

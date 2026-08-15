@@ -128,7 +128,8 @@
 - **已解锁**：可新建/扩展 Run 编排、READY 断言、渠道统一到同一 command
 - **首刀 W∞-125**：Channel `/ch/merchants/new` 委托 Platform provisioning Run（`source_mode=channel_referral`），写真实 channel membership；交付「已交付」须 READY 校验
 - **W∞-126 PASS**：三场景 QR（`consumer_storefront` / `owner_activation` / `employee_onboarding`）可解析、可撤销、可追踪
-- 后续切片（resume saga / activation token）按 TASK_QUEUE 续切
+- **W∞-127 PASS**：Owner activation token（`awaiting_activation` → `/api/v1/auth/owner-activate` → READY）
+- 后续切片（resume saga）按 TASK_QUEUE 续切
 - 现有 `/p/tenants/new` 11 步 READY 路径保留并作为共享 command
 
 ---
@@ -156,7 +157,7 @@
 
 | TASK | 内容 | 状态 |
 | ---- | ---- | ---- |
-| ~~1.1 READY 开通~~ | W∞-125+ | **ACTIVE**（W∞-125/126 PASS；NEXT W∞-127） |
+| ~~1.1 READY 开通~~ | W∞-125+ | **ACTIVE**（W∞-125/126/127 PASS；NEXT W∞-128 mid-run resume） |
 | **W∞-107** | 工作台队列一键处置（MPC-01 / 1.3） | **PASS** |
 | **W∞-108** | Storefront 发布链闭环加固（装修→Consumer 可读 / 1.2） | **PASS** |
 | **W∞-109** | CRM 深操作：RFM + 批量 + 360 轴（MPC-06 / 1.4） | **PASS** |
@@ -211,7 +212,7 @@
 | 管理端 CRUD 完整模块 | **100%**（workflows 除外为 CUSTOM） |
 | 工作台待办可处置率 | **≥95%** |
 | 假 BI | **0** |
-| §5 READY | W∞-125/126 PASS；续刀 W∞-127+ |
+| §5 READY | W∞-125/126/127 PASS；续刀 W∞-128+ mid-run resume |
 
 ---
 

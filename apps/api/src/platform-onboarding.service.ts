@@ -5,7 +5,7 @@ import {
   NotFoundException,
   OnModuleDestroy,
 } from '@nestjs/common';
-import { randomUUID, scryptSync } from 'node:crypto';
+import { createHash, randomBytes, randomUUID, scryptSync } from 'node:crypto';
 import type { PoolClient } from 'pg';
 import { createApiPool } from './database-pool';
 import { DataScopeService } from './data-scope.service';
@@ -26,6 +26,9 @@ const STEP_CODES = [
   'activate_verify',
   'ready_handoff',
 ] as const;
+
+const hashToken = (value: string) => createHash('sha256').update(value).digest('hex');
+const mintActivationToken = () => randomBytes(24).toString('base64url');
 
 const text = (value: unknown, max: number) => {
   if (typeof value !== 'string' || !value.trim() || value.trim().length > max)
@@ -185,6 +188,12 @@ export class PlatformOnboardingService implements OnModuleDestroy {
   private input(body: Record<string, unknown>) {
     const plan = String(body.plan ?? 'starter');
     if (!PLANS.has(plan)) throw new BadRequestException('VALIDATION_ERROR');
+    const activationMode =
+      body.activationMode === 'token' || body.activationMode === 'password'
+        ? body.activationMode
+        : body.adminPassword
+          ? 'password'
+          : 'token';
     const input = {
       slug: slug(body.slug),
       tenantName: text(body.tenantName, 160),
@@ -198,14 +207,19 @@ export class PlatformOnboardingService implements OnModuleDestroy {
       longitude: coordinate(body.longitude, -180, 180),
       adminEmail: text(body.adminEmail, 320).toLowerCase(),
       adminName: text(body.adminName, 160),
-      adminPassword: text(body.adminPassword, 128),
+      adminPassword:
+        activationMode === 'password' ? text(body.adminPassword, 128) : (optionalText(body.adminPassword, 128) ?? ''),
       industry: industryFrom(body),
       plan,
       themeVariant: optionalText(body.themeVariant, 48) ?? 'signature',
       sourceMode: body.sourceMode === 'channel_referral' ? 'channel_referral' : 'platform_direct',
       channelId: optionalText(body.channelId, 36),
+      activationMode: activationMode as 'password' | 'token',
     };
-    if (!/.+@.+\..+/.test(input.adminEmail) || input.adminPassword.length < 12)
+    if (!/.+@.+\..+/.test(input.adminEmail)) throw new BadRequestException('VALIDATION_ERROR');
+    if (input.activationMode === 'password' && input.adminPassword.length < 12)
+      throw new BadRequestException('VALIDATION_ERROR');
+    if (input.activationMode === 'token' && input.adminPassword)
       throw new BadRequestException('VALIDATION_ERROR');
     if (input.sourceMode === 'channel_referral') {
       if (!input.channelId || !/^[0-9a-f-]{36}$/i.test(input.channelId))
@@ -278,9 +292,18 @@ export class PlatformOnboardingService implements OnModuleDestroy {
         [runId],
       );
       const resources = await this.provision(client, context, input, runId, correlationId);
+      const finalState =
+        input.activationMode === 'token' ? 'awaiting_activation' : 'ready';
       await client.query(
-        "update tenant_provisioning_runs set tenant_id=$2,state='ready',delivery=$3,verification=$4,ready_at=now(),updated_at=now(),updated_by=$5 where id=$1",
-        [runId, resources.tenantId, resources.delivery, resources.verification, context.userId],
+        `update tenant_provisioning_runs set tenant_id=$2,state=$3,delivery=$4,verification=$5,ready_at=${finalState === 'ready' ? 'now()' : 'null'},updated_at=now(),updated_by=$6 where id=$1`,
+        [
+          runId,
+          resources.tenantId,
+          finalState,
+          resources.delivery,
+          resources.verification,
+          context.userId,
+        ],
       );
       await client.query('commit');
       return this.get(context, runId);
@@ -410,6 +433,8 @@ export class PlatformOnboardingService implements OnModuleDestroy {
       serviceId: randomUUID(),
       benefitId: randomUUID(),
       contentId: randomUUID(),
+      ownerCodeEntryId: randomUUID(),
+      activationTokenId: randomUUID(),
     };
     try {
       await client.query(
@@ -441,16 +466,23 @@ export class PlatformOnboardingService implements OnModuleDestroy {
     await this.completeStep(client, runId, 'tenant_foundation', { tenantId: ids.tenantId });
 
     try {
-      await client.query(
-        'insert into users(id,email,display_name,password_hash,created_by,updated_by) values($1,$2,$3,$4,$5,$5)',
-        [
-          ids.userId,
-          input.adminEmail,
-          input.adminName,
-          `scrypt$oneday-onboarding$${scryptSync(input.adminPassword, 'oneday-onboarding', 64).toString('base64url')}`,
-          context.userId,
-        ],
-      );
+      if (input.activationMode === 'token') {
+        await client.query(
+          "insert into users(id,email,display_name,password_hash,status,created_by,updated_by) values($1,$2,$3,null,'pending',$4,$4)",
+          [ids.userId, input.adminEmail, input.adminName, context.userId],
+        );
+      } else {
+        await client.query(
+          "insert into users(id,email,display_name,password_hash,status,created_by,updated_by) values($1,$2,$3,$4,'active',$5,$5)",
+          [
+            ids.userId,
+            input.adminEmail,
+            input.adminName,
+            `scrypt$oneday-onboarding$${scryptSync(input.adminPassword, 'oneday-onboarding', 64).toString('base64url')}`,
+            context.userId,
+          ],
+        );
+      }
     } catch (error) {
       if ((error as { code?: string }).code === '23505') throw new ConflictException('CONFLICT');
       throw error;
@@ -467,6 +499,7 @@ export class PlatformOnboardingService implements OnModuleDestroy {
     await this.completeStep(client, runId, 'owner_role_packs', {
       ownerUserId: ids.userId,
       roleCodes: ['owner', 'store_manager', 'employee'],
+      activationMode: input.activationMode,
     });
 
     await client.query(
@@ -673,12 +706,18 @@ export class PlatformOnboardingService implements OnModuleDestroy {
     const consumerCode = mintCode();
     const ownerCode = mintCode();
     const employeeCode = mintCode();
+    const activationToken =
+      input.activationMode === 'token' ? mintActivationToken() : null;
     const consumerPath = `/c/entry?tenant=${encodeURIComponent(input.slug)}&source=one-code:${consumerCode}&scene=storefront`;
-    const ownerPath = '/m';
+    const ownerPath =
+      input.activationMode === 'token'
+        ? `/owner-activate?code=${encodeURIComponent(ownerCode)}`
+        : '/m';
     const employeePath = '/e/workbench';
     const sceneRows: {
       scene: 'consumer_storefront' | 'owner_activation' | 'employee_onboarding';
       code: string;
+      entryId: string;
       targetPath: string;
       roleTargets: Record<string, string>;
       resolveRole: 'consumer' | 'management' | 'employee';
@@ -686,13 +725,15 @@ export class PlatformOnboardingService implements OnModuleDestroy {
       {
         scene: 'consumer_storefront',
         code: consumerCode,
+        entryId: randomUUID(),
         targetPath: consumerPath,
-        roleTargets: { consumer: consumerPath, employee: employeePath, management: ownerPath },
+        roleTargets: { consumer: consumerPath, employee: employeePath, management: '/m' },
         resolveRole: 'consumer',
       },
       {
         scene: 'owner_activation',
         code: ownerCode,
+        entryId: ids.ownerCodeEntryId,
         targetPath: ownerPath,
         roleTargets: { management: ownerPath },
         resolveRole: 'management',
@@ -700,6 +741,7 @@ export class PlatformOnboardingService implements OnModuleDestroy {
       {
         scene: 'employee_onboarding',
         code: employeeCode,
+        entryId: randomUUID(),
         targetPath: employeePath,
         roleTargets: { employee: employeePath },
         resolveRole: 'employee',
@@ -709,7 +751,7 @@ export class PlatformOnboardingService implements OnModuleDestroy {
       await client.query(
         "insert into one_code_entries(id,tenant_id,store_id,code,scene,source,target_path,role_targets,created_by,updated_by) values($1,$2,$3,$4,$5,'provisioning',$6,$7,$8,$8)",
         [
-          randomUUID(),
+          row.entryId,
           ids.tenantId,
           ids.storeId,
           row.code,
@@ -719,6 +761,32 @@ export class PlatformOnboardingService implements OnModuleDestroy {
           context.userId,
         ],
       );
+    }
+    let activationMeta: Record<string, unknown> | null = null;
+    if (activationToken) {
+      const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
+      await client.query(
+        "insert into owner_activation_tokens(id,tenant_id,run_id,user_id,one_code_entry_id,token_hash,status,expires_at,created_by,updated_by) values($1,$2,$3,$4,$5,$6,'pending',$7,$8,$8)",
+        [
+          ids.activationTokenId,
+          ids.tenantId,
+          runId,
+          ids.userId,
+          ids.ownerCodeEntryId,
+          hashToken(activationToken),
+          expiresAt,
+          context.userId,
+        ],
+      );
+      activationMeta = {
+        mode: 'token',
+        token: activationToken,
+        expiresAt: expiresAt.toISOString(),
+        activatePath: '/api/v1/auth/owner-activate',
+        ownerCode,
+      };
+    } else {
+      activationMeta = { mode: 'password', ownerActivated: true };
     }
     const scenes = sceneRows.map((row) => ({
       scene: row.scene,
@@ -735,30 +803,73 @@ export class PlatformOnboardingService implements OnModuleDestroy {
       landingPath: `/c/one-code/${consumerCode}`,
       consumerPath,
       ownerEmail: input.adminEmail,
-      managementPath: ownerPath,
+      managementPath: '/m',
       employeePath,
       scenes,
+      activation: activationMeta,
     };
     await this.completeStep(client, runId, 'one_code_delivery', delivery);
 
-    const verification = await this.verify(client, ids, input);
-    if (!Object.values(verification).every(Boolean)) throw new Error('READY_VERIFICATION_FAILED');
-    await this.completeStep(client, runId, 'activate_verify', verification);
-    await this.completeStep(client, runId, 'ready_handoff', {
-      ready: true,
-      tenantId: ids.tenantId,
-      storeId: ids.storeId,
+    const verification = await this.verify(client, ids, input, {
+      requireOwnerActivated: input.activationMode === 'password',
     });
-
-    const event = { runId, ...delivery, verification };
-    await client.query(
-      "insert into audit_logs(id,tenant_id,actor_id,action,resource_type,resource_id,correlation_id,trace_id,details,created_by,updated_by) values($1,$2,$3,'platform.tenant_ready','tenant_provisioning_run',$4,$5,'commercial-provisioning',$6,$3,$3)",
-      [randomUUID(), context.tenantId, context.userId, runId, correlationId, event],
-    );
-    await client.query(
-      "insert into outbox_events(id,tenant_id,event_type,aggregate_type,aggregate_id,payload,correlation_id,trace_id,created_by,updated_by) values($1,$2,'tenant.provisioning.ready.v1','tenant_provisioning_run',$3,$4,$5,'commercial-provisioning',$6,$6)",
-      [randomUUID(), context.tenantId, runId, event, correlationId, context.userId],
-    );
+    const requiredOk = Object.entries(verification)
+      .filter(([key]) => key !== 'owner_activated' || input.activationMode === 'password')
+      .every(([, value]) => Boolean(value));
+    if (!requiredOk) throw new Error('READY_VERIFICATION_FAILED');
+    await this.completeStep(client, runId, 'activate_verify', {
+      ...verification,
+      activationMode: input.activationMode,
+      awaitingActivation: input.activationMode === 'token',
+    });
+    if (input.activationMode === 'token') {
+      // ready_handoff stays pending until owner activates.
+      await client.query(
+        "update tenant_provisioning_steps set state='pending',output=$3,updated_at=now(),version=version+1 where run_id=$1 and step_code=$2",
+        [
+          runId,
+          'ready_handoff',
+          { ready: false, awaitingActivation: true, tenantId: ids.tenantId, storeId: ids.storeId },
+        ],
+      );
+      await client.query(
+        "insert into audit_logs(id,tenant_id,actor_id,action,resource_type,resource_id,correlation_id,trace_id,details,created_by,updated_by) values($1,$2,$3,'platform.tenant_awaiting_activation','tenant_provisioning_run',$4,$5,'commercial-provisioning',$6,$3,$3)",
+        [
+          randomUUID(),
+          context.tenantId,
+          context.userId,
+          runId,
+          correlationId,
+          { runId, tenantId: ids.tenantId, ownerEmail: input.adminEmail },
+        ],
+      );
+      await client.query(
+        "insert into outbox_events(id,tenant_id,event_type,aggregate_type,aggregate_id,payload,correlation_id,trace_id,created_by,updated_by) values($1,$2,'tenant.provisioning.awaiting_activation.v1','tenant_provisioning_run',$3,$4,$5,'commercial-provisioning',$6,$6)",
+        [
+          randomUUID(),
+          context.tenantId,
+          runId,
+          { runId, tenantId: ids.tenantId },
+          correlationId,
+          context.userId,
+        ],
+      );
+    } else {
+      await this.completeStep(client, runId, 'ready_handoff', {
+        ready: true,
+        tenantId: ids.tenantId,
+        storeId: ids.storeId,
+      });
+      const event = { runId, ...delivery, verification };
+      await client.query(
+        "insert into audit_logs(id,tenant_id,actor_id,action,resource_type,resource_id,correlation_id,trace_id,details,created_by,updated_by) values($1,$2,$3,'platform.tenant_ready','tenant_provisioning_run',$4,$5,'commercial-provisioning',$6,$3,$3)",
+        [randomUUID(), context.tenantId, context.userId, runId, correlationId, event],
+      );
+      await client.query(
+        "insert into outbox_events(id,tenant_id,event_type,aggregate_type,aggregate_id,payload,correlation_id,trace_id,created_by,updated_by) values($1,$2,'tenant.provisioning.ready.v1','tenant_provisioning_run',$3,$4,$5,'commercial-provisioning',$6,$6)",
+        [randomUUID(), context.tenantId, runId, event, correlationId, context.userId],
+      );
+    }
     await client.query(
       "insert into outbox_events(id,tenant_id,event_type,aggregate_type,aggregate_id,payload,correlation_id,trace_id,created_by,updated_by) values($1,$2,'storefront.published.v1','storefront_binding',$3,$4,$5,'commercial-provisioning',$6,$6)",
       [
@@ -821,13 +932,19 @@ export class PlatformOnboardingService implements OnModuleDestroy {
     return roles;
   }
 
-  private async verify(client: PoolClient, ids: Record<string, string>, input: Input) {
+  private async verify(
+    client: PoolClient,
+    ids: Record<string, string>,
+    input: Input,
+    opts: { requireOwnerActivated: boolean } = { requireOwnerActivated: true },
+  ) {
     const row = (
       await client.query(
         `select
           exists(select 1 from tenants where id=$1 and slug=$2 and status='active' and deleted_at is null) tenant_active,
           exists(select 1 from platform_tenant_settings where tenant_id=$1 and plan=$3 and deleted_at is null) plan_ready,
           exists(select 1 from memberships m join membership_roles mr on mr.membership_id=m.id and mr.tenant_id=m.tenant_id join roles r on r.id=mr.role_id and r.tenant_id=m.tenant_id where m.id=$4 and m.tenant_id=$1 and m.status='active' and r.code='owner') owner_ready,
+          exists(select 1 from users where id=$11 and status='active' and password_hash is not null and deleted_at is null) owner_activated,
           exists(select 1 from employees where id=$5 and tenant_id=$1 and status='active' and deleted_at is null) employee_ready,
           exists(select 1 from stores where id=$6 and tenant_id=$1 and status='active' and address is not null and phone is not null and business_hours is not null and deleted_at is null) store_ready,
           exists(select 1 from storefront_bindings where id=$7 and tenant_id=$1 and live_version_id=$8 and status='active' and deleted_at is null) storefront_published,
@@ -852,6 +969,7 @@ export class PlatformOnboardingService implements OnModuleDestroy {
           ids.templateVersionId,
           ids.templateId,
           ids.tenantId,
+          ids.userId,
         ],
       )
     ).rows[0] as Record<string, boolean>;
@@ -966,6 +1084,7 @@ export class PlatformOnboardingService implements OnModuleDestroy {
       themeVariant: input.themeVariant,
       sourceMode: input.sourceMode,
       channelId: input.channelId,
+      activationMode: input.activationMode,
     };
   }
 
