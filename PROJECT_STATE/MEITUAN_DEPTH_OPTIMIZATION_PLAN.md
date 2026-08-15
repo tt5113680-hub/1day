@@ -212,7 +212,7 @@
 | 管理端 CRUD 完整模块 | **100%**（workflows 除外为 CUSTOM） |
 | 工作台待办可处置率 | **≥95%** |
 | 假 BI | **0** |
-| §5 READY | W∞-125..128 PASS；续刀 W∞-129+ Worker/Outbox health |
+| §5 READY | W∞-125..129 PASS；续刀 W∞-130+ Circle 双审批可见性 |
 
 ---
 
