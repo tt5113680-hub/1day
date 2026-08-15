@@ -39,7 +39,7 @@
 - **Depth plan (owner 2026-08-12):** `PROJECT_STATE/MEITUAN_DEPTH_OPTIMIZATION_PLAN.md`
 - Primary executor: OpenCode + DeepSeek — `PROJECT_STATE/EXECUTOR_PLAN_B_API_AGENT.md` + `LOCAL_UNATTENDED_SETUP.md`
 - Progress: `pnpm unattended:dashboard` / `PHASE1_PROGRESS.json`
-- **NEXT slice:** W∞-107 workbench queue disposition（跳过 §5 READY）
+- **NEXT slice:** W∞-129 Worker/Outbox health 断言（§5 READY 续刀）
 - P1-C prep in `infra/deploy/`; live deploy blocked until G lifted
 - Human UI sign-off must not auto-PASS
 

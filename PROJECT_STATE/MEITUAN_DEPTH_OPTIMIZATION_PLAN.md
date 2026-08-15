@@ -157,7 +157,7 @@
 
 | TASK | 内容 | 状态 |
 | ---- | ---- | ---- |
-| ~~1.1 READY 开通~~ | W∞-125+ | **ACTIVE**（W∞-125/126/127 PASS；NEXT W∞-128 mid-run resume） |
+| ~~1.1 READY 开通~~ | W∞-125+ | **ACTIVE**（W∞-125..128 PASS；NEXT W∞-129 Worker/Outbox health） |
 | **W∞-107** | 工作台队列一键处置（MPC-01 / 1.3） | **PASS** |
 | **W∞-108** | Storefront 发布链闭环加固（装修→Consumer 可读 / 1.2） | **PASS** |
 | **W∞-109** | CRM 深操作：RFM + 批量 + 360 轴（MPC-06 / 1.4） | **PASS** |
@@ -212,7 +212,7 @@
 | 管理端 CRUD 完整模块 | **100%**（workflows 除外为 CUSTOM） |
 | 工作台待办可处置率 | **≥95%** |
 | 假 BI | **0** |
-| §5 READY | W∞-125/126/127 PASS；续刀 W∞-128+ mid-run resume |
+| §5 READY | W∞-125..128 PASS；续刀 W∞-129+ Worker/Outbox health |
 
 ---
 

@@ -274,6 +274,7 @@ export class PlatformOnboardingService implements OnModuleDestroy {
     }
 
     const client = await this.pool.connect();
+    let checkpoint: Record<string, string> | null = null;
     try {
       await client.query('begin');
       await client.query(
@@ -291,22 +292,17 @@ export class PlatformOnboardingService implements OnModuleDestroy {
         "update tenant_provisioning_runs set state='provisioning',updated_at=now() where id=$1",
         [runId],
       );
-      const resources = await this.provision(client, context, input, runId, correlationId);
-      const finalState =
-        input.activationMode === 'token' ? 'awaiting_activation' : 'ready';
+      checkpoint = await this.provisionFoundation(client, context, input, runId);
       await client.query(
-        `update tenant_provisioning_runs set tenant_id=$2,state=$3,delivery=$4,verification=$5,ready_at=${finalState === 'ready' ? 'now()' : 'null'},updated_at=now(),updated_by=$6 where id=$1`,
-        [
-          runId,
-          resources.tenantId,
-          finalState,
-          resources.delivery,
-          resources.verification,
-          context.userId,
-        ],
+        `update tenant_provisioning_runs
+         set tenant_id=$2,
+             input=coalesce(input,'{}'::jsonb)||$3::jsonb,
+             updated_at=now(),
+             updated_by=$4
+         where id=$1`,
+        [runId, checkpoint.tenantId, { checkpoint }, context.userId],
       );
       await client.query('commit');
-      return this.get(context, runId);
     } catch (error) {
       await client.query('rollback');
       const conflict =
@@ -328,14 +324,199 @@ export class PlatformOnboardingService implements OnModuleDestroy {
       if (conflict && !(error instanceof ConflictException))
         throw new ConflictException('CONFLICT');
       if (terminal) throw error;
-      // Recoverable failures return the run + step trail so Platform UI can show where it stopped.
+      return this.get(context, runId);
+    } finally {
+      client.release();
+    }
+
+    return this.finishCommercialPhase(
+      context,
+      runId,
+      correlationId,
+      input,
+      checkpoint!,
+      typeof body.testFailAtStep === 'string' ? body.testFailAtStep : null,
+    );
+  }
+
+  /**
+   * W∞-128 — resume a failed_recoverable run whose foundation tenant already committed.
+   * Replays commercial steps (industry_template → ready) without recreating identity/org/store.
+   */
+  async resume(context: OrganizationContext, runId: string, requestId: string, body: Record<string, unknown> = {}) {
+    if (!/^[0-9a-f-]{36}$/i.test(runId)) throw new BadRequestException('VALIDATION_ERROR');
+    const run = (
+      await this.pool.query(
+        `select id,tenant_id,state,input,correlation_id,industry,plan,source_mode,request_slug
+         from tenant_provisioning_runs
+         where id=$1 and requested_by_tenant_id=$2 and deleted_at is null`,
+        [runId, context.tenantId],
+      )
+    ).rows[0] as
+      | {
+          id: string;
+          tenant_id: string | null;
+          state: string;
+          input: Record<string, unknown>;
+          correlation_id: string;
+        }
+      | undefined;
+    if (!run) throw new NotFoundException('NOT_FOUND');
+    if (run.state !== 'failed_recoverable' || !run.tenant_id)
+      throw new ConflictException('CONFLICT');
+    const checkpoint = (run.input?.checkpoint ?? null) as Record<string, string> | null;
+    if (!checkpoint?.tenantId || checkpoint.tenantId !== run.tenant_id)
+      throw new ConflictException('CONFLICT');
+
+    const input = this.inputFromStored(run.input);
+    const commercial = [
+      'industry_template',
+      'storefront_publish',
+      'commercial_defaults',
+      'channel_circle',
+      'one_code_delivery',
+      'activate_verify',
+      'ready_handoff',
+    ];
+    await this.pool.query(
+      `update tenant_provisioning_steps
+       set state='pending', attempts=0, started_at=null, ended_at=null, error_code=null, output='{}'::jsonb,
+           updated_at=now(), version=version+1
+       where run_id=$1 and step_code=any($2::text[]) and deleted_at is null`,
+      [runId, commercial],
+    );
+    await this.pool.query(
+      `update tenant_provisioning_runs
+       set state='provisioning', error_code=null, error_detail=null, updated_at=now(), updated_by=$2, version=version+1
+       where id=$1`,
+      [runId, context.userId],
+    );
+    const correlationId = /^[0-9a-f-]{36}$/i.test(requestId)
+      ? requestId
+      : (run.correlation_id ?? randomUUID());
+    return this.finishCommercialPhase(
+      context,
+      runId,
+      correlationId,
+      input,
+      checkpoint,
+      typeof body.testFailAtStep === 'string' ? body.testFailAtStep : null,
+    );
+  }
+
+  private inputFromStored(stored: Record<string, unknown>): Input {
+    const { checkpoint: _checkpoint, ...rest } = stored;
+    return this.input({
+      ...rest,
+      activationMode: rest.activationMode === 'token' ? 'token' : 'password',
+      // Password mode resume needs a placeholder only for schema; owner already exists.
+      adminPassword:
+        rest.activationMode === 'token'
+          ? undefined
+          : typeof rest.adminPassword === 'string' && rest.adminPassword.length >= 12
+            ? rest.adminPassword
+            : 'Resume-Placeholder-Password!',
+    });
+  }
+
+  private async finishCommercialPhase(
+    context: OrganizationContext,
+    runId: string,
+    correlationId: string,
+    input: Input,
+    checkpoint: Record<string, string>,
+    testFailAtStep: string | null,
+  ) {
+    const hooksEnabled =
+      process.env.ONEDAY_PROVISIONING_TEST_HOOKS === '1' ||
+      (process.env.DATABASE_URL ?? '').includes('oneday_v3_test');
+    const failAt = hooksEnabled && testFailAtStep ? testFailAtStep : null;
+    const client = await this.pool.connect();
+    try {
+      await client.query('begin');
+      if (failAt === 'industry_template') {
+        const err = new Error('TEST_INJECTED_COMMERCIAL_FAILURE');
+        (err as { failStep?: string }).failStep = 'industry_template';
+        throw err;
+      }
+      const resources = await this.provisionCommercial(
+        client,
+        context,
+        input,
+        runId,
+        correlationId,
+        checkpoint,
+      );
+      const finalState = input.activationMode === 'token' ? 'awaiting_activation' : 'ready';
+      await client.query(
+        `update tenant_provisioning_runs
+         set tenant_id=$2,state=$3,delivery=$4,verification=$5,
+             ready_at=${finalState === 'ready' ? 'now()' : 'null'},
+             error_code=null,error_detail=null,
+             updated_at=now(),updated_by=$6,version=version+1
+         where id=$1`,
+        [
+          runId,
+          resources.tenantId,
+          finalState,
+          resources.delivery,
+          resources.verification,
+          context.userId,
+        ],
+      );
+      await client.query('commit');
+      return this.get(context, runId);
+    } catch (error) {
+      await client.query('rollback');
+      const conflict =
+        error instanceof ConflictException || (error as { code?: string }).code === '23505';
+      const terminal = conflict || error instanceof BadRequestException;
+      const detail =
+        error instanceof Error ? error.message.slice(0, 1000) : 'Unknown provisioning failure';
+      const failStep =
+        typeof (error as { failStep?: string }).failStep === 'string'
+          ? (error as { failStep: string }).failStep
+          : 'industry_template';
+      await this.pool.query(
+        'update tenant_provisioning_runs set state=$2,error_code=$3,error_detail=$4,updated_at=now(),updated_by=$5,version=version+1 where id=$1',
+        [
+          runId,
+          terminal ? 'failed_terminal' : 'failed_recoverable',
+          terminal ? 'VALIDATION_OR_CONFLICT' : 'PROVISIONING_FAILED',
+          detail,
+          context.userId,
+        ],
+      );
+      if (!terminal) {
+        await this.pool.query(
+          `update tenant_provisioning_steps
+           set state='failed', attempts=attempts+1, started_at=coalesce(started_at,now()), ended_at=now(),
+               error_code='PROVISIONING_FAILED', output=$3::jsonb, updated_at=now(), version=version+1
+           where run_id=$1 and step_code=$2 and deleted_at is null`,
+          [runId, failStep, { detail, resumable: true }],
+        );
+        await this.pool.query(
+          "insert into audit_logs(id,tenant_id,actor_id,action,resource_type,resource_id,correlation_id,trace_id,details,created_by,updated_by) values($1,$2,$3,'platform.tenant_provisioning_failed_recoverable','tenant_provisioning_run',$4,$5,'commercial-provisioning',$6,$3,$3)",
+          [
+            randomUUID(),
+            context.tenantId,
+            context.userId,
+            runId,
+            correlationId,
+            { runId, failStep, detail, tenantId: checkpoint.tenantId },
+          ],
+        );
+      }
+      if (conflict && !(error instanceof ConflictException))
+        throw new ConflictException('CONFLICT');
+      if (terminal) throw error;
       return this.get(context, runId);
     } finally {
       client.release();
     }
   }
 
-  /** After a rolled-back TX, re-materialize step rows so operators can see the failure trail. */
+  /** After a rolled-back foundation TX, re-materialize step rows so operators can see the failure trail. */
   private async persistFailedStepTrail(runId: string, userId: string, detail: string) {
     const existing = await this.pool.query(
       'select 1 from tenant_provisioning_steps where run_id=$1 and deleted_at is null limit 1',
@@ -405,12 +586,11 @@ export class PlatformOnboardingService implements OnModuleDestroy {
     };
   }
 
-  private async provision(
+  private async provisionFoundation(
     client: PoolClient,
     context: OrganizationContext,
     input: Input,
     runId: string,
-    correlationId: string,
   ) {
     const existing = await client.query(
       'select 1 from tenants where slug=$1 union all select 1 from users where email=$2',
@@ -545,7 +725,17 @@ export class PlatformOnboardingService implements OnModuleDestroy {
       merchantId: ids.merchantId,
       storeId: ids.storeId,
     });
+    return ids;
+  }
 
+  private async provisionCommercial(
+    client: PoolClient,
+    context: OrganizationContext,
+    input: Input,
+    runId: string,
+    correlationId: string,
+    ids: Record<string, string>,
+  ) {
     const catalog = industryCatalog[input.industry]!;
     const industryConfig = {
       family: input.industry,
@@ -733,7 +923,7 @@ export class PlatformOnboardingService implements OnModuleDestroy {
       {
         scene: 'owner_activation',
         code: ownerCode,
-        entryId: ids.ownerCodeEntryId,
+        entryId: ids.ownerCodeEntryId ?? randomUUID(),
         targetPath: ownerPath,
         roleTargets: { management: ownerPath },
         resolveRole: 'management',

@@ -454,6 +454,51 @@ export default function Onboarding() {
                   ))}
                 </ol>
                 <div className={styles.actions}>
+                  {run.state === 'failed_recoverable' ? (
+                    <Button
+                      data-testid="provisioning-resume"
+                      loading={saving}
+                      onClick={() =>
+                        void (async () => {
+                          if (!(await sessionApi.context())) return setState('forbidden');
+                          setSaving(true);
+                          try {
+                            const response = await sessionApi.request(
+                              `${api}/api/v1/platform/onboarding/${run.runId}/resume`,
+                              {
+                                method: 'POST',
+                                headers: {
+                                  'content-type': 'application/json',
+                                  'x-request-id': crypto.randomUUID(),
+                                },
+                                body: JSON.stringify({}),
+                              },
+                            );
+                            if ([401, 403].includes(response.status)) return setState('forbidden');
+                            if (!response.ok) throw Error('RESUME');
+                            const next = (await response.json()).data as ProvisioningRun;
+                            setRun(next);
+                            setState(
+                              next.state === 'ready' || next.state === 'awaiting_activation'
+                                ? 'done'
+                                : 'error',
+                            );
+                            setNote(
+                              next.state === 'ready' || next.state === 'awaiting_activation'
+                                ? `已从失败步骤续跑完成（状态 ${next.state}）。`
+                                : `续跑后状态 ${next.state}；可再次续跑或换标识重开。`,
+                            );
+                          } catch {
+                            setNote('续跑失败，请稍后重试。');
+                          } finally {
+                            setSaving(false);
+                          }
+                        })()
+                      }
+                    >
+                      从失败步骤续跑
+                    </Button>
+                  ) : null}
                   {state !== 'done' ? (
                     <>
                       <Button

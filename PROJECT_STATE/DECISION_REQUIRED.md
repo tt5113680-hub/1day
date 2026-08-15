@@ -101,7 +101,7 @@ Owner accepted IDE depth plan with these hard overrides (see `MEITUAN_DEPTH_OPTI
 | §2 可深度建设 | **必须达到目标深度**（作业闭环，不得停在壳/分布条） |
 | §3 底座+产品深度 | **目标 100%**（Blueprint / 各端产品深度拉满） |
 | §4 对标深度模型 | **继续做到 100%**（列表→筛→详→操作→审计） |
-| §5 开通 READY 工程 | **ACTIVE — 主人 2026-08-15「开始第五节」**；W∞-125/126/127 PASS；NEXT W∞-128 mid-run resume |
+| §5 开通 READY 工程 | **ACTIVE — 主人 2026-08-15「开始第五节」**；W∞-125..128 PASS；NEXT W∞-129 Worker/Outbox health |
 | §6 多租户 SaaS | **补到最强**（配额拦截/会话即时失效/审计导出/Outbox/scope/同步） |
 | §7 分阶段路线 | **必须落地**；Phase 1 跳过 1.1 READY，从 W∞-107 起切 |
 | §8–10 | 按方案（测试策略/指标/对应关系）；指标按 100% 拉满 |

@@ -19,6 +19,24 @@ export class PlatformOnboardingController {
       error: null,
     };
   }
+  @Post(':runId/resume') async resume(
+    @Headers('authorization') a: string | undefined,
+    @Headers('x-request-id') r: string | undefined,
+    @Param('runId') runId: string,
+    @Body() b: Record<string, unknown>,
+  ) {
+    if (!r?.trim()) throw new BadRequestException('VALIDATION_ERROR');
+    return {
+      data: await this.onboarding.resume(
+        await this.auth.requirePlatform(a, 'platform.manage'),
+        runId,
+        r,
+        b ?? {},
+      ),
+      meta: { requestId: r },
+      error: null,
+    };
+  }
   @Post(':runId/delivery/revoke') async revokeDelivery(
     @Headers('authorization') a: string | undefined,
     @Headers('x-request-id') r: string | undefined,

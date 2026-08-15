@@ -1,5 +1,10 @@
 ﻿# CHANGELOG
 
+## 2026-08-16 — G1-W∞-128 §5 READY mid-run resume PASS
+
+- Foundation TX commits tenant/org/store; commercial failure → `failed_recoverable` with checkpoint; `POST /api/v1/platform/onboarding/:runId/resume` replays commercial steps to READY; platform UI resume button.
+- Evidence: `evidence/G1-MEITUAN-PARITY/WINF128/ACCEPTANCE.md`; tests/g1-winf128 2/2.
+
 ## 2026-08-15 — G1-W∞-127 §5 READY Owner activation token PASS
 
 - `activationMode=token` leaves run in `awaiting_activation`; migration 076; `POST /api/v1/auth/owner-activate`; `/owner-activate` page; password mode kept for fixtures.
