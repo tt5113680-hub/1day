@@ -62,6 +62,14 @@ type ProvisioningRun = {
       ownerCode?: string;
       ownerActivated?: boolean;
     };
+    circle?: {
+      exposure?: string;
+      circleId?: string | null;
+      circleCode?: string | null;
+      membershipId?: string | null;
+      dualApproval?: boolean;
+      consumerVisible?: boolean;
+    };
   } | null;
   verification?: Record<string, boolean | string | number | null> | null;
   steps: ProvisioningStep[];
@@ -412,6 +420,21 @@ export default function Onboarding() {
                       </dd>
                     </div>
                   ) : null}
+                  {run.delivery?.circle ? (
+                    <div>
+                      <dt>商圈曝光</dt>
+                      <dd data-testid="provisioning-circle-exposure">
+                        {run.delivery.circle.exposure === 'pending'
+                          ? 'pending（待双审批，Consumer 不可见）'
+                          : run.delivery.circle.exposure === 'not_requested'
+                            ? '未申请'
+                            : String(run.delivery.circle.exposure)}
+                        {run.delivery.circle.circleCode ? (
+                          <small> · {run.delivery.circle.circleCode}</small>
+                        ) : null}
+                      </dd>
+                    </div>
+                  ) : null}
                 </dl>
                 {run.verification ? (
                   <ul className={styles.steps} data-testid="provisioning-verification">
@@ -421,6 +444,7 @@ export default function Onboarding() {
                         ['outbox_clear', 'Outbox 无死信/凝固 pending'],
                         ['worker_health_recent', 'Worker 心跳新鲜'],
                         ['storefront_published', '门店已发布'],
+                        ['circle_not_consumer_visible', '商圈未双审批不曝光'],
                       ] as const
                     ).map(([key, label]) => (
                       <li key={key} data-verify={key} data-verify-ok={String(Boolean(run.verification?.[key]))}>

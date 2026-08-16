@@ -214,6 +214,7 @@ export class PlatformOnboardingService implements OnModuleDestroy {
       themeVariant: optionalText(body.themeVariant, 48) ?? 'signature',
       sourceMode: body.sourceMode === 'channel_referral' ? 'channel_referral' : 'platform_direct',
       channelId: optionalText(body.channelId, 36),
+      circleId: optionalText(body.circleId, 36),
       activationMode: activationMode as 'password' | 'token',
     };
     if (!/.+@.+\..+/.test(input.adminEmail)) throw new BadRequestException('VALIDATION_ERROR');
@@ -227,6 +228,8 @@ export class PlatformOnboardingService implements OnModuleDestroy {
     } else {
       input.channelId = null;
     }
+    if (input.circleId && !/^[0-9a-f-]{36}$/i.test(input.circleId))
+      throw new BadRequestException('VALIDATION_ERROR');
     return input;
   }
 
@@ -867,8 +870,7 @@ export class PlatformOnboardingService implements OnModuleDestroy {
       sourceMode: input.sourceMode,
       circleExposure: 'not_requested',
     };
-    let channelCircleState: 'succeeded' | 'skipped' =
-      input.sourceMode === 'platform_direct' ? 'skipped' : 'succeeded';
+    let channelCircleState: 'succeeded' | 'skipped' = 'skipped';
     if (input.sourceMode === 'channel_referral' && input.channelId) {
       const channel = (
         await client.query(
@@ -889,6 +891,53 @@ export class PlatformOnboardingService implements OnModuleDestroy {
         membership: 'written',
       };
       channelCircleState = 'succeeded';
+    }
+    if (input.circleId) {
+      const circle = (
+        await client.query(
+          "select id,code,name from platform_business_circles where id=$1 and tenant_id=$2 and status='active' and deleted_at is null",
+          [input.circleId, context.tenantId],
+        )
+      ).rows[0];
+      if (!circle) throw new BadRequestException('CIRCLE_NOT_AVAILABLE');
+      const membershipId = randomUUID();
+      try {
+        await client.query(
+          `insert into platform_business_circle_merchants(
+             id,tenant_id,circle_id,merchant_tenant_id,benefits,recommendation_reason,
+             invitation_status,invitation_note,circle_approval_status,approval_status,display_config,
+             created_by,updated_by
+           ) values(
+             $1,$2,$3,$4,'[]'::jsonb,$5,
+             'accepted','provisioning circle request','pending','pending',$6::jsonb,
+             $7,$7
+           )`,
+          [
+            membershipId,
+            context.tenantId,
+            circle.id,
+            ids.tenantId,
+            `开通申请加入商圈 ${circle.name}`,
+            JSON.stringify({ visible: false, sortOrder: 0, source: 'provisioning' }),
+            context.userId,
+          ],
+        );
+      } catch (error) {
+        if ((error as { code?: string }).code === '23505') throw new ConflictException('CONFLICT');
+        throw error;
+      }
+      channelCircleOutput = {
+        ...channelCircleOutput,
+        circleId: circle.id,
+        circleCode: circle.code,
+        circleMembershipId: membershipId,
+        circleExposure: 'pending',
+        dualApproval: false,
+        consumerVisible: false,
+      };
+      channelCircleState = 'succeeded';
+      ids.circleMembershipId = membershipId;
+      ids.circleId = circle.id;
     }
     await this.completeStep(client, runId, 'channel_circle', channelCircleOutput, channelCircleState);
 
@@ -997,6 +1046,14 @@ export class PlatformOnboardingService implements OnModuleDestroy {
       employeePath,
       scenes,
       activation: activationMeta,
+      circle: {
+        exposure: (channelCircleOutput.circleExposure as string) ?? 'not_requested',
+        circleId: (channelCircleOutput.circleId as string | undefined) ?? null,
+        circleCode: (channelCircleOutput.circleCode as string | undefined) ?? null,
+        membershipId: (channelCircleOutput.circleMembershipId as string | undefined) ?? null,
+        dualApproval: Boolean(channelCircleOutput.dualApproval),
+        consumerVisible: Boolean(channelCircleOutput.consumerVisible),
+      },
     };
     await this.completeStep(client, runId, 'one_code_delivery', delivery);
 
@@ -1175,7 +1232,16 @@ export class PlatformOnboardingService implements OnModuleDestroy {
               and status='ok'
               and deleted_at is null
               and last_run_at > now() - make_interval(mins => $13)
-          ) worker_health_recent`,
+          ) worker_health_recent,
+          not exists(
+            select 1 from platform_business_circle_merchants m
+            where m.merchant_tenant_id=$1
+              and m.deleted_at is null
+              and m.invitation_status='accepted'
+              and m.circle_approval_status='approved'
+              and m.approval_status='approved'
+              and coalesce((m.display_config->>'visible')::boolean,false)
+          ) circle_not_consumer_visible`,
         [
           ids.tenantId,
           input.slug,
@@ -1331,6 +1397,7 @@ export class PlatformOnboardingService implements OnModuleDestroy {
       themeVariant: input.themeVariant,
       sourceMode: input.sourceMode,
       channelId: input.channelId,
+      circleId: input.circleId,
       activationMode: input.activationMode,
     };
   }

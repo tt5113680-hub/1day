@@ -1,5 +1,10 @@
 ﻿# CHANGELOG
 
+## 2026-08-16 — G1-W∞-130 §5 READY Circle 双审批可见性 PASS
+
+- Optional `circleId` creates pending dual-approval circle membership (not Consumer-visible); READY still succeeds; `circle_not_consumer_visible` verify + UI exposure.
+- Evidence: `evidence/G1-MEITUAN-PARITY/WINF130/ACCEPTANCE.md`; tests/g1-winf130 2/2.
+
 ## 2026-08-16 — G1-W∞-129 §5 READY Worker/Outbox health PASS
 
 - migration 077 worker_heartbeats; Worker persistHeartbeat; verify adds worker_health_recent + run-scoped outbox_clear (dead-letter / stale pending); platform verification checklist UI.
