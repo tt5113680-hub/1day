@@ -1,5 +1,15 @@
 ﻿# CHANGELOG
 
+## 2026-08-16 — G1-W∞-140 员工客户详情 RFM/复购/360 互动轴 densify PASS（§2 其余 densify · 新老/复购/留存）
+
+- `employee-customer-detail.service.ts` `detail()` 新增两个只读数据源（tenant+employee scope fail-closed，沿用既有 归属/任务/贡献 门控）：
+  - **RFM 单真源**：读 `customer_rfm_profiles`（W109/W132 现场计算落库）按 `tenant_id+customer_id` 返回 `recencyDays/frequencyCount/reachCount/layer/windowDays/computedAt`，reuse Management 同表不重算、不假分层，无画像返回 `rfm:null`；R/F/M 为互动口径非金额。
+  - **跟进/复购互动**：`task_follow_ups` join 本员工名下该客户 `tasks`，按 `created_at` 倒序取最近 20，返回 `followedAt/summary/hasNote`。
+- `/e/customers/[id]`（ME-03 详情）复用共享全标对视觉类，把「来源/归属/任务/时间线」推进到 **RFM 分层 + 复购/互动 + 客户 360 互动轴**：概况条 `summaryStrip` 扩为 6 列（新增 `RFM 分层` layer 直显高价值-活跃/温和互动/需唤醒/沉睡、`跟进/复购互动`）；分布面板新增「客户 360 互动轴」block（由真实 rfm 推导 recencyBucket/frequencyBucket/reachBucket/layer）；新增「客户跟进互动」section。全部真实档案行推导，禁止假 BI。
+- honest 边界全保留：`source=local`、仅记录来源/归属/任务/跟进与入口痕迹及互动 RFM 分层、**不作复购成交**、不含第三方订单履约与支付金额、非本平台下单、不代表第三方成交。
+- Evidence: `evidence/G1-MEITUAN-PARITY/WINF140/ACCEPTANCE.md`; tests/g1-winf140 4/4（3 静态 + 1 真实 DB round-trip：跨租户/foreign 404 fail-closed + rfm layer + followUps 回读）。`pnpm typecheck` 20/20、`pnpm build` 20/20、单测 49/49。g1-winf* 476/480（W116/W137 并行起服瞬断隔离复跑 9/9 PASS；W88/W89 memberships/Management summaryStrip CSS 为 clean HEAD 既有基线，stash 复跑证实与本刀无涉）。
+- 不代签主人 UI；无 GMV、无支付、不碰钱/销售/管店；未复活 consumer_orders / 本平台下单/收单；§5 READY 未触碰。
+
 ## 2026-08-16 — G1-W∞-139 套餐/入口排行 densify PASS（§2 补强 · MPC-03）
 
 - `GET /api/v1/management/catalog/module-click-rank?days=N`：按模块点击排行，在既有 jumpRank 之上补齐「点击族」信号——jump/jump_confirm（出站跳转）+ consult_click/favorite_click（站内 L2 点击）归到套餐（经受控外链 url / module_key=action name），module_impression 按 session+module 去重独立展示作曝光参考**不计为点击**；total 不含曝光；诚实边界（source=local、不代表第三方成交/支付）。

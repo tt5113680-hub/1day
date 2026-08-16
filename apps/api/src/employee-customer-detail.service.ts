@@ -54,7 +54,8 @@ export class EmployeeCustomerDetailService implements OnModuleDestroy {
     if (!UUID.test(customerId)) throw new BadRequestException('VALIDATION_ERROR');
     const employee = await this.employee(context);
     const customer = await this.customer(context.tenantId, employee.id, customerId);
-    const [identities, tags, sources, ownerships, tasks, events] = await Promise.all([
+    const [identities, tags, sources, ownerships, tasks, events, rfm, followUps] =
+      await Promise.all([
       this.pool.query(
         "select identity_type,masked_value,status from customer_identities where tenant_id=$1 and customer_id=$2 and status='active' and deleted_at is null order by created_at",
         [context.tenantId, customerId],
@@ -78,6 +79,20 @@ export class EmployeeCustomerDetailService implements OnModuleDestroy {
       this.pool.query(
         "select action,created_at from audit_logs where tenant_id=$1 and resource_type='customer' and resource_id=$2 and deleted_at is null order by created_at desc limit 12",
         [context.tenantId, customerId],
+      ),
+      this.pool.query(
+        'select recency_days,frequency_count,reach_count,layer,window_days,computed_at from customer_rfm_profiles where tenant_id=$1 and customer_id=$2 and deleted_at is null limit 1',
+        [context.tenantId, customerId],
+      ),
+      this.pool.query(
+        `select f.created_at,f.raw_note,f.summary
+           from task_follow_ups f
+           join tasks tk on tk.id=f.task_id
+          where tk.tenant_id=$1 and tk.customer_id=$2 and tk.assignee_employee_id=$3
+            and f.deleted_at is null
+          order by f.created_at desc
+          limit 20`,
+        [context.tenantId, customerId, employee.id],
       ),
     ]);
     return {
@@ -106,6 +121,22 @@ export class EmployeeCustomerDetailService implements OnModuleDestroy {
         status: item.status,
         escalationLevel: item.escalation_level,
         createdAt: item.created_at,
+      })),
+      rfm:
+        rfm.rows[0] === undefined
+          ? null
+          : {
+              recencyDays: rfm.rows[0].recency_days,
+              frequencyCount: rfm.rows[0].frequency_count,
+              reachCount: rfm.rows[0].reach_count,
+              layer: rfm.rows[0].layer,
+              windowDays: rfm.rows[0].window_days,
+              computedAt: rfm.rows[0].computed_at,
+            },
+      followUps: followUps.rows.map((item) => ({
+        followedAt: item.created_at,
+        summary: item.summary,
+        hasNote: Boolean(item.raw_note),
       })),
       timeline: [
         ...events.rows.map((item) => ({

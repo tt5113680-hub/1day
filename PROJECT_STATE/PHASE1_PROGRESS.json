@@ -1,8 +1,8 @@
-{
+﻿{
   "recordedAt": "2026-08-14T12:00:00+08:00",
   "phase": "Meituan depth 100% closed-loop (owner plan 2026-08-12)",
   "goal": "Blueprint/product depth 100%; SaaS strongest; skip §5 READY; DeepSeek/IDE unattended W119+",
-  "currentStep": "W138 PASS (store batch business status, §2 densify: POST /management/stores/depth/batch-status idempotent single-tx batch active/inactive with per-store version+1, batch audit store.batch_status_<status> uuid resource_id, per-store outbox store.batch_status_<status>.v1, store_batch_status idempotency_keys replay; /m/stores 门店营业状态批量 panel select-all+per-store+target+apply confirm; g1-winf138 2/2 store-id-baseline-relative). §5 READY engineered W125-131 PASS; W132-138 densify PASS; next W138+ (套餐入口排行 / 其它 §2 densify). Phase4 deferred.",
+  "currentStep": "W140 PASS: employee customer detail RFM/复购/360 互动轴 densify (§2 新老/复购/留存 employee tool surface). employee-customer-detail.service.ts detail() read-only adds rfm single-source (customer_rfm_profiles, reuse W109/W132, rfm:null if none, R/F/M interaction non-monetary) + followUps (task_follow_ups join employee-scoped customer tasks, created_at desc limit 20). /e/customers/[id] reuses full-parity chrome: summaryStrip 6-col + RFM 分层 + 跟进/复购互动 + 客户 360 互动轴 distribution block + 客户跟进互动 section; honest source=local/no repurchase sale/no native checkout. g1-winf140 4/4 (real-DB foreign 404 fail-closed). §5 READY engineered W125-131 PASS; W132-140 densify PASS; next W140+ 其它 §2 densify. Phase4 deferred.",
   "milestones": [
     {
       "id": "g1-winf-chrome",
@@ -34,7 +34,7 @@
     },
     {
       "id": "ready-and-densify",
-      "label": "§5 READY engineering + §2 densify W125..138",
+      "label": "§5 READY engineering + §2 densify W125..140",
       "weight": 30,
       "status": "pass",
       "evidence": "WINF125..138 PASS"

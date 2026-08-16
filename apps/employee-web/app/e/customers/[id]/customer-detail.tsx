@@ -16,6 +16,15 @@ type Data = {
   ownerships: { ownershipRole: string; isCurrentEmployee: boolean }[];
   tags: { id: string; label: string }[];
   tasks: { id: string; title: string; dueAt: string; status: string }[];
+  rfm: {
+    recencyDays: number | null;
+    frequencyCount: number | null;
+    reachCount: number | null;
+    layer: string | null;
+    windowDays: number | null;
+    computedAt: string | null;
+  } | null;
+  followUps: { followedAt: string; summary: string | null; hasNote: boolean }[];
   timeline: { kind: string; action: string; at: string; taskId?: string; title?: string }[];
 };
 const api = process.env.NEXT_PUBLIC_API_BASE_URL ?? 'http://127.0.0.1:3001';
@@ -126,6 +135,46 @@ export function CustomerDetail() {
   const timelineKindDist = countBy(
     data.timeline.map((item) => (item.kind === 'task' ? '任务动态' : '客户动态')),
   );
+  const layerLabel = data.rfm?.layer ?? null;
+  const recencyBucket = data.rfm
+    ? data.rfm.recencyDays == null
+      ? null
+      : data.rfm.recencyDays <= 7
+        ? '近 7 天内互动'
+        : data.rfm.recencyDays <= 30
+          ? '近 30 天内互动'
+          : data.rfm.recencyDays <= 90
+            ? '90 天内互动'
+            : '90 天内无互动'
+    : null;
+  const frequencyBucket = data.rfm
+    ? data.rfm.frequencyCount == null
+      ? null
+      : data.rfm.frequencyCount === 0
+        ? '暂无互动频次'
+        : data.rfm.frequencyCount <= 2
+          ? '低频互动 1-2 次'
+          : data.rfm.frequencyCount <= 5
+            ? '中度互动 3-5 次'
+            : '高频互动 6 次+'
+    : null;
+  const reachBucket = data.rfm
+    ? data.rfm.reachCount == null
+      ? null
+      : data.rfm.reachCount === 0
+        ? '暂无触达覆盖'
+        : data.rfm.reachCount <= 2
+          ? '基础触达 1-2 通道'
+          : data.rfm.reachCount <= 5
+            ? '常规触达 3-5 通道'
+            : '丰富触达 6 通道+'
+    : null;
+  const rfm360Dist = [
+    recencyBucket ? { label: recencyBucket, value: 1 } : null,
+    frequencyBucket ? { label: frequencyBucket, value: 1 } : null,
+    reachBucket ? { label: reachBucket, value: 1 } : null,
+    layerLabel ? { label: `分层 · ${layerLabel}`, value: 1 } : null,
+  ].filter((item): item is Bucket => item !== null);
   return (
     <main className={styles.page} data-testid="employee-customer-detail">
       <header className={styles.topBar}>
@@ -158,6 +207,14 @@ export function CustomerDetail() {
             <span>相关任务</span>
             <strong>{data.tasks.length}</strong>
           </div>
+          <div>
+            <span>RFM 分层</span>
+            <strong>{layerLabel ?? '未计算'}</strong>
+          </div>
+          <div>
+            <span>跟进/复购互动</span>
+            <strong>{data.followUps.length}</strong>
+          </div>
         </div>
       </section>
 
@@ -182,6 +239,10 @@ export function CustomerDetail() {
           <div className={styles.panelBlock}>
             <h3>时间线动态分布</h3>
             <Bars items={timelineKindDist} total={data.timeline.length} />
+          </div>
+          <div className={styles.panelBlock}>
+            <h3>客户 360 互动轴</h3>
+            <Bars items={rfm360Dist} total={rfm360Dist.length} />
           </div>
         </div>
       </section>
@@ -269,6 +330,25 @@ export function CustomerDetail() {
       </section>
       <section className={styles.section}>
         <div className={styles.sectionHead}>
+          <h2>客户跟进互动</h2>
+          <span>{data.followUps.length} 次跟进</span>
+        </div>
+        {data.followUps.length ? (
+          data.followUps.map((item, index) => (
+            <div className={styles.evidence} key={`${item.followedAt}-${index}`}>
+              <span>
+                <strong>{item.summary ?? (item.hasNote ? '已记录跟进' : '跟进记录')}</strong>
+                <small>跟进互动 · {when(item.followedAt)}</small>
+              </span>
+              <time>{when(item.followedAt)}</time>
+            </div>
+          ))
+        ) : (
+          <p className={styles.empty}>暂无你的跟进互动记录。</p>
+        )}
+      </section>
+      <section className={styles.section}>
+        <div className={styles.sectionHead}>
           <h2>时间线</h2>
           <span>{data.timeline.length} 条动态</span>
         </div>
@@ -288,7 +368,7 @@ export function CustomerDetail() {
       </section>
       <p className={styles.honest}>
         源
-        source=local：本页概况与分布全部由已抓取的客户详情真实档案行现场推导，仅记录来源、归属、任务与入口痕迹，不含第三方订单履约与支付金额，非本平台下单，不代表第三方成交。
+        source=local：本页概况与分布全部由已抓取的客户详情真实档案行现场推导，仅记录来源、归属、任务、跟进与入口痕迹及互动 RFM 分层，不作复购成交、不含第三方订单履约与支付金额，非本平台下单，不代表第三方成交。
       </p>
       <footer className={styles.footer}>
         <a href="/e/customers">客户目录</a>
