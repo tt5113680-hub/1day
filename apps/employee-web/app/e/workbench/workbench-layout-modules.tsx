@@ -13,6 +13,15 @@ type Task = {
   escalationLevel: number;
   version: number;
   customer: { id: string; displayName: string | null } | null;
+  disposition?: 'pending' | 'handled' | 'ignored';
+  dispositionAt?: string | null;
+};
+type DispositionMetric = {
+  total: number;
+  pending: number;
+  handled: number;
+  ignored: number;
+  handledRate: number;
 };
 
 type WorkbenchData = {
@@ -20,6 +29,7 @@ type WorkbenchData = {
   tasks: Task[];
   customerReminders: Task[];
   opportunities: { taskId: string; title: string; reason: string; source: string }[];
+  disposition: DispositionMetric;
   stats: {
     allOpenTasks: number;
     overdueTasks: number;
@@ -42,7 +52,12 @@ type WorkbenchData = {
   generatedAt: string;
   layout: {
     mode: 'published' | 'preview';
-    modules: { id: string; module_type: string; position: number; config: Record<string, unknown> }[];
+    modules: {
+      id: string;
+      module_type: string;
+      position: number;
+      config: Record<string, unknown>;
+    }[];
   } | null;
 };
 
@@ -72,6 +87,8 @@ const DEFAULT_FUNCTIONS = [
 
 const time = (value: string) =>
   new Intl.DateTimeFormat('zh-CN', { hour: '2-digit', minute: '2-digit' }).format(new Date(value));
+
+const dispositionRate = (d: { handledRate: number }) => `${d.handledRate}%`;
 
 const readLinks = (config: Record<string, unknown>) => {
   const raw = config.links;
@@ -113,6 +130,7 @@ export function PortalWorkbenchLayout({
   distribution,
   busy,
   complete,
+  dispose,
 }: {
   data: WorkbenchData;
   distribution: {
@@ -129,6 +147,7 @@ export function PortalWorkbenchLayout({
   };
   busy: string | null;
   complete: (task: Task) => void;
+  dispose: (task: Task, action: 'handled' | 'ignored') => void;
 }) {
   const modules = (data.layout?.modules ?? []).filter((module) => visible(module.config));
   const stats = data.stats;
@@ -141,8 +160,7 @@ export function PortalWorkbenchLayout({
   const initial = data.employee.displayName.slice(0, 1);
 
   const renderModule = (module: (typeof modules)[number]): ReactNode => {
-    const type =
-      module.module_type === 'quick_actions' ? 'action_grid' : module.module_type;
+    const type = module.module_type === 'quick_actions' ? 'action_grid' : module.module_type;
     const section = String(module.config.section ?? '');
 
     switch (type) {
@@ -269,7 +287,11 @@ export function PortalWorkbenchLayout({
         const queue = String(module.config.queue ?? 'tasks');
         if (queue === 'tasks')
           return (
-            <section className={styles.panel} aria-labelledby={`tasks-${module.id}`} key={module.id}>
+            <section
+              className={styles.panel}
+              aria-labelledby={`tasks-${module.id}`}
+              key={module.id}
+            >
               <div className={styles.panelHead}>
                 <h2 id={`tasks-${module.id}`}>今天要做</h2>
                 <span>可直接完成</span>
@@ -380,7 +402,11 @@ export function PortalWorkbenchLayout({
           );
         if (queue === 'share_codes')
           return (
-            <section className={styles.panel} aria-labelledby={`share-${module.id}`} key={module.id}>
+            <section
+              className={styles.panel}
+              aria-labelledby={`share-${module.id}`}
+              key={module.id}
+            >
               <div className={styles.panelHead}>
                 <h2 id={`share-${module.id}`}>分享码</h2>
                 <a href="/e/share">管理 →</a>
@@ -410,6 +436,97 @@ export function PortalWorkbenchLayout({
           );
         return null;
       }
+      case 'queue_actions':
+        return (
+          <section className={styles.panel} aria-label="员工队列处置" key={module.id}>
+            <div className={styles.panelHead}>
+              <h2 id={`disposition-${module.id}`}>员工队列处置</h2>
+              <span>今日待办 · 一键标记已处理/忽略</span>
+            </div>
+            <div className={styles.rateStrip} aria-label="队列处置率">
+              <strong>
+                {dispositionRate(data.disposition)}
+                <span> 处置率</span>
+              </strong>
+              <span>
+                可处置 {data.disposition.total} · 待办 {data.disposition.pending} · 已处理{' '}
+                {data.disposition.handled} · 已忽略 {data.disposition.ignored}
+              </span>
+            </div>
+            {data.tasks.length === 0 ? (
+              <div className={styles.empty}>
+                <strong>暂无队列待处置</strong>
+                <p>今日待办会出现在这里，可用「已处理」或「忽略」留痕处置结果。</p>
+              </div>
+            ) : (
+              data.tasks.map((task) => (
+                <article className={styles.queueRow} key={task.id}>
+                  <div className={styles.queueCopy}>
+                    <strong>{task.title}</strong>
+                    <span>
+                      {task.status === 'overdue' ? '已逾期' : `${time(task.dueAt)} 前`} · 处置标记：
+                      {task.disposition === 'handled'
+                        ? '已处理'
+                        : task.disposition === 'ignored'
+                          ? '已忽略'
+                          : '待处置'}
+                    </span>
+                  </div>
+                  <div className={styles.queueActions}>
+                    <a className={styles.queueLink} href={`/e/tasks/${task.id}`}>
+                      打开 →
+                    </a>
+                    {task.disposition === 'handled' || task.disposition === 'ignored' ? (
+                      <span
+                        className={
+                          task.disposition === 'handled'
+                            ? styles.queueHandledText
+                            : styles.queueIgnoredText
+                        }
+                      >
+                        {task.disposition === 'handled' ? '已处理' : '已忽略'}
+                      </span>
+                    ) : (
+                      <>
+                        <button
+                          className={`${styles.queueButton} ${styles.queueHandled}`}
+                          type="button"
+                          disabled={busy !== null}
+                          onClick={() => void dispose(task, 'handled')}
+                        >
+                          已处理
+                        </button>
+                        <button
+                          className={`${styles.queueButton} ${styles.queueIgnored}`}
+                          type="button"
+                          disabled={busy !== null}
+                          onClick={() => void dispose(task, 'ignored')}
+                        >
+                          忽略
+                        </button>
+                      </>
+                    )}
+                  </div>
+                </article>
+              ))
+            )}
+            <div className={styles.distribution}>
+              <div className={styles.panelBlock}>
+                <h3>处置标记分布</h3>
+                <Bars
+                  items={[
+                    { label: '已处理', value: data.disposition.handled },
+                    { label: '已忽略', value: data.disposition.ignored },
+                    ...(data.disposition.pending
+                      ? [{ label: '待处置', value: data.disposition.pending }]
+                      : []),
+                  ].filter((item) => item.value > 0)}
+                  total={data.disposition.total}
+                />
+              </div>
+            </div>
+          </section>
+        );
       default:
         return null;
     }

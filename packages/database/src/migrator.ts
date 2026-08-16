@@ -77,6 +77,7 @@ import * as agentContracts from './migrations/075_agent_contracts.js';
 import * as ownerActivationTokens from './migrations/076_owner_activation_tokens.js';
 import * as workerHeartbeats from './migrations/077_worker_heartbeats.js';
 import * as storefrontReadModelCache from './migrations/078_storefront_read_model_cache.js';
+import * as employeeQueueDispositions from './migrations/079_employee_queue_dispositions.js';
 import type { Database } from './types.js';
 
 const migrationProvider: MigrationProvider = {
@@ -160,6 +161,7 @@ const migrationProvider: MigrationProvider = {
       '076_owner_activation_tokens': ownerActivationTokens,
       '077_worker_heartbeats': workerHeartbeats,
       '078_storefront_read_model_cache': storefrontReadModelCache,
+      '079_employee_queue_dispositions': employeeQueueDispositions,
     };
   },
 };

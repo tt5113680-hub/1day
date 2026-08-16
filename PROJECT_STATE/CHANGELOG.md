@@ -1,5 +1,11 @@
 ﻿# CHANGELOG
 
+## 2026-08-16 — G1-W∞-142 员工队列一键处置 PASS（§2 / ME-* densify）
+
+- migration `079_employee_queue_dispositions`；`POST /api/v1/employee/workbench/dispositions`（task.manage + 幂等 + audit/outbox）；overview 任务/线索/分享码 disposition + handledRate；`/e/workbench` + `/e/tasks` 一键已处理/忽略。
+- Evidence: `evidence/G1-MEITUAN-PARITY/WINF142/ACCEPTANCE.md`; tests/g1-winf142 5/5。
+- Next: **W∞-143** §2 其余 densify（ME 线索/跟进队列处置或驾驶舱剩余硬门槛）。
+
 ## 2026-08-16 — G1-W∞-141 员工获客分享配对闭环 densify PASS（§2 剩余 densify · L2 员工「发出分享」↔「打开分享」配对 · 回访）
 
 - `employee-share.service.ts` 只读新增 `pairing(context,id)`（employee scope fail-closed，先 `employee()` + `employee_share_codes` 按 tenant+employee 归属，越权 404），全部由真实 `entry_funnel_events` 现场推导，禁止假 BI：

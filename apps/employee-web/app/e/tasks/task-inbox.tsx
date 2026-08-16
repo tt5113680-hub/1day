@@ -14,12 +14,23 @@ type Task = {
   escalationLevel: number;
   version: number;
   customer: { id: string; displayName: string | null } | null;
+  disposition?: 'pending' | 'handled' | 'ignored';
+  dispositionAt?: string | null;
+};
+
+type DispositionMetric = {
+  total: number;
+  pending: number;
+  handled: number;
+  ignored: number;
+  handledRate: number;
 };
 
 type InboxData = {
   employee: { id: string; displayName: string; title: string | null };
   tasks: Task[];
   customerReminders: Task[];
+  disposition: DispositionMetric;
 };
 
 type Bucket = { label: string; value: number };
@@ -136,8 +147,7 @@ export function TaskInbox() {
     [allRows],
   );
   const customerDist = useMemo(
-    () =>
-      countBy(allRows.map((task) => (task.customer?.displayName ? '关联客户' : '内部执行'))),
+    () => countBy(allRows.map((task) => (task.customer?.displayName ? '关联客户' : '内部执行'))),
     [allRows],
   );
   const dueDist = useMemo(
@@ -175,6 +185,36 @@ export function TaskInbox() {
           ? '任务已被更新，请刷新后重试。'
           : '完成失败，请稍后重试。',
       );
+    } finally {
+      setBusy(null);
+    }
+  };
+
+  const dispose = async (task: Task, action: 'handled' | 'ignored') => {
+    setBusy(`dispose:${task.id}`);
+    setMessage('');
+    try {
+      const response = await sessionApi.request(`${api}/api/v1/employee/workbench/dispositions`, {
+        method: 'POST',
+        headers: {
+          'content-type': 'application/json',
+          'idempotency-key': `edge-${Date.now()}-${task.id}`,
+        },
+        body: JSON.stringify({
+          queueType: task.status === 'overdue' ? 'overdue_task' : 'open_task',
+          sourceId: task.id,
+          action,
+          title: task.title,
+          deepLink: `/e/tasks/${task.id}`,
+        }),
+      });
+      if (!response.ok) throw new Error('DISPOSITION');
+      setMessage(
+        action === 'handled' ? `已将「${task.title}」标记为已处理。` : `已忽略「${task.title}」。`,
+      );
+      await load('quiet');
+    } catch {
+      setMessage('队列处置未完成，请稍后重试。');
     } finally {
       setBusy(null);
     }
@@ -223,7 +263,8 @@ export function TaskInbox() {
       <section className={styles.heroCard} aria-label="任务收件箱概览">
         <h1>任务收件箱</h1>
         <p>
-          {data?.employee.displayName ?? '员工'} · 仅显示你范围内的待办与客户提醒；不含第三方订单履约。
+          {data?.employee.displayName ?? '员工'} ·
+          仅显示你范围内的待办与客户提醒；不含第三方订单履约。
         </p>
       </section>
 
@@ -251,6 +292,16 @@ export function TaskInbox() {
             <span>已逾期</span>
             <strong>{allRows.filter((task) => task.status === 'overdue').length}</strong>
           </div>
+        </div>
+        <div className={styles.rateStrip} aria-label="队列处置率">
+          <strong>
+            {data?.disposition ? `${data.disposition.handledRate}%` : '100%'}
+            <span> 处置率</span>
+          </strong>
+          <span>
+            可处置 {data?.disposition.total ?? 0} · 已处理 {data?.disposition.handled ?? 0} · 已忽略{' '}
+            {data?.disposition.ignored ?? 0}
+          </span>
         </div>
       </section>
 
@@ -318,6 +369,26 @@ export function TaskInbox() {
                   </div>
                   <div className={styles.actions}>
                     <a href={`/e/tasks/${task.id}`}>详情</a>
+                    {task.disposition === 'handled' || task.disposition === 'ignored' ? (
+                      <span
+                        className={
+                          task.disposition === 'handled'
+                            ? styles.queueHandledText
+                            : styles.queueIgnoredText
+                        }
+                      >
+                        {task.disposition === 'handled' ? '已处理' : '已忽略'}
+                      </span>
+                    ) : (
+                      <button
+                        className={`${styles.queueButton} ${styles.queueHandled}`}
+                        type="button"
+                        disabled={busy !== null}
+                        onClick={() => void dispose(task, 'handled')}
+                      >
+                        已处理
+                      </button>
+                    )}
                     <Button loading={busy === task.id} onClick={() => void complete(task)}>
                       完成
                     </Button>
@@ -354,7 +425,8 @@ export function TaskInbox() {
 
       <p className={styles.honest} role="note">
         以上分布全部由已抓取任务收件箱档案行现场推导(source=local)：状态/升级/客户关联/到期窗口/来源均由真实
-        tasks 与 customerReminders 行统计。推广员工具任务收件箱跟进门店服务痕迹，不含第三方订单履约，不代履约美团/抖音订单，非本平台下单。
+        tasks 与 customerReminders
+        行统计。推广员工具任务收件箱跟进门店服务痕迹，不含第三方订单履约，不代履约美团/抖音订单，非本平台下单。
       </p>
       <p className={styles.note}>
         推广员工具任务收件箱：菜单「任务」进入 `/e/tasks`；跟进门店服务痕迹，不代履约美团/抖音订单。

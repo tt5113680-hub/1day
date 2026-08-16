@@ -120,6 +120,15 @@ function Write-UnattendedOwnerAlert([string]$Message) {
     ''
   ) -join "`n"
   Set-Content -Path $alertPath -Value $body -Encoding utf8
+  # Owner rule 2026-08-16: on fault/block attempt WeChat (no-op if webhook unset; never starts paid LLM)
+  $notify = Join-Path $paths.Root 'scripts/owner-notify-wechat.ps1'
+  if (Test-Path $notify) {
+    try {
+      & powershell -NoProfile -ExecutionPolicy Bypass -File $notify -Message $Message -Root $paths.Root | Out-Null
+    } catch {
+      Add-Content -Path (Join-Path $paths.LogDir 'daemon.log') -Value ("[{0}] owner-notify failed: {1}" -f (Get-Date -Format 'yyyy-MM-dd HH:mm:ss'), $_.Exception.Message) -Encoding utf8
+    }
+  }
 }
 
 function Clear-StaleConstructionLock {

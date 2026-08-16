@@ -113,9 +113,14 @@ Owner accepted IDE depth plan with these hard overrides (see `MEITUAN_DEPTH_OPTI
 | -------- | ---------- |
 | J1 成本硬闸门 | **所有同类无人值守项目必须默认具备**：无授权切片 / 活跃 BLOCKED → **零 API 调用**；禁止 cold-start 复确认烧费；阻塞检测不得被文末历史 RESOLVED 误清。本仓已落地于 `scripts/unattended-scheduler.ps1` 等。 |
 | J2 执行器优先序 | **优先本地大模型**（Ollama / LM Studio / 本机 OpenAI 兼容 endpoint）作为以后无人值守默认；云端 DeepSeek 等按量 API 仅备用且须主人明确打开。Cursor 云额度不作 24h 主执行器。 |
-| J3 本仓当前 | **2026-08-16 主人「该放开的都放开，加速施工」**：COST STOP **CLEARED**；`DEEPSEEK_API_KEY` 已恢复；云端 DeepSeek Plan B **允许**（成本硬闸门 J1 仍保留）。计划任务若仍 Disabled，需管理员启用；IDE 可连续施工。 |
-| K 加速授权 | 授权下一工程切片 **W∞-132+**（§2 CRM 留存/唤醒深度等 densify）；Phase4 连接器仍待 API/商务；禁止代签主人 UI；禁止本平台下单/假 BI。 |
+| J3 本仓当前 | **2026-08-16 纠正：**「该放开的都放开」**不等于**付费云端 API 同意。误开 DeepSeek 已止损（key 再注释、daemon/opencode 已杀）。恢复云端 DeepSeek **必须主人明示**（如「同意用 DeepSeek 付费」）。默认仍 J2 本地大模型；无本地 endpoint 时不得偷偷切云端。 |
+| K 加速授权 | 授权工程切片 **W∞-132+ densify**（IDE / 本地模型）；**不含**自动付费云端。Phase4 仍待 API/商务；禁止代签主人 UI；禁止本平台下单/假 BI。 |
+| L 模糊意图 | **2026-08-16：** 不确定就问。付费/密钥/云端 API/公网上线不得推断。与「无人值守勿问」冲突时，**本条优先**。合格付费同意须明示（如「同意用 DeepSeek 付费」）。 |
+| M 先说明再动手 | **2026-08-16 再裁定：** 无人值守 = **自动工程施工**；明确 TASK **连续切刀、勿碎问**。一句报刀即可。 |
+| N 停机与微信 | **2026-08-16：** 仅 BUG/故障/不可恢复/无切片/DEFERRED/BLOCKED 才停；停则 `OWNER_ALERT` + `scripts/owner-notify-wechat.ps1`（需 `OWNER_NOTIFY_WEBHOOK_URL`）。付费类**仅主人明确要求**才可，禁止猜想启动。 |
 
 ## Current blockers
 
-- None for unattended cost-stop. Human G1 UI sign-off still open. Phase4 connectors still await API/business premise. Scheduled tasks may need Administrator enable if access denied.
+- **Paid cloud API:** DeepSeek **not authorized** until owner **explicit request**. Local LLM preferred.
+- **WeChat notify:** optional — set `OWNER_NOTIFY_WEBHOOK_URL` in `.env.local-unattended` (see `scripts/owner-notify-wechat.md`).
+- Human G1 UI sign-off still open. Phase4 connectors still await API/business premise.

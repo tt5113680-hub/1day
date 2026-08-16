@@ -17,12 +17,22 @@ type Task = {
   escalationLevel: number;
   version: number;
   customer: { id: string; displayName: string | null } | null;
+  disposition?: 'pending' | 'handled' | 'ignored';
+  dispositionAt?: string | null;
+};
+type DispositionMetric = {
+  total: number;
+  pending: number;
+  handled: number;
+  ignored: number;
+  handledRate: number;
 };
 type Data = {
   employee: { id: string; displayName: string; title: string | null };
   tasks: Task[];
   customerReminders: Task[];
   opportunities: { taskId: string; title: string; reason: string; source: string }[];
+  disposition: DispositionMetric;
   stats: {
     allOpenTasks: number;
     overdueTasks: number;
@@ -45,7 +55,12 @@ type Data = {
   generatedAt: string;
   layout: {
     mode: 'published' | 'preview';
-    modules: { id: string; module_type: string; position: number; config: Record<string, unknown> }[];
+    modules: {
+      id: string;
+      module_type: string;
+      position: number;
+      config: Record<string, unknown>;
+    }[];
   } | null;
 };
 type State = 'loading' | 'ready' | 'forbidden' | 'error';
@@ -87,6 +102,8 @@ const dueBucket = (dueAt: string, status: string) => {
   return '3 天以上';
 };
 
+const dispositionRate = (d: { handledRate: number }) => `${d.handledRate}%`;
+
 function Bars({ items, total }: { items: Bucket[]; total: number }) {
   if (!items.length) return <p className={styles.barEmpty}>暂无记录</p>;
   return (
@@ -125,29 +142,35 @@ export function Workbench() {
   const headers = () => ({
     'content-type': 'application/json',
   });
-  const load = useCallback(async (preserveMessage = false, mode: 'full' | 'quiet' = 'full') => {
-    if (!(await sessionApi.context())) {
-      setState('forbidden');
-      return;
-    }
-    if (mode === 'full') setState('loading');
-    if (!preserveMessage && mode === 'full') setMessage('');
-    try {
-      const previewQuery = previewToken ? `?preview=${encodeURIComponent(previewToken)}` : '';
-      const response = await sessionApi.request(`${api}/api/v1/employee/workbench${previewQuery}`, {
-        headers: headers(),
-      });
-      if (response.status === 401 || response.status === 403) {
+  const load = useCallback(
+    async (preserveMessage = false, mode: 'full' | 'quiet' = 'full') => {
+      if (!(await sessionApi.context())) {
         setState('forbidden');
         return;
       }
-      if (!response.ok) throw Error('LOAD_FAILED');
-      setData((await response.json()).data as Data);
-      setState('ready');
-    } catch {
-      if (mode === 'full') setState('error');
-    }
-  }, [previewToken]);
+      if (mode === 'full') setState('loading');
+      if (!preserveMessage && mode === 'full') setMessage('');
+      try {
+        const previewQuery = previewToken ? `?preview=${encodeURIComponent(previewToken)}` : '';
+        const response = await sessionApi.request(
+          `${api}/api/v1/employee/workbench${previewQuery}`,
+          {
+            headers: headers(),
+          },
+        );
+        if (response.status === 401 || response.status === 403) {
+          setState('forbidden');
+          return;
+        }
+        if (!response.ok) throw Error('LOAD_FAILED');
+        setData((await response.json()).data as Data);
+        setState('ready');
+      } catch {
+        if (mode === 'full') setState('error');
+      }
+    },
+    [previewToken],
+  );
   useEffect(() => {
     void load();
   }, [load]);
@@ -174,6 +197,34 @@ export function Workbench() {
           ? '任务已被更新，请刷新后重试。'
           : '操作未完成，请检查网络后重试。',
       );
+    } finally {
+      setBusy(null);
+    }
+  };
+  const dispose = async (task: Task, action: 'handled' | 'ignored') => {
+    setBusy(`dispose:${task.id}`);
+    setMessage('');
+    try {
+      const response = await sessionApi.request(`${api}/api/v1/employee/workbench/dispositions`, {
+        method: 'POST',
+        headers: { ...headers(), 'idempotency-key': `edge-${Date.now()}-${task.id}` },
+        body: JSON.stringify({
+          queueType: task.status === 'overdue' ? 'overdue_task' : 'open_task',
+          sourceId: task.id,
+          action,
+          title: task.title,
+          deepLink: `/e/tasks/${task.id}`,
+        }),
+      });
+      if (!response.ok) throw Error('DISPOSITION_FAILED');
+      setMessage(
+        action === 'handled'
+          ? `已将「${task.title}」标记为已处理。`
+          : `已忽略「${task.title}」待办。`,
+      );
+      await load(true);
+    } catch {
+      setMessage('队列处置未完成，请检查网络后重试。');
     } finally {
       setBusy(null);
     }
@@ -310,239 +361,331 @@ export function Workbench() {
             }}
             busy={busy}
             complete={(task) => void complete(task)}
+            dispose={(task, action) => void dispose(task, action)}
           />
         </>
       ) : (
         <>
-      <section className={styles.heroCard} aria-label="员工概览">
-        <span className={styles.avatar} aria-hidden>
-          {initial}
-        </span>
-        <div className={styles.heroCopy}>
-          <h1>你好，{data.employee.displayName}</h1>
-          <p>{data.employee.title ?? '员工'} · 仅显示你的任务与客户范围 · 不含第三方订单履约</p>
-        </div>
-      </section>
+          <section className={styles.heroCard} aria-label="员工概览">
+            <span className={styles.avatar} aria-hidden>
+              {initial}
+            </span>
+            <div className={styles.heroCopy}>
+              <h1>你好，{data.employee.displayName}</h1>
+              <p>{data.employee.title ?? '员工'} · 仅显示你的任务与客户范围 · 不含第三方订单履约</p>
+            </div>
+          </section>
 
-      <EmployeeDeepPageNav page="workbench" />
+          <EmployeeDeepPageNav page="workbench" />
 
-      {message ? (
-        <p className={styles.feedback} role="status">
-          {message}
-        </p>
-      ) : null}
+          {message ? (
+            <p className={styles.feedback} role="status">
+              {message}
+            </p>
+          ) : null}
 
-      <section className={styles.panel} aria-labelledby="overview-title">
-        <div className={styles.panelHead}>
-          <span id="overview-title">今日作业概览</span>
-          <span className={styles.panelMeta}>{time(data.generatedAt)} 更新</span>
-        </div>
-        <EmployeeWorkbenchKpiStrip page="workbench" stats={stats} state="ready" />
-        <div className={styles.metrics}>
-          {overview.map((item) => (
-            <article className={styles.metric} key={item.label}>
-              <strong>{item.value}</strong>
-              <span>{item.label}</span>
-              <small>{item.hint}</small>
-            </article>
-          ))}
-        </div>
-      </section>
+          <section className={styles.panel} aria-labelledby="overview-title">
+            <div className={styles.panelHead}>
+              <span id="overview-title">今日作业概览</span>
+              <span className={styles.panelMeta}>{time(data.generatedAt)} 更新</span>
+            </div>
+            <EmployeeWorkbenchKpiStrip page="workbench" stats={stats} state="ready" />
+            <div className={styles.metrics}>
+              {overview.map((item) => (
+                <article className={styles.metric} key={item.label}>
+                  <strong>{item.value}</strong>
+                  <span>{item.label}</span>
+                  <small>{item.hint}</small>
+                </article>
+              ))}
+            </div>
+          </section>
 
-      <section className={styles.panel} aria-label="工作台作业分布">
-        <div className={styles.panelHead}>
-          <h2>工作台作业分布</h2>
-          <span className={styles.panelMeta}>由工作台真实行推导</span>
-        </div>
-        <div className={styles.distribution}>
-          <div className={styles.panelBlock}>
-            <h3>状态分布</h3>
-            <Bars items={statusDist} total={allRows.length} />
-          </div>
-          <div className={styles.panelBlock}>
-            <h3>升级分布</h3>
-            <Bars items={escalationDist} total={allRows.length} />
-          </div>
-          <div className={styles.panelBlock}>
-            <h3>客户关联分布</h3>
-            <Bars items={customerDist} total={allRows.length} />
-          </div>
-          <div className={styles.panelBlock}>
-            <h3>到期窗口分布</h3>
-            <Bars items={dueDist} total={allRows.length} />
-          </div>
-          <div className={styles.panelBlock}>
-            <h3>来源分布</h3>
-            <Bars items={sourceDist} total={allRows.length + opportunities.length} />
-          </div>
-          <div className={styles.panelBlock}>
-            <h3>行动机会分布</h3>
-            <Bars items={opportunityDist} total={opportunities.length} />
-          </div>
-          <div className={styles.panelBlock}>
-            <h3>线索分布</h3>
-            <Bars items={leadDist} total={stats.claimedLeads + stats.poolLeads} />
-          </div>
-          <div className={styles.panelBlock}>
-            <h3>分享分布</h3>
-            <Bars items={shareDist} total={stats.activeShareCodes + stats.shareOpensToday} />
-          </div>
-        </div>
-      </section>
+          <section className={styles.panel} aria-label="工作台作业分布">
+            <div className={styles.panelHead}>
+              <h2>工作台作业分布</h2>
+              <span className={styles.panelMeta}>由工作台真实行推导</span>
+            </div>
+            <div className={styles.distribution}>
+              <div className={styles.panelBlock}>
+                <h3>状态分布</h3>
+                <Bars items={statusDist} total={allRows.length} />
+              </div>
+              <div className={styles.panelBlock}>
+                <h3>升级分布</h3>
+                <Bars items={escalationDist} total={allRows.length} />
+              </div>
+              <div className={styles.panelBlock}>
+                <h3>客户关联分布</h3>
+                <Bars items={customerDist} total={allRows.length} />
+              </div>
+              <div className={styles.panelBlock}>
+                <h3>到期窗口分布</h3>
+                <Bars items={dueDist} total={allRows.length} />
+              </div>
+              <div className={styles.panelBlock}>
+                <h3>来源分布</h3>
+                <Bars items={sourceDist} total={allRows.length + opportunities.length} />
+              </div>
+              <div className={styles.panelBlock}>
+                <h3>行动机会分布</h3>
+                <Bars items={opportunityDist} total={opportunities.length} />
+              </div>
+              <div className={styles.panelBlock}>
+                <h3>线索分布</h3>
+                <Bars items={leadDist} total={stats.claimedLeads + stats.poolLeads} />
+              </div>
+              <div className={styles.panelBlock}>
+                <h3>分享分布</h3>
+                <Bars items={shareDist} total={stats.activeShareCodes + stats.shareOpensToday} />
+              </div>
+            </div>
+          </section>
 
-      <section className={styles.panel} aria-label="常用功能网格">
-        <div className={styles.panelHead}>
-          <h2>常用功能</h2>
-          <span>商家工作台</span>
-        </div>
-        <div className={styles.functions}>
-          {functions.map((item) => (
-            <a className={styles.function} href={item.href} key={item.href}>
-              <span className={styles.functionIcon} aria-hidden>
-                {FUNCTION_ICONS[item.label] ?? '·'}
+          <section className={styles.panel} aria-label="常用功能网格">
+            <div className={styles.panelHead}>
+              <h2>常用功能</h2>
+              <span>商家工作台</span>
+            </div>
+            <div className={styles.functions}>
+              {functions.map((item) => (
+                <a className={styles.function} href={item.href} key={item.href}>
+                  <span className={styles.functionIcon} aria-hidden>
+                    {FUNCTION_ICONS[item.label] ?? '·'}
+                  </span>
+                  <strong>{item.label}</strong>
+                  <span>{item.desc}</span>
+                </a>
+              ))}
+            </div>
+          </section>
+
+          <section className={styles.panel} aria-labelledby="today-title">
+            <div className={styles.panelHead}>
+              <h2 id="today-title">今天要做</h2>
+              <span>可直接完成</span>
+            </div>
+            {data.tasks.length === 0 ? (
+              <div className={styles.empty}>
+                <strong>今天没有待办</strong>
+                <p>保持节奏，新的任务会在这里出现。</p>
+              </div>
+            ) : (
+              data.tasks.map((task) => (
+                <article className={styles.task} key={task.id}>
+                  <div>
+                    <StatusBadge tone={task.status === 'overdue' ? 'danger' : 'info'}>
+                      {task.status === 'overdue' ? '已逾期' : `${time(task.dueAt)} 前`}
+                    </StatusBadge>
+                    <h3>{task.title}</h3>
+                    <p>
+                      {task.customer?.displayName
+                        ? `客户：${task.customer.displayName}`
+                        : '内部执行任务'}
+                      {task.escalationLevel ? ` · 已升级 ${task.escalationLevel} 次` : ''}
+                    </p>
+                  </div>
+                  <div className={styles.taskActions}>
+                    <a href={`/e/tasks/${task.id}`}>详情</a>
+                    <Button loading={busy === task.id} onClick={() => void complete(task)}>
+                      完成
+                    </Button>
+                  </div>
+                </article>
+              ))
+            )}
+          </section>
+
+          <section className={styles.panel} aria-label="员工队列处置">
+            <div className={styles.panelHead}>
+              <h2 id="disposition-title">员工队列处置</h2>
+              <span>今日待办 · 一键标记已处理/忽略</span>
+            </div>
+            <div className={styles.rateStrip} aria-label="队列处置率">
+              <strong>
+                {dispositionRate(data.disposition)}
+                <span> 处置率</span>
+              </strong>
+              <span>
+                可处置 {data.disposition.total} · 待办 {data.disposition.pending} · 已处理{' '}
+                {data.disposition.handled} · 已忽略 {data.disposition.ignored}
               </span>
-              <strong>{item.label}</strong>
-              <span>{item.desc}</span>
-            </a>
-          ))}
-        </div>
-      </section>
-
-      <section className={styles.panel} aria-labelledby="today-title">
-        <div className={styles.panelHead}>
-          <h2 id="today-title">今天要做</h2>
-          <span>可直接完成</span>
-        </div>
-        {data.tasks.length === 0 ? (
-          <div className={styles.empty}>
-            <strong>今天没有待办</strong>
-            <p>保持节奏，新的任务会在这里出现。</p>
-          </div>
-        ) : (
-          data.tasks.map((task) => (
-            <article className={styles.task} key={task.id}>
-              <div>
-                <StatusBadge tone={task.status === 'overdue' ? 'danger' : 'info'}>
-                  {task.status === 'overdue' ? '已逾期' : `${time(task.dueAt)} 前`}
-                </StatusBadge>
-                <h3>{task.title}</h3>
-                <p>
-                  {task.customer?.displayName
-                    ? `客户：${task.customer.displayName}`
-                    : '内部执行任务'}
-                  {task.escalationLevel ? ` · 已升级 ${task.escalationLevel} 次` : ''}
-                </p>
+            </div>
+            {data.tasks.length === 0 ? (
+              <div className={styles.empty}>
+                <strong>暂无队列待处置</strong>
+                <p>今日待办会出现在这里，可用「已处理」或「忽略」留痕处置结果。</p>
               </div>
-              <div className={styles.taskActions}>
-                <a href={`/e/tasks/${task.id}`}>详情</a>
-                <Button loading={busy === task.id} onClick={() => void complete(task)}>
-                  完成
-                </Button>
+            ) : (
+              data.tasks.map((task) => (
+                <article className={styles.queueRow} key={task.id}>
+                  <div className={styles.queueCopy}>
+                    <strong>{task.title}</strong>
+                    <span>
+                      {task.status === 'overdue' ? '已逾期' : `${time(task.dueAt)} 前`} · 处置标记：
+                      {task.disposition === 'handled'
+                        ? '已处理'
+                        : task.disposition === 'ignored'
+                          ? '已忽略'
+                          : '待处置'}
+                    </span>
+                  </div>
+                  <div className={styles.queueActions}>
+                    <a className={styles.queueLink} href={`/e/tasks/${task.id}`}>
+                      打开 →
+                    </a>
+                    {task.disposition === 'handled' || task.disposition === 'ignored' ? (
+                      <span
+                        className={
+                          task.disposition === 'handled'
+                            ? styles.queueHandledText
+                            : styles.queueIgnoredText
+                        }
+                      >
+                        {task.disposition === 'handled' ? '已处理' : '已忽略'}
+                      </span>
+                    ) : (
+                      <>
+                        <button
+                          className={`${styles.queueButton} ${styles.queueHandled}`}
+                          type="button"
+                          disabled={busy !== null}
+                          onClick={() => void dispose(task, 'handled')}
+                        >
+                          已处理
+                        </button>
+                        <button
+                          className={`${styles.queueButton} ${styles.queueIgnored}`}
+                          type="button"
+                          disabled={busy !== null}
+                          onClick={() => void dispose(task, 'ignored')}
+                        >
+                          忽略
+                        </button>
+                      </>
+                    )}
+                  </div>
+                </article>
+              ))
+            )}
+            <div className={styles.distribution}>
+              <div className={styles.panelBlock}>
+                <h3>处置标记分布</h3>
+                <Bars
+                  items={[
+                    { label: '已处理', value: data.disposition.handled },
+                    { label: '已忽略', value: data.disposition.ignored },
+                    ...(data.disposition.pending
+                      ? [{ label: '待处置', value: data.disposition.pending }]
+                      : []),
+                  ].filter((item) => item.value > 0)}
+                  total={data.disposition.total}
+                />
               </div>
-            </article>
-          ))
-        )}
-      </section>
+            </div>
+          </section>
 
-      <section className={styles.panel} aria-labelledby="opportunity-title">
-        <div className={styles.panelHead}>
-          <h2 id="opportunity-title">行动机会</h2>
-          <span>来自任务时限信号</span>
-        </div>
-        {data.opportunities.length === 0 ? (
-          <div className={styles.empty}>
-            <strong>暂未识别到紧急机会</strong>
-            <p>当新的待办或逾期信号出现时，这里会给出可执行建议。</p>
-          </div>
-        ) : (
-          data.opportunities.map((item) => (
-            <article className={styles.opportunity} key={item.taskId}>
-              <span>行动建议</span>
-              <h3>{item.title}</h3>
-              <p>{item.reason}</p>
-            </article>
-          ))
-        )}
-      </section>
-
-      <section className={styles.panel} aria-labelledby="customer-title">
-        <div className={styles.panelHead}>
-          <h2 id="customer-title">客户提醒</h2>
-          <span>与你有关的待办</span>
-        </div>
-        {data.customerReminders.length === 0 ? (
-          <div className={styles.empty}>
-            <strong>暂无客户提醒</strong>
-            <p>客户关联任务会在这里提示你。</p>
-          </div>
-        ) : (
-          data.customerReminders.map((task) => (
-            <article className={styles.reminder} key={task.id}>
-              <div>
-                <strong>{task.customer?.displayName ?? '待确认客户'}</strong>
-                <p>{task.title}</p>
+          <section className={styles.panel} aria-labelledby="opportunity-title">
+            <div className={styles.panelHead}>
+              <h2 id="opportunity-title">行动机会</h2>
+              <span>来自任务时限信号</span>
+            </div>
+            {data.opportunities.length === 0 ? (
+              <div className={styles.empty}>
+                <strong>暂未识别到紧急机会</strong>
+                <p>当新的待办或逾期信号出现时，这里会给出可执行建议。</p>
               </div>
-              <span>{task.status === 'overdue' ? '尽快处理' : time(task.dueAt)}</span>
-            </article>
-          ))
-        )}
-      </section>
+            ) : (
+              data.opportunities.map((item) => (
+                <article className={styles.opportunity} key={item.taskId}>
+                  <span>行动建议</span>
+                  <h3>{item.title}</h3>
+                  <p>{item.reason}</p>
+                </article>
+              ))
+            )}
+          </section>
 
-      <section className={styles.panel} aria-labelledby="lead-queue-title">
-        <div className={styles.panelHead}>
-          <h2 id="lead-queue-title">线索队列</h2>
-          <a href="/e/leads">全部 →</a>
-        </div>
-        {data.queues.leads.length === 0 ? (
-          <div className={styles.empty}>
-            <strong>暂无线索</strong>
-            <p>线索池有新条目时会在这里提示。</p>
-          </div>
-        ) : (
-          data.queues.leads.map((item) => (
-            <a className={styles.reminder} href={item.deepLink} key={item.id}>
-              <div>
-                <strong>{item.title}</strong>
-                <p>{item.status === 'open' ? '待认领' : '已认领'}</p>
+          <section className={styles.panel} aria-labelledby="customer-title">
+            <div className={styles.panelHead}>
+              <h2 id="customer-title">客户提醒</h2>
+              <span>与你有关的待办</span>
+            </div>
+            {data.customerReminders.length === 0 ? (
+              <div className={styles.empty}>
+                <strong>暂无客户提醒</strong>
+                <p>客户关联任务会在这里提示你。</p>
               </div>
-              <span>{new Date(item.occurredAt).toLocaleDateString()}</span>
-            </a>
-          ))
-        )}
-      </section>
+            ) : (
+              data.customerReminders.map((task) => (
+                <article className={styles.reminder} key={task.id}>
+                  <div>
+                    <strong>{task.customer?.displayName ?? '待确认客户'}</strong>
+                    <p>{task.title}</p>
+                  </div>
+                  <span>{task.status === 'overdue' ? '尽快处理' : time(task.dueAt)}</span>
+                </article>
+              ))
+            )}
+          </section>
 
-      <section className={styles.panel} aria-labelledby="share-queue-title">
-        <div className={styles.panelHead}>
-          <h2 id="share-queue-title">分享码</h2>
-          <a href="/e/share">管理 →</a>
-        </div>
-        {data.queues.shareCodes.length === 0 ? (
-          <div className={styles.empty}>
-            <strong>暂无活跃分享码</strong>
-            <p>创建分享码后可追踪打开次数。</p>
-          </div>
-        ) : (
-          data.queues.shareCodes.map((item) => (
-            <a className={styles.reminder} href={item.deepLink} key={item.id}>
-              <div>
-                <strong>{item.title}</strong>
-                <p>
-                  {item.scenario}
-                  {item.expiresAt ? ` · 到期 ${new Date(item.expiresAt).toLocaleDateString()}` : ''}
-                </p>
+          <section className={styles.panel} aria-labelledby="lead-queue-title">
+            <div className={styles.panelHead}>
+              <h2 id="lead-queue-title">线索队列</h2>
+              <a href="/e/leads">全部 →</a>
+            </div>
+            {data.queues.leads.length === 0 ? (
+              <div className={styles.empty}>
+                <strong>暂无线索</strong>
+                <p>线索池有新条目时会在这里提示。</p>
               </div>
-              <span>活跃</span>
-            </a>
-          ))
-        )}
-      </section>
+            ) : (
+              data.queues.leads.map((item) => (
+                <a className={styles.reminder} href={item.deepLink} key={item.id}>
+                  <div>
+                    <strong>{item.title}</strong>
+                    <p>{item.status === 'open' ? '待认领' : '已认领'}</p>
+                  </div>
+                  <span>{new Date(item.occurredAt).toLocaleDateString()}</span>
+                </a>
+              ))
+            )}
+          </section>
+
+          <section className={styles.panel} aria-labelledby="share-queue-title">
+            <div className={styles.panelHead}>
+              <h2 id="share-queue-title">分享码</h2>
+              <a href="/e/share">管理 →</a>
+            </div>
+            {data.queues.shareCodes.length === 0 ? (
+              <div className={styles.empty}>
+                <strong>暂无活跃分享码</strong>
+                <p>创建分享码后可追踪打开次数。</p>
+              </div>
+            ) : (
+              data.queues.shareCodes.map((item) => (
+                <a className={styles.reminder} href={item.deepLink} key={item.id}>
+                  <div>
+                    <strong>{item.title}</strong>
+                    <p>
+                      {item.scenario}
+                      {item.expiresAt
+                        ? ` · 到期 ${new Date(item.expiresAt).toLocaleDateString()}`
+                        : ''}
+                    </p>
+                  </div>
+                  <span>活跃</span>
+                </a>
+              ))
+            )}
+          </section>
         </>
       )}
 
       <p className={styles.honest} role="note">
         以上分布全部由已抓取工作台档案行现场推导(source=local)：状态/升级/客户关联/到期窗口/来源均由真实
         tasks 与 customerReminders 行统计；线索与分享 KPI 来自 stats 与 queues
-        真实字段。推广员工具工作台跟进门店服务痕迹，不含第三方订单履约，不代履约美团/抖音订单，非本平台下单。
+        真实字段；处置率仅登记推广员工具内「已处理/已忽略」留痕，不代履约美团/抖音订单，不含支付金额与第三方订单履约，非本平台下单。
       </p>
     </main>
   );

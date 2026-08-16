@@ -1728,6 +1728,25 @@ export interface ManagementQueueDispositionsTable {
   version: Generated<number>;
 }
 
+export interface EmployeeQueueDispositionsTable {
+  id: string;
+  tenant_id: string;
+  employee_id: string;
+  queue_type: string;
+  source_id: string;
+  status: string;
+  deep_link: string | null;
+  title: string | null;
+  disposition_at: Timestamp;
+  disposed_by: string | null;
+  created_at: Timestamp;
+  created_by: string | null;
+  updated_at: Timestamp;
+  updated_by: string | null;
+  deleted_at: Timestamp | null;
+  version: Generated<number>;
+}
+
 export interface CustomerRfmProfilesTable {
   id: string;
   tenant_id: string;
@@ -1810,6 +1829,7 @@ export interface Database {
   stores: StoresTable;
   idempotency_keys: IdempotencyKeysTable;
   employees: EmployeesTable;
+  employee_queue_dispositions: EmployeeQueueDispositionsTable;
   membership_invitations: MembershipInvitationsTable;
   customers: CustomersTable;
   customer_identities: CustomerIdentitiesTable;

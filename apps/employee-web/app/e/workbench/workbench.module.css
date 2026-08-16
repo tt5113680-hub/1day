@@ -395,6 +395,114 @@
   font-size: 14px;
 }
 
+.rateStrip {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 12px;
+  border-radius: 10px;
+  padding: 10px 12px;
+  background: linear-gradient(135deg, #fff9db 0%, #fffef5 100%);
+  border: 1px solid rgb(255 209 0 / 35%);
+}
+
+.rateStrip strong {
+  font: 700 20px / 1.1 var(--od-font-display, system-ui);
+  color: #222;
+}
+
+.rateStrip span {
+  color: #666;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.queueRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 8px;
+  border-radius: 10px;
+  padding: 10px 12px;
+  background: #faf9f5;
+}
+
+.queueCopy {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+}
+
+.queueCopy strong {
+  overflow: hidden;
+  color: #222;
+  font-size: 13px;
+  font-weight: 800;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.queueCopy span {
+  color: #888;
+  font-size: 12px;
+}
+
+.queueActions {
+  display: flex;
+  flex: 0 0 auto;
+  align-items: center;
+  gap: 6px;
+}
+
+.queueLink {
+  color: #8a6d00;
+  font-size: 12px;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.queueHandledText,
+.queueIgnoredText {
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.queueHandledText {
+  color: #1a7f37;
+}
+
+.queueIgnoredText {
+  color: #8a6d00;
+}
+
+.queueButton {
+  min-height: 32px;
+  padding-inline: 10px;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.queueButton:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.queueHandled {
+  background: #fff;
+  border-color: #ffd100;
+  color: #222;
+}
+
+.queueIgnored {
+  background: #fff3d4;
+  color: #8a6d00;
+}
+
 .centered {
   display: grid;
   min-height: 100vh;

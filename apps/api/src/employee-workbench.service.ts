@@ -14,6 +14,10 @@ import { PortalLayoutService } from './portal-layout.service';
 
 const UUID = /^[0-9a-f-]{36}$/i;
 const trace = 'page-e-001';
+const QUEUE_TYPES = new Set(['open_task', 'overdue_task', 'lead', 'share_code']);
+const ACTIONS = new Set(['handled', 'ignored']);
+const safeLink = (value: unknown) =>
+  typeof value === 'string' && value.startsWith('/') && value.length <= 320 ? value : '';
 
 @Injectable()
 export class EmployeeWorkbenchService implements OnModuleDestroy {
@@ -23,7 +27,7 @@ export class EmployeeWorkbenchService implements OnModuleDestroy {
 
   async overview(context: OrganizationContext, previewToken?: string) {
     const employee = await this.employee(context);
-    const [result, statsRow, leadRows, shareRows] = await Promise.all([
+    const [result, statsRow, leadRows, shareRows, dispositionRows] = await Promise.all([
       this.pool.query(
         `select t.id,t.title,t.due_at,t.status,t.escalation_level,t.version,
               c.id as customer_id,c.display_name as customer_name
@@ -64,6 +68,12 @@ export class EmployeeWorkbenchService implements OnModuleDestroy {
          order by s.created_at desc limit 6`,
         [context.tenantId, employee.id],
       ),
+      this.pool.query(
+        `select queue_type, source_id, status, disposition_at
+         from employee_queue_dispositions
+         where tenant_id=$1 and employee_id=$2 and deleted_at is null`,
+        [context.tenantId, employee.id],
+      ),
     ]);
     const tasks = result.rows.map((row) => ({
       id: row.id,
@@ -74,13 +84,51 @@ export class EmployeeWorkbenchService implements OnModuleDestroy {
       version: row.version,
       customer: row.customer_id ? { id: row.customer_id, displayName: row.customer_name } : null,
     }));
-    const today = tasks.filter((task) => this.isToday(task.dueAt));
-    const customerReminders = tasks.filter((task) => task.customer !== null).slice(0, 5);
+    const dispositionByKey = new Map<string, string>();
+    const dispositionAtByKey = new Map<string, string>();
+    for (const row of dispositionRows.rows) {
+      const key = `${row.queue_type}:${row.source_id}`;
+      dispositionByKey.set(key, row.status);
+      dispositionAtByKey.set(key, row.disposition_at);
+    }
+    const withDisposition = (type: string, id: string) => {
+      const key = `${type}:${id}`;
+      return {
+        disposition: dispositionByKey.get(key) ?? 'pending',
+        dispositionAt: dispositionAtByKey.get(key) ?? null,
+      };
+    };
+    const tasksWithDisposition = tasks.map((task) => ({
+      ...task,
+      queueType: task.status === 'overdue' ? 'overdue_task' : 'open_task',
+      ...withDisposition(task.status === 'overdue' ? 'overdue_task' : 'open_task', task.id),
+    }));
+    const today = tasksWithDisposition.filter((task) => this.isToday(task.dueAt));
+    const customerReminders = tasksWithDisposition
+      .filter((task) => task.customer !== null)
+      .slice(0, 5);
+    const leads = leadRows.rows.map((row) => ({
+      id: row.id,
+      title: row.display_name,
+      status: row.status,
+      occurredAt: row.created_at,
+      deepLink: '/e/leads',
+      ...withDisposition('lead', row.id),
+    }));
+    const shareCodes = shareRows.rows.map((row) => ({
+      id: row.id,
+      title: row.code,
+      scenario: row.scenario,
+      expiresAt: row.expires_at,
+      deepLink: '/e/share',
+      ...withDisposition('share_code', row.id),
+    }));
+    const disposition = this.dispositionSummary(dispositionByKey, today, leads, shareCodes);
     return {
       employee: { id: employee.id, displayName: employee.display_name, title: employee.title },
       tasks: today,
       customerReminders,
-      opportunities: tasks.slice(0, 3).map((task) => ({
+      opportunities: tasksWithDisposition.slice(0, 3).map((task) => ({
         taskId: task.id,
         title: task.status === 'overdue' ? `优先处理：${task.title}` : `建议推进：${task.title}`,
         reason:
@@ -98,22 +146,8 @@ export class EmployeeWorkbenchService implements OnModuleDestroy {
         shareOpensToday: statsRow.rows[0].share_opens_today,
         redemptionsToday: statsRow.rows[0].redemptions_today,
       },
-      queues: {
-        leads: leadRows.rows.map((row) => ({
-          id: row.id,
-          title: row.display_name,
-          status: row.status,
-          occurredAt: row.created_at,
-          deepLink: '/e/leads',
-        })),
-        shareCodes: shareRows.rows.map((row) => ({
-          id: row.id,
-          title: row.code,
-          scenario: row.scenario,
-          expiresAt: row.expires_at,
-          deepLink: '/e/share',
-        })),
-      },
+      queues: { leads, shareCodes },
+      disposition,
       generatedAt: new Date().toISOString(),
       layout: await this.portalLayout.resolve(context.tenantId, 'employee', previewToken),
     };
@@ -209,6 +243,172 @@ export class EmployeeWorkbenchService implements OnModuleDestroy {
     await client.query(
       "insert into outbox_events(id,tenant_id,event_type,aggregate_type,aggregate_id,payload,correlation_id,trace_id,created_by,updated_by) values($1,$2,'employee.workbench.task_completed.v1','task',$3,$4,$5,$6,$7,$7)",
       [randomUUID(), context.tenantId, taskId, { payload }, correlationId, trace, context.userId],
+    );
+  }
+
+  private dispositionSummary(
+    byKey: Map<string, string>,
+    tasks: { queueType: string; id: string }[],
+    leads: { id: string }[],
+    shareCodes: { id: string }[],
+  ) {
+    const actionable = [
+      ...tasks.map((task) => task.queueType + ':' + task.id),
+      ...leads.map((item) => 'lead:' + item.id),
+      ...shareCodes.map((item) => 'share_code:' + item.id),
+    ];
+    return this.reduceDisposition(byKey, actionable);
+  }
+
+  private reduceDisposition(byKey: Map<string, string>, keys: string[]) {
+    const unique = [...new Set(keys)];
+    let pending = 0;
+    let handled = 0;
+    let ignored = 0;
+    for (const key of unique) {
+      const status = byKey.get(key);
+      if (status === 'handled') handled += 1;
+      else if (status === 'ignored') ignored += 1;
+      else pending += 1;
+    }
+    const handledRate = unique.length ? Math.round((handled / unique.length) * 100) : 100;
+    return { total: unique.length, pending, handled, ignored, handledRate };
+  }
+
+  async dispose(
+    context: OrganizationContext,
+    body: Record<string, unknown>,
+    key: string,
+    requestId: string,
+  ) {
+    const queueType = typeof body.queueType === 'string' ? body.queueType : '';
+    const sourceId = typeof body.sourceId === 'string' ? body.sourceId : '';
+    const action = typeof body.action === 'string' ? body.action : '';
+    const deepLink = safeLink(body.deepLink);
+    const title = typeof body.title === 'string' ? body.title.slice(0, 320) : '';
+    if (!QUEUE_TYPES.has(queueType) || !UUID.test(sourceId) || !ACTIONS.has(action) || !key.trim())
+      throw new BadRequestException('VALIDATION_ERROR');
+    const employee = await this.employee(context);
+    const client = await this.pool.connect();
+    try {
+      await client.query('begin');
+      const replay = await this.replay(client, context.tenantId, key);
+      if (replay) {
+        await client.query('commit');
+        return replay;
+      }
+      const existing = await client.query(
+        `select * from employee_queue_dispositions
+         where tenant_id=$1 and employee_id=$2 and queue_type=$3 and source_id=$4 and deleted_at is null for update`,
+        [context.tenantId, employee.id, queueType, sourceId],
+      );
+      const row =
+        existing.rowCount && existing.rows[0].status === action
+          ? existing.rows[0]
+          : (
+              await client.query(
+                `insert into employee_queue_dispositions
+                   (id,tenant_id,employee_id,queue_type,source_id,status,deep_link,title,disposition_at,disposed_by,created_by,updated_by)
+                 values($1,$2,$3,$4,$5,$6,$7,$8,now(),$9,$9,$9)
+                 on conflict (tenant_id,employee_id,queue_type,source_id) do update
+                   set status=excluded.status,deep_link=excluded.deep_link,title=excluded.title,
+                       disposition_at=now(),disposed_by=excluded.disposed_by,
+                       updated_at=now(),updated_by=excluded.updated_by,version=employee_queue_dispositions.version+1
+                 returning *`,
+                [
+                  randomUUID(),
+                  context.tenantId,
+                  employee.id,
+                  queueType,
+                  sourceId,
+                  action,
+                  deepLink,
+                  title,
+                  context.userId,
+                ],
+              )
+            ).rows[0];
+      const data = this.disposeOutput(row);
+      const correlationId = UUID.test(requestId) ? requestId : randomUUID();
+      await this.persistDisposition(
+        client,
+        context,
+        queueType,
+        sourceId,
+        key,
+        correlationId,
+        data,
+        action,
+        title,
+      );
+      await client.query(
+        'insert into idempotency_keys(id,tenant_id,resource_type,idempotency_key,response,created_by,updated_by) values($1,$2,$3,$4,$5,$6,$6)',
+        [randomUUID(), context.tenantId, 'employee_queue_disposition', key, data, context.userId],
+      );
+      await client.query('commit');
+      return data;
+    } catch (error) {
+      await client.query('rollback');
+      throw error;
+    } finally {
+      client.release();
+    }
+  }
+
+  private disposeOutput(row: Record<string, unknown>) {
+    return {
+      queueType: row.queue_type,
+      sourceId: row.source_id,
+      status: row.status,
+      deepLink: row.deep_link,
+      title: row.title,
+      dispositionAt: row.disposition_at,
+      version: row.version,
+    };
+  }
+
+  private async replay(client: PoolClient, tenantId: string, key: string) {
+    const result = await client.query(
+      "select response from idempotency_keys where tenant_id=$1 and resource_type='employee_queue_disposition' and idempotency_key=$2 and deleted_at is null",
+      [tenantId, key],
+    );
+    return result.rowCount ? result.rows[0].response : null;
+  }
+
+  private async persistDisposition(
+    client: PoolClient,
+    context: OrganizationContext,
+    queueType: string,
+    sourceId: string,
+    key: string,
+    correlationId: string,
+    data: Record<string, unknown>,
+    action: string,
+    title: string,
+  ) {
+    await client.query(
+      "insert into audit_logs(id,tenant_id,actor_id,action,resource_type,resource_id,correlation_id,trace_id,details,created_by,updated_by) values($1,$2,$3,'employee.queue_disposition','employee_queue_disposition',$4,$5,$6,$7,$3,$3)",
+      [
+        randomUUID(),
+        context.tenantId,
+        context.userId,
+        sourceId,
+        correlationId,
+        trace,
+        { ...data, action, title },
+      ],
+    );
+    await client.query(
+      "insert into outbox_events(id,tenant_id,event_type,aggregate_type,aggregate_id,payload,correlation_id,trace_id,created_by,updated_by) values($1,$2,'employee.queue_disposition.v1','employee_queue_disposition',$3,$4,$5,$6,$7,$7)",
+      [
+        randomUUID(),
+        context.tenantId,
+        sourceId,
+        { ...data, action, title },
+        correlationId,
+        trace,
+        context.userId,
+      ],
     );
   }
 
