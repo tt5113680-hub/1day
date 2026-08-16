@@ -12,6 +12,23 @@ import type { OrganizationContext } from './organization.service';
 
 const uuid = /^[0-9a-f-]{36}$/i;
 
+/** Archive source tags only — not a live third-party review stream. */
+const REVIEW_SOURCES = [
+  'local',
+  'import_meituan',
+  'import_dianping',
+  'import_douyin',
+  'manual',
+] as const;
+
+const REVIEW_SOURCE_LABELS: Record<(typeof REVIEW_SOURCES)[number], string> = {
+  local: '本地登记',
+  import_meituan: '导入·美团',
+  import_dianping: '导入·点评',
+  import_douyin: '导入·抖音',
+  manual: '人工补录',
+};
+
 /**
  * G1-W5: Management PC Order / Review / Marketing read skeletons (MPC-04/05/07).
  *
@@ -20,6 +37,9 @@ const uuid = /^[0-9a-f-]{36}$/i;
  * honest empty states. `source`/`delivery_channel`/`status` are surfaced so the
  * UI can label local pilot data vs. a third-party hand-off without ever claiming
  * live Meituan order/review/price sync.
+ *
+ * W∞-134 — §2 reviews densify: multi-platform source tags + rating trend from
+ * real `store_reviews` rows (archive labels only; no live Meituan stream).
  */
 @Injectable()
 export class ManagementCommerceService implements OnModuleDestroy {
@@ -158,20 +178,32 @@ export class ManagementCommerceService implements OnModuleDestroy {
    * Real, tenant-scoped (store-scoped for store managers) `store_reviews` rows plus
    * the honest local reply trace (`reply_text`/`reply_status`/`replied_at`/`replied_by_name`).
    * `reply` filter = pending (no reply yet) / replied / all. `rating` narrows by star.
+   * W∞-134: optional `source` filter for multi-platform archive tags.
    * No third-party review stream is ever claimed; no fabricated rating aggregates.
    */
-  async listReviews(tenantId: string, storeIds: string[] | null, reply = 'all', rating?: number) {
+  async listReviews(
+    tenantId: string,
+    storeIds: string[] | null,
+    reply = 'all',
+    rating?: number,
+    source?: string,
+  ) {
     if (!['all', 'pending', 'replied'].includes(reply))
       throw new BadRequestException('VALIDATION_ERROR');
+    if (source !== undefined && !(REVIEW_SOURCES as readonly string[]).includes(source))
+      throw new BadRequestException('VALIDATION_ERROR');
     const { clause, params } = this.storeFilter(storeIds);
-    const hasStoreFilter = params.length > 0;
     const filters: string[] = [];
-    const values: (string | number)[] = [tenantId, ...params];
+    const values: (string | number | string[])[] = [tenantId, ...params];
     if (reply === 'pending') filters.push('r.replied_at is null');
     if (reply === 'replied') filters.push('r.replied_at is not null');
     if (rating !== undefined) {
-      filters.push(`r.rating=$${hasStoreFilter ? 3 : 2}`);
       values.push(rating);
+      filters.push(`r.rating=$${values.length}`);
+    }
+    if (source !== undefined) {
+      values.push(source);
+      filters.push(`r.source=$${values.length}`);
     }
     const result = await this.pool.query(
       `select r.id,r.store_id,st.name as store_name,r.rating,r.content,r.reviewer_label,r.source,r.status,
@@ -187,7 +219,77 @@ export class ManagementCommerceService implements OnModuleDestroy {
     return result.rows.map((row) => ({
       ...row,
       rating: Number(row.rating),
+      sourceLabel:
+        REVIEW_SOURCE_LABELS[row.source as (typeof REVIEW_SOURCES)[number]] ?? String(row.source),
     }));
+  }
+
+  /**
+   * W∞-134 — §2 reviews densify: multi-platform source tags + daily rating trend.
+   *
+   * Aggregates real `store_reviews` only. Source values are archive tags (local /
+   * import_* / manual); never claimed as a live Meituan/Dianping/Douyin stream.
+   * `ratingTrend` is day buckets over the requested window; empty days omitted.
+   */
+  async reviewInsights(tenantId: string, storeIds: string[] | null, days = 30) {
+    if (![7, 14, 30, 90].includes(days)) throw new BadRequestException('VALIDATION_ERROR');
+    const storeClause =
+      storeIds === null || storeIds.length === 0 ? '' : 'and r.store_id = any($2::uuid[])';
+    const dayIdx = storeIds === null || storeIds.length === 0 ? 2 : 3;
+    const values: (string | number | string[])[] =
+      storeIds === null || storeIds.length === 0
+        ? [tenantId, days]
+        : [tenantId, storeIds, days];
+    const window = `and r.created_at >= now() - ($${dayIdx}::text || ' days')::interval`;
+    const [bySourceRows, trendRows] = await Promise.all([
+      this.pool.query(
+        `select r.source,
+                count(*)::int as total,
+                count(*) filter (where r.replied_at is null)::int as pending,
+                coalesce(round(avg(r.rating)::numeric, 1), 0) as avg_rating
+         from store_reviews r
+         join stores st on st.id=r.store_id and st.tenant_id=r.tenant_id and st.deleted_at is null
+         where r.tenant_id=$1 and r.deleted_at is null ${storeClause} ${window}
+         group by r.source
+         order by total desc, r.source asc`,
+        values,
+      ),
+      this.pool.query(
+        `select to_char(date_trunc('day', r.created_at), 'YYYY-MM-DD') as day,
+                count(*)::int as count,
+                coalesce(round(avg(r.rating)::numeric, 1), 0) as avg_rating
+         from store_reviews r
+         join stores st on st.id=r.store_id and st.tenant_id=r.tenant_id and st.deleted_at is null
+         where r.tenant_id=$1 and r.deleted_at is null ${storeClause} ${window}
+         group by 1
+         order by 1 asc`,
+        values,
+      ),
+    ]);
+    const bySource = bySourceRows.rows.map((row) => ({
+      source: String(row.source),
+      label:
+        REVIEW_SOURCE_LABELS[row.source as (typeof REVIEW_SOURCES)[number]] ?? String(row.source),
+      total: Number(row.total),
+      pending: Number(row.pending),
+      avgRating: Number(row.avg_rating),
+    }));
+    const ratingTrend = trendRows.rows.map((row) => ({
+      day: String(row.day),
+      count: Number(row.count),
+      avgRating: Number(row.avg_rating),
+    }));
+    return {
+      days,
+      bySource,
+      ratingTrend,
+      knownSources: REVIEW_SOURCES.map((source) => ({
+        source,
+        label: REVIEW_SOURCE_LABELS[source],
+      })),
+      disclaimer:
+        '多平台标签与评分趋势均来自本地 store_reviews 档案；source 仅为导入/登记标签，不接美团/点评/抖音实时评价流，不伪造第三方评分。',
+    };
   }
 
   /**

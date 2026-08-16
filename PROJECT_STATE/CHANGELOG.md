@@ -1,5 +1,10 @@
 ﻿# CHANGELOG
 
+## 2026-08-16 — G1-W∞-134 评价多平台标签 + 评分趋势 PASS
+
+- `GET .../reviews/insights` bySource + ratingTrend；list `source` filter + `sourceLabel`；`/m/reviews` 面板与筛选。
+- Evidence: `evidence/G1-MEITUAN-PARITY/WINF134/ACCEPTANCE.md`; tests/g1-winf134 2/2.
+
 ## 2026-08-16 — G1-W∞-133 会员到期提醒进通知中心 PASS
 
 - Notification materialize adds `renewal`（member_expiry / member_expired）+ counts; deepLink `/m/memberships`; `/m/notifications` UI filter/summary.

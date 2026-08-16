@@ -14,6 +14,7 @@ type ReviewRow = {
   content: string;
   reviewer_label: string;
   source: string;
+  sourceLabel?: string;
   status: string;
   reply_text: string | null;
   replied_at: string | null;
@@ -32,10 +33,19 @@ type ReviewQueue = {
   pendingQueue: ReviewRow[];
 };
 
+type ReviewInsights = {
+  days: number;
+  bySource: { source: string; label: string; total: number; pending: number; avgRating: number }[];
+  ratingTrend: { day: string; count: number; avgRating: number }[];
+  knownSources: { source: string; label: string }[];
+  disclaimer: string;
+};
+
 const api = process.env.NEXT_PUBLIC_API_BASE_URL ?? 'http://127.0.0.1:3001';
 const sessionApi = new SessionApiClient(api);
 const fmt = (iso: string) => new Date(iso).toLocaleString('zh-CN', { hour12: false });
 const stars = (rating: number) => `★`.repeat(rating) + `☆`.repeat(Math.max(0, 5 - rating));
+const sourceLabel = (review: ReviewRow) => review.sourceLabel ?? review.source;
 
 const REPLY_FILTERS = [
   { key: 'all', label: '全部' },
@@ -43,11 +53,16 @@ const REPLY_FILTERS = [
   { key: 'replied', label: '已回复' },
 ] as const;
 
+const TREND_DAYS = [7, 14, 30, 90] as const;
+
 export default function CommerceReviewsPage() {
   const [state, setState] = useState<'loading' | 'ready' | 'forbidden' | 'error'>('loading');
   const [reviews, setReviews] = useState<ReviewRow[]>([]);
   const [queue, setQueue] = useState<ReviewQueue | null>(null);
+  const [insights, setInsights] = useState<ReviewInsights | null>(null);
   const [reply, setReply] = useState<'all' | 'pending' | 'replied'>('all');
+  const [source, setSource] = useState<string>('all');
+  const [trendDays, setTrendDays] = useState<(typeof TREND_DAYS)[number]>(30);
   const [replyingId, setReplyingId] = useState<string | null>(null);
   const [replyDraft, setReplyDraft] = useState('');
   const [replyBusy, setReplyBusy] = useState(false);
@@ -57,20 +72,31 @@ export default function CommerceReviewsPage() {
     if (!(await sessionApi.context())) return setState('forbidden');
     setState('loading');
     try {
-      const [listResponse, queueResponse] = await Promise.all([
-        sessionApi.request(`${api}/api/v1/management/commerce/reviews?reply=${reply}`),
+      const sourceQuery = source === 'all' ? '' : `&source=${encodeURIComponent(source)}`;
+      const [listResponse, queueResponse, insightsResponse] = await Promise.all([
+        sessionApi.request(
+          `${api}/api/v1/management/commerce/reviews?reply=${reply}${sourceQuery}`,
+        ),
         sessionApi.request(`${api}/api/v1/management/commerce/reviews/queue`),
+        sessionApi.request(
+          `${api}/api/v1/management/commerce/reviews/insights?days=${trendDays}`,
+        ),
       ]);
-      if ([401, 403].includes(listResponse.status) || [401, 403].includes(queueResponse.status))
+      if (
+        [401, 403].includes(listResponse.status) ||
+        [401, 403].includes(queueResponse.status) ||
+        [401, 403].includes(insightsResponse.status)
+      )
         return setState('forbidden');
-      if (!listResponse.ok || !queueResponse.ok) throw Error();
+      if (!listResponse.ok || !queueResponse.ok || !insightsResponse.ok) throw Error();
       setReviews((await listResponse.json()).data as ReviewRow[]);
       setQueue((await queueResponse.json()).data as ReviewQueue);
+      setInsights((await insightsResponse.json()).data as ReviewInsights);
       setState('ready');
     } catch {
       setState('error');
     }
-  }, [reply]);
+  }, [reply, source, trendDays]);
 
   useEffect(() => void load(), [load]);
 
@@ -151,14 +177,15 @@ export default function CommerceReviewsPage() {
       <section className={styles.heroCard} aria-label="评价档案说明">
         <h1>评价档案</h1>
         <p>
-          本地试点评价记录、平均分与待回复队列（租户隔离）。来源如实标注；不接第三方评价流，不伪造第三方评价分。
+          本地试点评价记录、多平台档案标签、评分趋势与待回复队列（租户隔离）。来源如实标注；不接第三方评价流，不伪造第三方评价分。
         </p>
       </section>
 
       <ManagementEarlyMeetingKpi page="reviews" />
 
       <p className={styles.honest} role="status">
-        评价与回复均为本地试点档案（source=local），推广员工具只做档案与回复痕迹；不接美团评价接口，不代第三方回写，不伪造第三方评价分，不包含本平台收款，非本平台下单。
+        评价与回复均为本地试点档案（含 source=local 及导入标签）；source
+        为导入/登记标签（本地/美团导入/点评导入/抖音导入/人工补录），推广员工具只做档案与回复痕迹；不接美团评价接口，不代第三方回写，不伪造第三方评价分，不包含本平台收款，非本平台下单。
       </p>
 
       <section className={styles.summaryStrip} aria-label="评价概况">
@@ -181,6 +208,74 @@ export default function CommerceReviewsPage() {
         <div>
           <span>回复率</span>
           <strong>{replyRate}%</strong>
+        </div>
+        <div>
+          <span>来源标签</span>
+          <strong>{insights?.bySource.length ?? 0}</strong>
+        </div>
+      </section>
+
+      <section className={styles.panel} aria-label="多平台标签与评分趋势">
+        <div className={styles.panelBlock}>
+          <h2>多平台标签</h2>
+          <p className={styles.panelMeta}>近 {insights?.days ?? trendDays} 天档案来源分布（非实时流）。</p>
+          <ul className={styles.bars}>
+            {(insights?.bySource ?? []).map((b) => (
+              <li key={b.source} className={styles.barRow}>
+                <span className={styles.barLabel}>{b.label}</span>
+                <span className={styles.barTrack}>
+                  <span
+                    className={styles.barFill}
+                    style={{
+                      width: `${
+                        insights && insights.bySource.length
+                          ? (b.total / Math.max(1, insights.bySource.reduce((a, x) => a + x.total, 0))) *
+                            100
+                          : 0
+                      }%`,
+                    }}
+                  />
+                </span>
+                <span className={styles.barValue}>
+                  {b.total}/{b.avgRating}
+                </span>
+              </li>
+            ))}
+            {!insights?.bySource.length && <li className={styles.barEmpty}>窗口内暂无评价</li>}
+          </ul>
+        </div>
+        <div className={styles.panelBlock}>
+          <h2>评分趋势</h2>
+          <p className={styles.panelMeta}>按日均分与条数（本地档案）。</p>
+          <div className={styles.chips}>
+            {TREND_DAYS.map((d) => (
+              <button
+                key={d}
+                type="button"
+                className={`${styles.chip} ${trendDays === d ? styles.chipActive : ''}`}
+                onClick={() => setTrendDays(d)}
+              >
+                {d} 天
+              </button>
+            ))}
+          </div>
+          <ul className={styles.trendList}>
+            {(insights?.ratingTrend ?? []).map((point) => (
+              <li key={point.day} className={styles.trendRow}>
+                <span className={styles.trendDay}>{point.day.slice(5)}</span>
+                <span className={styles.barTrack}>
+                  <span
+                    className={styles.barFill}
+                    style={{ width: `${(point.avgRating / 5) * 100}%` }}
+                  />
+                </span>
+                <span className={styles.barValue}>
+                  {point.avgRating} · {point.count}
+                </span>
+              </li>
+            ))}
+            {!insights?.ratingTrend.length && <li className={styles.barEmpty}>窗口内暂无趋势点</li>}
+          </ul>
         </div>
       </section>
 
@@ -268,7 +363,8 @@ export default function CommerceReviewsPage() {
                       {review.reviewer_label}
                     </h3>
                     <p>
-                      {review.store_name} · {fmt(review.created_at)}
+                      {review.store_name} · {fmt(review.created_at)} ·{' '}
+                      <span className={styles.sourceTagInline}>{sourceLabel(review)}</span>
                     </p>
                   </div>
                   <Button
@@ -335,6 +431,29 @@ export default function CommerceReviewsPage() {
             ))}
           </div>
         </div>
+        <div className={styles.panelBlock}>
+          <h2>来源标签筛选</h2>
+          <p className={styles.panelMeta}>多平台档案标签（非实时评价流）。</p>
+          <div className={styles.chips}>
+            <button
+              type="button"
+              className={`${styles.chip} ${source === 'all' ? styles.chipActive : ''}`}
+              onClick={() => setSource('all')}
+            >
+              全部来源
+            </button>
+            {(insights?.knownSources ?? []).map((item) => (
+              <button
+                key={item.source}
+                type="button"
+                className={`${styles.chip} ${source === item.source ? styles.chipActive : ''}`}
+                onClick={() => setSource(item.source)}
+              >
+                {item.label}
+              </button>
+            ))}
+          </div>
+        </div>
       </section>
 
       {replyMessage && (
@@ -356,9 +475,12 @@ export default function CommerceReviewsPage() {
                   {review.store_name} · {fmt(review.created_at)}
                 </p>
               </div>
-              <StatusBadge tone={review.status === 'active' ? 'success' : 'neutral'}>
-                {review.status === 'active' ? '展示中' : '已隐藏'}
-              </StatusBadge>
+              <div className={styles.rowBadges}>
+                <span className={styles.sourceTag}>{sourceLabel(review)}</span>
+                <StatusBadge tone={review.status === 'active' ? 'success' : 'neutral'}>
+                  {review.status === 'active' ? '展示中' : '已隐藏'}
+                </StatusBadge>
+              </div>
             </div>
             <p className={styles.reviewContent}>{review.content}</p>
             {review.reply_status === 'replied' ? (

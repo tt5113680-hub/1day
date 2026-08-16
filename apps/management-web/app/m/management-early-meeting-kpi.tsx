@@ -54,7 +54,8 @@ const pageNote = (page: ManagementDeepPageId) => {
   if (page === 'orders') return ' 本页「订单痕迹」为第三方档案试点，不计入早会 GMV。';
   if (page === 'notifications')
     return ' 本页待办与 dashboard anomalies 队列同源类别（逾期/审批/会员到期提醒）。';
-  if (page === 'reviews') return ' 本页「评价档案」为 store_reviews 试点，不计入早会 GMV。';
+  if (page === 'reviews')
+    return ' 本页「评价档案」含多平台标签与评分趋势，均为 store_reviews 试点，不计入早会 GMV。';
   return '';
 };
 

@@ -22,6 +22,7 @@ import { TenantContextService } from './tenant-context.service';
  * Tenant owners see the whole tenant; assigned store managers see only scoped
  * stores. Read-only skeletons backed by real, tenant-scoped DB rows.
  * W∞-114: Reviews reply queue — list/filter + pending reply queue + reply write.
+ * W∞-134: Reviews insights — multi-platform source tags + rating trend.
  */
 @Controller('api/v1/management/commerce')
 export class ManagementCommerceController {
@@ -116,6 +117,7 @@ export class ManagementCommerceController {
   async reviews(
     @Query('reply') reply: string | undefined,
     @Query('rating') rating: string | undefined,
+    @Query('source') source: string | undefined,
     @Headers('authorization') authorization?: string,
     @Headers('x-tenant-context') tenant?: string,
     @Headers('x-request-id') requestId?: string,
@@ -124,12 +126,14 @@ export class ManagementCommerceController {
     const ratingNum = rating === undefined || rating === '' ? undefined : Number(rating);
     if (ratingNum !== undefined && ![1, 2, 3, 4, 5].includes(ratingNum))
       throw new BadRequestException('VALIDATION_ERROR');
+    const sourceFilter = source === undefined || source === '' || source === 'all' ? undefined : source;
     return {
       data: await this.commerce.listReviews(
         context.tenantId,
         context.storeIds,
         reply ?? 'all',
         ratingNum,
+        sourceFilter,
       ),
       meta: { requestId },
       error: null,
@@ -146,6 +150,23 @@ export class ManagementCommerceController {
     const context = await this.operatorContext(authorization, tenant, requestId);
     return {
       data: await this.commerce.reviewQueue(context.tenantId, context.storeIds),
+      meta: { requestId },
+      error: null,
+    };
+  }
+
+  /** G1-W∞-134 — 评价多平台标签 + 评分趋势（§2 densify；档案标签非实时流）。 */
+  @Get('reviews/insights')
+  async reviewsInsights(
+    @Query('days') days: string | undefined,
+    @Headers('authorization') authorization?: string,
+    @Headers('x-tenant-context') tenant?: string,
+    @Headers('x-request-id') requestId?: string,
+  ) {
+    const context = await this.operatorContext(authorization, tenant, requestId);
+    const daysNum = days === undefined || days === '' ? 30 : Number(days);
+    return {
+      data: await this.commerce.reviewInsights(context.tenantId, context.storeIds, daysNum),
       meta: { requestId },
       error: null,
     };
