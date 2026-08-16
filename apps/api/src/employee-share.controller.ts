@@ -44,6 +44,24 @@ export class EmployeeShareController {
     };
   }
 
+  @Get(':id/pairing')
+  async pairing(
+    @Headers('authorization') authorization: string | undefined,
+    @Headers('x-tenant-context') tenant: string | undefined,
+    @Headers('x-request-id') requestId: string | undefined,
+    @Param('id') id: string,
+  ) {
+    if (!requestId?.trim()) throw new BadRequestException('VALIDATION_ERROR');
+    return {
+      data: await this.shares.pairing(
+        await this.auth.require(authorization, 'task.read', tenant),
+        id,
+      ),
+      meta: { requestId },
+      error: null,
+    };
+  }
+
   @Post(':id/revoke')
   async revoke(
     @Headers('authorization') authorization: string | undefined,

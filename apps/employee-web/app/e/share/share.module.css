@@ -348,6 +348,61 @@
   font-weight: 600;
 }
 
+.pairNote {
+  margin: 0 12px;
+  border-radius: 10px;
+  padding: 10px 12px;
+  background: #fff9db;
+  color: #999;
+  font-size: 12px;
+  line-height: 1.5;
+  font-weight: 600;
+}
+
+.pairingList {
+  display: grid;
+  gap: 8px;
+}
+
+.pairingRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  border-radius: 10px;
+  padding: 8px 10px;
+  background: #f8f8f8;
+  font-size: 12px;
+  color: #333;
+}
+
+.pairingRow strong {
+  color: #222;
+}
+
+.pairingMark {
+  flex-shrink: 0;
+  border-radius: 6px;
+  padding: 2px 6px;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.pairingMark.open {
+  color: #7a5a00;
+  background: #fff3b0;
+}
+
+.pairingMark.visit {
+  color: #2266aa;
+  background: #e3edf7;
+}
+
+.pairingMark.jump {
+  color: #775522;
+  background: #f3e9d5;
+}
+
 @media (max-width: 580px) {
   .summaryStrip {
     grid-template-columns: 1fr 1fr;

@@ -19,6 +19,34 @@ type ShareCode = {
   opens: number;
 };
 
+type SharePairing = {
+  code: string;
+  scenario: 'employee' | 'campaign' | 'channel';
+  targetPath: string;
+  status: string;
+  shareSentAt: string | null;
+  totals: {
+    opens: number;
+    entryVisits: number;
+    jumps: number;
+    jumpConfirms: number;
+    dwells: number;
+    openSessions: number;
+    revisits: number;
+    openToVisitRate: number;
+    openToJumpRate: number;
+  };
+  byDate: { day: string; opens: number; visits: number; jumps: number }[];
+  pairings: {
+    at: string;
+    event: 'share_open' | 'visit' | 'jump';
+    surface: string;
+    device: string;
+    session: string;
+  }[];
+  disclaimer: string;
+};
+
 const api = process.env.NEXT_PUBLIC_API_BASE_URL ?? 'http://127.0.0.1:3001';
 const sessionApi = new SessionApiClient(api);
 const labels = { employee: '员工码', campaign: '活动码', channel: '渠道码' };
@@ -51,6 +79,10 @@ export function ShareCodes() {
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState('');
   const [qr, setQr] = useState('');
+  const [pairing, setPairing] = useState<SharePairing | null>(null);
+  const [pairingState, setPairingState] = useState<'loading' | 'ready' | 'error' | 'empty'>(
+    'loading',
+  );
   const link = useMemo(
     () => (selected ? `${window.location.origin}/c/share/${selected.code}` : ''),
     [selected],
@@ -83,6 +115,36 @@ export function ShareCodes() {
   useEffect(() => {
     void load();
   }, [load]);
+
+  const loadPairing = useCallback(async (item: ShareCode) => {
+    if (!(await sessionApi.context())) {
+      setPairingState('error');
+      return;
+    }
+    setPairingState('loading');
+    try {
+      const response = await sessionApi.request(
+        `${api}/api/v1/employee/share-codes/${item.id}/pairing`,
+        {
+          headers: {},
+        },
+      );
+      if ([401, 403].includes(response.status)) {
+        setPairingState('error');
+        return;
+      }
+      if (!response.ok) throw new Error('PAIRING_FAILED');
+      const data = (await response.json()).data as SharePairing;
+      setPairing(data);
+      setPairingState(data.totals.opens > 0 || data.pairings.length > 0 ? 'ready' : 'empty');
+    } catch {
+      setPairingState('error');
+    }
+  }, []);
+
+  useEffect(() => {
+    if (selected) void loadPairing(selected);
+  }, [selected, loadPairing]);
 
   useEffect(() => {
     if (!link) {
@@ -369,6 +431,150 @@ export function ShareCodes() {
           />
         )}
       </section>
+      {selected && (
+        <section
+          className={styles.panel}
+          data-testid="share-pairing-panel"
+          aria-label="分享配对明细"
+        >
+          <div className={styles.panelHead}>
+            <h2>{labels[selected.scenario]}分享配对明细</h2>
+            <span className={styles.panelMeta}>发出 ↔ 打开 ↔ 进店 ↔ 出站 ↔ 回访 · 30 天</span>
+          </div>
+          {pairingState === 'loading' ? (
+            <AppStatePanel
+              kind="loading"
+              title="正在读取分享配对"
+              description="正在同步该分享码的入口痕迹。"
+            />
+          ) : pairingState === 'error' ? (
+            <AppStatePanel
+              kind="error"
+              title="分享配对暂不可用"
+              description="该分享码的痕迹未能完成加载。"
+            />
+          ) : pairingState === 'empty' ? (
+            <AppStatePanel
+              kind="empty"
+              title="暂无打开记录"
+              description="该分享码尚未被消费端打开，打开与进店痕迹会在此汇总。"
+            />
+          ) : (
+            pairing && (
+              <>
+                <div className={styles.summaryStrip} aria-label="分享配对概况">
+                  <div>
+                    <span>打开</span>
+                    <strong>{pairing.totals.opens}</strong>
+                  </div>
+                  <div>
+                    <span>进店</span>
+                    <strong>{pairing.totals.entryVisits}</strong>
+                  </div>
+                  <div>
+                    <span>出站</span>
+                    <strong>{pairing.totals.jumps}</strong>
+                  </div>
+                  <div>
+                    <span>回访</span>
+                    <strong>{pairing.totals.revisits}</strong>
+                  </div>
+                </div>
+                <div className={styles.distribution} aria-label="分享配对分布">
+                  <div className={styles.panelBlock}>
+                    <h3>打开后去向分布</h3>
+                    <div className={styles.bars}>
+                      <div className={styles.barRow}>
+                        <span className={styles.barLabel}>打开→进店</span>
+                        <span className={styles.barTrack}>
+                          <span
+                            className={styles.barFill}
+                            data-testid="share-pairing-open-visit-bar"
+                            style={{
+                              width: barWidth(pairing.totals.opens, pairing.totals.entryVisits),
+                            }}
+                          />
+                        </span>
+                        <span className={styles.barValue}>
+                          {pairing.totals.opens > 0
+                            ? `${pairing.totals.opens > 0 ? pairing.totals.openToVisitRate : 0}%`
+                            : '0%'}
+                        </span>
+                      </div>
+                      <div className={styles.barRow}>
+                        <span className={styles.barLabel}>打开→出站</span>
+                        <span className={styles.barTrack}>
+                          <span
+                            className={styles.barFill}
+                            data-testid="share-pairing-open-jump-bar"
+                            style={{ width: barWidth(pairing.totals.opens, pairing.totals.jumps) }}
+                          />
+                        </span>
+                        <span className={styles.barValue}>
+                          {pairing.totals.opens > 0 ? `${pairing.totals.openToJumpRate}%` : '0%'}
+                        </span>
+                      </div>
+                      <div className={styles.barRow}>
+                        <span className={styles.barLabel}>回访（再次进入）</span>
+                        <span className={styles.barTrack}>
+                          <span
+                            className={styles.barFill}
+                            data-testid="share-pairing-revisit-bar"
+                            style={{
+                              width: barWidth(pairing.totals.opens, pairing.totals.revisits),
+                            }}
+                          />
+                        </span>
+                        <span className={styles.barValue}>{pairing.totals.revisits}</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                {pairing.pairings.length > 0 && (
+                  <div className={styles.panelBlock}>
+                    <h3>最近痕迹</h3>
+                    <div className={styles.pairingList}>
+                      {pairing.pairings.map((row, index) => (
+                        <div
+                          className={styles.pairingRow}
+                          key={`${row.at}-${index}`}
+                          data-testid="share-pairing-row"
+                        >
+                          <span>
+                            <strong>{new Date(row.at).toLocaleString()}</strong>
+                            <span>
+                              {' '}
+                              · {row.surface} · {row.device}
+                            </span>
+                          </span>
+                          <span
+                            className={`${styles.pairingMark} ${
+                              row.event === 'share_open'
+                                ? styles.open
+                                : row.event === 'visit'
+                                  ? styles.visit
+                                  : styles.jump
+                            }`}
+                          >
+                            {row.event === 'share_open'
+                              ? '打开'
+                              : row.event === 'visit'
+                                ? '进店'
+                                : '出站'}
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+                <p className={styles.pairNote} role="note">
+                  分享配对仅统计至打开/进店/出站/停留等入口痕迹（source=local）；回访按同一会话再次进入提醒，不含支付金额、不含第三方订单履约、不代表第三方成交、非本平台下单。
+                </p>
+              </>
+            )
+          )}
+        </section>
+      )}
       {selected && (
         <section className={styles.panel} data-testid="share-link-panel">
           <div className={styles.panelHead}>

@@ -1,5 +1,16 @@
 ﻿# CHANGELOG
 
+## 2026-08-16 — G1-W∞-141 员工获客分享配对闭环 densify PASS（§2 剩余 densify · L2 员工「发出分享」↔「打开分享」配对 · 回访）
+
+- `employee-share.service.ts` 只读新增 `pairing(context,id)`（employee scope fail-closed，先 `employee()` + `employee_share_codes` 按 tenant+employee 归属，越权 404），全部由真实 `entry_funnel_events` 现场推导，禁止假 BI：
+  - `totals`：`opens`(share_open)/`entryVisits`(visit)/`jumps`(jump)/`jumpConfirms`/`dwells`/`openSessions`(去重会话)/`revisits`(同会话多次进入，`group by session_id having count(*)>1`)/`openToVisitRate`/`openToJumpRate`
+  - `byDate`（近 30 日逐日 opens/visits/jumps 时间序列）+ `shareSentAt`（首条员工 share）+ `pairings[]`（最近 12 条 share_open/visit/jump 痕迹 at/surface/device/session 截断）+ `disclaimer`（仅统计至打开/进店/出站/停留入口痕迹 source=local、回访按同一会话多次进入、不含支付金额与第三方订单履约）
+- `employee-share.controller.ts` 新增 `GET api/v1/employee/share-codes/:id/pairing`（`task.read` fail-closed + x-request-id）。
+- `/e/share`（share-codes.tsx + share.module.css）选中分享码新增「分享配对明细」白卡 `data-testid="share-pairing-panel"`（summaryStrip 打开/进店/出站/回访 + 分布「打开后去向分布」三条黄渐变 bar 打开→进店/打开→出站/回访 + 「最近痕迹」`share-pairing-row` 打开/进店/出站 三色 mark + loading/error/empty 三态 + `pairNote` 诚实底注 非本平台下单/不含支付金额/不代表第三方成交）。
+- honest 边界全保留（source=local、仅统计至打开/进店/出站/停留入口痕迹、回访按同一会话多次进入、不含支付金额、不含第三方订单履约、不代表第三方成交、非本平台下单）；不碰钱/销/管店、无 GMV、无储值/支付；`/m/workflows` CUSTOM；§5 READY 未触碰；不复活 consumer_orders/本平台下单/收单。无 schema/DB。
+- Evidence: `evidence/G1-MEITUAN-PARITY/WINF141/ACCEPTANCE.md`; tests/g1-winf141 4/4（3 静态 + 1 真实 DB round-trip：employee code → share/share_open/visit/jump 痕迹落库 → GET pairing opens=2/entryVisits=2/jumps=1/openToVisitRate/openToJumpRate/revisits≥1/pairings → 越权 other-employee 码 404 拒绝 fail-closed）；回归 g1-winf96 4/4。`pnpm typecheck` 20/20、`pnpm build` 20/20（employee-web 含 /e/share）、unit 49/49、g1-winf* 482/484（唯一 2 失败 = W88/W89 memberships CSS clean HEAD 既有基线 stash 对照与本刀无涉）、evidence-contract 74/74、eslint+prettier clean。
+- 未代签主人 UI；无 GMV；不碰钱/销售/管店；未复活 consumer_orders / 本平台下单/收单；§5 READY 未触碰。
+
 ## 2026-08-16 — G1-W∞-140 员工客户详情 RFM/复购/360 互动轴 densify PASS（§2 其余 densify · 新老/复购/留存）
 
 - `employee-customer-detail.service.ts` `detail()` 新增两个只读数据源（tenant+employee scope fail-closed，沿用既有 归属/任务/贡献 门控）：

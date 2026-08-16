@@ -178,6 +178,118 @@ export class EmployeeShareService implements OnModuleDestroy {
     }
   }
 
+  /** L2 分享配对闭环保底：每码 发出↔打开↔进店↔出站↔回访，全部由真实 entry_funnel_events 现场推导。 */
+  async pairing(context: OrganizationContext, id: string) {
+    if (!UUID.test(id)) throw new BadRequestException('VALIDATION_ERROR');
+    const employee = await this.employee(context);
+    const codeRow = await this.pool.query(
+      `select s.code,s.scenario,s.target_path,s.status,s.created_at
+       from employee_share_codes s
+       where s.id=$1 and s.tenant_id=$2 and s.employee_id=$3 and s.deleted_at is null`,
+      [id, context.tenantId, employee.id],
+    );
+    if (!codeRow.rowCount) throw new NotFoundException('NOT_FOUND');
+    const code = codeRow.rows[0].code as string;
+
+    const [totals, timeRows, sent, recent] = await Promise.all([
+      this.pool.query(
+        `select
+           count(*) filter (where event_code='share_open')::int as opens,
+           count(*) filter (where event_code='visit')::int as entry_visits,
+           count(*) filter (where event_code='jump')::int as jumps,
+           count(*) filter (where event_code='jump_confirm')::int as jump_confirms,
+           count(*) filter (where event_code='dwell')::int as dwells,
+           count(distinct session_id) filter (where event_code='share_open')::int as open_sessions
+         from entry_funnel_events
+         where tenant_id=$1 and share_code=$2 and occurred_at >= now() - interval '30 days'`,
+        [context.tenantId, code],
+      ),
+      this.pool.query(
+        `select to_char(occurred_at at time zone 'Asia/Shanghai', 'YYYY-MM-DD') as day,
+                count(*) filter (where event_code='share_open')::int as opens,
+                count(*) filter (where event_code='visit')::int as visits,
+                count(*) filter (where event_code='jump')::int as jumps
+         from entry_funnel_events
+         where tenant_id=$1 and share_code=$2 and occurred_at >= now() - interval '30 days'
+         group by 1 order by 1 asc`,
+        [context.tenantId, code],
+      ),
+      this.pool.query(
+        `select occurred_at as sent_at from entry_funnel_events
+         where tenant_id=$1 and share_code=$2 and event_code='share' and actor_role='employee'
+         order by occurred_at asc limit 1`,
+        [context.tenantId, code],
+      ),
+      this.pool.query(
+        `select e.occurred_at,
+                e.event_code,
+                coalesce(nullif(e.surface,''), '(未知面)') as surface,
+                coalesce(nullif(e.device,''), 'h5') as device,
+                left(e.session_id, 8) as session_tag
+         from entry_funnel_events e
+         where e.tenant_id=$1 and e.share_code=$2 and e.event_code in ('share_open','visit','jump')
+           and e.occurred_at >= now() - interval '30 days'
+         order by e.occurred_at desc
+         limit 12`,
+        [context.tenantId, code],
+      ),
+    ]);
+
+    const t = totals.rows[0] ?? {};
+    const opens = Number(t.opens ?? 0);
+    const entryVisits = Number(t.entry_visits ?? 0);
+    const jumps = Number(t.jumps ?? 0);
+    const jumpConfirms = Number(t.jump_confirms ?? 0);
+    const dwells = Number(t.dwells ?? 0);
+    const openSessions = Number(t.open_sessions ?? 0);
+    // 回访：同一会话出现多次 share_open/visit（再次进入），按 share_open 会话号去重保守计数。
+    const revisitRows = await this.pool.query(
+      `select session_id from entry_funnel_events
+       where tenant_id=$1 and share_code=$2 and event_code in ('share_open','visit')
+         and session_id is not null and occurred_at >= now() - interval '30 days'
+       group by session_id having count(*) > 1`,
+      [context.tenantId, code],
+    );
+    const revisits = revisitRows.rowCount ?? 0;
+
+    const openToVisitRate = opens > 0 ? Number(((entryVisits / opens) * 100).toFixed(1)) : 0;
+    const openToJumpRate = opens > 0 ? Number(((jumps / opens) * 100).toFixed(1)) : 0;
+
+    return {
+      code,
+      scenario: codeRow.rows[0].scenario as string,
+      targetPath: codeRow.rows[0].target_path as string,
+      status: codeRow.rows[0].status as string,
+      shareSentAt: sent.rows[0]?.sent_at ?? null,
+      totals: {
+        opens,
+        entryVisits,
+        jumps,
+        jumpConfirms,
+        dwells,
+        openSessions,
+        revisits,
+        openToVisitRate,
+        openToJumpRate,
+      },
+      byDate: timeRows.rows.map((r) => ({
+        day: r.day as string,
+        opens: Number(r.opens ?? 0),
+        visits: Number(r.visits ?? 0),
+        jumps: Number(r.jumps ?? 0),
+      })),
+      pairings: recent.rows.map((r) => ({
+        at: r.occurred_at,
+        event: r.event_code as string,
+        surface: r.surface as string,
+        device: r.device as string,
+        session: r.session_tag as string,
+      })),
+      disclaimer:
+        '仅统计至打开/进店/出站/停留等入口痕迹（source=local）；回访按同一会话多次进入提醒，不代表成交，不含支付金额与第三方订单履约。',
+    };
+  }
+
   async open(code: string) {
     if (!CODE.test(code)) throw new BadRequestException('VALIDATION_ERROR');
     const client = await this.pool.connect();
