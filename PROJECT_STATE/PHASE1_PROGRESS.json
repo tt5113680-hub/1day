@@ -2,7 +2,7 @@
   "recordedAt": "2026-08-14T12:00:00+08:00",
   "phase": "Meituan depth 100% closed-loop (owner plan 2026-08-12)",
   "goal": "Blueprint/product depth 100%; SaaS strongest; skip §5 READY; DeepSeek/IDE unattended W119+",
-  "currentStep": "W124 PASS (multi-terminal sync SLO testable guardrail, W∞-SAAS-SYNC: SyncSloService read-only observability of 8 topic projection/subscription lag + pendingOutbox + events24h + guardrail{maxSloSeconds:60,within60s}, tenant.manage fail-closed, zero schema; ManagementSyncSloController GET /management/sync-slo; /m/settings 多端同步 SLO · 60 秒收敛护栏 card reusing existing CSS; g1-winf124 2/2 real DB round-trip incl. stale >60s projection flips within60s=false + 401). Phase3 §6/§7 (W118..124) all PASS. §5 READY deferred.",
+  "currentStep": "W137 PASS (membership tiers + batch-expiry, §2 densify: GET /management/memberships/tiers real tier enrollments/enrolled/stillValid/expiringSoon/expired joined to benefit rules + POST /management/memberships/batch-expiry idempotent audit+outbox batch expiry with uuid resource_id fix; /m/memberships 会员等级分布 + 批量到期策略 panels; g1-winf137 2/2 baseline-relative). §5 READY engineered W125-131 PASS; W132-137 densify PASS; next W138+ (套餐入口排行 / 门店营业状态批量). Phase4 deferred.",
   "milestones": [
     {
       "id": "g1-winf-chrome",
@@ -31,6 +31,13 @@
       "weight": 15,
       "status": "pass",
       "evidence": "WINF118..124 PASS"
+    },
+    {
+      "id": "ready-and-densify",
+      "label": "§5 READY engineering + §2 densify W125..137",
+      "weight": 30,
+      "status": "pass",
+      "evidence": "WINF125..137 PASS"
     }
   ],
   "ownerGates": [
@@ -45,5 +52,5 @@
       "status": "deferred"
     }
   ],
-  "notes": "W124 closed by DeepSeek (multi-terminal sync SLO testable guardrail, W∞-SAAS-SYNC): new apps/api/src/sync-slo.service.ts (SyncSloService, read-only, tenant.manage fail-closed, zero schema/migration) derives per-topic projection/subscription lag from sync_notifications (now()-max(occurred_at) sec, rounded) for 8 topics (operating/storefront/content/membership/lifecycle/rbac/channel/circle) with label/projectedAt/lagSeconds/withinSlo + recent projected event trace (eventType/aggregateType/aggregateId), pendingOutbox (count + oldest pending/needs_attention age sec), events24h, and guardrail{maxSloSeconds:60, within60s} - any topic lag or pending wait >60s flips within60s=false (honest: no changes = no measurable lag = healthy). New management-sync-slo.controller.ts GET /api/v1/management/sync-slo; app.module registers both. /m/settings adds sync SLO card (data-testid sync-slo-panel) with summaryStrip + per-topic lag bar list (sync-slo-topics normalized to maxSloSeconds) + honest source=local/no-native-checkout/non-Meituan-Douyin notes, reusing existing CSS zero-new. g1-winf124-sync-slo-guardrail 2/2 (static + real DB: provision -> dispatch onboarding storefront.published.v1 via createSyncNotificationHandler -> GET /management/sync-slo 200 guardrail.maxSloSeconds==60, storefront withinSlo==true lag<=60; insert 120s-old membership projection row -> that topic withinSlo==false/lag>60 and global guardrail.within60s==false proving observable >60s breach; unauthenticated 401). g1-winf*.test.mjs serial 446/446, typecheck/build 20/20, unit 49/49, evidence-contract 74/74, eslint+prettier clean; no GMV, no payment, §5 READY deferred. Phase3 §6/§7 (W118..124) all PASS; next direction (§5 READY / Phase4) awaits owner."
+  "notes": "W124 closed by DeepSeek (multi-terminal sync SLO testable guardrail, W∞-SAAS-SYNC): new apps/api/src/sync-slo.service.ts (SyncSloService, read-only, tenant.manage fail-closed, zero schema/migration) derives per-topic projection/subscription lag from sync_notifications (now()-max(occurred_at) sec, rounded) for 8 topics (operating/storefront/content/membership/lifecycle/rbac/channel/circle) with label/projectedAt/lagSeconds/withinSlo + recent projected event trace (eventType/aggregateType/aggregateId), pendingOutbox (count + oldest pending/needs_attention age sec), events24h, and guardrail{maxSloSeconds:60, within60s} - any topic lag or pending wait >60s flips within60s=false (honest: no changes = no measurable lag = healthy). New management-sync-slo.controller.ts GET /api/v1/management/sync-slo; app.module registers both. /m/settings adds sync SLO card (data-testid sync-slo-panel) with summaryStrip + per-topic lag bar list (sync-slo-topics normalized to maxSloSeconds) + honest source=local/no-native-checkout/non-Meituan-Douyin notes, reusing existing CSS zero-new. g1-winf124-sync-slo-guardrail 2/2 (static + real DB: provision -> dispatch onboarding storefront.published.v1 via createSyncNotificationHandler -> GET /management/sync-slo 200 guardrail.maxSloSeconds==60, storefront withinSlo==true lag<=60; insert 120s-old membership projection row -> that topic withinSlo==false/lag>60 and global guardrail.within60s==false proving observable >60s breach; unauthenticated 401). g1-winf*.test.mjs serial 446/446, typecheck/build 20/20, unit 49/49, evidence-contract 74/74, eslint+prettier clean; no GMV, no payment, §5 READY deferred. Phase3 §6/§7 (W118..124) all PASS; W125-131 §5 READY engineering close-out; W132-137 §2 densify PASS. W137 closed by DeepSeek (membership tiers + batch-expiry): new GET /management/memberships/tiers (real tier enrollments/仍有效/14天内临期/已过期 joined to membership_benefit_rules validityDays/ruleEnabled/ruleTitle + unassigned fallback) + POST /management/memberships/batch-expiry (idempotent audit+outbox batch expiry, addDays 1-3650, version+1, store-scope skip; fixed batch-audit resource_id to uuid). /m/memberships adds 会员等级分布 + 批量到期策略 panels. g1-winf137 2/2 baseline-relative (robust to persistent test DB seed). typecheck/build 20/20, unit 49/49, regressions w133/w135/w41 pass, eslint+prettier clean; no GMV/no payment/no native checkout, §5 READY remains deployed-engineered only, next W138+ awaits human-direction-free densify."
 }

@@ -1,5 +1,14 @@
 ﻿# CHANGELOG
 
+## 2026-08-16 — G1-W∞-137 会员等级分布 + 批量到期策略 PASS（§2 densify）
+
+- `GET .../memberships/tiers`：等级→在册/仍有效/14天内临期/已过期（真实 membership_enrollments 聚合，join 规则 + 未配置兜底，禁止假 BI）。
+- `POST .../memberships/batch-expiry`：对选中的在册会员批量延后/设置 `expires_at`（addDays 1–3650，audit+outbox 同事务，整批幂等，store scope 越界跳）；fix 批级 audit `resource_id`（uuid 化，原字符串致 500）。
+- `/m/memberships`：会员等级分布面板 + 批量到期策略面板，honest 底注（source=local，不含储值/支付/GMV）。
+- Evidence: `evidence/G1-MEITUAN-PARITY/WINF137/ACCEPTANCE.md`; tests/g1-winf137 2/2（baseline-relative 以在持久测试库可复跑）。`pnpm typecheck` 20/20、`pnpm build` 20/20、单测 49/49、回归 w133/w135/w41 通过。
+- W89/W88 memberships summaryStrip `repeat(3)` 偏差为 HEAD 既有预存项（未改动 memberships CSS，与本次无关）。
+- 不代签主人 UI 签验；无储值/支付/GMV；未复活 consumer_orders / 本平台下单/收单。
+
 ## 2026-08-16 — G1-W∞-136 订单门店对比 + 时间序列 PASS（§2 densify）
 
 - `GET .../commerce/orders/insights`：storeCompare（门店记录/有效/有效占比/金额参考/来源分布）+ timeSeries（逐日记录/有效），由真实 customer_orders 现场推导；`days` 7/30/90 白名单。

@@ -41,6 +41,8 @@ interface BenefitConfig {
  * - `renewals`：到期提醒 —— 会员有效期临近/已过、或长期无核销活跃的会员真实档案。
  * - `alerts`：异常告警 —— 已暂停/已取消、有效期已过仍在册、有发放但余额低/异常等真实档案。
  * - W∞-135 `cohort`：入会月 cohort（在册/仍有效/已过期/近 30 天活跃）只读聚合。
+ * - W∞-137 `tiers`：会员等级分布 —— 等级→在册/仍有效/临期/已过期（真实档案聚合）+ 配置规则。
+ * - W∞-137 `batchExpiry`：批量到期策略 —— 一次为多条在册会员延后/设置 `expires_at`（可审计、幂等）。
  */
 @Injectable()
 export class ManagementMembershipDepthService implements OnModuleDestroy {
@@ -289,6 +291,222 @@ export class ManagementMembershipDepthService implements OnModuleDestroy {
       disclaimer:
         'cohort 由本地 membership_enrollments 入会月聚合；不含储值/支付/GMV，不代表第三方成交。',
     };
+  }
+
+  /**
+   * W∞-137 — §2 会员 densify：会员等级分布。
+   * 以已配置等级规则为准，聚合 `membership_enrollments` 真实档案的等级在册/仍有效/临期/已过期。
+   * 未配置规则的等级兜底为「自定义」。禁止假 BI；不含储值/支付/GMV。
+   */
+  async tiers(context: OrganizationContext, storeIds: string[] | null = null) {
+    const scoped = storeIds !== null && storeIds.length > 0;
+    const params: (string | string[])[] = scoped
+      ? [context.tenantId, storeIds]
+      : [context.tenantId];
+    const storeFilter = scoped ? ' and e.store_id = any($2::uuid[])' : '';
+    const rows = await this.pool.query(
+      `select coalesce(nullif(e.tier,''),'unassigned') as tier,
+              count(*)::int as enrolled,
+              count(*) filter (
+                where e.enrollment_status='active'
+                  and (e.expires_at is null or e.expires_at > now())
+              )::int as still_valid,
+              count(*) filter (
+                where e.enrollment_status='active'
+                  and e.expires_at is not null
+                  and e.expires_at between now() and now()+interval '14 days'
+              )::int as expiring_soon,
+              count(*) filter (
+                where e.expires_at is not null and e.expires_at <= now()
+              )::int as expired
+       from membership_enrollments e
+       where e.tenant_id=$1 and e.deleted_at is null ${storeFilter}
+       group by 1
+       having count(*)::int > 0
+       order by enrolled desc`,
+      params,
+    );
+    const rules = (
+      await this.pool.query(
+        `select tier,validity_days,enabled,title
+         from membership_benefit_rules
+         where tenant_id=$1 and deleted_at is null`,
+        [context.tenantId],
+      )
+    ).rows;
+    const ruleByTier = new Map<
+      string,
+      { validity_days: number; enabled: boolean; title: string }
+    >();
+    for (const rule of rules) ruleByTier.set(String(rule.tier), rule);
+    const tiers = rows.rows.map((row) => {
+      const tier = row.tier === 'unassigned' ? null : String(row.tier);
+      const rule = tier ? ruleByTier.get(tier) : undefined;
+      return {
+        tier,
+        enrolled: Number(row.enrolled),
+        stillValid: Number(row.still_valid),
+        expiringSoon: Number(row.expiring_soon),
+        expired: Number(row.expired),
+        validityDays: rule ? Number(rule.validity_days) : null,
+        ruleEnabled: rule ? Boolean(rule.enabled) : null,
+        ruleTitle: rule ? String(rule.title) : null,
+      };
+    });
+    return {
+      tiers,
+      disclaimer:
+        '等级分布由本地 membership_enrollments 与规则档聚合；不含储值/支付/GMV，不代表第三方成交。',
+    };
+  }
+
+  /**
+   * W∞-137 — §2 会员 densify：批量到期策略。
+   * 对选中的在册会员一次性延后/设置 `expires_at`（`addDays` 天；无到期设置则自 now 起）。
+   * 每个成功会员版本号 +1，写 audit + outbox，整批幂等；不含储值/支付/GMV。
+   */
+  async batchExpiry(
+    context: OrganizationContext,
+    body: Record<string, unknown>,
+    key: string,
+    storeIds: string[] | null,
+  ) {
+    if (!key.trim() || key.length > 160) throw new BadRequestException('VALIDATION_ERROR');
+    const addDays = Number(body.addDays);
+    if (!Number.isInteger(addDays) || addDays < 1 || addDays > 3650)
+      throw new BadRequestException('VALIDATION_ERROR');
+    if (!Array.isArray(body.enrollmentIds) || body.enrollmentIds.length < 1)
+      throw new BadRequestException('VALIDATION_ERROR');
+    if (body.enrollmentIds.length > 50) throw new BadRequestException('VALIDATION_ERROR');
+    const enrollmentIds = [
+      ...new Set(body.enrollmentIds.map((id) => String(id)).filter((id) => uuid.test(id))),
+    ];
+    if (enrollmentIds.length !== body.enrollmentIds.length)
+      throw new BadRequestException('VALIDATION_ERROR');
+
+    const client = await this.pool.connect();
+    try {
+      await client.query('begin');
+      const replay = await client.query(
+        "select response from idempotency_keys where tenant_id=$1 and resource_type='membership_batch_expiry' and idempotency_key=$2 and deleted_at is null",
+        [context.tenantId, key],
+      );
+      if (replay.rowCount) {
+        await client.query('commit');
+        return replay.rows[0].response;
+      }
+      const updated: { enrollmentId: string; from: string | null; to: string }[] = [];
+      const skipped: { enrollmentId: string; reason: string }[] = [];
+      for (const enrollmentId of enrollmentIds) {
+        const row = await client.query(
+          `select id,store_id,expires_at,tier
+           from membership_enrollments
+           where id=$1 and tenant_id=$2 and enrollment_status='active' and deleted_at is null
+           for update`,
+          [enrollmentId, context.tenantId],
+        );
+        const enrollment = row.rows[0];
+        if (!enrollment) {
+          skipped.push({ enrollmentId, reason: 'NOT_FOUND' });
+          continue;
+        }
+        if (storeIds !== null && !storeIds.includes(String(enrollment.store_id))) {
+          skipped.push({ enrollmentId, reason: 'OUT_OF_SCOPE' });
+          continue;
+        }
+        const from = enrollment.expires_at ? String(enrollment.expires_at) : null;
+        const base = enrollment.expires_at ? new Date(String(enrollment.expires_at)) : new Date();
+        const to = new Date(base.getTime() + addDays * 86400000);
+        await client.query(
+          'update membership_enrollments set expires_at=$1,updated_at=now(),version=version+1 where id=$2 and tenant_id=$3',
+          [to.toISOString(), enrollmentId, context.tenantId],
+        );
+        updated.push({ enrollmentId, from, to: to.toISOString() });
+      }
+      const response = {
+        addDays,
+        updatedCount: updated.length,
+        skippedCount: skipped.length,
+        updated,
+        skipped,
+        disclaimer: '批量到期策略仅调整本地 membership_enrollments 的有效期；不含储值/支付/GMV。',
+      };
+      const correlation = randomUUID();
+      await client.query(
+        "insert into audit_logs(id,tenant_id,actor_id,action,resource_type,resource_id,correlation_id,trace_id,details,created_by,updated_by) values($1,$2,$3,'membership.batch_expiry_applied','membership_batch_expiry',$4,$5,$6,$7,$3,$3)",
+        [
+          randomUUID(),
+          context.tenantId,
+          context.userId,
+          correlation,
+          correlation,
+          randomUUID(),
+          { addDays, updatedCount: updated.length, skippedCount: skipped.length },
+        ],
+      );
+      for (const item of updated) {
+        await this.receiptEntry(
+          client,
+          context,
+          'membership.expiry_extended',
+          'membership.expiry.extended.v1',
+          item.enrollmentId,
+          { ...item, addDays },
+        );
+      }
+      await client.query(
+        "insert into idempotency_keys(id,tenant_id,resource_type,idempotency_key,response,created_by,updated_by) values($1,$2,'membership_batch_expiry',$3,$4,$5,$5)",
+        [randomUUID(), context.tenantId, key, response, context.userId],
+      );
+      await client.query('commit');
+      return response;
+    } catch (error) {
+      await client.query('rollback');
+      throw error;
+    } finally {
+      client.release();
+    }
+  }
+
+  /**
+   * W∞-137 — 批量到期策略：per-enrollment audit + outbox（事务内）。
+   */
+  private async receiptEntry(
+    client: Pool | PoolClient,
+    context: OrganizationContext,
+    action: string,
+    event: string,
+    enrollmentId: string,
+    details: unknown,
+  ) {
+    const correlation = randomUUID(),
+      trace = randomUUID();
+    await client.query(
+      "insert into audit_logs(id,tenant_id,actor_id,action,resource_type,resource_id,correlation_id,trace_id,details,created_by,updated_by) values($1,$2,$3,$4,'membership_enrollment',$5,$6,$7,$8,$3,$3)",
+      [
+        randomUUID(),
+        context.tenantId,
+        context.userId,
+        action,
+        enrollmentId,
+        correlation,
+        trace,
+        details,
+      ],
+    );
+    await client.query(
+      "insert into outbox_events(id,tenant_id,event_type,aggregate_type,aggregate_id,payload,correlation_id,trace_id,created_by,updated_by) values($1,$2,$3,'membership_enrollment',$4,$5,$6,$7,$8,$8)",
+      [
+        randomUUID(),
+        context.tenantId,
+        event,
+        enrollmentId,
+        details,
+        correlation,
+        trace,
+        context.userId,
+      ],
+    );
   }
 
   private async record(

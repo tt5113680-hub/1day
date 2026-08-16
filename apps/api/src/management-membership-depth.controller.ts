@@ -80,4 +80,32 @@ export class ManagementMembershipDepthController {
       error: null,
     };
   }
+
+  /** G1-W∞-137 — 会员等级分布：等级→在册/仍有效/临期/已过期（§2 densify）。 */
+  @Get('tiers')
+  async tiers(
+    @Headers('authorization') a: string | undefined,
+    @Headers('x-tenant-context') t: string | undefined,
+    @Headers('x-request-id') r: string | undefined,
+  ) {
+    const c = await this.context(a, t, r);
+    return { data: await this.depth.tiers(c), meta: { requestId: r }, error: null };
+  }
+
+  /** G1-W∞-137 — 批量到期策略：为选中在册会员批量延后/设置有效期（§2 densify）。 */
+  @Post('batch-expiry')
+  async batchExpiry(
+    @Headers('authorization') a: string | undefined,
+    @Headers('x-tenant-context') t: string | undefined,
+    @Headers('x-request-id') r: string | undefined,
+    @Headers('idempotency-key') k: string | undefined,
+    @Body() b: Record<string, unknown>,
+  ) {
+    const c = await this.context(a, t, r);
+    return {
+      data: await this.depth.batchExpiry(c, b, k ?? '', null),
+      meta: { requestId: r },
+      error: null,
+    };
+  }
 }

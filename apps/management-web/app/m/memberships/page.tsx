@@ -72,6 +72,17 @@ type CohortRow = {
   active30d: number;
 };
 type CohortData = { months: number; cohorts: CohortRow[]; disclaimer: string };
+type TierRow = {
+  tier: string | null;
+  enrolled: number;
+  stillValid: number;
+  expiringSoon: number;
+  expired: number;
+  validityDays: number | null;
+  ruleEnabled: boolean | null;
+  ruleTitle: string | null;
+};
+type TierData = { tiers: TierRow[]; disclaimer: string };
 type Data = {
   enrollments: Enrollment[];
   benefits: Benefit[];
@@ -79,6 +90,7 @@ type Data = {
   renewals: Renewal[];
   alerts: AlertData;
   cohort: CohortData | null;
+  tiers: TierData | null;
 };
 
 const entryLabel = (type: string) =>
@@ -96,6 +108,7 @@ export default function MembershipsPage() {
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [batchBenefitId, setBatchBenefitId] = useState('');
   const [cohortMonths, setCohortMonths] = useState<3 | 6 | 12 | 24>(6);
+  const [expiryDays, setExpiryDays] = useState('90');
 
   const load = useCallback(async () => {
     if (!(await client.context())) {
@@ -104,12 +117,13 @@ export default function MembershipsPage() {
     }
     setState('loading');
     try {
-      const [membership, rules, renewals, alerts, cohort] = await Promise.all([
+      const [membership, rules, renewals, alerts, cohort, tiers] = await Promise.all([
         client.request(`${api}/api/v1/management/memberships`),
         client.request(`${api}/api/v1/management/memberships/rules`),
         client.request(`${api}/api/v1/management/memberships/renewals`),
         client.request(`${api}/api/v1/management/memberships/alerts`),
         client.request(`${api}/api/v1/management/memberships/cohort?months=${cohortMonths}`),
+        client.request(`${api}/api/v1/management/memberships/tiers`),
       ]);
       if ([401, 403].includes(membership.status)) {
         setState('forbidden');
@@ -125,6 +139,7 @@ export default function MembershipsPage() {
           ? ((await alerts.json()).data as AlertData)
           : { suspended: [], expired: [], noRecentActivity: [] },
         cohort: cohort.ok ? ((await cohort.json()).data as CohortData) : null,
+        tiers: tiers.ok ? ((await tiers.json()).data as TierData) : null,
       });
       setState('ready');
     } catch {
@@ -205,6 +220,40 @@ export default function MembershipsPage() {
         skippedCount: number;
       };
       setNote(`批量发放完成：成功 ${result.grantedCount}，跳过 ${result.skippedCount}。`);
+      setSelectedIds([]);
+      await load();
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const batchExpiry = async () => {
+    if (selectedIds.length < 1) return;
+    const addDays = Number(expiryDays);
+    if (!Number.isInteger(addDays) || addDays < 1) {
+      setNote('请输入 1–3650 的正整数天数。');
+      return;
+    }
+    setBusy(true);
+    setNote('');
+    try {
+      const response = await client.request(`${api}/api/v1/management/memberships/batch-expiry`, {
+        method: 'POST',
+        headers: {
+          'content-type': 'application/json',
+          'idempotency-key': crypto.randomUUID(),
+        },
+        body: JSON.stringify({ enrollmentIds: selectedIds, addDays }),
+      });
+      if (!response.ok) {
+        setNote('批量到期策略未应用，请刷新后重试。');
+        return;
+      }
+      const result = (await response.json()).data as {
+        updatedCount: number;
+        skippedCount: number;
+      };
+      setNote(`批量到期策略已应用：成功 ${result.updatedCount}，跳过 ${result.skippedCount}。`);
       setSelectedIds([]);
       await load();
     } finally {
@@ -407,9 +456,7 @@ export default function MembershipsPage() {
                   className={styles.barFill}
                   style={{
                     width: `${
-                      row.enrolled
-                        ? (row.stillValid / Math.max(1, row.enrolled)) * 100
-                        : 0
+                      row.enrolled ? (row.stillValid / Math.max(1, row.enrolled)) * 100 : 0
                     }%`,
                   }}
                 />
@@ -419,9 +466,84 @@ export default function MembershipsPage() {
               </span>
             </li>
           ))}
-          {!data.cohort?.cohorts.length && <li className={styles.muted}>窗口内暂无入会 cohort。</li>}
+          {!data.cohort?.cohorts.length && (
+            <li className={styles.muted}>窗口内暂无入会 cohort。</li>
+          )}
         </ul>
         <p className={styles.sub}>条数/仍有效/近30天活跃</p>
+      </section>
+
+      <section className={styles.panelBlock} aria-label="会员等级分布">
+        <h2>会员等级分布</h2>
+        <p className={styles.muted}>
+          {data.tiers?.disclaimer ??
+            '等级分布由本地 membership_enrollments 与规则档聚合；不含储值/支付/GMV。'}
+        </p>
+        <ul className={styles.bars}>
+          {(data.tiers?.tiers ?? []).map((row) => {
+            const tier = row.tier ?? '未分配等级';
+            const total = Math.max(1, row.enrolled);
+            return (
+              <li
+                key={tier}
+                className={styles.barRow}
+                data-testid={`tier-${row.tier ?? 'unassigned'}`}
+              >
+                <span className={styles.barLabel}>
+                  {tier}
+                  {row.ruleEnabled === false ? '（规则停用）' : ''}
+                  {row.validityDays != null ? ` · ${row.validityDays}天` : ''}
+                </span>
+                <span className={styles.barTrack}>
+                  <span
+                    className={styles.barFill}
+                    style={{
+                      width: `${Math.round((row.stillValid / total) * 100)}%`,
+                    }}
+                  />
+                </span>
+                <span className={styles.barValue}>
+                  在册 {row.enrolled} · 有效 {row.stillValid} · 临期 {row.expiringSoon} · 过期{' '}
+                  {row.expired}
+                </span>
+              </li>
+            );
+          })}
+          {!data.tiers?.tiers.length && <li className={styles.barEmpty}>暂无等级记录</li>}
+        </ul>
+        <p className={styles.sub}>等级 · 在册 / 仍有效 / 14天内临期 / 已过期</p>
+      </section>
+
+      <section className={styles.panelBlock} aria-label="批量到期策略">
+        <h2>批量到期策略</h2>
+        <p className={styles.muted}>
+          对勾选的在册会员一次性能延后有效期（无到期设置则自今天起算）。仅调整本地会员档案
+          expires_at，可审计，不含储值/支付。
+        </p>
+        <div className={styles.actions}>
+          <label className={styles.ruleField}>
+            延后天数
+            <input
+              className={styles.ruleInput}
+              value={expiryDays}
+              onChange={(event) => setExpiryDays(event.target.value)}
+              aria-label="批量延后天数"
+              type="number"
+              min={1}
+              max={3650}
+            />
+          </label>
+          <Button disabled={busy || selectedIds.length < 1} onClick={() => void batchExpiry()}>
+            应用到期策略（{selectedIds.length}）
+          </Button>
+          <Button
+            tone="secondary"
+            disabled={busy || selectedIds.length < 1}
+            onClick={() => setSelectedIds([])}
+          >
+            清空选择
+          </Button>
+        </div>
       </section>
 
       <section className={styles.panelBlock} aria-label="批量发放">
