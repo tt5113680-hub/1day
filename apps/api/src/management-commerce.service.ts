@@ -173,6 +173,105 @@ export class ManagementCommerceService implements OnModuleDestroy {
   }
 
   /**
+   * W∞-136 — §2 订单痕迹 densify：门店对比 + 时间序列。
+   *
+   * Aggregates real tenant-scoped (store-scoped for store managers) `customer_orders`
+   * rows only. `storeCompare` ranks real stores by trace count / valid-rate / amount
+   * reference (no GMV claim). `timeSeries` is day-bucketed trace counts (and valid
+   * counts) over the requested window. Source of truth is the local pilot archive
+   * (source=local); never a live Meituan order/revenue stream.
+   */
+  async orderInsights(tenantId: string, storeIds: string[] | null, days = 30) {
+    if (![7, 30, 90].includes(days)) throw new BadRequestException('VALIDATION_ERROR');
+    const window = `and co.occurred_at > now() - ($2::text || ' days')::interval`;
+    const storeQueryClause =
+      storeIds === null || storeIds.length === 0 ? '' : 'and co.store_id = any($2::uuid[])';
+    const storeQueryValues =
+      storeIds === null || storeIds.length === 0
+        ? [tenantId, String(days)]
+        : [tenantId, storeIds, String(days)];
+    const [storeRows, seriesRows, sourceRows] = await Promise.all([
+      this.pool.query(
+        `select st.id as store_id,st.name as store_name,
+                count(co.id)::int as total,
+                count(co.id) filter (
+                  where co.fulfillment_status in ('active','completed','fulfilled','paid')
+                )::int as valid,
+                coalesce(sum(co.amount_cents),0) as amount_cents,
+                coalesce(max(co.currency),'CNY') as currency
+         from stores st
+         left join customer_orders co on co.store_id=st.id and co.tenant_id=st.tenant_id and co.deleted_at is null ${window}
+         where st.tenant_id=$1 and st.deleted_at is null ${storeQueryClause}
+         group by st.id,st.name
+         having count(co.id) > 0
+         order by total desc`,
+        storeQueryValues,
+      ),
+      this.pool.query(
+        `select to_char(date_trunc('day', co.occurred_at), 'YYYY-MM-DD') as day,
+                count(*)::int as count,
+                count(*) filter (
+                  where co.fulfillment_status in ('active','completed','fulfilled','paid')
+                )::int as valid_count
+         from customer_orders co
+         join stores st on st.id=co.store_id and st.tenant_id=co.tenant_id and st.deleted_at is null
+         where co.tenant_id=$1 and co.deleted_at is null ${storeQueryClause} ${window}
+         group by 1
+         order by 1 asc`,
+        storeQueryValues,
+      ),
+      this.pool.query(
+        `select st.name as store_name, co.source,
+                count(*)::int as count
+         from customer_orders co
+         join stores st on st.id=co.store_id and st.tenant_id=co.tenant_id and st.deleted_at is null
+         where co.tenant_id=$1 and co.deleted_at is null ${storeQueryClause} ${window}
+         group by 1,2
+         order by 1 asc, count desc`,
+        storeQueryValues,
+      ),
+    ]);
+    const totalStores = storeRows.rows.length;
+    const storeCompare = storeRows.rows.map((row) => ({
+      storeId: String(row.store_id),
+      storeName: String(row.store_name),
+      total: Number(row.total),
+      valid: Number(row.valid),
+      validRate: Number(row.total) ? Number((Number(row.valid) / Number(row.total)).toFixed(3)) : 0,
+      currency: String(row.currency),
+      amountRef: String(row.amount_cents),
+    }));
+    const storeSources = storeCompare.reduce<Record<string, { source: string; count: number }[]>>(
+      (acc, store) => {
+        acc[store.storeName] = [];
+        return acc;
+      },
+      {},
+    );
+    for (const row of sourceRows.rows) {
+      const name = String(row.store_name);
+      storeSources[name] ??= [];
+      storeSources[name].push({ source: String(row.source), count: Number(row.count) });
+    }
+    const timeSeries = seriesRows.rows.map((row) => ({
+      day: String(row.day),
+      count: Number(row.count),
+      validCount: Number(row.valid_count),
+    }));
+    return {
+      days,
+      totalStores,
+      storeCompare: storeCompare.map((store) => ({
+        ...store,
+        sources: storeSources[store.storeName] ?? [],
+      })),
+      timeSeries,
+      disclaimer:
+        '门店对比与时间序列均由本地 customer_orders 档案按日/按门店聚合（source=local）；金额为记录字段参考，不接美团实时订单，不含本平台收款，不代表第三方成交或履约，非本平台下单。',
+    };
+  }
+
+  /**
    * G1-W∞-114 (MPC-05): evaluation archive list, optionally filtered by reply state.
    *
    * Real, tenant-scoped (store-scoped for store managers) `store_reviews` rows plus
@@ -237,9 +336,7 @@ export class ManagementCommerceService implements OnModuleDestroy {
       storeIds === null || storeIds.length === 0 ? '' : 'and r.store_id = any($2::uuid[])';
     const dayIdx = storeIds === null || storeIds.length === 0 ? 2 : 3;
     const values: (string | number | string[])[] =
-      storeIds === null || storeIds.length === 0
-        ? [tenantId, days]
-        : [tenantId, storeIds, days];
+      storeIds === null || storeIds.length === 0 ? [tenantId, days] : [tenantId, storeIds, days];
     const window = `and r.created_at >= now() - ($${dayIdx}::text || ' days')::interval`;
     const [bySourceRows, trendRows] = await Promise.all([
       this.pool.query(

@@ -98,6 +98,23 @@ export class ManagementCommerceController {
       .send(file.csv);
   }
 
+  /** W∞-136 — 订单门店对比 + 时间序列（§2 densify；本地档案非实时流）。 */
+  @Get('orders/insights')
+  async ordersInsights(
+    @Query('days') days: string | undefined,
+    @Headers('authorization') authorization?: string,
+    @Headers('x-tenant-context') tenant?: string,
+    @Headers('x-request-id') requestId?: string,
+  ) {
+    const context = await this.operatorContext(authorization, tenant, requestId);
+    const daysNum = days === undefined || days === '' ? 30 : Number(days);
+    return {
+      data: await this.commerce.orderInsights(context.tenantId, context.storeIds, daysNum),
+      meta: { requestId },
+      error: null,
+    };
+  }
+
   @Get('orders/:id')
   async orderDetail(
     @Param('id') id: string,
@@ -126,7 +143,8 @@ export class ManagementCommerceController {
     const ratingNum = rating === undefined || rating === '' ? undefined : Number(rating);
     if (ratingNum !== undefined && ![1, 2, 3, 4, 5].includes(ratingNum))
       throw new BadRequestException('VALIDATION_ERROR');
-    const sourceFilter = source === undefined || source === '' || source === 'all' ? undefined : source;
+    const sourceFilter =
+      source === undefined || source === '' || source === 'all' ? undefined : source;
     return {
       data: await this.commerce.listReviews(
         context.tenantId,

@@ -2,16 +2,16 @@
 
 ## Executor
 
-- **IDE Agent** closed **W∞-135**（会员批量发放 + 入会月 cohort）。
-- DeepSeek Plan B may run when IDE releases lock；勿并行写。
+- **DeepSeek Plan B（opencode）closed **W∞-136**（订单门店对比 + 时间序列，§2 densify）。
+- IDE Agent must not write in parallel；勿并行写。
 
 ## Current task
 
 - branch: `hardening/COMMERCIAL-COMPLETION`
-- last_verified: **2026-08-16** — **W∞-135 PASS**. See evidence/G1-MEITUAN-PARITY/WINF135/ACCEPTANCE.md。
-- in_flight: **W∞-136 (NEXT)** §2 剩余 densify（订单门店对比/时间序列）
+- last_verified: **2026-08-16** — **W∞-136 PASS**. See evidence/G1-MEITUAN-PARITY/WINF136/ACCEPTANCE.md。
+- in_flight: **W∞-137 (NEXT)** §2 剩余 densify（会员等级/批量到期策略、套餐入口排行、门店营业状态批量等）
 - deferred: Phase4 连接器（待 API/商务）
-- note: W125–W135 PASS。§2 评价/会员 densify 已收；订单对比为下刀。
+- note: W125–W136 PASS。§2 评价/会员/订单 densify 已收；下刀为 W137+。
 
 ## Owner gates (parallel)
 

@@ -54,6 +54,24 @@ type OrderDetail = {
   audits: TraceAudit[];
 };
 
+type OrderInsights = {
+  days: number;
+  totalStores: number;
+  storeCompare: {
+    storeId: string;
+    storeName: string;
+    total: number;
+    valid: number;
+    validRate: number;
+    currency: string;
+    amountRef: string;
+    sources: { source: string; count: number }[];
+  }[];
+  timeSeries: { day: string; count: number; validCount: number }[];
+};
+
+const TREND_DAYS = [7, 30, 90] as const;
+
 const api = process.env.NEXT_PUBLIC_API_BASE_URL ?? 'http://127.0.0.1:3001';
 const sessionApi = new SessionApiClient(api);
 const yuan = (cents: string) => (Number(cents) / 100).toFixed(2);
@@ -76,6 +94,8 @@ const toneOf = (value: string): 'success' | 'warning' | 'neutral' => {
 export default function CommerceOrdersPage() {
   const [state, setState] = useState<'loading' | 'ready' | 'forbidden' | 'error'>('loading');
   const [orders, setOrders] = useState<OrderRow[]>([]);
+  const [insights, setInsights] = useState<OrderInsights | null>(null);
+  const [trendDays, setTrendDays] = useState<(typeof TREND_DAYS)[number]>(30);
   const [busy, setBusy] = useState<'export' | null>(null);
   const [notice, setNotice] = useState('');
   const [drawer, setDrawer] = useState<{
@@ -87,15 +107,20 @@ export default function CommerceOrdersPage() {
     if (!(await sessionApi.context())) return setState('forbidden');
     setState('loading');
     try {
-      const response = await sessionApi.request(`${api}/api/v1/management/commerce/orders`);
-      if ([401, 403].includes(response.status)) return setState('forbidden');
-      if (!response.ok) throw Error();
-      setOrders((await response.json()).data as OrderRow[]);
+      const [listResponse, insightsResponse] = await Promise.all([
+        sessionApi.request(`${api}/api/v1/management/commerce/orders`),
+        sessionApi.request(`${api}/api/v1/management/commerce/orders/insights?days=${trendDays}`),
+      ]);
+      if ([401, 403].includes(listResponse.status) || [401, 403].includes(insightsResponse.status))
+        return setState('forbidden');
+      if (!listResponse.ok || !insightsResponse.ok) throw Error();
+      setOrders((await listResponse.json()).data as OrderRow[]);
+      setInsights((await insightsResponse.json()).data as OrderInsights);
       setState('ready');
     } catch {
       setState('error');
     }
-  }, []);
+  }, [trendDays]);
   const openDetail = async (orderId: string) => {
     setDrawer({ orderId, detail: null, loading: true });
     try {
@@ -297,6 +322,91 @@ export default function CommerceOrdersPage() {
               </li>
             ))}
             {!orders.length && <li className={styles.barEmpty}>暂无记录</li>}
+          </ul>
+        </div>
+      </section>
+      <section className={styles.panel} aria-label="订单门店对比与时间序列">
+        <div className={styles.panelBlock}>
+          <h2>门店对比</h2>
+          <p className={styles.panelMeta}>
+            近 {insights?.days ?? trendDays} 天各门店档案（记录/有效/金额参考）。
+          </p>
+          <ul className={styles.bars}>
+            {(insights?.storeCompare ?? []).map((store) => (
+              <li key={store.storeId} className={styles.barRow}>
+                <span className={styles.barLabel}>{store.storeName}</span>
+                <span className={styles.barTrack}>
+                  <span
+                    className={styles.barFill}
+                    style={{
+                      width: `${
+                        insights && insights.storeCompare.length
+                          ? (store.total / Math.max(1, insights.storeCompare[0]?.total ?? 1)) * 100
+                          : 0
+                      }%`,
+                    }}
+                  />
+                </span>
+                <span className={styles.barValue}>
+                  {store.valid}/{store.total}
+                </span>
+              </li>
+            ))}
+            {!insights?.storeCompare.length && (
+              <li className={styles.barEmpty}>窗口内暂无门店档案</li>
+            )}
+          </ul>
+          {insights && insights.storeCompare.length > 0 && (
+            <ul className={styles.bars}>
+              {insights.storeCompare.map((store) => (
+                <li key={store.storeId} className={styles.detailRow}>
+                  <span className={styles.barLabel}>{store.storeName}</span>
+                  <span className={styles.detailValue}>
+                    有效 {store.valid} / 记录 {store.total}（{(store.validRate * 100).toFixed(1)}%）
+                    · 金额参考 {store.currency} {yuan(store.amountRef)}
+                  </span>
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+        <div className={styles.panelBlock}>
+          <h2>时间序列</h2>
+          <p className={styles.panelMeta}>按日志档条数与有效条数（本地档案）。</p>
+          <div className={styles.chips}>
+            {TREND_DAYS.map((d) => (
+              <button
+                key={d}
+                type="button"
+                className={`${styles.chip} ${trendDays === d ? styles.chipActive : ''}`}
+                onClick={() => setTrendDays(d)}
+              >
+                {d} 天
+              </button>
+            ))}
+          </div>
+          <ul className={styles.trendList}>
+            {(insights?.timeSeries ?? []).map((point) => (
+              <li key={point.day} className={styles.trendRow}>
+                <span className={styles.trendDay}>{point.day.slice(5)}</span>
+                <span className={styles.barTrack}>
+                  <span
+                    className={styles.barFill}
+                    style={{
+                      width: `${
+                        insights && insights.timeSeries.length
+                          ? (point.count / Math.max(1, insights.timeSeries[0]?.count ?? 1)) * 100
+                          : 0
+                      }%`,
+                    }}
+                  />
+                </span>
+                <span className={styles.barValue}>
+                  {point.validCount}/{point.count}
+                </span>
+              </li>
+            ))}
+            {!insights?.timeSeries.length && <li className={styles.barEmpty}>窗口内暂无序列点</li>}
           </ul>
         </div>
       </section>

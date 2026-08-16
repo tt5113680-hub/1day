@@ -1,5 +1,12 @@
 ﻿# CHANGELOG
 
+## 2026-08-16 — G1-W∞-136 订单门店对比 + 时间序列 PASS（§2 densify）
+
+- `GET .../commerce/orders/insights`：storeCompare（门店记录/有效/有效占比/金额参考/来源分布）+ timeSeries（逐日记录/有效），由真实 customer_orders 现场推导；`days` 7/30/90 白名单。
+- `/m/orders`：门店对比 + 时间序列 白卡面板 + 7/30/90 天切换，honest 底注（source=local、不接美团实时、非本平台下单）。
+- Evidence: `evidence/G1-MEITUAN-PARITY/WINF136/ACCEPTANCE.md`; tests/g1-winf136 2/2. `pnpm typecheck` 20/20、`pnpm build` 20/20、单测 49/49。W89 memberships CSS `repeat(3)` 短缺为 HEAD 既有预存偏差（未改动 memberships 与本刀无关）。
+- 非主人 UI 签验；无储值/支付/GMV；不复活 consumer_orders / 本平台下单/收单。
+
 ## 2026-08-16 — G1-W∞-135 会员批量发放 + 入会月 cohort PASS
 
 - `GET .../memberships/cohort` + `POST .../memberships/batch-grants`；`/m/memberships` cohort 面板与勾选批量发放。
