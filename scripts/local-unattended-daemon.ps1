@@ -29,6 +29,16 @@ while ($true) {
     Write-Log ("DAEMON auto-cleared stale lock: {0}" -f $cleared.reason)
   }
 
+  # Cost guard first: no slice → never call orchestrator / DeepSeek
+  if (Test-NoAuthorizedEngineeringSlice) {
+    $idleWait = Get-IdleNoSliceWaitMinutes
+    Write-Log "DAEMON IDLE_NO_SLICE — refusing DeepSeek; sleep ${idleWait}m (cost guard)"
+    Write-UnattendedOwnerAlert ("COST GUARD idle: no authorized slice — daemon sleeping {0}m without API" -f $idleWait)
+    $why = Wait-UnattendedIdle -MaxMinutes $idleWait
+    Write-Log "DAEMON resume reason=$why (still subject to cost guard)"
+    continue
+  }
+
   $gate = Test-ShouldRunNow
   if ($gate.ok) {
     Write-Log 'DAEMON prev finished — starting next task'
@@ -36,6 +46,13 @@ while ($true) {
     & powershell.exe -NoProfile -ExecutionPolicy Bypass -File $orchestrator
     $code = $LASTEXITCODE
     Write-Log "DAEMON turn finished exit=$code"
+    if ($code -eq 5) {
+      $idleWait = Get-IdleNoSliceWaitMinutes
+      Write-Log "DAEMON exit=IDLE_NO_SLICE — sleep ${idleWait}m without chaining"
+      $why = Wait-UnattendedIdle -MaxMinutes $idleWait
+      Write-Log "DAEMON resume reason=$why"
+      continue
+    }
   } else {
     Write-Log "DAEMON monitor: $($gate.reason)"
     if ("$($gate.reason)" -match 'lock') {
@@ -43,6 +60,13 @@ while ($true) {
       if ($info.exists -and $info.ageMinutes -ge 60) {
         Write-UnattendedOwnerAlert ("DeepSeek blocked by lock for {0}m holder={1} pid={2} — health will auto-clear when stale" -f $info.ageMinutes, $info.holder, $info.pid)
       }
+    }
+    if ($gate.idle -or ("$($gate.reason)" -match 'cost guard|no authorized')) {
+      $idleWait = if ($gate.waitMinutes) { [int]$gate.waitMinutes } else { Get-IdleNoSliceWaitMinutes }
+      Write-Log "DAEMON cost-guard wait ${idleWait}m"
+      $why = Wait-UnattendedIdle -MaxMinutes $idleWait
+      Write-Log "DAEMON resume reason=$why"
+      continue
     }
   }
 

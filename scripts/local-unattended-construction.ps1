@@ -87,6 +87,23 @@ $resolvedProfile = if ($Profile -eq 'auto') { Get-TaskSizeProfile } else { $Prof
 $limits = Get-ProfileLimits $resolvedProfile
 if ($MaxMinutes -le 0) { $MaxMinutes = $limits.MaxMinutes }
 
+# Cost / owner gates BEFORE auth — idle must not depend on API keys
+if (Test-ActiveBlockedReport) {
+  Write-Log 'SKIP: active BLOCKED_REPORT — owner must clear before resuming'
+  exit 0
+}
+
+if (Test-NoAuthorizedEngineeringSlice) {
+  Write-Log 'SKIP: no authorized engineering slice — cost guard refuses DeepSeek (IDLE_NO_SLICE)'
+  Write-UnattendedOwnerAlert 'COST GUARD: skipped DeepSeek — NO_AUTHORIZED_SLICE (script-level, zero tokens)'
+  exit 5
+}
+
+if ((Test-G1Ready)) {
+  Write-Log 'SKIP: G1 READY — waiting for owner manual test'
+  exit 0
+}
+
 if (-not (Test-ExecutorAuthenticated)) {
   if ($executor -eq 'opencode') {
     Write-Log 'FAIL: OpenCode not ready. Set DEEPSEEK_API_KEY and npm install -g opencode-ai'
@@ -99,16 +116,6 @@ if (-not (Test-ExecutorAuthenticated)) {
 if (-not (Test-Path $promptFile)) {
   Write-Log "FAIL: missing prompt file $promptFile"
   exit 2
-}
-
-if (Test-ActiveBlockedReport) {
-  Write-Log 'SKIP: active BLOCKED_REPORT — owner must clear before resuming'
-  exit 0
-}
-
-if ((Test-G1Ready)) {
-  Write-Log 'SKIP: G1 READY — waiting for owner manual test'
-  exit 0
 }
 
 $runNumber = Get-RunNumber + 1

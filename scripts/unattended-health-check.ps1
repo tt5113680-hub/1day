@@ -37,6 +37,13 @@ if ($blockedActive) {
   Add-Note 'BLOCKED_REPORT clear'
 }
 
+# --- COST GUARD: no authorized slice ---
+if (Test-NoAuthorizedEngineeringSlice) {
+  Add-Note ("COST GUARD idle: NO_AUTHORIZED_SLICE — DeepSeek must not be called (idle wait {0}m)" -f (Get-IdleNoSliceWaitMinutes))
+} else {
+  Add-Note 'authorized-slice gate: not in NO_AUTHORIZED_SLICE idle'
+}
+
 # --- G1 READY stop ---
 if (Test-G1Ready) {
   Add-Note 'G1 READY flag set — unattended waits for owner manual test (expected pause)'

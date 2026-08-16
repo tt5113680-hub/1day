@@ -67,11 +67,40 @@ UNATTENDED_POLL_MINUTES=20
 
 ---
 
-## Plan C（保底，不如 B 稳）：IDE 长会话半自动
+## Plan D（主人 2026-08-15 起 **以后默认**）：本机大模型
+
+**裁决：** 以后无人值守 **优先调用本地大模型**，避免再出现云端空转烧光余额。
+
+```text
+orchestrator 成本闸门（无切片 → SKIP / 长睡）
+        │
+        ▼
+  opencode → http://127.0.0.1:11434/v1  (Ollama)
+          或 LM Studio / 其它 OpenAI 兼容本地 endpoint
+```
+
+示例 `.env.local-unattended`（勿提交）：
+
+```env
+UNATTENDED_EXECUTOR=opencode
+UNATTENDED_OPENCODE_MODEL=ollama/qwen2.5-coder:14b
+# 按 OpenCode / 本机实际 provider 名调整；确保 base URL 指向本机
+UNATTENDED_CHAIN_MODE=1
+UNATTENDED_POLL_MINUTES=20
+UNATTENDED_IDLE_NO_SLICE_WAIT_MIN=360
+```
+
+**硬前提（所有项目通用）：**
+
+1. `Test-NoAuthorizedEngineeringSlice` / 活跃 `BLOCKED_REPORT` → **禁止启动模型**
+2. 不得用「冷启动复确认」刷 `LATEST_HANDOFF` / `BLOCKED_REPORT`
+3. 云端 DeepSeek 仅在主人明确恢复 key + 任务时作备用
+
+## Plan C（保底，不如本机稳）：IDE 长会话半自动
 
 - Cursor IDE 打开 + Auto-run，你偶尔发 `继续`
 - **不符合**「完全无人值守」，但 **不依赖 Headless 额度**
-- 仅当 **拒绝任何 API 费用** 时使用
+- 仅当 **拒绝任何 API 费用且本机模型未就绪** 时使用
 
 ---
 
@@ -80,4 +109,6 @@ UNATTENDED_POLL_MINUTES=20
 - [x] 暂停 Cursor Headless 计划任务（避免空转）
 - [x] 安装 OpenCode + 切换 construction 脚本
 - [x] DeepSeek API key 配置（`.env.local-unattended`，不入库）
-- [ ] 首轮施工验证中 → 20 分钟全自动
+- [x] **2026-08-15 成本事故止损** + 脚本硬闸门 + 主人裁决优先本地模型（决策 J）
+- [ ] 本机 Ollama/LM Studio 接入验证（待主人装好模型后开启）
+- [ ] 云端 DeepSeek 保持关闭直至明确授权

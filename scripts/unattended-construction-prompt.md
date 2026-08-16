@@ -34,8 +34,16 @@ You are the **sole write executor** for this repository turn (Plan B OpenCode/De
 - Do not auto-sign owner acceptance; do not claim 全部商用
 - Do not write in parallel with another IDE/DeepSeek writer
 
+## COST GUARD (mandatory — 2026-08-15)
+
+If after the read list there is **no owner-authorized engineering slice** (`NO_AUTHORIZED_SLICE`, only deferred §5 READY, only human gates, or blocked awaiting owner):
+
+1. **STOP immediately.** Do not call more tools. Do not “re-confirm”. Do not expand `LATEST_HANDOFF` / `BLOCKED_REPORT` / `CHANGELOG` with cold-start checkpoint spam.
+2. Exit the turn with no commit (or a single one-line note only if the orchestrator already required a status touch — prefer **zero writes**).
+3. Script-level gates should have refused this launch; if you still ran, treat that as a bug and do nothing billable.
+
 ## Done criteria
 
 1. Code 2. Self-test 3. typecheck/build 4. tests 5. PROJECT_STATE + CHANGELOG 6. evidence 7. commit + push (auth C)
 
-Execute now.
+Execute now — **only if** an authorized incomplete engineering slice exists.

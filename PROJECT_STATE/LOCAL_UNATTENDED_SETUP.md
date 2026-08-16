@@ -1,8 +1,27 @@
 # 本地无人值守施工 — 一次性配置
 
 - recorded_at: 2026-08-10 Asia/Shanghai
+- **updated:** 2026-08-15 — 成本硬闸门 + 优先本地大模型（主人裁决 J）
 - **施工总纲（不可偏离）：** `PROJECT_STATE/COMMERCIAL_EXECUTION_CHARTER.md`
 - **推荐模式：专用机 / 24h 开机 + 每 10 分钟监控接龙**
+- **以后默认执行器：本机大模型（Plan D）**；云端 DeepSeek 仅备用
+
+## 成本硬闸门（所有同类项目必须有 — 2026-08-15）
+
+事故：无授权切片时仍连环冷启动云端 API，空转烧费。
+
+**脚本必须做到（本仓已落地）：**
+
+| 闸门 | 行为 |
+| ---- | ---- |
+| 无 `授权工程切片` / `NO_AUTHORIZED_SLICE` | **不启动模型**，exit `IDLE_NO_SLICE`，长睡（默认 360m） |
+| 活跃 `BLOCKED_REPORT`（只看文首 ACTIVE） | SKIP；文末历史 RESOLVED **不得**清闸 |
+| 成本检查 | **先于** API Key 鉴权 |
+| 禁止 | cold-start「第 N 次复确认」刷状态文件烧 token |
+
+环境变量：`UNATTENDED_IDLE_NO_SLICE_WAIT_MIN`（默认 360）。
+
+全局 Cursor 规则：`~/.cursor/rules/unattended-cost-guard-local-llm.mdc`（所有项目 alwaysApply）。
 
 ## 你要的行为（已实现）
 

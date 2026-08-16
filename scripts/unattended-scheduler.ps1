@@ -1,4 +1,4 @@
-# Shared adaptive scheduling for local unattended construction.
+﻿# Shared adaptive scheduling for local unattended construction.
 param()
 
 function Get-UnattendedPaths {
@@ -360,6 +360,10 @@ function Get-AdaptiveSchedule {
     $duration = if ($null -ne $LastRun.durationMinutes) { [double]$LastRun.durationMinutes } else { 0 }
 
     switch ($exitCode) {
+      5 {
+        $wait = Get-IdleNoSliceWaitMinutes
+        $reason = 'last=IDLE_NO_SLICE — long sleep, no API burn'
+      }
       3 {
         $wait = [Math]::Min($maxWait, 15)
         $maxMinutes = [Math]::Min(240, $maxMinutes + 30)
@@ -415,12 +419,73 @@ function Get-AdaptiveSchedule {
 }
 
 function Test-ActiveBlockedReport {
+  <#
+    Only the leading "current" section counts.
+    Historical "## RESOLVED …" tails must NOT clear an ACTIVE head
+    (bug 2026-08-15: full-file -match RESOLVED → false → DeepSeek idle burn).
+  #>
   $paths = Get-UnattendedPaths
   $p = Join-Path $paths.Root 'PROJECT_STATE/BLOCKED_REPORT.md'
   if (-not (Test-Path $p)) { return $false }
   $text = Get-Content $p -Raw -Encoding utf8
-  if ($text -match 'RESOLVED|no active blocker|Current blockers\s*\n\s*None') { return $false }
-  return $true
+  if ([string]::IsNullOrWhiteSpace($text)) { return $false }
+
+  $activePart = $text
+  $m = [regex]::Match($text, '(?m)^##\s+RESOLVED\b')
+  if ($m.Success) {
+    $activePart = $text.Substring(0, $m.Index)
+  }
+
+  if ($activePart -match '(?im)^\s*-\s*status:\s*\*\*RESOLVED\*\*') { return $false }
+  if ($activePart -match '(?i)no active blocker') { return $false }
+  if ($activePart -match '(?im)Current blockers\s*\r?\n\s*None') { return $false }
+
+  return ($activePart -match '(?i)##\s*ACTIVE\b|\bACTIVE\b|\bNO_AUTHORIZED_SLICE\b|\bCOST[_ -]?STOP\b|owner action required|must stop')
+}
+
+function Test-NoAuthorizedEngineeringSlice {
+  <#
+    STANDARD COST GUARD (2026-08-15): if there is no owner-authorized engineering
+    slice, NEVER launch OpenCode/DeepSeek. Script-level only — zero API tokens.
+    Fail closed on explicit English idle markers (encoding-safe).
+  #>
+  $paths = Get-UnattendedPaths
+
+  function Read-Head([string]$Rel, [int]$Lines = 40) {
+    $p = Join-Path $paths.Root $Rel
+    if (-not (Test-Path $p)) { return '' }
+    return ((Get-Content $p -TotalCount $Lines -Encoding utf8 -ErrorAction SilentlyContinue) -join "`n")
+  }
+
+  $currentHead = Read-Head 'PROJECT_STATE/CURRENT_STATE.md' 20
+  $handoffHead = Read-Head 'PROJECT_STATE/LATEST_HANDOFF.md' 40
+  $decisionHead = Read-Head 'PROJECT_STATE/DECISION_REQUIRED.md' 120
+  $promptPath = Join-Path $paths.Root 'scripts/unattended-construction-prompt.md'
+  $prompt = ''
+  if (Test-Path $promptPath) {
+    $prompt = Get-Content $promptPath -Raw -Encoding utf8 -ErrorAction SilentlyContinue
+    if (-not $prompt) { $prompt = '' }
+  }
+
+  if ($currentHead -match 'NO_AUTHORIZED_SLICE') { return $true }
+  if ($handoffHead -match 'NO_AUTHORIZED_SLICE') { return $true }
+  if ($currentHead -match '(?i)current_task:.*NO_AUTHORIZED|BLOCKED \(NO_AUTHORIZED') { return $true }
+
+  $s5Deferred = ($decisionHead -match 'DEFERRED') -and ($decisionHead -match 'READY')
+  $s5Authorized = ($decisionHead -match 'AUTHORIZED') -and ($decisionHead -match 'READY') -and ($decisionHead -notmatch 'DEFERRED')
+  $promptForbidsS5 = ($prompt -match 'do NOT start') -and ($prompt -match 'READY')
+  if ($s5Deferred -and -not $s5Authorized -and $promptForbidsS5) {
+    if ($currentHead -match '(?i)NO_AUTHORIZED|BLOCKED|all \[x\] PASS') {
+      return $true
+    }
+  }
+
+  return $false
+}
+
+function Get-IdleNoSliceWaitMinutes {
+  Load-UnattendedEnv
+  return Get-EnvInt 'UNATTENDED_IDLE_NO_SLICE_WAIT_MIN' 360
 }
 
 function Test-ShouldRunNow {
@@ -435,6 +500,17 @@ function Test-ShouldRunNow {
 
   if (Test-ActiveBlockedReport) {
     return @{ ok = $false; reason = 'BLOCKED_REPORT active — owner action required' }
+  }
+
+  # Cost guard: never bill DeepSeek for empty cold-start reconfirms.
+  # -Force does NOT bypass this (owner must clear state / authorize a slice).
+  if (Test-NoAuthorizedEngineeringSlice) {
+    return @{
+      ok     = $false
+      reason = 'no authorized engineering slice — cost guard (no API)'
+      idle   = $true
+      waitMinutes = (Get-IdleNoSliceWaitMinutes)
+    }
   }
 
   if ((Test-G1Ready) -and -not $Force) {
@@ -489,6 +565,7 @@ function Write-LastRunRecord {
       2 { 'CONFIG' }
       3 { 'TIMEOUT' }
       4 { 'USAGE_LIMIT' }
+      5 { 'IDLE_NO_SLICE' }
       default { "EXIT_$ExitCode" }
     }
     profile         = $Profile

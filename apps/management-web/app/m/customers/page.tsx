@@ -23,6 +23,38 @@ type Customer = {
 };
 type Assignee = { id: string; displayName: string; title: string | null };
 type Filters = { search: string; tag: string; segment: string; source: string; layer: string };
+type RetentionDepth = {
+  months: number;
+  cohort: {
+    cohortMonth: string;
+    enrolled: number;
+    activeWithin30d: number;
+    activeWithin90d: number;
+    stillActive: number;
+    retained30Rate: number;
+    retained90Rate: number;
+  }[];
+  repurchaseCycle: {
+    sampleCustomers: number;
+    gapCount: number;
+    avgDays: number;
+    medianDays: number;
+    unit: string;
+    note: string;
+  };
+  dormantQueue: {
+    customerId: string;
+    displayName: string;
+    layer: string;
+    recencyDays: number | null;
+    frequencyCount: number;
+    reachCount: number;
+    computedAt: string;
+    wakePlanned: boolean;
+    deepLink: string;
+  }[];
+  disclaimer: string;
+};
 
 const api = process.env.NEXT_PUBLIC_API_BASE_URL ?? 'http://127.0.0.1:3001';
 const sessionApi = new SessionApiClient(api);
@@ -51,18 +83,28 @@ export default function ManagementCustomersPage() {
   const [assignees, setAssignees] = useState<Assignee[]>([]);
   const [assigneeId, setAssigneeId] = useState('');
   const [notice, setNotice] = useState('');
-  const [busy, setBusy] = useState<'export' | 'ownership' | 'rfm' | 'tags' | null>(null);
+  const [busy, setBusy] = useState<'export' | 'ownership' | 'rfm' | 'tags' | 'wake' | null>(null);
   const [rfmSummary, setRfmSummary] = useState<{
     total: number;
     layers: Record<string, number>;
     dormant: number;
   } | null>(null);
+  const [retention, setRetention] = useState<RetentionDepth | null>(null);
+  const [wakeSelected, setWakeSelected] = useState<string[]>([]);
   const [tagInput, setTagInput] = useState('');
   const [tagMode, setTagMode] = useState<'add' | 'remove'>('add');
   const headers = (idempotencyKey?: string) => ({
     'content-type': 'application/json',
     ...(idempotencyKey ? { 'idempotency-key': idempotencyKey } : {}),
   });
+  const loadRetention = useCallback(async () => {
+    if (!(await sessionApi.context())) return;
+    const response = await sessionApi.request(
+      `${api}/api/v1/management/customers/retention-depth?months=6`,
+      { headers: headers() },
+    );
+    if (response.ok) setRetention((await response.json()).data);
+  }, []);
   const load = useCallback(
     async (nextFilters = applied) => {
       if (!(await sessionApi.context())) return setState('forbidden');
@@ -78,12 +120,13 @@ export default function ManagementCustomersPage() {
         if (!response.ok) throw Error('LOAD');
         setCustomers((await response.json()).data);
         setSelected([]);
+        await loadRetention();
         setState('ready');
       } catch {
         setState('error');
       }
     },
-    [applied],
+    [applied, loadRetention],
   );
   useEffect(() => void load(), [load]);
   useEffect(() => {
@@ -220,6 +263,34 @@ export default function ManagementCustomersPage() {
       setBusy(null);
     }
   };
+  const wakeDormant = async () => {
+    if (!wakeSelected.length) return;
+    setBusy('wake');
+    setNotice('');
+    try {
+      const response = await sessionApi.request(
+        `${api}/api/v1/management/customers/dormant-queue/wake`,
+        {
+          method: 'POST',
+          headers: headers(crypto.randomUUID()),
+          body: JSON.stringify({ customerIds: wakeSelected }),
+        },
+      );
+      if (!response.ok) throw Error('WAKE');
+      const data = (await response.json()).data as { applied: number };
+      setNotice(`已将 ${data.applied} 位沉睡/需唤醒客户纳入「沉睡唤醒」计划。`);
+      setWakeSelected([]);
+      await load();
+    } catch {
+      setNotice('唤醒计划未提交成功，请稍后重试。');
+    } finally {
+      setBusy(null);
+    }
+  };
+  const toggleWake = (id: string) =>
+    setWakeSelected((current) =>
+      current.includes(id) ? current.filter((value) => value !== id) : [...current, id],
+    );
 
   if (state === 'loading')
     return (
@@ -338,6 +409,93 @@ export default function ManagementCustomersPage() {
           RFM
           分层由真实互动档案（跟进、触点、订单痕迹、来源）现场计算，仅统计观看/访问/跳转/跟进等入口与痕迹，不含支付金额，非本平台下单、不代表第三方成交。
         </p>
+      </section>
+
+      <section className={styles.panel} aria-label="留存深度" data-testid="customers-retention-depth">
+        <div className={styles.panelBlock}>
+          <h2>建档 cohort（近 {retention?.months ?? 6} 月）</h2>
+          <ul className={styles.bars}>
+            {(retention?.cohort ?? []).map((row) => (
+              <li key={row.cohortMonth} className={styles.barRow}>
+                <span className={styles.barLabel}>
+                  {row.cohortMonth} · 建档 {row.enrolled} · 30 日留存 {row.retained30Rate}% · 90 日{' '}
+                  {row.retained90Rate}% · 仍活跃 {row.stillActive}
+                </span>
+                <span className={styles.barTrack}>
+                  <span
+                    className={styles.barFill}
+                    style={{
+                      width: `${row.enrolled ? Math.min(100, row.retained90Rate) : 0}%`,
+                    }}
+                  />
+                </span>
+                <span className={styles.barValue}>{row.activeWithin90d}</span>
+              </li>
+            ))}
+            {!retention?.cohort?.length && <li className={styles.barEmpty}>暂无建档 cohort</li>}
+          </ul>
+        </div>
+        <div className={styles.panelBlock}>
+          <h2>复购周期（互动间隔）</h2>
+          <div className={styles.summaryStrip} aria-label="复购周期概况">
+            <div>
+              <span>样本客户</span>
+              <strong>{retention?.repurchaseCycle.sampleCustomers ?? 0}</strong>
+            </div>
+            <div>
+              <span>平均间隔（天）</span>
+              <strong>{retention?.repurchaseCycle.avgDays ?? 0}</strong>
+            </div>
+            <div>
+              <span>中位间隔（天）</span>
+              <strong>{retention?.repurchaseCycle.medianDays ?? 0}</strong>
+            </div>
+            <div>
+              <span>间隔样本</span>
+              <strong>{retention?.repurchaseCycle.gapCount ?? 0}</strong>
+            </div>
+          </div>
+          <p className={styles.honest}>{retention?.repurchaseCycle.note ?? retention?.disclaimer}</p>
+        </div>
+      </section>
+
+      <section className={styles.panel} aria-label="沉睡唤醒队列" data-testid="customers-dormant-queue">
+        <div className={styles.panelBlock}>
+          <div className={styles.batch}>
+            <strong>沉睡唤醒队列</strong>
+            <span>需唤醒 / 沉睡 · 最多 100</span>
+            <Button
+              disabled={!wakeSelected.length || busy === 'wake'}
+              onClick={() => void wakeDormant()}
+            >
+              {busy === 'wake' ? '提交中' : `纳入唤醒计划（${wakeSelected.length}）`}
+            </Button>
+          </div>
+          <ul className={styles.queueList}>
+            {(retention?.dormantQueue ?? []).map((row) => (
+              <li key={row.customerId} className={styles.queueRow}>
+                <label>
+                  <input
+                    type="checkbox"
+                    checked={wakeSelected.includes(row.customerId)}
+                    disabled={row.wakePlanned}
+                    onChange={() => toggleWake(row.customerId)}
+                  />
+                  <span>
+                    {row.displayName} · {row.layer}
+                    {row.recencyDays === null ? '' : ` · ${row.recencyDays} 天未互动`}
+                    {row.wakePlanned ? ' · 已在唤醒计划' : ''}
+                  </span>
+                </label>
+                <Link href={row.deepLink}>详情</Link>
+              </li>
+            ))}
+            {!retention?.dormantQueue?.length && (
+              <li className={styles.barEmpty}>暂无需唤醒 / 沉睡客户（请先重算 RFM）</li>
+            )}
+          </ul>
+          <p className={styles.honest}>{retention?.disclaimer}</p>
+        </div>
       </section>
 
       <section className={styles.panel} aria-label="客户跟进分布">

@@ -17,6 +17,7 @@ const text = (value: unknown, max: number) =>
 
 /**
  * W∞-109 — CRM 深操作：RFM 自动分层 + 批量打标/归属（MPC-06 / Phase1 1.4）。
+ * W∞-132 — §2 收口：cohort + 复购周期 + 沉睡唤醒队列。
  *
  * RFM 由真实客户关联互动数据现场计算并落库到 `customer_rfm_profiles`，禁止假分层：
  *  - R = 最近互动天数（距最近一次 task_follow_up / nurture_touchpoint / customer_order 痕迹）
@@ -201,6 +202,239 @@ export class ManagementCrmDepthService implements OnModuleDestroy {
     const total = rows.rows.reduce((sum, row) => sum + row.c, 0);
     const dormant = byLayer['沉睡'] ?? 0;
     return { total, layers: byLayer, dormant };
+  }
+
+  /**
+   * W∞-132 — §2 目标深度收口：cohort + 复购周期 + 沉睡唤醒队列。
+   * 全部由真实建档日 / 互动痕迹 / RFM 分层现场推导；不含支付金额与第三方成交。
+   */
+  async retentionDepth(context: OrganizationContext, monthsRaw: string | undefined) {
+    const months = Math.min(12, Math.max(3, Number.parseInt(monthsRaw ?? '6', 10) || 6));
+    const [cohort, repurchase, dormantQueue, summary] = await Promise.all([
+      this.cohort(context.tenantId, months),
+      this.repurchaseCycle(context.tenantId),
+      this.dormantQueue(context.tenantId),
+      this.summary(context.tenantId),
+    ]);
+    return {
+      months,
+      cohort,
+      repurchaseCycle: repurchase,
+      dormantQueue,
+      rfm: summary,
+      disclaimer:
+        'cohort/复购/唤醒队列均由本地互动档案与 RFM 分层推导；不含支付金额、非本平台下单、不代表第三方成交。',
+    };
+  }
+
+  async wakeDormant(
+    context: OrganizationContext,
+    body: Record<string, unknown>,
+    key: string,
+    requestId: string,
+  ) {
+    if (!key.trim() || key.length > 160) throw new BadRequestException('VALIDATION_ERROR');
+    if (
+      !Array.isArray(body.customerIds) ||
+      body.customerIds.length < 1 ||
+      body.customerIds.length > 100
+    )
+      throw new BadRequestException('VALIDATION_ERROR');
+    const customerIds = body.customerIds.map((value) => {
+      const id = text(value, 36);
+      if (!id || !uuid.test(id)) throw new BadRequestException('VALIDATION_ERROR');
+      return id;
+    });
+    const label = '沉睡唤醒';
+    const client = await this.pool.connect();
+    let applied = 0;
+    try {
+      await client.query('begin');
+      const eligible = await client.query(
+        `select c.id
+         from customers c
+         join customer_rfm_profiles r on r.tenant_id=c.tenant_id and r.customer_id=c.id and r.deleted_at is null
+         where c.tenant_id=$1 and c.status='active' and c.deleted_at is null
+           and r.layer in ('需唤醒','沉睡')
+           and c.id = any($2::uuid[])`,
+        [context.tenantId, customerIds],
+      );
+      for (const row of eligible.rows) {
+        await client.query(
+          `insert into customer_tags(id,tenant_id,customer_id,label,created_by,updated_by)
+           values($1,$2,$3,$4,$5,$5)
+           on conflict (tenant_id,customer_id,label)
+           do update set deleted_at=null,updated_at=now(),updated_by=excluded.updated_by,version=customer_tags.version+1`,
+          [randomUUID(), context.tenantId, row.id, label, context.userId],
+        );
+        applied += 1;
+      }
+      await this.record(client, context, 'customer.dormant_wake', context.tenantId, requestId, {
+        requested: customerIds.length,
+        applied,
+        label,
+      });
+      await client.query(
+        `insert into outbox_events(id,tenant_id,event_type,aggregate_type,aggregate_id,payload,correlation_id,trace_id,created_by,updated_by)
+         values($1,$2,'customer.dormant_wake.v1','customer_rfm_tenant',$3,$4,$5,'page-m-003',$6,$6)`,
+        [
+          randomUUID(),
+          context.tenantId,
+          context.tenantId,
+          { requested: customerIds.length, applied, label },
+          uuid.test(requestId) ? requestId : randomUUID(),
+          context.userId,
+        ],
+      );
+      await client.query('commit');
+    } catch (error) {
+      await client.query('rollback');
+      throw error;
+    } finally {
+      client.release();
+    }
+    return { label, requested: customerIds.length, applied };
+  }
+
+  private async cohort(tenantId: string, months: number) {
+    const result = await this.pool.query(
+      `with bounds as (
+         select date_trunc('month', now()) - make_interval(months => $2 - 1) as start_month
+       ),
+       cohort_customers as (
+         select c.id as customer_id,
+                date_trunc('month', c.created_at) as cohort_month
+         from customers c, bounds b
+         where c.tenant_id=$1 and c.status='active' and c.deleted_at is null
+           and c.created_at >= b.start_month
+       ),
+       interactions as (
+         select ft.customer_id, f.created_at as interacted_at
+         from task_follow_ups f
+         join tasks ft on ft.id=f.task_id
+         where ft.tenant_id=$1 and f.deleted_at is null and ft.deleted_at is null
+         union all
+         select tp.customer_id, tp.occurred_at
+         from employee_nurture_touchpoints tp
+         where tp.tenant_id=$1 and tp.deleted_at is null
+         union all
+         select o.customer_id, o.occurred_at
+         from customer_orders o
+         where o.tenant_id=$1 and o.deleted_at is null
+       )
+       select
+         to_char(cc.cohort_month, 'YYYY-MM') as cohort_month,
+         count(distinct cc.customer_id)::int as enrolled,
+         count(distinct case
+           when i.interacted_at is not null
+            and i.interacted_at < cc.cohort_month + interval '30 days'
+           then cc.customer_id end)::int as active_within_30d,
+         count(distinct case
+           when i.interacted_at is not null
+            and i.interacted_at < cc.cohort_month + interval '90 days'
+           then cc.customer_id end)::int as active_within_90d,
+         count(distinct case
+           when r.layer in ('高价值-活跃','温和互动') then cc.customer_id end)::int as still_active
+       from cohort_customers cc
+       left join interactions i on i.customer_id=cc.customer_id
+       left join customer_rfm_profiles r
+         on r.tenant_id=$1 and r.customer_id=cc.customer_id and r.deleted_at is null
+       group by cc.cohort_month
+       order by cc.cohort_month asc`,
+      [tenantId, months],
+    );
+    return result.rows.map((row) => {
+      const enrolled = Number(row.enrolled) || 0;
+      const active30 = Number(row.active_within_30d) || 0;
+      const active90 = Number(row.active_within_90d) || 0;
+      const stillActive = Number(row.still_active) || 0;
+      return {
+        cohortMonth: row.cohort_month as string,
+        enrolled,
+        activeWithin30d: active30,
+        activeWithin90d: active90,
+        stillActive,
+        retained30Rate: enrolled ? Math.round((active30 / enrolled) * 1000) / 10 : 0,
+        retained90Rate: enrolled ? Math.round((active90 / enrolled) * 1000) / 10 : 0,
+      };
+    });
+  }
+
+  private async repurchaseCycle(tenantId: string) {
+    const result = await this.pool.query(
+      `with events as (
+         select ft.customer_id, f.created_at as occurred_at
+         from task_follow_ups f
+         join tasks ft on ft.id=f.task_id
+         where ft.tenant_id=$1 and f.deleted_at is null and ft.deleted_at is null
+         union all
+         select tp.customer_id, tp.occurred_at
+         from employee_nurture_touchpoints tp
+         where tp.tenant_id=$1 and tp.deleted_at is null
+         union all
+         select o.customer_id, o.occurred_at
+         from customer_orders o
+         where o.tenant_id=$1 and o.deleted_at is null
+       ),
+       ordered as (
+         select customer_id, occurred_at,
+                lag(occurred_at) over (partition by customer_id order by occurred_at) as prev_at
+         from events
+       ),
+       gaps as (
+         select customer_id,
+                extract(epoch from (occurred_at - prev_at))/86400.0 as gap_days
+         from ordered
+         where prev_at is not null and occurred_at > prev_at
+       )
+       select
+         count(*)::int as gap_count,
+         count(distinct customer_id)::int as sample_customers,
+         coalesce(round(avg(gap_days)::numeric, 1), 0)::float8 as avg_days,
+         coalesce(round((percentile_cont(0.5) within group (order by gap_days))::numeric, 1), 0)::float8 as median_days
+       from gaps`,
+      [tenantId],
+    );
+    const row = result.rows[0] ?? {};
+    return {
+      sampleCustomers: Number(row.sample_customers) || 0,
+      gapCount: Number(row.gap_count) || 0,
+      avgDays: Number(row.avg_days) || 0,
+      medianDays: Number(row.median_days) || 0,
+      unit: 'days_between_interactions',
+      note: '复购周期按连续互动间隔（跟进/触点/订单痕迹）估算，非成交金额周期。',
+    };
+  }
+
+  private async dormantQueue(tenantId: string) {
+    const result = await this.pool.query(
+      `select c.id, c.display_name, r.layer, r.recency_days, r.frequency_count, r.reach_count, r.computed_at,
+              exists(
+                select 1 from customer_tags t
+                where t.tenant_id=c.tenant_id and t.customer_id=c.id
+                  and t.label='沉睡唤醒' and t.deleted_at is null
+              ) as wake_planned
+       from customer_rfm_profiles r
+       join customers c on c.id=r.customer_id and c.tenant_id=r.tenant_id
+       where r.tenant_id=$1 and r.deleted_at is null and c.status='active' and c.deleted_at is null
+         and r.layer in ('需唤醒','沉睡')
+       order by case when r.layer='需唤醒' then 0 else 1 end,
+                coalesce(r.recency_days, 9999) desc,
+                c.display_name
+       limit 100`,
+      [tenantId],
+    );
+    return result.rows.map((row) => ({
+      customerId: row.id as string,
+      displayName: row.display_name as string,
+      layer: row.layer as string,
+      recencyDays: row.recency_days === null ? null : Number(row.recency_days),
+      frequencyCount: Number(row.frequency_count) || 0,
+      reachCount: Number(row.reach_count) || 0,
+      computedAt: row.computed_at as string,
+      wakePlanned: Boolean(row.wake_planned),
+      deepLink: `/m/customers/${row.id}`,
+    }));
   }
 
   private deriveLayer(recencyDays: number | null, frequencyCount: number | null): string {

@@ -1,5 +1,10 @@
 ﻿# CHANGELOG
 
+## 2026-08-16 — G1-W∞-132 PASS + COST STOP cleared (owner accelerate)
+
+- **W∞-132** CRM retention-depth + dormant wake（§2）：API `retention-depth` / `dormant-queue/wake` + `/m/customers` panels；evidence/G1-MEITUAN-PARITY/WINF132。
+- Owner「该放开的都放开，加速施工」：COST STOP cleared；DeepSeek key restored；next **W∞-133+** densify。计划任务需管理员 Enable（`scripts/enable-unattended-after-cost-clear.ps1`）。
+
 ## 2026-08-16 — G1-W∞-131 §5 READY 读模型/缓存版本 PASS（§5 工程收口）
 
 - migration 078 `storefront_read_model_cache`; draft≠live + preview token; verify `published_read_consistent` / `preview_published_distinguishable` / `cache_version_consistent`; publish path warms cache; platform UI checklist.

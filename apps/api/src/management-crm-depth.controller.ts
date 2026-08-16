@@ -1,4 +1,4 @@
-import { BadRequestException, Body, Controller, Headers, Post } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Get, Headers, Post, Query } from '@nestjs/common';
 import { AuthorizationService } from './authorization.service';
 import { ManagementCrmDepthService } from './management-crm-depth.service';
 
@@ -39,6 +39,39 @@ export class ManagementCrmDepthController {
     const c = await this.context(a, t, r);
     return {
       data: await this.crm.batchTag(c, b, k ?? '', r!),
+      meta: { requestId: r },
+      error: null,
+    };
+  }
+
+  /** W∞-132 — §2 CRM：cohort + 复购周期 + 沉睡唤醒队列（只读聚合）。 */
+  @Get('retention-depth')
+  async retentionDepth(
+    @Headers('authorization') a: string | undefined,
+    @Headers('x-tenant-context') t: string | undefined,
+    @Headers('x-request-id') r: string | undefined,
+    @Query('months') months: string | undefined,
+  ) {
+    const c = await this.context(a, t, r);
+    return {
+      data: await this.crm.retentionDepth(c, months),
+      meta: { requestId: r },
+      error: null,
+    };
+  }
+
+  /** W∞-132 — 沉睡/需唤醒客户一键进入唤醒计划（打标 + 审计）。 */
+  @Post('dormant-queue/wake')
+  async wakeDormant(
+    @Headers('authorization') a: string | undefined,
+    @Headers('x-tenant-context') t: string | undefined,
+    @Headers('x-request-id') r: string | undefined,
+    @Headers('idempotency-key') k: string | undefined,
+    @Body() b: Record<string, unknown>,
+  ) {
+    const c = await this.context(a, t, r);
+    return {
+      data: await this.crm.wakeDormant(c, b, k ?? '', r!),
       meta: { requestId: r },
       error: null,
     };

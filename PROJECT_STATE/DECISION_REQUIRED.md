@@ -113,8 +113,9 @@ Owner accepted IDE depth plan with these hard overrides (see `MEITUAN_DEPTH_OPTI
 | -------- | ---------- |
 | J1 成本硬闸门 | **所有同类无人值守项目必须默认具备**：无授权切片 / 活跃 BLOCKED → **零 API 调用**；禁止 cold-start 复确认烧费；阻塞检测不得被文末历史 RESOLVED 误清。本仓已落地于 `scripts/unattended-scheduler.ps1` 等。 |
 | J2 执行器优先序 | **优先本地大模型**（Ollama / LM Studio / 本机 OpenAI 兼容 endpoint）作为以后无人值守默认；云端 DeepSeek 等按量 API 仅备用且须主人明确打开。Cursor 云额度不作 24h 主执行器。 |
-| J3 本仓当前 | Construction/Daemon 计划任务保持 **Disabled**；`DEEPSEEK_API_KEY` 已注释止损；恢复前须主人授权真实切片 + 选定本地或云端执行器。 |
+| J3 本仓当前 | **2026-08-16 主人「该放开的都放开，加速施工」**：COST STOP **CLEARED**；`DEEPSEEK_API_KEY` 已恢复；云端 DeepSeek Plan B **允许**（成本硬闸门 J1 仍保留）。计划任务若仍 Disabled，需管理员启用；IDE 可连续施工。 |
+| K 加速授权 | 授权下一工程切片 **W∞-132+**（§2 CRM 留存/唤醒深度等 densify）；Phase4 连接器仍待 API/商务；禁止代签主人 UI；禁止本平台下单/假 BI。 |
 
 ## Current blockers
 
-- **COST STOP ACTIVE（2026-08-15）** — 空转烧费事故后已停 DeepSeek；见 `OWNER_ALERT_UNATTENDED.md`。§5 READY 已由主人「开始第五节」解锁（首刀 W∞-125）。Human G1 UI sign-off still open.
+- None for unattended cost-stop. Human G1 UI sign-off still open. Phase4 connectors still await API/business premise. Scheduled tasks may need Administrator enable if access denied.

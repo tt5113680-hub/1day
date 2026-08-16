@@ -209,6 +209,49 @@
   font-size: 16px;
 }
 
+.honest {
+  margin: 10px 0 0;
+  color: #666;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.queueList {
+  list-style: none;
+  margin: 12px 0 0;
+  padding: 0;
+  display: grid;
+  gap: 8px;
+}
+
+.queueRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: #fafafa;
+  border: 1px solid #eee;
+}
+
+.queueRow label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  flex: 1;
+  color: #333;
+  font-size: 13px;
+}
+
+.queueRow a {
+  color: #8a6d00;
+  font-weight: 600;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
 .notice {
   margin: 0;
   border-radius: 10px;
