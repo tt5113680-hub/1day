@@ -60,6 +60,22 @@ export class ManagementStoreDepthController {
     };
   }
 
+  @Post('batch-status')
+  async batchStatus(
+    @Headers('authorization') a: string | undefined,
+    @Headers('x-tenant-context') t: string | undefined,
+    @Headers('x-request-id') r: string | undefined,
+    @Headers('idempotency-key') k: string | undefined,
+    @Body() b: Record<string, unknown>,
+  ) {
+    const c = await this.context(a, t, r);
+    return {
+      data: await this.depth.batchStatus(c, b, k ?? '', r!),
+      meta: { requestId: r },
+      error: null,
+    };
+  }
+
   @Delete(':id')
   async remove(
     @Param('id') id: string,

@@ -108,7 +108,9 @@ const contactMeta: Record<ContactQr['contactType'], { title: string; hint: strin
   employee: { title: '员工码', hint: '把顾客引到员工触点，按员工/门店归因' },
 };
 const consumerOrigin =
-  process.env.NEXT_PUBLIC_CONSUMER_BASE_URL ?? process.env.NEXT_PUBLIC_API_BASE_URL ?? 'http://127.0.0.1:3001';
+  process.env.NEXT_PUBLIC_CONSUMER_BASE_URL ??
+  process.env.NEXT_PUBLIC_API_BASE_URL ??
+  'http://127.0.0.1:3001';
 const scanUrl = (targetPath: string) => `${consumerOrigin}${targetPath}`;
 
 export default function StoresPage() {
@@ -122,9 +124,15 @@ export default function StoresPage() {
   const [busy, setBusy] = useState<string | null>(null);
   const [newStore, setNewStore] = useState<StoreDraft>(blankStore);
   const [editStore, setEditStore] = useState<Record<string, Partial<StoreDraft>>>({});
-  const [qr, setQr] = useState<Record<string, Record<ContactQr['contactType'], string> | undefined>>({});
-  const [qrContacts, setQrContacts] = useState<Record<string, Record<ContactQr['contactType'], ContactQr> | undefined>>({});
+  const [qr, setQr] = useState<
+    Record<string, Record<ContactQr['contactType'], string> | undefined>
+  >({});
+  const [qrContacts, setQrContacts] = useState<
+    Record<string, Record<ContactQr['contactType'], ContactQr> | undefined>
+  >({});
   const [qrLoading, setQrLoading] = useState<Record<string, boolean>>({});
+  const [selectedStores, setSelectedStores] = useState<Set<string>>(new Set());
+  const [batchStatus, setBatchStatus] = useState<'active' | 'inactive'>('active');
   const load = useCallback(async () => {
     if (!(await sessionApi.context())) return setState('forbidden');
     setState('loading');
@@ -177,13 +185,21 @@ export default function StoresPage() {
     () => countBy(stores.map((store) => tasksBuckets(store.openTasks))),
     [stores],
   );
-  const request = (url: string, method: 'POST' | 'PATCH' | 'PUT' | 'DELETE', body?: unknown) =>
+  const request = (
+    url: string,
+    method: 'POST' | 'PATCH' | 'PUT' | 'DELETE',
+    body?: unknown,
+    idempotencyKey?: string,
+  ) =>
     sessionApi.request(url, {
       method,
       ...(body === undefined
         ? {}
         : {
-            headers: { 'content-type': 'application/json' },
+            headers: {
+              'content-type': 'application/json',
+              ...(idempotencyKey ? { 'idempotency-key': idempotencyKey } : {}),
+            },
             body: JSON.stringify(body),
           }),
     });
@@ -266,6 +282,36 @@ export default function StoresPage() {
       await load();
     } catch {
       setNote('门店未创建。门店编号需唯一，请检查编号与店名后重试。');
+    } finally {
+      setBusy(null);
+    }
+  };
+  const applyBatchStatus = async () => {
+    if (!selectedStores.size) return setNote('请先勾选要批量营业状态的门店。');
+    setBusy('batch-status');
+    setNote('');
+    try {
+      const storeIds = [...selectedStores];
+      const target = batchStatus === 'active' ? '营业中' : '已停用';
+      if (
+        batchStatus === 'inactive' &&
+        !window.confirm(
+          `确认将选中的 ${storeIds.length} 家门店批量置为「已停用」？该操作可审计且可再次批量恢复。`,
+        )
+      )
+        return setTimeout(() => setBusy(null), 0);
+      const response = await request(
+        `${api}/api/v1/management/stores/depth/batch-status`,
+        'POST',
+        { storeIds, status: batchStatus },
+        `batch-status-${storeIds.sort().join(',')}-${batchStatus}`,
+      );
+      if (!response.ok) throw new Error('BATCH_STATUS');
+      setSelectedStores(new Set());
+      setNote(`已将选中的 ${storeIds.length} 家门店批量置为「${target}」。`);
+      await load();
+    } catch {
+      setNote('批量营业状态未生效，请刷新后重试。');
     } finally {
       setBusy(null);
     }
@@ -506,11 +552,68 @@ export default function StoresPage() {
           创建门店
         </Button>
       </section>
+      <section className={styles.panel} aria-label="门店营业状态批量">
+        <div className={styles.panelHead}>
+          <h2>门店营业状态批量</h2>
+          <span className={styles.panelMeta}>可审计 · 幂等 · 后续可再批量恢复</span>
+        </div>
+        <p className={styles.help}>
+          勾选多家门店后统一置为 营业中 /
+          已停用。仅登记营业状态，不包含本平台收款、非本平台下单、不代替平台成交。
+        </p>
+        <div className={styles.batchRow}>
+          <label className={styles.batchCheck}>
+            <input
+              type="checkbox"
+              checked={selectedStores.size === stores.length && stores.length > 0}
+              onChange={(event) =>
+                setSelectedStores(
+                  event.target.checked ? new Set(stores.map((s) => s.id)) : new Set(),
+                )
+              }
+            />
+            全选本轮门店
+          </label>
+          <label>
+            置为
+            <select
+              value={batchStatus}
+              onChange={(event) => setBatchStatus(event.target.value as 'active' | 'inactive')}
+            >
+              <option value="active">营业中</option>
+              <option value="inactive">已停用</option>
+            </select>
+          </label>
+          <Button
+            type="button"
+            disabled={busy === 'batch-status' || selectedStores.size === 0}
+            onClick={() => void applyBatchStatus()}
+          >
+            批量应用营业状态（已选 {selectedStores.size}）
+          </Button>
+        </div>
+      </section>
       <section className={styles.list}>
         {stores.map((store) => (
           <article className={styles.card} key={store.id}>
             <div className={styles.head}>
               <div>
+                <label className={styles.batchCheck} htmlFor={`batch-${store.id}`}>
+                  <input
+                    id={`batch-${store.id}`}
+                    type="checkbox"
+                    checked={selectedStores.has(store.id)}
+                    onChange={(event) =>
+                      setSelectedStores((value) => {
+                        const next = new Set(value);
+                        if (event.target.checked) next.add(store.id);
+                        else next.delete(store.id);
+                        return next;
+                      })
+                    }
+                  />
+                  批量选择
+                </label>
                 <StatusBadge tone={store.status === 'active' ? 'success' : 'neutral'}>
                   {store.status === 'active' ? '营业中' : '已停用'}
                 </StatusBadge>
@@ -631,9 +734,14 @@ export default function StoresPage() {
             <section className={styles.commercial} aria-label="三类触点二维码">
               <h3>三类触点二维码</h3>
               <p className={styles.help}>
-                商户码 / 门店码 / 员工码是扫码分流入口，顾客扫码仅进站/跳转并按触点归因到入口痕迹，不含本平台收款、不建立自营订单。
+                商户码 / 门店码 /
+                员工码是扫码分流入口，顾客扫码仅进站/跳转并按触点归因到入口痕迹，不含本平台收款、不建立自营订单。
               </p>
-              <Button type="button" disabled={qrLoading[store.id]} onClick={() => void toggleQr(store)}>
+              <Button
+                type="button"
+                disabled={qrLoading[store.id]}
+                onClick={() => void toggleQr(store)}
+              >
                 {qrOpen(store.id) ? '收起二维码' : '查看触点二维码'}
               </Button>
               {qrOpen(store.id) && (

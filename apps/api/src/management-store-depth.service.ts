@@ -112,7 +112,13 @@ export class ManagementStoreDepthService implements OnModuleDestroy {
       await this.outbox(client, context, 'store.created.v1', id, requestId, details);
       await client.query(
         "insert into idempotency_keys(id,tenant_id,resource_type,idempotency_key,response,created_by,updated_by) values($1,$2,'store',$3,$4,$5,$5)",
-        [randomUUID(), context.tenantId, key, { id, code, name, status: 'active', version: store.version }, context.userId],
+        [
+          randomUUID(),
+          context.tenantId,
+          key,
+          { id, code, name, status: 'active', version: store.version },
+          context.userId,
+        ],
       );
       await client.query('commit');
       return { id, code, name, merchantId: merchant.id, status: 'active', version: store.version };
@@ -146,8 +152,7 @@ export class ManagementStoreDepthService implements OnModuleDestroy {
     )
       throw new BadRequestException('VALIDATION_ERROR');
     const status = optionalText(body.status, 32) ?? 'active';
-    if (!['active', 'inactive'].includes(status))
-      throw new BadRequestException('VALIDATION_ERROR');
+    if (!['active', 'inactive'].includes(status)) throw new BadRequestException('VALIDATION_ERROR');
     const client = await this.pool.connect();
     try {
       await client.query('begin');
@@ -183,7 +188,101 @@ export class ManagementStoreDepthService implements OnModuleDestroy {
       await this.audit(client, context, 'store.updated', storeId, requestId, details);
       await this.outbox(client, context, 'store.updated.v1', storeId, requestId, details);
       await client.query('commit');
-      return { id: store.id, code: store.code, name: store.name, status: store.status, version: store.version };
+      return {
+        id: store.id,
+        code: store.code,
+        name: store.name,
+        status: store.status,
+        version: store.version,
+      };
+    } catch (error) {
+      await client.query('rollback');
+      throw error;
+    } finally {
+      client.release();
+    }
+  }
+
+  /**
+   * W∞-138 — 门店营业状态批量（MPC-02 / §2 densify）：对租户内多个门店批量置 营业中/已停用。
+   * 幂等（idempotency_keys）+ 单事务 + 单条 audit + 每条 outbox；仅登记营业状态，不碰价格/成交。
+   */
+  async batchStatus(
+    context: OrganizationContext,
+    body: Record<string, unknown>,
+    key: string,
+    requestId: string,
+  ) {
+    if (!key.trim() || key.length > 160) throw new BadRequestException('VALIDATION_ERROR');
+    const rawIds = body.storeIds;
+    if (!Array.isArray(rawIds) || rawIds.length === 0 || rawIds.length > 200)
+      throw new BadRequestException('VALIDATION_ERROR');
+    const status = optionalText(body.status, 32) ?? '';
+    if (!['active', 'inactive'].includes(status)) throw new BadRequestException('VALIDATION_ERROR');
+    const storeIds = rawIds.map((id) => {
+      if (typeof id !== 'string' || !uuid.test(id))
+        throw new BadRequestException('VALIDATION_ERROR');
+      return id;
+    });
+    const client = await this.pool.connect();
+    try {
+      await client.query('begin');
+      const replay = await client.query(
+        "select response from idempotency_keys where tenant_id=$1 and resource_type='store_batch_status' and idempotency_key=$2 and deleted_at is null",
+        [context.tenantId, key],
+      );
+      if (replay.rowCount) {
+        await client.query('commit');
+        return replay.rows[0].response;
+      }
+      const updated = await client.query(
+        `update stores set status=$1, updated_at=now(), updated_by=$2, version=version+1
+         where tenant_id=$3 and id = any($4::uuid[]) and deleted_at is null
+         returning id, code, name, status, version`,
+        [status, context.userId, context.tenantId, storeIds],
+      );
+      const rows = updated.rows as {
+        id: string;
+        code: string;
+        name: string;
+        status: string;
+        version: number;
+      }[];
+      const details = {
+        status,
+        count: rows.length,
+        storeIds: rows.map((row) => row.id),
+        names: rows.map((row) => row.name),
+      };
+      await this.audit(
+        client,
+        context,
+        `store.batch_status_${status}`,
+        rows[0]?.id ?? randomUUID(),
+        requestId,
+        details,
+      );
+      for (const row of rows) {
+        await this.outbox(client, context, `store.batch_status_${status}.v1`, row.id, requestId, {
+          status,
+        });
+      }
+      await client.query(
+        "insert into idempotency_keys(id,tenant_id,resource_type,idempotency_key,response,created_by,updated_by) values($1,$2,'store_batch_status',$3,$4,$5,$5)",
+        [
+          randomUUID(),
+          context.tenantId,
+          key,
+          { status, effected: rows.length, stores: rows },
+          context.userId,
+        ],
+      );
+      await client.query('commit');
+      return {
+        status,
+        effected: rows.length,
+        stores: rows,
+      };
     } catch (error) {
       await client.query('rollback');
       throw error;
