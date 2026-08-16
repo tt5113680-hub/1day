@@ -212,7 +212,7 @@
 | 管理端 CRUD 完整模块 | **100%**（workflows 除外为 CUSTOM） |
 | 工作台待办可处置率 | **≥95%** |
 | 假 BI | **0** |
-| §5 READY | W∞-125..131 PASS；§5 工程收口完成；Phase4 仍 DEFERRED |
+| §5 READY | W∞-125..131 PASS；§5 工程收口完成；Phase4 仍 DEFERRED；W∞-132 PASS；**NEXT W∞-133+** densify |
 
 ---
 
