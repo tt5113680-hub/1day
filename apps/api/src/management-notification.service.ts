@@ -11,12 +11,12 @@ import { createApiPool } from './database-pool';
 import type { OrganizationContext } from './organization.service';
 
 const UUID = /^[0-9a-f-]{36}$/i;
-const CATEGORIES = new Set(['anomaly', 'approval', 'workflow']);
+const CATEGORIES = new Set(['anomaly', 'approval', 'workflow', 'renewal']);
 const STATES = new Set(['all', 'unread', 'read', 'ignored']);
 const BATCH_ACTIONS = new Set(['read', 'unread', 'ignore', 'unignore']);
 const safeLink = (value: unknown) => {
   const link = typeof value === 'string' ? value : '';
-  return /^\/m\/(?:customers|workflows)$/i.test(link) ? link : '/m/customers';
+  return /^\/m\/(?:customers|workflows|memberships)$/i.test(link) ? link : '/m/customers';
 };
 
 @Injectable()
@@ -237,6 +237,28 @@ export class ManagementNotificationService implements OnModuleDestroy {
          from workflow_instances i
          join workflow_definitions d on d.id=i.definition_id and d.tenant_id=i.tenant_id
          where i.tenant_id=$1 and i.status='active' and i.deleted_at is null
+         union all
+         select 'renewal' as category,'member_expiry'::text as source_type,e.id::uuid aggregate_id,
+                concat('会员将到期：',coalesce(c.display_name,'在册会员')) title,
+                concat('会员有效期临近（或已超有效周期），到期后不再列为在册。') body,
+                '/m/memberships' deep_link, coalesce(e.expires_at, e.joined_at) occurred_at
+         from membership_enrollments e
+         join customers c on c.id=e.customer_id and c.tenant_id=e.tenant_id and c.deleted_at is null
+         where e.tenant_id=$1 and e.deleted_at is null and e.enrollment_status='active'
+           and (
+             (e.expires_at is not null and e.expires_at > now() and e.expires_at <= now()+interval '3 days')
+             or (e.last_active_at is not null and e.last_active_at <= now()-interval '90 days')
+             or (e.last_active_at is null and e.joined_at is not null and e.joined_at <= now()-interval '120 days')
+           )
+         union all
+         select 'renewal' as category,'member_expired'::text as source_type,e.id::uuid aggregate_id,
+                concat('会员已过期：',coalesce(c.display_name,'在册会员')) title,
+                concat('在册会员有效期已过，需确认是否续期或转出，异常提醒用于运营处置。') body,
+                '/m/memberships' deep_link, e.expires_at occurred_at
+         from membership_enrollments e
+         join customers c on c.id=e.customer_id and c.tenant_id=e.tenant_id and c.deleted_at is null
+         where e.tenant_id=$1 and e.deleted_at is null and e.enrollment_status='active'
+           and e.expires_at is not null and e.expires_at < now()
        ) n
        on conflict (tenant_id,category,source_type,source_id) do nothing`,
       [tenantId],
@@ -248,7 +270,12 @@ export class ManagementNotificationService implements OnModuleDestroy {
       `select
         (select count(*)::int from tasks where tenant_id=$1 and status='overdue' and deleted_at is null) anomaly,
         (select count(*)::int from customer_ownership_transfer_approvals where tenant_id=$1 and status='pending' and deleted_at is null) approval,
-        (select count(*)::int from workflow_instances where tenant_id=$1 and status='active' and deleted_at is null) workflow`,
+        (select count(*)::int from workflow_instances where tenant_id=$1 and status='active' and deleted_at is null) workflow,
+        (select count(*)::int from membership_enrollments where tenant_id=$1 and deleted_at is null and enrollment_status='active'
+           and ((expires_at is not null and expires_at <= now()+interval '3 days')
+                 or (last_active_at is not null and last_active_at <= now()-interval '90 days')
+                 or (last_active_at is null and joined_at is not null and joined_at <= now()-interval '120 days')
+                 or (expires_at is not null and expires_at < now()))) renewal`,
       [tenantId],
     );
     return result.rows[0];

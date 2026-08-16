@@ -53,7 +53,7 @@ const pageNote = (page: ManagementDeepPageId) => {
     return ' 本页下方「入口痕迹日报」为 L0–L2 逐日展开，与「入口 L0–L2」计数口径相关但粒度不同。';
   if (page === 'orders') return ' 本页「订单痕迹」为第三方档案试点，不计入早会 GMV。';
   if (page === 'notifications')
-    return ' 本页待办与 dashboard anomalies 队列同源类别（逾期/审批）。';
+    return ' 本页待办与 dashboard anomalies 队列同源类别（逾期/审批/会员到期提醒）。';
   if (page === 'reviews') return ' 本页「评价档案」为 store_reviews 试点，不计入早会 GMV。';
   return '';
 };
@@ -88,9 +88,7 @@ export function ManagementEarlyMeetingKpiStrip({
       aria-label="早会经营信号（与工作台同源）"
       data-testid="management-early-meeting-kpi"
     >
-      <span className={styles.kpiTitle}>
-        早会经营信号 · 与工作台同源 · 不含 GMV/支付金额
-      </span>
+      <span className={styles.kpiTitle}>早会经营信号 · 与工作台同源 · 不含 GMV/支付金额</span>
       {state === 'loading' ? (
         <p className={styles.kpiLoading}>正在同步工作台指标…</p>
       ) : state === 'error' || !metrics ? (
@@ -110,8 +108,7 @@ export function ManagementEarlyMeetingKpiStrip({
           <p className={styles.kpiNote} role="note">
             以上 7 项与管理工作台「早会经营信号」同源（/api/v1/management/dashboard）。条 B：逾期{' '}
             {metrics.overdueTasks}、今日待办 {metrics.openTasksToday}、今日完成{' '}
-            {metrics.completedTasksToday}。
-            {pageNote(page)}
+            {metrics.completedTasksToday}。{pageNote(page)}
           </p>
         </>
       )}

@@ -7,7 +7,7 @@ import styles from '../_commerce.module.css';
 import local from './notifications.module.css';
 import { ManagementEarlyMeetingKpi } from '../management-early-meeting-kpi';
 
-type Category = 'anomaly' | 'approval' | 'workflow';
+type Category = 'anomaly' | 'approval' | 'workflow' | 'renewal';
 type NotificationRow = {
   notificationId: string;
   category: Category;
@@ -32,7 +32,7 @@ type SettingsAuditRecord = {
 };
 type Payload = {
   items: NotificationRow[];
-  counts: { anomaly: number; approval: number; workflow: number };
+  counts: { anomaly: number; approval: number; workflow: number; renewal: number };
 };
 type SettingsAuditPayload = {
   records: SettingsAuditRecord[];
@@ -48,11 +48,13 @@ const categoryCopy: Record<Category, string> = {
   anomaly: '异常',
   approval: '审批',
   workflow: '工作流',
+  renewal: '会员',
 };
 const categoryTone: Record<Category, 'danger' | 'warning' | 'info' | 'success' | 'neutral'> = {
   anomaly: 'danger',
   approval: 'warning',
   workflow: 'info',
+  renewal: 'neutral',
 };
 const barWidth = (total: number, value: number) => (total ? `${(value / total) * 100}%` : '0%');
 const countBy = (items: string[]) => {
@@ -65,6 +67,7 @@ const countBy = (items: string[]) => {
 const destinationCopy: Record<string, string> = {
   '/m/customers': '客户跟进',
   '/m/workflows': '工作流整合',
+  '/m/memberships': '会员中心',
 };
 const stateCopy: Record<State, string> = {
   all: '全部',
@@ -77,7 +80,7 @@ export default function ManagementNotificationsPage() {
   const [state, setState] = useState<'loading' | 'ready' | 'forbidden' | 'error'>('loading');
   const [data, setData] = useState<Payload>({
     items: [],
-    counts: { anomaly: 0, approval: 0, workflow: 0 },
+    counts: { anomaly: 0, approval: 0, workflow: 0, renewal: 0 },
   });
   const [audit, setAudit] = useState<SettingsAuditPayload>({ records: [], count: 0 });
   const [category, setCategory] = useState('');
@@ -205,6 +208,7 @@ export default function ManagementNotificationsPage() {
       { label: '跟进异常', value: c.anomaly },
       { label: '待审批', value: c.approval },
       { label: '进行中工作流', value: c.workflow },
+      { label: '会员到期/异常', value: c.renewal },
     ]
       .filter((b) => b.value > 0)
       .sort((a, b) => b.value - a.value);
@@ -241,7 +245,7 @@ export default function ManagementNotificationsPage() {
       </main>
     );
   const { items, counts } = data;
-  const total = counts.anomaly + counts.approval + counts.workflow;
+  const total = counts.anomaly + counts.approval + counts.workflow + counts.renewal;
   return (
     <main className={styles.page} data-testid="management-notifications">
       <header className={styles.topBar}>
@@ -254,7 +258,7 @@ export default function ManagementNotificationsPage() {
       <section className={styles.heroCard} aria-label="通知中心说明">
         <h1>通知中心</h1>
         <p>
-          租户范围内可推进的工作流、审批与跟进异常汇总（统一入口/工作流工具）；
+          租户范围内可推进的工作流、审批、跟进异常与会员到期/异常汇总（统一入口/工作流工具，含会员到期提醒）；
           可标记已读、忽略并批量处置；不含支付金额与第三方订单履约态。
         </p>
       </section>
@@ -277,6 +281,10 @@ export default function ManagementNotificationsPage() {
         <div>
           <span>进行中工作流</span>
           <strong>{counts.workflow}</strong>
+        </div>
+        <div>
+          <span>会员到期/异常</span>
+          <strong>{counts.renewal}</strong>
         </div>
       </section>
 
@@ -317,6 +325,7 @@ export default function ManagementNotificationsPage() {
               <option value="anomaly">异常</option>
               <option value="approval">审批</option>
               <option value="workflow">工作流</option>
+              <option value="renewal">会员</option>
             </select>
           </div>
           <Button
@@ -383,8 +392,9 @@ export default function ManagementNotificationsPage() {
           </div>
         </div>
         <p className={styles.honest} role="note">
-          以上分布全部由已抓取通知档案行现场推导(source=local)：通知类型、推进去向与待办负载均按真实租户待推进文件统计。
-          通知中心仅汇总推广员工具可推进的工作流待办与跟进异常；不包含支付金额、销售成交或第三方订单履约状态。
+          以上分布全部由已抓取通知档案行现场推导(source=local)：通知类型、推进去向与待办负载均按真实租户待推进文件统计
+          （逾期任务、归属审批、进行中工作流，以及会员将到期/已过期/长期无活跃的到期提醒）。
+          通知中心仅汇总推广员工具可推进的工作流待办、跟进异常与会员到期提醒；不包含支付金额、销售成交或第三方订单履约状态。
           已读/忽略与批量处置仅登记本工具的处置状态，不会代第三方履约。
           点击「去处理」进入对应工具页面。
         </p>
@@ -490,7 +500,7 @@ export default function ManagementNotificationsPage() {
           <AppStatePanel
             kind="empty"
             title="当前没有待办通知"
-            description="工作流待办、审批与跟进异常会实时汇总到这里。"
+            description="工作流待办、审批、跟进异常与会员到期提醒会实时汇总到这里。"
           />
         )}
       </section>

@@ -153,11 +153,12 @@ test('management notification center aggregates tenant-scoped workflow/anomaly/a
     const payload = (await list.json()).data;
     assert.deepEqual(
       new Set(payload.items.map((item) => item.category)),
-      new Set(['anomaly', 'approval', 'workflow']),
+      new Set(['anomaly', 'approval', 'workflow', 'renewal']),
     );
     assert.equal(typeof payload.counts.anomaly, 'number');
     assert.equal(typeof payload.counts.approval, 'number');
     assert.equal(typeof payload.counts.workflow, 'number');
+    assert.equal(typeof payload.counts.renewal, 'number');
     const myAnomaly = payload.items.find((item) => item.id === task);
     assert.ok(myAnomaly, 'seeded overdue task surfaced as anomaly');
     assert.equal(myAnomaly.category, 'anomaly');
@@ -172,7 +173,10 @@ test('management notification center aggregates tenant-scoped workflow/anomaly/a
     );
     assert.ok(
       payload.items.every(
-        (item) => item.deepLink === '/m/customers' || item.deepLink === '/m/workflows',
+        (item) =>
+          item.deepLink === '/m/customers' ||
+          item.deepLink === '/m/workflows' ||
+          item.deepLink === '/m/memberships',
       ),
     );
     const anomaly = await fetch(`${base}/api/v1/management/notifications?category=anomaly`, {

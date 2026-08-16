@@ -39,7 +39,7 @@
 - **Depth plan (owner 2026-08-12):** `PROJECT_STATE/MEITUAN_DEPTH_OPTIMIZATION_PLAN.md`
 - Primary executor: OpenCode + DeepSeek — `PROJECT_STATE/EXECUTOR_PLAN_B_API_AGENT.md` + `LOCAL_UNATTENDED_SETUP.md`
 - Progress: `pnpm unattended:dashboard` / `PHASE1_PROGRESS.json`
-- **NEXT slice:** §5 CLOSED（W125–W131）；Phase4 连接器 DEFERRED；主人 G1 UI 签验并行
+- **NEXT slice:** W∞-134 §2 剩余 densify（评价趋势 / 会员批量发放 / 订单门店对比）
 - P1-C prep in `infra/deploy/`; live deploy blocked until G lifted
 - Human UI sign-off must not auto-PASS
 
