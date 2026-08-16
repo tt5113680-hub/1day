@@ -112,6 +112,29 @@ export class MembershipCommercialController {
     };
   }
 
+  /** G1-W∞-135 — 批量发放权益（§2 densify；本地 ledger，无储值/支付）。 */
+  @Post('management/memberships/batch-grants')
+  async batchGrant(
+    @Headers('authorization') a: string | undefined,
+    @Headers('x-tenant-context') t: string | undefined,
+    @Headers('x-request-id') r: string | undefined,
+    @Headers('idempotency-key') key: string | undefined,
+    @Body() body: Record<string, unknown>,
+  ) {
+    const context = await this.managementOperatorContext(a, t, r);
+    return {
+      data: await this.memberships.batchGrant(
+        context,
+        body,
+        key ?? '',
+        context.storeIds,
+        context.permissionCodes,
+      ),
+      meta: { requestId: r },
+      error: null,
+    };
+  }
+
   @Post('management/memberships/:id/grants')
   async grant(
     @Param('id') id: string,

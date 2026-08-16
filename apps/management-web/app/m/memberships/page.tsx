@@ -64,12 +64,21 @@ type AlertRow = {
   alert_type: string;
 };
 type AlertData = { suspended: AlertRow[]; expired: AlertRow[]; noRecentActivity: AlertRow[] };
+type CohortRow = {
+  cohortMonth: string;
+  enrolled: number;
+  stillValid: number;
+  expired: number;
+  active30d: number;
+};
+type CohortData = { months: number; cohorts: CohortRow[]; disclaimer: string };
 type Data = {
   enrollments: Enrollment[];
   benefits: Benefit[];
   rules: BenefitRule[];
   renewals: Renewal[];
   alerts: AlertData;
+  cohort: CohortData | null;
 };
 
 const entryLabel = (type: string) =>
@@ -84,6 +93,9 @@ export default function MembershipsPage() {
   const [ledger, setLedger] = useState<LedgerData | null>(null);
   const [ruleTier, setRuleTier] = useState('');
   const [ruleValidity, setRuleValidity] = useState('365');
+  const [selectedIds, setSelectedIds] = useState<string[]>([]);
+  const [batchBenefitId, setBatchBenefitId] = useState('');
+  const [cohortMonths, setCohortMonths] = useState<3 | 6 | 12 | 24>(6);
 
   const load = useCallback(async () => {
     if (!(await client.context())) {
@@ -92,11 +104,12 @@ export default function MembershipsPage() {
     }
     setState('loading');
     try {
-      const [membership, rules, renewals, alerts] = await Promise.all([
+      const [membership, rules, renewals, alerts, cohort] = await Promise.all([
         client.request(`${api}/api/v1/management/memberships`),
         client.request(`${api}/api/v1/management/memberships/rules`),
         client.request(`${api}/api/v1/management/memberships/renewals`),
         client.request(`${api}/api/v1/management/memberships/alerts`),
+        client.request(`${api}/api/v1/management/memberships/cohort?months=${cohortMonths}`),
       ]);
       if ([401, 403].includes(membership.status)) {
         setState('forbidden');
@@ -111,12 +124,13 @@ export default function MembershipsPage() {
         alerts: alerts.ok
           ? ((await alerts.json()).data as AlertData)
           : { suspended: [], expired: [], noRecentActivity: [] },
+        cohort: cohort.ok ? ((await cohort.json()).data as CohortData) : null,
       });
       setState('ready');
     } catch {
       setState('error');
     }
-  }, []);
+  }, [cohortMonths]);
 
   useEffect(() => {
     void load();
@@ -159,6 +173,40 @@ export default function MembershipsPage() {
       });
       setNote(response.ok ? '权益已发放，员工可按会员码核销。' : '权益发放未完成，请刷新后重试。');
       if (response.ok && openId === id) await loadLedger(id);
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const toggleSelect = (id: string) => {
+    setSelectedIds((prev) => (prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]));
+  };
+
+  const batchGrant = async () => {
+    if (!batchBenefitId || selectedIds.length < 1) return;
+    setBusy(true);
+    setNote('');
+    try {
+      const response = await client.request(`${api}/api/v1/management/memberships/batch-grants`, {
+        method: 'POST',
+        headers: { 'content-type': 'application/json', 'idempotency-key': crypto.randomUUID() },
+        body: JSON.stringify({
+          enrollmentIds: selectedIds,
+          benefitId: batchBenefitId,
+          quantity: 1,
+        }),
+      });
+      if (!response.ok) {
+        setNote('批量发放未完成，请刷新后重试。');
+        return;
+      }
+      const result = (await response.json()).data as {
+        grantedCount: number;
+        skippedCount: number;
+      };
+      setNote(`批量发放完成：成功 ${result.grantedCount}，跳过 ${result.skippedCount}。`);
+      setSelectedIds([]);
+      await load();
     } finally {
       setBusy(false);
     }
@@ -302,8 +350,8 @@ export default function MembershipsPage() {
       <section className={styles.heroCard} aria-label="会员与权益概况">
         <h1>会员与权益</h1>
         <p>
-          发放、吊销与时间线共用
-          member_benefit_ledger；员工按会员码核销。权益与核销均在推广员工具授权范围内，不伪造第三方投放或本平台成交。
+          发放、批量发放、吊销与时间线共用 member_benefit_ledger；入会月 cohort
+          为本地档案聚合。员工按会员码核销。不含储值/支付，不伪造第三方投放或本平台成交。
         </p>
       </section>
 
@@ -325,6 +373,87 @@ export default function MembershipsPage() {
         <div>
           <span>覆盖门店</span>
           <strong>{coveredStores.size}</strong>
+        </div>
+        <div>
+          <span>已选批量</span>
+          <strong>{selectedIds.length}</strong>
+        </div>
+      </section>
+
+      <section className={styles.panelBlock} aria-label="入会月 cohort">
+        <h2>入会月 cohort</h2>
+        <p className={styles.muted}>
+          {data.cohort?.disclaimer ??
+            'cohort 由本地 membership_enrollments 入会月聚合；不含储值/支付/GMV。'}
+        </p>
+        <div className={styles.actions}>
+          {([3, 6, 12, 24] as const).map((m) => (
+            <Button
+              key={m}
+              tone={cohortMonths === m ? 'primary' : 'secondary'}
+              disabled={busy}
+              onClick={() => setCohortMonths(m)}
+            >
+              {m} 个月
+            </Button>
+          ))}
+        </div>
+        <ul className={styles.bars}>
+          {(data.cohort?.cohorts ?? []).map((row) => (
+            <li key={row.cohortMonth} className={styles.barRow}>
+              <span className={styles.barLabel}>{row.cohortMonth}</span>
+              <span className={styles.barTrack}>
+                <span
+                  className={styles.barFill}
+                  style={{
+                    width: `${
+                      row.enrolled
+                        ? (row.stillValid / Math.max(1, row.enrolled)) * 100
+                        : 0
+                    }%`,
+                  }}
+                />
+              </span>
+              <span className={styles.barValue}>
+                {row.enrolled}/{row.stillValid}/{row.active30d}
+              </span>
+            </li>
+          ))}
+          {!data.cohort?.cohorts.length && <li className={styles.muted}>窗口内暂无入会 cohort。</li>}
+        </ul>
+        <p className={styles.sub}>条数/仍有效/近30天活跃</p>
+      </section>
+
+      <section className={styles.panelBlock} aria-label="批量发放">
+        <h2>批量发放</h2>
+        <p className={styles.muted}>勾选下方会员后选择权益，一次写入多条 ledger（最多 50）。</p>
+        <div className={styles.actions}>
+          <select
+            className={styles.select}
+            value={batchBenefitId}
+            onChange={(event) => setBatchBenefitId(event.target.value)}
+            aria-label="批量发放权益"
+          >
+            <option value="">选择权益</option>
+            {data.benefits.map((benefit) => (
+              <option key={benefit.id} value={benefit.id}>
+                {benefit.title}
+              </option>
+            ))}
+          </select>
+          <Button
+            disabled={busy || !batchBenefitId || selectedIds.length < 1}
+            onClick={() => void batchGrant()}
+          >
+            批量发放（{selectedIds.length}）
+          </Button>
+          <Button
+            tone="secondary"
+            disabled={busy || selectedIds.length < 1}
+            onClick={() => setSelectedIds([])}
+          >
+            清空选择
+          </Button>
         </div>
       </section>
 
@@ -480,9 +609,17 @@ export default function MembershipsPage() {
           data.enrollments.map((item) => (
             <div key={item.id} className={styles.panel} data-testid={`membership-card-${item.id}`}>
               <div className={styles.title}>
-                <h2>
-                  {item.display_name} · {item.member_code}
-                </h2>
+                <label className={styles.selectRow}>
+                  <input
+                    type="checkbox"
+                    checked={selectedIds.includes(item.id)}
+                    onChange={() => toggleSelect(item.id)}
+                    aria-label={`选择 ${item.member_code}`}
+                  />
+                  <h2>
+                    {item.display_name} · {item.member_code}
+                  </h2>
+                </label>
                 <Button
                   tone="secondary"
                   disabled={busy}

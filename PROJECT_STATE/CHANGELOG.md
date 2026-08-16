@@ -1,5 +1,10 @@
 ﻿# CHANGELOG
 
+## 2026-08-16 — G1-W∞-135 会员批量发放 + 入会月 cohort PASS
+
+- `GET .../memberships/cohort` + `POST .../memberships/batch-grants`；`/m/memberships` cohort 面板与勾选批量发放。
+- Evidence: `evidence/G1-MEITUAN-PARITY/WINF135/ACCEPTANCE.md`; tests/g1-winf135 2/2.
+
 ## 2026-08-16 — G1-W∞-134 评价多平台标签 + 评分趋势 PASS
 
 - `GET .../reviews/insights` bySource + ratingTrend；list `source` filter + `sourceLabel`；`/m/reviews` 面板与筛选。

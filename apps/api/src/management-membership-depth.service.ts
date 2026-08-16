@@ -40,6 +40,7 @@ interface BenefitConfig {
  * - `rules` / `upsertRule`：管理 `membership_benefit_rules` 等级→权益规则（单一真源，可审计）。
  * - `renewals`：到期提醒 —— 会员有效期临近/已过、或长期无核销活跃的会员真实档案。
  * - `alerts`：异常告警 —— 已暂停/已取消、有效期已过仍在册、有发放但余额低/异常等真实档案。
+ * - W∞-135 `cohort`：入会月 cohort（在册/仍有效/已过期/近 30 天活跃）只读聚合。
  */
 @Injectable()
 export class ManagementMembershipDepthService implements OnModuleDestroy {
@@ -239,6 +240,54 @@ export class ManagementMembershipDepthService implements OnModuleDestroy {
       suspended: suspended.rows,
       expired: expired.rows,
       noRecentActivity: inactive.rows,
+    };
+  }
+
+  /**
+   * W∞-135 — §2 会员 densify：入会月 cohort。
+   * 真实 `membership_enrollments` 聚合；不含储值/支付/GMV。
+   */
+  async cohort(context: OrganizationContext, months = 6, storeIds: string[] | null = null) {
+    if (![3, 6, 12, 24].includes(months)) throw new BadRequestException('VALIDATION_ERROR');
+    const scoped = storeIds !== null && storeIds.length > 0;
+    const params: (string | number | string[])[] = scoped
+      ? [context.tenantId, months, storeIds]
+      : [context.tenantId, months];
+    const storeFilter = scoped ? ' and e.store_id = any($3::uuid[])' : '';
+    const rows = await this.pool.query(
+      `select to_char(date_trunc('month', e.joined_at), 'YYYY-MM') as cohort_month,
+              count(*)::int as enrolled,
+              count(*) filter (
+                where e.enrollment_status='active'
+                  and (e.expires_at is null or e.expires_at > now())
+              )::int as still_valid,
+              count(*) filter (
+                where e.expires_at is not null and e.expires_at < now()
+              )::int as expired,
+              count(*) filter (
+                where e.last_active_at is not null
+                  and e.last_active_at >= now() - interval '30 days'
+              )::int as active_30d
+       from membership_enrollments e
+       where e.tenant_id=$1 and e.deleted_at is null
+         and e.joined_at is not null
+         and e.joined_at >= date_trunc('month', now()) - ($2::text || ' months')::interval
+         ${storeFilter}
+       group by 1
+       order by 1 asc`,
+      params,
+    );
+    return {
+      months,
+      cohorts: rows.rows.map((row) => ({
+        cohortMonth: String(row.cohort_month),
+        enrolled: Number(row.enrolled),
+        stillValid: Number(row.still_valid),
+        expired: Number(row.expired),
+        active30d: Number(row.active_30d),
+      })),
+      disclaimer:
+        'cohort 由本地 membership_enrollments 入会月聚合；不含储值/支付/GMV，不代表第三方成交。',
     };
   }
 

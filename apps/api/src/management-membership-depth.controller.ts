@@ -1,4 +1,4 @@
-import { BadRequestException, Body, Controller, Get, Headers, Post } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Get, Headers, Post, Query } from '@nestjs/common';
 import { AuthorizationService } from './authorization.service';
 import { ManagementMembershipDepthService } from './management-membership-depth.service';
 
@@ -62,5 +62,22 @@ export class ManagementMembershipDepthController {
   ) {
     const c = await this.context(a, t, r);
     return { data: await this.depth.alerts(c), meta: { requestId: r }, error: null };
+  }
+
+  /** G1-W∞-135 — 会员入会月 cohort（§2 densify）。 */
+  @Get('cohort')
+  async cohort(
+    @Headers('authorization') a: string | undefined,
+    @Headers('x-tenant-context') t: string | undefined,
+    @Headers('x-request-id') r: string | undefined,
+    @Query('months') months?: string,
+  ) {
+    const c = await this.context(a, t, r);
+    const monthsNum = months === undefined || months === '' ? 6 : Number(months);
+    return {
+      data: await this.depth.cohort(c, monthsNum),
+      meta: { requestId: r },
+      error: null,
+    };
   }
 }

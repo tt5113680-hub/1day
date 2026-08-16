@@ -374,6 +374,125 @@ export class MembershipCommercialService implements OnModuleDestroy {
       `grant:${key}`,
     );
   }
+
+  /**
+   * W∞-135 — §2 会员 densify：批量发放同一权益到多条在册会员（最多 50）。
+   * 每条仍走 ledger + audit；不含储值/支付。幂等键覆盖整批结果。
+   */
+  async batchGrant(
+    context: OrganizationContext,
+    body: Record<string, unknown>,
+    key: string,
+    storeIds: string[] | null,
+    permissionCodes: string[],
+  ) {
+    if (!key.trim() || key.length > 160) throw new BadRequestException('VALIDATION_ERROR');
+    const benefitId = String(body.benefitId ?? '');
+    if (!UUID.test(benefitId)) throw new BadRequestException('VALIDATION_ERROR');
+    const quantity = Number(body.quantity);
+    if (!Number.isInteger(quantity) || quantity < 1 || quantity > 100)
+      throw new BadRequestException('VALIDATION_ERROR');
+    if (!Array.isArray(body.enrollmentIds) || body.enrollmentIds.length < 1)
+      throw new BadRequestException('VALIDATION_ERROR');
+    if (body.enrollmentIds.length > 50) throw new BadRequestException('VALIDATION_ERROR');
+    const enrollmentIds = [
+      ...new Set(
+        body.enrollmentIds.map((id) => String(id)).filter((id) => UUID.test(id)),
+      ),
+    ];
+    if (enrollmentIds.length !== body.enrollmentIds.length)
+      throw new BadRequestException('VALIDATION_ERROR');
+
+    const client = await this.pool.connect();
+    try {
+      await client.query('begin');
+      const replay = await client.query(
+        "select response from idempotency_keys where tenant_id=$1 and resource_type='membership_batch_grant' and idempotency_key=$2 and deleted_at is null",
+        [context.tenantId, key],
+      );
+      if (replay.rowCount) {
+        await client.query('commit');
+        return replay.rows[0].response as Record<string, unknown>;
+      }
+      await client.query('commit');
+    } catch (error) {
+      await client.query('rollback');
+      throw error;
+    } finally {
+      client.release();
+    }
+
+    const granted: { enrollmentId: string; ledgerId: string }[] = [];
+    const skipped: { enrollmentId: string; reason: string }[] = [];
+    for (const enrollmentId of enrollmentIds) {
+      const storeId = await this.enrollmentStoreId(context.tenantId, enrollmentId);
+      if (!storeId) {
+        skipped.push({ enrollmentId, reason: 'NOT_FOUND' });
+        continue;
+      }
+      if (storeIds !== null && !storeIds.includes(storeId)) {
+        skipped.push({ enrollmentId, reason: 'OUT_OF_SCOPE' });
+        continue;
+      }
+      try {
+        await this.dataScopes.requireStoreWriteScope(
+          context.tenantId,
+          context.userId,
+          storeId,
+          permissionCodes,
+        );
+        const row = (await this.change(
+          context,
+          enrollmentId,
+          benefitId,
+          quantity,
+          `grant:${key}:${enrollmentId}`,
+        )) as { id: string };
+        granted.push({ enrollmentId, ledgerId: String(row.id) });
+      } catch {
+        skipped.push({ enrollmentId, reason: 'GRANT_FAILED' });
+      }
+    }
+
+    const response = {
+      benefitId,
+      quantity,
+      grantedCount: granted.length,
+      skippedCount: skipped.length,
+      granted,
+      skipped,
+      disclaimer: '批量发放仅为本地权益 ledger 痕迹；不含储值/支付/GMV。',
+    };
+
+    const save = await this.pool.connect();
+    try {
+      await save.query('begin');
+      await save.query(
+        "insert into idempotency_keys(id,tenant_id,resource_type,idempotency_key,response,created_by,updated_by) values($1,$2,'membership_batch_grant',$3,$4,$5,$5) on conflict do nothing",
+        [randomUUID(), context.tenantId, key, response, context.userId],
+      );
+      await save.query(
+        "insert into audit_logs(id,tenant_id,actor_id,action,resource_type,resource_id,correlation_id,trace_id,details,created_by,updated_by) values($1,$2,$3,'membership.benefit_batch_granted','membership_batch',$4,$5,$6,$7,$3,$3)",
+        [
+          randomUUID(),
+          context.tenantId,
+          context.userId,
+          benefitId,
+          randomUUID(),
+          randomUUID(),
+          response,
+        ],
+      );
+      await save.query('commit');
+    } catch (error) {
+      await save.query('rollback');
+      throw error;
+    } finally {
+      save.release();
+    }
+    return response;
+  }
+
   async revoke(
     context: OrganizationContext,
     enrollmentId: string,

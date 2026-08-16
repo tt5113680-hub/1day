@@ -63,7 +63,7 @@
 
 .summaryStrip {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 10px;
   border-radius: 10px;
   padding: 12px;
@@ -132,6 +132,29 @@
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
+  align-items: center;
+}
+
+.select {
+  min-width: 180px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 8px 10px;
+  color: #222;
+  background: #fff;
+  font: inherit;
+  font-size: 13px;
+}
+
+.selectRow {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  min-width: 0;
+}
+
+.selectRow h2 {
+  margin: 0;
 }
 
 .timeline {
