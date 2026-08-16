@@ -178,6 +178,41 @@ export class ManagementCatalogController {
     };
   }
 
+  /** G1-W∞-139 — 按模块点击排行（MPC-03 §2）：点击族入口痕迹按套餐聚合。 */
+  @Get('module-click-rank')
+  async moduleClickRank(
+    @Query('days') days: string | undefined,
+    @Headers('authorization') authorization?: string,
+    @Headers('x-tenant-context') tenant?: string,
+    @Headers('x-request-id') requestId?: string,
+  ) {
+    const context = await this.operatorContext(authorization, tenant, requestId);
+    return {
+      data: await this.catalog.moduleClickRank(context, context.storeIds, days),
+      meta: { requestId },
+      error: null,
+    };
+  }
+
+  /** G1-W∞-139 — 套餐排序（MPC-03 §2）：单门店内多个套餐按 rank 一次性落序（幂等）。 */
+  @Post('stores/:storeId/services/reorder')
+  async reorderServices(
+    @Param('storeId') storeId: string,
+    @Headers('authorization') authorization?: string,
+    @Headers('x-tenant-context') tenant?: string,
+    @Headers('x-request-id') requestId?: string,
+    @Headers('idempotency-key') key?: string,
+    @Body() body: Record<string, unknown> = {},
+  ) {
+    const context = await this.operatorContext(authorization, tenant, requestId);
+    await this.requireScopedStoreWrite(context, storeId);
+    return {
+      data: await this.catalog.reorderServices(context, storeId, body, key ?? '', requestId!),
+      meta: { requestId },
+      error: null,
+    };
+  }
+
   /** G1-W∞-112 — 批量上下架（MPC-03）：单个门店内多个套餐批量置上下架（幂等）。 */
   @Post('stores/:storeId/services/batch-status')
   async batchServiceStatus(

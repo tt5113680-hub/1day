@@ -409,6 +409,143 @@ export class ManagementCatalogService implements OnModuleDestroy {
     };
   }
 
+  /**
+   * G1-W∞-139 — 按模块点击排行（MPC-03 §2「套餐/入口排行」补强）。
+   * 在既有 jumpRank（仅 jump/jump_confirm 出站跳转）之上，聚合**点击族**入口信号到套餐：
+   * jump / jump_confirm（出站跳转）+ consult_click / favorite_click（站内 L2 点击）。
+   * 按 offer 的受控外链 target_url / module 名归到套餐，得到「模块点击 + 跳转」更完整的入口热度。
+   * 诚实边界：仅聚合点击族痕迹（不把 module_impression 曝光当点击，不把停留当点击）；
+   * source=local；不含支付/成交，不代第三方成交。
+   */
+  async moduleClickRank(context: OrganizationContext, storeIds: string[] | null, daysRaw: unknown) {
+    const days =
+      typeof daysRaw === 'number'
+        ? Math.max(1, Math.min(90, Math.floor(daysRaw)))
+        : typeof daysRaw === 'string' && /^\d{1,2}$/.test(daysRaw)
+          ? Math.max(1, Math.min(90, Number(daysRaw)))
+          : 30;
+    const scoped = storeIds !== null;
+    const params: unknown[] = scoped
+      ? [context.tenantId, days, storeIds]
+      : [context.tenantId, days];
+    const storeFilter = scoped ? 'and ss.store_id = any($3::uuid[])' : '';
+    const rows = (
+      await this.pool.query(
+        `select ss.id as service_id, ss.name as service_name, ss.store_id,
+                coalesce(pair.impressions,0)::int as impressions,
+                coalesce(pair.jumps,0)::int as jumps,
+                coalesce(pair.confirms,0)::int as confirms,
+                coalesce(pair.station_clicks,0)::int as station_clicks,
+                coalesce(pair.total,0)::int as total
+         from store_services ss
+         left join (
+           select sef.service_id,
+                  count(distinct (case when e.event_code = 'module_impression' then concat(e.session_id,'::',e.module_key) end)) filter (where e.event_code = 'module_impression')::int as impressions,
+                  sum(case when e.event_code = 'jump' then 1 else 0 end)::int as jumps,
+                  sum(case when e.event_code = 'jump_confirm' then 1 else 0 end)::int as confirms,
+                  sum(case when e.event_code in ('consult_click','favorite_click') then 1 else 0 end)::int as station_clicks,
+                  sum(case when e.event_code in ('jump','jump_confirm','consult_click','favorite_click') then 1 else 0 end)::int as total
+           from store_service_platform_offers sef
+           join external_actions a
+             on a.id = sef.external_action_id and a.tenant_id = sef.tenant_id and a.deleted_at is null
+           join entry_funnel_events e
+             on e.tenant_id = sef.tenant_id
+             and e.event_code in ('jump','jump_confirm','module_impression','consult_click','favorite_click')
+             and e.occurred_at >= now() - make_interval(days => $2)
+             and (e.target_url is not null or e.module_key is not null)
+             and (e.target_url = a.target_url or e.module_key = a.name)
+           where sef.tenant_id=$1 and sef.deleted_at is null
+           group by sef.service_id
+         ) pair on pair.service_id = ss.id
+         where ss.tenant_id=$1 and ss.deleted_at is null ${storeFilter}
+           and coalesce(pair.total,0) > 0
+         order by coalesce(pair.total,0) desc, ss.name asc`,
+        params,
+      )
+    ).rows;
+    const totals = rows.reduce(
+      (acc, row) => {
+        acc['impressions'] += Number(row.impressions ?? 0);
+        acc['jumps'] += Number(row.jumps ?? 0);
+        acc['confirms'] += Number(row.confirms ?? 0);
+        acc['stationClicks'] += Number(row.station_clicks ?? 0);
+        acc['total'] += Number(row.total ?? 0);
+        return acc;
+      },
+      { impressions: 0, jumps: 0, confirms: 0, stationClicks: 0, total: 0 },
+    );
+    return {
+      days,
+      ...totals,
+      items: rows.map((row) => {
+        const total = Number(row.total ?? 0);
+        const jumps = Number(row.jumps ?? 0);
+        return {
+          serviceId: row.service_id,
+          serviceName: row.service_name,
+          storeId: row.store_id,
+          impressions: Number(row.impressions ?? 0),
+          jumps,
+          jumpConfirms: Number(row.confirms ?? 0),
+          stationClicks: Number(row.station_clicks ?? 0),
+          total,
+          sharePct: totals['total'] > 0 ? Number(((total / totals['total']) * 100).toFixed(1)) : 0,
+        };
+      }),
+      disclaimer:
+        '点击排行聚合入口痕迹中的点击族信号（jump / jump_confirm 出站跳转、consult_click / favorite_click 站内点击，source=local）；' +
+        'module_impression 仅作独立曝光参考不计为点击；不接美团/抖音实时，不代表第三方成交或支付。',
+    };
+  }
+
+  /**
+   * G1-W∞-139 — 套餐排序（MPC-03 §2「套餐/入口排行」补强）。
+   * 对租户内单个门店的多个套餐按 rank 一次性落序（≤200）。
+   * 单事务：每条 `update store_services set rank=$n, version=version+1`；
+   * 写 1 条 batch 级 audit（catalog.service_reordered）+ 每条受影响套餐 1 条 outbox（catalog.service.reordered.v1）；
+   * idempotency_keys（catalog_service_reorder）整批幂等。
+   */
+  async reorderServices(
+    context: OrganizationContext,
+    storeId: string,
+    body: Record<string, unknown>,
+    key: string,
+    requestId: string,
+  ) {
+    if (!UUID.test(storeId) || !key.trim()) throw new BadRequestException('VALIDATION_ERROR');
+    const raw = body.orderedIds;
+    if (!Array.isArray(raw) || raw.length === 0 || raw.length > 200)
+      throw new BadRequestException('VALIDATION_ERROR');
+    const orderedIds = raw.map((id) => {
+      if (typeof id !== 'string' || !UUID.test(id))
+        throw new BadRequestException('VALIDATION_ERROR');
+      return id;
+    });
+    return this.idempotent(context, `catalog_service_reorder:${storeId}`, key, async (client) => {
+      let effected = 0;
+      for (let index = 0; index < orderedIds.length; index += 1) {
+        const rank = orderedIds.length - index;
+        const result = await client.query(
+          `update store_services set rank=$1, updated_at=now(), updated_by=$2, version=version+1
+           where tenant_id=$3 and store_id=$4 and id=$5 and deleted_at is null
+           returning id, code, name, rank, version`,
+          [rank, context.userId, context.tenantId, storeId, orderedIds[index]],
+        );
+        effected += Number(result.rowCount ?? 0);
+      }
+      await this.receipt(
+        client,
+        context,
+        'catalog.service_reordered',
+        'catalog.service.reordered.v1',
+        storeId,
+        requestId,
+        { count: orderedIds.length, effected, serviceIds: orderedIds },
+      );
+      return { storeId, count: orderedIds.length, effected, services: orderedIds };
+    });
+  }
+
   async createOffer(
     context: OrganizationContext,
     serviceId: string,

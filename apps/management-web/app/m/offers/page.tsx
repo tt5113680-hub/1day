@@ -24,6 +24,7 @@ type Service = {
   description: string | null;
   price_label: string | null;
   category: string | null;
+  rank: number;
   status: string;
   version: number;
   offers: Offer[];
@@ -59,6 +60,17 @@ type JumpRankItem = {
   distinctModules: number;
   sharePct: number;
 };
+type ModuleClickRankItem = {
+  serviceId: string;
+  serviceName: string;
+  storeId: string;
+  impressions: number;
+  jumps: number;
+  jumpConfirms: number;
+  stationClicks: number;
+  total: number;
+  sharePct: number;
+};
 
 const api = process.env.NEXT_PUBLIC_API_BASE_URL ?? 'http://127.0.0.1:3001';
 const sessionApi = new SessionApiClient(api);
@@ -84,6 +96,9 @@ export default function OffersPage() {
     [stores, setStores] = useState<Store[]>([]),
     [categories, setCategories] = useState<CategoryGroup[]>([]),
     [jumpRank, setJumpRank] = useState<JumpRankItem[]>([]),
+    [moduleClickRank, setModuleClickRank] = useState<ModuleClickRankItem[]>([]),
+    [reorderStore, setReorderStore] = useState(''),
+    [rankDrafts, setRankDrafts] = useState<Record<string, number>>({}),
     [selectedStore, setSelectedStore] = useState(''),
     [service, setService] = useState(initialService),
     [offerDrafts, setOfferDrafts] = useState<Record<string, Record<string, string>>>({}),
@@ -94,16 +109,19 @@ export default function OffersPage() {
     if (!(await sessionApi.context())) return setState('forbidden');
     setState('loading');
     try {
-      const [catalogResponse, categoryResponse, rankResponse] = await Promise.all([
-        sessionApi.request(`${api}/api/v1/management/catalog`),
-        sessionApi.request(`${api}/api/v1/management/catalog/categories`),
-        sessionApi.request(`${api}/api/v1/management/catalog/jump-rank?days=30`),
-      ]);
+      const [catalogResponse, categoryResponse, rankResponse, clickRankResponse] =
+        await Promise.all([
+          sessionApi.request(`${api}/api/v1/management/catalog`),
+          sessionApi.request(`${api}/api/v1/management/catalog/categories`),
+          sessionApi.request(`${api}/api/v1/management/catalog/jump-rank?days=30`),
+          sessionApi.request(`${api}/api/v1/management/catalog/module-click-rank?days=30`),
+        ]);
       if ([401, 403].includes(catalogResponse.status)) return setState('forbidden');
       if (!catalogResponse.ok) throw Error();
       const data = (await catalogResponse.json()).data as Store[];
       setStores(data);
       setSelectedStore((current) => current || data[0]?.id || '');
+      setReorderStore((current) => current || data[0]?.id || '');
       if (categoryResponse.ok)
         setCategories(
           ((await categoryResponse.json()).data as { categories?: CategoryGroup[] }).categories ??
@@ -111,6 +129,10 @@ export default function OffersPage() {
         );
       if (rankResponse.ok)
         setJumpRank(((await rankResponse.json()).data as { items?: JumpRankItem[] }).items ?? []);
+      if (clickRankResponse.ok)
+        setModuleClickRank(
+          ((await clickRankResponse.json()).data as { items?: ModuleClickRankItem[] }).items ?? [],
+        );
       setState('ready');
     } catch {
       setState('error');
@@ -221,6 +243,35 @@ export default function OffersPage() {
       await load();
     } catch {
       setNote('批量操作未生效，请刷新后重试。');
+    } finally {
+      setSaving(false);
+    }
+  };
+  const reorder = async () => {
+    const reorderStoreData = stores.find((store) => store.id === reorderStore);
+    if (!reorderStoreData) return setNote('请先选择要排序的门店。');
+    const services = reorderStoreData.services;
+    if (!services.length) return setNote('该门店暂无套餐可排序。');
+    const ordered = [...services].sort(
+      (a, b) => (rankDrafts[b.id] ?? b.rank ?? 0) - (rankDrafts[a.id] ?? a.rank ?? 0),
+    );
+    setSaving(true);
+    try {
+      const response = await request(
+        `/api/v1/management/catalog/stores/${reorderStoreData.id}/services/reorder`,
+        'POST',
+        { orderedIds: ordered.map((item) => item.id) },
+        true,
+      );
+      if (!response.ok) throw Error();
+      const data = (await response.json()).data as { effected?: number };
+      setNote(
+        `已按当前排序更新 ${data.effected ?? ordered.length} 个套餐的展示顺序，目录刷新后生效。`,
+      );
+      setRankDrafts({});
+      await load();
+    } catch {
+      setNote('排序未保存，请检查后重试。');
     } finally {
       setSaving(false);
     }
@@ -459,6 +510,43 @@ export default function OffersPage() {
         </p>
       </section>
 
+      <section className={styles.panel} aria-label="模块点击排行">
+        <div className={styles.sectionTitle}>
+          <h2>套餐模块点击排行</h2>
+          <p>
+            按入口痕迹中的点击族信号聚合到套餐（出站跳转 jump / jump_confirm + 站内咨询/收藏
+            click），曝光仅作独立参考不计为点击。
+          </p>
+        </div>
+        {moduleClickRank.length ? (
+          <ul className={styles.bars}>
+            {moduleClickRank.map((item) => (
+              <li key={item.serviceId} className={styles.barRow}>
+                <span className={styles.barLabel}>{item.serviceName}</span>
+                <span className={styles.barTrack}>
+                  <span
+                    className={styles.barFill}
+                    style={{ width: barWidth(moduleClickRank[0]?.total ?? 0, item.total) }}
+                  />
+                </span>
+                <span className={styles.barValue}>{item.total}</span>
+                <span className={styles.clickMeta}>
+                  跳转 {item.jumps} · 确认 {item.jumpConfirms} · 站内 {item.stationClicks} · 曝光{' '}
+                  {item.impressions}
+                </span>
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <p className={styles.barEmpty}>近 30 日暂无点击族痕迹。</p>
+        )}
+        <p className={styles.honest} role="note">
+          仅聚合点击族痕迹（jump / jump_confirm / consult_click /
+          favorite_click，source=local）；曝光 module_impression
+          独立展示不计为点击；不接美团/抖音实时，也不代表第三方成交或支付。
+        </p>
+      </section>
+
       <section className={styles.panel} aria-label="商品分类树">
         <div className={styles.sectionTitle}>
           <h2>商品分类树</h2>
@@ -585,6 +673,58 @@ export default function OffersPage() {
             批量下架
           </Button>
         </div>
+      </section>
+      <section className={styles.panel} aria-label="套餐排序">
+        <div className={styles.sectionTitle}>
+          <h2>套餐排序</h2>
+          <p>为当前门店的套餐设定展示顺序（rank 高者优先），一次保存统一生效（≤200 个）。</p>
+        </div>
+        <div className={styles.reorderToolbar}>
+          <select
+            className={styles.batchSelect}
+            value={reorderStore}
+            onChange={(event) => setReorderStore(event.target.value)}
+          >
+            {stores.map((store) => (
+              <option key={store.id} value={store.id}>
+                {store.name}
+              </option>
+            ))}
+          </select>
+          <Button loading={saving} onClick={() => void reorder()}>
+            保存顺序
+          </Button>
+        </div>
+        {(() => {
+          const target = stores.find((store) => store.id === reorderStore);
+          const services = target?.services ?? [];
+          const ordered = [...services].sort(
+            (a, b) => (rankDrafts[b.id] ?? b.rank ?? 0) - (rankDrafts[a.id] ?? a.rank ?? 0),
+          );
+          return ordered.length ? (
+            <ul className={styles.reorderList} data-testid="reorder-list">
+              {ordered.map((item, index) => (
+                <li key={item.id} className={styles.reorderRow}>
+                  <input
+                    aria-label={`${item.name} 排序值`}
+                    inputMode="numeric"
+                    value={String(rankDrafts[item.id] ?? item.rank ?? ordered.length - index)}
+                    onChange={(event) => {
+                      const numeric = Number(event.target.value);
+                      setRankDrafts({
+                        ...rankDrafts,
+                        [item.id]: Number.isFinite(numeric) ? numeric : 0,
+                      });
+                    }}
+                  />
+                  <span>{item.name}</span>
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p className={styles.barEmpty}>该门店暂无套餐可排序。</p>
+          );
+        })()}
       </section>
       <section className={styles.catalog}>
         {currentStore?.services.map((item) => {

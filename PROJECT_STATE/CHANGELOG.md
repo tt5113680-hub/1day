@@ -1,5 +1,13 @@
 ﻿# CHANGELOG
 
+## 2026-08-16 — G1-W∞-139 套餐/入口排行 densify PASS（§2 补强 · MPC-03）
+
+- `GET /api/v1/management/catalog/module-click-rank?days=N`：按模块点击排行，在既有 jumpRank 之上补齐「点击族」信号——jump/jump_confirm（出站跳转）+ consult_click/favorite_click（站内 L2 点击）归到套餐（经受控外链 url / module_key=action name），module_impression 按 session+module 去重独立展示作曝光参考**不计为点击**；total 不含曝光；诚实边界（source=local、不代表第三方成交/支付）。
+- `POST /api/v1/management/catalog/stores/:storeId/services/reorder`：套餐排序（rank 高者优先），单事务 ≤200 条每服务 version+1，1 条 batch audit `catalog.service_reordered` + outbox `catalog.service.reordered.v1`，`catalog_service_reorder` 整批幂等重放，store-manager scope 越界拒绝。
+- `/m/offers` 新增「套餐模块点击排行」白卡（bar + `跳转/确认/站内/曝光` 细分行）+「套餐排序」白卡（门店下拉 + 排序值列表 + 保存顺序，幂等）+ `.clickMeta/.reorderToolbar/.reorderList/.reorderRow` CSS；眉标 `推广员工具 · 商品/套餐入口` 不变。
+- Evidence: `evidence/G1-MEITUAN-PARITY/WINF139/ACCEPTANCE.md`; tests/g1-winf139 2/2 + offers 面回归 19/19. `pnpm typecheck` 20/20、`pnpm build` 20/20、单测 49/49。全 glob 474/476（2 失败 = W88/W89 memberships summaryStrip 列数 HEAD 既有基线，未动 memberships，与本次无关）。eslint/prettier clean。
+- 不代签主人 UI；无 GMV、无支付、不碰钱/销售/管店；未复活 consumer_orders / 本平台下单/收单。
+
 ## 2026-08-16 — G1-W∞-137 会员等级分布 + 批量到期策略 PASS（§2 densify）
 
 - `GET .../memberships/tiers`：等级→在册/仍有效/14天内临期/已过期（真实 membership_enrollments 聚合，join 规则 + 未配置兜底，禁止假 BI）。
