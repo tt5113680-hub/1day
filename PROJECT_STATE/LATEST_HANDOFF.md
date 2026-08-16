@@ -8,11 +8,11 @@
 ## Current task
 
 - branch: `hardening/COMMERCIAL-COMPLETION`
-- last_verified: **2026-08-16** — **W∞-130 PASS** §5 READY 续刀：Circle 双审批前 Consumer 不可见；基础 READY 不阻塞。See evidence/G1-MEITUAN-PARITY/WINF130/ACCEPTANCE.md。
-- in_flight: **W∞-131 (NEXT)** §5 READY 收口 — 读模型/缓存版本断言或 §5 close-out
+- last_verified: **2026-08-16** — **W∞-131 PASS** §5 READY 收口：读模型/缓存版本断言（draft≠live preview + cache fingerprint）。See evidence/G1-MEITUAN-PARITY/WINF131/ACCEPTANCE.md。
+- in_flight: **none** — §5 工程收口完成；下一工程向切片为 **Phase4 连接器（DEFERRED）**
 - deferred: Phase4 连接器（待 API/商务前提）
-- blocker: DeepSeek **COST STOP** 仍有效（防空转烧费）；工程向 §5 已解锁
-- note: W125–W130 均已 PASS（本会话连续收口 W128/W129/W130）。
+- blocker: DeepSeek **COST STOP** 仍有效（防空转烧费）；§5 工程已关
+- note: W125–W131 均已 PASS；§5 READY 工程清单收口。
 
 ## Owner gates (parallel)
 

@@ -1,5 +1,10 @@
 ﻿# CHANGELOG
 
+## 2026-08-16 — G1-W∞-131 §5 READY 读模型/缓存版本 PASS（§5 工程收口）
+
+- migration 078 `storefront_read_model_cache`; draft≠live + preview token; verify `published_read_consistent` / `preview_published_distinguishable` / `cache_version_consistent`; publish path warms cache; platform UI checklist.
+- Evidence: `evidence/G1-MEITUAN-PARITY/WINF131/ACCEPTANCE.md`; tests/g1-winf131 2/2. **§5 engineering close-out.**
+
 ## 2026-08-16 — G1-W∞-130 §5 READY Circle 双审批可见性 PASS
 
 - Optional `circleId` creates pending dual-approval circle membership (not Consumer-visible); READY still succeeds; `circle_not_consumer_visible` verify + UI exposure.

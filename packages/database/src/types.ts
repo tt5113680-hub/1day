@@ -963,6 +963,27 @@ export interface WorkerHeartbeatsTable {
   deleted_at: Timestamp | null;
   version: Generated<number>;
 }
+/** W∞-131: Warmed Consumer published read-model / cache version for READY §7. */
+export interface StorefrontReadModelCacheTable {
+  id: string;
+  tenant_id: string;
+  store_id: string;
+  binding_id: string;
+  live_version_id: string;
+  binding_version: number;
+  published_version: string;
+  etag: string;
+  cache_version: number;
+  auth_epoch: number;
+  warmed_at: Timestamp;
+  correlation_id: string | null;
+  created_at: Timestamp;
+  created_by: string | null;
+  updated_at: Timestamp;
+  updated_by: string | null;
+  deleted_at: Timestamp | null;
+  version: Generated<number>;
+}
 export interface StorefrontPreviewTokensTable {
   id: string;
   tenant_id: string;
@@ -1834,6 +1855,7 @@ export interface Database {
   one_code_entries: OneCodeEntriesTable;
   owner_activation_tokens: OwnerActivationTokensTable;
   worker_heartbeats: WorkerHeartbeatsTable;
+  storefront_read_model_cache: StorefrontReadModelCacheTable;
   storefront_preview_tokens: StorefrontPreviewTokensTable;
   portal_bindings: PortalBindingsTable;
   portal_preview_tokens: PortalPreviewTokensTable;

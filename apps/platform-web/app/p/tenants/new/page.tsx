@@ -70,6 +70,15 @@ type ProvisioningRun = {
       dualApproval?: boolean;
       consumerVisible?: boolean;
     };
+    storefront?: {
+      publishedPath?: string;
+      previewPath?: string;
+      liveVersionId?: string;
+      draftVersionId?: string;
+      publishedVersion?: string;
+      etag?: string;
+      cacheVersion?: number;
+    };
   } | null;
   verification?: Record<string, boolean | string | number | null> | null;
   steps: ProvisioningStep[];
@@ -435,6 +444,17 @@ export default function Onboarding() {
                       </dd>
                     </div>
                   ) : null}
+                  {run.delivery?.storefront?.publishedVersion ? (
+                    <div>
+                      <dt>读模型缓存</dt>
+                      <dd data-testid="provisioning-storefront-cache">
+                        {run.delivery.storefront.publishedVersion}
+                        {typeof run.delivery.storefront.cacheVersion === 'number' ? (
+                          <small> · cache v{run.delivery.storefront.cacheVersion}</small>
+                        ) : null}
+                      </dd>
+                    </div>
+                  ) : null}
                 </dl>
                 {run.verification ? (
                   <ul className={styles.steps} data-testid="provisioning-verification">
@@ -444,6 +464,9 @@ export default function Onboarding() {
                         ['outbox_clear', 'Outbox 无死信/凝固 pending'],
                         ['worker_health_recent', 'Worker 心跳新鲜'],
                         ['storefront_published', '门店已发布'],
+                        ['published_read_consistent', 'Published 读模型版本一致'],
+                        ['preview_published_distinguishable', 'Preview/Published 可区分'],
+                        ['cache_version_consistent', '读模型缓存版本一致'],
                         ['circle_not_consumer_visible', '商圈未双审批不曝光'],
                       ] as const
                     ).map(([key, label]) => (

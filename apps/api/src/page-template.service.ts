@@ -9,6 +9,7 @@ import { createHash, randomBytes, randomUUID } from 'node:crypto';
 import { type Pool, type PoolClient } from 'pg';
 import { createApiPool } from './database-pool';
 import type { OrganizationContext } from './organization.service';
+import { warmStorefrontReadModelCache } from './storefront-read-model-cache';
 
 const UUID = /^[0-9a-f-]{36}$/i;
 const TARGETS = new Set(['consumer', 'employee', 'management']);
@@ -472,6 +473,19 @@ export class PageTemplateService implements OnModuleDestroy {
           ],
         );
         Object.assign(data, { binding: bindingData, publicationType, publicationSequence });
+        const authEpoch = (
+          await q.query('select auth_epoch from tenants where id=$1', [c.tenantId])
+        ).rows[0] as { auth_epoch: number };
+        await warmStorefrontReadModelCache(q, {
+          tenantId: c.tenantId,
+          storeId: bindingData.store_id,
+          bindingId: bindingData.id,
+          liveVersionId: bindingData.live_version_id,
+          bindingVersion: bindingData.version,
+          authEpoch: authEpoch?.auth_epoch ?? 0,
+          correlationId: correlation(r),
+          actorId: c.userId,
+        });
         await this.event(
           q,
           c,

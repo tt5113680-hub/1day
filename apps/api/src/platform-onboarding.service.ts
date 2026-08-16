@@ -10,6 +10,7 @@ import type { PoolClient } from 'pg';
 import { createApiPool } from './database-pool';
 import { DataScopeService } from './data-scope.service';
 import type { OrganizationContext } from './organization.service';
+import { warmStorefrontReadModelCache } from './storefront-read-model-cache';
 
 const INDUSTRIES = new Set(['restaurant', 'beauty', 'education', 'retail']);
 const PLANS = new Set(['starter', 'growth', 'enterprise']);
@@ -611,7 +612,9 @@ export class PlatformOnboardingService implements OnModuleDestroy {
       storeId: randomUUID(),
       templateId: randomUUID(),
       templateVersionId: randomUUID(),
+      draftVersionId: randomUUID(),
       bindingId: randomUUID(),
+      previewTokenId: randomUUID(),
       actionId: randomUUID(),
       serviceId: randomUUID(),
       benefitId: randomUUID(),
@@ -777,7 +780,7 @@ export class PlatformOnboardingService implements OnModuleDestroy {
     }
     await this.completeStep(client, runId, 'industry_template', {
       templateId: ids.templateId,
-      draftVersionId: ids.templateVersionId,
+      publishedVersionId: ids.templateVersionId,
       family: input.industry,
       modules: catalog.modules.length,
     });
@@ -786,13 +789,33 @@ export class PlatformOnboardingService implements OnModuleDestroy {
       'update page_templates set published_version_id=$1,version=version+1,updated_at=now(),updated_by=$2 where id=$3',
       [ids.templateVersionId, context.userId, ids.templateId],
     );
+    // Draft version is distinct from published live so Preview vs Published URLs differ (SPEC §7/§9).
     await client.query(
-      "insert into storefront_bindings(id,tenant_id,store_id,template_id,draft_version_id,live_version_id,status,published_at,created_by,updated_by) values($1,$2,$3,$4,$5,$5,'active',now(),$6,$6)",
+      "insert into page_template_versions(id,tenant_id,template_id,sequence,status,created_by,updated_by) values($1,$2,$3,2,'draft',$4,$4)",
+      [ids.draftVersionId, ids.tenantId, ids.templateId, context.userId],
+    );
+    for (const [position, module] of catalog.modules.entries()) {
+      await client.query(
+        'insert into page_modules(id,tenant_id,template_version_id,module_type,position,config,created_by,updated_by) values($1,$2,$3,$4,$5,$6,$7,$7)',
+        [
+          randomUUID(),
+          ids.tenantId,
+          ids.draftVersionId,
+          module.type,
+          position,
+          module.config,
+          context.userId,
+        ],
+      );
+    }
+    await client.query(
+      "insert into storefront_bindings(id,tenant_id,store_id,template_id,draft_version_id,live_version_id,status,published_at,created_by,updated_by) values($1,$2,$3,$4,$5,$6,'active',now(),$7,$7)",
       [
         ids.bindingId,
         ids.tenantId,
         ids.storeId,
         ids.templateId,
+        ids.draftVersionId,
         ids.templateVersionId,
         context.userId,
       ],
@@ -808,9 +831,55 @@ export class PlatformOnboardingService implements OnModuleDestroy {
         context.userId,
       ],
     );
+    const previewToken = randomBytes(24).toString('base64url');
+    await client.query(
+      "insert into storefront_preview_tokens(id,tenant_id,store_id,template_version_id,token_hash,expires_at,status,created_by,updated_by) values($1,$2,$3,$4,$5,now()+interval '30 minutes','active',$6,$6)",
+      [
+        ids.previewTokenId,
+        ids.tenantId,
+        ids.storeId,
+        ids.draftVersionId,
+        hashToken(previewToken),
+        context.userId,
+      ],
+    );
+    const bindingRow = (
+      await client.query(
+        'select version from storefront_bindings where id=$1',
+        [ids.bindingId],
+      )
+    ).rows[0] as { version: number };
+    const authEpochRow = (
+      await client.query('select auth_epoch from tenants where id=$1', [ids.tenantId])
+    ).rows[0] as { auth_epoch: number };
+    const cache = await warmStorefrontReadModelCache(client, {
+      tenantId: ids.tenantId!,
+      storeId: ids.storeId!,
+      bindingId: ids.bindingId!,
+      liveVersionId: ids.templateVersionId!,
+      bindingVersion: Number(bindingRow.version),
+      authEpoch: Number(authEpochRow?.auth_epoch ?? 0),
+      correlationId,
+      actorId: context.userId,
+    });
+    const storefrontCache = {
+      previewToken,
+      publishedVersion: cache.publishedVersion,
+      etag: cache.etag,
+      cacheVersion: cache.cacheVersion,
+      publishedPath: `/c/stores/${ids.storeId}?tenant=${encodeURIComponent(input.slug)}`,
+      previewPath: `/c/stores/${ids.storeId}?tenant=${encodeURIComponent(input.slug)}&preview=${encodeURIComponent(previewToken)}&scene=storefront_preview`,
+      liveVersionId: ids.templateVersionId!,
+      draftVersionId: ids.draftVersionId!,
+    };
     await this.completeStep(client, runId, 'storefront_publish', {
       bindingId: ids.bindingId,
       liveVersionId: ids.templateVersionId,
+      draftVersionId: ids.draftVersionId,
+      publishedVersion: storefrontCache.publishedVersion,
+      etag: storefrontCache.etag,
+      cacheVersion: storefrontCache.cacheVersion,
+      previewPath: storefrontCache.previewPath,
     });
 
     await client.query(
@@ -1054,6 +1123,15 @@ export class PlatformOnboardingService implements OnModuleDestroy {
         dualApproval: Boolean(channelCircleOutput.dualApproval),
         consumerVisible: Boolean(channelCircleOutput.consumerVisible),
       },
+      storefront: {
+        publishedPath: storefrontCache.publishedPath,
+        previewPath: storefrontCache.previewPath,
+        liveVersionId: storefrontCache.liveVersionId,
+        draftVersionId: storefrontCache.draftVersionId,
+        publishedVersion: storefrontCache.publishedVersion,
+        etag: storefrontCache.etag,
+        cacheVersion: storefrontCache.cacheVersion,
+      },
     };
     await this.completeStep(client, runId, 'one_code_delivery', delivery);
 
@@ -1208,6 +1286,36 @@ export class PlatformOnboardingService implements OnModuleDestroy {
           exists(select 1 from stores where id=$6 and tenant_id=$1 and status='active' and address is not null and phone is not null and business_hours is not null and deleted_at is null) store_ready,
           exists(select 1 from storefront_bindings where id=$7 and tenant_id=$1 and live_version_id=$8 and status='active' and deleted_at is null) storefront_published,
           exists(select 1 from page_templates where id=$9 and tenant_id=$1 and published_version_id=$8 and status='active' and deleted_at is null) template_published,
+          exists(
+            select 1 from storefront_bindings sb
+            join page_templates pt on pt.id=sb.template_id and pt.tenant_id=sb.tenant_id and pt.published_version_id=sb.live_version_id
+            where sb.id=$7 and sb.tenant_id=$1 and sb.live_version_id=$8 and sb.status='active' and sb.deleted_at is null
+              and exists(
+                select 1 from page_modules pm
+                where pm.tenant_id=sb.tenant_id and pm.template_version_id=sb.live_version_id
+                  and pm.status='active' and pm.deleted_at is null
+              )
+          ) published_read_consistent,
+          exists(
+            select 1 from storefront_bindings sb
+            join storefront_preview_tokens spt
+              on spt.tenant_id=sb.tenant_id and spt.store_id=sb.store_id
+             and spt.template_version_id=sb.draft_version_id
+             and spt.status='active' and spt.deleted_at is null and spt.expires_at>now()
+            where sb.id=$7 and sb.tenant_id=$1 and sb.live_version_id=$8
+              and sb.draft_version_id is not null and sb.draft_version_id <> sb.live_version_id
+              and sb.status='active' and sb.deleted_at is null
+          ) preview_published_distinguishable,
+          exists(
+            select 1 from storefront_read_model_cache c
+            join storefront_bindings sb on sb.id=c.binding_id and sb.tenant_id=c.tenant_id and sb.store_id=c.store_id
+            join tenants t on t.id=c.tenant_id
+            where c.tenant_id=$1 and c.store_id=$6 and c.binding_id=$7 and c.live_version_id=$8
+              and c.deleted_at is null and sb.deleted_at is null
+              and c.published_version = (sb.id::text || ':' || sb.version::text || ':' || coalesce(sb.live_version_id::text,'none'))
+              and c.binding_version = sb.version
+              and c.auth_epoch = t.auth_epoch
+          ) cache_version_consistent,
           exists(select 1 from one_code_entries where tenant_id=$1 and store_id=$6 and scene='consumer_storefront' and status='active' and deleted_at is null) consumer_qr_ready,
           exists(select 1 from one_code_entries where tenant_id=$1 and store_id=$6 and scene='owner_activation' and status='active' and deleted_at is null) owner_qr_ready,
           exists(select 1 from one_code_entries where tenant_id=$1 and store_id=$6 and scene='employee_onboarding' and status='active' and deleted_at is null) employee_qr_ready,
